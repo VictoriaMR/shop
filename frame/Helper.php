@@ -83,3 +83,12 @@ function appT($text){
 function utf8len($string){
 	return mb_strlen($string, 'UTF-8');
 }
+function get1024Peck($size, $dec=2){
+	$a = ['B', 'KB', 'MB', 'GB', 'TB'];
+	$pos = 0;
+	while ($size >= 1024) {
+		$size /= 1024;
+		$pos++;
+	}
+	return round($size, $dec).' '.$a[$pos];
+}

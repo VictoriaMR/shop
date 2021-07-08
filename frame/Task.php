@@ -47,8 +47,9 @@ class Task
 		$param = [];
 		$param[] = $process['class'];
 		$param[] = 'start';
-		$param[] = 'lock='.base64_encode(json_encode($process['lock'],JSON_UNESCAPED_UNICODE));
-		$param[] = 'data='.base64_encode(json_encode($process['data'],JSON_UNESCAPED_UNICODE));
+		$param[] = 'lock='.base64_encode(json_encode($process['lock'], JSON_UNESCAPED_UNICODE));
+		$param[] = 'data='.base64_encode(json_encode($process['data'], JSON_UNESCAPED_UNICODE));
+		print_r($process);
 		return $this->localRunPhp(implode(' ', $param));
 	}
 

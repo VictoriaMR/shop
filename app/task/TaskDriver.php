@@ -13,6 +13,8 @@ abstract class TaskDriver
 	protected $ip = '';
 	protected $data = '';
 	protected $key = '';
+	protected $locker;
+	protected $tasker;
 	public $config = [
 		'info' => '任务说明',
 		'task_url' => '',
@@ -40,7 +42,7 @@ abstract class TaskDriver
 			set_time_limit(0);
 			$process['lock'] = json_decode(base64_decode($process['lock']), true);
 			$process['data'] = json_decode(base64_decode($process['data']), true);
-			list($this->key, $this->cas) = $process['lock'];
+			list($this->lock, $this->cas) = $process['lock'];
 			if (isset($process['data'])) {
 				$this->data = $process['data'];
 				if (isset($process['data']['ip'])) {
@@ -48,7 +50,7 @@ abstract class TaskDriver
 				}
 			}
 			$this->startTime = time();
-			redis(2)->sAdd(self::TASKPREFIX . 'all', $this->key);
+			$this->key = self::TASKPREFIX.$this->lock;
 			// 设置任务当次启动时间
 			$this->setInfo('start_time', now());
 			$this->setInfo('ip', $this->ip);
@@ -57,17 +59,29 @@ abstract class TaskDriver
 			$this->setInfo('process.uid', getmyuid());
 			$this->setInfo('process.gid', getmygid());
 			$this->setInfo('process.user', get_current_user());
-			redis(2)->hIncrBy(self::TASKPREFIX.$this->key, 'count', 1);
-			redis(2)->hDel(self::TASKPREFIX.$this->key, 'loopCount');
+			$this->locker = make('frame/Locker');
+			$this->tasker = make('frame/Task');
+
+			redis(2)->sAdd(self::TASKPREFIX.'all', $this->lock);
+			redis(2)->hIncrBy($this->key, 'count', 1);
+			redis(2)->hDel($this->key, 'loopCount');
 			$this->startUp();
 		}
 	}
 
-	public function setInfo($field, $value, $key='')
+	public function setInfo($field, $value)
 	{
-		$hkey = self::TASKPREFIX.make('frame/Task')->getKeyByClassName($this->key);
-		return redis(2)->hSet($hkey, $field, $value);
-		return $result;
+		return redis(2)->hSet($this->key, $field, $value);
+	}
+
+	public function getInfo($field='')
+	{
+		$key = self::TASKPREFIX.$this->tasker->getKeyByClassName($this->lock);
+		if(empty($field)){
+			return redis(2)->hGetAll($key);
+		} else {
+			return redis(2)->hGet($key, $field);
+		}
 	}
 
 	public function startUp()
@@ -80,50 +94,48 @@ abstract class TaskDriver
 		$this->setInfo('info', $msg);
 	}
 
-	protected function before(){}
+	protected function before() {}
+	protected function beforeShutdown() {}
+	protected function beforeRestart() {}
 
 	public function continueRuning()
 	{
 		if (!$this->updateLock()) {
 			return false;
 		}
-		dd('123123');
 		// 关闭的不运行, 主任务不能关闭
 		$boot = $this->getInfo('boot');
-		if(Task::getStandClassName(self::getClassName())=='core\task\MainTask' && $boot=='off') {
-		$boot='restart';
+		if($this->tasker->getKeyByClassName($this->lock) == 'app-task-MainTask' && $boot == 'off') {
+			$boot = 'restart';
 		}
-		if($boot=='off') {
-		$this->beforeShutdown();
-		return false;
+		if ($boot == 'off') {
+			$this->beforeShutdown();
+			return false;
 		}
 		// 重启任务
-		if($boot=='restart'){
-		$this->beforeRestart();
-		$this->setInfo('boot','on');
-		return false;
+		if($boot == 'restart'){
+			$this->beforeRestart();
+			$this->setInfo('boot','on');
+			return false;
 		}
 		// 设定有限运行次数的
-		if($this->runCountLimit==0){
-		return false;
+		if ($this->runCountLimit == 0) {
+			return false;
 		}
-		if($this->runCountLimit>0){
-		$this->runCountLimit--;
+		if ( $this->runCountLimit > 0) {
+			$this->runCountLimit--;
 		}
 		// 设置了运行时间限制的
-		if($this->runTimeLimit>0 && time()-$this->startTime>$this->runTimeLimit){
-		return false;
+		if ($this->runTimeLimit > 0 && time() - $this->startTime > $this->runTimeLimit) {
+			return false;
 		}
-
-		self::$redis->hIncrBy(self::TASKPREFIX . $this->key, 'loopCount', 1);
-
 		return true;
 	}
 
 	protected function updateLock()
 	{
 		$this->ping();
-		if (make('frame/Locker')->update($this->lock, $this->lockTimeout)) {
+		if ($this->locker->update($this->lock, $this->lockTimeout)) {
 			return true;
 		}
 		return false;
@@ -136,32 +148,43 @@ abstract class TaskDriver
 
 	public function start()
 	{
-		if (make('frame/Locker')->getLock($this->lock, $this->cas)) {
+		if ($this->locker->getLock($this->lock, $this->cas)) {
 			$this->echo('任务启动中 '.now());
 			$this->before();
 			$result = true;
+			$runtime = time();
 			while ($result && $this->continueRuning()) {
+				echo '111'.PHP_EOL;
+				redis(2)->hIncrBy($this->key, 'loopCount', 1);
 				$result = $this->run();
-				Debug::remark($this->key.'-end','time');
-				$runTime=Debug::getRangeTime($this->key.'-start',$this->key.'-end');
-				$this->setInfo('memoryUsage',Debug::getNowUseMem().'/'.Debug::getNowMemPeak());
-				$this->setInfo('currentMemory',memory_get_usage());
+				$usgaMem = memory_get_usage();
+				$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
 				if($result) {
-				// 防止死循环减轻服务器压力
-				if ($runTime < 0.01 && $this->sleep < 0.01) { // 替代==0判断
-				usleep(10000); //0.01s
-				}
-				if ($this->sleep >=1) {
-				sleep($this->sleep);
-				} elseif ($this->sleep > 0) {
-				usleep($this->sleep*1000000);
+					// 防止死循环减轻服务器压力
+					if (time() - $runtime < 1 && $this->sleep < 1) {
+						sleep($this->sleep);
+					}
+					if ($this->sleep >= 1) {
+						sleep($this->sleep);
+					}
+					$runtime = time();
 				}
 			}
-			$this->resourcesPing();
-			}
+			$this->locker->unlock($this->lock);
+			$this->echo('任务已退出 '.now());
         }
-		$this->unlock();
-		$this->after();
+	}
+
+	 function get1024Peck($dec = 2)
+	{
+		$size = memory_get_usage() - APP_MEMORY_START;
+		$a = ['B', 'KB', 'MB', 'GB', 'TB'];
+		$pos = 0;
+		while ($size >= 1024) {
+			$size /= 1024;
+			$pos++;
+		}
+		return round($size, $dec).' '.$a[$pos];
 	}
 
     // 任务类具体工作方法, 单次工作， 外层已有循环

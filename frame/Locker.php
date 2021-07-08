@@ -50,7 +50,6 @@ class Locker
 			$timeout = 10;
 		}
 		$cas = $this->lock[$name] ?? false;
-		make('frame/Debug')->runlog(json_encode($this->lock, JSON_UNESCAPED_UNICODE), 'temp');
 		if (empty($cas)) { //当前无锁
 			return false;
 		}
@@ -60,5 +59,19 @@ class Locker
 			return false;
 		}
 		return redis(2)->expire($key, $timeout);
+    }
+
+    public function unlock($name)
+    {
+		$cas = self::$lock[$name] ?? '';
+		if (empty($cas)) {
+			return false;
+		}
+		$lock = redis(2)->get(self::LOCKERPREFIX.$name);
+		if ($lock == $cas) {
+			unset(self::$lock[$name]);
+			return redis(2)->del(self::LOCKERPREFIX.$name);
+		}
+		return false;
     }
 }
