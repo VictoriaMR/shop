@@ -1,5 +1,5 @@
-# prettybag
-a site for sale bag
+# shop
+a site for sale
 
 # notice
-this is a simple shop for mine
+this is a simple web frame
