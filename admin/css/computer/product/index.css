@@ -1,0 +1,18 @@
+#spu-list .spu-item {
+	width: calc((100% - 50px) / 5);
+	border: 1px solid #ccc;
+	max-width: 240px;
+	min-width: 180px;
+    border-radius: 4px;
+    float: left;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+#spu-list .spu-image {
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+}
+#spu-list .name-content {
+	padding: 0 4px 4px 4px;
+}

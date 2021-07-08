@@ -1,0 +1,71 @@
+#login-bg {
+	position: fixed;
+	height: 100%; 
+	width: 100%;
+    opacity: 0.7;
+}
+#login-bg img {
+	height:100%; 
+	width:100%;
+}
+.login-box {
+    width: 400px;
+    height: 400px;
+    padding: 25px;
+    color: #6c6c6c;
+    background: #ffffff;
+    position: fixed;
+    top: calc(50% - 200px);
+    right: calc(50% - 200px);
+    box-shadow: 4px 4px 10px #333333;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+.login-box a {
+	width: 65px;
+	float: left;
+	height: 28px;
+	text-align: center;
+	margin-right: 18px;
+}
+.login-box a.select {
+	border-bottom: 2px solid #000;
+}
+.poptip-content {
+    color: #ff9000;
+    border: 1px solid #f3d995;
+    padding: 5px 10px;
+    width: 90px;
+    text-align: center;
+    background: #fefcee;
+    position: absolute;
+    right: 50px;
+    top: 4px;
+}
+.poptip-content:after {
+    content: '';
+    position: absolute;
+    top: 9px;
+    right: -6px;
+    width: 9px;
+    height: 9px;
+    border-top: 1px solid #f3d995;
+    border-right: 1px solid #f3d995;
+    transform: rotate(45deg);
+    background: #fefcee;
+}
+#login-error {
+	border: 1px solid #ff934c;
+    border-color: #ffb4a8;
+    background-color: #fef2f2;
+    height: 28px;
+    line-height: 27px;
+    padding: 0 8px;
+    position: absolute;
+    width: 100%;
+    top: 12px;
+}
+#login-error .glyphicon {
+    font-size: 15px;
+    margin-top: 5px;
+}

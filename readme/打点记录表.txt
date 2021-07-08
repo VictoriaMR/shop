@@ -1,0 +1,27 @@
+CREATE TABLE `admin_logger` (
+  `log_id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `type_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型',
+  `browser` varchar(10) NOT NULL DEFAULT '' COMMENT '浏览器名',
+  `system` varchar(10) DEFAULT '' COMMENT '操作系统',
+  `agent` varchar(250) NOT NULL DEFAULT '' COMMENT '设备数据',
+  `remark` varchar(30) NOT NULL DEFAULT '' COMMENT '备注',
+  `ip` varchar(15) NOT NULL DEFAULT '' COMMENT 'IP地址',
+  `create_at` timestamp NULL COMMENT '创建时间',
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE `visitor_log` (
+  `log_id` bigint unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `lan_id` tinyint(2) NOT NULL DEFAULT '0' COMMENT '语言ID',
+  `is_moblie` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否移动端',
+  `ip` varchar(15) NOT NULL DEFAULT '' COMMENT 'ip地址',
+  `path` varchar(100) NOT NULL DEFAULT '' COMMENT '访问路径',
+  `query` varchar(100) DEFAULT '' COMMENT '参数',
+  `system` varchar(10) NOT NULL DEFAULT '' COMMENT '操作系统',
+  `browser` varchar(10) NOT NULL DEFAULT '' COMMENT '浏览器',
+  `agent` varchar(255) NOT NULL DEFAULT '' COMMENT '设备',
+  `create_at` timestamp NULL COMMENT '创建时间',
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
