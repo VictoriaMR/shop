@@ -49,17 +49,12 @@ class Task
 		$param[] = 'start';
 		$param[] = 'lock='.base64_encode(json_encode($process['lock'], JSON_UNESCAPED_UNICODE));
 		$param[] = 'data='.base64_encode(json_encode($process['data'], JSON_UNESCAPED_UNICODE));
-		print_r($process);
 		return $this->localRunPhp(implode(' ', $param));
 	}
 
 	public function localRunPhp($param)
 	{
 		$phpBin = config('task.phpbin');
-		if (!is_file($phpBin)) {
-			make('frame/Debug')->runlog('['.$phpBin.' is not a vaild php exec file]', 'task_error');
-			return false;
-		}
 		$cmd = $phpBin.' -f '.ROOT_PATH.'command '.$param;
 		if (request()->isWin()) {
 			pclose(popen('start /B '.$cmd.' 1>NUL 2>NUL', 'r'));

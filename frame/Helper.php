@@ -92,3 +92,19 @@ function get1024Peck($size, $dec=2){
 	}
 	return round($size, $dec).' '.$a[$pos];
 }
+function getDir($path){
+	if (is_file($path)) {
+		return $path;
+	}
+	$files = scandir($path);
+	$fileItem = [];
+	foreach ($files as $v) {
+		$newPath = $path.DIRECTORY_SEPARATOR.$v;
+		if (is_file($newPath)) {
+			$fileItem[] = $newPath;
+		} else if (is_dir($newPath) && $v != '.' && $v != '..') {
+			$fileItem = array_merge($fileItem, getDir($newPath));
+		}
+	}
+	return $fileItem;
+}
