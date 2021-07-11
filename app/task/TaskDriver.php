@@ -10,15 +10,12 @@ abstract class TaskDriver
 	protected $isRealObject = true;
 	protected $lock ='';
 	protected $cas ='';
-	protected $ip = '';
 	protected $data = '';
 	protected $key = '';
 	protected $locker;
 	protected $tasker;
 	public $config = [
 		'info' => '任务说明',
-		'task_url' => '',
-		'task_ip' => '',
 		'cron' => [
 			// 按下面格式配置， 可同时配置多条
 			// * * * * * *	分 时 日 月 周 (全为*表示持续运行)
@@ -36,24 +33,15 @@ abstract class TaskDriver
 
 	public function __construct($process=[])
 	{
-		if ($process===false) {
+		if (empty($process)) {
 			$this->isRealObject = false;
 		} else {
 			set_time_limit(0);
 			$process['lock'] = json_decode(base64_decode($process['lock']), true);
-			$process['data'] = json_decode(base64_decode($process['data']), true);
 			list($this->lock, $this->cas) = $process['lock'];
-			if (isset($process['data'])) {
-				$this->data = $process['data'];
-				if (isset($process['data']['ip'])) {
-					$this->ip = $process['data']['ip'];
-				}
-			}
 			$this->startTime = time();
-			$this->key = self::TASKPREFIX.$this->lock;
 			// 设置任务当次启动时间
 			$this->setInfo('start_time', now());
-			$this->setInfo('ip', $this->ip);
 			$this->setInfo('status', 'runing');
 			$this->setInfo('process.pid', getmypid());
 			$this->setInfo('process.uid', getmyuid());
@@ -69,14 +57,26 @@ abstract class TaskDriver
 		}
 	}
 
-	public function setInfo($field, $value)
+	protected function getKey($key)
 	{
-		return redis(2)->hSet($this->key, $field, $value);
+		return self::TASKPREFIX.$key;
 	}
 
-	public function getInfo($field='')
+	protected function setInfo($field, $value, $key='')
 	{
-		$key = self::TASKPREFIX.$this->tasker->getKeyByClassName($this->lock);
+		if (empty($key)) {
+			$key = $this->lock;
+		}
+		$key = $this->getKey($key);
+		return redis(2)->hSet($key, $field, $value);
+	}
+
+	protected function getInfo($field='', $key='')
+	{
+		if (empty($key)) {
+			$key = $this->lock;
+		}
+		$key = $this->getKey($key);
 		if(empty($field)){
 			return redis(2)->hGetAll($key);
 		} else {
@@ -84,21 +84,21 @@ abstract class TaskDriver
 		}
 	}
 
-	public function startUp()
+	protected function startUp($name='')
 	{
-		return $this->setInfo('boot', 'on');
+		return $this->setInfo('boot', 'on', $name);
 	}
 
-	public function echo($msg)
+	protected function echo($msg, $name='')
 	{
-		$this->setInfo('info', $msg);
+		$this->setInfo('info', $msg, $name);
 	}
 
 	protected function before() {}
 	protected function beforeShutdown() {}
 	protected function beforeRestart() {}
 
-	public function continueRuning()
+	protected function continueRuning()
 	{
 		if (!$this->updateLock()) {
 			return false;
@@ -155,7 +155,7 @@ abstract class TaskDriver
 			$runtime = time();
 			while ($result && $this->continueRuning()) {
 				echo '111'.PHP_EOL;
-				redis(2)->hIncrBy($this->key, 'loopCount', 1);
+				redis(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
 				$result = $this->run();
 				$usgaMem = memory_get_usage();
 				$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
@@ -175,16 +175,159 @@ abstract class TaskDriver
         }
 	}
 
-	 function get1024Peck($dec = 2)
+	protected function cronUnitParse($unit, $allowRange)
 	{
-		$size = memory_get_usage() - APP_MEMORY_START;
-		$a = ['B', 'KB', 'MB', 'GB', 'TB'];
-		$pos = 0;
-		while ($size >= 1024) {
-			$size /= 1024;
-			$pos++;
+		if ($unit == '*') {
+			$range = $allowRange;
+			$step = 1;
+		} else {
+			$step = 1;
+			$str = $unit;
+			if (strpos($str, '/')) {
+				list($str, $step) = explode('/', $str);
+			}
+			if ($str == '*') {
+				$range = $allowRange;
+			} else {
+				$range = [];
+				$str = explode(',', $str);
+				foreach ($str as $val) {
+					if (strpos($val, '-')) {
+						$tmp = explode('-', $val);
+						$range = array_merge($range, range($tmp[0], $tmp[1]));
+					} else {
+						$range[] = intval($val);
+					}
+				}
+			}
 		}
-		return round($size, $dec).' '.$a[$pos];
+		sort($range);
+		if ($step < 1) {
+			$step = 1;
+		}
+		$i = 0;
+		$result = [];
+		while (isset($range[$i])) {
+			$result[] = $range[$i];
+			$i = $i + $step;
+		}
+		return $result;
+	}
+
+	protected function cronNextVal($range, $val)
+	{
+		reset($range);
+		foreach ($range as $v) {
+			if($v >= $val){
+				return $v;
+			}
+		}
+		return -1;
+	}
+
+	protected function getNextTimeByCron($corn)
+	{
+		$corn = trim(preg_replace('/\s+/', ' ', $corn));
+		if ($corn == '* * * * *') {
+			return 0;
+		}
+		$corn = explode(' ', $corn);
+		$now = explode('-', date('i-H-d-m-w'));
+		//确定取值范围
+		$year = date('Y');
+		$minuteRange = $this->cronUnitParse($corn[0], range(0, 59));
+		$hourRange = $this->cronUnitParse($corn[1], range(0, 23));
+		$dayRange = $this->cronUnitParse($corn[2], range(1, date('t')));
+		$monthRange = $this->cronUnitParse($corn[3], range(1, 12));
+		$weekRange = $this->cronUnitParse($corn[4], range(0, 6));
+		//取值
+		$minute = $this->cronNextVal($minuteRange, $now[0] + 1);
+		$step = 0;
+		if ($minute < 0) {
+			$minute = $minuteRange[0];
+			$step=1;
+		}
+		$hour = $this->cronNextVal($hourRange, $now[1] + $step);
+		$step = 0;
+		if ($hour < 0) {
+			$hour=$hourRange[0];
+			$step=1;
+		}
+		if($corn[4] == '*' || $corn[3] != '*') {
+			$day = $this->cronNextVal($dayRange, $now[2] + $step);
+			$step = 0;
+			if ($day < 0) {
+				$day = $dayRange[0];
+				$step = 1;
+			}
+			$month = $this->cronNextVal($monthRange, $now[3] + $step);
+			if ($month < 0) {
+				$month = $monthRange[0];
+				$year++;
+			}
+		} else { // 按周参数计算
+			$week = $this->cronNextVal($weekRange, $now[4]+$step);
+			$basetime = time();
+			if ($week < 0) {
+				$week = $weekRange[0];
+				$basetime = $basetime + (7 - date('w',$basetime) + $week)*24*60*60; // 基础时间递增一周
+			}
+			$basemonth = date('m',$basetime);
+			$month = $this->cronNextVal($monthRange, $basemonth);
+			if ($month < 0 || date('m', $basetime) != $month) {
+				if ($month < 0) {
+					$month = $monthRange[0];
+					$year++;
+				}
+				$basetime = strtotime($year.'-'.$month.'-1 00:00:01');
+				for ($i=0; $i<7; $i++) {
+					$basetime = $basetime + $i*24*3600;
+					$calweek = date('w', $basetime);
+					if($calweek==$week){
+						break;
+					}
+				}
+				$day = date('d',$basetime);
+			} else {
+				$day = date('d',$basetime);
+			}
+		}
+		if ($year != date('Y')) {
+			$month = $monthRange[0];
+			$day = $dayRange[0];
+			$hour = $hourRange[0];
+			$minute = $minuteRange[0];
+		}
+		if ($month != date('m')) {
+			$day = $dayRange[0];
+			$hour = $hourRange[0];
+			$minute = $minuteRange[0];
+		}
+		if ($day != date('d')) {
+			$hour = $hourRange[0];
+			$minute = $minuteRange[0];
+		}
+		if ($hour != date('H')) {
+			$minute = $minuteRange[0];
+		}
+        $result = mktime($hour, $minute, 0, $month, $day, $year);
+        return $result > 0 ? $result : false;
+	}
+
+	protected function getNextTimeByCronArray($cornArray)
+	{
+		$result = false;
+		foreach ($cornArray as $val) {
+			$v = $this->getNextTimeByCron($val);
+			if ($v === false) {
+				return false;
+			}
+			$result ===false && $result=$v;
+            if ($v < $result) {
+                $result = $v;
+            }
+		}
+		return $result;
 	}
 
     // 任务类具体工作方法, 单次工作， 外层已有循环

@@ -14,9 +14,6 @@ class Task
 		if ($lockTimeout < 1) {
 			$lockTimeout = config('task.timeout');
 		}
-		if (!isset($data['ip'])) {
-			$data['ip'] = request()->getIp();
-		}
 		$lockKey = $this->getKeyByClassName($taskClass);
 		$locker = make('frame/Locker');
 		if ($locker->lock($lockKey, $lockTimeout)) {
@@ -24,7 +21,6 @@ class Task
 			$process = [
 				'class' => $taskClass,
 				'lock' => [$lockKey, $cas],
-				'data' => $data,
 			];
 			return $this->run($process);
 		}
@@ -48,7 +44,6 @@ class Task
 		$param[] = $process['class'];
 		$param[] = 'start';
 		$param[] = 'lock='.base64_encode(json_encode($process['lock'], JSON_UNESCAPED_UNICODE));
-		$param[] = 'data='.base64_encode(json_encode($process['data'], JSON_UNESCAPED_UNICODE));
 		return $this->localRunPhp(implode(' ', $param));
 	}
 
