@@ -34,15 +34,6 @@ class Redis
 	public function __call($func, $arg)
 	{
 		if (is_null($this->_link)) return false;
-		if ($func == 'hmset') {
-			if (isset($arg[2]) && is_array($arg[2])) {
-				$arg[2] = json_encode($arg[2], JSON_UNESCAPED_UNICODE);
-			}
-		} else {
-			if (isset($arg[1]) && is_array($arg[1])) {
-				$arg[1] = json_encode($arg[1], JSON_UNESCAPED_UNICODE);
-			}
-		}
 		$info = $this->_link->$func(...$arg);
 		$temp = isJson($info);
 		if ($temp === false) {

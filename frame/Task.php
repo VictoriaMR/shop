@@ -4,7 +4,7 @@ namespace frame;
 
 class Task
 {
-	public function start($taskClass='', $lockTimeout=0, $data=[])
+	public function start($taskClass='', $lockTimeout=0, $cas='')
 	{
 		if (empty($taskClass)) {
 			$taskClass = 'app\task\MainTask';
@@ -16,8 +16,16 @@ class Task
 		}
 		$lockKey = $this->getKeyByClassName($taskClass);
 		$locker = make('frame/Locker');
-		if ($locker->lock($lockKey, $lockTimeout)) {
-			$cas = $locker->holdLock($lockKey);
+		if (empty($cas)) {
+			if ($locker->lock($lockKey, $lockTimeout)) {
+				$cas = $locker->holdLock($lockKey);
+				$process = [
+					'class' => $taskClass,
+					'lock' => [$lockKey, $cas],
+				];
+				return $this->run($process);
+			}
+		} else {
 			$process = [
 				'class' => $taskClass,
 				'lock' => [$lockKey, $cas],
@@ -34,6 +42,8 @@ class Task
 		if ($locker->getLock($lock, $cas)) {
 			$locker->holdLock($lock);
 			return $this->localRun($process);
+		} else {
+			make('frame/Debug')->runlog(explode(', ', $process), 'task-error');
 		}
 		return false;
 	}

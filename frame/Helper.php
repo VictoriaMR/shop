@@ -2,7 +2,7 @@
 function dd(...$arg){
 	foreach ($arg as $value) {
 		print_r($value);
-		echo '<br />';
+		echo IS_CLI ? PHP_EOL : '<br />';
 	}
 	exit();
 }

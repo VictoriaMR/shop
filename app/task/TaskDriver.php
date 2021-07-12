@@ -11,7 +11,6 @@ abstract class TaskDriver
 	protected $lock ='';
 	protected $cas ='';
 	protected $data = '';
-	protected $key = '';
 	protected $locker;
 	protected $tasker;
 	public $config = [
@@ -41,7 +40,7 @@ abstract class TaskDriver
 			list($this->lock, $this->cas) = $process['lock'];
 			$this->startTime = time();
 			// 设置任务当次启动时间
-			$this->setInfo('start_time', now());
+			$this->setInfo('startTime', now());
 			$this->setInfo('status', 'runing');
 			$this->setInfo('process.pid', getmypid());
 			$this->setInfo('process.uid', getmyuid());
@@ -51,8 +50,8 @@ abstract class TaskDriver
 			$this->tasker = make('frame/Task');
 
 			redis(2)->sAdd(self::TASKPREFIX.'all', $this->lock);
-			redis(2)->hIncrBy($this->key, 'count', 1);
-			redis(2)->hDel($this->key, 'loopCount');
+			redis(2)->hIncrBy(self::TASKPREFIX.$this->lock, 'count', 1);
+			redis(2)->hDel(self::TASKPREFIX.$this->lock, 'loopCount');
 			$this->startUp();
 		}
 	}
@@ -154,7 +153,6 @@ abstract class TaskDriver
 			$result = true;
 			$runtime = time();
 			while ($result && $this->continueRuning()) {
-				echo '111'.PHP_EOL;
 				redis(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
 				$result = $this->run();
 				$usgaMem = memory_get_usage();

@@ -8,8 +8,8 @@ class LoginController extends Controller
 {
 	public function index()
 	{	
-		make('frame/Task')->start();
-		dd();
+		// make('frame/Task')->start();
+		// dd();
 		html()->addCss();
 		html()->addJs();
 		session()->set('admin', []);

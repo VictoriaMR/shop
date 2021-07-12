@@ -27,20 +27,20 @@ class Base
 		return $this->instance()->where($where)->field($field)->find();
 	}
 
-	public function updateData($id, $data)
+	public function updateData($where, $data)
 	{
 		if (!is_array($where)) {
-			$where = [$this->_primaryKey => (int)$id];
+			$where = [$this->_primaryKey => (int)$where];
 		}
 		return $this->instance()->where($where)->update($data);
 	}
 
-	public function deleteData($id)
+	public function deleteData($where)
 	{
 		if (!is_array($where)) {
 			$where = [$this->_primaryKey => (int)$id];
 		}
-		return $this->instance()->where($this->_primaryKey, $id)->delete();
+		return $this->instance()->where($where)->delete();
 	}
 
 	public function getCountData(array $where=[]) 

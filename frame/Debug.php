@@ -56,7 +56,7 @@ class Debug
 		view()->load('frame/pagetrace', false);
 	}
 
-	public function runlog($msg, $type='')
+	public function runlog($msg='', $type='')
 	{
 		$destination = ROOT_PATH.'runtime'.DS.date('Ym').DS.date('d').(empty($type) ? '' : '_'.$type).'.log';
 

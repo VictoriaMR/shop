@@ -68,6 +68,7 @@ class Html
 		if (!is_dir($path.'static')) {
 			mkdir($path.'static', 0750, true);
 		}
+		make('app/service/SystemStaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, 'css');
 		file_put_contents($path.DS.$file, $cssStr);
 		return $file;
 	}
@@ -91,6 +92,7 @@ class Html
 		if (!is_dir($path.'static')) {
 			mkdir($path.'static', 0750, true);
 		}
+		make('app/service/SystemStaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, 'js');
 		file_put_contents($file, $jsStr);
 		return $file;
 	}

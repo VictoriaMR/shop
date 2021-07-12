@@ -7,17 +7,12 @@ class Locker
 	const LOCKERPREFIX = 'frame-lock:';
 	protected $lock = [];
 
-	public function lock($name, $timeout=100, $isShareLock=false)
+	public function lock($name, $timeout=100)
 	{
 		if ($timeout < 1) {
 			$timeout = 100;
 		}
-		if ($isShareLock) {
-			$cas = 'frame-sharelock-'.$timeout;
-		} else {
-			$cas = make('frame/Str')->random(32);
-		}
-
+		$cas = make('frame/Str')->random(32);
 		$lock = redis(2)->set(self::LOCKERPREFIX.$name, $cas, ['nx', 'ex' => $timeout]);
 		if ($lock) {
 			$this->lock[$name] = $cas;
@@ -63,13 +58,13 @@ class Locker
 
     public function unlock($name)
     {
-		$cas = self::$lock[$name] ?? '';
+		$cas = $this->lock[$name] ?? '';
 		if (empty($cas)) {
 			return false;
 		}
 		$lock = redis(2)->get(self::LOCKERPREFIX.$name);
 		if ($lock == $cas) {
-			unset(self::$lock[$name]);
+			unset($this->lock[$name]);
 			return redis(2)->del(self::LOCKERPREFIX.$name);
 		}
 		return false;
