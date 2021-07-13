@@ -1,172 +1,75 @@
 <?php 
 
 namespace app\service;
-
-use app\service\Base as BaseService;
-use App\Models\Member;
+use app\service\Base;
 
 /**
  * 	用户公共类
  */
-class MemberService extends BaseService
+class MemberService extends Base
 {	
-	protected static $constantMap = [
-        'base' => Member::class,
-    ];
-
-	public function __construct(Member $model)
-    {
-        $this->baseModel = $model;
-    }
-
 	public function create($data)
 	{
-		if (empty($data['password'])) return false;
-		$data['salt'] = $this->getSalt();
-		$data['password'] = password_hash($this->getPasswd($data['password'], $data['salt']), PASSWORD_DEFAULT);
-
+		$data['password'] = $this->getPassword($data['password']);
 		return $this->baseModel->insertGetId($data);
 	}
 
-	public function updateById($memId, $data)
-	{
-		if (empty($memId) || empty($data)) return false;
-
-		if (!empty($data['password'])) {
-			$data['salt'] = $this->getSalt();
-			$data['password'] = password_hash($this->getPasswd($data['password'], $data['salt']), PASSWORD_DEFAULT);
-		}
-		$result = $this->baseModel->updateDataById($memId, $data);
-		if ($result) {
-			$this->clearCache($memId);
-		}
-		return $result;
-	}
-
-	public function login($mobile, $password, $type = 'home')
+	public function login($mobile, $password, $type='mobile')
 	{
 		if (empty($mobile) || empty($password)) return false;
-
-		$info = $this->getInfoByMobile($mobile);
+		switch($type) {
+			case 'mobile':
+				$key = 'getInfoByMobile';
+				break;
+			case 'email':
+				$key = 'getInfoByEmail';
+				break;
+			default:
+				return false;
+				break;
+		}
+		$info = $this->$key($mobile);
 		if (empty($info)) return false;
-		if (!$info['status']) return false;
-
-		if ($this->checkPassword($this->getPasswd($password, $info['salt']), $info['password'])) {
+		if (empty($info['status'])) return false;
+		//验证密码
+		if ($this->checkPassword($password, $info['password'])) {
 			$data = [
 				'mem_id' => $info['mem_id'],
 				'name' => $info['name'],
-				'mobile' => $info['mobile'],
 				'nickname' => $info['nickname'],
 				'avatar' => $info['avatar'],
-				'salt' => $info['salt'],
+				'mobile' => $info['mobile'],
+				'email' => $info['email'],
 			];
-			return \frame\Session::set($type, $data);
+			session()->set($this->login_key.'_info', $data);
+			$data = [
+	            'mem_id' => $info['mem_id'],
+	            'remark' => '登录管理后台',
+	            'type_id' => 0,
+	        ];
+	        $this->addLoginLog($data);
+	        return true;
 		}
 		return false;
 	}
 
-	public function checkPassword($inPassword = '', $sourcePassword = '')
+	protected function checkPassword($inPassword, $sourcePassword)
 	{
 		return password_verify($inPassword, $sourcePassword);
 	}
 
-	public function isExistUserByMobile($mobile) 
+	protected function getPassword($password)
 	{
-		return $this->baseModel->isExistUserByMobile($mobile);
+		return password_hash($password, PASSWORD_DEFAULT);
 	}
 
-	public function getInfoByMobile($mobile)
+	public function isExistByMobile($mobile) 
 	{
-		$info = $this->baseModel->getInfoByMobile($mobile);
-		if (!empty($info)) {
-        	if (empty($info['avatar'])) {
-        		$info['avatar'] = $this->getDefaultAvatar($info['mem_id']);
-        	} else {
-        		$info['avatar'] = mediaUrl($info['avatar']);
-        	}
-        }
-        return $info;
+		return $this->getCountData(['mobile'=>$mobile]) > 0;
 	}
 
-    public function getInfo($userId)
-    {
-        $info = $this->baseModel->getInfo($userId);
-    	if (!empty($info)) {
-        	if (empty($info['avatar'])) {
-        		$info['avatar'] = $this->getDefaultAvatar($info['mem_id']);
-        	} else {
-        		$info['avatar'] = mediaUrl($info['avatar']);
-        	}
-        }
-        return $info;
-    }
-
-    public function getInfoCache($userId)
-    {
-        $cacheKey = $this->getInfoCacheKey($userId);
-        $info = redis()->get($cacheKey);
-        if (empty($info)) {
-            $info = $this->getInfo($userId);
-            redis()->set($cacheKey, $info, self::constant('INFO_CACHE_TIMEOUT'));
-        }
-        return $info;
-    }
-
-    public function getDefaultAvatar($userId, $male = true)
-    {
-    	if ($male) {
-    		return siteUrl('image/common/male.jpg');
-    	} else {
-    		return siteUrl('image/common/female.jpg');
-    	}
-    }
-
-    public function getInfoCacheKey($userId)
-    {
-        return 'MEMBER_INFO_CACHE_' . $userId;
-    }
-
-    public function clearCache($userId)
-    {
-        return redis()->foget($this->getInfoCacheKey($userId));
-    }
-
-    public function getTotal(array $where)
-    {
-    	return $this->baseModel->where($where)->count();
-    }
-
-    public function getList(array $where, $page=1, $size=20)
-    {
-    	$list = $this->baseModel->where($where)->page($page, $size)->get();
-    	if (!empty($list)) {
-    		foreach ($list as $key => $value) {
-    			unset($value['password']);
-    			if (empty($value['avatar'])) {
-	        		$value['avatar'] = $this->getDefaultAvatar($value['mem_id']);
-	        	} else {
-	        		$value['avatar'] = mediaUrl($value['avatar']);
-	        	}
-	        	$list[$key] = $value;
-    		}
-    	}
-    	return $list;
-    }
-
-    public function getMemIdsByName($name)
-    {
-        if (empty($name)) return [];
-        $list = $this->baseModel->where(['name,nickname'=>['like', '%'.$name.'%']])->field('mem_id')->get();
-        if (empty($list)) return [];
-        return array_unique(array_column($list, 'mem_id'));
-    }
-
-    public function getMemIdsByMobile($mobile)
-    {
-        if (empty($mobile)) return [];
-        $list = $this->baseModel->where(['mobile'=>['like', '%'.$mobile.'%']])->field('mem_id')->get();
-        if (empty($list)) return [];
-        return array_unique(array_column($list, 'mem_id'));
-    }
-
+	protected function getInfoByMobile($mobile)
+	{
+		return $this->loadData(['mobile'=>$mobile]);
+	}
 }

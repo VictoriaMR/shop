@@ -9,6 +9,7 @@
 	</div>
 	<div class="clear"></div>
 	<form class="relative" style="padding-top: 50px;">
+		<input type="hidden" name="is_ajax" value="1">
 		<div id="login-error" class="hidden">
 			<span class="glyphicon glyphicon-warning-sign left orange"></span>
 			<div id="login-error-msg" class="left ml4">请输入帐户名</div>

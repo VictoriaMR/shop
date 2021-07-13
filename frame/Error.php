@@ -43,7 +43,7 @@ class Error
 				if ($count == 0) {
 					echo 'Parmas: '.$key.' => '.$value.'<br />';
 				} else {
-					echo '--------'.$key.' => '.$value.'<br />';
+					echo '---------'.$key.' => '.$value.'<br />';
 				}
 				$count ++;
 			}

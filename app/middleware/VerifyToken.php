@@ -19,7 +19,7 @@ class VerifyToken
 		if ($this->inExceptArray($request)) {
 			return true;
 		}
-		$loginKey = env('APP_TEMPLATE_TYPE').'_mem_id';
+		$loginKey = env('APP_TEMPLATE_TYPE').'__info';
 		//检查登录状态
 		if (empty(session()->get($loginKey))) {
 			session()->set('callback_url', rtrim($_SERVER['REQUEST_URI'].'?'.$_SERVER['QUERY_STRING']), '?');

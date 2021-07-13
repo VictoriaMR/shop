@@ -10,12 +10,12 @@
 }
 .login-box {
     width: 400px;
-    height: 400px;
+    height: 340px;
     padding: 25px;
     color: #6c6c6c;
     background: #ffffff;
     position: fixed;
-    top: calc(50% - 200px);
+    top: calc(50% - 170px);
     right: calc(50% - 200px);
     box-shadow: 4px 4px 10px #333333;
     border: 1px solid #ccc;

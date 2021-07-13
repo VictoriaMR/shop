@@ -15,20 +15,6 @@ class LogService extends BaseService
         $this->baseModel =  $model;
     }
 
-    public function addLog(array $data)
-    {
-    	if (empty($data)) return false;
-    	$temp = [
-            'ip' => getIp(),
-            'browser' => getBrowser(),
-            'system' => getSystem(),
-            'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-            'create_at' => now(),
-        ];
-    	$data = array_merge($temp, $data);
-    	return $this->baseModel->insert($data);
-    }
-
     public function getTypeList()
     {
         return [

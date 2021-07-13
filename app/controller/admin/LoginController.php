@@ -8,8 +8,6 @@ class LoginController extends Controller
 {
 	public function index()
 	{	
-		// make('frame/Task')->start();
-		// dd();
 		html()->addCss();
 		html()->addJs();
 		session()->set('admin', []);
@@ -20,7 +18,7 @@ class LoginController extends Controller
 	public function loginCode()
 	{
 		$imageService = make('app/service/ImageService');
-		$code = make('app/service/Base')->getSalt();
+		$code = randString(4, true, false, true);
 		session()->set('admin_login_code', $code);
 		$imageService->verifyCode($code, 80, 34);
 	}
@@ -32,25 +30,17 @@ class LoginController extends Controller
 		$password = trim(ipost('password', ''));
 
 		if (empty($phone) || empty($code) || empty($password)) {
-			return $this->result(10000, [], ['message' => '输入错误!']);
+			$this->error('参数错误');
 		}
-		if (strtolower($code) != strtolower(Session::get('admin_login_code'))) {
-			return $this->result(10000, [], ['message' => '验证码错误!']);
+		if (strtolower($code) != session()->get('admin_login_code')) {
+			$this->error('验证码错误');
 		}
-		$memberService = make('App/Services/Admin/MemberService');
-		$result = $memberService->login($phone, $password, 'admin');
-
+		$memberService = make('app/service/admin/MemberService');
+		$result = $memberService->login($phone, $password);
 		if ($result) {
-	        $logService = make('app/service/admin/LogService');
-			$data = [
-	            'mem_id' => Session::get('admin_mem_id'),
-	            'remark' => '登录管理后台',
-	            'type_id' => $logService::constant('TYPE_LOGIN'),
-	        ];
-	        $logService->addLog($data);
-			$this->result(200, ['url' => url('index')], ['message' => '登录成功!']);
+			$this->success(['url' => url('index')], '登录成功!');
 		} else {
-			$this->result(10000, $result, ['message' => '账号或者密码不匹配!']);
+			$this->error('账号或者密码不匹配!');
 		}
 	}
 

@@ -1,10 +1,11 @@
-var LOGIN = {
+const LOGIN = {
 	init: function () {
 		$('#login-btn').on('click', function() {
-			var msg = '';
+			let msg = '';
 			$('#login-error').addClass('hidden');
-			$(this).parent('form').find('input:visible').each(function(){
-				var name = $(this).attr('name');
+			const thisobj = $(this);
+			thisobj.parent('form').find('input:visible').each(function(){
+				const name = $(this).attr('name');
 				if (!VERIFY[name]($(this).val())) {
 					$(this).focus();
 					switch (name) {
@@ -28,29 +29,28 @@ var LOGIN = {
 				$('#login-error').removeClass('hidden').find('#login-error-msg').text(msg);
 				return false;
 			}
-			$(this).button('loading');
+			thisobj.button('loading');
 			$.post(URI+'login/login', $(this).parent('form').serializeArray(), function(res) {
-				if (res.code == 200) {
+				if (res.code === 200 || res.code === '200') {
 					window.location.href = res.data.url;
 				} else {
 					$('#login-error').removeClass('hidden').find('#login-error-msg').text(res.message);
+					thisobj.button('reset');
 				}
 			});
-			$(this).button('reset');
 		});
 		//验证码自动校正
 		$('input[name="code"]').on('blur', function(){
-			var code = $(this).val();
-			var thisobj = $(this);
+			const code = $(this).val();
+			const thisobj = $(this);
 			if (!VERIFY.code(code)) {
 				$('#login-error').removeClass('hidden').find('#login-error-msg').text('验证码格式不正确');
 				thisobj.parent().find('iconfont').remove();
 				return false;
 			}
 			$.post(URI+'login/checkCode', {code: code}, function(res) {
-				if (res.code == 200) {
+				if (res.code === 200) {
 					$('#login-error').addClass('hidden');
-				} else {
 				}
 			});
 		});

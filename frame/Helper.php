@@ -108,3 +108,22 @@ function getDirFile($path){
 	}
 	return $fileItem;
 }
+function randString($len=16, $lower=true, $upper=true, $number=true){
+	$str = '';
+	if ($lower) {
+	    $str .= 'abcdefghijklnmopqrstuvwxyz';
+	}
+	if ($upper) {
+	    $str .= 'ABCDEFGHIJKLNMOPQRSTUVWXYZ';
+	}
+	if ($number) {
+	    $str .= '0123456789';
+	}
+	$rStr = '';
+	$seedLen = strlen($str);
+	while ($len > 0) {
+	    $rStr .= $str[rand(0, $seedLen - 1)];
+	    $len--;
+	}
+	return $rStr;
+}

@@ -8,7 +8,7 @@ class View
 
 	public function display($template='', $match=true)
 	{
-		return $this->fetch(ROOT_PATH.APP_TEMPLATE_TYPE.DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)]);
+		$this->fetch(ROOT_PATH.APP_TEMPLATE_TYPE.DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)]);
 	}
 
 	protected function fetch($template, array $data=[])
