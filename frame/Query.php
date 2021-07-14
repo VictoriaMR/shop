@@ -80,7 +80,7 @@ final class Query
 	public function field($columns)
 	{
 		if (empty($columns)) return $this;
-		$this->_columns .= trim($value).',';
+		$this->_columns .= trim($columns).',';
 		return $this;
 	}
 

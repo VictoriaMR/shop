@@ -10,7 +10,7 @@ class LoginController extends Controller
 	{	
 		html()->addCss();
 		html()->addJs();
-		session()->set('admin', []);
+		session()->set('admin');
 		$this->assign('_title', '登录');
 		$this->view();
 	}
@@ -48,24 +48,28 @@ class LoginController extends Controller
 	{
 		$code = ipost('code', '');
 		if (empty($code)) {
-			return $this->result(10000, [], ['message' => '验证码格式错误!']);
+			$this->error('验证码错误!');
 		}
-		if (strtolower($code) != strtolower(Session::get('admin_login_code'))) {
-			return $this->result(10000, [], ['message' => '验证码错误!']);
+		if (strtolower($code) != session()->get('admin_login_code')) {
+			$this->error('验证码错误');
 		}
-		$this->result(200, '', ['message' => '验证码正确!']);
+		$this->success('验证码正确!');
 	}
 
 	public function logout()
 	{
-		$logService = \App::make('App\Services\Admin\LogService');
+		$info = session()->get('admin_info');
+		if (empty($info)) {
+			$this->error('非登陆状态');
+		}
+		$logService = make('app\service\admin\LogService');
 		$data = [
-            'mem_id' => Session::get('admin_mem_id'),
+            'mem_id' => $info['mem_id'],
             'remark' => '登出管理后台',
-            'type_id' => $logService::constant('TYPE_LOGOUT'),
+            'type_id' => 1,
         ];
         $logService->addLog($data);
-		Session::set('admin');
+		session()->set('admin_info');
 		redirect(url('login'));
 	}
 

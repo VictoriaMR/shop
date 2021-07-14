@@ -63,10 +63,10 @@ class App
 		}
 	}
 
-	private static function runOver()
+	public static function runOver()
 	{
 		if (env('APP_DEBUG')) {
-			if (IS_AJAX) {
+			if (IS_AJAX || APP_SITE_ID == '00') {
 				self::make('frame/Debug')->runlog();
 			} else {
 				self::make('frame/Debug')->runlog()->init();

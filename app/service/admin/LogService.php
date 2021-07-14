@@ -1,18 +1,13 @@
 <?php 
+
 namespace app\service\admin;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-use App\Models\Admin\Logger;
-
-class LogService extends BaseService
+class LogService extends Base
 {	
-	protected static $constantMap = [
-        'base' => Logger::class,
-    ];
-
-	public function __construct(Logger $model)
+    public function addLog(array $data)
     {
-        $this->baseModel =  $model;
+        return make('app/model/admin/Logger')->addLog($data);
     }
 
     public function getTypeList()
@@ -25,12 +20,12 @@ class LogService extends BaseService
 
     public function getTotal(array $where)
     {
-        return $this->baseModel->where($where)->count();
+        return make('app/model/admin/Logger')->getCountData($where);
     }
 
     public function getList(array $where, $page=1, $size=20)
     {
-        $list = $this->baseModel->where($where)->orderBy('create_at', 'desc')->page($page, $size)->get();
+        $list = make('app/model/admin/Logger')->getListData($where, '*', $page, $size, ['log_id'=>'desc']);
         if (!empty($list)) {
             $memIdArr = array_unique(array_column($list, 'mem_id'));
             $memData = make('App/Services/Admin/MemberService')->getList(['mem_id'=>['in', $memIdArr]], 0);

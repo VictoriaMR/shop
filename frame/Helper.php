@@ -127,3 +127,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	}
 	return $rStr;
 }
+function getUniqueName(){
+	$arr = explode(' ', microtime());
+	return str_replace('.', '', $arr[0] + $arr[1]);
+}

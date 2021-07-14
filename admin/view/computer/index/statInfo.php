@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<div class="w50 left pr10 mt10">
 		<p class="boxTitle">网站基本信息</p>
@@ -49,7 +48,7 @@
 				<tr>
 					<td width="130">MySQL版本</td>
 					<td>
-						<strong><?php echo mysqlVersion();?></strong>
+						
 					</td>
 				</tr>
 				<tr>
@@ -145,4 +144,3 @@ $(function(){
 	STATINFO.init();
 })
 </script>
-<?php $this->load('common/footer');?>

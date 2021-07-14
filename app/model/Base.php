@@ -48,9 +48,9 @@ class Base
 		return $this->instance()->where($where)->count();
 	}
 
-	public function getListData(array $where=[], $fields=[], $page=0, $size=20)
+	public function getListData(array $where=[], $fields=[], $page=0, $size=20, $order=[])
 	{
-		return $this->instance()->where($where)->field($fields)->page($page, $size)->get();
+		return $this->instance()->where($where)->field($fields)->page($page, $size)->orderBy($order)->get();
 	}
 
 	public function __call($func, $arg)

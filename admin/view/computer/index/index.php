@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div id="index-page">
 	<div class="header">
 		<div class="right">
@@ -117,4 +116,3 @@ $(function(){
 	INDEX.init();
 });
 </script>
-<?php $this->load('common/footer');?>

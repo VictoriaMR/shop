@@ -19,7 +19,7 @@ class Controller
         ];
         header('Content-Type:application/json; charset=utf-8');
         echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
-        exit();
+        \App::runOver();
     }
 
     protected function success($data=[], $options=null)
@@ -63,11 +63,12 @@ class Controller
         } else {
             $this->_nav = array_merge(['default' => $this->_default], $this->_arr);
         }
+        $router = router()->getRoute();
         $this->assign('_tag', $this->_tag);
         $this->assign('_nav', $this->_nav);
         $this->assign('_tagShow', $this->_tagShow);
-        $this->assign('_path', \Router::$_route['path']);
-        $this->assign('_func', \Router::$_route['func']);
-        $this->assign('_title', $this->_tag[\Router::$_route['func']] ?? '');
+        $this->assign('_path', $router['path']);
+        $this->assign('_func', $router['func']);
+        $this->assign('_title', $this->_tag[$router['func']] ?? '');
     }
 }

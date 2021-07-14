@@ -4,9 +4,9 @@ namespace frame;
 
 class Session
 {
-	public static function set($key='', $data=[])
+	public static function set($key='', $data=null)
 	{
-		if (empty($key)) {
+		if (empty($data)) {
 			$_SESSION = [];
 		} else {
 			$_SESSION[$key] = $data;

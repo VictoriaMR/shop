@@ -89,7 +89,7 @@ final class Router
 	public function buildUrl($url=null, $param=null)
 	{
 		if (is_null($url)) {
-			$url = \App::convertToline($this->_route['path'].DS.$this->_route['func']);
+			$url = $this->_route['path'].DS.$this->_route['func'];
 		}
 		if (!empty($url)) {
 			$url .= empty(env('TEMPLATE_SUFFIX')) ? '' : '.'.env('TEMPLATE_SUFFIX');
