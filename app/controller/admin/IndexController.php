@@ -7,15 +7,15 @@ class IndexController extends Controller
 {
 	public function __construct()
 	{
-        $this->_arr = [
-            'statInfo' => '统计信息',
-        ];
-        $this->_tagShow = false;
-        $this->_default = '概览';
+		$this->_arr = [
+			'statInfo' => '统计信息',
+		];
+		$this->_tagShow = false;
+		$this->_default = '概览';
 	}
 
 	public function index()
-	{	
+	{
 		html()->addCss();
 		html()->addJs();
 		$this->assign('info', session()->get('admin_info'));
@@ -24,27 +24,31 @@ class IndexController extends Controller
 
 	public function statInfo()
 	{
-        html()->addCss();
-        html()->addJs();
-        if (request()->isPost()) {
-            $opn = ipost('opn');
-            if (in_array($opn, ['getSystemInfo'])) {
-                $this->$opn();
-            }
-            $this->error('非法请求');
-        }
-        $logService = make('app/service/LoggerService');
-        //浏览设备统计
-        $viewAgentInfo = $logService->getStats('browser');
-        //每日浏览人数统计
-        $viewerInfo = $logService->getIpDateStat();
-        //系统信息
-        $cpuInfo = $this->getCpuInfo();
+		html()->addCss();
+		html()->addJs();
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['getSystemInfo'])) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
+		$logService = make('app/service/LoggerService');
+		//浏览设备统计
+		$viewAgentInfo = $logService->getStats('browser');
+		//每日浏览人数统计
+		$viewerInfo = $logService->getIpDateStat();
+		//系统信息
+		$cpuInfo = $this->getCpuInfo();
 
-        $this->assign('viewAgentInfo', $viewAgentInfo);
-        $this->assign('viewerInfo', $viewerInfo);
-        $this->assign('cpuInfo', $cpuInfo);
-        $this->_init();
+		$mysqlVersion = $logService->getQuery('SELECT version() AS version')[0] ?? [];
+
+		$this->assign('viewAgentInfo', $viewAgentInfo);
+		$this->assign('viewerInfo', $viewerInfo);
+		$this->assign('cpuInfo', $cpuInfo);
+		$this->assign('mysqlVersion', $mysqlVersion['version'] ?? '');
+		$this->_init();
+
 		$this->view();
 	}
 

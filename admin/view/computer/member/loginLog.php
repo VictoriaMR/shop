@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<form action="<?php echo url();?>" class="form-inline">
 		<?php if (!empty($typeArr)) { ?>
@@ -74,4 +73,3 @@
     </table>
 	<?php echo page($size, $total);?>
 </div>
-<?php $this->load('common/footer');?>

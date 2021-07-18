@@ -36,6 +36,9 @@ function view(){
 function html(){
 	return make('frame/Html');
 }
+function page($size, $total, $current=null){
+	return make('frame/Paginator')->make($size, $total, $current);
+}
 function request(){
 	return make('frame/Request');
 }
@@ -55,7 +58,17 @@ function url($url=null, $param=null) {
     return router()->buildUrl($url, $param);
 }
 function siteUrl($name){
-	return env('APP_DOMAIN').$name;
+	return env('APP_DOMAIN').$name.'?v='.config('version');
+}
+function mediaUrl($url='', $width=''){
+	if (!empty($width)) {
+		$ext = pathinfo($url, PATHINFO_EXTENSION);
+		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
+	}
+	if (strpos($url, 'http') === false) {
+		$url = env('FILE_CENTER_DOMAIN').$url;
+	}
+	return $url.'?v='.config('version');
 }
 function isCli(){
 	return stripos(php_sapi_name(), 'cli') !== false;

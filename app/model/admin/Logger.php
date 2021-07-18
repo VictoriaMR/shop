@@ -10,6 +10,7 @@ class Logger extends Base
 	protected $_primaryKey = 'log_id';
 	const TYPE_LOGIN = 0;
 	const TYPE_LOGOUT = 1;
+	const TYPE_LOGIN_FAIL = 2;
 
 	public function addLog(array $data)
 	{

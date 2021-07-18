@@ -61,7 +61,10 @@ function post(uri, param, success, error) {
 	});
 }
 function addRightTips(info, type, delay) {
-    if(typeof delay == 'undefined') {
+	if (typeof $info === 'undefined') {
+		return false;
+	}
+    if(typeof delay === 'undefined') {
         delay = 5000;
     }
     info = info.replace(/\n/g,'<br>');

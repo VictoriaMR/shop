@@ -1,22 +1,13 @@
 <?php 
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-use App\Models\Category;
-
-/**
- * 	分类类
- */
-class CategoryService extends BaseService
+class CategoryService extends Base
 {
-    protected static $constantMap = [
-        'base' => Category::class,
-    ];
-
-    public function __construct(Category $model)
+    public function __construct()
     {
-        $this->baseModel = $model;
+        $this->baseModel = make('app/model/Category');
     }
 
 	public function create(array $data)
@@ -33,7 +24,7 @@ class CategoryService extends BaseService
         ];
         $cateId = $this->baseModel->create($insert);
         //设置多语言
-        $cateLanModel = make('App\Models\CategoryLanguage');
+        $cateLanModel = make('app/model/CategoryLanguage');
         $translateService = make('app\service\TranslateService');
         $lanList = make('app\service\LanguageService')->getInfo();
         foreach ($lanList as $key => $value) {
@@ -73,7 +64,7 @@ class CategoryService extends BaseService
         if (empty($cateId)) {
             return [];
         }
-        return make('App\Models\CategoryLanguage')->getListByWhere(['cate_id' => $cateId]);
+        return make('app/model/CategoryLanguage')->getListData(['cate_id' => $cateId]);
     }
 
     public function getList(array $where=[])
@@ -136,7 +127,7 @@ class CategoryService extends BaseService
         if (empty($cateId) || empty($lanId) || empty($name)) {
             return false;
         }
-        $model = make('App\Models\CategoryLanguage');
+        $model = make('app/model/CategoryLanguage');
         $where = ['cate_id'=>$cateId, 'lan_id'=>$lanId];
         if ($model->getCount($where)) {
             return $model->where($where)->update(['name' => $name]);
@@ -153,14 +144,14 @@ class CategoryService extends BaseService
 
     public function hasProduct($id)
     {
-        return make('App\Models\ProductCategoryRelation')->where('cate_id', $id)->count() > 0;
+        return make('app/model/ProductCategoryRelation')->where('cate_id', $id)->count() > 0;
     }
 
     protected function deleteDataById($cateId)
     {
         $result = $this->baseModel->deleteById($cateId);
         if ($result) {
-            $result = make('App\Models\CategoryLanguage')->where('cate_id', $cateId)->delete();
+            $result = make('app/model/CategoryLanguage')->where('cate_id', $cateId)->delete();
         }
     }
 
@@ -168,7 +159,7 @@ class CategoryService extends BaseService
     {
         if (empty($spuId) || empty($cateIds)) return false;
         $insert = [];
-        $model = make('App\Models\ProductCategoryRelation');
+        $model = make('app/model/ProductCategoryRelation');
         foreach ($cateIds as $key => $value) {
             $where = [
                 'cate_id' => $value,
@@ -183,13 +174,13 @@ class CategoryService extends BaseService
 
     public function getSpuIdByCateId($cateId)
     {
-        $result = make('App\Models\ProductCategoryRelation')->where('cate_id', $cateId)->field('spu_id')->get();
+        $result = make('app/model/ProductCategoryRelation')->where('cate_id', $cateId)->field('spu_id')->get();
         return array_column($result, 'spu_id');
     }
 
     public function getRelationList(array $where=[])
     {
-        return make('App\Models\ProductCategoryRelation')->where($where)->field('cate_id,spu_id')->get();
+        return make('app/model/ProductCategoryRelation')->where($where)->field('cate_id,spu_id')->get();
     }
 
     public function updateStat()

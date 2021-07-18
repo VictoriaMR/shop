@@ -40,6 +40,12 @@ class LoginController extends Controller
 		if ($result) {
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {
+			$data = [
+				'remark' => '登陆尝试失败',
+				'type_id' => 2,
+				'param' => json_encode(request()->input(), JSON_UNESCAPED_UNICODE),
+			];
+			$memberService->addLoginLog($data);
 			$this->error('账号或者密码不匹配!');
 		}
 	}
@@ -75,8 +81,10 @@ class LoginController extends Controller
 
 	public function signature()
     {
-    	$text = !empty(Session::get('admin_name')) ? Session::get('admin_name') : '管理后台';
-        make('App/Services/ImageService')->text(ROOT_PATH.'admin/image/computer/signature.png', $text, 12, 30, 10, 80, [235, 235, 235]);
-        exit();
+    	$info = session()->get('admin_info');
+    	if (empty($info)) {
+    		return '';
+    	}
+        make('app/service/ImageService')->text(ROOT_PATH.'admin/image/computer/signature.png', $info['name'], 12, 30, 10, 80, [235, 235, 235]);
     }
 }

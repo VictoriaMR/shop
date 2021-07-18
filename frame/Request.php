@@ -71,23 +71,6 @@ class Request
 		return $default;
 	}
 
-	public function siteUrl($url='')
-	{
-		return env('APP_DOMAIN').$url;
-	}
-
-	public function mediaUrl($url='', $width='')
-	{
-		if (!empty($width)) {
-			$ext = pathinfo($url, PATHINFO_EXTENSION);
-			$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
-		}
-		if (strpos($url, 'http') === false) {
-			$url = env('FILE_CENTER_DOMAIN').$url;
-		}
-		return $url;
-	}
-
 	public function getIp()
 	{
 		if (!empty($_SERVER['HTTP_CLIENT_IP'])) {

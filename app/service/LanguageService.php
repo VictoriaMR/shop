@@ -26,7 +26,7 @@ class LanguageService extends BaseService
 
     public function getInfo($lanId = '')
     {
-    	$info = make('App\Models\Language')->getInfo();
+    	$info = make('app/model/Language')->getListData();
     	if (!empty($info)) {
     		$info = array_column($info, null, 'lan_id');
     	}

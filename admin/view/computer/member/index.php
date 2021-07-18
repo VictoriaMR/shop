@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<form action="<?php echo url();?>" class="form-inline">
 		<div class="row-item">
@@ -73,8 +72,8 @@
         		<td class="col-md-1"><?php echo $value['salt'];?></td>
         		<td class="col-md-1"><?php echo $value['create_at'];?></td>
         		<td class="col-md-2">
-        			<button class="btn btn-primary btn-sm modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
-                    <button class="btn btn-danger btn-sm delete mt2" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>
+        			<button class="btn btn-primary btn-xs modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
+                    <button class="btn btn-danger btn-xs delete mt2" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>
         		</td>
         	</tr>
         	<?php } ?>
@@ -135,4 +134,3 @@ $(function(){
 	MEMBERLIST.init();
 });
 </script>
-<?php $this->load('common/footer');?>

@@ -29,19 +29,6 @@ class App
 		if (is_callable($callArr)) {
 			//中间件
 			self::make('app/middleware/VerifyToken')->handle($info);
-			//公共静态js,css
-			if (!IS_CLI && !IS_AJAX) {
-				if ($info['class'] == 'admin') {
-					html()->addJs(['jquery', 'common', 'bootstrap', 'bootstrap-plugin'], false);
-					html()->addCss(['computer/common', 'computer/bootstrap', 'computer/space', 'icon'], false);
-				} else {
-					html()->addJs(['jquery', 'common']);
-					html()->addCss(['icon', (IS_MOBILE ? 'mobile/common' : 'computer/common')], false);
-					if (empty(session()->get('site_language_name'))) {
-						session()->set('site_language_name', 'en');
-					}
-				}
-			}
 			call_user_func_array($callArr, []);
 		} else {
 			throw new \Exception($class.' '.$info['func'].' was not exist!', 1);
@@ -66,10 +53,15 @@ class App
 	public static function runOver()
 	{
 		if (env('APP_DEBUG')) {
-			if (IS_AJAX || APP_SITE_ID == '00') {
+			if (IS_AJAX) {
 				self::make('frame/Debug')->runlog();
 			} else {
-				self::make('frame/Debug')->runlog()->init();
+				$router = router()->getRoute();
+				if ($router['path'] == 'index' && $router['func'] == 'index') {
+					self::make('frame/Debug')->runlog();
+				} else {
+					self::make('frame/Debug')->runlog()->init();
+				}
 			}
 		}
 		exit();

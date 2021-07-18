@@ -1,24 +1,20 @@
 <?php 
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-
-/**
- * 	产品类
- */
-class ProductSpuService extends BaseService
+class ProductSpuService extends Base
 {
 	const CACHE_INFO_KEY = 'SPU_CACHE_INFO_';
 
-	public function create(array $data)
+	protected function getModel()
 	{
-		return make('App\Models\ProductSpu')->insertGetId($data);
+		$this->baseModel = make('app/model/ProductSpu');
 	}
 
 	public function addSpuImage(array $data)
 	{
-		$model = make('App\Models\ProductSpuImage');
+		$model = make('app/model/ProductSpuImage');
 		if (!empty($data[0]) && is_array($data[0])) {
 			foreach ($data as $key => $value) {
 				if ($model->getCount($value)) {
@@ -31,7 +27,7 @@ class ProductSpuService extends BaseService
 
 	public function addIntroduceImage(array $data)
 	{
-		$model = make('App\Models\ProductIntroduce');
+		$model = make('app/model/ProductIntroduce');
 		if (!empty($data[0]) && is_array($data[0])) {
 			foreach ($data as $key => $value) {
 				if ($model->getCount($value)) {
@@ -65,7 +61,7 @@ class ProductSpuService extends BaseService
 		if ($spuId < 1) {
 			return false;
 		}
-		$info = make('App\Models\ProductSpu')->loadData($spuId);
+		$info = make('app/model/ProductSpu')->loadData($spuId);
 		if (empty($info)) {
 			return false;
 		}
@@ -91,7 +87,7 @@ class ProductSpuService extends BaseService
 		$attvData = array_column($attvData, 'name', 'attv_id');
 
 		//获取spu图片ID集
-		$spuImageList = make('App\Models\ProductSpuImage')->getInfoBySpuId($spuId);
+		$spuImageList = make('app/model/ProductSpuImage')->getInfoBySpuId($spuId);
 		//获取sku图片ID集
 		$skuImageList = $skuService->getInfoBySkuIds($skuIdArr);
 		//全部图片合集
@@ -168,15 +164,15 @@ class ProductSpuService extends BaseService
 
 	public function getTotal(array $where=[])
 	{
-		return make('App\Models\ProductSpu')->getCount($where);
+		return make('app/model/ProductSpu')->getCountData($where);
 	}
 
 	public function getAdminList(array $where=[], $page=1, $size=20)
 	{
-		$list = make('App\Models\ProductSpu')->getListByWhere($where, '*', $page, $size);
+		$list = $this->getListData($where, '*', $page, $size);
 		if (!empty($list)) {
 			$spuIdArr = array_column($list, 'spu_id');
-			$cateService = make('App/Services/CategoryService');
+			$cateService = make('app/service/CategoryService');
 			$linkArr = $cateService->getRelationList(['spu_id'=>['in', $spuIdArr]]);
 			$cateIdArr = array_unique(array_column($linkArr, 'cate_id'));
 			$cateArr = $cateService->getList(['cate_id'=>['in', $cateIdArr]]);
@@ -185,7 +181,8 @@ class ProductSpuService extends BaseService
 			foreach ($linkArr as $value) {
 				$tempArr[$value['spu_id']][] = $cateArr[$value['cate_id']];
 			}
-			$siteArr = make('App/Services/SiteService')->getListCache();
+			$siteArr = make('app/service/SiteService')->getListCache();
+			dd($siteArr);
 			$siteArr = array_column($siteArr, 'name', 'site_id');
 			foreach ($list as $key => $value) {
 				$value['avatar'] = mediaUrl($value['avatar'], 400);

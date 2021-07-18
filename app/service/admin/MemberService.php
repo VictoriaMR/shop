@@ -11,4 +11,14 @@ class MemberService extends Base
 	{
 		$this->baseModel = make('app/model/admin/Member');
 	}
+
+	public function getMemIdsByName($name)
+	{
+		return array_column($this->baseModel->getListData(['name'=>$name], 'mem_id', 0), 'mem_id');
+	}
+
+	public function getMemIdsByMobile($mobile)
+	{
+		return array_column($this->baseModel->getListData(['mobile'=>$mobile], 'mem_id', 0), 'mem_id');
+	}
 }

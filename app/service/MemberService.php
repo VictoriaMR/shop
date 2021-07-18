@@ -104,8 +104,17 @@ class MemberService extends Base
 	protected function dataFormat(array $data)
 	{
 		if (empty($data['avatar'])) {
-			$data['avatar'] = siteUrl('image/common/'.(empty($data['sex']) ? 'female' : 'male').'.jpg');
+			$data['avatar'] = $this->getAvatar($data['avatar'], $data['sex']);
 		}
 		return $data;
+	}
+
+	public function getAvatar($avatar='', $sex=0)
+	{
+		if (empty($avatar)) {
+			return siteUrl('image/common/'.(empty($sex) ? 'female' : 'male').'.jpg');
+		} else {
+			return mediaUrl($avatar);
+		}
 	}
 }

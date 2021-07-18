@@ -8,6 +8,11 @@ use app\service\Base;
  */
 class LoggerService extends Base
 {
+	public function __construct()
+	{
+		$this->baseModel = make('app/model/Logger');
+	}
+
 	public function addLog(array $data=[])
 	{
 		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
@@ -23,17 +28,17 @@ class LoggerService extends Base
 			'create_at' => now(),
 		];
 		$insert = array_merge($insert, $data);
-		return make('app/model/Logger')->insert($insert);
+		return $this->insert($insert);
 	}
 
 	public function getStats($field)
 	{
-		return make('app/model/Logger')->field('count(*) AS count, '.$field)->groupBy($field)->get();
+		return $this->field('count(*) AS count, '.$field)->groupBy($field)->get();
 	}
 
 	public function getIpDateStat($limit = 14)
 	{
 		$sql = 'SELECT COUNT(*) AS count, a.`format_date` FROM (SELECT `ip`, DATE_FORMAT(`create_at`,"%Y-%m-%d") AS `format_date` FROM `visitor_log` GROUP BY `ip`,`format_date`) a GROUP BY a.`format_date` ORDER BY a.`format_date` DESC LIMIT '.$limit;
-		return make('app/model/Logger')->getQuery($sql);
+		return $this->getQuery($sql);
 	}
 }

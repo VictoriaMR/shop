@@ -51,49 +51,56 @@ class Html
 
 	public function getCss()
 	{
-		$path = ROOT_PATH.APP_TEMPLATE_TYPE.DS;
+		if (empty($this->_CSS)) {
+			return false;
+		}
 		$_route = router()->getRoute();
-		$file = 'static'.DS.(IS_MOBILE ? 'm_' : 'c_').$_route['path'].'_'.$_route['func'].'.css';
-		if (APP_STATIC && is_file($path.DS.$file)) {
-			return $file;
-		}
-		$cssStr = '';
-		$this->_CSS = array_unique($this->_CSS);
-		foreach ($this->_CSS as $key => $value) {
-			$source = $path.'css'.DS.$value.'.css';
-			if (is_file($source)) {
-				$cssStr .= trim(file_get_contents($source));
-			}
-		}
-		if (!is_dir($path.'static')) {
-			mkdir($path.'static', 0750, true);
-		}
-		make('app/service/SystemStaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, 'css');
-		file_put_contents($path.DS.$file, $cssStr);
-		return $file;
+		return $this->addStaticFile($this->_CSS, $_route['path'].'_'.$_route['func'], 'css');
 	}
 
 	public function getJs()
 	{
-		$path = ROOT_PATH.APP_TEMPLATE_TYPE.DS;
+		if (empty($this->_JS)) {
+			return false;
+		}
 		$_route = router()->getRoute();
-		$file = 'static'.DS.(IS_MOBILE ? 'm_' : 'c_').$_route['path'].'_'.$_route['func'].'.js';
+		return $this->addStaticFile($this->_JS, $_route['path'].'_'.$_route['func'], 'js');
+	}
+
+	public function getCommonCss()
+	{
+		$name = APP_TEMPLATE_TYPE == 'admin' ? 'admin' : 'default';
+		$arr = config('css')[$name][IS_MOBILE ? 'mobile' : 'computer'];
+		return $this->addStaticFile($arr, 'common', 'css');
+	}
+
+	public function getCommonJs()
+	{
+		$name = APP_TEMPLATE_TYPE == 'admin' ? 'admin' : 'default';
+		$arr = config('js')[$name][IS_MOBILE ? 'mobile' : 'computer'];
+		return $this->addStaticFile($arr, 'common', 'js');
+	}
+
+	protected function addStaticFile(array $arr, $name, $type)
+	{
+		$path = ROOT_PATH.APP_TEMPLATE_TYPE.DS;
+		$file = 'static'.DS.(IS_MOBILE ? 'm_' : 'c_').$name.'.'.$type;
 		if (APP_STATIC && is_file($path.$file)) {
 			return $file;
 		}
-		$jsStr = '';
-		$this->_JS = array_unique($this->_JS);
-		foreach ($this->_JS as $key => $value) {
-			$source = $path.'js'.DS.$value.'.js';
+		$str = '';
+		$arr = array_unique($arr);
+		foreach ($arr as $key => $value) {
+			$source = $path.$type.DS.$value.'.'.$type;
 			if (is_file($source)) {
-				$jsStr .= trim(file_get_contents($source));
+				$str .= trim(file_get_contents($source));
 			}
 		}
 		if (!is_dir($path.'static')) {
 			mkdir($path.'static', 0750, true);
 		}
-		make('app/service/SystemStaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, 'js');
-		file_put_contents($file, $jsStr);
+		make('app/service/SystemStaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, $type);
+		file_put_contents($path.$file, $str);
 		return $file;
 	}
 }

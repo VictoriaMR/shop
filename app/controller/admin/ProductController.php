@@ -1,9 +1,7 @@
 <?php
 
 namespace app\controller\admin;
-
 use app\controller\Controller;
-use frame\Html;
 
 class ProductController extends Controller
 {
@@ -18,7 +16,7 @@ class ProductController extends Controller
 
 	public function index()
 	{	
-		Html::addCss();
+		html()->addCss();
 		
 		$status = (int)iget('status', -1);
 		$site = (int)iget('site', -1);
@@ -28,15 +26,14 @@ class ProductController extends Controller
 		$spuId = (int)iget('spu_id');
 		$page = (int)iget('page', 1);
 		$size = (int)iget('size', 20);
-
-
-		$spuService = make('App/Services/ProductSpuService');
+		//spu状态
+		$spuService = make('app/service/ProductSpuService');
 		$statusList = $spuService->getStatusList();
-
-		$siteList = make('App/Services/SiteService')->getList();
+		//站点
+		$siteList = make('app/service/SiteService')->getList();
 		$siteList = array_column($siteList, 'name', 'site_id');
-
-		$cateList = make('App/Services/CategoryService')->getListFormat();
+		//分类
+		$cateList = make('app/service/CategoryService')->getListFormat();
 
 		$where = [];
 		if (in_array($status, array_keys($statusList), true)) {
@@ -46,7 +43,7 @@ class ProductController extends Controller
 			$where['site_id'] = $site;
 		}
 		if ($cate > 0) {
-			$spuIdArr = make('App/Services/CategoryService')->getSpuIdByCateId($cate);
+			$spuIdArr = make('app/service/CategoryService')->getSpuIdByCateId($cate);
 			if (empty($spuIdArr)) {
 				$where = ['spu_id' => 0];
 			} else {
@@ -54,7 +51,7 @@ class ProductController extends Controller
 			}
 		}
 
-		$total = $spuService->getTotal($where);
+		$total = $spuService->getCountData($where);
 		if ($total > 0) {
 			$list = $spuService->getAdminList($where, $page, $size);
 		}
@@ -81,7 +78,7 @@ class ProductController extends Controller
 		Html::addCss();
 		$id = (int)iget('id');
 
-		$spuService = make('App/Services/ProductSpuService');
+		$spuService = make('app/service/ProductSpuService');
 		$info = $spuService->getInfo($id);
 		dd($info);
 		$this->_arr['view'] = 'SPU详情';

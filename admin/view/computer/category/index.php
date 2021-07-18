@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid" id="category-list">
 	<div class="row-item">
 		<div class="left">
@@ -122,4 +121,3 @@ $(function(){
 	CATEGORYLIST.init();
 });
 </script>
-<?php $this->load('common/footer');?>

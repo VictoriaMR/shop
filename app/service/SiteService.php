@@ -1,21 +1,15 @@
 <?php 
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-use App\Models\Site;
-
-class SiteService extends BaseService
+class SiteService extends Base
 {
     const CACHE_KEY = 'SITE_LIST_CACHE';
-    public function __construct(Site $model)
-    {
-        $this->baseModel = $model;
-    }
 
 	public function getLanguage(array $where)
     {
-        return make('App\Models\SiteLanguage')->getListByWhere($where);
+        return make('app/model/SiteLanguage')->getListData($where);
     }
 
     public function setNxLanguage($siteId, $name, $lanId, $value)
@@ -23,7 +17,7 @@ class SiteService extends BaseService
         if (empty($siteId) || empty($name) || empty($lanId) || empty($value)) {
             return false;
         }
-        $model = make('App\Models\SiteLanguage');
+        $model = make('app/model/SiteLanguage');
         $where = ['site_id'=>$siteId, 'name'=>$name, 'lan_id'=>$lanId];
         if ($model->getCount($where)) {
             return $model->where($where)->update(['value' => $value]);
@@ -35,7 +29,7 @@ class SiteService extends BaseService
 
     public function getList(array $where=[])
     {
-        return $this->baseModel->getListByWhere($where);
+        return make('app/model/Site')->getListData($where);
     }
 
     public function getListCache()
@@ -43,7 +37,8 @@ class SiteService extends BaseService
         $list = redis()->get(self::CACHE_KEY);
         if ($list === false) {
             $list = $this->getList();
-            redis()->set(self::CACHE_KEY, $list, -1);
+            dd($list);
+            redis()->set(self::CACHE_KEY, $list);
         }
         return $list;
     }

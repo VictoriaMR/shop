@@ -1,9 +1,7 @@
 <?php
 
 namespace app\controller\admin;
-
 use app\controller\Controller;
-use frame\Html;
 
 class CategoryController extends Controller
 {
@@ -18,22 +16,22 @@ class CategoryController extends Controller
 
 	public function index()
 	{	
-		if (isPost()) {
+		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'updateStat'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		Html::addCss();
-		Html::addJs();
-		$list = make('App\Services\CategoryService')->getListFormat();
+		html()->addCss();
+		html()->addJs();
+		$list = make('app/service/CategoryService')->getListFormat();
 		//语言列表
-		$language = make('App\Services\LanguageService')->getInfo();
+		$language = make('app/service/LanguageService')->getInfo();
 
 		$this->assign('language', $language);
 		$this->assign('list', $list);
-		return view();
+		$this->view();
 	}
 
 	protected function sortCategory()
@@ -43,7 +41,7 @@ class CategoryController extends Controller
 			$this->error('数据正确');
 		}
 		$arr = array_keys($data);
-		$services = make('App\Services\CategoryService');
+		$services = make('app/service/CategoryService');
 		$count = 1;
 		foreach ($data as $key => $value) {
 			$services->updateData((int) $key, ['sort'=>$count++]);
@@ -60,7 +58,7 @@ class CategoryController extends Controller
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('App\Services\CategoryService')->getInfo($cateId);
+		$info = make('app/service/CategoryService')->getInfo($cateId);
 		$this->success($info, '');
 	}
 
@@ -70,7 +68,7 @@ class CategoryController extends Controller
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('App\Services\CategoryService')->getLanguage($cateId);
+		$info = make('app/service/CategoryService')->getLanguage($cateId);
 		$this->success($info, '');
 	}
 
@@ -82,7 +80,7 @@ class CategoryController extends Controller
 		}
 		$language = ipost('language');
 		if (!empty($language)) {
-			$services = make('App\Services\CategoryService');
+			$services = make('app/service/CategoryService');
 			foreach ($language as $key => $value) {
 				$services->setNxLanguage($cateId, $key, $value);
 			}
@@ -105,9 +103,9 @@ class CategoryController extends Controller
 			'avatar' => $avatar,
 		];
 		if (empty($cateId)) {
-			$result = make('App\Services\CategoryService')->create($data);
+			$result = make('app/service/CategoryService')->create($data);
 		} else {
-			$result = make('App\Services\CategoryService')->updateDataById($cateId, $data);
+			$result = make('app/service/CategoryService')->updateDataById($cateId, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -122,7 +120,7 @@ class CategoryController extends Controller
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$services = make('App\Services\CategoryService');
+		$services = make('app/service/CategoryService');
 		if ($services->hasChildren($cateId)) {
 			$this->error('该分类有子分类, 不能删除');
 		}
@@ -139,7 +137,7 @@ class CategoryController extends Controller
 
 	protected function updateStat()
 	{
-		$result = make('App\Services\CategoryService')->updateStat();
+		$result = make('app/service/CategoryService')->updateStat();
 		if ($result) {
 			$this->success('更新成功');
 		} else {

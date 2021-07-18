@@ -1,9 +1,7 @@
 <?php
 
 namespace app\controller\admin;
-
 use app\controller\Controller;
-use frame\Html;
 
 class MemberController extends Controller
 {
@@ -19,14 +17,14 @@ class MemberController extends Controller
 
 	public function index()
 	{
-		if (isPost()) {
+		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'modify', 'editInfo'])) {
 				$this->$opn();
 			}
 		}
 
-		Html::addJs();
+		html()->addJs();
 		$status = (int) iget('status', -1);
 		$page = (int) iget('page', 1);
 		$size = (int) iget('size', 20);
@@ -46,10 +44,15 @@ class MemberController extends Controller
 			$where['mobile'] = ['like', '%'.$phone.'%'];
 		}
 
-		$memberService = make('App/Services/Admin/MemberService');
-		$total = $memberService->getTotal($where);
+		$memberService = make('app/service/admin/MemberService');
+		$total = $memberService->getCountData($where);
 		if ($total > 0) {
-			$list = $memberService->getList($where, $page, $size);
+			$fields = 'mem_id,name,nickname,phone,email,status,salt,create_at';
+			$list = $memberService->getListData($where, '*', $page, $size);
+			foreach ($list as $key => $value) {
+				$value['avatar'] = $memberService->getAvatar($value['avatar'], $value['sex']);
+				$list[$key] = $value;
+			}
 		}
 
 		$this->assign('total', $total);
@@ -61,7 +64,7 @@ class MemberController extends Controller
 		$this->assign('stime', $stime);
 		$this->assign('etime', $etime);
 
-		return view();
+		$this->view();
 	}
 
 	protected function modify()
@@ -71,7 +74,7 @@ class MemberController extends Controller
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$result = make('App/Services/Admin/MemberService')->updateDataById($memId, ['status' => $status]);
+		$result = make('app/service/admin/MemberService')->updateData($memId, ['status' => $status]);
 		if ($result) {
 			$this->success('操作成功');
 		} else {
@@ -85,7 +88,7 @@ class MemberController extends Controller
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$info = make('App/Services/Admin/MemberService')->getInfo($memId);
+		$info = make('app/service/admin/MemberService')->loadData($memId);
 		if (empty($info)) {
 			$this->error('找不到用户数据');
 		}
@@ -129,11 +132,11 @@ class MemberController extends Controller
 		if (!empty($password)) {
 			$data['password'] = $password;
 		}
-		$memberService = make('App/Services/Admin/MemberService');
+		$memberService = make('app/service/admin/MemberService');
 		if (empty($mem_id)) {
 			$result = $memberService->create($data);
 		} else {
-			$result = $memberService->updateDataById($mem_id, $data);
+			$result = $memberService->updateData($mem_id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -145,18 +148,18 @@ class MemberController extends Controller
 	{
 		$page = (int) iget('page', 1);
 		$size = (int) iget('size', 50);
-		$typeId = iget('type_id');
+		$typeId = iget('type_id', -1);
 		$name = trim(iget('name'));
 		$mobile = trim(iget('mobile'));
 		$stime = trim(iget('stime'));
 		$etime = trim(iget('etime'));
 
-		$loggerService = make('App\Services\Admin\LogService');
+		$loggerService = make('app/service/admin/LogService');
 		$where = [];
 		if ($typeId >= 0) {
 			$where['type_id'] = (int) $typeId;
 		}
-		$memberService = make('App/Services/Admin/MemberService');
+		$memberService = make('app/service/admin/MemberService');
 		if (!empty($name)) {
 			$memIdArr = $memberService->getMemIdsByName($name);
 			if (!empty($memIdArr)) {
@@ -175,9 +178,9 @@ class MemberController extends Controller
 			}
 		}
 
-		$total = $loggerService->getTotal($where);
+		$total = $loggerService->getCountData($where);
 		if ($total > 0) {
-			$list = $loggerService->getList($where, $page, $size);
+			$list = $loggerService->getList($where, '*', $page, $size);
 		}
 
 		$this->assign('typeArr', $loggerService->getTypeList());
@@ -190,6 +193,6 @@ class MemberController extends Controller
 		$this->assign('stime', $stime);
 		$this->assign('etime', $etime);
 
-		return view();
+		$this->view();
 	}
 }

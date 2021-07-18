@@ -48,7 +48,7 @@
 				<tr>
 					<td width="130">MySQL版本</td>
 					<td>
-						
+						<strong><?php echo $mysqlVersion;?></strong>
 					</td>
 				</tr>
 				<tr>

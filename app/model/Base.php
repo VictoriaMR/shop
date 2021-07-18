@@ -22,7 +22,7 @@ class Base
 	public function loadData($where, $field='')
 	{
 		if (!is_array($where)) {
-			$where = [$this->_primaryKey => (int)$id];
+			$where = [$this->_primaryKey => (int)$where];
 		}
 		return $this->instance()->where($where)->field($field)->find();
 	}
