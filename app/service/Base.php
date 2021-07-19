@@ -2,9 +2,12 @@
 
 namespace app\service;
 
-class Base
+abstract class Base
 {
     protected $baseModel;
+    private function __clone() {}
+    
+    abstract protected function getModel();
 
     public function __call($func, $arg)
     {

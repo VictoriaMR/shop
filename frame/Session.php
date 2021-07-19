@@ -6,11 +6,7 @@ class Session
 {
 	public static function set($key='', $data=null)
 	{
-		if (empty($data)) {
-			$_SESSION = [];
-		} else {
-			$_SESSION[$key] = $data;
-		}
+		$_SESSION[$key] = $data;
 		return true;
 	}
 

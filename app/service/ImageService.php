@@ -9,13 +9,11 @@ class ImageService
 	public function verifyCode($code, $width = 80, $height = 40)
 	{
 		if (empty($code)) return false;
-
 		//创建画布
 		$image = @imagecreatetruecolor($width, $height) or die('Cannot Initialize new GD image stream');
     	//填充背景色
     	$bgcolor = imagecolorallocate($image, 255, 255, 255);
     	imagefill($image, 0, 0, $bgcolor);
-
     	// 生成随机码
     	$len = strlen($code);
     	for ($i = 0; $i < $len; $i++) {

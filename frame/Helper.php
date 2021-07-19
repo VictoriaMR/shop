@@ -7,8 +7,14 @@ function dd(...$arg){
 	exit();
 }
 function config($name=''){
-	if (empty($name)) return $GLOBALS;
 	$name = explode('.', $name);
+	if (empty($GLOBALS[$name[0]])) {
+		if (is_file($file = ROOT_PATH.'config'.DS.$name[0].'.php')) {
+			$GLOBALS[$name[0]] = require $file;
+		} else {
+			return false;
+		}
+	}
 	$data = $GLOBALS;
 	foreach ($name as $value) {
 		if (empty($data[$value])) {
@@ -19,9 +25,7 @@ function config($name=''){
 	return $data;
 }
 function env($name='', $replace=''){
-	if (defined($name))
-		return constant($name);
-	return config('ENV')[$name] ?? $replace;
+	return config('env')[$name] ?? $replace;
 }
 function redirect($url){
 	header('Location:'.$url);
@@ -31,34 +35,34 @@ function make($name){
 	return \App::make($name);
 }
 function view(){
-	return make('frame/View');
+	return \App::make('frame/View');
 }
 function html(){
-	return make('frame/Html');
+	return \App::make('frame/Html');
 }
 function page($size, $total, $current=null){
-	return make('frame/Paginator')->make($size, $total, $current);
+	return \App::make('frame/Paginator')->make($size, $total, $current);
 }
 function request(){
-	return make('frame/Request');
+	return \App::make('frame/Request');
 }
 function redis($db=0){
-	return make('frame/Redis')->setDb($db);
+	return \App::make('frame/Redis')->setDb($db);
 }
 function session(){
-	return make('frame/Session');
+	return \App::make('frame/Session');
 }
 function router(){
-	return make('frame/Router');
+	return \App::make('frame/Router');
 }
 function db($db=null){
-	return make('frame/Connection')->setDb($db);
+	return \App::make('frame/Connection')->setDb($db);
 }
 function url($url=null, $param=null) {
     return router()->buildUrl($url, $param);
 }
 function siteUrl($name){
-	return env('APP_DOMAIN').$name.'?v='.config('version');
+	return env('APP_DOMAIN').$name.'?v='.config('version')[APP_TEMPLATE_TYPE];
 }
 function mediaUrl($url='', $width=''){
 	if (!empty($width)) {

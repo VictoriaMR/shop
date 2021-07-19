@@ -3,16 +3,15 @@
 namespace app\service;
 use app\service\Base;
 
-/**
- * 	用户公共类
- */
 class MemberService extends Base
 {	
+	protected function getModel(){}
+
 	public function create($data)
 	{
 		$data['salt'] = randString(8);
 		$data['password'] = $this->getPassword($data['password'], $data['salt']);
-		return $this->baseModel->insertGetId($data);
+		return $this->insertGetId($data);
 	}
 
 	public function login($mobile, $password, $type='mobile')
@@ -20,16 +19,15 @@ class MemberService extends Base
 		if (empty($mobile) || empty($password)) return false;
 		switch($type) {
 			case 'mobile':
-				$key = 'getInfoByMobile';
+				$info = $this->loadData(['mobile'=>$mobile]);
 				break;
 			case 'email':
-				$key = 'getInfoByEmail';
+				$info = $this->loadData(['email'=>$mobile]);
 				break;
 			default:
 				return false;
 				break;
 		}
-		$info = $this->$key($mobile);
 		if (empty($info)) return false;
 		if (empty($info['status'])) return false;
 		//验证密码
@@ -41,7 +39,7 @@ class MemberService extends Base
 				'avatar' => $info['avatar'],
 				'mobile' => $info['mobile'],
 				'email' => $info['email'],
-				'sex' => $info['sex'],
+				'sex' => $info['sex'] ?? 0,
 			];
 			$data = $this->dataFormat($data);
 			session()->set($this->login_key.'_info', $data);
@@ -63,18 +61,7 @@ class MemberService extends Base
 
 	protected function getPassword($password, $salt)
 	{
-		$password = $this->saltPassword($password, $salt);
-		return password_hash($password, PASSWORD_DEFAULT);
-	}
-
-	public function isExistByMobile($mobile) 
-	{
-		return $this->getCountData(['mobile'=>$mobile]) > 0;
-	}
-
-	protected function getInfoByMobile($mobile)
-	{
-		return $this->loadData(['mobile'=>$mobile]);
+		return password_hash($this->saltPassword($password, $salt), PASSWORD_DEFAULT);
 	}
 
 	protected function saltPassword($password, $salt)
@@ -104,7 +91,7 @@ class MemberService extends Base
 	protected function dataFormat(array $data)
 	{
 		if (empty($data['avatar'])) {
-			$data['avatar'] = $this->getAvatar($data['avatar'], $data['sex']);
+			$data['avatar'] = $this->getAvatar($data['avatar'], $data['sex'] ?? 0);
 		}
 		return $data;
 	}

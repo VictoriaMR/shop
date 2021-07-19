@@ -4,7 +4,7 @@ namespace app\service;
 
 class SystemStaticFile extends Base
 {
-	public function __construct()
+	protected function getModel()
 	{
 		$this->baseModel = make('app/model/SystemStaticFile');
 	}
@@ -16,10 +16,10 @@ class SystemStaticFile extends Base
 		}
 		$name = explode('.', $name)[0];
 		$where = ['name'=>$name, 'type'=>$type];
-		if ($this->baseModel->getCountData($where)) {
-			return $this->baseModel->where($where)->update(['status'=>0]);
+		if ($this->getCountData($where)) {
+			return $this->where($where)->update(['status'=>0]);
 		} else {
-			return $this->baseModel->insert($where);
+			return $this->insert($where);
 		}
 	}
 }
