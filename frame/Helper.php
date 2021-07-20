@@ -62,7 +62,7 @@ function url($url=null, $param=null) {
     return router()->buildUrl($url, $param);
 }
 function siteUrl($name){
-	return env('APP_DOMAIN').$name.'?v='.config('version')[APP_TEMPLATE_TYPE];
+	return env('APP_DOMAIN').$name.'?v='.config('version.'.APP_TEMPLATE_TYPE);
 }
 function mediaUrl($url='', $width=''){
 	if (!empty($width)) {

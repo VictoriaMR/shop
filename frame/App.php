@@ -53,14 +53,11 @@ class App
 	public static function runOver()
 	{
 		if (env('APP_DEBUG')) {
-			if (IS_AJAX) {
-				self::make('frame/Debug')->runlog();
-			} else {
+			self::make('frame/Debug')->runlog();
+			if (!IS_AJAX) {
 				$router = router()->getRoute();
-				if ($router['path'] == 'index' && $router['func'] == 'index') {
-					self::make('frame/Debug')->runlog();
-				} else {
-					self::make('frame/Debug')->runlog()->init();
+				if (!($router['path'] == 'index' && $router['func'] == 'index')) {
+					self::make('frame/Debug')->init();
 				}
 			}
 		}

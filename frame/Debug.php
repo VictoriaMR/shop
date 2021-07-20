@@ -81,13 +81,7 @@ class Debug
 		$info = $time_str . $memory_str . $file_load . PHP_EOL;
 		$server = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '0.0.0.0';
 		$remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
-		$message = '';
-		if ($msg == '') {
-			$message = error_get_last()['message'] ?? '';
-		} else {
-			$message = preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL;
-		}
-		error_log('[runtime] '.now().' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.$message.'---------------------------------------------------------------'.PHP_EOL, 3, $destination);
+		error_log('[runtime] '.now().' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'---------------------------------------------------------------'.PHP_EOL, 3, $destination);
 		return $this;
 	}
 }
