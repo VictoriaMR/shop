@@ -10,7 +10,6 @@
 	<div class="clear"></div>
 	<form class="relative" style="padding-top: 50px;">
 		<input type="hidden" name="is_ajax" value="1">
-		<input type="hidden" name="is_ajax" value="1">
 		<div id="login-error" class="hidden">
 			<span class="glyphicon glyphicon-warning-sign left orange"></span>
 			<div id="login-error-msg" class="left ml4">请输入帐户名</div>
@@ -26,7 +25,7 @@
 			<img id="refresh" class="left pointer ml10" height="34" width="80" src="<?php echo url('login/loginCode', ['is_ajax'=>1]);?>" onclick="document.getElementById('refresh').src='<?php echo url('login/loginCode', ['is_ajax'=>1]);?>'" title="看不清？换一张">
 			<div class="clear"></div>
 		</div>
-		<button id="login-btn" type="botton" class="btn btn-primary btn-lg w100 mt20">登录</button>
+		<button id="login-btn" type="button" class="btn btn-primary btn-lg w100 mt20">登录</button>
 	</form>
 </div>
 <script type="text/javascript">

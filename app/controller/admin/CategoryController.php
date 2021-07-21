@@ -25,9 +25,10 @@ class CategoryController extends Controller
 		}
 		html()->addCss();
 		html()->addJs();
+
 		$list = make('app/service/CategoryService')->getListFormat();
 		//语言列表
-		$language = make('app/service/LanguageService')->getInfo();
+		$language = make('app/service/LanguageService')->getListCache();
 
 		$this->assign('language', $language);
 		$this->assign('list', $list);
@@ -54,11 +55,11 @@ class CategoryController extends Controller
 
 	protected function getCateInfo()
 	{
-		$cateId = (int) ipost('cate_id');
+		$cateId = (int)ipost('cate_id');
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/CategoryService')->getInfo($cateId);
+		$info = make('app/service/CategoryService')->loadData($cateId);
 		$this->success($info, '');
 	}
 

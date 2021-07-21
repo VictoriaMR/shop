@@ -17,7 +17,7 @@ class FileService
             return false;
         }
         $name = md5_file($file['tmp_name']);
-        $attachmentService = make('app\service\AttachmentService');
+        $attachmentService = make('app/service/AttachmentService');
         $data = $attachmentService->getAttachmentByName($name, 200);
         if (empty($data)) {
             $path = ROOT_PATH.env('FILE_CENTER').DS.$cate.DS;

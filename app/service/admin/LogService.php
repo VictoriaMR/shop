@@ -5,7 +5,7 @@ use app\service\Base;
 
 class LogService extends Base
 {	
-    public function __construct()
+    protected function getModel()
     {
         $this->baseModel = make('app/model/admin/Logger');
     }

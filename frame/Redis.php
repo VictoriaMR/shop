@@ -28,18 +28,25 @@ class Redis
 			$this->_link->select($db);
 			$this->_db = $db;
 		}
-		return $this->_link;
+		return $this;
 	}
 	
 	public function __call($func, $arg)
 	{
 		if (is_null($this->_link)) return false;
-		$info = $this->_link->$func(...$arg);
-		$temp = isJson($info);
-		if ($temp === false) {
-			return $info;
+		if ($func == 'hmset') {
+			if (isset($arg[2]) && is_array($arg[2])) {
+				$arg[2] = json_encode($arg[2], JSON_UNESCAPED_UNICODE);
+			}
 		} else {
-			return $temp;
+			if (isset($arg[1]) && is_array($arg[1])) {
+				$arg[1] = json_encode($arg[1], JSON_UNESCAPED_UNICODE);
+			}
 		}
+		$info = $this->_link->$func(...$arg);
+		if ($info && in_array($func, ['get', 'hget'])) {
+			$info = isJson($info);
+		}
+		return $info;
 	}
 }

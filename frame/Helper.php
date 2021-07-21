@@ -79,8 +79,8 @@ function isCli(){
 }
 function isJson($string){
 	if (is_array($string)) return false;
-	$string = json_decode($string, true); 
-	return json_last_error() == JSON_ERROR_NONE ? $string : false;
+	$temp = json_decode($string, true); 
+	return json_last_error() == JSON_ERROR_NONE ? $temp : $string;
 }
 function ipost($name='', $default=null){
 	return request()->ipost($name, $default);

@@ -5,7 +5,7 @@ use app\service\Base;
 
 class CategoryService extends Base
 {
-    public function __construct()
+    protected function getModel()
     {
         $this->baseModel = make('app/model/Category');
     }
@@ -69,7 +69,7 @@ class CategoryService extends Base
 
     public function getList(array $where=[])
     {
-        $list = $this->baseModel->where($where)->orderBy('sort', 'asc')->get();
+        $list = $this->getListData($where, '*', 0, 0, ['sort'=>'asc']);
         if (!empty($list)) {
             foreach ($list as $key => $value) {
                 if (empty($value['avatar'])) {

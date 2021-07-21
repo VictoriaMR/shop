@@ -1,22 +1,14 @@
 <?php 
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-use App\Models\Attachment;
-
-/**
- * 	文件类
- */
-class AttachmentService extends BaseService
+class AttachmentService extends Base
 {	
-    protected static $constantMap = [
-        'base' => Attachment::class,
-    ];
 
-	public function __construct(Attachment $model)
+	protected function getModel()
     {
-        $this->baseModel = $model;
+        $this->baseModel = make('app/model/Attachment');
     }
 
      public function addIfNot(array $data)

@@ -9,7 +9,7 @@ class LoginController extends Controller
 	{	
 		html()->addCss();
 		html()->addJs();
-		session()->set('admin');
+		session()->set(APP_TEMPLATE_TYPE.'_info');
 		$this->assign('_title', '登录');
 		$this->view();
 	}

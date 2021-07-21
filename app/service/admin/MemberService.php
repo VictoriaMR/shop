@@ -7,7 +7,7 @@ class MemberService extends Base
 {	
 	protected $login_key = 'admin';
 
-	public function getModel()
+	protected function getModel()
 	{
 		$this->baseModel = make('app/model/admin/Member');
 	}
