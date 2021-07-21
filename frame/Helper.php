@@ -6,26 +6,26 @@ function dd(...$arg){
 	}
 	exit();
 }
-function config($name=''){
+function config($name='', $replace=''){
 	$name = explode('.', $name);
 	if (empty($GLOBALS[$name[0]])) {
 		if (is_file($file = ROOT_PATH.'config'.DS.$name[0].'.php')) {
 			$GLOBALS[$name[0]] = require $file;
 		} else {
-			return false;
+			return $replace;
 		}
 	}
 	$data = $GLOBALS;
 	foreach ($name as $value) {
 		if (empty($data[$value])) {
-			return false;
+			return $replace;
 		}
 		$data = $data[$value];
 	}
 	return $data;
 }
 function env($name='', $replace=''){
-	return config('env')[$name] ?? $replace;
+	return config('env.'.$name, $replace);
 }
 function redirect($url){
 	header('Location:'.$url);
@@ -72,7 +72,7 @@ function mediaUrl($url='', $width=''){
 	if (strpos($url, 'http') === false) {
 		$url = env('FILE_CENTER_DOMAIN').$url;
 	}
-	return $url.'?v='.config('version');
+	return $url.'?v='.config('version.'.APP_TEMPLATE_TYPE);
 }
 function isCli(){
 	return stripos(php_sapi_name(), 'cli') !== false;

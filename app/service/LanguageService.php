@@ -1,76 +1,60 @@
 <?php 
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-
-/**
- * 	语言类
- */
-class LanguageService extends BaseService
+class LanguageService extends Base
 {	
-	const CACHE_KEY = 'SITE_LANGUAGE_CACHE';
+	const CACHE_KEY = 'site_language:';
 
-	public function create(array $data)
+	protected function getModel()
 	{
-		if (empty($data['code']) || empty($data['name'])) {
-			return false;
-		}
-        $data = [
-            'code' => $data['code'],
-            'name' => $data['name'],
-            'sort' => $data['sort'] ?? 0,
-        ];
-        return make('App\Models\Language')->create($data);
+		$this->baseModel = make('app/model/Language');
 	}
 
-    public function getInfo($lanId = '')
-    {
-    	$info = make('app/model/Language')->getListData();
-    	if (!empty($info)) {
-    		$info = array_column($info, null, 'lan_id');
-    	}
-    	if (empty($lanId)) {
-    		return $info;
-    	}
-    	return $info[$lanId] ?? [];
-    }
+	public function getInfoCache($lanId)
+	{
+		$cacheKey = $this->getCacheKey($lanId);
+		$info = redis()->get($cacheKey);
+		if (empty($info)) {
+			$info = $this->loadData($lanId);
+			redis()->set($cacheKey, $info);
+		}
+		return $info;
+	}
 
-    protected function getCacheKey()
-    {
-    	return self::CACHE_KEY;
-    }
+	public function getListCache()
+	{
+		$cacheKey = $this->getCacheKey();
+		$list = redis()->get($cacheKey);
+		if (empty($list)) {
+			$list = $this->getListData();
+			redis()->set($cacheKey, $list);
+		}
+		return $list;
+	}
 
-    public function getInfoCache($lanId = '')
-    {
-    	$info = redis()->get($this->getCacheKey());
-    	if (empty($info)) {
-    		$info = $this->getInfo();
-    		redis()->set($this->getCacheKey(), $info, -1);
-    	}
-    	if (empty($lanId)) {
-    		return $info;
-    	}
-    	return $info[$lanId] ?? '';
-    }
+	protected function getCacheKey($lanId='')
+	{
+		if (empty($lanId)) {
+			return self::CACHE_KEY.'lan_list';
+		}
+		return self::CACHE_KEY.'lan_id_'.$lanId;
+	}
 
-    public function deleteCache()
-    {
-    	return redis()->delete($this->getCacheKey());
-    }
+	public function deleteCache($lanId)
+	{
+		redis()->del($this->getCacheKey($lanId));
+		redis()->del($this->getCacheKey());
+		return true;
+	}
 
-    public function priceFormat($price, $lanId)
-    {
-        if ($price <= 0) {
-            return [
-                'price' => 0,
-                'symbol' => '',
-            ];
-        }
-        $info = $this->getInfoCache($lanId);
-        return [
-            'price' => sprintf('%.2f', $price * $info['rate']),
-            'symbol' => $info['symbol'],
-        ];
-    }
+	public function priceFormat($price, $lanId)
+	{
+		$info = $this->getInfoCache($lanId);
+		return [
+			'price' => sprintf('%.2f', $price * $info['rate']),
+			'symbol' => $info['symbol'],
+		];
+	}
 }

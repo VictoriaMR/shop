@@ -1,10 +1,9 @@
 <?php
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-
-class MessageService extends BaseService
+class MessageService extends Base
 {
     public function sendMessage($from, $to, $content, $tr_code='')
     {

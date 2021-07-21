@@ -5,41 +5,58 @@ use app\service\Base;
 
 class SiteService extends Base
 {
-    const CACHE_KEY = 'SITE_LIST_CACHE';
+	const CACHE_KEY = 'site_list:';
 
-	public function getLanguage(array $where)
-    {
-        return make('app/model/SiteLanguage')->getListData($where);
-    }
+	protected function getModel()
+	{
+		$this->baseModel = make('app/model/Site');
+	}
 
-    public function setNxLanguage($siteId, $name, $lanId, $value)
-    {
-        if (empty($siteId) || empty($name) || empty($lanId) || empty($value)) {
-            return false;
-        }
-        $model = make('app/model/SiteLanguage');
-        $where = ['site_id'=>$siteId, 'name'=>$name, 'lan_id'=>$lanId];
-        if ($model->getCount($where)) {
-            return $model->where($where)->update(['value' => $value]);
-        } else {
-            $where['value'] = $value;
-            return $model->insert($where);
-        }
-    }
+	public function getInfo($siteId, $lanId)
+	{
+		$info = $this->loadData($siteId);
+		if (!empty($info)) {
+			$inArr = ['title', 'keyword', 'description'];
+			$lanInfo = make('app/model/SiteLanguage')->whereIn('name', $inArr)->where('lan_id', $lanId)->get();
+			if (!empty($lanInfo)) {
+				$lanInfo = array_column($lanInfo, 'value', 'name');
+				foreach ($inArr as $value) {
+					$info[$value] = $lanInfo[$value] ?? '';
+				}	
+			}
+		}
+		return $info;
+	}
 
-    public function getList(array $where=[])
-    {
-        return make('app/model/Site')->getListData($where);
-    }
+	public function getInfoCache($siteId, $lanId)
+	{
+		$cacheKey = $this->getCacheKey($siteId, $lanId);
+		$info = redis()->get($cacheKey);
+		if (empty($info)) {
+			$info = $this->getInfo($siteId, $lanId);
+			redis()->set($cacheKey, $info);
+		}
+		return $info;
+	}
 
-    public function getListCache()
-    {
-        $list = redis()->get(self::CACHE_KEY);
-        if ($list === false) {
-            $list = $this->getList();
-            dd($list);
-            redis()->set(self::CACHE_KEY, $list);
-        }
-        return $list;
-    }
+	public function deleteCache($siteId, $lanId)
+	{
+		return redis()->del($this->getCacheKey($siteId, $lanId));
+	}
+
+	protected function getCacheKey($siteId, $lanId)
+	{
+		return self::CACHE_KEY.'site_'.$siteId.'_'.$lanId;
+	}
+
+	public function setNxLanguage($siteId, $name, $lanId, $value)
+	{
+		$where = ['site_id'=>$siteId, 'name'=>$name, 'lan_id'=>$lanId];
+		if ($this->getCount($where)) {
+			return $this->where($where)->update(['value' => $value]);
+		} else {
+			$where['value'] = $value;
+			return $this->insert($where);
+		}
+	}
 }

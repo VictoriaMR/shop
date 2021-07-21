@@ -3,12 +3,9 @@
 namespace app\service;
 use app\service\Base;
 
-/**
- * 	访问日志类
- */
 class LoggerService extends Base
 {
-	public function __construct()
+	public function getModel()
 	{
 		$this->baseModel = make('app/model/Logger');
 	}
@@ -27,8 +24,7 @@ class LoggerService extends Base
 			'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
 			'create_at' => now(),
 		];
-		$insert = array_merge($insert, $data);
-		return $this->insert($insert);
+		return $this->insert(array_merge($insert, $data));
 	}
 
 	public function getStats($field)

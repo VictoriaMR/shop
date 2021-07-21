@@ -11,9 +11,6 @@ class SystemStaticFile extends Base
 
 	public function addNotExist($name, $type)
 	{
-		if (empty($name) || empty($type)) {
-			return false;
-		}
 		$name = explode('.', $name)[0];
 		$where = ['name'=>$name, 'type'=>$type];
 		if ($this->getCountData($where)) {

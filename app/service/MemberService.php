@@ -5,6 +5,7 @@ use app\service\Base;
 
 class MemberService extends Base
 {	
+	protected $login_key;
 	protected function getModel(){}
 
 	public function create($data)
@@ -24,9 +25,6 @@ class MemberService extends Base
 			case 'email':
 				$info = $this->loadData(['email'=>$mobile]);
 				break;
-			default:
-				return false;
-				break;
 		}
 		if (empty($info)) return false;
 		if (empty($info['status'])) return false;
@@ -36,12 +34,11 @@ class MemberService extends Base
 				'mem_id' => $info['mem_id'],
 				'name' => $info['name'],
 				'nickname' => $info['nickname'],
-				'avatar' => $info['avatar'],
+				'avatar' => $this->getAvatar($info['avatar'], $info['sex']),
 				'mobile' => $info['mobile'],
 				'email' => $info['email'],
 				'sex' => $info['sex'] ?? 0,
 			];
-			$data = $this->dataFormat($data);
 			session()->set($this->login_key.'_info', $data);
 			$data = [
 				'mem_id' => $info['mem_id'],
@@ -86,14 +83,6 @@ class MemberService extends Base
 			}
 		}
 		return $rePassword;
-	}
-
-	protected function dataFormat(array $data)
-	{
-		if (empty($data['avatar'])) {
-			$data['avatar'] = $this->getAvatar($data['avatar'], $data['sex'] ?? 0);
-		}
-		return $data;
 	}
 
 	public function getAvatar($avatar='', $sex=0)

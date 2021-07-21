@@ -5,7 +5,7 @@ use app\service\Base;
 
 class ProductSpuService extends Base
 {
-	const CACHE_INFO_KEY = 'SPU_CACHE_INFO_';
+	const CACHE_INFO_KEY = 'spu_cache_info:';
 
 	protected function getModel()
 	{
@@ -38,34 +38,24 @@ class ProductSpuService extends Base
 		return $model->insert($data);
 	}
 
-	public function getInfoCache($spuId)
+	public function getInfoCache($spuId, $lanId)
 	{
-		$spuId = (int)$spuId;
-		if ($spuId < 1) {
-			return false;
-		}
-		$info = redis()->get($this->getCacheKey($spuId));
-		if ($info !== false) {
-			return $info;
-		}
-		$info = $this->getInfo($spuId);
-		if ($info !== false) {
-			redis()->set($this->getCacheKey($spuId), $info);
+		$cacheKey = $this->getCacheKey($spuId, $lanId);
+		$info = redis()->get($cacheKey);
+		if (empty($info)) {
+			$info = $this->getInfo($spuId, $lanId);
+			redis()->set($cacheKey, $info);
 		}
 		return $info;
 	}
 
 	public function getInfo($spuId, $lanId=1)
 	{
-		$spuId = (int)$spuId;
-		if ($spuId < 1) {
-			return false;
-		}
-		$info = make('app/model/ProductSpu')->loadData($spuId);
+		$info = $this->loadData($spuId);
 		if (empty($info)) {
 			return false;
 		}
-		$info['avatar'] = mediaUrl($info['avatar']);
+		$info['avatar'] = mediaUrl($info['avatar'], 200);
 		//价格格式化
 		$languageService = make('app\service\LanguageService');
 		$priceFormat = $languageService->priceFormat($info['min_price'], $lanId);
@@ -148,23 +138,9 @@ class ProductSpuService extends Base
 		return $info;
 	}
 
-	protected function getCacheKey($spuId)
+	protected function getCacheKey($spuId, $lanId)
 	{
-		return self::CACHE_INFO_KEY.$spuId.'_'.\frame\Session::get('home_language_id');
-	}
-
-	public function getStatusList($status=null)
-	{
-		$arr = [0=>'下架', 1=>'上架'];
-		if (is_null($status)) {
-			return $arr;
-		}
-		return $arr[$status] ?? '';
-	}
-
-	public function getTotal(array $where=[])
-	{
-		return make('app/model/ProductSpu')->getCountData($where);
+		return self::CACHE_INFO_KEY.$spuId.'_'.$lanId;
 	}
 
 	public function getAdminList(array $where=[], $page=1, $size=20)

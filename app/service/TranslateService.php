@@ -1,35 +1,27 @@
 <?php
 
 namespace app\service;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-use App\Models\Translate;
-
-/**
- * 翻译接口类
- */
-class TranslateService extends BaseService
+class TranslateService extends Base
 {
-    const CACHE_KEY = 'SITE_TRANSLATE_TEXT_';
+	const CACHE_KEY = 'site_translate:';
 
-	public function __construct(Translate $model)
+	protected function getModel()
 	{
-		$this->baseModel = $model;
+		$this->baseModel = make('app/model/Translate');
 	}
 
 	public function getTranslate($text, $to = 'en', $from = 'zh')
 	{
-		if (empty(env('BAIDU_APPID')) || empty(env('BAIDU_SECRET_KEY'))) {
-			return false;
-		}
 		if ($to == $from) {
 			return $text;
 		}
-        $lanArr = make('app\service\LanguageService')->getInfoCache();
-        $lanArr = array_column($lanArr, 'tr_code', 'code');
-        if (isset($lanArr[$to])) {
-            $to = $lanArr[$to];
-        }
+		$lanList = make('app\service\LanguageService')->getListCache();
+		$lanList = array_column($lanList, 'tr_code', 'code');
+		if (isset($lanList[$to])) {
+			$to = $lanList[$to];
+		}
 		$salt = time();
 		$data = [
 			'q' => $text,
@@ -54,76 +46,58 @@ class TranslateService extends BaseService
 	}
 
 	public function getText($name)
-    {
-        if (empty($name)) return '';
-    	$code = \frame\Session::get('site_language_name');
-        $cacheKey = self::CACHE_KEY.strtoupper($code);
-        //获取缓存中对应的翻译文本
-    	$info = redis(1)->hget($cacheKey, $name);
-    	if (empty($info)) {
-            //检查文本
-            $value = $this->setNotExist($name, $code);
-            if (empty($value)) {
-                return $name;
-            } else {
-            	redis(1)->hset($cacheKey, $name, $value);
-            	return $value;
-            }
-    	}
-    	return $info;
-    }
+	{
+		if (empty($name)) return '';
+		$code = session()->get('site_language_code');
+		$cacheKey = $this->getCacheKey(session()->get('site_language_code'));
+		$info = redis(1)->hget($cacheKey, $name);
+		if (empty($info)) {
+			$info = $this->setNotExist($name, $code);
+			if (empty($info)) {
+				return $name;
+			} else {
+				redis(1)->hset($cacheKey, $name, $info);
+			}
+		}
+		return $info;
+	}
 
-    public function setNotExist($name, $code, $value='')
-    {
-    	$result = $this->isExistName($name, $code);
-        if (empty($result)) {
-            $data = [
-                'name' => $name,
-                'type' => $code, 
-            ];
-            if (!empty($value)) {
-                $data['value'] = trim($value);
-                $cacheKey = self::CACHE_KEY.strtoupper($code);
-                redis(1)->hset($cacheKey, $name, $value);
-            }
-            return $this->baseModel->insert($data);
-        } else {
-            if (empty($value)) {
-                return $result;
-            } else {
-                $cacheKey = self::CACHE_KEY.strtoupper($code);
-                redis(1)->hset($cacheKey, $name, $value);
-                return $this->baseModel->where(['name'=>$name, 'type'=>$code])->update(['value'=>$value]);
-            }
-        }
-    }
+	protected function getCacheKey($code)
+	{
+		return self::CACHE_KEY.'site_text_'.$code;
+	}
 
-    protected function isExistName($name, $code)
-    {
-        return $this->baseModel->where(['name'=>$name, 'type'=>$code])->value('value');
-    }
+	public function setNotExist($name, $code, $value='')
+	{
+		$data = [
+			'name' => $name,
+			'type' => $code, 
+		];
+		$info = $this->loadData($data);
+		if (empty($info)) {
+			$this->insert($data);
+			return false;
+		}
+		return $info['value'];
+	}
 
-    public function reloadCache()
-    {
-        $list = make('App/Services/LanguageService')->getInfo();
-        foreach ($list as $key => $value) {
-            $cacheKey = self::CACHE_KEY.strtoupper($value['code']);
-            redis(1)->del($cacheKey);
-        }
-
-        $list = $this->baseModel->where('value', '<>', '')->get();
-
-        $tempData = [];
-        foreach ($list as $key => $value) {
-            if (!isset($tempData[$value['type']])) {
-                $tempData[$value['type']] = [];
-            }
-            $tempData[$value['type']][$value['name']] = $value['value'];
-        }
-        foreach ($tempData as $key => $value) {
-            $cacheKey = self::CACHE_KEY.strtoupper($key);
-            redis(1)->hmset($cacheKey, $value);
-        }
-        return true;
-    }
+	public function reloadCache()
+	{
+		$list = $this->getListData(['value'=>['<>', '']]);
+		$tempData = [];
+		foreach ($list as $key => $value) {
+			if (!isset($tempData[$value['type']])) {
+				$tempData[$value['type']] = [];
+			}
+			$tempData[$value['type']][$value['name']] = $value['value'];
+		}
+		$lanlist = make('app/service/LanguageService')->getListCache();
+		foreach ($list as $key => $value) {
+			$cacheKey = $this->getCacheKey($value['code']);
+			redis(1)->del($cacheKey);
+			if (empty($tempData[$value['code']])) continue;
+			redis(1)->hmset($cacheKey, $tempData[$value['code']]);
+		}
+		return true;
+	}
 }

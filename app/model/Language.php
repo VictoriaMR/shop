@@ -7,14 +7,4 @@ class Language extends Base
 {
 	protected $_table = 'language';
 	protected $_primaryKey = 'lan_id';
-
-	public function getInfo($fields = '')
-	{
-		return $this->loadData(null, $fields);
-	}
-
-	public function create(array $data) 
-	{
-		return $this->insertGetId($data);
-	}
 }
