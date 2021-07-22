@@ -42,7 +42,7 @@
 	            <th class="col-md-1">状态</th>
 	            <th class="col-md-1">邮箱</th>
 	            <th class="col-md-1">盐值</th>
-	            <th class="col-md-1">添加时间</th>
+	            <th class="col-md-1">添加时间<br />更新时间</th>
 	            <th class="col-md-2">操作</th>
 	        </tr>
         	<?php if (empty($list)){ ?>
@@ -70,7 +70,7 @@
         		</td>
         		<td class="col-md-1"><?php echo $value['email'];?></td>
         		<td class="col-md-1"><?php echo $value['salt'];?></td>
-        		<td class="col-md-1"><?php echo $value['create_at'];?></td>
+        		<td class="col-md-1"><?php echo $value['add_time'];?><br /><?php echo $value['update_time'];?></td>
         		<td class="col-md-2">
         			<button class="btn btn-primary btn-xs modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
                     <button class="btn btn-danger btn-xs delete mt2" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>

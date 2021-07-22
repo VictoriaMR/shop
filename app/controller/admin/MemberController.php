@@ -9,7 +9,7 @@ class MemberController extends Controller
 	{
         $this->_arr = [
             'index' => '人员列表',
-            'loginLog' => '日志',
+            'log' => '日志',
         ];
         $this->_default = '管理人员';
 		$this->_init();
@@ -74,8 +74,9 @@ class MemberController extends Controller
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$result = make('app/service/admin/MemberService')->updateData($memId, ['status' => $status]);
+		$result = make('app/service/admin/MemberService')->updateData($memId, ['status'=>$status, 'update_time'=>now()]);
 		if ($result) {
+			$this->addLog('修改用户状态-'.$memId.($status==1?'-启用':'-停用'));
 			$this->success('操作成功');
 		} else {
 			$this->error('操作失败');
@@ -92,6 +93,10 @@ class MemberController extends Controller
 		if (empty($info)) {
 			$this->error('找不到用户数据');
 		}
+		$data = [
+			'remark' => '获取用户信息-'.$memId,
+			'type_id' => 3,
+		];
 		unset($info['password']);
 		$this->success($info);
 	}
@@ -132,11 +137,13 @@ class MemberController extends Controller
 		if (!empty($password)) {
 			$data['password'] = $password;
 		}
-		$memberService = make('app/service/admin/MemberService');
+		$service = make('app/service/admin/MemberService');
 		if (empty($mem_id)) {
-			$result = $memberService->create($data);
+			$result = $service->create($data);
+			$this->addLog('新增用户-'.$result);
 		} else {
-			$result = $memberService->updateData($mem_id, $data);
+			$this->addLog('编辑用户-'.$mem_id);
+			$result = $service->updateData($mem_id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -144,7 +151,7 @@ class MemberController extends Controller
 		$this->error('操作失败');
 	}
 
-	public function loginLog()
+	public function log()
 	{
 		$page = (int) iget('page', 1);
 		$size = (int) iget('size', 50);

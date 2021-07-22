@@ -45,9 +45,9 @@ class CategoryController extends Controller
 		$services = make('app/service/CategoryService');
 		$count = 1;
 		foreach ($data as $key => $value) {
-			$services->updateData((int) $key, ['sort'=>$count++]);
+			$services->updateData($key, ['sort'=>$count++]);
 			foreach ($value as $k => $v) {
-				$services->updateData((int) $v, ['sort'=>$k+1]);
+				$services->updateData($v, ['sort'=>$k+1]);
 			}
 		}
 		$this->success('排序成功');
@@ -86,6 +86,7 @@ class CategoryController extends Controller
 				$services->setNxLanguage($cateId, $key, $value);
 			}
 		}
+		$this->addLog('修改分类语言-'.$cateId);
 		$this->success('操作成功');
 	}
 
@@ -104,9 +105,11 @@ class CategoryController extends Controller
 			'avatar' => $avatar,
 		];
 		if (empty($cateId)) {
-			$result = make('app/service/CategoryService')->create($data);
+			$result = make('app/service/CategoryService')->insert($data);
+			$this->addLog('新增分类-'.$result);
 		} else {
-			$result = make('app/service/CategoryService')->updateDataById($cateId, $data);
+			$this->addLog('修改分类信息-'.$cateId);
+			$result = make('app/service/CategoryService')->updateData($cateId, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -130,6 +133,7 @@ class CategoryController extends Controller
 		}
 		$result = $services->deleteDataById($cateId);
 		if ($result) {
+			$this->addLog('删除分类语言-'.$cateId);
 			$this->success('删除成功');
 		} else {
 			$this->error('删除失败');

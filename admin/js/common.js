@@ -248,11 +248,11 @@ function guid() {
 					success: function(res) {
 	                    if (res.code == 200) {
 	                    	thisobj.removeClass('loading').attr('src', res.data.url);
-	                    	obj = thisobj.parent().find('[name="'+name+'"]');
-	                    	if (obj.length == 0) {
+	                    	const $inputObj = thisobj.parent().find('[name="'+name+'"]');
+	                    	if ($inputObj.length === 0) {
 	                    		thisobj.parent().append('<input name="'+name+'" value="'+(res.data.cate+'/'+res.data.name+'.'+res.data.type)+'" class="hide" />');
 	                    	} else {
-	                    		obj.val(res.data.cate+'/'+res.data.name+'.'+res.data.type);
+	                    		$inputObj.val(res.data.cate+'/'+res.data.name+'.'+res.data.type);
 	                    	}
 	                    } else {
 	                    	errorTips(res.message);

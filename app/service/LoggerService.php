@@ -22,7 +22,7 @@ class LoggerService extends Base
 			'system' => request()->getSystem(),
 			'browser' => request()->getBrowser(),
 			'agent' => $_SERVER['HTTP_USER_AGENT'] ?? '',
-			'create_at' => now(),
+			'add_time' => now(),
 		];
 		return $this->insert(array_merge($insert, $data));
 	}
@@ -34,7 +34,7 @@ class LoggerService extends Base
 
 	public function getIpDateStat($limit = 14)
 	{
-		$sql = 'SELECT COUNT(*) AS count, a.`format_date` FROM (SELECT `ip`, DATE_FORMAT(`create_at`,"%Y-%m-%d") AS `format_date` FROM `visitor_log` GROUP BY `ip`,`format_date`) a GROUP BY a.`format_date` ORDER BY a.`format_date` DESC LIMIT '.$limit;
+		$sql = 'SELECT COUNT(*) AS count, a.`format_date` FROM (SELECT `ip`, DATE_FORMAT(`add_time`,"%Y-%m-%d") AS `format_date` FROM `visitor_log` GROUP BY `ip`,`format_date`) a GROUP BY a.`format_date` ORDER BY a.`format_date` DESC LIMIT '.$limit;
 		return $this->getQuery($sql);
 	}
 }

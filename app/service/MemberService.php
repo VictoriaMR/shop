@@ -12,6 +12,7 @@ class MemberService extends Base
 	{
 		$data['salt'] = randString(8);
 		$data['password'] = $this->getPassword($data['password'], $data['salt']);
+		$data['add_time'] = now();
 		return $this->insertGetId($data);
 	}
 
@@ -41,11 +42,11 @@ class MemberService extends Base
 			];
 			session()->set($this->login_key.'_info', $data);
 			$data = [
-				'mem_id' => $info['mem_id'],
 				'remark' => '登录管理后台',
 				'type_id' => 0,
 			];
-			$this->addLoginLog($data);
+			$this->updateData($info['mem_id'], ['login_time'=>now()]);
+			$this->addLog($data);
 			return true;
 		}
 		return false;

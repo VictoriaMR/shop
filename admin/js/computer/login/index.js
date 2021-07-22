@@ -31,9 +31,8 @@ const LOGIN = {
 			}
 			thisobj.button('loading');
 			$.post(URI+'login/login', $(this).parent('form').serializeArray(), function(res) {
-				console.log(res)
 				if (res.code === 200 || res.code === '200') {
-					// window.location.href = res.data.url;
+					window.location.href = res.data.url;
 				} else {
 					$('#login-error').removeClass('hidden').find('#login-error-msg').text(res.message);
 					thisobj.button('reset');

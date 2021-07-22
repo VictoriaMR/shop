@@ -8,7 +8,7 @@ class Member extends Base
 	protected $_table = 'admin_member';
 	protected $_primaryKey = 'mem_id';
 
-	public function addLoginLog(array $data)
+	public function addLog(array $data)
 	{
 		return make('app/model/admin/Logger')->addLog($data);
 	}

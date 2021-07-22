@@ -64,7 +64,7 @@
         		<td class="col-md-1"><?php echo $value['system'];?></td>
         		<td class="col-md-1"><?php echo empty($value['remark']) ? $value['type_text'] : $value['remark'];?></td>
         		<td class="col-md-1"><?php echo $value['ip'];?></td>
-        		<td class="col-md-1"><?php echo $value['create_at'];?></td>
+        		<td class="col-md-1"><?php echo $value['add_time'];?></td>
         		<td class="col-md-4"><?php echo $value['agent'];?></td>
         	</tr>
         	<?php } ?>

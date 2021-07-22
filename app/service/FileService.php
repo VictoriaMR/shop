@@ -37,8 +37,9 @@ class FileService
                 'type' => $ext,
                 'cate' => $cate,
                 'size' => filesize($saveUrl),
+                'add_time' => now(),
             ];
-            $attachId = $attachmentService->create($data);
+            $attachId = $attachmentService->insertGetId($data);
             $data['attach_id'] = $attachId;
             //图片缩略
             if ($thumb) {

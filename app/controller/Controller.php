@@ -71,4 +71,13 @@ class Controller
         $this->assign('_func', $router['func']);
         $this->assign('_title', $this->_tag[$router['func']] ?? '');
     }
+
+    protected function addLog($msg)
+    {
+		$data = [
+			'remark' => $msg,
+			'type_id' => 3,
+		];
+		make('app/service/admin/LogService')->addLog($data);
+    }
 }

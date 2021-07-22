@@ -10,17 +10,13 @@ class LogService extends Base
         $this->baseModel = make('app/model/admin/Logger');
     }
 
-    public function addLog(array $data)
-    {
-        return $this->addLog($data);
-    }
-
     public function getTypeList()
     {
         return [
             $this->baseModel::TYPE_LOGIN => '登入',
             $this->baseModel::TYPE_LOGOUT => '登出',
             $this->baseModel::TYPE_LOGIN_FAIL => '登入失败',
+            $this->baseModel::TYPE_BEHAVIOR => '操作',
         ];
     }
 

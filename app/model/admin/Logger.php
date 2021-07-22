@@ -11,15 +11,17 @@ class Logger extends Base
 	const TYPE_LOGIN = 0;
 	const TYPE_LOGOUT = 1;
 	const TYPE_LOGIN_FAIL = 2;
+	const TYPE_BEHAVIOR = 3;
 
 	public function addLog(array $data)
 	{
-		if (empty($data)) return false;
+		$data['mem_id'] = session()->get(APP_TEMPLATE_TYPE.'_info')['mem_id'] ?? '';
 		$data['ip'] = request()->getIp();
 		$data['browser'] = request()->getBrowser();
 		$data['system'] = request()->getSystem();
 		$data['agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-		$data['create_at'] = now();
+		$data['param'] = empty($param = request()->input()) ? '' : json_encode($param, JSON_UNESCAPED_UNICODE);
+		$data['add_time'] = now();
 		return $this->insert($data);
 	}
 }
