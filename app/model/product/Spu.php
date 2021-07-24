@@ -1,9 +1,9 @@
 <?php
 
-namespace app\model;
+namespace app\model\product;
 use app\model\Base;
 
-class ProductSpu extends Base
+class Spu extends Base
 {
 	protected $_table = 'product_spu';
 	protected $_primaryKey = 'spu_id';
@@ -11,11 +11,15 @@ class ProductSpu extends Base
 	const STATUS_CLOSE = 0;
 	const STATUS_OPEN = 1;
 
-	public function getStatusList()
+	public function getStatusList($status=null)
 	{
-		return [
+		$arr = [
 			self::STATUS_CLOSE => '下架',
 			self::STATUS_OPEN => '上架',
 		];
+		if (is_null($status)) {
+			return $arr;
+		}
+		return $arr[$status] ?? '';
 	}
 }

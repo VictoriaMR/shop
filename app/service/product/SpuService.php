@@ -1,15 +1,15 @@
 <?php 
 
-namespace app\service;
+namespace app\service\product;
 use app\service\Base;
 
-class ProductSpuService extends Base
+class SpuService extends Base
 {
 	const CACHE_INFO_KEY = 'spu_cache_info:';
 
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/ProductSpu');
+		$this->baseModel = make('app/model/product/Spu');
 	}
 
 	public function addSpuImage(array $data)
@@ -147,28 +147,36 @@ class ProductSpuService extends Base
 	{
 		$list = $this->getListData($where, '*', $page, $size);
 		if (!empty($list)) {
+			//图片
+			$attachArr = array_unique(array_column($list, 'attach_id'));
+			$attachArr = make('app/service/AttachmentService')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+			//名称
 			$spuIdArr = array_column($list, 'spu_id');
-			$cateService = make('app/service/CategoryService');
-			$linkArr = $cateService->getRelationList(['spu_id'=>['in', $spuIdArr]]);
-			$cateIdArr = array_unique(array_column($linkArr, 'cate_id'));
-			$cateArr = $cateService->getList(['cate_id'=>['in', $cateIdArr]]);
-			$cateArr = array_column($cateArr, 'name', 'cate_id');
-			$tempArr = [];
-			foreach ($linkArr as $value) {
-				$tempArr[$value['spu_id']][] = $cateArr[$value['cate_id']];
-			}
-			$siteArr = make('app/service/SiteService')->getListCache();
-			dd($siteArr);
-			$siteArr = array_column($siteArr, 'name', 'site_id');
+			$nameArr = make('app/service/product/LanguageService')->getListData(['spu_id'=>['in', $spuIdArr], 'lan_id'=>1]);
+			$nameArr = array_column($nameArr, 'name', 'spu_id');
 			foreach ($list as $key => $value) {
-				$value['avatar'] = mediaUrl($value['avatar'], 400);
+				$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
+				$value['name'] = $nameArr[$value['spu_id']] ?? '';
 				$value['status_text'] = $this->getStatusList($value['status']);
-				$value['url'] = url('product/view', ['id'=>$value['spu_id']]);
-				$value['cate_name'] = implode(' | ', $tempArr[$value['spu_id']]);
-				$value['site_name'] = $siteArr[$value['site_id']];
+				$value['url'] = url('product/detail', ['id'=>$value['spu_id']]);
 				$list[$key] = $value;
 			}
 		}
 		return $list;
+	}
+
+	public function getAdminInfo($spuId)
+	{
+		$info = $this->loadData($spuId);
+		if (empty($info)) {
+			return false;
+		}
+		//名称
+		$info['name'] = make('app/service/product/LanguageService')->loadData(['spu_id'=>$spuId,'lan_id'=>1])['name'];
+		//图片
+		$info['image'] = make('app/service/product/SpuImageService')->getListBySpuId($spuId);
+		
+		return $info;
 	}
 }

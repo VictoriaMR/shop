@@ -35,7 +35,7 @@
 	            		<span>&nbsp;<?php echo $value['name'];?></span>
 	            	</div>
 	            	<div class="left image-content">
-	            		<img class="big-image" src="<?php echo $value['avatar'];?>">
+	            		<img class="big-image" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-original="<?php echo $value['avatar'];?>">
 	            	</div>
 	            </td>
 	            <td class="col-md-1"><?php echo $value['sale_total'] ?? '';?></td>

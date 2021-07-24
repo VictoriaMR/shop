@@ -1,9 +1,9 @@
 <?php
 
-namespace app\model;
+namespace app\model\product;
 use app\model\Base;
 
-class ProductIntroduce extends Base
+class Introduce extends Base
 {
 	protected $_table = 'product_introduce';
 

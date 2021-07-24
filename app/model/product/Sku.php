@@ -1,9 +1,9 @@
 <?php
 
-namespace app\model;
+namespace app\model\product;
 use app\model\Base;
 
-class ProductSku extends Base
+class Sku extends Base
 {
 	protected $_table = 'product_sku';
 	protected $_primaryKey = 'sku_id';

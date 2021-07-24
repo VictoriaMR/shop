@@ -1,9 +1,9 @@
 <?php
 
-namespace app\model;
+namespace app\model\product;
 use app\model\Base;
 
-class ProductLanguage extends Base
+class Language extends Base
 {
 	protected $_table = 'product_language';
 

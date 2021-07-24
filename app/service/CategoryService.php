@@ -28,9 +28,7 @@ class CategoryService extends Base
 		$list = $this->getListData($where, '*', 0, 0, ['sort'=>'asc']);
 		if (empty($list)) return false;
 		foreach ($list as $key => $value) {
-			if (empty($value['avatar'])) {
-				$value['avatar'] = siteUrl('image/common/noimg.png');
-			} else {
+			if (!empty($value['avatar'])) {
 				$value['avatar'] = mediaUrl($value['avatar'], 200);
 			}
 			$list[$key] = $value;

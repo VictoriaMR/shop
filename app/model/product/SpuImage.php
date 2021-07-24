@@ -1,10 +1,9 @@
 <?php
 
-namespace app\model;
-
+namespace app\model\product;
 use app\model\Base;
 
-class ProductSpuImage extends Base
+class SpuImage extends Base
 {
 	//表名
 	protected $_table = 'product_spu_image';

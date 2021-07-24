@@ -52,7 +52,7 @@ class Html
 	public function getCss()
 	{
 		if (empty($this->_CSS)) {
-			return false;
+			return [];
 		}
 		$_route = router()->getRoute();
 		return $this->addStaticFile($this->_CSS, $_route['path'].'_'.$_route['func'], 'css');
@@ -61,7 +61,7 @@ class Html
 	public function getJs()
 	{
 		if (empty($this->_JS)) {
-			return false;
+			return [];
 		}
 		$_route = router()->getRoute();
 		return $this->addStaticFile($this->_JS, $_route['path'].'_'.$_route['func'], 'js');

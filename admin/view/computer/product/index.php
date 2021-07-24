@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<form action="<?php echo url();?>" class="form-inline">
 		<div class="form-group mt10 mr20">
@@ -17,7 +16,7 @@
 			<select class="form-control" name="site" style="min-width:180px;">
 				<option value="-1">请选择站点</option>
 				<?php if (!empty($siteList)) {
-					foreach ($siteList as $key => $value) { if ($key <= 0) {continue;}?>
+					foreach ($siteList as $key => $value) {?>
 				<option <?php if ($site==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value;?></option>
 				<?php } }?>
 			</select>
@@ -48,18 +47,18 @@
 		<div class="spu-item">
 			<a href="<?php echo $value['url'];?>" class="block">
 				<div class="spu-image">
-					<img src="<?php echo $value['avatar'];?>">
+					<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-original="<?php echo $value['avatar'];?>">
 				</div>
 				<div class="name-content f600">
 					<div class="spu-name e2 f400"><?php echo $value['name'];?></div>
 					<div>
-						<div class="w50 left e1">分类: <?php echo $value['cate_name'];?></div>
-						<div class="w50 right e1">站点: <?php echo $value['site_name'];?></div>
+						<div class="w50 left e1">分类: <?php echo empty($cateList[$value['cate_id']]) ? '' : $cateList[$value['cate_id']]['name'];?></div>
+						<div class="w50 right e1">站点: <?php echo $siteList[$value['site_id']];?></div>
 						<div class="clear"></div>
 					</div>
 					<div class="e1">价格: <?php echo '￥'.$value['min_price'].' - ￥'.$value['max_price'];?></div>
 					<div>
-						<span>序号: <?php echo $value['spu_id'];?></span>
+						<span>PID: <?php echo $value['spu_id'];?></span>
 						<span class="right" style="color: <?php echo $value['status'] == 1 ? 'green' : 'red';?>"><?php echo $value['status_text'];?></span>
 					</div>
 				</div>
@@ -71,4 +70,3 @@
 	<?php echo page($size, $total);?>
 </div>
 <?php } ?>
-<?php $this->load('common/footer');?>

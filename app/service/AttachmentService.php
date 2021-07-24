@@ -43,4 +43,13 @@ class AttachmentService extends Base
 		$info['url'] = env('FILE_CENTER_DOMAIN').$info['cate'].DS.$info['name'].($width == '' ? '' : DS.$width).'.'.$info['type'];
 		return $info;
 	}
+
+	public function getList($where)
+	{
+		$list = $this->getListData($where);
+		foreach ($list as $key => $value) {
+			$list[$key] = $this->urlInfo($value, '400');
+		}
+		return $list;
+	}
 }

@@ -290,4 +290,5 @@ $(function(){
     });
     $('#progressing').show();
     progressing(20);
+    $('img[data-original]').lazyload();
 });

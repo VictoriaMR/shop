@@ -27,19 +27,19 @@ class ProductController extends Controller
 		$page = (int)iget('page', 1);
 		$size = (int)iget('size', 20);
 		//spu状态
-		$spuService = make('app/service/ProductSpuService');
+		$spuService = make('app/service/product/SpuService');
 		$statusList = $spuService->getStatusList();
 		//站点
-		$siteList = make('app/service/SiteService')->getList();
+		$siteList = make('app/service/SiteService')->getListData([], 'site_id,name');
 		$siteList = array_column($siteList, 'name', 'site_id');
 		//分类
 		$cateList = make('app/service/CategoryService')->getListFormat();
-
+		$cateList = array_column($cateList, null, 'cate_id');
 		$where = [];
 		if (in_array($status, array_keys($statusList), true)) {
 			$where['status'] = $status;
 		}
-		if (in_array($site, array_keys($siteList), true)) {
+		if ($site >= 0) {
 			$where['site_id'] = $site;
 		}
 		if ($cate > 0) {
@@ -69,20 +69,21 @@ class ProductController extends Controller
 		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
 
-		return view();
+		$this->view();
 	}
 
-	public function view()
+	public function detail()
 	{
-		service();
-		Html::addCss();
+		html()->addCss();
+		html()->addJs();
 		$id = (int)iget('id');
+		$spuService = make('app/service/product/SpuService');
+		$info = $spuService->getAdminInfo($id);
+		
+		$this->assign('info', $info);
 
-		$spuService = make('app/service/ProductSpuService');
-		$info = $spuService->getInfo($id);
-		dd($info);
-		$this->_arr['view'] = 'SPU详情';
+		$this->_arr['detail'] = 'SPU详情';
 		$this->_init();
-		return view();
+		$this->view();
 	}
 }
