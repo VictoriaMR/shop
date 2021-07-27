@@ -45,7 +45,7 @@ function confirm(msg, callbck) {
 }
 function post(uri, param, success, error) {
 	$.post(uri, param, function(res) {
-		if (res.code == 200) {
+		if (res.code === 200 || res.code === '200') {
 			if (res.message) {
 				successTips(res.message)
 			}
@@ -61,14 +61,14 @@ function post(uri, param, success, error) {
 	});
 }
 function addRightTips(info, type, delay) {
-	if (typeof $info === 'undefined') {
+	if (typeof info === 'undefined') {
 		return false;
 	}
-    if(typeof delay === 'undefined') {
+    if (typeof delay === 'undefined') {
         delay = 5000;
     }
     info = info.replace(/\n/g,'<br>');
-    if($('#rightTips').length == 0) {
+    if($('#rightTips').length === 0) {
         $('body').append('<div id="rightTips"></div>');
         $('#rightTips').on('click', '.info .glyphicon-remove', function(){
             $(this).parent().remove();

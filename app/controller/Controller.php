@@ -11,14 +11,19 @@ class Controller
     protected $_tagShow = true;
     
 	protected function result($code, $data=[], $options=[])
-    {
-       $data = [
-            'code' => $code,
-            'data' => $data,
-            'message' => '',
-        ];
-        header('Content-Type:application/json; charset=utf-8');
-        echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
+    {   
+        if (IS_AJAX) {
+            $data = [
+                'code' => $code,
+                'data' => $data,
+                'message' => '',
+            ];
+            header('Content-Type:application/json; charset=utf-8');
+            echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
+        } else {
+            $this->assign('error_message', $options['message']);
+            $this->view('common/404');
+        }
         \App::runOver();
     }
 
@@ -50,9 +55,9 @@ class Controller
         return view()->assign($name, $value);
     }
 
-    protected function view()
+    protected function view($name='')
     {
-        return view()->display();
+        return view()->display($name);
     }
 
     protected function _init()

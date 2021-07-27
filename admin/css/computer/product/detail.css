@@ -9,10 +9,12 @@
 }
 .field-row > dt, .in-field-row > dt {
 	min-width: 80px;
+	line-height: 25px;
 	text-align: right;
 }
 .field-row > dd, .in-field-row > dd {
 	margin-left: 15px;
+	line-height: 25px;
 }
 .field-row dt {
 	font-weight: 700;
