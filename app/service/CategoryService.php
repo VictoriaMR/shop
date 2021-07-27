@@ -27,6 +27,13 @@ class CategoryService extends Base
 	{
 		$list = $this->getListData($where, '*', 0, 0, ['sort'=>'asc']);
 		if (empty($list)) return false;
+		$cateIdArr = array_column($list, 'cate_id');
+		$lanArr = make('app/model/CategoryLanguage')->where(['cate_id'=>['in', $cateIdArr], 'lan_id'=>1])->field('cate_id,name')->get();
+		$lanArr = array_column($lanArr, 'name', 'cate_id');
+		foreach ($list as $key => $value) {
+			$value['name'] = $lanArr[$value['cate_id']] ?? '';
+			$list[$key] = $value;
+		}
 		foreach ($list as $key => $value) {
 			if (!empty($value['avatar'])) {
 				$value['avatar'] = mediaUrl($value['avatar'], 200);
@@ -92,97 +99,65 @@ class CategoryService extends Base
 
 	public function hasChildren($id)
 	{
-		return $this->baseModel->where('parent_id', $id)->count() > 0;
+		return $this->where('parent_id', $id)->count() > 0;
 	}
 
 	public function hasProduct($id)
 	{
-		return make('app/model/ProductCategoryRelation')->where('cate_id', $id)->count() > 0;
+		return make('app/model/product/Spu')->where('cate_id', $id)->count() > 0;
 	}
 
 	protected function deleteDataById($cateId)
 	{
-		$result = $this->baseModel->deleteById($cateId);
+		$result = $this->deleteData($cateId);
 		if ($result) {
 			$result = make('app/model/CategoryLanguage')->where('cate_id', $cateId)->delete();
 		}
-	}
-
-	public function addCateProRelation($spuId, array $cateIds)
-	{
-		if (empty($spuId) || empty($cateIds)) return false;
-		$insert = [];
-		$model = make('app/model/ProductCategoryRelation');
-		foreach ($cateIds as $key => $value) {
-			$where = [
-				'cate_id' => $value,
-				'spu_id' => $spuId,
-			];
-			if (!$model->getCount($where)) {
-				$insert[] = $where;
-			}
-		}
-		return $model->insert($insert);
-	}
-
-	public function getSpuIdByCateId($cateId)
-	{
-		$result = make('app/model/ProductCategoryRelation')->where('cate_id', $cateId)->field('spu_id')->get();
-		return array_column($result, 'spu_id');
-	}
-
-	public function getRelationList(array $where=[])
-	{
-		return make('app/model/ProductCategoryRelation')->where($where)->field('cate_id,spu_id')->get();
+		return $result;
 	}
 
     public function updateStat()
     {
-        $result = $this->baseModel->table('product_category_relation a')->leftJoin('product_spu b', 'a.spu_id', 'b.spu_id')->field('a.cate_id, SUM(b.sale_total) AS sale_total, SUM(b.visit_total) AS visit_total')->where('b.status', 1)->groupBy('a.cate_id')->get();
-        if (!empty($result)) {
-            $result = array_column($result, null, 'cate_id');
-            foreach ($result as $key => $value) {
-                $data = [];
-                if (isset($value['sale_total'])) {
-                    $data['sale_total'] = (int) $value['sale_total'];
-                }
-                if (isset($value['visit_total'])) {
-                    $data['visit_total'] = (int) $value['visit_total'];
-                }
-                if (empty($data)) continue;
-                $this->baseModel->updateDataById($key, $data);
-            }
-            //更新父类数据
-            $result = $this->baseModel->where('parent_id', '>', 0)->field('parent_id,SUM(sale_total) AS sale_total, SUM(visit_total) AS visit_total')->groupBy('parent_id')->get();
-            if (!empty($result)) {
-                $result = array_column($result, null, 'parent_id');
-                foreach ($result as $key => $value) {
-                    $data = [];
-                    if (isset($value['sale_total'])) {
-                        $data['sale_total'] = (int) $value['sale_total'];
-                    }
-                    if (isset($value['visit_total'])) {
-                        $data['visit_total'] = (int) $value['visit_total'];
-                    }
-                    if (empty($data)) continue;
-                    $this->baseModel->updateDataById($key, $data);
-                }
-            }
-        }
-        return true;
+		$result = make('app/model/product/Spu')->field('cate_id, SUM(sale_total) AS sale_total, SUM(visit_total) AS visit_total')->where('status', 1)->groupBy('cate_id')->get();
+		if (!empty($result)) {
+			$result = array_column($result, null, 'cate_id');
+			foreach ($result as $key => $value) {
+				$data = [
+					'sale_total' => $value['sale_total'],
+					'visit_total' => $value['visit_total'],
+				];
+				$this->updateData($key, $data);
+			}
+		}
+		return true;
+    }
+
+    protected function getCacheKey($suffix='')
+    {
+    	return 'category:list-cache'.$suffix;
     }
 
 	public function getHotCategory($size=8)
 	{
-		$list = $this->field('(sale_total+visit_total) AS sort_number, cate_id, name, avatar')->where('parent_id', '>', 0)->orderBy(['sort_number'=>'desc', 'sort'=>'asc'])->page(1, $size)->get();
-		foreach ($list as $key => $value) {
-			if (empty($value['avatar'])) {
-				$value['avatar'] = siteUrl('image/common/noimg.png');
-			} else {
-				$value['avatar'] = mediaUrl($value['avatar'], 200);
+		$lanId = lanId();
+		$cacheKey = $this->getCacheKey('-hot-'.$lanId);
+		$list = redis()->get($cacheKey);
+		if (empty($list)) {
+			$list = $this->field('cate_id, avatar')->where('parent_id', '>', 0)->orderBy(['(sale_total+visit_total)'=>'desc', 'sort'=>'asc'])->page(1, $size)->get();
+			if (!empty($list)) {
+				$cateIdArr = array_column($list, 'cate_id');
+				$lanArr = make('app/model/CategoryLanguage')->where(['cate_id'=>['in', $cateIdArr], 'lan_id'=>$lanId])->field('cate_id,name')->get();
+				$lanArr = array_column($lanArr, 'name', 'cate_id');
+				foreach ($list as $key => $value) {
+					$value['name'] = $lanArr[$value['cate_id']] ?? '';
+					$value['url'] = router()->siteUrl($value['name'], 'category-'.$value['cate_id']);
+					$value['avatar'] = empty($value['avatar']) ? siteUrl('image/common/noimg.svg') : mediaUrl($value['avatar'], 200);
+					$list[$key] = $value;
+				}
 			}
-			$list[$key] = $value;
+			redis()->set($cacheKey, $list, strtotime(date('Y-m-d', strtotime('+1 day')).' 00:00:00')-time());
 		}
+
 		return $list;
 	}
 }

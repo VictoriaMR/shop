@@ -34,7 +34,7 @@ function redirect($url){
 function make($name){
 	return \App::make($name);
 }
-function view(){
+function view() {
 	return \App::make('frame/View');
 }
 function html(){
@@ -64,7 +64,7 @@ function url($url=null, $param=null) {
 function siteUrl($name){
 	return env('APP_DOMAIN').$name.'?v='.config('version.'.APP_TEMPLATE_TYPE);
 }
-function mediaUrl($url='', $width=''){
+function mediaUrl($url, $width=''){
 	if (!empty($width)) {
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
@@ -147,4 +147,14 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 function getUniqueName(){
 	$arr = explode(' ', microtime());
 	return str_replace('.', '', $arr[0] + $arr[1]);
+}
+function lanId(){
+	$lanId = session()->get('site_language_id');
+	if (empty($lanId)) {
+		$lanId = defined('APP_LANGUAGE') ? APP_LANGUAGE : 2;
+	}
+	return $lanId;
+}
+function siteId(){
+	return APP_SITE_ID;
 }

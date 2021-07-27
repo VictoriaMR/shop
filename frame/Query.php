@@ -31,7 +31,9 @@ final class Query
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) {
-					$this->_where[] = [$key, $value[0], $value[1]];
+					if (!empty($value[1])) {
+						$this->_where[] = [$key, $value[0], $value[1]];
+					}
 				} else {
 					$this->_where[] = [$key, '=', $value];
 				}

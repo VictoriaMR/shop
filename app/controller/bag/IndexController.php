@@ -1,22 +1,19 @@
 <?php
 
 namespace app\controller\bag;
-
 use app\controller\Controller;
-use frame\Html;
 
 class IndexController extends Controller
 {
 	public function index()
 	{	
-		Html::addCss();
-		Html::addJs();
-		Html::addJs('cart');
+		html()->addCss();
+		html()->addJs();
 
 		//分类列表
-		$hotCategory = make('App\Services\CategoryService')->getHotCategory();
+		$hotCategory = make('app/service/CategoryService')->getHotCategory(16);
+		$this->assign('hot_category', array_chunk($hotCategory, 2));
 
-		$this->assign('hot_category', $hotCategory);
-		return view();
+		$this->view();
 	}
 }

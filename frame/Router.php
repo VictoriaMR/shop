@@ -27,50 +27,23 @@ final class Router
 			if (empty($pathInfo['path'])) {
 				$this->_route['path'] = 'index';
 				$this->_route['func'] = 'index';
-			} else {
-				$pathInfo['path'] = str_replace(env('TEMPLATE_SUFFIX'), '', $pathInfo['path']);
-				if (strpos($pathInfo['path'], '-') === false) {
-					$pathInfo = explode(DS, $pathInfo['path']);
-			        switch (count($pathInfo)) {
-			        	case 0:
-			        		$this->_route['path'] = 'index';
-				        	$this->_route['func'] = 'index';
-			        		break;
-			        	case 1:
-			        		$this->_route['path'] = implode(DS, $pathInfo);
-				        	$this->_route['func'] = 'index';
-			        		break;
-			        	default:
-			        		$func = array_pop($pathInfo);
-			        		$this->_route['path'] = implode(DS, $pathInfo);
-			        		$this->_route['func'] = $func;
-			        		break;
-			        }
-				} else {
-					$pathInfo = explode('-', $pathInfo['path']);
-					$temp = array_pop($pathInfo);
-					//是页码
-					if (strlen($temp) > 1 && strpos($temp, 'p') === 0) {
-						$_GET['page'] = (int)substr($temp, 1);
-						$temp = array_pop($pathInfo);
+			} elseif(defined('TEMPLATE_SUFFIX')){
+				$pathInfo['path'] = str_replace('.'.TEMPLATE_SUFFIX, '', $pathInfo['path']);
+				$routerArr = explode('-', $pathInfo['path']);
+				if (!empty($routerArr)) {
+					$routerArr = array_reverse($routerArr);
+					foreach ($routerArr as $key => $value) {
+						if ($key % 2 > 0) {
+							if (in_array($value, ['page', 'size'])) {
+								$_GET[$value] = $routerArr[$key-1];
+							} else {
+								$this->_route['path'] = $value;
+								$this->_route['func'] = 'index';
+								$_GET['id'] = $routerArr[$key-1];
+								break;
+							}
+						}
 					}
-					$id = (int) $temp;
-					$temp = array_pop($pathInfo);
-					switch ($temp) {
-						case 'c':
-							$this->_route['path'] = 'category';
-							$_GET['cid'] = $id;
-							break;
-						case 'p':
-						case 'k':
-							$this->_route['path'] = 'product';
-							$_GET['s'.$temp.'u_id'] = $id;
-							break;
-						default:
-							$this->_route['path'] = 'index';
-							break;
-					}
-					$this->_route['func'] = 'index';
 				}
 			}
 		}
@@ -81,9 +54,12 @@ final class Router
 		return $this;
 	}
 
-	public function getRoute()
+	public function getRoute($name='')
 	{
-		return $this->_route;
+		if (empty($name)) {
+			return $this->_route;
+		}
+		return $this->_route[$name] ?? '';
 	}
 
 	public function buildUrl($url=null, $param=null)
@@ -92,7 +68,7 @@ final class Router
 			$url = $this->_route['path'].DS.$this->_route['func'];
 		}
 		if (!empty($url)) {
-			$url .= empty(env('TEMPLATE_SUFFIX')) ? '' : '.'.env('TEMPLATE_SUFFIX');
+			$url .= defined('TEMPLATE_SUFFIX') ? '.'.TEMPLATE_SUFFIX : '';
 		}
 		if (empty($param)) {
 			$param = iget();
@@ -101,5 +77,23 @@ final class Router
 			$url .= '?' . http_build_query($param);
 		}
 		return env('APP_DOMAIN').$url;
+	}
+
+	public function siteUrl($name, $type, $param=[])
+	{
+		$name = preg_replace('/[^-A-Za-z0-9 ]/', '', strtolower($name));
+		$name = preg_replace('/( ){2,}/', ' ', $name);
+		$name = str_replace(' ', '-' , $name);
+		$name .= '-'.$type;
+		if (isset($param['page'])) {
+			$name .= '-page-'.$param['page'];
+		}
+		if (isset($param['size'])) {
+			$name .= '-size-'.$param['size'];
+		}
+		if (defined('TEMPLATE_SUFFIX')) {
+			$name .= '.'.TEMPLATE_SUFFIX;
+		}
+		return env('APP_DOMAIN').$name;
 	}
 }

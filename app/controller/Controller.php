@@ -50,7 +50,7 @@ class Controller
         $this->result('10000', [], ['message' => $message]);
     }
 
-    protected function assign($name, $value = null)
+    protected function assign($name, $value=null)
     {
         return view()->assign($name, $value);
     }

@@ -4,23 +4,12 @@ namespace app\middleware;
 
 class VerifyToken
 {
-	private $except = [
-		'admin' => [
-			'login' => true,
-		],
-		'prettybag' => [
-			'index' => true,
-			'login' => true,
-		],
-	];
-
 	public function handle($request)
 	{
 		if ($this->inExceptArray($request)) {
 			return true;
 		}
 		$loginKey = APP_TEMPLATE_TYPE.'_info';
-		//检查登录状态
 		if (empty(session()->get($loginKey))) {
 			session()->set('callback_url', rtrim($_SERVER['REQUEST_URI'].'?'.$_SERVER['QUERY_STRING']), '?');
 			if (IS_AJAX) {
@@ -38,14 +27,16 @@ class VerifyToken
 	{
 		//没有在排除的都要求登录
 		$class = strtolower($route['class']);
-		if (empty($this->except[$class])) {
-			return false;
+		if ($class == 'admin') {
+			$except = config('except.admin');
+		} else {
+			$except = config('except.default');
 		}
 		$path = strtolower($route['path']);
-		if (!empty($this->except[$class][$path])) {
+		if (!empty($except[$path])) {
 			return true;
 		}
-		if (!empty($this->except[$class][$path.'/'.$route['func']])) {
+		if (!empty($except[$path.'/'.$route['func']])) {
 			return true;
 		}
 		return false;
