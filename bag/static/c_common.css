@@ -39,8 +39,9 @@ body {
 	background: #f5f5f5
 }
 .layer {
-	max-width: 1200px;
-	margin: 0 auto
+	max-width: 1300px;
+	margin: 0 auto;
+	margin: 0 10px;
 }
 .left {
 	float: left
@@ -70,226 +71,226 @@ body {
 	font-family: 'Open Sans-extraBold'
 }
 .f12 {
-	font-size: .12rem
+	font-size: 12px
 }
 .f14 {
-	font-size: .14rem
+	font-size: 14px
 }
 .f16 {
-	font-size: .16rem
+	font-size: 16px
 }
 .f18 {
-	font-size: .18rem
+	font-size: 18px
 }
 .f20 {
-	font-size: .20rem
+	font-size: 20px
 }
 .f22 {
-	font-size: .22rem
+	font-size: 22px
 }
 .f24 {
-	font-size: .24rem
+	font-size: 24px
 }
 .f26 {
-	font-size: .26rem
+	font-size: 26px
 }
 .f28 {
-	font-size: .28rem
+	font-size: 28px
 }
 .f30 {
-	font-size: .30rem
+	font-size: 30px
 }
 .f32 {
-	font-size: .32rem
+	font-size: 32px
 }.mb2 {
-	margin-top: .02rem
+	margin-top: 02px
 }
 .mb4 {
-	margin-top: .04rem
+	margin-top: 04px
 }
 .mb6 {
-	margin-top: .06rem
+	margin-top: 06px
 }
 .mb8 {
-	margin-top: .08rem
+	margin-top: 08px
 }
 .mb10 {
-	margin-top: .10rem
+	margin-top: 10px
 }
 .mb12 {
-	margin-top: .12rem
+	margin-top: 12px
 }
 .mb14 {
-	margin-top: .14rem
+	margin-top: 14px
 }
 .mb16 {
-	margin-top: .16rem
+	margin-top: 16px
 }
 .mb18 {
-	margin-top: .18rem
+	margin-top: 18px
 }
 .mb20 {
-	margin-top: .20rem
+	margin-top: 20px
 }
 .mb22 {
-	margin-top: .22rem
+	margin-top: 22px
 }
 .mb24 {
-	margin-top: .24rem
+	margin-top: 24px
 }
 .mb26 {
-	margin-top: .26rem
+	margin-top: 26px
 }
 .mb28 {
-	margin-top: .28rem
+	margin-top: 28px
 }
 .mb30 {
-	margin-top: .30rem
+	margin-top: 30px
 }
 .mb32 {
-	margin-top: .32rem
+	margin-top: 32px
 }
 .ml2 {
-	margin-left: .02rem
+	margin-left: 02px
 }
 .ml4 {
-	margin-left: .04rem
+	margin-left: 04px
 }
 .ml6 {
-	margin-left: .06rem
+	margin-left: 06px
 }
 .ml8 {
-	margin-left: .08rem
+	margin-left: 08px
 }
 .ml10 {
-	margin-left: .10rem
+	margin-left: 10px
 }
 .ml12 {
-	margin-left: .12rem
+	margin-left: 12px
 }
 .ml14 {
-	margin-left: .14rem
+	margin-left: 14px
 }
 .ml16 {
-	margin-left: .16rem
+	margin-left: 16px
 }
 .ml18 {
-	margin-left: .18rem
+	margin-left: 18px
 }
 .ml20 {
-	margin-left: .20rem
+	margin-left: 20px
 }
 .ml22 {
-	margin-left: .22rem
+	margin-left: 22px
 }
 .ml24 {
-	margin-left: .24rem
+	margin-left: 24px
 }
 .ml26 {
-	margin-left: .26rem
+	margin-left: 26px
 }
 .ml28 {
-	margin-left: .28rem
+	margin-left: 28px
 }
 .ml30 {
-	margin-left: .30rem
+	margin-left: 30px
 }
 .ml32 {
-	margin-left: .32rem
+	margin-left: 32px
 }
 .pb2 {
-	padding-bottom: .02rem
+	padding-bottom: 02px
 }
 .pb4 {
-	padding-bottom: .04rem
+	padding-bottom: 04px
 }
 .pb6 {
-	padding-bottom: .06rem
+	padding-bottom: 06px
 }
 .pb8 {
-	padding-bottom: .08rem
+	padding-bottom: 08px
 }
 .pb10 {
-	padding-bottom: .10rem
+	padding-bottom: 10px
 }
 .pb12 {
-	padding-bottom: .12rem
+	padding-bottom: 12px
 }
 .pb14 {
-	padding-bottom: .14rem
+	padding-bottom: 14px
 }
 .pb16 {
-	padding-bottom: .16rem
+	padding-bottom: 16px
 }
 .pb18 {
-	padding-bottom: .18rem
+	padding-bottom: 18px
 }
 .pb20 {
-	padding-bottom: .20rem
+	padding-bottom: 20px
 }
 .pb22 {
-	padding-bottom: .22rem
+	padding-bottom: 22px
 }
 .pb24 {
-	padding-bottom: .24rem
+	padding-bottom: 24px
 }
 .pb26 {
-	padding-bottom: .26rem
+	padding-bottom: 26px
 }
 .pb28 {
-	padding-bottom: .28rem
+	padding-bottom: 28px
 }
 .pb30 {
-	padding-bottom: .30rem
+	padding-bottom: 30px
 }
 .pb32 {
-	padding-bottom: .32rem
+	padding-bottom: 32px
 }
 .pl2 {
-	padding-left: .02rem
+	padding-left: 02px
 }
 .pl4 {
-	padding-left: .04rem
+	padding-left: 04px
 }
 .pl6 {
-	padding-left: .06rem
+	padding-left: 06px
 }
 .pl8 {
-	padding-left: .08rem
+	padding-left: 08px
 }
 .pl10 {
-	padding-left: .10rem
+	padding-left: 10px
 }
 .pl12 {
-	padding-left: .12rem
+	padding-left: 12px
 }
 .pl14 {
-	padding-left: .14rem
+	padding-left: 14px
 }
 .pl16 {
-	padding-left: .16rem
+	padding-left: 16px
 }
 .pl18 {
-	padding-left: .18rem
+	padding-left: 18px
 }
 .pl20 {
-	padding-left: .20rem
+	padding-left: 20px
 }
 .pl22 {
-	padding-left: .22rem
+	padding-left: 22px
 }
 .pl24 {
-	padding-left: .24rem
+	padding-left: 24px
 }
 .pl26 {
-	padding-left: .26rem
+	padding-left: 26px
 }
 .pl28 {
-	padding-left: .28rem
+	padding-left: 28px
 }
 .pl30 {
-	padding-left: .30rem
+	padding-left: 30px
 }
 .pl32 {
-	padding-left: .32rem
+	padding-left: 32px
 }

@@ -1,3 +1,7 @@
+.category-content {
+	position: relative;
+	margin-top: -0.1rem;
+}
 .hot-category-list {
 	width: 100%;
 	white-space: nowrap;
@@ -6,6 +10,7 @@
 	font-size: 0;
 	background: #FFFFFF;
 	padding-bottom: 0.12rem;
+	p
 }
 .hot-category-list::-webkit-scrollbar {
 	width: 0.04rem;
@@ -57,4 +62,41 @@
 	background-position: center center;
 	background-size: 100%;
 	margin-bottom: -2px;
+}
+.banner {
+	height: 1.2rem;
+	overflow: hidden;
+}
+.banner img {
+	width: 100% !important;
+	height: 100% !important;
+}
+.banner li a {
+	display: table-cell;
+	width: 3.75rem;
+	height: 1.2rem;
+	text-align: center;
+	vertical-align: middle;
+}
+.pop-content {
+	position: absolute;
+	width: 100%;
+	z-index: 100;
+	left: 0px;
+	bottom: 0px;
+	text-align: center;
+}
+.pop-content li {
+	display: inline-block;
+    height: 0.08rem;
+    width: 0.08rem;
+    border-radius: 100%;
+    background-color: #ffffff;
+    margin: 0.1rem 0.02rem;
+    opacity: 0.5;
+    transition-duration: 300ms;
+}
+.pop-content li.active {
+	background-color: #ff5000;
+	opacity: 1;
 }

@@ -6,4 +6,4 @@
 /.env
 /composer.lock
 /admin/static
-/home/static
+/bag/static
