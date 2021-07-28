@@ -5,16 +5,14 @@
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
-body,h1,h2,h3,h4,h5,h6,p,dl,dt,dd,ul,ol,li,form,button,input,textarea,th,td {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box
+body{
+	font: 400 0.12rem 'Open Sans';
+	color: #333;
+	background-color: #f5f5f5;
+	min-height: 100vh;
 }
-body {
-	font-size: 0.12rem;
-	font-family: 'Open Sans',sans-serif;
-	font-weight: normal;
-	color: #333
+button,input{
+	font: 400 0.12rem 'Open Sans';
 }
 ol,ul,li {
 	list-style: none
@@ -25,10 +23,11 @@ img {
 }
 button,input,select,textarea {
 	font-size: 100%;
-	-webkit-appearance: none
+	-webkit-appearance: none;
+	border: none;
 }
 button,input,select,textarea:focus {
-	outline: none
+	outline: none;
 }
 table {
 	border-collapse: collapse;
@@ -77,7 +76,9 @@ a {
 	height: 100%;
 	width: 100%;
 	border: none;
-	padding: 0 0.08rem
+	padding: 0 0.08rem;
+	font-size: 0.14rem;
+	color: #666666;
 }
 .center {
 	margin: 0 auto
@@ -98,6 +99,35 @@ a {
 }
 .relative {
 	position: relative;
+}
+.bg-f {
+	background-color: #ffffff;
+}
+.bg-f5 {
+	background-color: #f5f5f5;
+}
+.c6 {
+	color: #666666;
+}
+.c40 {
+	color: #404040;
+}
+.btn {
+	height: 0.4rem;
+	font-weight: 700;
+}
+.btn[disabled] {
+	background-color: #666666;
+}
+.hide,.hidden {
+	display: none;
+}
+.btn-black {
+	background-color: #404040;
+	color: #ffffff;
+}
+.flex {
+	display: flex;
 }
 .cover {
 	width: 100%;
@@ -152,6 +182,9 @@ a {
 .f800 {
 	font-family: 'Open Sans-extraBold'
 }
+.f0 {
+	font-size: 0;
+}
 .f11 {
 	font-size: .11rem
 }
@@ -187,52 +220,52 @@ a {
 }
 .f32 {
 	font-size: .32rem
-}.mb2 {
+}.mt2 {
 	margin-top: .02rem
 }
-.mb4 {
+.mt4 {
 	margin-top: .04rem
 }
-.mb6 {
+.mt6 {
 	margin-top: .06rem
 }
-.mb8 {
+.mt8 {
 	margin-top: .08rem
 }
-.mb10 {
+.mt10 {
 	margin-top: .10rem
 }
-.mb12 {
+.mt12 {
 	margin-top: .12rem
 }
-.mb14 {
+.mt14 {
 	margin-top: .14rem
 }
-.mb16 {
+.mt16 {
 	margin-top: .16rem
 }
-.mb18 {
+.mt18 {
 	margin-top: .18rem
 }
-.mb20 {
+.mt20 {
 	margin-top: .20rem
 }
-.mb22 {
+.mt22 {
 	margin-top: .22rem
 }
-.mb24 {
+.mt24 {
 	margin-top: .24rem
 }
-.mb26 {
+.mt26 {
 	margin-top: .26rem
 }
-.mb28 {
+.mt28 {
 	margin-top: .28rem
 }
-.mb30 {
+.mt30 {
 	margin-top: .30rem
 }
-.mb32 {
+.mt32 {
 	margin-top: .32rem
 }
 .ml2 {

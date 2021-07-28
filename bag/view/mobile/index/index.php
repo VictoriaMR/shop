@@ -2,7 +2,7 @@
 <div class="banner relative">
 	<ul>
 		<?php foreach ($banner as $key => $value){?>
-		<li class="sw-slides" data-index="<?php echo $key;?>">
+		<li class="slider">
 			<a href="<?php echo $value['url'];?>">
 				<img src="<?php echo $value['image'];?>">
 			</a>
@@ -11,7 +11,7 @@
 	</ul>
 	<ol class="pop-content">
 		<?php foreach ($banner as $key => $value){?>
-		<li <?php echo $key==0?'class="active"':'';?> data-index="<?php echo $key;?>"></li>
+		<li <?php echo $key==0?'class="active"':'';?>></li>
 		<?php } ?>
 	</ol>
 </div>
@@ -36,5 +36,5 @@
 </div>
 <?php } ?>
 <script type="text/javascript">
-swipeslider($('.banner'));
+$('.banner').slider();
 </script>

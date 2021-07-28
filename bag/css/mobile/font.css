@@ -20,6 +20,9 @@
 .f800 {
 	font-family: 'Open Sans-extraBold'
 }
+.f0 {
+	font-size: 0;
+}
 .f11 {
 	font-size: .11rem
 }

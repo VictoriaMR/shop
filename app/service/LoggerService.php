@@ -14,8 +14,8 @@ class LoggerService extends Base
 	{
 		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
 		$insert = [
-			'mem_id' => $info['mem_id'] ?? '',
-			'lan_id' => session()->get('site_language_id'),
+			'mem_id' => $info['mem_id'] ?? 0,
+			'lan_id' => lanId(),
 			'is_moblie' => IS_MOBILE ? 1 : 0,
 			'ip' => request()->getIp(),
 			'path' => $_SERVER['REQUEST_URI'] ?? '',

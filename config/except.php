@@ -9,5 +9,6 @@ return [
 		'category' => true,
 		'product' => true,
 		'search' => true,
+		'api' => true,
 	],
 ];

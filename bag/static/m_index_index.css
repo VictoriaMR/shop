@@ -10,7 +10,7 @@
 	font-size: 0;
 	background: #FFFFFF;
 	padding-bottom: 0.12rem;
-	p
+	padding-top: 0.08rem;
 }
 .hot-category-list::-webkit-scrollbar {
 	width: 0.04rem;
@@ -18,7 +18,7 @@
 }
 .hot-category-list::-webkit-scrollbar-track {
 	background: #d4d8de;
-	margin:  0 1.6rem;
+	margin:  0 40vw;
 	border-radius: 0.03rem;
 }
 .hot-category-list::-webkit-scrollbar-thumb {
@@ -64,19 +64,23 @@
 	margin-bottom: -2px;
 }
 .banner {
-	height: 1.2rem;
 	overflow: hidden;
 }
-.banner img {
-	width: 100% !important;
-	height: 100% !important;
+.banner ul {
+	white-space: nowrap;
+	position: relative;
+	font-size: 0;
+	width: 100%;
+}
+.banner li {
+	display: inline-block;
+	vertical-align: middle;
+	width: 100%;
 }
 .banner li a {
-	display: table-cell;
-	width: 3.75rem;
-	height: 1.2rem;
+	display: block;
+	width: 100%;
 	text-align: center;
-	vertical-align: middle;
 }
 .pop-content {
 	position: absolute;

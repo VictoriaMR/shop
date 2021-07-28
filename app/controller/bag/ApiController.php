@@ -17,7 +17,7 @@ class ApiController extends Controller
 			'path' => trim($url['path'] ?? '', '/'),
 			'query' => $url['query'] ?? '',
 		];
-		make('App\Services\LoggerService')->addLog($data);
+		make('app/service/LoggerService')->addLog($data);
 		$this->success();
 	}
 }

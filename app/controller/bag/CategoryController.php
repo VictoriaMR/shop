@@ -14,6 +14,8 @@ class CategoryController extends Controller
 		html()->addCss();
 		html()->addJs();
 
+		$cateList = make('app/service/CategoryService')->getList(['parent_id'=>$id]);
+
 
 		$this->view();
 	}
