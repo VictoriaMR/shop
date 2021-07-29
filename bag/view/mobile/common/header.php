@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html style="font-size: 100px;">
+<html style="font-size: 100px">
 <head>
 	<title><?php echo $_title ?? '';?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />

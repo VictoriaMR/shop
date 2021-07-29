@@ -8,19 +8,19 @@
 				<p class="name">Email</p>
 				<div class="group flex">
 					<input type="text" name="email" class="input" placeholder="name@example.com" />
-					<button class="btn btn-black">Send</button>
+					<button class="btn btn-black send-email">Send</button>
 				</div>
 			</div>
 			<div class="verify mt18">
 				<div class="verify-code">
 					<p class="name">Verification code</p>
 					<div class="input-group f0 flex">
-						<input type="text" class="input" maxlength="1">
-						<input type="text" class="input" maxlength="1">
-						<input type="text" class="input" maxlength="1">
-						<input type="text" class="input" maxlength="1">
-						<input type="text" class="input" maxlength="1">
-						<input type="text" class="input" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1">
 					</div>
 				</div>
 				<div class="password hide">
@@ -87,3 +87,8 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+$(function(){
+	LOGIN.init();
+});
+</script>

@@ -20,7 +20,8 @@
 	padding: 0 0.16rem;
 }
 #login-page .email .btn {
-	width: 0.62rem;
+	min-width: 0.62rem;
+	padding: 0 0.16rem;
 }
 #login-page .content .input:focus {
 	border-color: #000000;
@@ -39,6 +40,14 @@
 }
 #login-page .input-group.focus .input {
 	border-color: #000000;
+}
+#login-page .error .input {
+	border-color: #EB2027;
+}
+#login-page .error-msg {
+	font-weight: 700;
+	color: #EB2027;
+	margin-top: 0.02rem;
 }
 #login-page .change-verify-btn,
 .change-login-sign {
@@ -87,4 +96,41 @@
 #login-page .agreement .iconfont {
 	position: relative;
 	top: 0.01rem;
+}
+
+/*tips*/
+#message-tips {
+	padding: 0.24rem 0.3rem 0.24rem 0.16rem;
+	position: fixed;
+	top: 0.16rem;
+	left: 0.16rem;
+	color: #fff;
+	width: calc(100% - 0.32rem);
+}
+#message-tips.error {
+	background-color: #FF898A;
+}
+#message-tips.success {
+	background-color: #74CAC9;
+}
+#message-tips .icon-content {
+	width: 0.4rem;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: left;
+	font-size: 0.28rem;
+}
+#message-tips .text-content {
+	width: calc(100% - 0.4rem);
+	display: table-cell;
+	vertical-align: middle;
+	text-align: left;
+	font-size: 0.14rem;
+}
+#message-tips .icon-close {
+	font-size: 0.16rem;
+	position: absolute;
+	top: 0.12rem;
+	right: 0.12rem;
+	font-weight: 600;
 }

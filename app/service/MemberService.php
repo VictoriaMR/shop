@@ -6,7 +6,11 @@ use app\service\Base;
 class MemberService extends Base
 {	
 	protected $login_key;
-	protected function getModel(){}
+	
+	protected function getModel()
+	{
+		$this->baseModel = make('app/model/Member');
+	}
 
 	public function create($data)
 	{
