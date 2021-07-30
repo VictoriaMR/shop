@@ -1,11 +1,28 @@
 <?php 
 
-namespace app\service;
+namespace app\service\email;
+use app\service\Base;
 
-use app\service\Base as BaseService;
-
-class EmailService extends BaseService
+class EmailService extends Base
 {
+	protected function getModel()
+	{
+		$this->baseModel = make('app/model/email/Email');
+	}
+
+	public function sendLoginCode($memId, $code)
+	{
+		$data = make('app/service/email/UsedService')->getSiteAccountId();
+		if (empty($data)) {
+			return false;
+		}
+		$data['type'] = $this->getConst('TYPE_LOGIN_SEND_CODE');
+		$data['mem_id'] = $memId;
+		$data['content'] = $code;
+		$data['add_time'] = now();
+		return $this->insert($data);
+	}
+
 	public function send($to, $content, $form='')
 	{
 		if (empty($to) || empty($content)) {

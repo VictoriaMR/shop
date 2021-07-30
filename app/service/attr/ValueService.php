@@ -1,13 +1,13 @@
 <?php 
 
-namespace app\service;
+namespace app\service\attr;
 
-use app\service\Base as BaseService;
+use app\service\Base
 
 /**
  * 	属性值类
  */
-class AttrvalueService extends BaseService
+class ValueService extends Base
 {
 	const CACHE_KEY = 'PRODUCT_ATTRVALUE_CACHE';
 

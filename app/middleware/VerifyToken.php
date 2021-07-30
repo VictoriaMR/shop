@@ -9,9 +9,8 @@ class VerifyToken
 		if ($this->inExceptArray($request)) {
 			return true;
 		}
-		$loginKey = APP_TEMPLATE_TYPE.'_info';
-		if (empty(session()->get($loginKey))) {
-			session()->set('callback_url', rtrim($_SERVER['REQUEST_URI'].'?'.$_SERVER['QUERY_STRING']), '?');
+		if (empty(userId())) {
+			session()->set('callback_url', str_replace('login.html', '', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']));
 			if (IS_AJAX) {
 				header('Content-Type:application/json;charset=utf-8');
 				echo json_encode(['code'=>'10001', 'data'=>'', 'message' => 'need login'], JSON_UNESCAPED_UNICODE);

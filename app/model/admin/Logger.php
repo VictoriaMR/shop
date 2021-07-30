@@ -8,19 +8,20 @@ class Logger extends Base
 	protected $_connect = 'static';
 	protected $_table = 'admin_logger';
 	protected $_primaryKey = 'log_id';
+	
 	const TYPE_LOGIN = 0;
 	const TYPE_LOGOUT = 1;
 	const TYPE_LOGIN_FAIL = 2;
 	const TYPE_BEHAVIOR = 3;
 
-	public function addLog(array $data)
+	public function addLog(array $data=[])
 	{
-		$data['mem_id'] = session()->get(APP_TEMPLATE_TYPE.'_info')['mem_id'] ?? '';
-		$data['ip'] = request()->getIp();
+		$data['mem_id'] = useId();
 		$data['browser'] = request()->getBrowser();
 		$data['system'] = request()->getSystem();
 		$data['agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
-		$data['param'] = empty($param = request()->input()) ? '' : json_encode($param, JSON_UNESCAPED_UNICODE);
+		$data['path'] = implode('/', router()->getRoute());
+		$data['ip'] = request()->getIp();
 		$data['add_time'] = now();
 		return $this->insert($data);
 	}

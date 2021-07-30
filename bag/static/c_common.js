@@ -29,8 +29,15 @@ const VERIFY = {
 	password: function (password) {
 		return VERIFY.check(password, /^[0-9A-Za-z]{6,}/);
 	},
-	code: function(code) {
-		return VERIFY.check(code, /^[a-zA-Z0-9]{4,}/);
+	code: function(code, len) {
+		if (typeof len === 'undefined') {
+			len = 4;
+		}
+		if (len === 4) {
+			return VERIFY.check(code, /^[a-zA-Z0-9]{4}/);
+		} else if(len === 6) {
+			return VERIFY.check(code, /^[a-zA-Z0-9]{6}/);
+		}
 	},
 	check: function(input, reg) {
 		input = input.trim();

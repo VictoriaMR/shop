@@ -3,7 +3,7 @@
 namespace app\service\admin;
 use app\service\Base;
 
-class LogService extends Base
+class LoggerService extends Base
 {	
     protected function getModel()
     {
@@ -13,10 +13,10 @@ class LogService extends Base
     public function getTypeList()
     {
         return [
-            $this->baseModel::TYPE_LOGIN => '登入',
-            $this->baseModel::TYPE_LOGOUT => '登出',
-            $this->baseModel::TYPE_LOGIN_FAIL => '登入失败',
-            $this->baseModel::TYPE_BEHAVIOR => '操作',
+            $this->getConst('TYPE_LOGIN') => '登入',
+            $this->getConst('TYPE_LOGOUT') => '登出',
+            $this->getConst('TYPE_LOGIN_FAIL') => '登入失败',
+            $this->getConst('TYPE_BEHAVIOR') => '操作',
         ];
     }
 

@@ -19,6 +19,11 @@ class Base
 		return $this->_instance;
 	}
 
+	public function getConst($name)
+	{
+		return constant(get_class($this).'::'.$name);
+	}
+
 	public function loadData($where, $field='')
 	{
 		if (!is_array($where)) {

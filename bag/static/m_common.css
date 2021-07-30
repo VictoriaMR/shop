@@ -119,6 +119,7 @@ a {
 .btn {
 	height: 0.4rem;
 	font-weight: 700;
+	white-space: nowrap;
 }
 .btn[disabled] {
 	background-color: #666666;

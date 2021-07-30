@@ -18,12 +18,13 @@
 }
 .hot-category-list::-webkit-scrollbar-track {
 	background: #d4d8de;
-	margin:  0 40vw;
+	margin: 0 40vw;
 	border-radius: 0.03rem;
 }
 .hot-category-list::-webkit-scrollbar-thumb {
-	background: #ff6d2a;
+	background: #5d656b;
 	border-radius: 0.06rem;
+	opacity: 0.8;
 }
 .hot-category-list li {
 	display: inline-block;
@@ -101,6 +102,6 @@
     transition-duration: 300ms;
 }
 .pop-content li.active {
-	background-color: #ff5000;
-	opacity: 1;
+	background-color: #5d656b;
+	opacity: 0.8;
 }

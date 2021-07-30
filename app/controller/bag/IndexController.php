@@ -6,7 +6,7 @@ use app\controller\Controller;
 class IndexController extends Controller
 {
 	public function index()
-	{	
+	{
 		html()->addCss();
 		html()->addJs();
 		html()->addJs('slider');

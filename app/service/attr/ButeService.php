@@ -1,13 +1,13 @@
 <?php 
 
-namespace app\service;
+namespace app\service\attr;
 
-use app\service\Base as BaseService;
+use app\service\Base;
 
 /**
  * 	属性类
  */
-class AttributeService extends BaseService
+class ButeService extends Base
 {
 	const CACHE_KEY = 'PRODUCT_ATTRIBUTE_CACHE';
 

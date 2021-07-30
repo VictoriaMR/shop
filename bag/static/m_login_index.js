@@ -141,7 +141,8 @@ const LOGIN = {
 			_this.loading(_thisObj, 'LOGGING IN...');
 			$.post(URI+'login/login', param, function(res) {
 				if (res.code === 200 || res.code === '200') {
-					window.history.back();
+					localStorage.setItem('login_token', res.data.token);
+					window.location.href = res.data.url ? res.data.url : URI;
 				} else {
 					_this.loaded(_thisObj);
 					for (let i in res.message) {
@@ -159,6 +160,7 @@ const LOGIN = {
 			btnObj.attr('disabled', true);
 			btnObj.data('text', btnObj.text())
 		}
+		btnObj.text(time + ' s');
 		const timeobj = setInterval(function() {
 			if (time === 1) {
 				clearInterval(timeobj);

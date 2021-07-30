@@ -4,9 +4,7 @@ namespace app\service;
 use app\service\Base;
 
 class MemberService extends Base
-{	
-	protected $login_key;
-	
+{
 	protected function getModel()
 	{
 		$this->baseModel = make('app/model/Member');
@@ -20,9 +18,9 @@ class MemberService extends Base
 		return $this->insertGetId($data);
 	}
 
-	public function login($mobile, $password, $type='mobile')
+	public function login($mobile, $password='', $type='mobile')
 	{
-		if (empty($mobile) || empty($password)) return false;
+		if (empty($mobile)) return false;
 		switch($type) {
 			case 'mobile':
 				$info = $this->loadData(['mobile'=>$mobile]);
@@ -33,27 +31,55 @@ class MemberService extends Base
 		}
 		if (empty($info)) return false;
 		if (empty($info['status'])) return false;
-		//验证密码
-		if ($this->checkPassword($password, $info['password'], $info['salt'])) {
-			$data = [
-				'mem_id' => $info['mem_id'],
-				'name' => $info['name'],
-				'nickname' => $info['nickname'],
-				'avatar' => $this->getAvatar($info['avatar'], $info['sex']),
-				'mobile' => $info['mobile'],
-				'email' => $info['email'],
-				'sex' => $info['sex'] ?? 0,
-			];
-			session()->set($this->login_key.'_info', $data);
-			$data = [
-				'remark' => '登录管理后台',
-				'type_id' => 0,
-			];
-			$this->updateData($info['mem_id'], ['login_time'=>now()]);
-			$this->addLog($data);
-			return true;
+		if (!empty($password) && !$this->checkPassword($password, $info['password'], $info['salt'])){
+			return false;
 		}
-		return false;
+		return $this->loginSuccess($info);
+	}
+
+	protected function loginSuccess($info)
+	{
+		$data = [
+			'mem_id' => $info['mem_id'],
+			'name' => $info['name'],
+			'nickname' => $info['nickname'],
+			'avatar' => $this->getAvatar($info['avatar'], $info['sex']),
+			'mobile' => $info['mobile'],
+			'email' => $info['email'],
+			'sex' => $info['sex'] ?? 0,
+		];
+		session()->set(APP_TEMPLATE_TYPE.'_info', $data);
+		$this->updateData($info['mem_id'], ['login_time'=>now()]);
+		$this->addLog(['type'=>0]);
+		$tokenCacheKey = $this->getCacheKey('', $info['mem_id']);
+		$token = redis(2)->get($tokenCacheKey);
+		if ($token) {
+			redis(2)->expire($tokenCacheKey, $this->getConst('TOKEN_CACHE_TIMEOUT'));
+			redis(2)->expire($this->getCacheKey($token), $this->getConst('TOKEN_CACHE_TIMEOUT'));
+		} else {
+			$token = randString(32);
+			redis(2)->set($tokenCacheKey, $token, $this->getConst('TOKEN_CACHE_TIMEOUT'));
+			redis(2)->set($this->getCacheKey($token), $info['mem_id'], $this->getConst('TOKEN_CACHE_TIMEOUT'));
+		}
+		return $token;
+	}
+
+	protected function getCacheKey($token='', $memId='')
+	{
+		return 'login-token:'.siteId().':'.$token.$memId;
+	}
+
+	public function loginByToken($token)
+	{
+		$tokenCacheKey = $this->getCacheKey($token);
+		$memId = redis(2)->get($tokenCacheKey);
+		if (empty($memId)) {
+			return false;
+		}
+		$info = $this->loadData($memId);
+		if (empty($info)) return false;
+		if (empty($info['status'])) return false;
+		return $this->loginSuccess($info);
 	}
 
 	protected function checkPassword($inPassword, $sourcePassword, $salt='')

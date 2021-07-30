@@ -39,12 +39,8 @@ class LoginController extends Controller
 		if ($result) {
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {
-			$data = [
-				'remark' => '登陆尝试失败',
-				'type_id' => 2,
-				'param' => json_encode(request()->input(), JSON_UNESCAPED_UNICODE),
-			];
-			$memberService->addLoginLog($data);
+			$logService = make('app\service\admin\LogService');
+        	$logService->addLog(['type_id' => $logService->getConst('TYPE_LOGIN_FAIL')]);
 			$this->error('账号或者密码不匹配!');
 		}
 	}
@@ -63,18 +59,9 @@ class LoginController extends Controller
 
 	public function logout()
 	{
-		$info = session()->get('admin_info');
-		if (empty($info)) {
-			$this->error('非登陆状态');
-		}
-		$logService = make('app\service\admin\LogService');
-		$data = [
-            'mem_id' => $info['mem_id'],
-            'remark' => '登出管理后台',
-            'type_id' => 1,
-        ];
-        $logService->addLog($data);
-		session()->set('admin_info');
+		$logService = make('app\service\admin\LoggerService');
+		$logService->addLog(['type' => $logService->getConst('TYPE_LOGOUT')]);
+		session()->set(APP_TEMPLATE_TYPE.'_info');
 		redirect(url('login'));
 	}
 

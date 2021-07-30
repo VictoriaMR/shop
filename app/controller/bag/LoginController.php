@@ -3,14 +3,15 @@
 namespace app\controller\bag;
 use app\controller\Controller;
 
-
 class LoginController extends Controller
 {
 	public function index()
 	{	
+		if (userId()) {
+			redirect();
+		}
 		html()->addCss();
 		html()->addJs();
-		session()->set(APP_TEMPLATE_TYPE.'_info');
 		$this->assign('_title', '登录');
 		$this->view();
 	}
@@ -35,37 +36,87 @@ class LoginController extends Controller
 			'email' => $email,
 			'status' => 1,
 		];
-		if (!$memberService->getCountData($where)) {
+		$memId = $memberService->loadData($where, 'mem_id')['mem_id'] ?? 0;
+		if (empty($memId)) {
 			$this->error('Sorry, we couldn\'t find an account matching that email.');
 		}
-		$cacheKey = 'login-code-'.siteId().':'.$email;
+		$cacheKey = $this->getCacheKey($email);
 		$ttl = redis()->TTL($cacheKey);
 		if ($ttl < -1) {
 			$code = randString(6, false, false);
 			$ttl = 120;
 			//todo send email
-			redis()->set($cacheKey, $code, $ttl);
+			$rst = make('app/service/email/EmailService')->sendLoginCode($memId, $code);
+			if ($rst) {
+				redis()->set($cacheKey, 1, $ttl);
+				redis()->set($this->getCacheKey($email, 'except'), $code, 600);
+			} else {
+				$this->error('Sorry, we couldn\'t sent to “'.$email.'”, Please select another way to login.');
+			}
 		}
 		$this->success($ttl, 'Verification code has been sent to “'.$email.'”, Please check your email.');
+	}
+
+	protected function getCacheKey($email, $type='limit')
+	{
+		return 'login-code-'.siteId().':'.$type.':'.$email;
 	}
 
 	public function login()
 	{
 		$param = ipost();
-		$code = ipost('verify_code');
-		$passwd = ipost('password');
 		$error = [];
 		if (empty($param['email'])) {
 			$error['email'] = 'This Email is required.';
 		}
-		if (isset($param['password']) && empty($param['password'])) {
+		if (empty($param['password']) && empty($param['verify_code'])) {
+			$error['verify_code'] = 'This Verification code is required.';
+		} elseif (isset($param['password']) && empty($param['password'])) {
 			$error['password'] = 'This Password is required.';
-		}
-		if (isset($param['verify_code']) && empty($param['verify_code'])) {
+		} elseif (isset($param['verify_code']) && empty($param['verify_code'])) {
 			$error['verify_code'] = 'This Verification code is required.';
 		}
 		if (!empty($error)) {
 			$this->error($error);
 		}
+		if (empty($param['password'])) {
+			$code = redis()->get($this->getCacheKey($param['email'], 'except'));
+			if ($code == $param['verify_code']) {
+				$rst = make('app/service/MemberService')->login($param['email'], '', 'email');
+			} else {
+				$this->error(['verify_code' => 'This Verification code was not match.']);
+			}
+		} else {
+			$rst = make('app/service/MemberService')->login($param['email'], $param['password'], 'email');
+		}
+		if (empty($rst)) {
+			$this->error('Sorry, login failed, Please try agin.');
+		}
+		redis()->del($this->getCacheKey($param['email']));
+		redis()->del($this->getCacheKey($param['email'], 'except'));
+		$this->success(['token'=>$rst, 'url'=>session()->get('callback_url')]);
+	}
+
+	public function loginToken()
+	{
+		$token = ipost('token');
+		if (empty($token)) {
+			return false;
+		}
+		$memberService = make('app/service/MemberService');
+		$rst = make('app/service/MemberService')->loginByToken($token);
+		if ($rst) {
+			$this->success(['url'=>session()->get('callback_url')]);
+		} else {
+			$this->error('login error');
+		}
+	}
+
+	public function logout()
+	{
+		$logService = make('app\service\LoggerService');
+		$logService->addLog(['type' => $logService->getConst('TYPE_LOGOUT')]);
+		session()->set(APP_TEMPLATE_TYPE.'_info');
+		redirect(url('login'));
 	}
 }

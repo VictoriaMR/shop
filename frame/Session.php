@@ -4,15 +4,28 @@ namespace frame;
 
 class Session
 {
-	public static function set($key='', $data=null)
+	public static function set($name=null, $data=null)
 	{
-		$_SESSION[$key] = $data;
+		if (is_null($name)) {
+			$_SESSION = null;
+		} else {
+			$_SESSION[$name] = $data;
+		}
 		return true;
 	}
 
-	public static function get($name='')
+	public static function get($name='', $default=null)
 	{
 		if (empty($name)) return $_SESSION;
-		return $_SESSION[$name] ?? null;
+		$name = explode('.', $name);
+		$data = $_SESSION;
+		foreach ($name as $value) {
+			if (isset($data[$value])) {
+				$data = $data[$value];
+			} else {
+				return $default;		
+			}
+		}
+		return $data;
 	}
 }

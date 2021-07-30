@@ -27,7 +27,11 @@ function config($name='', $replace=''){
 function env($name='', $replace=''){
 	return config('env.'.$name, $replace);
 }
-function redirect($url){
+function redirect($url=''){
+	if (empty($url)) {
+		$url = session()->get('callback_url');
+		$url = $url ? $url : env('APP_DOMAIN');
+	}
 	header('Location:'.$url);
 	exit();
 }
@@ -157,4 +161,7 @@ function lanId(){
 }
 function siteId(){
 	return APP_SITE_ID;
+}
+function userId(){
+	return session()->get(APP_TEMPLATE_TYPE.'_info.mem_id', 0);
 }

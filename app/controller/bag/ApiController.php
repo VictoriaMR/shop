@@ -1,7 +1,6 @@
 <?php
 
 namespace app\controller\bag;
-
 use app\controller\Controller;
 
 class ApiController extends Controller
@@ -9,15 +8,15 @@ class ApiController extends Controller
 	public function stat()
 	{
 		$url = ipost('url');
-		if (empty($url)) {
-			$this->error('参数不正确');
-		}
-		$url = parse_url($url);
+		$service = make('app/service/LoggerService');
 		$data = [
-			'path' => trim($url['path'] ?? '', '/'),
-			'query' => $url['query'] ?? '',
+			'path' => $url,
+			'type' => $service->getConst('TYPE_BEHAVIOR'),
 		];
-		make('app/service/LoggerService')->addLog($data);
+		$service->addLog($data);
+		if (empty(userId())) {
+			$this->error('need login');
+		}
 		$this->success();
 	}
 }
