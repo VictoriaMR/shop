@@ -77,7 +77,7 @@ final class Router
 		return $this->_route[$name] ?? '';
 	}
 
-	public function buildUrl($url=null, $param=null)
+	public function buildUrl($url=null, $param=null, $domain=null)
 	{
 		if (is_null($url)) {
 			$url = $this->_route['path'].DS.$this->_route['func'];
@@ -91,7 +91,7 @@ final class Router
 		if (!empty($param)) {
 			$url .= '?' . http_build_query($param);
 		}
-		return env('APP_DOMAIN').$url;
+		return (is_null($domain) ? env('APP_DOMAIN') : $domain).$url;
 	}
 
 	public function siteUrl($name, $type, $param=[])

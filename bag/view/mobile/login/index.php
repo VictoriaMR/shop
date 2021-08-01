@@ -15,18 +15,18 @@
 				<div class="verify-code">
 					<p class="name">Verification code</p>
 					<div class="input-group f0 flex">
-						<input type="text" class="input" name="verify_code" maxlength="1">
-						<input type="text" class="input" name="verify_code" maxlength="1">
-						<input type="text" class="input" name="verify_code" maxlength="1">
-						<input type="text" class="input" name="verify_code" maxlength="1">
-						<input type="text" class="input" name="verify_code" maxlength="1">
-						<input type="text" class="input" name="verify_code" maxlength="1">
+						<input type="text" class="input" name="verify_code" maxlength="1" autocomplete="off">
+						<input type="text" class="input" name="verify_code" maxlength="1" autocomplete="off">
+						<input type="text" class="input" name="verify_code" maxlength="1" autocomplete="off">
+						<input type="text" class="input" name="verify_code" maxlength="1" autocomplete="off">
+						<input type="text" class="input" name="verify_code" maxlength="1" autocomplete="off">
+						<input type="text" class="input" name="verify_code" maxlength="1" autocomplete="off">
 					</div>
 				</div>
 				<div class="password hide">
 					<p class="name">Password</p>
 					<div class="group">
-						<input type="password" name="password" class="input"/>
+						<input type="password" name="password" class="input" autocomplete="off" />
 					</div>
 				</div>
 				<div class="mt18">
@@ -61,19 +61,19 @@
 			<div class="email">
 				<p class="name">Email</p>
 				<div class="group">
-					<input type="text" name="email" class="input" placeholder="name@example.com" />
+					<input type="text" name="email" class="input" placeholder="name@example.com" autocomplete="off" />
 				</div>
 			</div>
 			<div class="password mt18">
 				<p class="name">Password</p>
 				<div class="group">
-					<input type="password" name="password" class="input"/>
+					<input type="password" name="password" class="input" autocomplete="off" />
 				</div>
 			</div>
 			<div class="repassword mt18">
 				<p class="name">Confirm Password</p>
 				<div class="group">
-					<input type="password" name="repassword" class="input"/>
+					<input type="password" name="repassword" class="input" autocomplete="off" />
 				</div>
 			</div>
 			<div class="mt18 agreement">
@@ -87,6 +87,19 @@
 		</div>
 	</div>
 </div>
+<?php if (!empty($error)) {?>
+<div id="message-tips" class="error top">
+	<div class="content">
+		<div class="icon-content">
+			<span class="iconfont icon-warn"></span>
+		</div>
+		<div class="text-content">
+			<span><?php echo $error;?></span>
+		</div>
+	</div>
+	<span class="iconfont icon-close"></span>
+</div>
+<?php } ?>
 <script type="text/javascript">
 $(function(){
 	LOGIN.init();

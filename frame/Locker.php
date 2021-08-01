@@ -12,7 +12,7 @@ class Locker
 		if ($timeout < 1) {
 			$timeout = 100;
 		}
-		$cas = make('frame/Str')->random(32);
+		$cas = randString(32);
 		$lock = redis(2)->set(self::LOCKERPREFIX.$name, $cas, ['nx', 'ex' => $timeout]);
 		if ($lock) {
 			$this->lock[$name] = $cas;

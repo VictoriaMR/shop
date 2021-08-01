@@ -17,16 +17,16 @@ final class Container
 		return self::$_instance;
 	}
 
-	public function autoload($concrete, $file)
+	public function autoload($concrete, $file, $params=null)
 	{
 		if (isset($this->_building[$concrete])) {
 			return $this->_building[$concrete];
 		}
 		require $file;
-		return $this->build($concrete);
+		return $this->build($concrete, $params);
 	}
 
-	private function build($concrete)
+	private function build($concrete, $params)
 	{
 		if ($concrete instanceof Closure) {
 			return $concrete($this);
@@ -35,7 +35,11 @@ final class Container
 		if (!$reflector->isInstantiable()) {
 			return $concrete;
 		}
-		$object = $reflector->newInstance();
+		if (is_null($reflector->getConstructor()) || is_null($params)) {
+			$object = $reflector->newInstance();
+		} else {
+			$object = $reflector->newInstance($params);
+		}
 		$this->_building[$concrete] = $object;
 		return $object;
 	}

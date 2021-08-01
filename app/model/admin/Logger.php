@@ -16,7 +16,7 @@ class Logger extends Base
 
 	public function addLog(array $data=[])
 	{
-		$data['mem_id'] = useId();
+		$data['mem_id'] = userId();
 		$data['browser'] = request()->getBrowser();
 		$data['system'] = request()->getSystem();
 		$data['agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';

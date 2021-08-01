@@ -21,6 +21,17 @@ class View
 		}
 	}
 
+	public function getContent($template, $data=[])
+	{
+		// 页面缓存
+		ob_start();
+		ob_implicit_flush(0);
+		extract($data, EXTR_OVERWRITE);
+		include $template;
+		// 获取并清空缓存
+		return ob_get_clean();
+	}
+
 	private function getTemplate($template, $match = true)
 	{
 		if ($match) {

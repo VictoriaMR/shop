@@ -152,6 +152,7 @@ const LOGIN = {
 				}
 			});
 		});
+		TIPS.timeout();
 	},
 	initSendCode: function(time){
 		const _this = this;

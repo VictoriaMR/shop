@@ -43,7 +43,7 @@ class Task
 			$locker->holdLock($lock);
 			return $this->localRun($process);
 		} else {
-			make('frame/Debug')->runlog(explode(', ', $process), 'task-error');
+			debug()->runlog(explode(', ', $process), 'task-error');
 		}
 		return false;
 	}
@@ -68,7 +68,7 @@ class Task
 			$rstSign = '';
 			exec($cmd.' > /dev/null 2>&1 &', $out, $rstSign);
 		}
-		env('APP_DEBUG') && make('frame/Debug')->runlog($cmd, 'task');
+		env('APP_DEBUG') && debug()->runlog($cmd, 'task');
 		return true;
 	}
 

@@ -34,10 +34,10 @@ class MemberService extends Base
 		if (!empty($password) && !$this->checkPassword($password, $info['password'], $info['salt'])){
 			return false;
 		}
-		return $this->loginSuccess($info);
+		return $this->loginSuccess($info,$type == 'email');
 	}
 
-	protected function loginSuccess($info)
+	protected function loginSuccess($info, $keepLogin)
 	{
 		$data = [
 			'mem_id' => $info['mem_id'],
@@ -51,17 +51,19 @@ class MemberService extends Base
 		session()->set(APP_TEMPLATE_TYPE.'_info', $data);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
 		$this->addLog(['type'=>0]);
-		$tokenCacheKey = $this->getCacheKey('', $info['mem_id']);
-		$token = redis(2)->get($tokenCacheKey);
-		if ($token) {
-			redis(2)->expire($tokenCacheKey, $this->getConst('TOKEN_CACHE_TIMEOUT'));
-			redis(2)->expire($this->getCacheKey($token), $this->getConst('TOKEN_CACHE_TIMEOUT'));
-		} else {
-			$token = randString(32);
-			redis(2)->set($tokenCacheKey, $token, $this->getConst('TOKEN_CACHE_TIMEOUT'));
-			redis(2)->set($this->getCacheKey($token), $info['mem_id'], $this->getConst('TOKEN_CACHE_TIMEOUT'));
+		if ($keepLogin) {
+			$tokenCacheKey = $this->getCacheKey('', $info['mem_id']);
+			$token = redis(2)->get($tokenCacheKey);
+			if ($token) {
+				redis(2)->expire($tokenCacheKey, $this->getConst('TOKEN_CACHE_TIMEOUT'));
+				redis(2)->expire($this->getCacheKey($token), $this->getConst('TOKEN_CACHE_TIMEOUT'));
+			} else {
+				$token = randString(32);
+				redis(2)->set($tokenCacheKey, $token, $this->getConst('TOKEN_CACHE_TIMEOUT'));
+				redis(2)->set($this->getCacheKey($token), $info['mem_id'], $this->getConst('TOKEN_CACHE_TIMEOUT'));
+			}
 		}
-		return $token;
+		return $token ?? true;
 	}
 
 	protected function getCacheKey($token='', $memId='')

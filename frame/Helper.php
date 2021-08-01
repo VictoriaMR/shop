@@ -6,26 +6,26 @@ function dd(...$arg){
 	}
 	exit();
 }
-function config($name='', $replace=''){
+function config($name='', $default=''){
 	$name = explode('.', $name);
 	if (empty($GLOBALS[$name[0]])) {
 		if (is_file($file = ROOT_PATH.'config'.DS.$name[0].'.php')) {
 			$GLOBALS[$name[0]] = require $file;
 		} else {
-			return $replace;
+			return $default;
 		}
 	}
 	$data = $GLOBALS;
 	foreach ($name as $value) {
 		if (empty($data[$value])) {
-			return $replace;
+			return $default;
 		}
 		$data = $data[$value];
 	}
 	return $data;
 }
-function env($name='', $replace=''){
-	return config('env.'.$name, $replace);
+function env($name='', $default=''){
+	return config('env.'.$name, $default);
 }
 function redirect($url=''){
 	if (empty($url)) {
@@ -35,8 +35,8 @@ function redirect($url=''){
 	header('Location:'.$url);
 	exit();
 }
-function make($name){
-	return \App::make($name);
+function make($name, $params=null){
+	return \App::make($name, $params);
 }
 function view() {
 	return \App::make('frame/View');
@@ -59,11 +59,17 @@ function session(){
 function router(){
 	return \App::make('frame/Router');
 }
+function debug(){
+	return \App::make('frame/Debug');
+}
 function db($db=null){
 	return \App::make('frame/Connection')->setDb($db);
 }
-function url($url=null, $param=null) {
-    return router()->buildUrl($url, $param);
+function site(){
+	return make('app/service/SiteService');
+}
+function url($url=null, $param=null, $domain=null) {
+    return router()->buildUrl($url, $param, $domain);
 }
 function siteUrl($name){
 	return env('APP_DOMAIN').$name.'?v='.config('version.'.APP_TEMPLATE_TYPE);

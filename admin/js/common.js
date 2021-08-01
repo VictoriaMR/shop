@@ -276,19 +276,18 @@ $(function(){
 			obj.parents('form').eq(0).submit();
 		}
 	});
-    $('.form_datetime').datetimepicker({
-        language: 'zh-CN',
-        format: 'yyyy-mm-dd',
-        weekStart: 1,
-        todayBtn:  1,
-        autoclose: 1,
-        todayHighlight: 1,
-        startView: 2,
-        forceParse: 0,
-        clearBtn: 1,
-        minView: 'month'
-    });
-    $('#progressing').show();
-    progressing(20);
-    $('img[data-original]').lazyload();
+	$('.form_datetime').datetimepicker({
+		language: 'zh-CN',
+		format: 'yyyy-mm-dd',
+		weekStart: 1,
+		todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0,
+		clearBtn: 1,
+		minView: 'month'
+	});
+	$('#progressing').show();
+	progressing(20);
 });

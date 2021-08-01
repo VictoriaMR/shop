@@ -7,9 +7,11 @@ class LoginController extends Controller
 {
 	public function index()
 	{	
+		if (userId()) {
+			redirect(url());
+		}
 		html()->addCss();
 		html()->addJs();
-		session()->set(APP_TEMPLATE_TYPE.'_info');
 		$this->assign('_title', '登录');
 		$this->view();
 	}

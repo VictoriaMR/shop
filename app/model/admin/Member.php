@@ -1,7 +1,7 @@
 <?php
 
 namespace app\model\admin;
-use app\model\Member as Base;
+use app\model\Base;
 
 class Member extends Base
 {

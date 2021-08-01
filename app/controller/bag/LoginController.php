@@ -10,9 +10,22 @@ class LoginController extends Controller
 		if (userId()) {
 			redirect();
 		}
+		$email = iget('email');
+		$verifyCode = iget('verify_code');
+		if (!empty($email) && !empty($verifyCode)) {
+			$code = redis(2)->get($this->getCacheKey($email, 'except'));
+			if ($code == $verifyCode) {
+				$rst = make('app/service/MemberService')->login($param['email'], '', 'email');
+				if ($rst) {
+					redirect();
+				}
+			} else {
+				$this->assign('error', 'This Verification code was not match.');
+			}
+		}
 		html()->addCss();
 		html()->addJs();
-		$this->assign('_title', '登录');
+		$this->assign('_title', 'login');
 		$this->view();
 	}
 
@@ -41,15 +54,15 @@ class LoginController extends Controller
 			$this->error('Sorry, we couldn\'t find an account matching that email.');
 		}
 		$cacheKey = $this->getCacheKey($email);
-		$ttl = redis()->TTL($cacheKey);
+		$ttl = redis(2)->TTL($cacheKey);
 		if ($ttl < -1) {
 			$code = randString(6, false, false);
 			$ttl = 120;
 			//todo send email
 			$rst = make('app/service/email/EmailService')->sendLoginCode($memId, $code);
 			if ($rst) {
-				redis()->set($cacheKey, 1, $ttl);
-				redis()->set($this->getCacheKey($email, 'except'), $code, 600);
+				redis(2)->set($cacheKey, 1, $ttl);
+				redis(2)->set($this->getCacheKey($email, 'except'), $code, 600);
 			} else {
 				$this->error('Sorry, we couldn\'t sent to “'.$email.'”, Please select another way to login.');
 			}
@@ -80,7 +93,7 @@ class LoginController extends Controller
 			$this->error($error);
 		}
 		if (empty($param['password'])) {
-			$code = redis()->get($this->getCacheKey($param['email'], 'except'));
+			$code = redis(2)->get($this->getCacheKey($param['email'], 'except'));
 			if ($code == $param['verify_code']) {
 				$rst = make('app/service/MemberService')->login($param['email'], '', 'email');
 			} else {
@@ -92,8 +105,8 @@ class LoginController extends Controller
 		if (empty($rst)) {
 			$this->error('Sorry, login failed, Please try agin.');
 		}
-		redis()->del($this->getCacheKey($param['email']));
-		redis()->del($this->getCacheKey($param['email'], 'except'));
+		redis(2)->del($this->getCacheKey($param['email']));
+		redis(2)->del($this->getCacheKey($param['email'], 'except'));
 		$this->success(['token'=>$rst, 'url'=>session()->get('callback_url')]);
 	}
 

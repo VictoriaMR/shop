@@ -28,7 +28,7 @@ class SiteService extends Base
 		return $info;
 	}
 
-	public function getInfoCache($siteId, $lanId)
+	public function getInfoCache($siteId, $lanId=2)
 	{
 		$cacheKey = $this->getCacheKey($siteId, $lanId);
 		$info = redis()->get($cacheKey);

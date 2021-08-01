@@ -5,9 +5,7 @@ namespace app\task;
 abstract class TaskDriver
 {
 	const TASKPREFIX ='frame-task:';
-	const TASKUDPSERVERKEY = 'frame-task:udp-block-server';
 	protected $startTime;
-	protected $isRealObject = true;
 	protected $lock ='';
 	protected $cas ='';
 	protected $data = '';
@@ -90,7 +88,7 @@ abstract class TaskDriver
 
 	protected function echo($msg, $name='')
 	{
-		$this->setInfo('info', $msg, $name);
+		$this->setInfo('remark', $msg, $name);
 	}
 
 	protected function before() {}
@@ -243,15 +241,15 @@ abstract class TaskDriver
 		$step = 0;
 		if ($minute < 0) {
 			$minute = $minuteRange[0];
-			$step=1;
+			$step = 1;
 		}
 		$hour = $this->cronNextVal($hourRange, $now[1] + $step);
 		$step = 0;
 		if ($hour < 0) {
 			$hour=$hourRange[0];
-			$step=1;
+			$step = 1;
 		}
-		if($corn[4] == '*' || $corn[3] != '*') {
+		if ($corn[4] == '*' || $corn[3] != '*') {
 			$day = $this->cronNextVal($dayRange, $now[2] + $step);
 			$step = 0;
 			if ($day < 0) {
@@ -281,7 +279,7 @@ abstract class TaskDriver
 				for ($i=0; $i<7; $i++) {
 					$basetime = $basetime + $i*24*3600;
 					$calweek = date('w', $basetime);
-					if($calweek==$week){
+					if ($calweek == $week) {
 						break;
 					}
 				}
@@ -308,8 +306,8 @@ abstract class TaskDriver
 		if ($hour != date('H')) {
 			$minute = $minuteRange[0];
 		}
-        $result = mktime($hour, $minute, 0, $month, $day, $year);
-        return $result > 0 ? $result : false;
+		$result = mktime($hour, $minute, 0, $month, $day, $year);
+		return $result > 0 ? $result : false;
 	}
 
 	protected function getNextTimeByCronArray($cornArray)
@@ -320,15 +318,15 @@ abstract class TaskDriver
 			if ($v === false) {
 				return false;
 			}
-			$result ===false && $result=$v;
-            if ($v < $result) {
-                $result = $v;
-            }
+			$result === false && $result = $v;
+			if ($v < $result) {
+				$result = $v;
+			}
 		}
 		return $result;
 	}
 
-    // 任务类具体工作方法, 单次工作， 外层已有循环
-    // 如果 run 方法单次运行比较久， 请务必注意适当时间调用 $this->lockUpdate(); 时间间隔不能大于 $this->lockTimeout
-    abstract public function run();
+	// 任务类具体工作方法, 单次工作， 外层已有循环
+	// 如果 run 方法单次运行比较久， 请务必注意适当时间调用 $this->lockUpdate(); 时间间隔不能大于 $this->lockTimeout
+	abstract public function run();
 }

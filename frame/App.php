@@ -13,9 +13,9 @@ class App
 		self::send();
 	}
 
-	public static function make($abstract)
+	public static function make($abstract, $params=null)
 	{
-		return self::autoload($abstract);
+		return self::autoload($abstract, $params);
 	}
 
 	private static function send()
@@ -36,12 +36,12 @@ class App
 		self::runOver();
 	}
 
-	private static function autoload($abstract) 
+	private static function autoload($abstract, $params=null) 
 	{
 		$file = ROOT_PATH.str_replace('\\', DS, $abstract).'.php';
 
 		if (is_file($file)) {
-			return \frame\Container::instance()->autoload(str_replace(DS, '\\', $abstract), $file);
+			return \frame\Container::instance()->autoload(str_replace(DS, '\\', $abstract), $file, $params);
 		}
 		if (env('APP_DEBUG')) {
 			throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
@@ -53,11 +53,11 @@ class App
 	public static function runOver()
 	{
 		if (env('APP_DEBUG')) {
-			self::make('frame/Debug')->runlog();
+			debug()->runlog();
 			if (!IS_AJAX) {
 				$router = router()->getRoute();
 				if (!($router['path'] == 'index' && $router['func'] == 'index')) {
-					self::make('frame/Debug')->init();
+					debug()->init();
 				}
 			}
 		}
