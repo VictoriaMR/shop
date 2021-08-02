@@ -7,9 +7,9 @@ class CategoryController extends Controller
 {
 	public function __construct()
 	{
-        $this->_arr = [
-            'index' => '分类列表',
-        ];
+		$this->_arr = [
+			'index' => '分类列表',
+		];
 		$this->_default = '分类管理';
 		$this->_init();
 	}

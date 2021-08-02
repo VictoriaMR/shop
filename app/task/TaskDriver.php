@@ -24,7 +24,7 @@ abstract class TaskDriver
 		],
 	];
 	protected $lockTimeout = 600;
-	protected $runCountLimit =-1;
+	protected $runCountLimit = -1;
 	protected $runTimeLimit = 0;
 	protected $sleep = 30;
 
@@ -38,6 +38,10 @@ abstract class TaskDriver
 			list($this->lock, $this->cas) = $process['lock'];
 			$this->startTime = time();
 			// 设置任务当次启动时间
+			$this->setInfo('info', $this->config['info']);
+			$this->setInfo('lockTimeout', $this->lockTimeout);
+			$this->setInfo('runTimeLimit', $this->runTimeLimit);
+			$this->setInfo('sleep', $this->sleep);
 			$this->setInfo('startTime', now());
 			$this->setInfo('status', 'runing');
 			$this->setInfo('process.pid', getmypid());
@@ -326,7 +330,18 @@ abstract class TaskDriver
 		return $result;
 	}
 
-	// 任务类具体工作方法, 单次工作， 外层已有循环
-	// 如果 run 方法单次运行比较久， 请务必注意适当时间调用 $this->lockUpdate(); 时间间隔不能大于 $this->lockTimeout
+	protected function taskSleep($time)
+	{
+		return redis(2)->hIncrBy(self::TASKPREFIX.$this->lock, 'runAt', $time);
+	}
+
+	public function taskStart($key)
+	{
+		$key = self::TASKPREFIX.'app-task-main-'.$key;
+		redis(2)->hSet($key, 'runAt', time())
+		redis(2)->hSet($key, 'nextRun', now());
+		return true;
+	}
+
 	abstract public function run();
 }

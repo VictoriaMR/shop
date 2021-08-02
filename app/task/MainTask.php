@@ -8,13 +8,14 @@ class MainTask extends TaskDriver
 
 	public function __construct($process=[])
 	{
-		parent::__construct($process);
+		redis(2)->hDel(self::TASKPREFIX.'all');
 		if (!empty($process)) {
 			$this->lockTimeout = config('task.timeout');
 			$this->runTimeLimit = 0;
 			$this->sleep = 1;
 		}
 		$this->config['info'] = '系统核心队列任务';
+		parent::__construct($process);
 	}
 
 	protected function before()
@@ -47,7 +48,6 @@ class MainTask extends TaskDriver
 
 	public function run()
 	{
-		echo '1'.PHP_EOL;
 		foreach ($this->taskList as $k => $v){
 			$info = $this->getInfo('', $k);
 			if (($info['boot'] ?? '') !== 'off') { // 开始启动任务
@@ -72,7 +72,7 @@ class MainTask extends TaskDriver
 				}
 			}
 		}
-		$this->echo("\n当前工作任务数：".count($this->taskList));
+		$this->echo('当前工作任务数：'.count($this->taskList));
 		return true;
 	}
 }

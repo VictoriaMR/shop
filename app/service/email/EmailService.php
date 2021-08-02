@@ -23,7 +23,11 @@ class EmailService extends Base
 		$data['mem_id'] = $memId;
 		$data['content'] = $code;
 		$data['add_time'] = now();
-		return $this->insert($data);
+		$rst = $this->insert($data);
+		if ($rst) {
+			make('app/task/TaskDriver')->taskStart('EmailTask');
+		}
+		return $rst;
 	}
 
 	public function sendEmailById($id)
