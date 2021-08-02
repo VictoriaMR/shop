@@ -28,6 +28,12 @@ class SiteService extends Base
 		return $info;
 	}
 
+	public function getName()
+	{
+		$info = $this->getInfoCache(siteId(), lanId());
+		return $info['name'] ?? '';
+	}
+
 	public function getInfoCache($siteId, $lanId=2)
 	{
 		$cacheKey = $this->getCacheKey($siteId, $lanId);

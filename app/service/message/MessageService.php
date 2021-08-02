@@ -1,113 +1,90 @@
 <?php
 
-namespace app\service;
+namespace app\service\message;
 use app\service\Base;
 
 class MessageService extends Base
 {
-    public function sendMessage($from, $to, $content, $tr_code='')
-    {
-    	$from = (int) $from;
-    	if (empty($from) || empty($to) || empty($content)) return false;
-    	$groupKey = $this->createGroup($from, $to);
-    	if (empty($groupKey)) {
-            return false;
-        }
-    	return $this->sendMessageByKey($groupKey, $content, $from);
-    }
+	protected function getModel()
+	{
+		$this->baseModel = make('app/model/message/Message');
+	}
 
-    public function createGroup($from, $to, $type=0)
-    {
-        $groupKey = $this->createGroupKey($from, $to, $type);
-        if ($this->isExistGroup($groupKey)) {
-            return $groupKey;
-        }
-        $insert = [
-            'group_key' => $groupKey,
-            'mem_id' => $from,
-            'type' => $type,
-            'create_at' => now(),
-        ];
-        $groupModel = make('App/Models/MessageGroup');
-        $result = $groupModel->insert($insert);
-        //群组加人员
-        $insert = [
-            'group_key' => $groupKey,
-            'mem_id' => $from,
-            'create_at' => time(),
-        ];
-        if (!empty($to)) {
-            $insert = [$insert];
-            $insert[] = [
-                'group_key' => $groupKey,
-                'mem_id' => $to,
-                'create_at' => time(),
-            ];
-        }
-        $result = make('App/Models/MessageMember')->insert($insert);
-        if ($type ==0 && substr($to, 0, 1) == 5) {
-            //发送初始化聊天术语
-            $this->sendMessageByKey($groupKey, dist('您好, 有什么可以帮到您'), $to);
-        }
-        if ($result) return $groupKey;
-        return false;
-    }
-
-    public function sendMessageByKey($groupKey, $content, $from, $trCode)
-    {
-        //消息数据
-        $insert = [
-            'group_key' => $groupKey,
-            'mem_id' => $from,
-            'content' => trim($content),
-            'create_at' => time(),
-        ];
-        $result = make('App/Models/Message')->insert($insert);
-        if ($result) {
-            //更新未读消息
-            $this->updateReadCount($groupKey, $from);
-        }
-        return $result;
-    }
-
-    protected function createGroupKey($from, $to, $type)
-    {
-        $array = [$from, $to];
-        sort($array);
-        return md5(implode('_', $array).'_'.$type);
-    }
-
-    protected function isExistGroup($groupKey)
-    {
-        if (empty($groupKey)) return false;
-        return make('App/Models/MessageGroup')->where('group_key', $groupKey)->count() > 0;
-    }
-
-    protected function updateReadCount($groupKey, $from)
-    {
-    	//消息组消息数
-        make('App/Models/MessageGroup')->where('group_key', $groupKey)->increment('message_total');
-    	//同组其他人员未读消息数
-    	make('App/Models/MessageMember')->where('group_key', $groupKey)->where('mem_id', '<>', $from)->increment('unread');
-    	return true;
-    }
-
-    public function joinInGroup($groupKey, $memId)
-    {
-    	$memId = (int) $memId;
-    	if (empty($groupKey) || empty($memId)) return false;
-    	$insert = [
+	public function createGroup($from, $to=0, $type=0)
+	{
+		$key = $this->getGroupKey($from, $to, $type);
+		if ($this->isExistGroup($key)) return $key;
+		$insert = [
 			'group_key' => $key,
-			'mem_id' => $mem_id,
-			'create_at' => time(),
+			'mem_id' => $from,
+			'type' => $type,
+			'add_time' => now(),
 		];
-		return make('App/Models/MessageMember')->insert($insert);
-    }
+		$this->start();
+		make('app/model/message/Group')->insert($insert);
+		//群组加人员
+		$insert = [
+			[
+				'group_key' => $key,
+				'mem_id' => $from,
+				'add_time' => now(),
+			],
+			[
+				'group_key' => $key,
+				'mem_id' => $to,
+				'add_time' => now(),
+			],
+		];
+		make('app/model/message/Member')->insert($insert);
+		$this->commit();
+		$insert = 'Hi, Welcome to '.site()->getName().', what can I do for you?';
+		$this->sendMessage($key, $insert, $to);
+	}
 
-    public function isExistMember($groupKey, $memId)
-    {
-    	$memId = (int) $memId;
-    	if (empty($groupKey) || empty($memId)) return false;
-    	return make('App/Models/MessageMember')->where('group_key', $groupKey)->where('mem_id', $memId)->count() > 0;
-    }
+	protected function sendMessage($key, $content, $memId)
+	{
+		if (!$this->isExistGroup($key)) return false;
+		if (!$this->isExistMember($key, $memId)) return false;
+		$insert = [
+			'group_key' => $key,
+			'mem_id' => $memId,
+			'lan_id' => lanId(),
+			'content' => substr(trim($content), 0, 250),
+			'add_time' => now(),
+		];
+		$rst = $this->insert($insert);
+		if ($rst) {
+			$this->updateReadCount($key, $memId);
+		}
+		return $rst;
+	}
+
+	protected function updateReadCount($key, $memId)
+	{
+		make('app/model/message/Group')->where('group_key', $key)->increment('total');
+		make('app/model/message/Member')->where('group_key', $key)->where('mem_id', '<>', $memId)->increment('unread');
+		return true;
+	}
+
+	public function getSystemId()
+	{
+		return $this->getConst('SYSTEM_CONTACT_USER');
+	}
+
+	protected function getGroupKey($from, $to=0, $type=0)
+	{
+		$array = [$from, $to];
+		sort($array);
+		return md5(implode('_', $array).'_'.$type);
+	}
+
+	protected function isExistGroup($key)
+	{
+		return make('app/model/message/Group')->getCountData(['group_key'=>$key]);
+	}
+
+	protected function isExistMember($key, $memId)
+	{
+		return make('app/model/message/Member')->getCountData(['group_key'=>$key, 'mem_id'=>$memId]);
+	}
 }

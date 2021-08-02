@@ -33,7 +33,7 @@ class LoggerService extends Base
                 $value['name'] = empty($value['mem_id']) ? '' : $memData[$value['mem_id']]['name'];
                 $value['nickname'] = empty($value['mem_id']) ? '' : $memData[$value['mem_id']]['nickname'];
                 $value['avatar'] = empty($value['mem_id']) ? $memberService->getAvatar() : $memberService->getAvatar($memData[$value['mem_id']]['avatar'], $memData[$value['mem_id']]['sex']);;
-                $value['type_text'] = $typeArr[$value['type_id']];
+                $value['type_text'] = $typeArr[$value['type']];
                 $list[$key] = $value;
             }
         }

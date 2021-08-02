@@ -15,8 +15,10 @@ class LoginController extends Controller
 		if (!empty($email) && !empty($verifyCode)) {
 			$code = redis(2)->get($this->getCacheKey($email, 'except'));
 			if ($code == $verifyCode) {
-				$rst = make('app/service/MemberService')->login($param['email'], '', 'email');
+				$rst = make('app/service/MemberService')->login($email, '', 'email');
 				if ($rst) {
+					redis(2)->del($this->getCacheKey($email));
+					redis(2)->del($this->getCacheKey($email, 'except'));
 					redirect();
 				}
 			} else {
@@ -72,7 +74,7 @@ class LoginController extends Controller
 
 	protected function getCacheKey($email, $type='limit')
 	{
-		return 'login-code-'.siteId().':'.$type.':'.$email;
+		return 'login-code-'.siteId().':'.$type.':'.md5($email);
 	}
 
 	public function login()

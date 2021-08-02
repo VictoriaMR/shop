@@ -12,7 +12,7 @@
 		<span class="iconfont icon-baby<?php echo $path=='order'?'fill':'';?>"></span>
 		<p class="text">订单</p>
 	</a>
-	<a class="tab<?php echo $path=='message'?' active':'';?>" href="<?php echo url('message');?>">
+	<a class="tab<?php echo $path=='message'?' active':'';?>" href="<?php echo url('contact');?>">
 		<span class="iconfont icon-comment<?php echo $path=='message'?'fill':'';?>"></span>
 		<p class="text">消息</p>
 	</a>

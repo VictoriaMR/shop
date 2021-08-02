@@ -161,10 +161,10 @@ class MemberController extends Controller
 		$stime = trim(iget('stime'));
 		$etime = trim(iget('etime'));
 
-		$loggerService = make('app/service/admin/LogService');
+		$loggerService = make('app/service/admin/LoggerService');
 		$where = [];
 		if ($typeId >= 0) {
-			$where['type_id'] = (int) $typeId;
+			$where['type'] = (int) $typeId;
 		}
 		$memberService = make('app/service/admin/MemberService');
 		if (!empty($name)) {

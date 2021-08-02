@@ -37,7 +37,7 @@ class MemberService extends Base
 		return $this->loginSuccess($info,$type == 'email');
 	}
 
-	protected function loginSuccess($info, $keepLogin)
+	protected function loginSuccess($info, $keepLogin=false)
 	{
 		$data = [
 			'mem_id' => $info['mem_id'],

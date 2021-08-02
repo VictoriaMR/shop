@@ -45,6 +45,76 @@ const VERIFY = {
 		return reg.test(input);
 	}
 };
+const TIPS = {
+	error: function(msg) {
+		this.init('error', msg)
+	},
+	success: function(msg, icon) {
+		this.init('success', msg, icon)
+	},
+	init: function(type, msg, icon) {
+		if (typeof msg === 'undefined' || msg === '') {
+			return false;
+		}
+		if (typeof icon === 'undefined') {
+			if (type === 'success') {
+				icon = 'check';
+			} else {
+				icon = 'warn';
+			}
+		}
+		const _this = this;
+		$('#message-tips').remove();
+		clearTimeout(_this.timeoutVal);
+		let html = '<div id="message-tips" class="'+type+'">\
+						<div class="content">\
+							<div class="icon-content">\
+								<span class="iconfont icon-'+icon+'"></span>\
+							</div>\
+							<div class="text-content">\
+								<span>'+msg+'</span>\
+							</div>\
+						</div>\
+						<span class="iconfont icon-close"></span>\
+					</div>';
+		$('body').append(html);
+		setTimeout(function(){
+			$('#message-tips').addClass('top');
+		}, 100);
+		_this.timeout();
+		$('body').on('click', '#message-tips .icon-close', function(){
+			clearTimeout(_this.timeoutVal);
+			$('#message-tips').remove();
+		});
+	},
+	timeout: function(obj) {
+		this.timeoutVal = setTimeout(function(){
+			$('#message-tips').fadeOut(300, function(){
+				$(this).remove();
+			});
+		}, 5000);
+	},
+	loading: function(){
+		$('#loading').remove();
+		clearTimeout(_this.timeoutVal);
+		let html = '<div class="m-modal" id="loading">\
+						<div class="mask"></div>\
+						<div class="loading-block">\
+							<div></div>\
+							<div></div>\
+							<div></div>\
+						</div>\
+					</div>';
+		$('body').append(html);
+		$('body').css({overflow: 'hidden'});
+	},
+	loadout: function(){
+		$('#loading').fadeOut(150, function(){
+			$(this).remove();
+			$('body').css({overflow: 'auto'});
+		});
+	}
+};
 $(function(){
 	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
 		if (res.code === 10000 || res.code === '10000') {
