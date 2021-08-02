@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
     <table class="table table-border">
         <tr>
@@ -27,4 +26,3 @@
         <?php }?>
     </table>
 </div>
-<?php $this->load('common/footer');?>

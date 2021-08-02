@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
     <form action="<?php echo url();?>" class="form-inline">
 		<div class="col-md-12 pt10">
@@ -80,4 +79,3 @@ $(function(){
 	TRANSFER.init();
 })
 </script>
-<?php $this->load('common/footer');?>

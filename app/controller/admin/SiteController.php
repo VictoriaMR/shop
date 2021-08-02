@@ -1,9 +1,7 @@
 <?php
 
 namespace app\controller\admin;
-
 use app\controller\Controller;
-use frame\Html;
 
 class SiteController extends Controller
 {
@@ -20,29 +18,29 @@ class SiteController extends Controller
 
 	public function index()
 	{	
-		if (isPost()) {
+		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['editSite', 'getSiteLanguage', 'getTransfer', 'editLanguage', 'getInfo'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		Html::addJs();
+		html()->addJs();
 		$page = iget('page', 1);
 		$size = iget('size', 20);
-		$total = make('App\Services\SiteService')->getCount([]);
+		$total = make('app/service/SiteService')->getCountData();
 		if ($total > 0) {
-			$list = make('App\Services\SiteService')->getListByWhere([], '*', $page, $size);
+			$list = make('app/service/SiteService')->getListData([], '*', $page, $size);
 		}
 
 		//语言列表
-		$language = make('App\Services\LanguageService')->getInfo();
+		$language = make('app/service/LanguageService')->getListCache();
 
 		$this->assign('total', $total);
 		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
 		$this->assign('language', $language);
-		return view();
+		$this->view();
 	}
 
 	protected function getInfo()
@@ -51,7 +49,7 @@ class SiteController extends Controller
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$info = make('App\Services\SiteService')->loadData($id);
+		$info = make('app/service/SiteService')->loadData($id);
 		if (empty($info)) {
 			$this->error('获取数据失败');
 		} else {
@@ -75,9 +73,9 @@ class SiteController extends Controller
 			'description' => $description,
 		];
 		if (empty($id)) {
-			$result = make('App\Services\SiteService')->insert($data);
+			$result = make('app/service/SiteService')->insert($data);
 		} else {
-			$result = make('App\Services\SiteService')->updateDataById($id, $data);
+			$result = make('app/service/SiteService')->updateDataById($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -97,7 +95,7 @@ class SiteController extends Controller
 			'site_id' => $id,
 			'name' => $name,
 		];
-		$info = make('App\Services\SiteService')->getLanguage($where);
+		$info = make('app/service/SiteService')->getLanguage($where);
 		$this->success($info ?? [], '');
 	}
 
@@ -114,7 +112,7 @@ class SiteController extends Controller
 		if ($code == 'zh') {
 			$this->success($value, '');
 		}
-		$result = make('App\Services\TranslateService')->getTranslate($value, $code);
+		$result = make('app/service/TranslateService')->getTranslate($value, $code);
 		$this->success($result, '');
 	}
 
@@ -127,7 +125,7 @@ class SiteController extends Controller
 		}
 		$language = ipost('language');
 		if (!empty($language)) {
-			$services = make('App\Services\SiteService');
+			$services = make('app/service/SiteService');
 			foreach ($language as $key => $value) {
 				$services->setNxLanguage($siteId, $name, $key, $value);
 			}
@@ -137,16 +135,16 @@ class SiteController extends Controller
 
 	public function staticCache()
 	{
-		if (isPost()) {
+		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['deleteStaticCache'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		Html::addJs();
+		html()->addJs();
 		$files = [];
-		$siteList = make('App\Services\SiteService')->getListByWhere([], 'name');
+		$siteList = make('app/service/SiteService')->getListData([], 'name');
 		foreach ($siteList as $key => $value) {
 			$path = ROOT_PATH.$value['name'].DS.'static';
 			$this->getFileList($path, $files);
@@ -163,7 +161,7 @@ class SiteController extends Controller
 		}
 
 		$this->assign('list', $list ?? []);
-		return view();
+		$this->view();
 	}
 
 	protected function deleteStaticCache()
@@ -174,7 +172,7 @@ class SiteController extends Controller
 		}
 		if ($name == 'all') {
 			$files = [];
-			$siteList = make('App\Services\SiteService')->getListByWhere([], 'name');
+			$siteList = make('app/service/SiteService')->getListData([], 'name');
 			foreach ($siteList as $key => $value) {
 				$path = ROOT_PATH.$value['name'].DS.'static';
 				$this->getFileList($path, $files);
@@ -210,14 +208,14 @@ class SiteController extends Controller
 
 	public function siteLog()
 	{
-		if (isPost()) {
+		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['deleteLog'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		Html::addJs();
+		html()->addJs();
 		$path = ROOT_PATH.'runtime';
 		$files = [];
 		$this->getFileList($path, $files);
@@ -237,7 +235,7 @@ class SiteController extends Controller
 			array_multisort($timeArr, SORT_DESC, $list);
 		}
 		$this->assign('list', $list ?? []);
-		return view();
+		$this->view();
 	}
 
 	protected function deleteLog()
@@ -276,6 +274,6 @@ class SiteController extends Controller
 			$list = explode('---------------------------------------------------------------', $content);
 		}
 		$this->assign('list', $list ?? []);
-		return view();
+		$this->view();
 	}
 }

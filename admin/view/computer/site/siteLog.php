@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<div class="row-item">
 		<div class="right">
@@ -41,4 +40,3 @@ $(function(){
 	SITELOG.init();
 });
 </script>
-<?php $this->load('common/footer');?>

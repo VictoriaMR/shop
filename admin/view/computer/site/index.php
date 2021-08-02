@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid" id="site-page">
 	<div class="form-group right">
 		<button class="btn btn-success add-btn" type="button"><i class="glyphicon glyphicon-plus-sign"></i> 新增站点</button>
@@ -129,4 +128,3 @@ $(function(){
 	SITE.init();
 });
 </script>
-<?php $this->load('common/footer');?>

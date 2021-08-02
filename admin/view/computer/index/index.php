@@ -71,9 +71,9 @@
 						<div class="item" data-for="systemInfo">
 							<ul>
 								<li data-src="<?php echo url('task');?>" class="selected">
-									<span class="glyphicon glyphicon-cloud"></span>
+									<span class="glyphicon glyphicon-tasks"></span>
 									<span class="ml6">任务管理</span>
-									<a class="glyphicon glyphicon-tasks right" title="新窗口打开" target="_blank" href="<?php echo url('task');?>"></a>
+									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('task');?>"></a>
 								</li>
 								<li data-src="<?php echo url('systemInfo');?>" class="selected">
 									<span class="glyphicon glyphicon-cloud"></span>

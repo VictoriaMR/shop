@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
     <table class="table">
         <tr>
@@ -30,7 +29,7 @@
         </tr>
         <tr>
             <td>Mysqli</td>
-            <td><?php echo mysqlVersion();?></td>
+            <td><?php echo $mysql_version;?></td>
             <td>
                 <?php if(extension_loaded('mysqli')){?>
                     <span class="green">已安装</span>
@@ -313,4 +312,3 @@
         </tr>
     </table>
 </div>
-<?php $this->load('common/footer');?>

@@ -22,8 +22,10 @@ class SystemInfoController extends Controller
 	public function index()
 	{
 		$redis_version = redis()->info()['redis_version'] ?? 0;
+        $rst = db()->query('SELECT version() AS version')->fetch_assoc();
+        $this->assign('mysql_version', $rst['version']);
 		$this->assign('redis_version', $redis_version);
-		return view();
+		$this->view();
 	}
 
 	public function mysql()
@@ -42,13 +44,13 @@ class SystemInfoController extends Controller
         $query = ['character','version','client','server','collation'];
         foreach ($query as $keyword) {
             $rst = db()->query("show variables like '%$keyword%'");
-            foreach($rst as $val) {
+            foreach ($rst as $val) {
                 $arr[$val['Variable_name']]=$val['Value'];
             }
         }
         $info['other'] = $arr;
         $this->assign('info',$info);
-        return view();
+        $this->view();
     }
 
     public function redis()
@@ -58,16 +60,16 @@ class SystemInfoController extends Controller
         $info = [];
         foreach ($redisInfo as $val){
             if (gettype($val) == 'array') {
-                $info=$val;
+                $info = $val;
             }
         }
         $info = array_merge($info, $res);
         $this->assign('info',$info);
-        return view();
+        $this->view();
     }
 
     public function phpinfo()
     {
-        return view();
+        $this->view();
     }
 } 

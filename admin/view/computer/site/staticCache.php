@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<div class="row-item">
 		<div class="right">
@@ -40,4 +39,3 @@ $(function(){
 	SITECACHE.init();
 });
 </script>
-<?php $this->load('common/footer');?>

@@ -1,4 +1,3 @@
-<?php $this->load('common/header');?>
 <div class="container-fluid">
 	<table class="table table-hover mt20" id="data-list">
 		<tbody>
@@ -18,4 +17,3 @@
 		</tbody>
 	</table>
 </div>
-<?php $this->load('common/footer');?>

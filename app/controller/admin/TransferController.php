@@ -1,9 +1,7 @@
 <?php
 
 namespace app\controller\admin;
-
 use app\controller\Controller;
-use frame\Html;
 
 class TransferController  extends Controller
 {
@@ -18,14 +16,14 @@ class TransferController  extends Controller
 
 	public function index()
 	{	
-		if (isPost()) {
+		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'editInfo', 'reloadCache', 'autoTransfer'])) {
 				$this->$opn();
 			}
 		}
 
-		Html::addJs();
+		html()->addJs();
 		$keyword = trim(iget('keyword'));
 		$page = (int)iget('page', 1);
 		$size = (int)iget('size', 20);
@@ -33,12 +31,12 @@ class TransferController  extends Controller
 		if (!empty($keyword)) {
 			$where['name'] = ['like', '%'.$keyword.'%'];
 		}
-		$service = make('App/Services/TranslateService');
-		$total = $service->getCount($where);
+		$service = make('app/service/TranslateService');
+		$total = $service->getCountData($where);
 		if ($total > 0) {
-			$list = $service->getListByWhere($where, '*', $page, $size);
+			$list = $service->getListData($where, '*', $page, $size);
 			if (!empty($list)) {
-				$languageList = make('App/Services/LanguageService')->getInfo();
+				$languageList = make('app/service/LanguageService')->getListCache();
 				$languageList = array_column($languageList, 'name', 'code');
 				foreach ($list as $key => $value) {
 					$value['type_name'] = $languageList[$value['type']] ?? '';
@@ -50,7 +48,7 @@ class TransferController  extends Controller
 		$this->assign('size', $size);
 		$this->assign('total', $total);
 		$this->assign('list', $list ?? '');
-		return view();
+		$this->view();
 	}
 
 	protected function getInfo()
@@ -59,11 +57,11 @@ class TransferController  extends Controller
 		if (empty($id)) {
 			$this->error('参数错误');
 		}
-		$info = make('App/Services/TranslateService')->loadData($id);
+		$info = make('app/service/TranslateService')->loadData($id);
 		if (empty($info)) {
 			$this->error('获取数据为空');
 		}
-		$languageList = make('App/Services/LanguageService')->getInfoCache();
+		$languageList = make('app/service/LanguageService')->getInfoCache();
 		$languageList = array_column($languageList, 'name', 'code');
 		$info['type_name'] = $languageList[$info['type']];
 		$this->success($info, '');
@@ -71,7 +69,7 @@ class TransferController  extends Controller
 
 	protected function reloadCache()
 	{
-		$result = make('App/Services/TranslateService')->reloadCache();
+		$result = make('app/service/TranslateService')->reloadCache();
 		if ($result) {
 			$this->success('重构成功');
 		} else {
@@ -92,7 +90,7 @@ class TransferController  extends Controller
 		if ($code == 'zh') {
 			$this->success($value, '');
 		}
-		$languageList = make('App/Services/LanguageService')->getInfoCache();
+		$languageList = make('app/service/LanguageService')->getInfoCache();
 		$languageList = array_column($languageList, 'tr_code', 'code');
 		$trCode = $languageList[$code];
 		$result = make('App\Services\TranslateService')->getTranslate($value, $trCode);
