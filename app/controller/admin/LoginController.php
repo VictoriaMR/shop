@@ -41,8 +41,8 @@ class LoginController extends Controller
 		if ($result) {
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {
-			$logService = make('app\service\admin\LogService');
-        	$logService->addLog(['type_id' => $logService->getConst('TYPE_LOGIN_FAIL')]);
+			$logService = make('app\service\admin\LoggerService');
+        	$logService->addLog(['type' => $logService->getConst('TYPE_LOGIN_FAIL')]);
 			$this->error('账号或者密码不匹配!');
 		}
 	}

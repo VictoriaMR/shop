@@ -43,7 +43,7 @@ class LoginController extends Controller
 	{
 		$email = ipost('email');
 		if (empty($email)) {
-			$this->error('Sorry, That email was Empty, Please try agin.');
+			$this->error('Sorry, That email was Empty, Please try again.');
 		}
 		$memberService = make('app/service/MemberService');
 		$where = [
@@ -60,8 +60,8 @@ class LoginController extends Controller
 		if ($ttl < -1) {
 			$code = randString(6, false, false);
 			$ttl = 120;
-			//todo send email
-			$rst = make('app/service/email/EmailService')->sendLoginCode($memId, $code);
+			$service = make('app/service/email/EmailService');
+			$rst = $service->sendEmail($memId, $code, $service->getConst('TYPE_LOGIN_SEND_CODE'));
 			if ($rst) {
 				redis(2)->set($cacheKey, 1, $ttl);
 				redis(2)->set($this->getCacheKey($email, 'except'), $code, 600);
@@ -72,9 +72,76 @@ class LoginController extends Controller
 		$this->success($ttl, 'Verification code has been sent to “'.$email.'”, Please check your email.');
 	}
 
-	protected function getCacheKey($email, $type='limit')
+	public function passwordVerify()
 	{
-		return 'login-code-'.siteId().':'.$type.':'.md5($email);
+		$email = ipost('email');
+		if (empty($email)) {
+			$this->error('Sorry, That email was Empty, Please try again.');
+		}
+		$memberService = make('app/service/MemberService');
+		$where = [
+			'site_id' => siteId(),
+			'email' => $email,
+			'status' => 1,
+		];
+		$memId = $memberService->loadData($where, 'mem_id')['mem_id'] ?? 0;
+		if (empty($memId)) {
+			$this->error('Sorry, we couldn\'t find an account matching that email.');
+		}
+		$cacheKey = $this->getCacheKey($email, 'limit', 'password-verify');
+		if (!redis(2)->exists($cacheKey)) {
+			$code = randString(32);
+			$service = make('app/service/email/EmailService');
+			$rst = $service->sendEmail($memId, $code, $service->getConst('TYPE_PASSWORD_RESET'));
+			if ($rst) {
+				redis(2)->set($cacheKey, 1, 120);
+				redis(2)->set($this->getCacheKey($code, 'except', 'password-verify'), $email, 3600*36);
+			} else {
+				$this->error('Sorry, we couldn\'t sent to “'.$email.'”, Please try again later.');
+			}
+		}
+		$this->success('Password reset\'s link has been sent to “'.$email.'”, Please check your email.');
+	}
+
+	public function resetPassword()
+	{
+		$token = input('token');
+		if (request()->isPost()) {
+			$password = ipost('password');
+			if (empty($token) || empty($password)) {
+				$this->error('Token or Password was Empty, Please try again!');
+			}
+			$cacheKey = $this->getCacheKey($token, 'except', 'password-verify');
+			$email = redis(2)->get($cacheKey);
+			if (empty($email)) {
+				$this->error('error', 'Token was invalid, Please check your email and find the right link!');
+			}
+			$rst = make('app/service/MemberService')->resetPassword($email, $password, 'email');
+			if ($rst) {
+				redis(2)->del($cacheKey);
+				$this->success(['url'=>url('login')],'Password was reset success!');
+			} else {
+				$this->error('Password was reset success!');
+			}
+		}
+		html()->addCss();
+		html()->addJs();
+		if (empty($token)) {
+			$this->assign('error', 'Token was Empty, Please check your email and find the right link!');
+		} else {
+			$cacheKey = $this->getCacheKey($token, 'except', 'password-verify');
+			if (!redis(2)->exists($cacheKey)) {
+				$this->assign('error', 'Token was invalid, Please check your email and find the right link!');
+			}
+		}
+		$this->assign('token', $token);
+		$this->assign('_title', 'Reset Password');
+		$this->view();
+	}
+
+	protected function getCacheKey($email, $type='limit', $code='login-code')
+	{
+		return $code.'-'.siteId().':'.$type.':'.md5($email);
 	}
 
 	public function login()
@@ -105,7 +172,7 @@ class LoginController extends Controller
 			$rst = make('app/service/MemberService')->login($param['email'], $param['password'], 'email');
 		}
 		if (empty($rst)) {
-			$this->error('Sorry, login failed, Please try agin.');
+			$this->error('Sorry, login failed, Please try again.');
 		}
 		redis(2)->del($this->getCacheKey($param['email']));
 		redis(2)->del($this->getCacheKey($param['email'], 'except'));
@@ -116,7 +183,7 @@ class LoginController extends Controller
 	{
 		$token = ipost('token');
 		if (empty($token)) {
-			return false;
+			$this->error('login token empty');
 		}
 		$memberService = make('app/service/MemberService');
 		$rst = make('app/service/MemberService')->loginByToken($token);
@@ -133,5 +200,10 @@ class LoginController extends Controller
 		$logService->addLog(['type' => $logService->getConst('TYPE_LOGOUT')]);
 		session()->set(APP_TEMPLATE_TYPE.'_info');
 		redirect(url('login'));
+	}
+
+	public function emailVerify()
+	{
+		$this->view();
 	}
 }

@@ -44,7 +44,7 @@
 								<span>When you click 'Send', we will send you a 6 digit code to your email. You can use this code to quick login our website and check your order status. If you don't receive verification code, please check spam box.</span>
 							</div>
 						</div>
-						<a class="password hide forget-btn" href="<?php echo url('login/fotget');?>">Forgot your password?</a>
+						<a class="password hide forget-btn" href="<?php echo url('login/forget');?>">Forgot your password?</a>
 					</div>
 				</div>
 				<div class="mt18">

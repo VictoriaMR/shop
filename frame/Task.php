@@ -4,6 +4,8 @@ namespace frame;
 
 class Task
 {
+	const TASKPREFIX ='frame-task:';
+	
 	public function start($taskClass='', $lockTimeout=0, $cas='')
 	{
 		if (empty($taskClass)) {
@@ -80,5 +82,13 @@ class Task
 	public function getKeyByClassName($classname)
 	{
 		return str_replace('\\', '-', $classname);
+	}
+
+	public function taskStart($key)
+	{
+		$key = self::TASKPREFIX.'app-task-main-'.$key;
+		redis(2)->hSet($key, 'runAt', time());
+		redis(2)->hSet($key, 'nextRun', now());
+		return true;
 	}
 }

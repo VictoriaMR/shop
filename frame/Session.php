@@ -9,7 +9,11 @@ class Session
 		if (is_null($name)) {
 			$_SESSION = null;
 		} else {
-			$_SESSION[$name] = $data;
+			if (is_null($data)) {
+				unset($_SESSION[$name]);
+			} else {
+				$_SESSION[$name] = $data;
+			}
 		}
 		return true;
 	}

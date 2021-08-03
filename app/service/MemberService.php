@@ -126,4 +126,13 @@ class MemberService extends Base
 			return mediaUrl($avatar);
 		}
 	}
+
+	public function resetPassword($mobile, $password, $type='email')
+	{
+		if (empty($mobile)) return false;
+		$where = [$type=>$mobile];
+		$info = $this->loadData($where);
+		if (empty($info)) return false;
+		return $this->updateData($where, ['password'=>$this->getPassword($password, $info['salt']), 'update_time'=>now()]);
+	}
 }

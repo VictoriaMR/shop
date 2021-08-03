@@ -13,3 +13,8 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+$(function(){
+	FORGET.init();
+});
+</script>

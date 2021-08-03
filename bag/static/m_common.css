@@ -54,6 +54,9 @@ a {
 .layer {
 	padding: 0 0.08rem
 }
+.layer24 {
+	padding: 0 0.24rem
+}
 .left {
 	float: left
 }

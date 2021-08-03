@@ -8,7 +8,7 @@ class MainTask extends TaskDriver
 
 	public function __construct($process=[])
 	{
-		redis(2)->hDel(self::TASKPREFIX.'all');
+		redis(2)->sDel(self::TASKPREFIX.'all');
 		if (!empty($process)) {
 			$this->lockTimeout = config('task.timeout');
 			$this->runTimeLimit = 0;

@@ -13,19 +13,19 @@ class EmailService extends Base
 		$this->baseModel = make('app/model/email/Email');
 	}
 
-	public function sendLoginCode($memId, $code)
+	public function sendEmail($memId, $code, $type)
 	{
 		$data = make('app/service/email/UsedService')->getSiteAccountId();
 		if (empty($data)) {
 			return false;
 		}
-		$data['type'] = $this->getConst('TYPE_LOGIN_SEND_CODE');
+		$data['type'] = $type;
 		$data['mem_id'] = $memId;
 		$data['content'] = $code;
 		$data['add_time'] = now();
 		$rst = $this->insert($data);
 		if ($rst) {
-			make('app/task/TaskDriver')->taskStart('EmailTask');
+			make('frame/Task')->taskStart('EmailTask');
 		}
 		return $rst;
 	}

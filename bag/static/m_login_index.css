@@ -13,7 +13,7 @@
 }
 #login-page .input {
 	height: 0.4rem;
-	border:  0.02rem solid #ffffff;
+	border: 0.02rem solid #ffffff;
 }
 #login-page .email .input,
 #login-page .password .input {
@@ -96,41 +96,4 @@
 #login-page .agreement .iconfont {
 	position: relative;
 	top: 0.01rem;
-}
-
-/*tips*/
-#message-tips {
-	padding: 0.24rem 0.3rem 0.24rem 0.16rem;
-	position: fixed;
-	top: 0.16rem;
-	left: 0.16rem;
-	color: #fff;
-	width: calc(100% - 0.32rem);
-}
-#message-tips.error {
-	background-color: #FF898A;
-}
-#message-tips.success {
-	background-color: #74CAC9;
-}
-#message-tips .icon-content {
-	width: 0.4rem;
-	display: table-cell;
-	vertical-align: middle;
-	text-align: left;
-	font-size: 0.28rem;
-}
-#message-tips .text-content {
-	width: calc(100% - 0.4rem);
-	display: table-cell;
-	vertical-align: middle;
-	text-align: left;
-	font-size: 0.14rem;
-}
-#message-tips .icon-close {
-	font-size: 0.16rem;
-	position: absolute;
-	top: 0.12rem;
-	right: 0.12rem;
-	font-weight: 600;
 }
