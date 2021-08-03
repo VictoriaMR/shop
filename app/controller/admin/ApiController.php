@@ -12,8 +12,8 @@ class ApiController extends Controller
 	{
 		$data = [
 			'version' => '1.0.0',
-			'category' => make('App\Services\CategoryService')->getListFormat(),
-			'site' => make('App\Services\SiteService')->getList(),
+			'category' => make('app/service/CategoryService')->getListFormat(),
+			'site' => make('app/service/SiteService')->getListData(['site_id'=>['<>', '00']]),
 		];
 		$this->success($data);
 	}
@@ -49,13 +49,19 @@ class ApiController extends Controller
 
 	public function stat()
 	{
-		make('App\Services\LoggerService')->addLog();
+		make('app/service/LoggerService')->addLog();
 	}
 
 	public function addProduct()
 	{
-		set_time_limit(120);
 		$data = ipost();
+		$data = [
+			'class' => 'app/service/product/SpuService',
+			'method' => 'addProduct',
+			'param' => $data
+		];
+		$rst = make('app/service/QueueService')->push($data);
+		dd();
 		if (empty($data['bc_product_category'])) {
 			$this->error('产品分类不能为空!');
 		}
@@ -81,8 +87,8 @@ class ApiController extends Controller
 		if (empty($data['bc_product_url'])) {
 			$this->error('产品链接不能为空!');
 		}
-		$spuDataService = make('App\Services\ProductSpuDataService');
-		$fileService = make('App\Services\FileService');
+		$spuDataService = make('app/service/ProductSpuDataService');
+		$fileService = make('app/service/FileService');
 
 		//上传或者更新图片
 		$spuImageArr = [];
@@ -106,8 +112,8 @@ class ApiController extends Controller
 			$this->error('产品图片上传失败!');
 		}
 		//属性组
-		$attributeService = make('App\Services\AttributeService');
-		$attrvalueService = make('App\Services\AttrvalueService');
+		$attributeService = make('app/service/AttributeService');
+		$attrvalueService = make('app/service/AttrvalueService');
 		$attrArr = [];
 		$attrValueArr = [];
 		foreach ($data['bc_sku'] as $key => $value) {
@@ -123,14 +129,14 @@ class ApiController extends Controller
 		foreach ($attrValueArr as $key => $value) {
 			$attrValueArr[$key] = $attrvalueService->addNotExist($key);
 		}
-		$productLanguageService = make('App\Services\ProductLanguageService');
+		$productLanguageService = make('app/service/ProductLanguageService');
 		$where = [
 			'site_id' => $data['bc_product_site'],
 			'item_id' => $data['bc_product_id'],
 			'supplier_id' => $supplierId,
 		];	
 		$info = $spuDataService->getInfoByWhere($where);
-		$spuService = make('App\Services\ProductSpuService');
+		$spuService = make('app/service/ProductSpuService');
 		if (empty($info)) {
 			//价格合集
 			foreach ($data['bc_sku'] as $key => $value) {
@@ -184,7 +190,7 @@ class ApiController extends Controller
 			}
 
 			//sku
-			$skuService = make('App\Services\ProductSkuService');
+			$skuService = make('app/service/ProductSkuService');
 			foreach ($data['bc_sku'] as $key => $value) {
 				if (empty($value['stock'])) continue;
 
@@ -257,7 +263,7 @@ class ApiController extends Controller
 			$this->error('产品SPU入库失败!');
 		}
 		//产品分类关联
-		make('App\Services\CategoryService')->addCateProRelation($spuId, $data['bc_product_category']);
+		make('app/service/CategoryService')->addCateProRelation($spuId, $data['bc_product_category']);
 		
 		//spu 介绍图片
 		$insert = [];
@@ -280,7 +286,7 @@ class ApiController extends Controller
 		}
 
 		//spu介绍文本
-		$descService = make('App\Services\DescriptionService');
+		$descService = make('app/service/DescriptionService');
 		$descArr = [];
 		$insert = [];
 		foreach ($data['bc_des_text'] as $key => $value) {
