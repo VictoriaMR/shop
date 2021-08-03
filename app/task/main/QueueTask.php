@@ -3,7 +3,7 @@
 namespace app\task\main;
 use app\task\TaskDriver;
 
-class EmailTask extends TaskDriver
+class QueueTask extends TaskDriver
 {
 	public function __construct($process=[])
 	{
@@ -17,17 +17,5 @@ class EmailTask extends TaskDriver
 		$this->config['cron'] = ['* * * * *']; //ayaways run
 	}
 
-	public function run()
-	{
-		$emailService = make('app/service/email/EmailService');
-		$list = $emailService->getListData(['status'=>0], 'email_id');
-		if (empty($list)) {
-			$this->taskSleep(300);
-		} else {
-			foreach ($list as $value) {
-				$emailService->sendEmailById($value['email_id']);
-			}
-		}
-		return true;
-	}
+	
 }

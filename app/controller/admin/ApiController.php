@@ -55,13 +55,18 @@ class ApiController extends Controller
 	public function addProduct()
 	{
 		$data = ipost();
+		$cacheKey = 'queue-add-product:'.ipost('bc_site_id');
+		if (redis(2)->hExists($cacheKey, ipost('bc_product_id'))) {
+			$this->error('队列已存在');
+		}
 		$data = [
 			'class' => 'app/service/product/SpuService',
 			'method' => 'addProduct',
-			'param' => $data
+			'param' => ipost(),
 		];
 		$rst = make('app/service/QueueService')->push($data);
 		if ($rst) {
+			redis(2)->hSet($cacheKey, ipost('bc_product_id'), 1);
 			$this->success('加入队列成功');
 		} else {
 			$this->error('加入队列失败');

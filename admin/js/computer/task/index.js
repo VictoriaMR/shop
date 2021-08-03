@@ -45,7 +45,8 @@ const TASK = {
 				</td>\
 				<td>\
 					<span title="开始时间">'+(list[i].start_time ? list[i].start_time : '')+'</span><br >\
-					<span title="开始时间">'+list[i].memoryUsage+'</span>\
+					<span title="运行时间">'+(list[i].nextRun ? list[i].nextRun : '')+'</span><br >\
+					<span title="使用内存">'+(list[i].memoryUsage ? list[i].memoryUsage : '')+'</span>\
 				</td>\
 				<td>\
 					<li class="cycle-'+(list[i].boot ? list[i].boot :'off')+'"></li>\
@@ -54,8 +55,8 @@ const TASK = {
 					</div>\
 				</td>\
 				<td>\
-					<span title="运行次数">'+list[i].count+'</span><br >\
-					<span title="运行次数">'+list[i].loopCount+'</span>\
+					<span title="运行次数">'+(list[i].count ? list[i].count : '0')+'</span><br >\
+					<span title="运行次数">'+(list[i].loopCount ? list[i].loopCount : '0')+'</span>\
 				</td>\
 				<td>\
 					<span>'+(list[i].remark ? list[i].remark : '')+'</span>\
