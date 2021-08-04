@@ -17,13 +17,13 @@
 		<table class="table table-hover table-middle">
 			<thead>
 				<tr>
-					<th width="200">任务类<br >任务说明</th>
-					<th width="100">IP<br >PID</th>
-					<th width="170">信息</th>
+					<th width="250">任务类<br >任务说明</th>
+					<th width="80">IP<br >PID</th>
+					<th width="120">信息</th>
 					<th width="80">运行状态<br >开关状态 </th>
 					<th width="80">运行次数<br >循环次数</th>
-					<th width="310">任务信息</th>
-					<th width="190">操作</th>
+					<th width="200">任务信息</th>
+					<th width="80">操作</th>
 				</tr>
 			</thead>
 			<tbody></tbody>

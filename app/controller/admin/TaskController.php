@@ -37,7 +37,11 @@ class TaskController extends Controller
 		$taskList = redis(2)->smembers(self::TASKPREFIX.'all');
 		$list = [];
 		if (!empty($taskList)) {
-			$taskList = array_reverse($taskList);
+			$mainIndex = array_search('app-task-MainTask', $taskList);
+			$data = redis(2)->hGetAll(self::TASKPREFIX.$taskList[$mainIndex]);
+			$data['name'] = $taskList[$mainIndex];
+			$list[] = $data;
+			unset($taskList[$mainIndex]);
 			foreach($taskList as $value) {
 				$data = redis(2)->hGetAll(self::TASKPREFIX.$value);
 				$data['name'] = $value;

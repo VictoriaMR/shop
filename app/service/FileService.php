@@ -30,7 +30,7 @@ class FileService
             if (!$result) {
                 return false;
             }
-            $imageService = make('app\service\ImageService');
+            $imageService = make('app/service/ImageService');
             $imageService->compressImg($saveUrl);
             $data = [
                 'name' => $name,
@@ -63,7 +63,7 @@ class FileService
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
-        $tempName = $dir.\frame\Str::getUniqueName().'.'.$ext;
+        $tempName = $dir.randString(32).'.'.$ext;
         //获取文件
         if (substr($url, 0, 4) != 'http') {
             $url = 'https:'.$url;
@@ -75,7 +75,7 @@ class FileService
         }
         if (file_put_contents($tempName, $result)) {
             $name = md5_file($tempName);
-            $attachmentService = make('app\service\AttachmentService');
+            $attachmentService = make('app/service/AttachmentService');
             $data = $attachmentService->getAttachmentByName($name);
             if (empty($data)) {
                 $path = $dir.$cate.DS;
@@ -85,7 +85,7 @@ class FileService
                 }
                 $file = $path.$name.'.'.$ext;
                 //存入压缩文件
-                $imageService = make('app\service\ImageService');
+                $imageService = make('app/service/ImageService');
                 $imageService->compressImg($tempName, $file);
                 $data = [
                     'name' => $name,
@@ -93,7 +93,7 @@ class FileService
                     'cate' => $cate,
                     'size' => filesize($file),
                 ];
-                $attachId = $attachmentService->create($data);
+                $attachId = $attachmentService->insertGetId($data);
                 $data['attach_id'] = $attachId;
                 //图片缩略
                 if ($thumb) {

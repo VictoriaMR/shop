@@ -88,7 +88,7 @@ function isCli(){
 	return stripos(php_sapi_name(), 'cli') !== false;
 }
 function isJson($string){
-	if (is_array($string)) return false;
+	if (is_array($string)) return $string;
 	$temp = json_decode($string, true); 
 	return json_last_error() == JSON_ERROR_NONE ? $temp : $string;
 }

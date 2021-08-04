@@ -33,6 +33,6 @@ class QueueService
 
 	public function dealFalse($data)
 	{
-		$result = redis(2)->lPush($this->failedKey, $data);
+		return redis(2)->lPush($this->failedKey, $data);
 	}
 }

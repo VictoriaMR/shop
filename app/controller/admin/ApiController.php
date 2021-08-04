@@ -72,37 +72,4 @@ class ApiController extends Controller
 			$this->error('加入队列失败');
 		}
 	}
-
-	protected function getSupplierItemUrl($url)
-	{
-		if (empty($url)) {
-			return '';
-		}
-		$url = explode('?', $url);
-		if (strpos($url[0], '1688.com') !== false) {
-			return $url[0];
-		} else {
-			parse_str($url[1], $params);
-			$id = $params['id'] ?? '';
-			if (empty($id)) {
-				return '';
-			}
-			return $url[0].(empty($id) ? '': '?id='.$id);
-		}
-	}
-
-	protected function filterUrl($url)
-	{
-		return str_replace(['.200x200', '.400x400', '.600x600', '.800x800', '_.webp'], '', $url);
-	}
-
-	protected function getSiteId($name)
-	{
-		$siteIdArr = [
-			'1688' => 1,
-			'taobao' => 2,
-			'tmall' => 3
-		];
-		return $siteIdArr[$name] ?? 0;
-	}
 }

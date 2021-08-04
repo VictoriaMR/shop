@@ -53,14 +53,12 @@ class MainTask extends TaskDriver
 
 	public function run()
 	{
-		echo __FUNCTION__.PHP_EOL;
 		foreach ($this->taskList as $k => $v){
 			$info = $this->getInfo('', $k);
 			if (($info['boot'] ?? '') !== 'off') { // 开始启动任务
 				//运行时间
 				if ($info['runAt'] <= time() && $this->locker->lock($k, $info['lockTimeout'])) {
 					$cas = $this->locker->holdLock($k);
-					echo $k.PHP_EOL;
 					try {
 						//下次运行时间
 						$nextRunAt = $this->getNextTimeByCronArray($v['cron']);

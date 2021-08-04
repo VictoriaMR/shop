@@ -161,7 +161,7 @@ abstract class TaskDriver
 
 	protected function ping()
 	{
-		$this->setInfo('ping_time', now());
+		$this->setInfo('pingTime', now());
 	}
 
 	public function start()
@@ -350,7 +350,12 @@ abstract class TaskDriver
 	protected function taskSleep($time)
 	{
 		$runAt = redis(2)->hGet(self::TASKPREFIX.$this->lock, 'runAt');
-		return redis(2)->hSet(self::TASKPREFIX.$this->lock, 'runAt', ($runAt > 0 ? $runAt : time())+$time);
+		$runAt = ($runAt > 0 ? $runAt : time()) + $time;
+		$data = [
+			'runAt' => $runAt,
+			'nextRun' => $runAt > 0 ? now($runAt) : 'alwaysRun',
+		];
+		return redis(2)->hMset(self::TASKPREFIX.$this->lock, $data);
 	}
 
 	abstract public function run();

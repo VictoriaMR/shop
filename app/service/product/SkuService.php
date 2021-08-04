@@ -7,6 +7,6 @@ class SkuService extends Base
 {
 	public function getModel()
 	{
-		$this->baseModel = make('app/model/product/SkuData');
+		$this->baseModel = make('app/model/product/Sku');
 	}
 }

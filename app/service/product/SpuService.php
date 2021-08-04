@@ -12,32 +12,6 @@ class SpuService extends Base
 		$this->baseModel = make('app/model/product/Spu');
 	}
 
-	public function addSpuImage(array $data)
-	{
-		$model = make('app/model/ProductSpuImage');
-		if (!empty($data[0]) && is_array($data[0])) {
-			foreach ($data as $key => $value) {
-				if ($model->getCount($value)) {
-					unset($data[$key]);
-				}
-			}
-		}
-		return $model->insert($data);
-	}
-
-	public function addIntroduceImage(array $data)
-	{
-		$model = make('app/model/ProductIntroduce');
-		if (!empty($data[0]) && is_array($data[0])) {
-			foreach ($data as $key => $value) {
-				if ($model->getCount($value)) {
-					unset($data[$key]);
-				}
-			}
-		}
-		return $model->insert($data);
-	}
-
 	public function getInfoCache($spuId, $lanId)
 	{
 		$cacheKey = $this->getCacheKey($spuId, $lanId);
@@ -185,7 +159,10 @@ class SpuService extends Base
 		if (empty($data['bc_product_category'])) {
 			return '产品分类不能为空!';
 		}
-		$supplierId = $this->getSiteId($data['bc_site_id']);
+		if (is_array($data['bc_product_category'])) {
+			$data['bc_product_category'] = array_shift($data['bc_product_category']);
+		}
+		$supplierId = $this->getSupplierSiteId($data['bc_site_id']);
 		if (empty($supplierId)) {
 			return '供应商不能为空!';
 		}
@@ -207,7 +184,6 @@ class SpuService extends Base
 		if (empty($data['bc_product_url'])) {
 			return '产品链接不能为空!';
 		}
-		$spuDataService = make('app/service/ProductSpuDataService');
 		$fileService = make('app/service/FileService');
 
 		//上传或者更新图片
@@ -224,7 +200,7 @@ class SpuService extends Base
 			}
 			$spuImageArr[$url] = $rst;
 			if ($key == 0) {
-				$firstImage = $spuImageArr[$url];
+				$firstImage = $spuImageArr[$url]['attach_id'];
 			}
 		}
 		$spuImageArr = array_filter($spuImageArr);
@@ -232,8 +208,11 @@ class SpuService extends Base
 			return '产品图片上传失败!';
 		}
 		//属性组
-		$attributeService = make('app/service/AttributeService');
-		$attrvalueService = make('app/service/AttrvalueService');
+		$attributeService = make('app/service/attr/ButeService');
+		$attrvalueService = make('app/service/attr/ValueService');
+		$productLanguageService = make('app/service/product/LanguageService');
+		$spuDataService = make('app/service/product/spuDataService');
+		$spuImageService = make('app/service/product/SpuImageService');
 		$attrArr = [];
 		$attrValueArr = [];
 		foreach ($data['bc_sku'] as $key => $value) {
@@ -249,14 +228,12 @@ class SpuService extends Base
 		foreach ($attrValueArr as $key => $value) {
 			$attrValueArr[$key] = $attrvalueService->addNotExist($key);
 		}
-		$productLanguageService = make('app/service/ProductLanguageService');
 		$where = [
 			'site_id' => $data['bc_product_site'],
 			'item_id' => $data['bc_product_id'],
 			'supplier_id' => $supplierId,
 		];	
-		$info = $spuDataService->getInfoByWhere($where);
-		$spuService = make('app/service/ProductSpuService');
+		$info = $spuDataService->loadData($where, 'spu_id');
 		if (empty($info)) {
 			//价格合集
 			foreach ($data['bc_sku'] as $key => $value) {
@@ -266,16 +243,16 @@ class SpuService extends Base
 			$insert = [
 				'status' => 0,
 				'site_id' => $data['bc_product_site'],
-				'avatar' => $firstImage['cate'].'/'.$firstImage['name'].'.'.$firstImage['type'],
+				'cate_id' => $data['bc_product_category'],
+				'attach_id' => $firstImage,
 				'min_price' => min($priceArr),
 				'max_price' => max($priceArr),
 				'origin_price' => round(max($priceArr) * ((10 - rand(5, 9)) / 10 + 1), 2), //虚拟原价
-				'name' => $data['bc_product_name'],
 				'add_time' => now(),
 			];
 			//事务开启
-			$spuDataService->start();
-			$spuId = $spuService->create($insert);
+			$this->start();
+			$spuId = $this->insertGetId($insert);
 			//spu扩展数据
 			$insert = [
 				'spu_id' => $spuId,
@@ -286,14 +263,14 @@ class SpuService extends Base
 				'shop_name' => $data['bc_shop_name'],
 				'shop_url' => $data['bc_shop_url'],
 			];
-			$spuDataService->create($insert);
+			$spuDataService->insert($insert);
 			//spu 多语言
 			$insert = [
 				'spu_id' => $spuId,
 				'lan_id' => 1,
-				'name' => $data['bc_product_name']
+				'name' => $data['bc_product_name'],
 			];
-			$productLanguageService->create($insert);
+			$productLanguageService->insert($insert);
 
 			//spu图片组
 			$insert = [];
@@ -306,11 +283,11 @@ class SpuService extends Base
 				];
 			}
 			if (!empty($insert)) {
-				$spuService->addSpuImage($insert);
+				$spuImageService->addSpuImage($insert);
 			}
 
 			//sku
-			$skuService = make('app/service/ProductSkuService');
+			$skuService = make('app/service/product/SkuService');
 			foreach ($data['bc_sku'] as $key => $value) {
 				if (empty($value['stock'])) continue;
 
@@ -322,7 +299,6 @@ class SpuService extends Base
 				$name = trim($name);
 				$name = $data['bc_product_name'].' - '.$name;
 
-				$avatar = '';
 				if (!empty($value['img'])) {
 					$value['img'] = $this->filterUrl($value['img']);
 					if (empty($spuImageArr[$value['img']])) {
@@ -332,24 +308,17 @@ class SpuService extends Base
 						}
 						$spuImageArr[$value['img']] = $rst;
 					}
-					$avatar = $spuImageArr[$value['img']]['cate'].'/'.$spuImageArr[$value['img']]['name'].'.'.$spuImageArr[$value['img']]['type'];
 				}
 				$insert = [
 					'spu_id' => $spuId,
-					'status' => 1,
-					'avatar' => $avatar,
+					'status' => 0,
+					'attach_id' => $spuImageArr[$value['img']]['attach_id'] ?? 0,
 					'stock' => $value['stock'],
 					'price' => $value['p_price'],
 					'cost_price' => $value['price'],
 					'add_time' => now(),
 				];
-				$skuId = $skuService->create($insert);
-				$insert = [
-					'spu_id' => $spuId,
-					'lan_id' => 1,
-					'name' => $name,
-				];
-				$productLanguageService->create($insert);
+				$skuId = $skuService->insert($insert);
 				//属性关联
 				$insert = [];
 				$count = 1;
@@ -372,18 +341,16 @@ class SpuService extends Base
 					];
 				}
 				if (!empty($insert)) {
-					$skuService->addAttributeRelation($insert);
+					make('app/service/product/AttrRelationService')->insert($insert);
 				}
 			}
-			$spuDataService->commit();
+			$this->commit();
 		} else {
 			$spuId = $info['spu_id'];
 		}
 		if (empty($spuId)) {
 			return '产品SPU入库失败!';
 		}
-		//产品分类关联
-		make('app/service/CategoryService')->addCateProRelation($spuId, $data['bc_product_category']);
 		
 		//spu 介绍图片
 		$insert = [];
@@ -402,25 +369,60 @@ class SpuService extends Base
 			];
 		}
 		if (!empty($insert)) {
-			$spuService->addIntroduceImage($insert);
+			make('app/service/product/IntroduceService')->addIntroduceImage($insert);
 		}
 
 		//spu介绍文本
-		$descService = make('app/service/DescriptionService');
+		$descService = make('app/service/product/DescriptionService');
 		$descArr = [];
 		$insert = [];
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$value['key'] = trim($value['key'], chr(0xc2).chr(0xa0));
-			$value['value'] = trim($value['value'], chr(0xc2).chr(0xa0));
-			$descArr[$value['key']] = $descService->setNotExit($value['key']);
-			$descArr[$value['value']] = $descService->setNotExit($value['value']);
+			$value['key'] = mb_substr(trim($value['key'], chr(0xc2).chr(0xa0)), 0, 120);
+			$value['value'] = mb_substr(trim($value['value'], chr(0xc2).chr(0xa0)), 0, 120);
+			$descArr[$value['key']] = $descService->addNotExist($value['key']);
+			$descArr[$value['value']] = $descService->addNotExist($value['value']);
 			$insert[] = [
 				'spu_id' => $spuId,
 				'name_id' => $descArr[$value['key']],
 				'value_id' => $descArr[$value['value']],
 			];
 		}
-		$descService->addDescRelation($insert);
+		make('app/service/product/DescriptionRelationService')->addDescRelation($insert);
+		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
+		redis(2)->hDel($cacheKey, $data['bc_product_id']);
 		return true;
+	}
+
+	protected function getSupplierSiteId($name)
+	{
+		$siteIdArr = [
+			'1688' => 1,
+			'taobao' => 2,
+			'tmall' => 3
+		];
+		return $siteIdArr[$name] ?? 0;
+	}
+
+	protected function getSupplierItemUrl($url)
+	{
+		if (empty($url)) {
+			return '';
+		}
+		$url = explode('?', $url);
+		if (strpos($url[0], '1688.com') !== false) {
+			return $url[0];
+		} else {
+			parse_str($url[1], $params);
+			$id = $params['id'] ?? '';
+			if (empty($id)) {
+				return '';
+			}
+			return $url[0].(empty($id) ? '': '?id='.$id);
+		}
+	}
+
+	protected function filterUrl($url)
+	{
+		return str_replace(['.200x200', '.400x400', '.600x600', '.800x800', '_.webp'], '', $url);
 	}
 }
