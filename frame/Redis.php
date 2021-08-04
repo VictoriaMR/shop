@@ -34,19 +34,19 @@ class Redis
 	public function __call($func, $arg)
 	{
 		if (is_null($this->_link)) return false;
-		if (!empty($arg[1]) && is_array($arg[1])) {
+		if ($func != 'hMset' && !empty($arg[1]) && is_array($arg[1])) {
 			$arg[1] = json_encode($arg[1], JSON_UNESCAPED_UNICODE);
 		} elseif ($func == 'hSet' && !empty($arg[2]) && is_array($arg[2])) {
 			$arg[2] = json_encode($arg[2], JSON_UNESCAPED_UNICODE);
 		}
 		$info = $this->_link->$func(...$arg);
 		if ($info) {
-			if (in_array($func, ['get', 'hGet'])) {
-				$info = isJson($info);
-			} elseif (in_array($func, ['hGetAll'])) {
+			if (in_array($func, ['hGetAll'])) {
 				foreach ($info as $k => $v) {
 					$info[$k] = isJson($v);
 				}
+			} else {
+				$info = isJson($info);
 			}
 		}
 		return $info;

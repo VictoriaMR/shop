@@ -5,6 +5,9 @@ use app\controller\Controller;
 
 class TaskController extends Controller
 {
+	const TASKPREFIX ='frame-task:';
+	const LOCKERPREFIX = 'frame-lock:';
+
 	public function __construct()
 	{
 		$this->_arr = [
@@ -18,28 +21,73 @@ class TaskController extends Controller
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['taskList'])) {
+			if (in_array($opn, ['taskList', 'modifyTask'])) {
 				$this->$opn();
 			}
 			$this->error('Unknown request');
 		}
 		html()->addCss();
 		html()->addJs();
+		$this->assign('enabled', config('task.enabled'));
 		$this->view();
 	}
 
 	protected function taskList()
 	{
-		$prev = 'frame-task:';
-		$taskList = redis(2)->smembers($prev.'all');
+		$taskList = redis(2)->smembers(self::TASKPREFIX.'all');
 		$list = [];
 		if (!empty($taskList)) {
+			$taskList = array_reverse($taskList);
 			foreach($taskList as $value) {
-				$data = redis(2)->hGetAll($prev.$value);
+				$data = redis(2)->hGetAll(self::TASKPREFIX.$value);
 				$data['name'] = $value;
 				$list[] = $data;
 			}
 		}
 		$this->success(['time'=>now(), 'list'=>$list]);
+	}
+
+	protected function modifyTask()
+	{
+		$type = ipost('type');
+		$key = ipost('key');
+		$enabled = config('task.enabled');
+		if (in_array($type, ['startup_all', 'shutdown_all'])) {
+			//关闭主进程
+			$pid = redis(2)->hGet(self::TASKPREFIX.'app-task-MainTask', 'process.pid');
+			if ($pid) {
+				exec((request()->isWin() ? 'TSKILL ' : 'kill ').$pid);
+			}
+			redis(2)->del(self::LOCKERPREFIX.'app-task-MainTask');
+
+			$taskList = redis(2)->smembers(self::TASKPREFIX.'all');
+			if (!empty($taskList)) {
+				foreach($taskList as $value) {
+					redis(2)->hSet(self::TASKPREFIX.$value, 'boot', $type == 'startup_all' && $enabled ? 'on' : 'off');
+				}
+			}
+			if ($type == 'startup_all' && $enabled) {
+				make('frame/Task')->start();
+			}
+		} else {
+			if (empty($key)) {
+				$this->error('进程名称不能为空');
+			}
+			if ($type == 'shutdown') {
+				$pid = redis(2)->hGet(self::TASKPREFIX.$key, 'process.pid');
+				if ($pid) {
+					exec((request()->isWin() ? 'TSKILL ' : 'kill ').$pid);
+				}
+				redis(2)->del(self::LOCKERPREFIX.$key);
+			}
+			redis(2)->hSet(self::TASKPREFIX.$key, 'boot', $type == 'startup' && $enabled ? 'on' : 'off');
+			if (!$enabled) {
+				$this->error('当前任务配置未开启');
+			}
+			if ($key == 'app-task-MainTask' && $type == 'startup') {
+				make('frame/Task')->start();
+			}
+		}
+		$this->success('操作成功');
 	}
 }

@@ -76,7 +76,7 @@ class Task
 
 	protected function getStandClassName($classname)
 	{
-		return trim($classname, ' \t\n\r\0\x0B\\');
+		return str_replace('-', '\\', trim($classname, ' \t\n\r\0\x0B\\'));
 	}
 
 	public function getKeyByClassName($classname)

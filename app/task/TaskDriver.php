@@ -38,16 +38,15 @@ abstract class TaskDriver
 			list($this->lock, $this->cas) = $process['lock'];
 			$this->startTime = time();
 			// 设置任务当次启动时间
-			$this->setInfo('info', $this->config['info']);
-			$this->setInfo('lockTimeout', $this->lockTimeout);
-			$this->setInfo('runTimeLimit', $this->runTimeLimit);
-			$this->setInfo('sleep', $this->sleep);
-			$this->setInfo('startTime', now());
-			$this->setInfo('status', 'runing');
-			$this->setInfo('process.pid', getmypid());
-			$this->setInfo('process.uid', getmyuid());
-			$this->setInfo('process.gid', getmygid());
-			$this->setInfo('process.user', get_current_user());
+			$data = [
+				'startTime' => now(),
+				'status' => 'runing',
+				'process.pid' => getmypid(),
+				'process.uid' => getmyuid(),
+				'process.gid' => getmygid(),
+				'process.user' => get_current_user(),
+			];
+			$this->setInfoArray($data);
 			$this->locker = make('frame/Locker');
 			$this->tasker = make('frame/Task');
 
@@ -70,6 +69,24 @@ abstract class TaskDriver
 		}
 		$key = $this->getKey($key);
 		return redis(2)->hSet($key, $field, $value);
+	}
+
+	protected function delInfo($key='')
+	{
+		if (empty($key)) {
+			$key = $this->lock;
+		}
+		$key = $this->getKey($key);
+		return redis(2)->del($key);
+	}
+
+	protected function setInfoArray(array $data, $key='')
+	{
+		if (empty($key)) {
+			$key = $this->lock;
+		}
+		$key = $this->getKey($key);
+		return redis(2)->hMset($key, $data);
 	}
 
 	protected function getInfo($field='', $key='')
@@ -332,7 +349,8 @@ abstract class TaskDriver
 
 	protected function taskSleep($time)
 	{
-		return redis(2)->hIncrBy(self::TASKPREFIX.$this->lock, 'runAt', $time);
+		$runAt = redis(2)->hGet(self::TASKPREFIX.$this->lock, 'runAt');
+		return redis(2)->hSet(self::TASKPREFIX.$this->lock, 'runAt', ($runAt > 0 ? $runAt : time())+$time);
 	}
 
 	abstract public function run();

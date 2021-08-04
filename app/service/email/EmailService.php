@@ -41,18 +41,21 @@ class EmailService extends Base
 			return false;
 		}
 		$this->emailAccountId = $info['account_id'];
+		$toName = explode('@', $memInfo['email'])[0];
 		switch ($info['type']) {
 			case $this->getConst('TYPE_LOGIN_SEND_CODE'):
 				$subject = 'Login Verification Code';
 				$template = 'code';
 				$this->siteInfo = site()->getInfoCache($info['site_id']);
-				$toName = explode('@', $memInfo['email'])[0];
 				$vars = [
 					'name' => $toName,
 					'siteName' => $this->siteInfo['name'],
 					'code' => $info['content'],
 					'link' => url('login', ['email'=>$memInfo['email'], 'verify_code'=>$info['content']], $this->siteInfo['domain']),
 				];
+				break;
+			default:
+				return false;
 				break;
 		}
 		$rst = $this->sendTemplate($memInfo['email'], $toName, $subject, $this->siteInfo['name'], $template, $vars);

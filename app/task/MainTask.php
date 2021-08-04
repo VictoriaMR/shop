@@ -8,7 +8,7 @@ class MainTask extends TaskDriver
 
 	public function __construct($process=[])
 	{
-		redis(2)->sDel(self::TASKPREFIX.'all');
+		redis(2)->del(self::TASKPREFIX.'all');
 		if (!empty($process)) {
 			$this->lockTimeout = config('task.timeout');
 			$this->runTimeLimit = 0;
@@ -21,25 +21,30 @@ class MainTask extends TaskDriver
 	protected function before()
 	{
 		$files = getDirFile(__DIR__.DIRECTORY_SEPARATOR.'main');
-		array_reverse($files);
+		$files = array_reverse($files);
 		foreach ($files as $key => $value) {
 			$className = __NAMESPACE__.str_replace([__DIR__, '.php'], '', $value);
 			//重新缓存配置
 			$class = make($className);
 			if ($class) {
 				$keyName = $this->tasker->getKeyByClassName($className);
+				$data = [];
+				$data['boot'] = $this->getInfo('boot', $keyName) == 'off' ? 'off' : 'on';
 				$config = $class->config;
-				$config['lockTimeout'] = $class->lockTimeout;
-				$config['runTimeLimit'] = $class->runTimeLimit;
-				$config['classname'] = $className;
-				$config['status'] = $this->getInfo('status', $keyName);
-				$config['runAt'] = $this->getNextTimeByCronArray($config['cron']);
-				redis(2)->sAdd(self::TASKPREFIX.'all', $keyName);
-				//加入缓存
-				foreach ($config as $k => $v) {
-					$this->setInfo($k, $v, $keyName);
+				$data['info'] = $config['info'];
+				$data['lockTimeout'] = $class->lockTimeout;
+				$data['runTimeLimit'] = $class->runTimeLimit;
+				$data['sleep'] = $class->sleep;
+				$data['classname'] = $className;
+				if ($data['boot'] == 'on') {
+					$data['runAt'] = $this->getNextTimeByCronArray($config['cron']);
+					$data['nextRun'] = $data['runAt'] > 0 ? now($data['runAt']) : 'alwaysRun';
 				}
-				$this->taskList[$keyName] = $className;
+				redis(2)->sAdd(self::TASKPREFIX.'all', $keyName);
+				$this->delInfo($keyName);
+				//加入缓存
+				$this->setInfoArray($data, $keyName);
+				$this->taskList[$keyName] = array_merge($data, $config);
 			} else {
 				$this->echo('类不存在', $className);
 			}
@@ -48,6 +53,7 @@ class MainTask extends TaskDriver
 
 	public function run()
 	{
+		echo __FUNCTION__.PHP_EOL;
 		foreach ($this->taskList as $k => $v){
 			$info = $this->getInfo('', $k);
 			if (($info['boot'] ?? '') !== 'off') { // 开始启动任务
@@ -57,13 +63,13 @@ class MainTask extends TaskDriver
 					echo $k.PHP_EOL;
 					try {
 						//下次运行时间
-						$nextRunAt = $this->getNextTimeByCronArray($info['cron']);
+						$nextRunAt = $this->getNextTimeByCronArray($v['cron']);
 						if ($nextRunAt < 0 || $nextRunAt === false) {
 							unset($this->taskList[$k]);
 							$this->echo('运行计划配置无效', $k);
 						} else {
-							$this->tasker->start($v, $info['lockTimeout'], $cas);
-							$this->setInfo('nextRun', $nextRunAt > 0 ? date('Y-m-d H:i:s', $nextRunAt) : 'alwaysRun', $k);
+							$this->tasker->start($k, $info['lockTimeout'], $cas);
+							$this->setInfo('nextRun', $nextRunAt > 0 ? now($nextRunAt) : 'alwaysRun', $k);
 							$this->setInfo('runAt', $nextRunAt, $k);
 						}
 					} catch (\Exception $e) {

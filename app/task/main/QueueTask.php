@@ -17,5 +17,22 @@ class QueueTask extends TaskDriver
 		$this->config['cron'] = ['* * * * *']; //ayaways run
 	}
 
-	
+	public function run()
+	{
+		$service = make('app/service/QueueService');
+		if ($service->count()) {
+			$data = $service->pop();
+			print_r($data);
+			print_r(make($data['class']));
+			$func = $data['method'];
+			$rst = make($data['class'])->$func($data['param']);
+			if ($rst !== true) {
+				$data['queue_error'] = $rst;
+				$service->dealFalse($data);
+			}
+		} else {
+			$this->taskSleep(300);
+			return false;
+		}
+	}
 }

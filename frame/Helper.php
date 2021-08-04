@@ -101,8 +101,8 @@ function iget($name='', $default=null){
 function input($name='', $default=null){
 	return request()->input($name, $default);
 }
-function now(){
-	return date('Y-m-d H:i:s');
+function now($time=null){
+	return date('Y-m-d H:i:s', $time ? $time : time());
 }
 function appT($text){
 	return make('App/Services/TranslateService')->getText($text);
