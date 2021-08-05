@@ -19,5 +19,5 @@ foreach ($argv as $key=>$value) {
 	$param[array_shift($temp)] = implode('=', $temp);
 }
 require ROOT_PATH.'frame/Start.php';
-\App::make($class, $param)->$func();
-exit();
+make($class, $param)->$func();
+\App::runOver();

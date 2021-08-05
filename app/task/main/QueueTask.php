@@ -13,7 +13,7 @@ class QueueTask extends TaskDriver
 			// 每运行6小时退出一次
 			$this->runTimeLimit = 60*60*6;
 		}
-		$this->config['info'] = 'email';
+		$this->config['info'] = '延时队列任务';
 		$this->config['cron'] = ['* * * * *']; //ayaways run
 	}
 

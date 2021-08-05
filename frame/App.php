@@ -54,7 +54,7 @@ class App
 	{
 		if (env('APP_DEBUG')) {
 			debug()->runlog();
-			if (!IS_AJAX) {
+			if (!IS_CLI && !IS_AJAX) {
 				$router = router()->getRoute();
 				if (!($router['path'] == 'index' && $router['func'] == 'index')) {
 					debug()->init();

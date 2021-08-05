@@ -53,6 +53,11 @@ class MainTask extends TaskDriver
 
 	public function run()
 	{
+		//获取当前工作状态
+		$boot  = $this->getInfo('boot');
+		if ($boot == 'off') {
+			return false;
+		}
 		foreach ($this->taskList as $k => $v){
 			$info = $this->getInfo('', $k);
 			if (($info['boot'] ?? '') !== 'off') { // 开始启动任务

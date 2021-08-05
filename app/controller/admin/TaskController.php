@@ -57,13 +57,6 @@ class TaskController extends Controller
 		$key = ipost('key');
 		$enabled = config('task.enabled');
 		if (in_array($type, ['startup_all', 'shutdown_all'])) {
-			//关闭主进程
-			$pid = redis(2)->hGet(self::TASKPREFIX.'app-task-MainTask', 'process.pid');
-			if ($pid) {
-				exec((request()->isWin() ? 'TSKILL ' : 'kill ').$pid);
-			}
-			redis(2)->del(self::LOCKERPREFIX.'app-task-MainTask');
-
 			$taskList = redis(2)->smembers(self::TASKPREFIX.'all');
 			if (!empty($taskList)) {
 				foreach($taskList as $value) {
@@ -78,10 +71,6 @@ class TaskController extends Controller
 				$this->error('进程名称不能为空');
 			}
 			if ($type == 'shutdown') {
-				$pid = redis(2)->hGet(self::TASKPREFIX.$key, 'process.pid');
-				if ($pid) {
-					exec((request()->isWin() ? 'TSKILL ' : 'kill ').$pid);
-				}
 				redis(2)->del(self::LOCKERPREFIX.$key);
 			}
 			redis(2)->hSet(self::TASKPREFIX.$key, 'boot', $type == 'startup' && $enabled ? 'on' : 'off');

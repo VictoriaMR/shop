@@ -67,10 +67,10 @@ class Debug
 			}
 		}
 		// 获取基本信息
-		if (isset($_SERVER['HTTP_HOST'])) {
-			$current_uri = ' uri: ' . $_SERVER['HTTP_HOST'] . urldecode($_SERVER['REQUEST_URI']);
-		} else {
+		if (IS_CLI) {
 			$current_uri = ' cmd: ' . implode(' ', $_SERVER['argv']);
+		} elseif (isset($_SERVER['HTTP_HOST'])) {
+			$current_uri = ' uri: ' . $_SERVER['HTTP_HOST'] . urldecode($_SERVER['REQUEST_URI']);
 		}
 		$runtime = number_format(microtime(true) - APP_TIME_START, 10,'.','');
 		$reqs = $runtime > 0 ? number_format(1 / $runtime, 2,'.','') : '∞';
