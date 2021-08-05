@@ -7,8 +7,6 @@ class IndexController extends Controller
 {
 	public function index()
 	{
-		make('app/task/main/QueueTask')->run();
-		dd('123123');
 		html()->addCss();
 		html()->addJs();
 		html()->addJs('slider');
