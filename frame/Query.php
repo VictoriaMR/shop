@@ -135,10 +135,13 @@ final class Query
 		if (empty($this->_table)) {
 			throw new \Exception('MySQL Error, no found table', 1);
 		}
-		if (empty($data[0])) $data = [$data];
-		$fields = array_keys($data[0]);
-		$data = array_map(function($value){
+		if (!is_array(current($data))) $data = [$data];
+		$fields = array_keys(current($data));
+		$data = array_map(function($value) use ($data){
 			foreach ($value as $k => $v) {
+				if (is_array($v)) {
+					dd($v, $data);
+				}
 				$value[$k] = "'".addslashes($v)."'";
 			}
 			return implode(',', $value);
@@ -249,7 +252,7 @@ final class Query
 						if (is_string($v)) {
 							$valueStr .= "'".addslashes($v)."',";
 						} else {
-							$valueStr .= (int) $value;
+							$valueStr .= (int)$v;
 							$valueStr .= ',';
 						}
 					}

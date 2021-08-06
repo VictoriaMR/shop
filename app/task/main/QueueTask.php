@@ -21,13 +21,15 @@ class QueueTask extends TaskDriver
 	{
 		$service = make('app/service/QueueService');
 		if ($service->count()) {
-			$data = $service->pop();
+			$data = $service->getInfo();
 			$func = $data['method'];
 			$rst = make($data['class'])->$func($data['param']);
+			$service->pop();
 			if ($rst !== true) {
 				$data['queue_error'] = $rst;
 				$service->dealFalse($data);
 			}
+			return true;
 		} else {
 			$this->taskSleep(300);
 			return false;

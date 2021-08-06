@@ -70,7 +70,7 @@ const TASK = {
 						<button class="btn btn-danger btn-sm btn-task" data-type="shutdown" '+(list[i].boot === 'on' ? '' : 'disabled')+'>停止</button>\
 					</div>\
 				</td>\
-            </tr>';
+			</tr>';
 		}
 		$('table tbody').html(html);
 	},
@@ -89,7 +89,7 @@ const TASK = {
 				} else {
 					errorTips(res.message);
 				}
-				_this.init();
+				_this.init(_this.enable);
 			});
 		});
 	}

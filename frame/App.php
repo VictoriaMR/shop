@@ -43,11 +43,7 @@ class App
 		if (is_file($file)) {
 			return \frame\Container::instance()->autoload(str_replace(DS, '\\', $abstract), $file, $params);
 		}
-		if (env('APP_DEBUG')) {
-			throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
-		} else {
-			redirect(url(404));
-		}
+		throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
 	}
 
 	public static function runOver()

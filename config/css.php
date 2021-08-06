@@ -5,7 +5,7 @@ return [
 		'mobile' => [],
 	],
 	'default' => [
-		'computer' => ['icon', 'computer/common', 'computer/font', 'computer/space'],
-		'mobile' => ['icon', 'mobile/common', 'mobile/font', 'mobile/space'],
+		'computer' => ['computer/common', 'icon', 'computer/font', 'computer/space'],
+		'mobile' => ['mobile/common', 'icon', 'mobile/font', 'mobile/space'],
 	],
 ];

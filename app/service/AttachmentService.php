@@ -44,11 +44,11 @@ class AttachmentService extends Base
 		return $info;
 	}
 
-	public function getList($where)
+	public function getList($where, $type='400')
 	{
 		$list = $this->getListData($where);
 		foreach ($list as $key => $value) {
-			$list[$key] = $this->urlInfo($value, '400');
+			$list[$key] = $this->urlInfo($value, $type);
 		}
 		return $list;
 	}

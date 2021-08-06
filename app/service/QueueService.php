@@ -31,6 +31,11 @@ class QueueService
 		return redis(2)->rPop($this->key);
 	}
 
+	public function getInfo()
+	{
+		return redis(2)->lIndex($this->key, -1);
+	}
+
 	public function dealFalse($data)
 	{
 		return redis(2)->lPush($this->failedKey, $data);

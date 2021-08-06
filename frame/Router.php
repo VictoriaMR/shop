@@ -27,8 +27,8 @@ final class Router
 			if (empty($pathInfo['path'])) {
 				$this->_route['path'] = 'index';
 				$this->_route['func'] = 'index';
-			} elseif(defined('TEMPLATE_SUFFIX') && strpos($pathInfo['path'], TEMPLATE_SUFFIX) !== false){
-				$pathInfo['path'] = str_replace('.'.TEMPLATE_SUFFIX, '', $pathInfo['path']);
+			} elseif(APP_TEMPLATE_TYPE != 'admin') {
+				$pathInfo['path'] = explode('.', $pathInfo['path'])[0];
 				$routerArr = explode('-', $pathInfo['path']);
 				if (!empty($routerArr) && count($routerArr) > 1) {
 					$routerArr = array_reverse($routerArr);
@@ -48,6 +48,10 @@ final class Router
 						$this->_route['path'] = $routerArr[0];
 					}
 					$this->_route['func'] = 'index';
+					if ($this->_route['path'] == 'sku' || $this->_route['path'] == 's') {
+						$_GET['sid'] = $_GET['id'];
+					}
+					$this->_route['path'] = $this->getPath($this->_route['path']);
 				}
 			}
 
@@ -69,6 +73,19 @@ final class Router
 		return $this;
 	}
 
+	protected function getPath($path)
+	{
+		$arr = [
+			'spu' => 'product',
+			'p' => 'product',
+			'cate' => 'category',
+			'c' => 'category',
+			'sku' => 'product',
+			's' => 'product',
+		];
+		return isset($arr[$path]) ? $arr[$path] : $path;
+	}
+
 	public function getRoute($name='')
 	{
 		if (empty($name)) {
@@ -85,30 +102,9 @@ final class Router
 		if (!empty($url)) {
 			$url .= defined('TEMPLATE_SUFFIX') ? '.'.TEMPLATE_SUFFIX : '';
 		}
-		if (empty($param)) {
-			$param = iget();
-		}
 		if (!empty($param)) {
 			$url .= '?' . http_build_query($param);
 		}
 		return (is_null($domain) ? env('APP_DOMAIN') : $domain).$url;
-	}
-
-	public function siteUrl($name, $type, $param=[])
-	{
-		$name = preg_replace('/[^-A-Za-z0-9 ]/', '', strtolower($name));
-		$name = preg_replace('/( ){2,}/', ' ', $name);
-		$name = str_replace(' ', '-' , $name);
-		$name .= '-'.$type;
-		if (isset($param['page'])) {
-			$name .= '-page-'.$param['page'];
-		}
-		if (isset($param['size'])) {
-			$name .= '-size-'.$param['size'];
-		}
-		if (defined('TEMPLATE_SUFFIX')) {
-			$name .= '.'.TEMPLATE_SUFFIX;
-		}
-		return env('APP_DOMAIN').$name;
 	}
 }

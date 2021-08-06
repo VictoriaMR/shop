@@ -6,6 +6,7 @@ use app\service\Base;
 class LanguageService extends Base
 {	
 	const CACHE_KEY = 'site_language:';
+	protected $info;
 
 	protected function getModel()
 	{
@@ -49,12 +50,17 @@ class LanguageService extends Base
 		return true;
 	}
 
-	public function priceFormat($price, $lanId)
+	public function formatPrice($price, $type=1)
 	{
-		$info = $this->getInfoCache($lanId);
-		return [
-			'price' => sprintf('%.2f', $price * $info['rate']),
-			'symbol' => $info['symbol'],
-		];
+		if (empty($this->info)) {
+			$this->info = $this->getInfoCache(lanId());
+		}
+		$price = sprintf('%.2f', $price * $this->info['rate']);
+		if ($type == 2) {
+			$price = $this->info['symbol'].$price;
+		} elseif ($type == 3) {
+			$price = $this->info['currency'].$price;
+		}
+		return $price;
 	}
 }

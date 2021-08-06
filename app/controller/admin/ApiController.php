@@ -11,7 +11,7 @@ class ApiController extends Controller
 	public function getHelperData()
 	{
 		$data = [
-			'version' => '1.0.0',
+			'version' => config('version.admin'),
 			'category' => make('app/service/CategoryService')->getListFormat(),
 			'site' => make('app/service/SiteService')->getListData(['site_id'=>['<>', '00']]),
 		];
@@ -58,6 +58,12 @@ class ApiController extends Controller
 		$cacheKey = 'queue-add-product:'.ipost('bc_site_id');
 		if (redis(2)->hExists($cacheKey, ipost('bc_product_id'))) {
 			$this->error('队列已存在');
+		}
+		if (empty(ipost('bc_product_category'))) {
+			$this->error('产品分类不能为空');
+		}
+		if (empty(ipost('bc_product_site'))) {
+			$this->error('站点不能为空');
 		}
 		$data = [
 			'class' => 'app/service/product/SpuService',

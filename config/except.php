@@ -10,5 +10,6 @@ return [
 		'product' => true,
 		'search' => true,
 		'api' => true,
+		'pagenotfound' => true,
 	],
 ];

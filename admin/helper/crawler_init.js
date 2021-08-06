@@ -59,6 +59,7 @@ const CRAWLERINIt = {
 	crawlerPageinit: function(info) {
 		const _this = this;
 		CRAWLER.getData(function(res) {
+			console.log(res, 'res')
 			if (res.code === 200) {
 				_this.crawlerPage(info, res.data);
 			} else {
@@ -104,7 +105,7 @@ const CRAWLERINIt = {
 							<div class="productAttLine">
 								<div class="label">产品分类:</div>
 								<div class="fill_in">
-									<select name="bc_product_category[0]">
+									<select name="bc_product_category">
 										<option value="">请选择分类</option>
 										` + _this.getCategoryHtml(category) + `
 									</select>
@@ -134,6 +135,7 @@ const CRAWLERINIt = {
 			let count = 0;
 			for (let i in data.sku) {
 				html += `<div class="sku-item flex">
+							<input type="hidden" name="bc_sku[` + count + `][sku_id]" value="`+i+`"/>
 							<div class="cancel-btn">x</div>
 							<div class="flex w100">
 							<div class="sku_img">`;
@@ -337,23 +339,21 @@ const CRAWLERINIt = {
 			});
 		}
 		//添加分类
-		document.getElementById('add-category').onclick = function() {
-			const count = document.querySelectorAll('#category .productAttLine').length;
-			let div = document.createElement('div');
-			div.setAttribute('class', 'productAttLine');
-			div.innerHTML = `<div class="label">产品分类:</div>
-							<div class="fill_in">
-								<select name="bc_product_category[`+count+`]">
-									<option value="">请选择分类</option>
-									`+_this.categoryHtml+`
-								</select>
-							</div>
-							<div class="clear"></div>`;
-			document.getElementById('category').appendChild(div);
-		}
+		// document.getElementById('add-category').onclick = function() {
+		// 	const count = document.querySelectorAll('#category .productAttLine').length;
+		// 	let div = document.createElement('div');
+		// 	div.setAttribute('class', 'productAttLine');
+		// 	div.innerHTML = `<div class="label">产品分类:</div>
+		// 					<div class="fill_in">
+		// 						<select name="bc_product_category[`+count+`]">
+		// 							<option value="">请选择分类</option>
+		// 							`+_this.categoryHtml+`
+		// 						</select>
+		// 					</div>
+		// 					<div class="clear"></div>`;
+		// 	document.getElementById('category').appendChild(div);
+		// }
 	},
-
-	
 	reload_crawlerPage: function() {
 		//删除缓存
 		HELPER.request({action: 'delCache', cache_key: 'crawler_data_cache'}, function() {

@@ -7,17 +7,17 @@ const HELPERINIT = {
 			this.crawlerItem();
 		}
 	},
-	getUrl: function() {
-		return localStorage.getItem('helper_api_url');
+	getUrl: function(callback) {
+		this.request({action: 'getUrl'}, callback);
 	},
 	request: function(param, callback) {
-        chrome.runtime.sendMessage(this.getExtId(), param, function(response) {
-            if (callback) {
-            	callback(response);
-            }
-        });
-    },
-    getExtId: function() {
+		chrome.runtime.sendMessage(this.getExtId(), param, function(response) {
+			if (callback) {
+				callback(response);
+			}
+		});
+	},
+	getExtId: function() {
 		return localStorage.getItem('helper_extid');
 	},
 	getDomain: function() {
@@ -48,16 +48,19 @@ const HELPERINIT = {
 		const _this = this;
 		//获取版本号
 		_this.request({action: 'request', value: 'api/getHelperData', cache_key: 'helper_all_data_cache'}, function(res) {
+			const version = res.data.version;
 			if (res.code === 200 || res.code === '200') {
-				let url = _this.getUrl()+value;
-				if (typeof res.data.version !== 'undefined') {
-					url += '?v='+res.data.version;
-				}
-				const id = value.replace(/\//g, '_').replace(/\./g, '_');
-				if (document.getElementById(id)) {
-					document.getElementById(id).remove();
-				}
-				_this.loadStaticUrl(action, url, id, callback);
+				_this.getUrl(function(res){
+					let url = res.data + value;
+					if (typeof version !== 'undefined') {
+						url += '?v='+version;
+					}
+					const id = value.replace(/\//g, '_').replace(/\./g, '_');
+					if (document.getElementById(id)) {
+						document.getElementById(id).remove();
+					}
+					_this.loadStaticUrl(action, url, id, callback);
+				});
 			}
 		});
 	},

@@ -68,9 +68,9 @@ class FileService
         if (substr($url, 0, 4) != 'http') {
             $url = 'https:'.$url;
         }
-        try {
-            $result = @file_get_contents($url);
-        } catch (\Throwable $e) {
+        $result = make('frame/Http')->get($url);
+        if (!empty($result['errno'])) {
+            dd($url, $result);
             return false;
         }
         if (file_put_contents($tempName, $result)) {

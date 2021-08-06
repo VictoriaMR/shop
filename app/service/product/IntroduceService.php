@@ -14,7 +14,9 @@ class IntroduceService extends Base
 	{
 		if (!empty($data[0]) && is_array($data[0])) {
 			foreach ($data as $key => $value) {
-				if ($this->getCountData($value)) {
+				$temp = $value;
+				unset($temp['sort']);
+				if ($this->getCountData($temp)) {
 					unset($data[$key]);
 				}
 			}

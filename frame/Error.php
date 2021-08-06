@@ -65,7 +65,7 @@ class Error
 				echo 'Uri: '.($_SERVER['REQUEST_METHOD'] ?? '').' '.($_SERVER['HTTP_HOST'] ?? '').' '.($_SERVER['REQUEST_URI'] ?? '').'<br />';
 				$this->echoParmas();
 			} else {
-				echo 'Error Message: '.$message.'<br />';
+				redirect(url('pageNotFound'));
 			}
 		}
 		exit();

@@ -34,6 +34,12 @@ class SiteService extends Base
 		return $info['name'] ?? '';
 	}
 
+	public function getTitle()
+	{
+		$info = $this->getInfoCache(siteId(), lanId());
+		return $info['title'] ?? '';
+	}
+
 	public function getInfoCache($siteId, $lanId=2)
 	{
 		$cacheKey = $this->getCacheKey($siteId, $lanId);
