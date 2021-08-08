@@ -76,7 +76,6 @@ $.fn.slider = function (options) {
 			startPixelOffset = currentSlide * -slidesWidth;
 		}
 		if (slidingState == 2) {
-			event.preventDefault();
 			let touchPixelRatio = 1;
 			if ((currentSlide == 0 && pointerData.clientX > startClientX) ||
 			(currentSlide == slideCount - 1 && pointerData.clientX < startClientX)) {

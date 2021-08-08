@@ -24,4 +24,17 @@ class ValueService extends Base
 		}
 		return $this->insertGetId(['name'=>$name]);
 	}
+
+	public function getListById($attvId, $lanId=1)
+	{
+		$list = $this->getListData(['attv_id'=>['in', $attvId]], 'attv_id,name', 0, 0, ['sort'=>'asc']);
+		$lanArr = make('app/service/attr/ValueLanguageService')->getListData(['attv_id'=>['in', $attvId], 'lan_id'=>$lanId], 'attv_id,name');
+		$lanArr = array_column($lanArr, 'name', 'attv_id');
+		foreach ($list as $key => $value) {
+			if (!empty($lanArr[$value['attv_id']])) {
+				$list[$key]['name'] = $lanArr[$value['attv_id']];
+			}
+		}
+		return $list;
+	}
 }

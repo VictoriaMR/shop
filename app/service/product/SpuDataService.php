@@ -5,7 +5,7 @@ use app\service\Base;
 
 class SpuDataService extends Base
 {
-	public function getModel()
+	protected function getModel()
 	{
 		$this->baseModel = make('app/model/product/SpuData');
 	}

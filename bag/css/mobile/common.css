@@ -52,13 +52,19 @@ a {
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 .layer {
-	padding: 0 0.12rem
+	width: 100%;
+	position: relative;
+	padding: 0 0.12rem;
 }
 .layer16 {
-	padding: 0 0.16rem
+	width: 100%;
+	position: relative;
+	padding: 0 0.16rem;
 }
 .layer24 {
-	padding: 0 0.24rem
+	width: 100%;
+	position: relative;
+	padding: 0 0.24rem;
 }
 .left {
 	float: left
@@ -93,6 +99,9 @@ a {
 .w100 {
 	width: 100%
 }
+.w50 {
+	width: 50%
+}
 .clear {
 	clear: both
 }
@@ -119,8 +128,11 @@ a {
 .c6 {
 	color: #666666;
 }
+.c9 {
+	color: #999999;
+}
 .c40 {
-	color: #404040;
+	color: #404040 !important;
 }
 .btn {
 	max-height: 100%;
@@ -133,6 +145,10 @@ a {
 }
 .hide,.hidden {
 	display: none;
+}
+.btn-light-black {
+	background-color: #707070;
+	color: #ffffff;
 }
 .btn-black {
 	background-color: #404040;
@@ -184,12 +200,11 @@ a {
 	right: 0;
 	bottom: 0;
 	left: 0;
-	z-index: 6000;
-	-webkit-overflow-scrolling: touch;
+	z-index: 102;
 	outline: 0;
 }
 .mask {
-	z-index: 4000;
+	z-index: 102;
 	position: fixed;
 	top: 0;
 	right: 0;
@@ -252,6 +267,53 @@ a {
 	-webkit-animation: loading 1s ease infinite;
 	animation: loading 1s ease infinite
 }
+.m-modal .dialog {
+	width: 100%;
+	height: 85%;
+	position: absolute;
+	bottom: 0;
+	background: #fff;
+	-webkit-transition: 0.3s -webkit-transform;
+	transition: 0.3s -webkit-transform;
+	transition: 0.3s transform;
+	transition: 0.3s transform, 0.3s -webkit-transform;
+	-webkit-transform: translateY(100%);
+	transform: translateY(100%);
+	border-radius: 0.1rem 0.1rem 0 0;
+	z-index: 103;
+}
+.m-modal .dialog.popup {
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+}
+.m-modal .dialog .icon-guanbi2 {
+	position: absolute;
+	font-size: 0.2rem;
+	top: 0.08rem;
+	right: 0.12rem;
+	color: #999999;
+}
+.m-modal .dialog .dialog-title {
+	line-height: 0.4rem;
+	font-size: 0.16rem;
+	text-align: center;
+	font-weight: 600;
+}
+.m-modal .dialog .content {
+	height: calc(100% - 0.4rem);
+	overflow-y: auto;
+}
+.m-modal .dialog .contentfill {
+	height: calc(100% - 0.5rem);
+	padding-bottom: 0.5rem;
+	overflow-y: auto;
+}
+.m-modal .dialog-footer {
+	width: calc(100% - 0.24rem);
+	height: 0.5rem;
+	position: absolute;
+	bottom: 0;
+}
 /*loading modal end*/
 /*tips*/
 #message-tips {
@@ -260,7 +322,9 @@ a {
 	top: 0.16rem;
 	left: 0.16rem;
 	color: #fff;
+	border-radius: 0.08rem;
 	width: calc(100% - 0.32rem);
+	z-index: 999;
 }
 #message-tips.error {
 	background-color: #FF898A;
@@ -282,7 +346,7 @@ a {
 	text-align: left;
 	font-size: 0.14rem;
 }
-#message-tips .icon-close {
+#message-tips .icon-guanbi1 {
 	font-size: 0.16rem;
 	position: absolute;
 	top: 0.12rem;

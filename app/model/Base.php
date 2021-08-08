@@ -24,12 +24,12 @@ class Base
 		return constant(get_class($this).'::'.$name);
 	}
 
-	public function loadData($where, $field='')
+	public function loadData($where, $field='', $orderBy=[])
 	{
 		if (!is_array($where)) {
 			$where = [$this->_primaryKey => (int)$where];
 		}
-		return $this->instance()->where($where)->field($field)->find();
+		return $this->instance()->where($where)->field($field)->orderBy($orderBy)->find();
 	}
 
 	public function updateData($where, $data)

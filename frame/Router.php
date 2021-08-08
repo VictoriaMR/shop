@@ -107,4 +107,27 @@ final class Router
 		}
 		return (is_null($domain) ? env('APP_DOMAIN') : $domain).$url;
 	}
+
+	public function urlFormat($name, $type, $param=[])
+	{
+		$name = preg_replace('/[^-A-Za-z0-9\s]/', '', strtolower($name));
+		$name = preg_replace('/( ){2,}/', ' ', $name);
+		$name = str_replace(' ', '-' , $name);
+		$name .= '-'.$type;
+		$name = preg_replace('/-{1,}/', '-', $name);
+		
+		if (isset($param['id'])) {
+			$name .= '-'.$param['id'];
+		}
+		if (isset($param['page'])) {
+			$name .= '-page-'.$param['page'];
+		}
+		if (isset($param['size'])) {
+			$name .= '-size-'.$param['size'];
+		}
+		if (defined('TEMPLATE_SUFFIX')) {
+			$name .= '.'.TEMPLATE_SUFFIX;
+		}
+		return env('APP_DOMAIN').$name;
+	}
 }

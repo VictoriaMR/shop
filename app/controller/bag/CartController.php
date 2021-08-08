@@ -9,4 +9,14 @@ class CartController extends Controller
 	{	
 		$this->view();
 	}
+
+	public function cartCount()
+	{
+		$rst = make('app/service/CartService')->getCartCount();
+		if ($rst) {
+			$this->success($rst, 'success');
+		} else {
+			$this->error('cart count error');
+		}
+	}
 }

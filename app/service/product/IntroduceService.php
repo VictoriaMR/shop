@@ -5,7 +5,7 @@ use app\service\Base;
 
 class IntroduceService extends Base
 {
-	public function getModel()
+	protected function getModel()
 	{
 		$this->baseModel = make('app/model/product/Introduce');
 	}
@@ -22,5 +22,16 @@ class IntroduceService extends Base
 			}
 		}
 		return $this->insert($data);
+	}
+
+	public function getListById($spuId)
+	{
+		$attachArr = $this->getListData(['spu_id'=>$spuId], 'attach_id', 0, 0, ['sort'=>'asc']);
+		$list = make('app/service/AttachmentService')->getList(['attach_id'=>['in', array_column($attachArr, 'attach_id')]]);
+		$list = array_column($list, null, 'attach_id');
+		foreach ($attachArr as $key => $value) {
+			$attachArr[$key] = $list[$value['attach_id']];
+		}
+		return $attachArr;
 	}
 }

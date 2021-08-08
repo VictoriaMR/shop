@@ -394,7 +394,7 @@ const CRAWLER = {
         const callbackName = params.jsonp ? params.jsonp : 'jsonp_'+this.random();
         const head = document.querySelector('head');
         params.callback = callbackName;
-        const urlParams = this.formatUrlParams(params);
+        const urlParams = this.urlFormatParams(params);
         const script = document.createElement('script');
         head.appendChild(script);
         //创建jsonp回调函数
@@ -420,7 +420,7 @@ const CRAWLER = {
             }
         }, 10000);
     },
-    formatUrlParams: function(params) {
+    urlFormatParams: function(params) {
         let arr = [];
         for(let name in params) {
             arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(params[name]));

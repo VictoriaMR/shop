@@ -5,116 +5,81 @@ use app\service\Base;
 
 class SpuService extends Base
 {
-	const CACHE_INFO_KEY = 'spu_cache_info:';
-
 	protected function getModel()
 	{
 		$this->baseModel = make('app/model/product/Spu');
 	}
 
-	public function getInfoCache($spuId, $lanId)
+	public function getInfoCache($spuId, $lanId=1)
 	{
 		$cacheKey = $this->getCacheKey($spuId, $lanId);
 		$info = redis()->get($cacheKey);
 		if (empty($info)) {
 			$info = $this->getInfo($spuId, $lanId);
-			redis()->set($cacheKey, $info);
+			redis()->set($cacheKey, $info, $this->getConst('CACHE_EXPIRE_TIME'));
 		}
 		return $info;
 	}
 
 	public function getInfo($spuId, $lanId=1)
 	{
-		$info = $this->loadData($spuId);
+		$info = $this->loadData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'cate_id,attach_id,min_price,max_price,original_price,sale_total');
 		if (empty($info)) {
 			return false;
 		}
-		$info['avatar'] = mediaUrl($info['avatar'], 200);
+		//获取图片集
+		$imageArr = $info['image'] = make('app/service/product/SpuImageService')->getListById($spuId);
+		$imageArr = array_column($imageArr, null, 'attach_id');
 		//价格格式化
-		$languageService = make('app\service\LanguageService');
-		$priceFormat = $languageService->priceFormat($info['min_price'], $lanId);
-		$info['price_format'] = $priceFormat['price'];
-		$info['price_symbol'] = $priceFormat['symbol'];
-		$info['url'] = filterUrl($info['name'], 'p', $spuId);
-		//获取sku列表
-		$skuService = make('app\service\ProductSkuService');
-		$skuList = $skuService->getListBySpuId($spuId);
-		$skuList = array_column($skuList, null, 'sku_id');
-		$skuIdArr = array_keys($skuList);
-		//sku属性关联
-		$skuRelationArr = $skuService->getAttributeRelation($skuIdArr);
-		$attrIdArr = array_unique(array_column($skuRelationArr, 'attr_id'));
-		$attrData = make('app\service\AttributeService')->getInfo($attrIdArr, 1);
-		$attrData = array_column($attrData, 'name', 'attr_id');
-		$attvIdArr = array_unique(array_column($skuRelationArr, 'attv_id'));
-		$attvData = make('app\service\AttrvalueService')->getInfo($attvIdArr, 1);
-		$attvData = array_column($attvData, 'name', 'attv_id');
+		$languageService = make('app/service/LanguageService');
+		$info['min_price'] = $languageService->priceFormat($info['min_price'], 2);
+		$info['max_price'] = $languageService->priceFormat($info['max_price'], 2);
+		$info['original_price'] = $languageService->priceFormat($info['original_price'], 2);
+		//获取语言
+		$info['name'] = make('app/service/product/LanguageService')->loadData(['spu_id'=>$spuId, 'lan_id'=>['in', [1, $lanId]]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
+		$info['url'] = router()->urlFormat($info['name'], 'p', ['id' => $spuId]);
+		//spu介绍图片
+		$info['introduce'] = make('app/service/product/IntroduceService')->getListById($spuId);
+		//spu描述
+		$info['description'] = make('app/service/product/DescriptionService')->getListById($spuId, $lanId);
 
-		//获取spu图片ID集
-		$spuImageList = make('app/model/ProductSpuImage')->getInfoBySpuId($spuId);
-		//获取sku图片ID集
-		$skuImageList = $skuService->getInfoBySkuIds($skuIdArr);
-		//全部图片合集
-		$attachArr = array_unique(array_filter(array_merge($spuImageList, array_column($skuImageList, 'attach_id'), array_column($skuRelationArr, 'attach_id'))));
-		$attachArr = make('app\service\AttachmentService')->getAttachmentListById($attachArr);
-		$attachArr = array_column($attachArr, 'url', 'attach_id');
-		foreach ($spuImageList as $value) {
-			$info['image'][] = $attachArr[$value];
+		//获取sku列表
+		$skuService = make('app/service/product/SkuService');
+		$info['sku'] = $skuService->getListData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'sku_id,attach_id,stock,price,original_price');
+		$info['sku'] = array_column($info['sku'], null, 'sku_id');
+
+		$info += make('app/service/product/AttrRelationService')->getListById(array_keys($info['sku']), $lanId);
+		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
+
+		if (!empty($tempArr = array_diff($skuImageList, array_keys($imageArr)))) {
+			$list = make('app/service/AttachmentService')->getList(['attach_id'=>['in', array_unique($tempArr)]]);
+			$imageArr += array_column($list, null, 'attach_id');
 		}
-		//属性归类
-		$info['attr'] = [];
-		$skuAttr = [];
-		foreach ($skuRelationArr as $key => $value) {
-			if (empty($info['attr'][$value['attr_id']])) {
-				$info['attr'][$value['attr_id']] = [
-					'id' => $value['attr_id'],
-					'name' => $attrData[$value['attr_id']],
-					'attv' => [],
-				];
-			}
-			if (empty($info['attr'][$value['attr_id']]['attv'][$value['attv_id']])) {
-				$info['attr'][$value['attr_id']]['attv'][$value['attv_id']] = [
-					'id' => $value['attv_id'],
-					'name' => $attvData[$value['attv_id']],
-					'img' => $attachArr[$value['attach_id']] ?? '',
-				];
-			}
-			$skuAttr[$value['sku_id']]['attr'][] = $value['attr_id'];
-			$skuAttr[$value['sku_id']]['attv'][] = $value['attv_id'];
+
+		foreach ($info['attvImage'] as $key => $value) {
+			if (empty($value)) continue;
+			$info['attvImage'][$key] = $imageArr[$value]['url'] ?? '';
 		}
-		//处理sku
-		foreach ($skuList as $key => $value) {
-			$priceFormat = $languageService->priceFormat($value['price'], $lanId);
-			$value['price_format'] = $priceFormat['price'];
-			$value['price_symbol'] = $priceFormat['symbol'];
-			$value['url'] = filterUrl($value['name'], 'k', $value['sku_id']);
-			$value['image'] = [];
-			foreach ($skuImageList as $k => $v) {
-				if ($v['sku_id'] == $value['sku_id']) {
-					$value['image'][] = $attachArr[$v['attach_id']];
-				}
+
+		foreach ($info['sku'] as $key => $value) {
+			$value['price'] = $languageService->priceFormat($value['price'], 2);
+			$value['original_price'] = $languageService->priceFormat($value['original_price'], 2);
+			$value['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
+			$name = [];
+			foreach ($info['skuAttv'][$key] as $v) {
+				$name[] = $info['attv'][$v];
 			}
-			$value = array_merge($value, $skuAttr[$value['sku_id']]);
-			$skuList[$key] = $value;
+			$name = implode(' ', $name);
+			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
+			$value['url'] = router()->urlFormat($value['name'], 's', ['id'=>$key]);
+			$info['sku'][$key] = $value;
 		}
-		//获取翻译语言
-		if ($lanId != env('DEFAULT_LANGUAGE_ID')) {
-			$skuIdArr[] = 0;
-			$textArr = make('app\service\ProductLanguageService')->getTextArr($spuId, $skuIdArr, $lanId);
-			$textArr = array_column($textArr, 'name', 'sku_id');
-			$info['name'] = empty($textArr[0]) ? $info['name'] : $textArr[0];
-			foreach ($skuList as $key => $value) {
-				$skuList[$key]['url'] = filterUrl($value['name'], 'k', $value['sku_id']);
-				$skuList[$key]['name'] = empty($textArr[$value['sku_id']]) ? $skuList[$key]['name'] : $textArr[$value['sku_id']];
-			}
-		}
-		$info['sku'] = $skuList;
 		return $info;
 	}
 
 	protected function getCacheKey($spuId, $lanId)
 	{
-		return self::CACHE_INFO_KEY.$spuId.'_'.$lanId;
+		return $this->getConst('CACHE_INFO_KEY').$spuId.'_'.$lanId;
 	}
 
 	public function getAdminList(array $where=[], $page=1, $size=20)
@@ -435,27 +400,6 @@ class SpuService extends Base
 		return str_replace(['.200x200', '.400x400', '.600x600', '.800x800', '_.webp'], '', explode('?', $url)[0]);
 	}
 
-	protected function formatUrl($name, $type, $param=[])
-	{
-		$name = preg_replace('/[^-A-Za-z0-9 ]/', '', strtolower($name));
-		$name = preg_replace('/( ){2,}/', ' ', $name);
-		$name = str_replace(' ', '-' , $name);
-		$name .= '-'.$type;
-		if (isset($param['id'])) {
-			$name .= '-'.$param['id'];
-		}
-		if (isset($param['page'])) {
-			$name .= '-page-'.$param['page'];
-		}
-		if (isset($param['size'])) {
-			$name .= '-size-'.$param['size'];
-		}
-		if (defined('TEMPLATE_SUFFIX')) {
-			$name .= '.'.TEMPLATE_SUFFIX;
-		}
-		return env('APP_DOMAIN').$name;
-	}
-
 	public function getRecommend($page=1, $size=20)
 	{
 		//获取收藏商品分类
@@ -481,16 +425,16 @@ class SpuService extends Base
 			$lanArr = array_column($lanArr, 'name', 'spu_id');
 			//获取图片集
 			$attachArr = array_unique(array_column($list, 'attach_id'));
-			$attachArr = make('app/service/AttachmentService')->getList(['attach_id'=>['in', $attachArr]], '200');
+			$attachArr = make('app/service/AttachmentService')->getList(['attach_id'=>['in', $attachArr]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 			$languageService = make('app/service/LanguageService');
 			//格式化数组
 			foreach($list as $key => $value) {
 				$value['name'] = $lanArr[$value['spu_id']] ?? '';
-				$value['url'] = $this->formatUrl($value['name'], 'p', ['id'=>$value['spu_id']]);
+				$value['url'] = router()->urlFormat($value['name'], 'p', ['id'=>$value['spu_id']]);
 				$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
-				$value['min_price'] = $languageService->formatPrice($value['min_price'], 2);
-				$value['original_price'] = $languageService->formatPrice($value['original_price'], 2);
+				$value['min_price'] = $languageService->priceFormat($value['min_price'], 2);
+				$value['original_price'] = $languageService->priceFormat($value['original_price'], 2);
 				$list[$key] = $value;
 			}
 		}

@@ -36,6 +36,10 @@
 	height: 1.71rem;
 	vertical-align: middle;
 	text-align: center;
+	font-size: 0;
+}
+#recommend-page .recommend-product-list .img img {
+	width: 100%;
 }
 #recommend-page .recommend-product-list .name {
 	overflow: hidden;
@@ -46,4 +50,9 @@
 	-webkit-box-orient: vertical;
 	margin-top: 0.10rem;
 	font-size: 0.13rem;
+}
+#recommend-page .recommend-product-list .original_price {
+	margin-left: 0.04rem;
+	color: #666666;
+	text-decoration: line-through;
 }

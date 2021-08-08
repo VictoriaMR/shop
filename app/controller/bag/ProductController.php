@@ -1,27 +1,41 @@
 <?php
 
 namespace app\controller\bag;
-
 use app\controller\Controller;
-use frame\Html;
 
 class ProductController extends Controller
 {
 	public function index()
-	{	
-		$spuId = iget('spu_id');
-		$skuId = iget('sku_id');
-		if (!empty($skuId)) {
-			$spuId = make('App\Services\ProductSkuService')->getSpuId($skuId);
+	{
+		html()->addCss();
+		html()->addJs();
+		html()->addJs('slider');
+
+		$spuId = iget('id', 0);
+		$skuId = iget('sid', 0);
+		if (empty($spuId) && empty($skuId)) {
+			redirect('pageNotFound');
 		}
-		if (!empty($spuId)) {
-			$spuInfo = make('App\Services\ProductSpuService')->getInfoCache($spuId);
-			if (!empty($spuInfo) && !empty($skuId)) {
-				$skuInfo = $spuInfo['sku'][$skuId] ?? [];
-			}
+		$spuService = make('app/service/product/SpuService');
+		if (empty($spuId)) {
+			$spuId = make('app/service/product/SkuService')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
 		}
-		$this->assign('spuInfo', $spuInfo ?? []);
-		$this->assign('skuInfo', $skuInfo ?? []);
-		return view();
+		if (empty($spuId)) {
+			redirect('pageNotFound');
+		}
+		$info = $spuService->getInfoCache($spuId, lanId());
+		if (empty($info)) {
+			redirect('pageNotFound');
+		}
+		// dd($info);
+		$this->assign('spuId', $spuId);
+		$this->assign('skuId', $skuId);
+		$this->assign('isLiked', make('app/service/member/CollectService')->isCollect($spuId));
+		$this->assign('info', $info);
+		$this->assign('skuNo', siteId().$info['cate_id'].$spuId);
+		$this->assign('_title', $info['name']);
+		$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
+
+		$this->view();
 	}
 }

@@ -58,9 +58,9 @@ const TIPS = {
 		}
 		if (typeof icon === 'undefined') {
 			if (type === 'success') {
-				icon = 'check';
+				icon = 'yuanxingxuanzhongfill';
 			} else {
-				icon = 'warn';
+				icon = 'tishifill';
 			}
 		}
 		const _this = this;
@@ -75,14 +75,14 @@ const TIPS = {
 								<span>'+msg+'</span>\
 							</div>\
 						</div>\
-						<span class="iconfont icon-close"></span>\
+						<span class="iconfont icon-guanbi1"></span>\
 					</div>';
 		$('body').append(html);
 		setTimeout(function(){
 			$('#message-tips').addClass('top');
 		}, 100);
 		_this.timeout();
-		$('body').on('click', '#message-tips .icon-close', function(){
+		$('body').on('click', '#message-tips .icon-guanbi1', function(){
 			clearTimeout(_this.timeoutVal);
 			$('#message-tips').remove();
 		});
@@ -96,7 +96,7 @@ const TIPS = {
 	},
 	loading: function(){
 		$('#loading').remove();
-		clearTimeout(_this.timeoutVal);
+		clearTimeout(this.timeoutVal);
 		let html = '<div class="m-modal" id="loading">\
 						<div class="mask"></div>\
 						<div class="loading-block">\
@@ -106,16 +106,27 @@ const TIPS = {
 						</div>\
 					</div>';
 		$('body').append(html);
-		$('body').css({overflow: 'hidden'});
+		this.stop();
 	},
 	loadout: function(){
 		$('#loading').fadeOut(150, function(){
 			$(this).remove();
-			$('body').css({overflow: 'auto'});
+			TIPS.start();
 		});
-	}
+	},
+	start: function() {
+		$('body').css({'overflow': 'auto'});
+	},
+	stop: function() {
+		$('body').css({'overflow': 'hidden'});
+	},
 };
 $(function(){
+	if ($('.icon-gouwuche').length > 0) {
+		$.post(URI+'cart/cartCount', {}, function(res){
+			console.log(res)
+		});
+	}
 	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
 		if (res.code === 10000 || res.code === '10000') {
 			if (location.pathname.substring(0, 6) !== '/login') {

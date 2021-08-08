@@ -50,7 +50,7 @@ class LanguageService extends Base
 		return true;
 	}
 
-	public function formatPrice($price, $type=1)
+	public function priceFormat($price, $type=1)
 	{
 		if (empty($this->info)) {
 			$this->info = $this->getInfoCache(lanId());

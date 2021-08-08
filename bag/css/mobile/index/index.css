@@ -62,10 +62,11 @@
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: 100%;
-	margin-bottom: -2px;
+	margin-bottom: -0.02rem;
 }
 .banner {
 	overflow: hidden;
+	position: relative;
 }
 .banner ul {
 	white-space: nowrap;
@@ -87,19 +88,19 @@
 	position: absolute;
 	width: 100%;
 	z-index: 100;
-	left: 0px;
-	bottom: 0px;
+	left: 0;
+	bottom: 0;
 	text-align: center;
 }
 .pop-content li {
 	display: inline-block;
-    height: 0.08rem;
-    width: 0.08rem;
-    border-radius: 100%;
-    background-color: #ffffff;
-    margin: 0.1rem 0.02rem;
-    opacity: 0.5;
-    transition-duration: 300ms;
+	height: 0.08rem;
+	width: 0.08rem;
+	border-radius: 100%;
+	background-color: #ffffff;
+	margin: 0.1rem 0.02rem;
+	opacity: 0.5;
+	transition-duration: 300ms;
 }
 .pop-content li.active {
 	background-color: #5d656b;

@@ -7,6 +7,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<meta http-equiv="cache-control" content="no-cache"/>
 	<meta name="apple-mobile-web-app-title" content="<?php echo $_sitename ?? '';?>"/>
+	<meta name="keywords" content="<?php echo $_seo ?? '';?>">
+	<meta name="description" content="<?php echo $_seo ?? '';?>">
 	<meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes"/>
 	<meta content="yes" name="apple-mobile-web-app-capable"/>
 	<meta content="yes" name="apple-touch-fullscreen"/>
@@ -25,5 +27,8 @@
 <script type="text/javascript">
 const URI = "<?php echo env('APP_DOMAIN');?>";
 </script>
+<?php $router = router()->getRoute();
+if (!in_array($router['path'], ['product'])) {?>
 <div class="layer cover">
 </div>
+<?php } ?>

@@ -10,7 +10,9 @@ class VerifyToken
 			return true;
 		}
 		if (empty(userId())) {
-			session()->set('callback_url', str_replace('login.html', '', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']));
+			if (!request()->isPost()) {
+				session()->set('callback_url', str_replace('login.html', '', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']));
+			}
 			if (IS_AJAX) {
 				header('Content-Type:application/json;charset=utf-8');
 				echo json_encode(['code'=>'10001', 'data'=>'', 'message' => 'need login'], JSON_UNESCAPED_UNICODE);

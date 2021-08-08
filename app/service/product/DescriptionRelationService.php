@@ -5,7 +5,7 @@ use app\service\Base;
 
 class DescriptionRelationService extends Base
 {
-	public function getModel()
+	protected function getModel()
 	{
 		$this->baseModel = make('app/model/product/DescriptionRelation');
 	}

@@ -150,7 +150,7 @@ class CategoryService extends Base
 				$lanArr = array_column($lanArr, 'name', 'cate_id');
 				foreach ($list as $key => $value) {
 					$value['name'] = $lanArr[$value['cate_id']] ?? '';
-					$value['url'] = router()->siteUrl($value['name'], 'category-'.$value['cate_id']);
+					$value['url'] = router()->urlFormat($value['name'], 'c', ['id'=>$value['cate_id']]);
 					$value['avatar'] = empty($value['avatar']) ? siteUrl('image/common/noimg.svg') : mediaUrl($value['avatar'], 200);
 					$list[$key] = $value;
 				}

@@ -56,4 +56,14 @@ class CartService extends Base
 		];
 		return $this->updateData($where, ['checked'=>$check]);
 	}
+
+	public function getCartCount()
+	{
+		$where = [
+			'mem_id' => userId(),
+			'site_id' => siteId(),
+			'checked' => $this->getConst('CART_CHECKED'),
+		];
+		return $this->loadData($where, 'SUM(quantity) as quantity')['quantity'] ?? 0;
+	}
 }

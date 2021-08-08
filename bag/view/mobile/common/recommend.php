@@ -17,12 +17,13 @@
 			<li class="item item-<?php echo $key%2;?>">
 				<a href="<?php echo $value['url'];?>">
 					<div class="img">
-						<img class="lazyload" data-src="<?php echo $value['image'];?>" src="<?php echo siteUrl('css/mobile/common/noimg.svg');?>">
+						<img class="lazyload" data-src="<?php echo $value['image'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>">
 					</div>
 					<div class="layer pb10">
 						<p class="name"><?php echo $value['name'];?></p>
 						<div class="mt10">
 							<span class="price f14 f600"><?php echo $value['min_price'];?></span>
+							<span class="original_price"><?php echo $value['original_price'];?></span>
 						</div>
 					</div>
 				</a>

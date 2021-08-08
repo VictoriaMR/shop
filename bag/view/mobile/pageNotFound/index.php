@@ -7,7 +7,7 @@
 			<a href="<?php echo url();?>"><?php echo $siteName;?> HOME</a>
 		</p>
 		<a class="flex input-group searching" href="<?php echo url('search');?>">
-			<button type="button" class="btn"><i class="iconfont icon-search"></i></button>
+			<button type="button" class="btn"><i class="iconfont icon-sousuo"></i></button>
 			<input class="input" type="text" name="search" placeholder="Search">
 		</a>
 	</div>
