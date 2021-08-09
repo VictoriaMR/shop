@@ -48,19 +48,19 @@
 			<li id="sku-select">
 				<p class="title c40 f600">SKU</p>
 				<p class="text e1">
-					<span>SELECT </span>
 					<?php if (empty($skuAttrSelect)) {?>
+					<span>SELECT </span>
 					<span class="attr-text"><?php echo implode(' ', $info['attr']);?></span>
 					<?php } else {?>
 					<?php foreach ($skuAttrSelect as $value){ echo $info['attv'][$value].' ';} ?>
 					<?php } ?>
 				</p>
-				<span class="iconfont icon-right"></span>
+				<span class="iconfont icon-xiangyou1"></span>
 			</li>
 			<li id="description">
 				<p class="title">PARAM</p>
 				<p class="text e1"><?php echo implode(' ', array_column($info['description'], 'name'));?></p>
-				<span class="iconfont icon-right"></span>
+				<span class="iconfont icon-xiangyou1"></span>
 			</li>
 		</ul>
 	</div>
