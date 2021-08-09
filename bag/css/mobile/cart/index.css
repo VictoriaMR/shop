@@ -1,0 +1,34 @@
+#cart-page .empty-title {
+	font-size: 0.16rem;
+	text-align: center;
+	padding: 0.18rem 0;
+	border-bottom: 0.01rem solid #E5E5E5;
+}
+#cart-page .continue-btn {
+	padding: 0.66rem 0;
+	text-align: center;
+}
+#cart-page .continue-btn .btn {
+	width: 2.3rem;
+	margin: 0 auto;
+}
+#cart-page .cart-list .item {
+	padding: 0.16rem 0 0.16rem 0;
+	margin-bottom: 0.04rem;
+	background: #fff;
+	border-radius: 0.08rem;
+}
+#cart-page .cart-list .item .image {
+	width: 1.02rem;
+	vertical-align: top;
+}
+#cart-page .cart-list .item .info {
+	width: calc(100% - 1.02rem);
+	padding-left: 0.08rem;
+	vertical-align: top;
+	text-align: left;
+}
+#cart-page .cart-list .item .info .product-name {
+	font-weight: 600;
+	line-height: 0.18rem;
+}

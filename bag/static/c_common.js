@@ -121,11 +121,36 @@ const TIPS = {
 		$('body').css({'overflow': 'hidden'});
 	},
 };
-$(function(){
-	if ($('.icon-gouwuche').length > 0) {
+const CART = {
+	init: function() {
 		$.post(URI+'cart/cartCount', {}, function(res){
-			console.log(res)
+			if (res.code === '200') {
+				$('.icon-gouwuche').addClass('icon-gouwuchefill').removeClass('icon-gouwuche');
+				$('.icon-gouwuchefill').parent().append('<span class="cart-number">'+(res.data > 99 ? 99 : res.data)+'</>');
+			} else {
+				$('.icon-gouwuchefill').addClass('icon-gouwuche').removeClass('icon-gouwuchefill');
+				$('.icon-gouwuche').parent().find('.cart-number').remove();
+			}
 		});
+	}
+};
+$(function(){
+	//回顶按钮
+	if (document.body.scrollHeight - 300 > window.screen.height) {
+		$('body').append('<div id="scroll-top"><span class="iconfont icon-xiangshang3"></span></div>');
+		window.addEventListener('scroll', function (){
+			if ($(document).scrollTop() > 300) {
+				$('#scroll-top').addClass('popup');
+			} else {
+				$('#scroll-top').removeClass('popup');
+			}
+		});
+		$('body').on('click', '#scroll-top', function(){
+			$('html,body').animate({scrollTop: 0}, 300);
+		});
+	}
+	if ($('.icon-gouwuche').length > 0) {
+		CART.init();
 	}
 	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
 		if (res.code === 10000 || res.code === '10000') {

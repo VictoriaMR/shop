@@ -38,8 +38,12 @@ final class Router
 								if (in_array($value, ['page', 'size'])) {
 									$_GET[$value] = $routerArr[$key-1];
 								} else {
+									if ($value == 'sku' || $value == 's') {
+										$_GET['sid'] = $routerArr[$key-1];
+									} else {
+										$_GET['id'] = $routerArr[$key-1];
+									}
 									$this->_route['path'] = $value;
-									$_GET['id'] = $routerArr[$key-1];
 									break;
 								}
 							}
@@ -48,9 +52,6 @@ final class Router
 						$this->_route['path'] = $routerArr[0];
 					}
 					$this->_route['func'] = 'index';
-					if ($this->_route['path'] == 'sku' || $this->_route['path'] == 's') {
-						$_GET['sid'] = $_GET['id'];
-					}
 					$this->_route['path'] = $this->getPath($this->_route['path']);
 				}
 			}

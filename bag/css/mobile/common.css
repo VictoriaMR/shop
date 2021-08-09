@@ -113,6 +113,14 @@ a {
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 1;
 }
+.e2 {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: normal;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+}
 .relative {
 	position: relative;
 }
@@ -137,8 +145,11 @@ a {
 .btn {
 	max-height: 100%;
 	height: 0.4rem;
+	text-align: center;
 	font-weight: 700;
 	white-space: nowrap;
+	line-height: 0.4rem;
+    display: block;
 }
 .btn[disabled] {
 	background-color: #666666;
@@ -165,6 +176,24 @@ a {
 	height: 0.4rem;
 	background: #F5F5F5;
 }
+#scroll-top {
+	position: fixed;
+	bottom: -0.4rem;
+	right: 0.12rem;
+	z-index: 98;
+	transition: bottom .25s;
+	-moz-transition: bottom .25s;
+	-webkit-transition: bottom .25s;
+	-o-transition: bottom .25s;
+}
+#scroll-top.popup {
+	bottom: 0.88rem;
+}
+#scroll-top .iconfont {
+	font-size: 0.40rem;
+	color: #707070;
+	opacity: 0.8;
+}
 #pb-footbar {
 	position: fixed;
 	bottom: 0;
@@ -179,7 +208,8 @@ a {
 	text-align: center;
 	float: left;
 	color: #5d656b;
-	padding-top: 0.01rem
+	padding-top: 0.01rem;
+	position: relative;
 }
 #pb-footbar .tab.active {
 	font-weight: 700
@@ -191,6 +221,20 @@ a {
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	overflow: hidden
+}
+.cart-number {
+	position: absolute;
+	top: 0;
+	left: calc(50% + 0.05rem);
+	display: inline-block;
+	background: #EB2027;
+	color: #fff;
+	font-size: 0.12rem;
+	width: 0.17rem;
+	height: 0.17rem;
+	text-align: center;
+	line-height: 0.17rem;
+	border-radius: 50%;
 }
 /*loading modal start*/
 .m-modal {

@@ -16,7 +16,8 @@
 	border: 0.02rem solid #ffffff;
 }
 #login-page .email .input,
-#login-page .password .input {
+#login-page .password .input,
+#login-page .repassword .input {
 	padding: 0 0.16rem;
 }
 #login-page .email .btn {
@@ -43,11 +44,21 @@
 }
 #login-page .error .input {
 	border-color: #EB2027;
+	background: rgb(235,32,39,0.1);
 }
-#login-page .error-msg {
+#login-page .message-tips {
 	font-weight: 700;
-	color: #EB2027;
 	margin-top: 0.02rem;
+}
+#login-page .message-tips.error {
+	color: #EB2027;
+}
+#login-page .success .input {
+	border-color: green;
+	background: rgb(0,128,0,0.1);
+}
+#login-page .message-tips.success {
+	color: green;
 }
 #login-page .change-verify-btn,
 .change-login-sign {

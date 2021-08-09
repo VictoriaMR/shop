@@ -77,10 +77,11 @@
 				</div>
 			</div>
 			<div class="mt18 agreement">
-				<span class="iconfont icon-squarecheck f16"></span>
+				<span class="iconfont icon-fangxingxuanzhong f16"></span>
 				<span class="c6">Sign up for our email list</span>
 				<input type="hidden" name="agreement" value="0">
 			</div>
+			<button class="btn btn-black mt32 w100 register-btn">CREATE AN ACCOUNT</button>
 			<div class="mt18">
 				<span class="change-login-sign">Had an Account?</pspan>
 			</div>

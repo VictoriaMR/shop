@@ -10,7 +10,7 @@ class AttrRelationService extends Base
 		$this->baseModel = make('app/model/product/AttributeRelation');
 	}
 
-	public function getListById($skuId, $lanId=1)
+	public function getListById($skuId, $lanId=1, $simple=false)
 	{
 		if (!is_array($skuId)) $skuId = [$skuId];
 		$list = $this->getListData(['sku_id'=>['in', $skuId]], 'sku_id,attr_id,attv_id,attach_id');
@@ -40,6 +40,9 @@ class AttrRelationService extends Base
 			$data['attrMap'][$value['attr_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
 			$data['skuAttv'][$value['sku_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
 			$data['attvImage'][$value['attv_id']] = $value['attach_id'];
+		}
+		if ($simple) {
+			return $data;
 		}
 		$data['skuMap'] = array_flip($tempArr);
 		$data['attrMap'] = array_map(function($value) {

@@ -25,15 +25,21 @@
 		</button>
 	</div>
 	<div class="name-and-price">
-		<p class="product-name"><?php echo $info['name'];?></p>
+		<p class="product-name"><?php echo $skuId ? $skuInfo['name'] : $info['name'];?></p>
 		<div class="product-price mt8">
+			<?php if ($skuId) {?>
+			<span class="price"><?php echo $skuInfo['price'];?></span>
+			<span class="original_price"><?php echo $skuInfo['original_price'];?></span>
+			<?php } else { ?>
 			<span class="price"><?php echo $info['min_price'];?> - <?php echo $info['max_price'];?></span>
 			<span class="original_price"><?php echo $info['original_price'];?></span>
+			<?php } ?>
 		</div>
-		<p class="mt4 c9">
-			<span>SKU: <?php echo $skuNo;?></span>
-			<?php if ($info['sale_total']){?>
-			<span class="right">Sold: <?php echo $info['sale_total'];?></span>
+		<p class="mt4 c9 tc">
+			<span class="left">SKU: <?php echo $skuNo;?></span>
+			<span>Stock: <?php echo $skuId ? $skuInfo['stock'] : $maxStock;?></span>
+			<?php if ($saleTotal){?>
+			<span class="right">Sold: <?php echo $saleTotal;?></span>
 			<?php } ?>
 		</p>
 	</div>
@@ -41,7 +47,14 @@
 		<ul>
 			<li id="sku-select">
 				<p class="title c40 f600">SKU</p>
-				<p class="text e1">SELECT <?php echo implode(' ', $info['attr']);?></p>
+				<p class="text e1">
+					<span>SELECT </span>
+					<?php if (empty($skuAttrSelect)) {?>
+					<span class="attr-text"><?php echo implode(' ', $info['attr']);?></span>
+					<?php } else {?>
+					<?php foreach ($skuAttrSelect as $value){ echo $info['attv'][$value].' ';} ?>
+					<?php } ?>
+				</p>
 				<span class="iconfont icon-right"></span>
 			</li>
 			<li id="description">
@@ -51,6 +64,26 @@
 			</li>
 		</ul>
 	</div>
+	<?php if (!empty($info['introduce'])) {?>
+	<div class="product-introduce mt20">
+		<div class="introduce-title flex">
+			<div class="tcell">
+				<p class="line"></p>
+			</div>
+			<p class="title">Detail</p>
+			<div class="tcell">
+				<p class="line"></p>
+			</div>
+		</div>
+		<div class="introduce-image">
+			<?php foreach($info['introduce'] as $value){?>
+			<p>
+				<img data-src="<?php echo str_replace('/400', '', $value['url']);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+			</p>
+			<?php } ?>
+		</div>
+	</div>
+	<?php } ?>
 	<!-- add cart -->
 	<div class="cart-bottom">
 		<div class="left">
@@ -88,9 +121,9 @@
 		</div>
 	</div>
 </div>
-<div class="m-modal" id="sku-select-modal">
+<div class="m-modal hide" id="sku-select-modal">
 	<div class="mask"></div>
-	<div class="dialog layer popup">
+	<div class="dialog layer">
 		<span class="iconfont icon-guanbi2"></span>
 		<div class="contentfill">
 			<div class="sku-image-block mt10">
@@ -104,9 +137,9 @@
 					</p>
 					<p class="stock c6">
 						<span>STOCK: </span>
-						<span class="number"><?php echo max(array_column($info['sku'], 'stock'));?></span>
+						<span class="number"><?php echo $skuId ? $skuInfo['stock'] : $maxStock;?></span>
 					</p>
-					<p class="c6">
+					<p class="select-text c6">
 						<span>SELECT: </span>
 						<span class="text"><?php echo implode(' ', $info['attr']);?></span>
 					</p>
@@ -114,14 +147,14 @@
 			</div>
 			<div class="sku-attr-list mt20">
 				<?php foreach ($info['attrMap'] as $key => $value) { ?>
-				<div class="item attr-item">
+				<div class="item attr-item" data-id="<?php echo $key;?>">
 					<p class="title"><?php echo $info['attr'][$key];?></p>
 					<ul class="mt10">
 						<?php foreach ($value as $vv){?>
 						<?php if (empty($info['attvImage'][$vv])){ ?>
-						<li class="item-text<?php echo count($value)>1?'':' active';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>"><?php echo $info['attv'][$vv];?></li>
+						<li class="item-text<?php echo count($value)==1||in_array($vv, $skuAttrSelect)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>"><?php echo $info['attv'][$vv];?></li>
 						<?php } else { ?>
-						<li class="item-image<?php echo count($value)>1?'':' active';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>">
+						<li class="item-image<?php echo count($value)==1||in_array($vv, $skuAttrSelect)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>">
 							<div class="attv-image tcell">
 								<img data-src="<?php echo $info['attvImage'][$vv];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 							</div>
@@ -157,9 +190,13 @@ $(function(){
 		skuId: <?php echo $skuId;?>,
 		sku: <?php echo json_encode($info['sku'], JSON_UNESCAPED_UNICODE);?>,
 		skuMap: <?php echo json_encode($info['skuMap'], JSON_UNESCAPED_UNICODE);?>,
-		attrMap: <?php echo json_encode($info['attrMap'], JSON_UNESCAPED_UNICODE);?>,
+		filterMap: <?php echo json_encode($info['filterMap'], JSON_UNESCAPED_UNICODE);?>,
+		name: '<?php echo addslashes($info['name']);?>',
+		url: '<?php echo $info['url'];?>',
+		image: '<?php echo $info['image'][0]['url'];?>',
 		stock: <?php echo max(array_column($info['sku'], 'stock'));?>,
 		price: '<?php echo $info['min_price'];?> - <?php echo $info['max_price'];?>',
+		originalPrice: '<?php echo $info['original_price'];?>'
 	});
 });
 </script>

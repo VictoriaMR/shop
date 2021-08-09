@@ -54,7 +54,7 @@ class FileService
         return $data;
     }
 
-    public function uploadUrlImage($url, $cate, $thumb = true)
+    public function uploadUrlImage($url, $cate, $thumb=true)
     {
         if (!in_array($cate, self::FILE_TYPE)) return false;
         //生成临时文件
@@ -70,7 +70,6 @@ class FileService
         }
         $result = make('frame/Http')->get($url);
         if (!empty($result['errno'])) {
-            dd($url, $result);
             return false;
         }
         if (file_put_contents($tempName, $result)) {

@@ -27,12 +27,18 @@ class ProductController extends Controller
 		if (empty($info)) {
 			redirect('pageNotFound');
 		}
-		// dd($info);
+		//浏览历史
+		make('app/service/member/HistoryService')->addHistory($spuId);
+
 		$this->assign('spuId', $spuId);
 		$this->assign('skuId', $skuId);
 		$this->assign('isLiked', make('app/service/member/CollectService')->isCollect($spuId));
 		$this->assign('info', $info);
-		$this->assign('skuNo', siteId().$info['cate_id'].$spuId);
+		$this->assign('skuInfo', $skuId ? $info['sku'][$skuId] : []);
+		$this->assign('skuNo', siteId().$info['cate_id'].($skuId ? 'S'.$skuId : $spuId));
+		$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
+		$this->assign('maxStock', max(array_column($info['sku'], 'stock')));
+		$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 		$this->assign('_title', $info['name']);
 		$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
 

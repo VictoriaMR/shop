@@ -206,4 +206,57 @@ class LoginController extends Controller
 	{
 		$this->view();
 	}
+
+	public function checkRegister()
+	{
+		$email = ipost('email');
+		if (empty($email)) {
+			$this->error('This Email is required.');
+		}
+		$where = [
+			'site_id' => siteId(),
+			'email' => $email,
+		];
+		$rst = make('app/service/MemberService')->getCountData($where);
+		if ($rst) {
+			$this->error('This Email has been register.');
+		} else {
+			$this->success('This Email is effective.');
+		}
+	}
+
+	public function register()
+	{
+		$email = ipost('email');
+		$password = ipost('password');
+		$error = [];
+		if (empty($email)) {
+			$error['email'] = 'This Email is required.';
+		}
+		if (empty($password)) {
+			$error['password'] = 'This Password is required.';
+		}
+		if (!empty($error)) {
+			$this->error($error);
+		}
+		$where = [
+			'site_id' => siteId(),
+			'email' => $email,
+		];
+		$service = make('app/service/MemberService');
+		$rst = $service->getCountData($where);
+		if ($rst) {
+			$this->error(['email' => 'This Email has been register.']);
+		}
+		$where['password'] = $password;
+		$where['status'] = 1;
+		$rst = $service->create($where);
+		if ($rst) {
+			$rst = $service->login($email, $password, 'email');
+			if ($rst) {
+				$this->success(['token'=>$rst, 'url'=>session()->get('callback_url')], 'The "'.$email.'" register success, have a happy shopping day');
+			}
+		}
+		$this->error(['alter' => 'Sorry, This Email register failed, Please try agin.']);
+	}
 }

@@ -12,7 +12,7 @@ class MemberService extends Base
 
 	public function create($data)
 	{
-		$data['salt'] = randString(8);
+		$data['salt'] = randString(4);
 		$data['password'] = $this->getPassword($data['password'], $data['salt']);
 		$data['add_time'] = now();
 		return $this->insertGetId($data);

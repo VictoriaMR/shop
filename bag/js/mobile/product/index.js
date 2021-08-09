@@ -1,13 +1,16 @@
 const PRODUCT = {
 	init: function(data) {
 		const _this = this;
-		_this.skuId = data.skuId;
 		_this.spuId = data.spuId;
+		_this.skuId = data.skuId;
 		_this.sku = data.sku;
 		_this.skuMap = data.skuMap;
-		_this.attrMap = data.attrMap;
-		_this.skuInit();
-		_this.initQuantityBtn();
+		_this.filterMap = data.filterMap
+		_this.name = data.name;
+		_this.url = data.url;
+		_this.stock = data.stock;
+		_this.price = data.price;
+		_this.originalPrice = data.originalPrice;
 		$('.like-block').on('click', function(){
 			TIPS.loading();
 			$.post(URI+'userInfo/collect', {spu_id: _this.spuId}, function(res){
@@ -61,10 +64,10 @@ const PRODUCT = {
 				}
 			}
 			pObj.find('.num').val(num);
-			_this.initQuantityBtn();
+			_this.initQuantity();
 		});
 		$('.quantity .num').on('blur', function(){
-			_this.initQuantityBtn();
+			_this.initQuantity();
 		});
 		//添加购物车
 		$('.m-modal .add-to-cart').on('click', function(){
@@ -79,6 +82,10 @@ const PRODUCT = {
 				_this.errorTipsTimeout();
 				return false;
 			}
+			if (!_this.skuId) {
+				return false;
+			}
+			_this.addToCart();
 		});
 		//属性点击
 		$('.sku-attr-list .attr-item li').on('click', function(){
@@ -87,30 +94,116 @@ const PRODUCT = {
 				return false;
 			}
 			if ($(this).hasClass('active')) {
-				$(this).removeClass('active');
-			} else {
-				$(this).addClass('active').siblings().removeClass('active');
+				return false;
 			}
+			$(this).addClass('active').siblings().removeClass('active');
 			_this.skuInit();
+		});
+		//底部按钮添加购物车
+		$('.cart-bottom .add-to-cart').on('click', function(){
+			if (!_this.skuId) {
+				$('#sku-select').trigger('click');
+				return false;
+			}
+			_this.addToCart();
+		});
+	},
+	addToCart: function(){
+		TIPS.loading();
+		$.post(URI+'cart/addToCart', {sku_id: this.skuId, num: $('.quantity .num').val()}, function(res) {
+			TIPS.loadout();
+			if (res.code === '200') {
+				$('.m-modal .mask').trigger('click');
+				TIPS.success(res.message);
+				CART.init()
+			} else if (res.code === '10001') {
+				window.location.href = URI+'login.html';
+			} else {
+				TIPS.error(res.message);
+			}
 		});
 	},
 	skuInit: function() {
-		const obj = $('.sku-attr-list .attr-item li');
-		obj.removeClass('disabled').attr('disabled', false);
-		let mapkey = selectText = '';
-		obj.each(function(){
-			if ($(this).hasClass('active')) {
-				mapkey += $(this).data('id')+':';
-				selectText += $(this).attr('title');
-			} else {
+		const obj = $('.sku-attr-list .attr-item');
+		obj.find('li').removeClass('disabled').attr('disabled', false);
+		let skuMapKey = [];
+		let selectText = [];
+		let filterMapKey = [];
 
+		obj.each(function(){
+			let selected = false;
+			const id = $(this).data('id');
+			$(this).find('li').each(function(){
+				if ($(this).hasClass('active')) {
+					selected = true;
+					skuMapKey.push(id+':'+$(this).data('id'));
+					selectText.push($(this).attr('title'));
+					filterMapKey.push($(this).data('id'));
+					return;
+				}
+			});
+			if (!selected) {
+				selectText.push($(this).find('.title').text());
 			}
 		});
-		if (mapkey.length > 0) {
+		skuMapKey = skuMapKey.join(';')+';';
+		selectText = selectText.join(' ');
+		filterMapKey = filterMapKey.join(':');
+		$('#sku-select-modal .sku-pro-info .select-text .text').text(selectText);
+		$('#sku-select .text .attr-text').text(selectText);
 
-		} else {
-
+		let name = this.name;
+		let url = this.url;
+		let image = this.image;
+		let stock = this.stock;
+		let price = this.price;
+		let originalPrice = this.originalPrice;
+		this.skuId = null;
+		if (this.skuMap[skuMapKey]) {
+			const skuInfo = this.sku[this.skuMap[skuMapKey]];
+			console.log(skuInfo)
+			this.skuId = skuInfo['sku_id'];
+			name = skuInfo.name;
+			url = skuInfo.url;
+			image = skuInfo.image;
+			stock = skuInfo.stock;
+			price = skuInfo.price;
+			originalPrice = skuInfo.original_price;
 		}
+		$('#sku-select-modal .quantity').data('stock', stock);
+		$('#sku-select-modal .sku-image-block .sku-image img').attr('src', image);
+		$('#sku-select-modal .sku-image-block .price').text(price);
+		$('#sku-select-modal .sku-image-block .original_price').text(originalPrice);
+		$('#sku-select-modal .sku-image-block .stock .number').text(stock);
+		//数量按钮初始化
+		this.initQuantity();
+		//url和标题替换
+		if (this.skuId) {
+			if (window.history.replaceState) {
+				window.history.replaceState(name, name, url);
+				$('head title').text(name);
+			}
+		} else {
+			if (window.history.pushState) {
+				window.history.pushState(name, name, url);
+				$('head title').text(name);
+			}
+		}
+		//属性按钮初始化
+		const filterMap = this.filterMap[filterMapKey];
+		obj.each(function(){
+			if ($(this).find('.active').length === 0) {
+				$(this).find('li').each(function(){
+					const id = $(this).data('id');
+					if (filterMap.indexOf(id) >= 0) {
+						$(this).removeClass('disabled').attr('disabled', false);
+					} else {
+						$(this).addClass('disabled').attr('disabled', true);
+					}
+				});
+			}
+		});
+		return true;
 	},
 	attrError: function(obj, text){
 		if (!text) return false;
@@ -128,9 +221,10 @@ const PRODUCT = {
 			});
 		}, 2000);
 	},
-	initQuantityBtn: function() {
+	initQuantity: function() {
 		const pObj = $('.quantity');
 		const stock = parseInt(pObj.data('stock'));
+		console.log(stock, 'stock')
 		const num = parseInt(pObj.find('.num').val());
 		if (stock <= 1) {
 			pObj.find('.num').val(1);

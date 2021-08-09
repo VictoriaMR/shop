@@ -13,20 +13,16 @@ class CartService extends Base
 	public function addToCart($skuId, $quantity=1, $spuId=0)
 	{
 		$where = [
-			'mem_id' => userId(),
-			'site_id' => siteId(),
+			'mem_id' => $this->userId(),
 			'sku_id' => $skuId,
 		];
 		$cartId = $this->loadData($where, 'cart_id')['cart_id'] ?? 0;
 		if ($cartId) {
 			return $this->where('cart_id', $cartId)->increment('quantity');
 		}
-		if (empty($spuId)) {
-			$spuId = make('app/service/product/SkuService')->loadData($skuId, 'spu_id')['spu_id'] ?? 0;
-		}
-		$where['spu_id'] = $spuId;
 		$where['quantity'] = $quantity;
 		$where['add_time'] = now();
+		$where['update_time'] = now();
 		return $this->insert($where);
 	}
 
@@ -34,7 +30,7 @@ class CartService extends Base
 	{
 		$where = [
 			'cart_id' => $cartId,
-			'mem_id' => userId(),
+			'mem_id' => $this->userId(),
 		];
 		return $this->deleteData($where);
 	}
@@ -43,7 +39,7 @@ class CartService extends Base
 	{
 		$where = [
 			'cart_id' => $cartId,
-			'mem_id' => userId(),
+			'mem_id' => $this->userId(),
 		];
 		return $this->where($where)->decrement('quantity', $quantity);
 	}
@@ -52,7 +48,7 @@ class CartService extends Base
 	{
 		$where = [
 			'cart_id' => $cartId,
-			'mem_id' => userId(),
+			'mem_id' => $this->userId(),
 		];
 		return $this->updateData($where, ['checked'=>$check]);
 	}
@@ -60,10 +56,20 @@ class CartService extends Base
 	public function getCartCount()
 	{
 		$where = [
-			'mem_id' => userId(),
-			'site_id' => siteId(),
+			'mem_id' => $this->userId(),
 			'checked' => $this->getConst('CART_CHECKED'),
 		];
 		return $this->loadData($where, 'SUM(quantity) as quantity')['quantity'] ?? 0;
+	}
+
+	public function getList()
+	{
+		$list = $this->getListData(['mem_id' => $this->userId()], 'cart_id,sku_id,quantity,checked', 0, 0, ['update_time'=>'desc']);
+		$skuService = make('app/service/product/SkuService');
+		$lanId = lanId();
+		foreach ($list as $key => $value) {
+			$list[$key] += $skuService->getInfoCache($value['sku_id'], $lanId);
+		}
+		return $list;
 	}
 }

@@ -2,7 +2,7 @@ const LOGIN = {
 	init: function() {
 		const _this = this;
 		$('#login-page .input').on('focus', function(){
-			$(this).parent().removeClass('error').parent().find('.error-msg').remove();
+			$(this).parent().removeClass('error').removeClass('success').parent().find('.message-tips').remove();
 		});
 		$('#login-page .verify-code .input').on('input', function(event){
 			const val = $(this).val();
@@ -58,11 +58,11 @@ const LOGIN = {
 			$('#login-page .register').toggle();
 		});
 		$('#login-page .agreement').on('click', function(){
-			if ($(this).find('.icon-squarecheck').length > 0) {
-				$(this).find('.iconfont').removeClass('icon-squarecheck').addClass('icon-squarecheckfill');
+			if ($(this).find('.icon-fangxingxuanzhong').length > 0) {
+				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingxuanzhongfill');
 				$(this).find('input').val(1);
 			} else {
-				$(this).find('.iconfont').removeClass('icon-squarecheckfill').addClass('icon-squarecheck');
+				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingxuanzhong');
 				$(this).find('input').val(0);
 			}
 		});
@@ -82,7 +82,7 @@ const LOGIN = {
 			_this.loading(_thisObj, 'Send...');
 			$.post(URI+'login/sengCode', {email: email}, function(res) {
 				_this.loaded(_thisObj);
-				if (res.code === 200 || res.code === '200') {
+				if (res.code === '200') {
 					_this.initSendCode(res.data);
 					TIPS.success(res.message);
 				} else {
@@ -140,7 +140,7 @@ const LOGIN = {
 			const _thisObj = $(this);
 			_this.loading(_thisObj, 'LOGGING IN...');
 			$.post(URI+'login/login', param, function(res) {
-				if (res.code === 200 || res.code === '200') {
+				if (res.code === '200') {
 					localStorage.setItem('login_token', res.data.token);
 					window.location.href = res.data.url ? res.data.url : URI;
 				} else {
@@ -148,7 +148,85 @@ const LOGIN = {
 					for (let i in res.message) {
 						_this.loginError($('.login [name="'+i+'"]').parent(), res.message[i]);
 					}
-
+				}
+			});
+		});
+		//验证注册邮箱
+		$('#login-page .register [name="email"]').on('blur', function(){
+			const email = $(this).val();
+			let obj = $(this).parent();
+			if (email === '') {
+				_this.loginError(obj, 'This Email is required.');
+				return false;
+			}
+			if (!VERIFY.email(email)) {
+				_this.loginError(obj, 'This Email is Invalid.');
+				return false;
+			}
+			TIPS.loading();
+			$.post(URI+'login/checkRegister', {email: email}, function(res){
+				TIPS.loadout();
+				if (res.code === '200') {
+					_this.loginSuccess(obj, res.message);
+				} else {
+					_this.loginError(obj, res.message);
+				}
+			});
+		});
+		//注册按钮
+		$('#login-page .register-btn').on('click', function(){
+			let obj = $('.register [name="email"]');
+			let param = {};
+			const email = obj.val();
+			if (email === '') {
+				_this.loginError(obj.parent(), 'This Email is required.');
+				return false;
+			}
+			if (!VERIFY.email(email)) {
+				_this.loginError(obj.parent(), 'This Email is Invalid.');
+				return false;
+			}
+			let pObj = $('.register [name="password"]');
+			const password = pObj.val();
+			if (password === '') {
+				_this.loginError(pObj.parent(), 'This Password is required.');
+				return false;
+			}
+			if (!VERIFY.password(password)) {
+				_this.loginError(pObj.parent(), 'This Password is Invalid.');
+				return false;
+			}
+			let rpObj = $('.register [name="repassword"]');
+			const repassword = rpObj.val();
+			if (repassword === '') {
+				_this.loginError(rpObj.parent(), 'This Confirm Password is required.');
+				return false;
+			}
+			if (!VERIFY.password(repassword)) {
+				_this.loginError(rpObj.parent(), 'This Confirm Password is Invalid.');
+				return false;
+			}
+			if (password != repassword) {
+				_this.loginError(pObj.parent(), 'This Password is not match.');
+				_this.loginError(rpObj.parent(), 'This Confirm Password is not match.');
+				return false;
+			}
+			param.email = email;
+			param.password = password;
+			const _thisObj = $(this);
+			_this.loading(_thisObj, 'CREATING AN ACCOUNT...');
+			$.post(URI+'login/register', param, function(res) {
+				if (res.code === '200') {
+					localStorage.setItem('login_token', res.data.token);
+					TIPS.success(res.message);
+					setTimeout(function(){
+						window.location.href = res.data.url ? res.data.url : URI;
+					});
+				} else {
+					_this.loaded(_thisObj);
+					for (let i in res.message) {
+						_this.loginError($('.register [name="'+i+'"]').parent(), res.message[i]);
+					}
 				}
 			});
 		});
@@ -175,8 +253,13 @@ const LOGIN = {
 	},
 	loginError(obj, msg){
 		obj.addClass('error');
-		obj.parent().find('.error-msg').remove();
-		obj.parent().append('<p class="error-msg">'+msg+'</p>');
+		obj.parent().find('.message-tips').remove();
+		obj.parent().append('<p class="message-tips error">'+msg+'</p>');
+	},
+	loginSuccess(obj, msg){
+		obj.addClass('success');
+		obj.parent().find('.message-tips').remove();
+		obj.parent().append('<p class="message-tips success">'+msg+'</p>');
 	},
 	loading: function(obj, msg) {
 		obj.data('text', obj.text());

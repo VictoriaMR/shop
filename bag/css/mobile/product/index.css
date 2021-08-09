@@ -60,6 +60,7 @@
 	border-radius: 50%;
 	font-size: 0.20rem;
 	color: #ffffff;
+	position: relative;
 }
 #product-page .product-image .like-block {
 	position: absolute;
@@ -266,4 +267,29 @@
 	padding: 0 0.08rem;
 	background: #efefef;
 	border: 0.02rem solid #707070;
+}
+.product-introduce .introduce-title .tcell {
+	width: 1.2rem;
+	height: 100%;
+}
+.product-introduce .introduce-title .title {
+	width: calc(100% - 2.4rem);
+	font-size: 0.14rem;
+	color: #ccc;
+	text-align: center;
+}
+.product-introduce .introduce-title .line {
+	width: 100%;
+	height: 0.02rem;
+	background: #EEEEEE;
+	display: inline-block;
+}
+.product-introduce .introduce-image  {
+	padding: 0.12rem 0;
+}
+.product-introduce .introduce-image p {
+	font-size: 0;
+}
+.product-introduce .introduce-image img {
+	width: 100%;
 }

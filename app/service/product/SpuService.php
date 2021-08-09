@@ -23,10 +23,17 @@ class SpuService extends Base
 
 	public function getInfo($spuId, $lanId=1)
 	{
-		$info = $this->loadData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'cate_id,attach_id,min_price,max_price,original_price,sale_total');
+		$info = $this->loadData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'cate_id,attach_id,min_price,max_price,original_price');
 		if (empty($info)) {
 			return false;
 		}
+		//获取sku列表
+		$skuService = make('app/service/product/SkuService');
+		$info['sku'] = $skuService->getListData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'sku_id,attach_id,stock,price,original_price,sale_total');
+		if (empty($info['sku'])) {
+			return false;
+		}
+		$info['sku'] = array_column($info['sku'], null, 'sku_id');
 		//获取图片集
 		$imageArr = $info['image'] = make('app/service/product/SpuImageService')->getListById($spuId);
 		$imageArr = array_column($imageArr, null, 'attach_id');
@@ -42,11 +49,6 @@ class SpuService extends Base
 		$info['introduce'] = make('app/service/product/IntroduceService')->getListById($spuId);
 		//spu描述
 		$info['description'] = make('app/service/product/DescriptionService')->getListById($spuId, $lanId);
-
-		//获取sku列表
-		$skuService = make('app/service/product/SkuService');
-		$info['sku'] = $skuService->getListData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'sku_id,attach_id,stock,price,original_price');
-		$info['sku'] = array_column($info['sku'], null, 'sku_id');
 
 		$info += make('app/service/product/AttrRelationService')->getListById(array_keys($info['sku']), $lanId);
 		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);

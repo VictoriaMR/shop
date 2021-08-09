@@ -8,6 +8,8 @@ class Base
 	protected $_connect;
 	protected $_table;
 	protected $_primaryKey;
+	protected $_memId;
+	protected $_siteId;
 
 	private function instance()
 	{
@@ -56,6 +58,22 @@ class Base
 	public function getListData(array $where=[], $fields=[], $page=0, $size=20, $order=[])
 	{
 		return $this->instance()->where($where)->field($fields)->page($page, $size)->orderBy($order)->get();
+	}
+
+	public function userId()
+	{
+		if (!$this->_memId) {
+			$this->_memId = userId();
+		}
+		return $this->_memId;
+	}
+
+	public function siteId()
+	{
+		if (!$this->_siteId) {
+			$this->_siteId = siteId();
+		}
+		return $this->_siteId;
 	}
 
 	public function __call($func, $arg)
