@@ -31,20 +31,18 @@ class AttrRelationService extends Base
 			$data['attv'][$value['attv_id']] = $value['name'];
 			$attvArr[$value['attv_id']] = $key;
 		}
-		$tempArr = [];
-		$data['skuAttv'] = $data['attvImage'] = [];
-		//skuMap
+		$data['skuAttv'] = $data['skuMap'] = $data['attvImage'] = [];
 		foreach ($list as $key => $value) {
-			if (!isset($tempArr[$value['sku_id']])) $tempArr[$value['sku_id']] = '';
-			$tempArr[$value['sku_id']] .= $value['attr_id'].':'.$value['attv_id'].';';
 			$data['attrMap'][$value['attr_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
 			$data['skuAttv'][$value['sku_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
+			$data['skuMap'][$value['sku_id']][$value['attr_id']] = $value['attv_id'];
+
 			$data['attvImage'][$value['attv_id']] = $value['attach_id'];
 		}
 		if ($simple) {
 			return $data;
 		}
-		$data['skuMap'] = array_flip($tempArr);
+
 		$data['attrMap'] = array_map(function($value) {
 			ksort($value);
 			return array_values($value);
@@ -53,6 +51,16 @@ class AttrRelationService extends Base
 			ksort($value);
 			return array_values($value);
 		}, $data['skuAttv']);
+
+		$tempArr = [];
+		foreach ($data['attrMap'] as $key => $value) {
+			foreach ($data['skuMap'] as $k => $v) {
+				if (!isset($v[$key])) continue;
+				if (!isset($tempArr[$k])) $tempArr[$k] = '';
+				$tempArr[$k] .= $key.':'.$v[$key].';';
+			}
+		}
+		$data['skuMap'] = array_flip($tempArr);
 
 		//sku属性选择
 		$data['filterMap'] = [];

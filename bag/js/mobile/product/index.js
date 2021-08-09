@@ -149,6 +149,7 @@ const PRODUCT = {
 		skuMapKey = skuMapKey.join(';')+';';
 		selectText = selectText.join(' ');
 		filterMapKey = filterMapKey.join(':');
+		console.log(skuMapKey, selectText, filterMapKey)
 		$('#sku-select-modal .sku-pro-info .select-text .text').text(selectText);
 		$('#sku-select .text .attr-text').text(selectText);
 
