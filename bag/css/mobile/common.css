@@ -96,14 +96,29 @@ a {
 .center {
 	margin: 0 auto
 }
-.w100 {
-	width: 100%
+.w25 {
+	width: 25%
+}
+.w30 {
+	width: 30%
 }
 .w50 {
 	width: 50%
 }
+.w70 {
+	width: 70%
+}
+.w75 {
+	width: 75%
+}
+.w100 {
+	width: 100%
+}
 .clear {
 	clear: both
+}
+.opac5 {
+	opacity: 0.5;
 }
 .e1 {
 	overflow: hidden;
@@ -149,7 +164,25 @@ a {
 	font-weight: 700;
 	white-space: nowrap;
 	line-height: 0.4rem;
-    display: block;
+	padding: 0 0.08rem;
+}
+.btn24 {
+	max-height: 100%;
+	height: 0.24rem;
+	text-align: center;
+	font-weight: 700;
+	white-space: nowrap;
+	line-height: 0.24rem;
+	padding: 0 0.12rem;
+}
+.btn32 {
+	max-height: 100%;
+	height: 0.32rem;
+	text-align: center;
+	font-weight: 700;
+	white-space: nowrap;
+	line-height: 0.32rem;
+	padding: 0 0.12rem;
 }
 .btn[disabled] {
 	background-color: #666666;
@@ -170,6 +203,12 @@ a {
 }
 .tc {
 	text-align: center;
+}
+.tl {
+	text-align: left;
+}
+.tr {
+	text-align: right;
 }
 .cover {
 	width: 100%;
@@ -246,6 +285,29 @@ a {
 	left: 0;
 	z-index: 102;
 	outline: 0;
+}
+.confirm-modal .content {
+	width: 3.0rem;
+	height: 1.6rem;
+	position: fixed;
+	left: calc(50% - 1.5rem);
+	top: calc(50% - 0.8rem);
+	background: #fff;
+	z-index: 103;
+	padding: 0.24rem 0 0.5rem 0;
+}
+.confirm-modal .content .footer {
+	border-top: 0.01rem solid #ccc;
+	width: 100%;
+	height: 0.5rem;
+	position: absolute;
+	bottom: 0;
+	padding-top: 0.09rem;
+}
+.confirm-modal .content .top-close-btn {
+	position: absolute;
+	top: 0;
+	right: 0;
 }
 .mask {
 	z-index: 102;
@@ -358,6 +420,9 @@ a {
 	position: absolute;
 	bottom: 0;
 }
+.loading .mask {
+	opacity: 0.2;
+}
 /*loading modal end*/
 /*tips*/
 #message-tips {
@@ -396,4 +461,19 @@ a {
 	top: 0.12rem;
 	right: 0.12rem;
 	font-weight: 600;
+}
+.list-title .tcell {
+	width: 0.8rem;
+	height: 100%;
+}
+.list-title .title {
+	width: calc(100% - 1.6rem);
+	font-size: 0.16rem;
+	text-align: center;
+}
+.list-title .line {
+	width: 100%;
+	height: 0.02rem;
+	background: #EEEEEE;
+	display: inline-block;
 }

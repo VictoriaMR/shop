@@ -17,6 +17,7 @@
 	margin-bottom: 0.04rem;
 	background: #fff;
 	border-radius: 0.08rem;
+	position: relative;
 }
 #cart-page .cart-list .item .image {
 	width: 1.02rem;
@@ -81,6 +82,16 @@
 	top: calc(50% - 0.06rem);
 	font-size: 0.12rem;
 }
+#cart-page .cart-list .item .btn-content button,
+.quantity .quantity-num {
+	padding: 0.03rem 0.06rem 0.04rem 0.06rem;
+	font-weight: 600;
+}
+#cart-page .cart-list .item .btn-content .btn-error {
+	background: #EB2027;
+	color: #fff;
+	border-radius: 0.12rem;
+}
 .like-block {
 	position: absolute;
 	right: 0.08rem;
@@ -101,4 +112,95 @@
 	text-decoration: line-through;
 	color: #666666;
 	margin-left: 0.04rem;
+}
+.quantity .minus,
+.quantity .plus {
+	width: 0.24rem;
+	height: 0.24rem;
+	float: right;
+	border: 0.01rem solid #707070;
+}
+.quantity button.disabled {
+	border-color: #999999;
+}
+.quantity .minus {
+	border-top-left-radius: 0.06rem;
+	border-bottom-left-radius: 0.06rem;
+	border-right: none;
+}
+.quantity .plus {
+	border-top-right-radius: 0.06rem;
+	border-bottom-right-radius: 0.06rem;
+	border-left: none;
+}
+.quantity .num {
+	width: 0.34rem;
+	height: 0.24rem;
+	text-align: center;
+	float: right;
+	padding: 0 0.06rem;
+	background: #efefef;
+	border: 0.01rem solid #707070;
+}
+#sku-select-modal .confirm-btn {
+	border-radius: 0.08rem;
+}
+#sku-select-modal .sku-image {
+	width: 1rem;
+	height: 1rem;
+}
+#sku-select-modal .sku-pro-info {
+	width: calc(100% - 1rem);
+	vertical-align: bottom;
+	padding-left: 0.12rem;
+	text-align: left;
+	font-size: 0.12rem;
+}
+#sku-select-modal .sku-pro-info p {
+	margin-top: 0.04rem;
+}
+#sku-select-modal .sku-attr-list .title {
+	font-size: 0.14rem;
+	font-weight: 700;
+}
+#sku-select-modal .sku-attr-list .item {
+	padding: 0.12rem 0 0.12rem 0;
+	border-top: 0.01rem solid #ccc;
+	position: relative;
+}
+#sku-select-modal .sku-attr-list .item li {
+	float: left;
+	border: 0.02rem solid #ffff;
+	margin-bottom: 0.08rem;
+}
+#sku-select-modal .sku-attr-list .item li.active {
+	border-color: #404040;
+}
+#sku-select-modal .sku-attr-list .item .item-text.active {
+	background: #404040;
+	color: #fff;
+}
+#sku-select-modal .sku-attr-list .item li.disabled {
+	opacity: 0.5;
+	border-style: dotted;
+}
+#sku-select-modal .sku-attr-list .item .item-image {
+	padding: 0.03rem;
+	overflow: hidden;
+	border-radius: 50%;
+	margin-right: 0.12rem;
+}
+#sku-select-modal .sku-attr-list .item .attv-image {
+	width: 0.36rem;
+	height: 0.36rem;
+	border-radius: 50%;
+	font-size: 0;
+	overflow: hidden;
+}
+#sku-select-modal .sku-attr-list .item .item-text {
+	height: 0.3rem;
+	line-height: 0.26rem;
+	padding: 0 0.16rem;
+	border-color: #999999;
+	font-weight: 700;
 }

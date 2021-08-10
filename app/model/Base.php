@@ -45,7 +45,7 @@ class Base
 	public function deleteData($where)
 	{
 		if (!is_array($where)) {
-			$where = [$this->_primaryKey => (int)$id];
+			$where = [$this->_primaryKey => (int)$where];
 		}
 		return $this->instance()->where($where)->delete();
 	}

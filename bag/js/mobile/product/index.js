@@ -107,13 +107,29 @@ const PRODUCT = {
 			}
 			_this.addToCart();
 		});
+		//checkout 按钮
+		$('.checkout-btn').on('click', function(){
+			if (!_this.skuId) {
+				$('#sku-select').trigger('click');
+				return false;
+			}
+			TIPS.loading();
+			const quantity = $('.quantity .num').val();
+			$.post(URI+'product/check', {sku_id: _this.skuId, quantity: quantity}, function(res) {
+				if (res.code === '200') {
+					window.location.href = URI+'checkout?id='+_this.skuId+'&quantity='+quantity;
+				} else {
+					TIPS.loadout();
+					TIPS.error(res.message);
+				}
+			});
+		});
 	},
 	addToCart: function(){
 		TIPS.loading();
 		$.post(URI+'cart/addToCart', {sku_id: this.skuId, num: $('.quantity .num').val()}, function(res) {
 			TIPS.loadout();
 			if (res.code === '200') {
-				$('.m-modal .mask').trigger('click');
 				TIPS.success(res.message);
 				CART.init()
 			} else if (res.code === '10001') {
@@ -149,7 +165,6 @@ const PRODUCT = {
 		skuMapKey = skuMapKey.join(';')+';';
 		selectText = selectText.join(' ');
 		filterMapKey = filterMapKey.join(':');
-		console.log(skuMapKey, selectText, filterMapKey)
 		$('#sku-select-modal .sku-pro-info .select-text .text').text(selectText);
 		$('#sku-select .text .attr-text').text(selectText);
 
@@ -162,7 +177,6 @@ const PRODUCT = {
 		this.skuId = null;
 		if (this.skuMap[skuMapKey]) {
 			const skuInfo = this.sku[this.skuMap[skuMapKey]];
-			console.log(skuInfo)
 			this.skuId = skuInfo['sku_id'];
 			name = skuInfo.name;
 			url = skuInfo.url;
@@ -225,7 +239,6 @@ const PRODUCT = {
 	initQuantity: function() {
 		const pObj = $('.quantity');
 		const stock = parseInt(pObj.data('stock'));
-		console.log(stock, 'stock')
 		const num = parseInt(pObj.find('.num').val());
 		if (stock <= 1) {
 			pObj.find('.num').val(1);

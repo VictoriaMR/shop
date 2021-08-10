@@ -407,7 +407,6 @@ class SpuService extends Base
 		//获取收藏商品分类
 		$where = [
 			'mem_id' => userId(),
-			'site_id' => siteId(),
 		];
 		$collSpuList = make('app/service/member/CollectService')->getListData($where, 'spu_id');
 		$hisSpuList = make('app/service/member/HistoryService')->getListData($where, 'spu_id');

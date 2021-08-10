@@ -94,24 +94,35 @@ const TIPS = {
 			});
 		}, 5000);
 	},
-	loading: function(){
-		$('#loading').remove();
+	loading: function(obj) {
+		let style = ''; 
+		if (obj) {
+			style = 'style="position:absolute;"'
+		} else {
+			obj = $('body');
+		}
+		obj.find('.loading').remove();
 		clearTimeout(this.timeoutVal);
-		let html = '<div class="m-modal" id="loading">\
-						<div class="mask"></div>\
+		let html = '<div class="m-modal loading" '+style+'>\
+						<div class="mask" '+style+'></div>\
 						<div class="loading-block">\
 							<div></div>\
 							<div></div>\
 							<div></div>\
 						</div>\
 					</div>';
-		$('body').append(html);
+		obj.append(html);
 		this.stop();
 	},
-	loadout: function(){
-		$('#loading').fadeOut(150, function(){
+	loadout: function(obj, nostop){
+		if (!obj) {
+			obj = $('body');
+		}
+		obj.find('.loading').fadeOut(150, function(){
 			$(this).remove();
-			TIPS.start();
+			if (!nostop) {
+				TIPS.start();
+			}
 		});
 	},
 	start: function() {

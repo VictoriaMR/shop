@@ -18,7 +18,6 @@ class CollectService extends Base
 		}
 		$where = [
 			'mem_id' => $memId,
-			'site_id' => siteId(),
 			'spu_id' => $spuId,
 		];
 		if ($this->getCountData($where)) {
@@ -39,7 +38,6 @@ class CollectService extends Base
 		}
 		$where = [
 			'mem_id' => $memId,
-			'site_id' => siteId(),
 			'spu_id' => $spuId,
 		];
 		return $this->getCountData($where) > 0;

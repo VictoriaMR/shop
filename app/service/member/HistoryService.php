@@ -17,7 +17,6 @@ class HistoryService extends Base
 		}
 		$where = [
 			'mem_id' => $this->userId(),
-			'site_id' => $this->siteId(),
 			'spu_id' => $spuId,
 			'add_date' => date('Y-m-d'),
 		];

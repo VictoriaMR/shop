@@ -44,4 +44,27 @@ class ProductController extends Controller
 
 		$this->view();
 	}
+
+	public function check()
+	{
+		$skuId = (int)ipost('sku_id');
+		$quantity = (int)ipost('quantity', 1);
+		if (empty($skuId)) {
+			$this->error('The product param was invalid.');
+		}
+		$skuService = make('app/service/product/SkuService');
+		$where = [
+			'sku_id' => $skuId,
+			'site_id' => siteId(),
+			'status' => $skuService->getConst('STATUS_OPEN'),
+		];
+		$data = $skuService->loadData($where, 'stock');
+		if (empty($data)) {
+			$this->error('The product was not exist.');
+		}
+		if ($data['stock'] < $quantity) {
+			$this->error('The product out of stock.');
+		}
+		$this->success();
+	}
 }

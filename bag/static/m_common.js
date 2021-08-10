@@ -94,24 +94,35 @@ const TIPS = {
 			});
 		}, 5000);
 	},
-	loading: function(){
-		$('#loading').remove();
+	loading: function(obj) {
+		let style = ''; 
+		if (obj) {
+			style = 'style="position:absolute;"'
+		} else {
+			obj = $('body');
+		}
+		obj.find('.loading').remove();
 		clearTimeout(this.timeoutVal);
-		let html = '<div class="m-modal" id="loading">\
-						<div class="mask"></div>\
+		let html = '<div class="m-modal loading" '+style+'>\
+						<div class="mask" '+style+'></div>\
 						<div class="loading-block">\
 							<div></div>\
 							<div></div>\
 							<div></div>\
 						</div>\
 					</div>';
-		$('body').append(html);
+		obj.append(html);
 		this.stop();
 	},
-	loadout: function(){
-		$('#loading').fadeOut(150, function(){
+	loadout: function(obj, nostop){
+		if (!obj) {
+			obj = $('body');
+		}
+		obj.find('.loading').fadeOut(150, function(){
 			$(this).remove();
-			TIPS.start();
+			if (!nostop) {
+				TIPS.start();
+			}
 		});
 	},
 	start: function() {
@@ -120,6 +131,37 @@ const TIPS = {
 	stop: function() {
 		$('body').css({'overflow': 'hidden'});
 	},
+	confirm: function(message, callback) {
+		$('#confirm-modal').remove();
+		$('body').append('<div class="confirm-modal" id="confirm-modal">\
+			<div class="mask"></div>\
+			<div class="content">\
+				<button class="btn24 btn-black close-btn top-close-btn">Close</button>\
+				<p class="layer mt32 tc f16 f600">'+message+'</p>\
+				<div class="footer layer">\
+					<button class="btn32 close-btn">CANCEL</button>\
+					<button class="btn32 btn-black right confirm-btn">CONFIRM</button>\
+				</div>\
+			</div>\
+		</div>');
+		this.stop();
+		$('body').on('click', '#confirm-modal .close-btn, #confirm-modal .mask', function(){
+			TIPS.confirmClose();
+		});
+		$('body').on('click', '#confirm-modal .confirm-btn', function(){
+			if (callback) {
+				callback()
+			} else {
+				TIPS.confirmClose();
+			}
+		});
+	},
+	confirmClose: function() {
+		$('#confirm-modal').fadeOut(200, function(){
+			$(this).remove();
+			TIPS.start();
+		});
+	}
 };
 const CART = {
 	init: function() {
@@ -139,7 +181,8 @@ $(function(){
 	if (document.body.scrollHeight - 300 > window.screen.height) {
 		$('body').append('<div id="scroll-top"><span class="iconfont icon-xiangshang3"></span></div>');
 		window.addEventListener('scroll', function (){
-			if ($(document).scrollTop() > 300) {
+			const top = document.documentElement.scrollTop ? document.documentElement.scrollTop : document.body.scrollTop;
+			if (top > 300) {
 				$('#scroll-top').addClass('popup');
 			} else {
 				$('#scroll-top').removeClass('popup');

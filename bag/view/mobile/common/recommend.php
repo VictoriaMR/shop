@@ -1,8 +1,7 @@
 <?php $recommendList = make('app/service/product/SpuService')->getRecommend();?>
 <?php if (!empty($recommendList)) {?>
-<link rel="stylesheet" type="text/css" href="<?php echo siteUrl('css/mobile/common/recommend.css');?>">
 <div id="recommend-page">
-	<div class="recommend-title flex">
+	<div class="list-title flex">
 		<div class="tcell">
 			<p class="line"></p>
 		</div>

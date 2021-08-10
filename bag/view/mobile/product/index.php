@@ -98,7 +98,7 @@
 		</div>
 		<div class="right">
 			<button class="btn btn-light-black add-to-cart">ADD TO CART</button>
-			<button class="btn btn-black checkout">CHECKOUT</button>
+			<button class="btn btn-black checkout-btn">CHECKOUT</button>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -126,7 +126,7 @@
 	<div class="dialog layer">
 		<span class="iconfont icon-guanbi2"></span>
 		<div class="contentfill">
-			<div class="sku-image-block mt10">
+			<div class="sku-image-block mt10 f0">
 				<div class="sku-image tcell">
 					<img data-src="<?php echo $info['image'][0]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 				</div>
@@ -178,7 +178,7 @@
 		</div>
 		<div class="dialog-footer">
 			<button class="btn btn-light-black add-to-cart left w50">ADD TO CART</button>
-			<button class="btn btn-black buy-now left w50">BUY NOW</button>
+			<button class="btn btn-black checkout-btn left w50">CHECKOUT</button>
 		</div>
 	</div>
 </div>

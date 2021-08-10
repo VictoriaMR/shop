@@ -110,7 +110,7 @@
 	border-top-left-radius: 0.2rem;
 	border-bottom-left-radius: 0.2rem;
 }
-.btn.checkout,.btn.buy-now {
+.btn.checkout-btn {
 	border-top-right-radius: 0.2rem;
 	border-bottom-right-radius: 0.2rem;
 }
@@ -170,6 +170,7 @@
 	vertical-align: bottom;
 	padding-left: 0.12rem;
 	text-align: left;
+	font-size: 0.12rem;
 }
 #sku-select-modal .sku-pro-info p {
 	margin-top: 0.04rem;
