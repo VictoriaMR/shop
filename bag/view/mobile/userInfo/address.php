@@ -17,7 +17,7 @@
 		<p class="f18 f600 tc mt32">Your address is empty</p>
 		<p class="f14 mt18 tc">Please click the add button to add a new address.</p>
 		<?php } else {?>
-		<ul class="address-list mt22">
+		<ul class="address-list mt22" data-page="<?php echo $page;?>" data-size="<?php echo $size;?>">
 			<?php foreach ($list as $value){?>
 			<li class="item<?php echo $value['default']?' active':'';?>" data-id="<?php echo $value['address_id'];?>">
 				<div class="info">
@@ -40,6 +40,7 @@
 		<?php } ?>
 	</div>
 </div>
+<?php $this->load('common/address');?>
 <script type="text/javascript">
 $(function(){
 	ADDRESS.init();

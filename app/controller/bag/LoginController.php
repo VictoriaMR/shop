@@ -196,9 +196,8 @@ class LoginController extends Controller
 
 	public function logout()
 	{
-		$logService = make('app\service\LoggerService');
-		$logService->addLog(['type' => $logService->getConst('TYPE_LOGOUT')]);
-		session()->set(APP_TEMPLATE_TYPE.'_info');
+		make('app/service/MemberService')->logout();
+
 		redirect(url('login'));
 	}
 

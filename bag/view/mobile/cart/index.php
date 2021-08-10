@@ -2,7 +2,7 @@
 	<?php if (empty($checkedList)) {?>
 	<p class="empty-title">YOUR CART IS EMPTY</p>
 	<div class="continue-btn">
-		<a href="<?php echo url('');?>" class="btn btn-black">CONTINUE SHOPPING</a>
+		<a href="<?php echo url('');?>" class="btn btn-black block">CONTINUE SHOPPING</a>
 	</div>
 	<?php } else {?>
 	<div class="layer pb24">
@@ -60,7 +60,7 @@
 					</div>
 					<div class="quantity tcell w25" data-stock="<?php echo $value['stock'];?>">
 						<button class="plus"><span class="iconfont icon-jiahao1"></span></button>
-						<input type="text" class="num" value="<?php echo $value['quantity'];?>" maxlength="4">
+						<input type="text" class="num" value="<?php echo $value['quantity'];?>" maxlength="3">
 						<button class="minus disabled" disabled="disabled"><span class="iconfont icon-jianhao"></span></button>
 					</div>
 				</div>

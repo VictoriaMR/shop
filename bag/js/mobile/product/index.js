@@ -85,7 +85,7 @@ const PRODUCT = {
 			if (!_this.skuId) {
 				return false;
 			}
-			_this.addToCart();
+			_this.addToCart($('.quantity .num').val());
 		});
 		//属性点击
 		$('.sku-attr-list .attr-item li').on('click', function(){
@@ -105,7 +105,7 @@ const PRODUCT = {
 				$('#sku-select').trigger('click');
 				return false;
 			}
-			_this.addToCart();
+			_this.addToCart(1);
 		});
 		//checkout 按钮
 		$('.checkout-btn').on('click', function(){
@@ -125,9 +125,9 @@ const PRODUCT = {
 			});
 		});
 	},
-	addToCart: function(){
+	addToCart: function(num){
 		TIPS.loading();
-		$.post(URI+'cart/addToCart', {sku_id: this.skuId, num: $('.quantity .num').val()}, function(res) {
+		$.post(URI+'cart/addToCart', {sku_id: this.skuId, num: num}, function(res) {
 			TIPS.loadout();
 			if (res.code === '200') {
 				TIPS.success(res.message);

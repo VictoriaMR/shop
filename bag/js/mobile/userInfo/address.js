@@ -1,5 +1,6 @@
 const ADDRESS = {
 	init: function() {
+		const _this = this;
 		//设置默认
 		$('.address-list').on('click', '.item .default-btn', function(){
 			if ($(this).hasClass('active')) {
@@ -23,6 +24,7 @@ const ADDRESS = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm('Sure delete this address?', function(){
 				TIPS.loading($('#confirm-modal .content'));
+				return
 				$.post(URI+'userInfo/deleteAddress', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
@@ -33,7 +35,9 @@ const ADDRESS = {
 				});
 			});
 		});
-		_this.initLoad();
+		if ($('.address-list').length > 0 && $('.address-list').height() > $(window).height()) {
+			_this.initLoad();
+		}
 		
 	},
 	initLoad: function() {
@@ -45,8 +49,48 @@ const ADDRESS = {
 				const scrollTop = $(this).scrollTop();
 				const scrollHeight = $(document).height();
 				const windowHeight = $(this).height();
-				if (scrollTop + windowHeight == scrollHeight - 20) {
-					console.log("已经到最底部了！");
+				if (scrollTop + windowHeight >= scrollHeight - 20) {
+					_this.stop = false;
+					$('.address-content').append('<div class="page-loading-block">\
+						<div></div>\
+						<div></div>\
+						<div></div>\
+						</div>');
+					_this.getPgae();
+				}
+			}
+		});
+	},
+	getPgae: function() {
+		const _this = this;
+		const page = parseInt($('.address-list').data('page')) + 1;
+		const size = parseInt($('.address-list').data('size'))
+		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
+			if (res.code === '200') {
+				$('.address-list').data('page', page);
+				$('.address-content').find('.page-loading-block').remove();
+				if (res.data.length > 0) {
+					_this.stop = true;
+					let html = '';
+					for (let i=0; i<res.data.length;i++) {
+						html += '<li class="item'+(res.data[i].default==='1'?' active':'')+'" data-id="'+res.data[i].address_id+'">\
+							<div class="info">\
+								<p class="e2">'+res.data[i].first_name+' '+res.data[i].last_name+'</p>\
+								<p class="e2">'+res.data[i].phone+'</p>\
+								<p class="e2">'+res.data[i].address1+' '+res.data[i].address2+'</p>\
+								<p class="e2">'+res.data[i].city+' '+res.data[i].state+' '+res.data[i].country+' '+res.data[i].postcode+'</p>';
+								if (res.data[i].tax_number){
+									html += '<p class="e2">'+res.data[i].tax_number+'</p>';
+								}
+						html += '<button class="btn24 default-btn'+(res.data[i].default==='1'?' active':'')+'">DEFAULT</button>\
+							</div>\
+							<div class="btn-content mt14">\
+								<button class="btn24 btn-black edit-btn">Edit</button>\
+								<button class="btn24 ml16 delete-btn">Delete</button>\
+							</div>\
+						</li>';
+					}
+					$('.address-list').append(html);
 				}
 			}
 		});

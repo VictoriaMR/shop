@@ -27,12 +27,13 @@ class UserInfoController extends Controller
 	public function address()
 	{
 		html()->addCss();
+		html()->addCss('common/address');
 		html()->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 10);
 		$addressService = make('app/service/member/AddressService');
-		$list = $addressService->getListData(['mem_id'=>userId()], '*', $page, $size, ['default'=>'desc','address_id'=>'desc']);
+		$list = $addressService->getListData(['mem_id'=>userId()], '*', $page, $size, ['`default`'=>'desc','address_id'=>'desc']);
 		if (!empty($list)) {
 			$countryList = array_unique(array_column($list, 'country_code2'));
 			$countryList = make('app/service/CountryService')->getListData(['code2'=>['in', $countryList]], 'code2,name_en');
@@ -81,5 +82,23 @@ class UserInfoController extends Controller
 		}
 		$service->deleteData($id);
 		$this->success();
+	}
+
+	public function getAddress()
+	{
+		$page = ipost('page', 1);
+		$size = ipost('size', 10);
+		$addressService = make('app/service/member/AddressService');
+		$list = $addressService->getListData(['mem_id'=>userId()], '*', $page, $size, ['`default`'=>'desc','address_id'=>'desc']);
+		if (!empty($list)) {
+			$countryList = array_unique(array_column($list, 'country_code2'));
+			$countryList = make('app/service/CountryService')->getListData(['code2'=>['in', $countryList]], 'code2,name_en');
+			$countryList = array_column($countryList, 'name_en', 'code2');
+			foreach ($list as $key => $value) {
+				$value['country'] = $countryList[$value['country_code2']] ?? '';
+				$list[$key] = $value;
+			}
+		}
+		$this->success($list);
 	}
 }

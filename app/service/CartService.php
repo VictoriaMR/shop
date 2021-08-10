@@ -64,7 +64,7 @@ class CartService extends Base
 
 	public function getList()
 	{
-		$list = $this->getListData(['mem_id' => $this->userId()], 'cart_id,sku_id,quantity,checked', 0, 0, ['update_time'=>'desc']);
+		$list = $this->getListData(['mem_id' => $this->userId()], 'cart_id,sku_id,quantity,checked', 0, 0, ['cart_id'=>'desc']);
 		$skuService = make('app/service/product/SkuService');
 		$lanId = lanId();
 		foreach ($list as $key => $value) {

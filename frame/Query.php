@@ -64,10 +64,10 @@ final class Query
 		if (empty($columns)) return $this;
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
-				$this->_orderBy .= '`'.$key.'` '.strtoupper($value).',';
+				$this->_orderBy .= $key.' '.strtoupper($value).',';
 			}
 		} else {
-			$this->_orderBy .= '`'.$columns.'` '.strtoupper($operator).',';
+			$this->_orderBy .= $columns.' '.strtoupper($operator).',';
 		}
 		return $this;
 	}

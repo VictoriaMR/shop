@@ -157,6 +157,9 @@ a {
 .c40 {
 	color: #404040 !important;
 }
+.cred {
+	color: #EB2027;
+}
 .btn {
 	max-height: 100%;
 	height: 0.4rem;
@@ -165,6 +168,7 @@ a {
 	white-space: nowrap;
 	line-height: 0.4rem;
 	padding: 0 0.08rem;
+	font-size: 0.14rem;
 }
 .btn24 {
 	max-height: 100%;
@@ -325,14 +329,22 @@ a {
 	top: calc(50% - 0.06rem);
 	left: calc(50% - 0.26rem);
 }
+.page-loading-block {
+	font-size: 0;
+	text-align: center;
+	margin-bottom: 0.06rem;
+}
+.page-loading-block>div:nth-child(1),
 .loading-block>div:nth-child(1) {
 	-webkit-animation-delay: -.2s;
 	animation-delay: -.2s
 }
+.page-loading-block>div:nth-child(2),
 .loading-block>div:nth-child(2) {
 	-webkit-animation-delay: -.1s;
 	animation-delay: -.1s
 }
+.page-loading-block>div:nth-child(3),
 .loading-block>div:nth-child(3) {
 	-webkit-animation-delay: 0s;
 	animation-delay: 0s;
@@ -366,6 +378,17 @@ a {
 	background-color: #222;
 	width: 0.12rem;
 	height: 0.12rem;
+	border-radius: 50%;
+	display: inline-block;
+	margin-right: 0.08rem;
+	vertical-align: middle;
+	-webkit-animation: loading 1s ease infinite;
+	animation: loading 1s ease infinite
+}
+.page-loading-block>div {
+	background-color: #222;
+	width: 0.10rem;
+	height: 0.10rem;
 	border-radius: 50%;
 	display: inline-block;
 	margin-right: 0.08rem;
@@ -935,6 +958,9 @@ a {
 @font-face {
 	font-family:'Open Sans-Bold';src:url('/font/OpenSans-Bold.ttf');src:url('/font/OpenSans-Bold.eot#iefix') format('embedded-opentype'),url('/font/OpenSans-Bold.woff') format('woff'),url('/font/OpenSans-Bold.ttf') format('truetype'),url('/font/OpenSans-Bold.svg#iconfont') format('svg')
 }
+.f400 {
+	font-family: 'Open Sans'
+}
 .f600 {
 	font-family: 'Open Sans-semiBold'
 }
@@ -1176,4 +1202,7 @@ a {
 }
 .pl32 {
 	padding-left: .32rem
+}
+.pr4 {
+	padding-right: 0.04rem;
 }

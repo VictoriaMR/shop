@@ -134,11 +134,11 @@
 	border-left: none;
 }
 .quantity .num {
-	width: 0.34rem;
+	width: 0.30rem;
 	height: 0.24rem;
 	text-align: center;
 	float: right;
-	padding: 0 0.06rem;
+	padding: 0 0.02rem;
 	background: #efefef;
 	border: 0.01rem solid #707070;
 }

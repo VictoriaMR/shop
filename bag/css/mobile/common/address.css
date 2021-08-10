@@ -1,0 +1,36 @@
+#address-book .dialog {
+	position: fixed;
+	top: 0.16rem;
+	right: 0.16rem;
+	bottom: 0.16rem;
+	left: 0.16rem;
+	background: #fff;
+	z-index: 105;
+	padding: 0.12rem;
+}
+#address-book .dialog .top-close-btn {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+#address-book .dialog .content {
+	height: calc(100% - 0.6rem - 0.34rem);
+	overflow-y: auto;
+}
+#address-book .dialog .footer {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 100%;
+	padding: 0.12rem;
+}
+#address-book .dialog .footer .btn {
+	width: 1.2rem;
+}
+#address-book .dialog .content .title .cred {
+	position: relative;
+	top: 0.04rem;
+}
+#address-book .dialog .content .input {
+	height: 0.4rem;
+}

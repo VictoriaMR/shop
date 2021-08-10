@@ -37,6 +37,21 @@ class MemberService extends Base
 		return $this->loginSuccess($info,$type == 'email');
 	}
 
+	public function logout($info)
+	{
+		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
+		//删除登陆token
+		$tokenCacheKey = $this->getCacheKey('', $info['mem_id']);
+		$token = redis(2)->get($tokenCacheKey);
+		redis(2)->del($tokenCacheKey);
+		if ($token) {
+			redis(2)->del($this->getCacheKey($token));
+		}
+		session()->set(APP_TEMPLATE_TYPE.'_info');
+		$this->addLog(['type'=>1]);
+		return true;
+	}
+
 	protected function loginSuccess($info, $keepLogin=false)
 	{
 		$data = [

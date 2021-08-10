@@ -80,14 +80,13 @@ class CartController extends Controller
 			}
 			$where['quantity'] = $num;
 			$where['add_time'] = now();
-			$where['update_time'] = now();
 			$rst = $cartService->insert($where);
 		} else {
 			$num += $cartSkuIno['quantity'];
 			if ($skuInfo['stock'] < $num) {
 				$num = $skuInfo['stock'];
 			}
-			$where = ['quantity' => $num, 'update_time' => now()];
+			$where = ['quantity' => $num];
 			$rst = $cartService->updateData($cartSkuIno['cart_id'], $where);
 		}
 		if ($rst) {

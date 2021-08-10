@@ -11,6 +11,9 @@
 @font-face {
 	font-family:'Open Sans-Bold';src:url('/font/OpenSans-Bold.ttf');src:url('/font/OpenSans-Bold.eot#iefix') format('embedded-opentype'),url('/font/OpenSans-Bold.woff') format('woff'),url('/font/OpenSans-Bold.ttf') format('truetype'),url('/font/OpenSans-Bold.svg#iconfont') format('svg')
 }
+.f400 {
+	font-family: 'Open Sans'
+}
 .f600 {
 	font-family: 'Open Sans-semiBold'
 }
