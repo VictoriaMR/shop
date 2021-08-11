@@ -7,6 +7,11 @@ class UserInfoController extends Controller
 {
 	public function index()
 	{	
+		html()->addCss();
+		html()->addJs();
+		dd(session()->get(APP_TEMPLATE_TYPE.'_info'));
+		$this->assign('info', session()->get(APP_TEMPLATE_TYPE.'_info'));
+		$this->assign('_title', 'My info page - '.site()->getName());
 		$this->view();
 	}
 

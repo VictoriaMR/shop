@@ -1,0 +1,7 @@
+#userinfo-page .image-avatar {
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 50%;
+	font-size: 0;
+	overflow: hidden;
+}

@@ -269,6 +269,7 @@
 }
 .product-introduce .introduce-image  {
 	padding: 0.12rem 0;
+	text-align: center;
 }
 .product-introduce .introduce-image p {
 	font-size: 0;

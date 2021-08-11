@@ -78,7 +78,7 @@
 		<div class="introduce-image">
 			<?php foreach($info['introduce'] as $value){?>
 			<p>
-				<img data-src="<?php echo str_replace('/400', '', $value['url']);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+				<img data-src="<?php echo $value['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 			</p>
 			<?php } ?>
 		</div>
