@@ -19,12 +19,20 @@ const ADDRESS = {
 				});
 			});
 		});
+		//新增地址
+		$('#address-page .add-new-address').on('click', function(){
+			ADDRESSBOOK.show();
+		});
+		//编辑地址
+		$('.address-list').on('click', '.item .edit-btn', function(){
+			const id = $(this).parents('.item').data('id');
+			ADDRESSBOOK.loadData(id);
+		});
 		//删除地址
 		$('.address-list').on('click', '.item .delete-btn', function(){
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm('Sure delete this address?', function(){
 				TIPS.loading($('#confirm-modal .content'));
-				return
 				$.post(URI+'userInfo/deleteAddress', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
@@ -38,7 +46,6 @@ const ADDRESS = {
 		if ($('.address-list').length > 0 && $('.address-list').height() > $(window).height()) {
 			_this.initLoad();
 		}
-		
 	},
 	initLoad: function() {
 		const _this = this;

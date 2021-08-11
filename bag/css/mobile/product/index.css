@@ -220,24 +220,6 @@
 	border-color: #999999;
 	font-weight: 700;
 }
-#sku-select-modal .sku-attr-list .error-tips {
-	background: #EB2027;
-	color: #fff;
-	font-weight: 700;
-	padding: 0.02rem 0.12rem;
-	position: absolute;
-	top: 0.4rem;
-}
-#sku-select-modal .sku-attr-list .error-tips .triangle {
-	display: block;
-	width: 0;
-	height: 0;
-	border-left: 0.07rem solid transparent;
-	border-right: 0.07rem solid transparent;
-	border-bottom: 0.07rem solid #EB2027;
-	position: absolute;
-	top: -0.07rem;
-}
 #sku-select-modal .stock-content .title {
 	line-height: 0.32rem;
 }

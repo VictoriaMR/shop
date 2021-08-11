@@ -29,8 +29,12 @@ class SkuService extends Base
 		}
 		//价格格式化
 		$languageService = make('app/service/LanguageService');
-		$info['price'] = $languageService->priceFormat($info['price'], 2);
-		$info['original_price'] = $languageService->priceFormat($info['original_price'], 2);
+		$temp = $languageService->priceFormat($info['price']);
+		$info['price'] = $temp[1];
+		$info['price_format'] = $temp[2];
+		$temp = $languageService->priceFormat($info['original_price']);
+		$info['original_price'] = $temp[1];
+		$info['original_price_format'] = $temp[2];
 		//属性列表
 		$info += make('app/service/product/AttrRelationService')->getListById($skuId, $lanId, true);
 

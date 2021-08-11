@@ -204,3 +204,20 @@
 	border-color: #999999;
 	font-weight: 700;
 }
+#cart-summary {
+	padding: 0.16rem;
+	background: #fff;
+	margin-bottom: 0.2rem;
+	position: relative;
+}
+#cart-summary .content {
+	padding: 0.16rem 0 0.08rem 0;
+	font-size: 0.14rem;
+}
+#cart-summary .content li {
+	padding: 0.16rem 0;
+	border-bottom: 0.01rem solid #F7F7F7;
+}
+#cart-summary .content li:last-child {
+	border-bottom: none;
+}

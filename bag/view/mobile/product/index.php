@@ -28,11 +28,11 @@
 		<p class="product-name"><?php echo $skuId ? $skuInfo['name'] : $info['name'];?></p>
 		<div class="product-price mt8">
 			<?php if ($skuId) {?>
-			<span class="price"><?php echo $skuInfo['price'];?></span>
-			<span class="original_price"><?php echo $skuInfo['original_price'];?></span>
+			<span class="price"><?php echo $skuInfo['price_format'];?></span>
+			<span class="original_price"><?php echo $skuInfo['original_price_format'];?></span>
 			<?php } else { ?>
-			<span class="price"><?php echo $info['min_price'];?> - <?php echo $info['max_price'];?></span>
-			<span class="original_price"><?php echo $info['original_price'];?></span>
+			<span class="price"><?php echo $info['min_price_format'];?> - <?php echo $info['max_price_format'];?></span>
+			<span class="original_price"><?php echo $info['original_price_format'];?></span>
 			<?php } ?>
 		</div>
 		<p class="mt4 c9 tc">
@@ -195,8 +195,8 @@ $(function(){
 		url: '<?php echo $info['url'];?>',
 		image: '<?php echo $info['image'][0]['url'];?>',
 		stock: <?php echo max(array_column($info['sku'], 'stock'));?>,
-		price: '<?php echo $info['min_price'];?> - <?php echo $info['max_price'];?>',
-		originalPrice: '<?php echo $info['original_price'];?>'
+		price: '<?php echo $info['min_price_format'];?> - <?php echo $info['max_price_format'];?>',
+		originalPrice: '<?php echo $info['original_price_format'];?>'
 	});
 });
 </script>

@@ -182,8 +182,8 @@ const PRODUCT = {
 			url = skuInfo.url;
 			image = skuInfo.image;
 			stock = skuInfo.stock;
-			price = skuInfo.price;
-			originalPrice = skuInfo.original_price;
+			price = skuInfo.price_format;
+			originalPrice = skuInfo.original_price_format;
 		}
 		$('#sku-select-modal .quantity').data('stock', stock);
 		$('#sku-select-modal .sku-image-block .sku-image img').attr('src', image);

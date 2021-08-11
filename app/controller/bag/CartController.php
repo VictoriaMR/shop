@@ -14,6 +14,8 @@ class CartController extends Controller
 		$list = make('app/service/CartService')->getList();
 		$checkedList = [];
 		$unCheckList = [];
+		$originalPriceTotal = 0;
+		$priceTotal = 0;
 		if (!empty($list)) {
 			foreach ($list as $key => $value) {
 				if ($value['quantity'] > $value['stock']) {
@@ -23,6 +25,8 @@ class CartController extends Controller
 				}
 				if ($value['checked']) {
 					$checkedList[] = $value;
+					$originalPriceTotal += $value['original_price']*$value['quantity'];
+					$priceTotal += $value['price']*$value['quantity'];
 				} else {
 					$unCheckList[] = $value;
 				}
@@ -36,12 +40,61 @@ class CartController extends Controller
 			$list = make('app/service/member/CollectService')->getListData($where, 'spu_id');
 			$list = array_column($list, 'spu_id');
 		}
+		$summary = [];
+		$languageService = make('app/service/LanguageService');
+		$temp = $languageService->priceFormat($originalPriceTotal);
+		$summary[] = [
+			'type'=> 1,
+			'name' => 'Original Price',
+			'price' => $temp[1],
+			'price_format' => $temp[2],
+		];
+		$temp = $languageService->priceFormat($priceTotal);
+		$summary[] = [
+			'type'=> 2,
+			'name' => 'Total',
+			'price' => $temp[1],
+			'price_format' => $temp[2],
+		];
 		
 		$this->assign('checkedList', $checkedList);
 		$this->assign('unCheckList', $unCheckList);
 		$this->assign('collectList', $list);
+		$this->assign('summary', $summary);
 		$this->assign('_title', 'My shopping cart - '.site()->getName());
 		$this->view();
+	}
+
+	public function cartSummary()
+	{
+		$list = make('app/service/CartService')->getList();
+		$originalPriceTotal = 0;
+		$priceTotal = 0;
+		if (!empty($list)) {
+			foreach ($list as $key => $value) {
+				if ($value['checked']) {
+					$originalPriceTotal += $value['original_price']*$value['quantity'];
+					$priceTotal += $value['price']*$value['quantity'];
+				}
+			}
+		}
+		$summary = [];
+		$languageService = make('app/service/LanguageService');
+		$temp = $languageService->priceFormat($originalPriceTotal);
+		$summary[] = [
+			'type'=> 1,
+			'name' => 'Original Price',
+			'price' => $temp[1],
+			'price_format' => $temp[2],
+		];
+		$temp = $languageService->priceFormat($priceTotal);
+		$summary[] = [
+			'type'=> 2,
+			'name' => 'Total',
+			'price' => $temp[1],
+			'price_format' => $temp[2],
+		];
+		$this->success($summary);
 	}
 
 	public function cartCount()

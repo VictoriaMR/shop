@@ -39,9 +39,9 @@ class SpuService extends Base
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		//价格格式化
 		$languageService = make('app/service/LanguageService');
-		$info['min_price'] = $languageService->priceFormat($info['min_price'], 2);
-		$info['max_price'] = $languageService->priceFormat($info['max_price'], 2);
-		$info['original_price'] = $languageService->priceFormat($info['original_price'], 2);
+		$info['min_price_format'] = $languageService->priceFormat($info['min_price'], 2);
+		$info['max_price_format'] = $languageService->priceFormat($info['max_price'], 2);
+		$info['original_price_format'] = $languageService->priceFormat($info['original_price'], 2);
 		//获取语言
 		$info['name'] = make('app/service/product/LanguageService')->loadData(['spu_id'=>$spuId, 'lan_id'=>['in', [1, $lanId]]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
 		$info['url'] = router()->urlFormat($info['name'], 'p', ['id' => $spuId]);
@@ -418,7 +418,7 @@ class SpuService extends Base
 			$cateList = $this->getListData(['spu_id'=>['in'=>$spuList]], 'cate_id');
 			$where['cate_id'] = ['in', array_column($cateList, 'cate_id')];
 		}
-		$list = $this->getListData($where, 'spu_id,attach_id,min_price,original_price', $page, $size, ['sale_total+visit_total'=>'desc']);
+		$list = $this->getListData($where, 'spu_id,attach_id,min_price,max_price,original_price', $page, $size, ['sale_total+visit_total'=>'desc']);
 		if (!empty($list)) {
 			$spuList = array_column($list, 'spu_id');
 			//获取语言
@@ -434,8 +434,15 @@ class SpuService extends Base
 				$value['name'] = $lanArr[$value['spu_id']] ?? '';
 				$value['url'] = router()->urlFormat($value['name'], 'p', ['id'=>$value['spu_id']]);
 				$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
-				$value['min_price'] = $languageService->priceFormat($value['min_price'], 2);
-				$value['original_price'] = $languageService->priceFormat($value['original_price'], 2);
+				$temp = $languageService->priceFormat($value['min_price']);
+				$value['min_price'] = $temp[1];
+				$value['min_price_format'] = $temp[2];
+				$temp = $languageService->priceFormat($value['max_price']);
+				$value['max_price'] = $temp[1];
+				$value['max_price_format'] = $temp[2];
+				$temp = $languageService->priceFormat($value['original_price']);
+				$value['original_price'] = $temp[1];
+				$value['original_price_format'] = $temp[2];
 				$list[$key] = $value;
 			}
 		}

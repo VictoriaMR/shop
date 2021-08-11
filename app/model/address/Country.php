@@ -1,6 +1,6 @@
 <?php
 
-namespace app\model;
+namespace app\model\address;
 use app\model\Base;
 
 class Country extends Base

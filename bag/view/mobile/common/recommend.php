@@ -21,8 +21,8 @@
 					<div class="layer pb10">
 						<p class="name"><?php echo $value['name'];?></p>
 						<div class="mt10">
-							<span class="price f14 f600"><?php echo $value['min_price'];?></span>
-							<span class="original_price"><?php echo $value['original_price'];?></span>
+							<span class="price f14 f600"><?php echo $value['min_price_format'];?></span>
+							<span class="original_price"><?php echo $value['original_price_format'];?></span>
 						</div>
 					</div>
 				</a>

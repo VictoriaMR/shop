@@ -11,7 +11,7 @@
 	<div class="address-content mt18">
 		<div class="title">
 			<span>ADDRESSES</span>
-			<button class="btn24 btn-black right">Add an Address</button>
+			<button class="btn24 btn-black right add-new-address">Add an Address</button>
 		</div>
 		<?php if (empty($list)) {?>
 		<p class="f18 f600 tc mt32">Your address is empty</p>

@@ -86,6 +86,7 @@ const CARTPAGE = {
 					pObj.find('.table').removeClass('opac5').find('.btn-error').remove();
 					obj.find('.num').val(num);
 					_this.initQuantity(obj);
+					_this.initSummary();
 				} else {
 					TIPS.error(res.message);
 				}
@@ -110,6 +111,7 @@ const CARTPAGE = {
 				if (res.code === '200') {
 					pObj.find('.table').removeClass('opac5').find('.btn-error').remove();
 					_this.initQuantity(obj);
+					_this.initSummary();
 				} else {
 					TIPS.error(res.message);
 				}
@@ -323,5 +325,21 @@ const CARTPAGE = {
 				}
 			}
 		}
+	},
+	initSummary: function(){
+		TIPS.loading($('#cart-summary'));
+		$.post(URI+'cart/cartSummary', {}, function(res){
+			let html = '';
+			if (res.code === '200') {
+				for (let i=0; i<res.data.length; i++) {
+					html += '<li '+(res.data[i].type === 2 ? 'class="f700"':'')+'>\
+								<span>'+res.data[i].name+'</span>\
+								<span class="right">'+res.data[i].price_format+'</span>\
+							</li>';
+				}
+			}
+			$('#cart-summary .content ul').html(html);
+			TIPS.loadout($('#cart-summary'));
+		});
 	}
 };

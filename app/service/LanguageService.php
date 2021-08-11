@@ -50,17 +50,17 @@ class LanguageService extends Base
 		return true;
 	}
 
-	public function priceFormat($price, $type=1)
+	public function priceFormat($price, $type=null)
 	{
 		if (empty($this->info)) {
 			$this->info = $this->getInfoCache(lanId());
 		}
 		$price = sprintf('%.2f', $price * $this->info['rate']);
-		if ($type == 2) {
-			$price = $this->info['symbol'].$price;
-		} elseif ($type == 3) {
-			$price = $this->info['currency'].$price;
-		}
-		return $price;
+		$arr = [
+			'1' => $price,
+			'2' => $this->info['symbol'].$price,
+			'3' => $this->info['currency'].$this->info['symbol'].$price,
+		];
+		return is_null($type) ? $arr : $arr[$type];
 	}
 }

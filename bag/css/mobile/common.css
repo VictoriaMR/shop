@@ -93,8 +93,73 @@ a {
 	font-size: 0.14rem;
 	color: #666666;
 }
+.selection {
+	height: 100%;
+	width: 100%;
+	border: none;
+	font-size: 0.14rem;
+	color: #666666;
+	background: #fff;
+}
+.selection .selector-icon {
+	line-height: 0.36rem;
+	position: relative;
+	padding: 0 0.08rem;
+}
+.selection .selector-icon .iconfont {
+	position: absolute;
+	top: 0;
+	right: 0.06rem;
+}
+.selection.open .selector-icon .iconfont {
+	transform: rotateX(180deg);
+}
+.selection .selector-content {
+	display: none;
+	background: #fff;
+	width: calc(100% + 0.04rem);
+	position: relative;
+	left: -0.02rem;
+	z-index: 1;
+	box-shadow: 0 0 0.06rem 0 rgba(0, 0, 0, 0.2);
+}
+.selection.open .selector-content {
+	display: block;
+}
+.selection .selector-content .selector-search {
+	padding: 0.1rem;
+	width: 100%;
+}
+.selection .selector-content .selector-search .btn {
+	float: left;
+	width: 0.38rem;
+	height: 0.38rem;
+	background: #F7F7F7;
+}
+.selection .selector-content .selector-search .input {
+	width: calc(100% - 0.38rem);
+	float: left;
+	height: 0.38rem !important;
+	background: #F7F7F7 !important;
+	border: none !important;
+}
+.selection .selector-content .selector {
+	height: 2.56rem;
+	overflow-y: scroll;
+}
+.selection .selector-content .selector li {
+	padding: 0 0.1rem;
+	line-height: 0.32rem;
+}
+.selection .selector-content .selector li.active {
+	background: #666666;
+	color: #fff;
+}
 .center {
 	margin: 0 auto
+}
+.w20 {
+	width: 20%
 }
 .w25 {
 	width: 25%
@@ -110,6 +175,9 @@ a {
 }
 .w75 {
 	width: 75%
+}
+.w80 {
+	width: 80%
 }
 .w100 {
 	width: 100%
@@ -140,10 +208,13 @@ a {
 	position: relative;
 }
 .bg-f {
-	background-color: #ffffff;
+	background-color: #FFFFFF;
 }
 .bg-f5 {
-	background-color: #f5f5f5;
+	background-color: #F5F5F5;
+}
+.bg-f7 {
+	background-color: #F7F7F7;
 }
 .cf {
 	color: #FFFFFF;
@@ -412,8 +483,8 @@ a {
 	z-index: 103;
 }
 .m-modal .dialog.popup {
-    -webkit-transform: translateY(0);
-    transform: translateY(0);
+	-webkit-transform: translateY(0);
+	transform: translateY(0);
 }
 .m-modal .dialog .icon-guanbi2 {
 	position: absolute;
@@ -499,4 +570,22 @@ a {
 	height: 0.02rem;
 	background: #EEEEEE;
 	display: inline-block;
+}
+.error-tips {
+	background: #EB2027;
+	color: #fff;
+	font-weight: 700;
+	padding: 0.02rem 0.12rem;
+	position: absolute;
+	top: 0.4rem;
+}
+.error-tips .triangle {
+	display: block;
+	width: 0;
+	height: 0;
+	border-left: 0.07rem solid transparent;
+	border-right: 0.07rem solid transparent;
+	border-bottom: 0.07rem solid #EB2027;
+	position: absolute;
+	top: -0.07rem;
 }

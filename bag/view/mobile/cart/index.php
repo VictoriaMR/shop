@@ -40,8 +40,8 @@
 							</div>
 							<div class="edit-content">
 								<div class="product-price">
-									<p class="price e1"><?php echo $value['price'];?></p>
-									<p class="original_price e1"><?php echo $value['original_price'];?></p>
+									<p class="price e1"><?php echo $value['price_format'];?></p>
+									<p class="original_price e1"><?php echo $value['original_price_format'];?></p>
 								</div>
 							</div>
 						</div>
@@ -67,6 +67,23 @@
 			</li>
 			<?php } ?>
 		</ul>
+	</div>
+	<div id="cart-summary">
+		<p class="f18">Cart Summary</p>
+		<div class="content">
+			<ul>
+				<?php foreach ($summary as $value){?>
+				<li <?php echo $value['type'] == 2 ? 'class="f700"' : '';?>>
+					<span><?php echo $value['name'];?></span>
+					<span class="right"><?php echo $value['price_format'];?></span>
+				</li>
+				<?php } ?>
+			</ul>
+		</div>
+		<button class="btn btn-black w100">CHECKOUT</button>
+		<div class="mt10 papay-btn">
+			
+		</div>
 	</div>
 	<?php } ?>
 	<?php if (!empty($unCheckList)){?>
@@ -112,8 +129,8 @@
 							</div>
 							<div class="edit-content">
 								<div class="product-price">
-									<p class="price e1"><?php echo $value['price'];?></p>
-									<p class="original_price e1"><?php echo $value['original_price'];?></p>
+									<p class="price e1"><?php echo $value['price_format'];?></p>
+									<p class="original_price e1"><?php echo $value['original_price_format'];?></p>
 								</div>
 							</div>
 						</div>
