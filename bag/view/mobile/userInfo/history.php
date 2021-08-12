@@ -21,7 +21,7 @@
 		<p class="title"><?php echo $k;?></p>
 		<ul data-key="<?php echo $k;?>">
 			<?php foreach ($v as $key => $value){?>
-			<li class="item" data-id="<?php echo $value['spu_id'];?>">
+			<li class="item" data-id="<?php echo $value['spu_id'];?>" data-key="<?php echo $value['his_id'];?>">
 				<a href="<?php echo $value['url'];?>">
 					<div class="img">
 						<img class="lazyload" data-src="<?php echo $value['image'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>">
@@ -43,3 +43,8 @@
 		<?php } ?>
 	</div>
 </div>
+<script type="text/javascript">
+$(function(){
+	HISTORY.init();
+});
+</script>

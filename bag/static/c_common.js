@@ -296,4 +296,21 @@ $(function(){
 			}
 		}
 	});
+	//收藏
+	$('.product-list').on('click', '.like-block', function(event){
+		event.stopPropagation();
+		const obj = $(this).parents('.item');
+		const _thisObj = $(this);
+		const id = obj.data('id');
+		TIPS.loading(obj);
+		$.post(URI+'userInfo/wish', {spu_id: id}, function(res){
+			TIPS.loadout(obj);
+			if (res.code === '200') {
+				window.location.reload();
+			} else if (res.code === '10001') {
+				window.location.href = URI+'login.html';
+			}
+		});
+		return false;
+	});
 });

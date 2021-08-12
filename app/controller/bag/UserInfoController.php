@@ -330,4 +330,22 @@ class UserInfoController extends Controller
 		}
 		return $list;
 	}
+
+	public function deleteHistory()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('Sorry, That history product id was Empty.');
+		}
+		$where = [
+			'mem_id' => userId(),
+			'his_id' => $id,
+		];
+		$rst = make('app/service/member/HistoryService')->deleteData($where);
+		if ($rst) {
+			$this->success('That history product was removed failed.');
+		} else {
+			$this->error('Sorry, That history product was removed failed.');
+		}
+	}
 }
