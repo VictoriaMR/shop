@@ -1,0 +1,11 @@
+#wish-page {
+	padding-top: 0.2rem;
+	padding-bottom: 0.32rem;
+}
+#wish-page .product-list .remove-btn {
+	position: absolute;
+	top: 0;
+	right: 0.05rem;
+	border-top-right-radius: 0.06rem;
+	padding: 0 0.06rem;
+}

@@ -1,6 +1,5 @@
 const CATEGORYLIST = {
 	init: function() {
-		console.log(123123)
 		$('#dealbox .switch_botton').on('click', function(){
 	    	var status = $(this).data('status');
 	    	status = status == 0 ? 1 : 0;

@@ -102,8 +102,6 @@ const ADDRESSBOOK = {
 			if (!check) {
 				const key = parseInt($('#address-book .error').eq(0).attr('key'));
 				const top = key * 61 + (key - 1) * 18 * (100/result_font);
-
-				console.log(top)
 				$('#address-book .dialog .content').animate({'scrollTop': top}, 200);
 				return false;
 			}

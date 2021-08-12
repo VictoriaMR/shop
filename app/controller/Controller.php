@@ -22,7 +22,6 @@ class Controller
 			echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
 		} else {
 			$this->assign('error_message', $options['message']);
-			$this->view('common/404');
 		}
 		\App::runOver();
 	}

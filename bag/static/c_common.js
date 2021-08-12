@@ -5,7 +5,7 @@ if(document.documentElement.currentStyle) {
 } else {
     user_webset_font = getComputedStyle(document.documentElement,false)['fontSize'];
 }
-const xs = parseFloat(user_webset_font)/100;
+const xs = parseFloat(user_webset_font) / 100;
 const docEl = document.documentElement,
     resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize',
     recalc = function() {
@@ -13,7 +13,7 @@ const docEl = document.documentElement,
         if (!clientWidth) return;
         if (!document.addEventListener) return;
         view_jsset_font = (clientWidth / 3.75);
-        result_font = view_jsset_font/xs;
+        result_font = view_jsset_font / xs;
         docEl.style.fontSize = result_font + 'px';
     };
 window.addEventListener(resizeEvt, recalc, false);
@@ -168,14 +168,103 @@ const CART = {
 		$.post(URI+'cart/cartCount', {}, function(res){
 			if (res.code === '200') {
 				$('.icon-gouwuche').addClass('icon-gouwuchefill').removeClass('icon-gouwuche');
-				$('.icon-gouwuchefill').parent().append('<span class="cart-number">'+(res.data > 99 ? 99 : res.data)+'</>');
+				$('.icon-gouwuchefill').parent().append('<span class="red-number">'+(res.data > 99 ? 99 : res.data)+'</>');
 			} else {
 				$('.icon-gouwuchefill').addClass('icon-gouwuche').removeClass('icon-gouwuchefill');
-				$('.icon-gouwuche').parent().find('.cart-number').remove();
+				$('.icon-gouwuche').parent().find('.red-number').remove();
 			}
 		});
 	}
 };
+function S4() {
+	return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
+}
+function guid() {
+	return (S4()+S4()+'-'+S4()+'-'+S4()+'-'+S4()+'-'+S4()+S4()+S4());
+}
+(function($){
+	$.fn.bigImage = function(){
+		const obj = $(this);
+		obj.css({cursor: 'pointer'});
+		obj.attr('title', '点击查看大图');
+		obj.on('click', function(){
+			let bigImageObj = $('#dealbox-bigimage');
+			if (bigImageObj.length == 0) {
+				var html = '<div id="dealbox-bigimage">\
+								<div class="mask"></div>\
+								<div class="centerShow">\
+									<img src="'+URI+'image/common/noimg.png">\
+								</div>\
+							</div>';
+				$('body').append(html);
+				bigImageObj = $('#dealbox-bigimage');
+			}
+			const src = obj.attr('src').replace('/200', '').replace('/400', '').replace('/600', '');
+			bigImageObj.find('.centerShow img').attr('src', src);
+			bigImageObj.find('.centerShow img').on('load', function(){
+				bigImageObj.offsetCenter().dealboxShow();
+			});
+		});
+	};
+	$.fn.imageUpload = function(name, cate, width, height, callback) {
+		const obj = $(this);
+		obj.each(function(){
+			const thisobj = $(this);
+			if (typeof width !== 'undefined') {
+				thisobj.attr('width', width)
+			}
+			if (typeof height !== 'undefined') {
+				thisobj.attr('height', height)
+			}
+			thisobj.css({cursor: 'pointer'});
+			const guid_name = guid();
+			thisobj.data('file', guid_name);
+			thisobj.parent().append('<input name="'+guid_name+'" type="file" accept=".bmp,.jpg,.png,.jpeg,image/bmp,image/jpg,image/png,image/jpeg" class="hide" readonly="readonly"/>');
+			thisobj.on('click', function(){
+				const file = $(this).data('file');
+				$('[name="'+file+'"]').click();
+			});
+			$('[name="'+guid_name+'"]').on('change', function (e) {
+	            const thissrc = thisobj.attr('src');
+	            thisobj.data('src', thissrc);
+	            thisobj.attr('src', URI+'image/common/loading.png').addClass('loading');
+				const files = $(this).prop('files');
+				const data = new FormData();
+            	data.append('file', files[0]);
+            	data.append('cate', cate);
+  				$.ajax({
+					url: URI+'api/upload',
+					type: 'POST',
+					data: data,
+					cache: false,
+					processData: false,
+					contentType: false,
+					success: function(res) {
+	                    if (res.code == 200) {
+	                    	thisobj.removeClass('loading').attr('src', res.data.url);
+	                    	const $inputObj = thisobj.parent().find('[name="'+name+'"]');
+	                    	if ($inputObj.length === 0) {
+	                    		thisobj.parent().append('<input name="'+name+'" value="'+(res.data.cate+'/'+res.data.name+'.'+res.data.type)+'" class="hide" />');
+	                    	} else {
+	                    		$inputObj.val(res.data.cate+'/'+res.data.name+'.'+res.data.type);
+	                    	}
+	                    	if (callback) {
+	                    		callback(res.data);
+	                    	}
+	                    } else {
+	                    	TIPS.error(res.message);
+	                    	thisobj.removeClass('loading').attr('src', thisobj.data('src'));
+	                    }
+	                },
+	                error: function(res) {
+	                	TIPS.error('网络错误, 上传失败');
+	                	thisobj.removeClass('loading').attr('src', thisobj.data('src'));
+	                }
+				});
+			});
+		});
+	};
+}(jQuery));
 $(function(){
 	//回顶按钮
 	if (document.body.scrollHeight - 300 > window.screen.height) {

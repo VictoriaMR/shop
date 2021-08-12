@@ -18,7 +18,7 @@ class FileService
         }
         $name = md5_file($file['tmp_name']);
         $attachmentService = make('app/service/AttachmentService');
-        $data = $attachmentService->getAttachmentByName($name, 200);
+        $data = $attachmentService->getAttachmentByName($name);
         if (empty($data)) {
             $path = ROOT_PATH.env('FILE_CENTER').DS.$cate.DS;
             //创建目录
@@ -49,7 +49,7 @@ class FileService
                     $imageService->thumbImage($saveUrl, $to, $value, $value);
                 }
             }
-            $data = $attachmentService->urlInfo($data, 200);
+            $data = $attachmentService->urlInfo($data);
         }
         return $data;
     }

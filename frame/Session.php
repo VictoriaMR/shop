@@ -12,7 +12,15 @@ class Session
 			if (is_null($data)) {
 				unset($_SESSION[$name]);
 			} else {
-				$_SESSION[$name] = $data;
+				$temp = explode('.', $name);
+				if (count($temp) == 1) {
+					$_SESSION[$name] = $data;
+				} else {
+					if (!isset($_SESSION[$temp[0]])) {
+						$_SESSION[$temp[0]] = [];
+					}
+					$_SESSION[$temp[0]][$temp[1]] = $data;
+				}
 			}
 		}
 		return true;

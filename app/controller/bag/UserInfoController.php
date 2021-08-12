@@ -9,13 +9,87 @@ class UserInfoController extends Controller
 	{	
 		html()->addCss();
 		html()->addJs();
-		dd(session()->get(APP_TEMPLATE_TYPE.'_info'));
-		$this->assign('info', session()->get(APP_TEMPLATE_TYPE.'_info'));
-		$this->assign('_title', 'My info page - '.site()->getName());
+
+		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
+		$info['name'] = trim($info['first_name'].' '.$info['last_name']);
+		$temp = explode(' ', $info['mobile']);
+		$info['dialing_code'] = $temp[0];
+		$info['phone'] = $temp[1] ?? '';
+
+		$where = [
+			'mem_id' => $info['mem_id'],
+		];
+		//收藏统计
+		$collectionTotal = make('app/service/member/CollectService')->getCountData($where);
+		//足迹统计
+		$historyTotal = make('app/service/member/HistoryService')->getCountData($where);
+		//地址统计
+		$addressTotal = make('app/service/member/AddressService')->getCountData($where);
+
+		$this->assign('collectionTotal', $collectionTotal);
+		$this->assign('historyTotal', $historyTotal);
+		$this->assign('addressTotal', $addressTotal);
+		$this->assign('info', $info);
+		$this->assign('_title', 'My Info - '.site()->getName());
 		$this->view();
 	}
 
-	public function collect()
+	public function getInfo()
+	{
+		$list = make('app/service/address/CountryService')->getListData(['status'=>1], 'dialing_code', 0, 0, ['sort'=>'asc']);
+		$list = array_values(array_unique(array_column($list, 'dialing_code')));
+		$this->success($list);
+	}
+
+	public function editInfo()
+	{
+		$first_name = ipost('first_name');
+		$last_name = ipost('last_name');
+		$dialing_code = ipost('dialing_code');
+		$phone = ipost('phone');
+		if (empty($first_name)) {
+			$this->error('First Name is required');
+		}
+		if (empty($last_name)) {
+			$this->error('Last Name is required');
+		}
+		if (empty($dialing_code) || empty($phone)) {
+			$this->error('Phone Number is required');
+		}
+		$data = [
+			'first_name' => substr($first_name, 0, 32),
+			'last_name' => substr($last_name, 0, 32),
+			'mobile' => substr($dialing_code.' '.$phone, 0, 20),
+		];
+		$rst = make('app/service/MemberService')->updateData(userId(), $data);
+		if ($rst) {
+			$info = session()->get(APP_TEMPLATE_TYPE.'_info');
+			session()->set(APP_TEMPLATE_TYPE.'_info', array_merge($info, $data));
+			$this->success('Update your info success.');
+		} else {
+			$this->error('Update your info failed.');
+		}
+	}
+
+	public function updateAvatar()
+	{
+		$attach_id = ipost('attach_id');
+		if (empty($attach_id)) {
+			$this->error('Param error');
+		}
+		$info = make('app/service/AttachmentService')->getAttachmentById($attach_id);
+		if (empty($info)) {
+			$this->error('File was not exist.');
+		}
+		$avatar = $info['cate'].DS.$info['name'].'.'.$info['type'];
+		$rst = make('app/service/MemberService')->updateData(userId(), ['avatar'=>$avatar]);
+		if ($rst) {
+			session()->set(APP_TEMPLATE_TYPE.'_info.avatar', $info['url']);
+		}
+		$this->success('Update your avatar success.');
+	}
+
+	public function wish()
 	{
 		$spuId = ipost('spu_id', 0);
 		if (empty($spuId)) {
@@ -23,7 +97,7 @@ class UserInfoController extends Controller
 		}
 		$rst = make('app/service/member/CollectService')->collectProduct($spuId);
 		if ($rst) {
-			$this->success($rst, 'success');
+			$this->success($rst, $rst == 1 ? 'That product was add to your wish list success' : 'That product was removed from your wish list success');
 		} else {
 			$this->error('collect failed');
 		}
@@ -179,5 +253,81 @@ class UserInfoController extends Controller
 		} else {
 			$this->error($address_id ? 'Edit address failed' : 'Add address failed');
 		}
+	}
+
+	public function wishList()
+	{
+		html()->addCss();
+		html()->addCss('common/productList');
+		html()->addJs();
+
+		$page = iget('page', 1);
+		$size = iget('size', 10);
+
+		$list = $this->getWishList($page, $size);
+
+		$this->assign('list', $list);
+
+		$this->assign('_title', 'My Wish List - '.site()->getName());
+
+		$this->view();
+	}
+
+	protected function getWishList($page=1, $size=10)
+	{
+		$memId = userId();
+		$list = make('app/service/member/CollectService')->getListData(['mem_id'=>$memId], '*', $page, $size, ['coll_id'=>'desc']);
+		if (!empty($list)) {
+			$spuIdArr = array_unique(array_column($list, 'spu_id'));
+			$spuArr = make('app/service/product/SpuService')->getListById($spuIdArr);
+			$spuArr = array_column($spuArr, null, 'spu_id');
+			foreach ($list as $key => $value) {
+				$list[$key]  = array_merge($value, $spuArr[$value['spu_id']]);
+			}
+		}
+		return $list;
+	}
+
+	public function history()
+	{
+		html()->addCss();
+		html()->addCss('common/productList');
+		html()->addJs();
+
+		$page = iget('page', 1);
+		$size = iget('size', 10);
+
+		$list = $this->getHistoryList($page, $size);
+
+		$this->assign('list', $list);
+		$this->assign('_title', 'My History List - '.site()->getName());
+		$this->view();
+	}
+
+	protected function getHistoryList($page=1, $size=10)
+	{
+		$memId = userId();
+		$list = make('app/service/member/HistoryService')->getListData(['mem_id'=>$memId], '*', $page, $size, ['his_id'=>'desc']);
+		if (!empty($list)) {
+			$spuIdArr = array_unique(array_column($list, 'spu_id'));
+			//获取收藏ID
+			$where = [
+				'mem_id' => $memId,
+				'spu_id' => ['in', $spuIdArr],
+			];
+			$collSpuList = make('app/service/member/CollectService')->getListData($where, 'spu_id');
+			$collSpuList = array_column($collSpuList, 'spu_id');
+
+			$spuArr = make('app/service/product/SpuService')->getListById($spuIdArr);
+			$spuArr = array_column($spuArr, null, 'spu_id');
+			$tempArr = [];
+			//按日期分组
+			foreach ($list as $key => $value) {
+				$value['is_liked'] = in_array($value['spu_id'], $collSpuList) ? 1 : 0;
+				$tempArr[$value['add_date']][] = array_merge($value, $spuArr[$value['spu_id']]);
+			}
+			$list = $tempArr;
+		}
+		return $list;
 	}
 }

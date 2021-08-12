@@ -47,7 +47,7 @@ const CARTPAGE = {
 			const obj = $(this).parents('.item');
 			const id = $(this).data('id');
 			TIPS.loading(obj);
-			$.post(URI+'userInfo/collect',{spu_id:id}, function(res) {
+			$.post(URI+'userInfo/wish',{spu_id:id}, function(res) {
 				TIPS.loadout(obj);
 				if (res.code === '200') {
 					if (res.data === 1) {

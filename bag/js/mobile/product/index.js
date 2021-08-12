@@ -13,7 +13,7 @@ const PRODUCT = {
 		_this.originalPrice = data.originalPrice;
 		$('.like-block').on('click', function(){
 			TIPS.loading();
-			$.post(URI+'userInfo/collect', {spu_id: _this.spuId}, function(res){
+			$.post(URI+'userInfo/wish', {spu_id: _this.spuId}, function(res){
 				TIPS.loadout();
 				if (res.code === '200') {
 					if (res.data === 1) {

@@ -37,7 +37,7 @@ class MemberService extends Base
 		return $this->loginSuccess($info,$type == 'email');
 	}
 
-	public function logout($info)
+	public function logout()
 	{
 		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
 		//删除登陆token
@@ -56,8 +56,10 @@ class MemberService extends Base
 	{
 		$data = [
 			'mem_id' => $info['mem_id'],
-			'name' => $info['name'],
-			'nickname' => $info['nickname'],
+			'name' => $info['name'] ?? '',
+			'nickname' => $info['nickname'] ?? '',
+			'first_name' => $info['first_name'] ?? '',
+			'last_name' => $info['last_name'] ?? '',
 			'avatar' => $this->getAvatar($info['avatar'], $info['sex']),
 			'mobile' => $info['mobile'],
 			'email' => $info['email'],

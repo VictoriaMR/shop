@@ -11,8 +11,8 @@
 			<input class="input" type="text" name="search" placeholder="Search">
 		</a>
 	</div>
-	<div class="mt32">
-		<?php $this->load('common/recommend');?>
-	</div>
+</div>
+<div class="mt32">
+	<?php $this->load('common/recommend');?>
 </div>
 

@@ -1,25 +1,30 @@
-<?php $recommendList = make('app/service/product/SpuService')->getRecommend();?>
-<?php if (!empty($recommendList)) {?>
-<div id="recommend-page">
-	<div class="list-title flex layer">
-		<div class="tcell">
-			<p class="line"></p>
-		</div>
-		<p class="title">YOU MAT ALSO LIKE</p>
-		<div class="tcell">
-			<p class="line"></p>
+<div id="history-page">
+	<div class="layer">
+		<div class="list-title flex">
+			<div class="tcell">
+				<p class="line"></p>
+			</div>
+			<p class="title">HISTORY LIST</p>
+			<div class="tcell">
+				<p class="line"></p>
+			</div>
 		</div>
 	</div>
 	<div class="product-list mt10">
-		<ul>
-			<?php foreach ($recommendList as $key => $value){?>
+		<?php if (empty($list)) {?>
+		<p class="tc f14 mt24 c6">Your history list is empty.</p>
+		<div class="mt24">
+			<?php $this->load('common/recommend');?>
+		</div>
+		<?php } else { ?>
+		<?php foreach ($list as $k => $v){ ?>
+		<p class="title"><?php echo $k;?></p>
+		<ul data-key="<?php echo $k;?>">
+			<?php foreach ($v as $key => $value){?>
 			<li class="item" data-id="<?php echo $value['spu_id'];?>">
 				<a href="<?php echo $value['url'];?>">
 					<div class="img">
 						<img class="lazyload" data-src="<?php echo $value['image'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>">
-						<button class="like-block">
-							<span class="iconfont icon-xihuan<?php echo $value['is_liked'] ? 'fill' : '';?>"></span>
-						</button>
 					</div>
 					<div class="layer pb10">
 						<p class="name"><?php echo $value['name'];?></p>
@@ -29,10 +34,12 @@
 						</div>
 					</div>
 				</a>
+				<button class="btn24 btn-black remove-btn">Romove</button>
 			</li>
 			<?php }?>
 		</ul>
 		<p class="clear"></p>
+		<?php } ?>
+		<?php } ?>
 	</div>
 </div>
-<?php } ?>

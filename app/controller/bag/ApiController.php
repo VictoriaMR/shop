@@ -19,4 +19,23 @@ class ApiController extends Controller
 		}
 		$this->success();
 	}
+
+	public function upload()
+	{	
+		$file = $_FILES['file'] ?? [];
+		if (empty($file)) {
+			$this->error('上传数据为空');
+		}
+		$cate = $_POST['cate'] ?? '';
+		$fileService = make('app/service/FileService');
+
+		if (!in_array($cate, $fileService::FILE_TYPE)) {
+			$this->error('没有权限操作'.$cate.'文件夹');
+		}
+		$result = $fileService->upload($file, $cate);
+		if (empty($result)) {
+			$this->error('上传失败');
+		}
+		$this->success($result);
+	}
 }

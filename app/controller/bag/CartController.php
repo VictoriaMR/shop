@@ -8,7 +8,7 @@ class CartController extends Controller
 	public function index()
 	{	
 		html()->addCss();
-		html()->addCss('common/recommend');
+		html()->addCss('common/productList');
 		html()->addJs();
 
 		$list = make('app/service/CartService')->getList();

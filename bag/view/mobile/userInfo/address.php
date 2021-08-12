@@ -1,5 +1,5 @@
-<div id="address-page" class="layer">
-	<div class="list-title flex mt10">
+<div id="address-page" class="layer mt20">
+	<div class="list-title flex">
 		<div class="tcell">
 			<p class="line"></p>
 		</div>

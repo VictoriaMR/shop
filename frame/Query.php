@@ -137,11 +137,17 @@ final class Query
 		}
 		if (!is_array(current($data))) $data = [$data];
 		$fields = array_keys(current($data));
-		$data = array_map(function($value) use ($data){
-			foreach ($value as $k => $v) {
-				if (is_array($v)) {
-					dd($v, $data);
+		$insertTime = [];
+		if (!empty($this->_addTime)) {
+			$insertTime = explode(',', $this->_addTime);
+		}
+		$data = array_map(function($value) use ($data, $insertTime){
+			if (!empty($insertTime)) {
+				foreach ($insertTime as $v) {
+					$value[$v] = now();
 				}
+			}
+			foreach ($value as $k => $v) {
 				$value[$k] = "'".addslashes($v)."'";
 			}
 			return implode(',', $value);
@@ -154,6 +160,11 @@ final class Query
 	{
 		if (empty($data)) return false;
 		$tempArr = [];
+		if (!empty($this->_updateTime)) {
+			foreach(explode(',', $this->_updateTime) as $value) {
+				$data[$value] = now();
+			}
+		}
 		foreach ($data as $key => $value) {
 			$tempArr[] = '`'.$key.'`'.'='."'".addslashes($value)."'";
 		}

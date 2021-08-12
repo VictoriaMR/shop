@@ -6,7 +6,7 @@ foreach ($tempArr as $value) {
 	$zoneList[$value['country_code2']][] = $value;
 }
 ?>
-<div id="address-book" class="hidden">
+<div id="address-book" class="modal hidden">
 	<div class="mask address-book-mask"></div>
 	<div class="dialog">
 		<button class="btn24 btn-black top-close-btn">Close</button>

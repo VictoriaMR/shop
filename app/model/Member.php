@@ -7,6 +7,9 @@ class Member extends Base
 {
 	protected $_table = 'member';
 	protected $_primaryKey = 'mem_id';
+	protected $_addTime = 'add_time';
+	protected $_updateTime = 'update_time';
+
 	const INFO_CACHE_TIMEOUT = 3600 * 24;
 	const TOKEN_CACHE_TIMEOUT = 3600 * 24 *7;
 
