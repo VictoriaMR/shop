@@ -281,7 +281,7 @@ $(function(){
 			$('html,body').animate({scrollTop: 0}, 300);
 		});
 	}
-	if ($('.icon-gouwuche').length > 0) {
+	if ($('.icon-gouwuche, .icon-gouwuchefill').length > 0) {
 		CART.init();
 	}
 	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){

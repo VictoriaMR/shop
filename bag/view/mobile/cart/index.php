@@ -156,9 +156,7 @@
 		</ul>
 	</div>
 	<?php } ?>
-	<div class="layer">
-		<?php $this->load('common/recommend');?>
-	</div>
+	<?php $this->load('common/recommend');?>
 </div>
 <div class="m-modal hide" id="sku-select-modal">
 	<div class="mask"></div>

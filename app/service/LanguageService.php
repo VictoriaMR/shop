@@ -63,4 +63,16 @@ class LanguageService extends Base
 		];
 		return is_null($type) ? $arr : $arr[$type];
 	}
+
+	public function priceSymbol($type=2)
+	{
+		if (empty($this->info)) {
+			$this->info = $this->getInfoCache(lanId());
+		}
+		$arr = [
+			'2' => $this->info['symbol'],
+			'3' => $this->info['currency'].$this->info['symbol'],
+		];
+		return $arr[$type] ?? '';
+	}
 }

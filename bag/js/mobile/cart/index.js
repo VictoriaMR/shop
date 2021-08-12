@@ -327,6 +327,7 @@ const CARTPAGE = {
 		}
 	},
 	initSummary: function(){
+		CART.init();
 		TIPS.loading($('#cart-summary'));
 		$.post(URI+'cart/cartSummary', {}, function(res){
 			let html = '';

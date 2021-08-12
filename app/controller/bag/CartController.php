@@ -42,19 +42,20 @@ class CartController extends Controller
 		}
 		$summary = [];
 		$languageService = make('app/service/LanguageService');
-		$temp = $languageService->priceFormat($originalPriceTotal);
+		$symbol = $languageService->priceSymbol(2);
+		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
+		$priceTotal = sprintf('%.2f', $priceTotal);
 		$summary[] = [
 			'type'=> 1,
 			'name' => 'Original Price',
-			'price' => $temp[1],
-			'price_format' => $temp[2],
+			'price' => $originalPriceTotal,
+			'price_format' => $symbol.$originalPriceTotal,
 		];
-		$temp = $languageService->priceFormat($priceTotal);
 		$summary[] = [
 			'type'=> 2,
 			'name' => 'Total',
-			'price' => $temp[1],
-			'price_format' => $temp[2],
+			'price' => $priceTotal,
+			'price_format' => $symbol.$priceTotal,
 		];
 		
 		$this->assign('checkedList', $checkedList);
@@ -80,19 +81,20 @@ class CartController extends Controller
 		}
 		$summary = [];
 		$languageService = make('app/service/LanguageService');
-		$temp = $languageService->priceFormat($originalPriceTotal);
+		$symbol = $languageService->priceSymbol(2);
+		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
+		$priceTotal = sprintf('%.2f', $priceTotal);
 		$summary[] = [
 			'type'=> 1,
 			'name' => 'Original Price',
-			'price' => $temp[1],
-			'price_format' => $temp[2],
+			'price' => $originalPriceTotal,
+			'price_format' => $symbol.$originalPriceTotal,
 		];
-		$temp = $languageService->priceFormat($priceTotal);
 		$summary[] = [
 			'type'=> 2,
 			'name' => 'Total',
-			'price' => $temp[1],
-			'price_format' => $temp[2],
+			'price' => $priceTotal,
+			'price_format' => $symbol.$priceTotal,
 		];
 		$this->success($summary);
 	}
@@ -132,7 +134,6 @@ class CartController extends Controller
 				$this->error('Sorry, That product was out of stock.');
 			}
 			$where['quantity'] = $num;
-			$where['add_time'] = now();
 			$rst = $cartService->insert($where);
 		} else {
 			$num += $cartSkuIno['quantity'];

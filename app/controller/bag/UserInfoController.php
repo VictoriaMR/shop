@@ -242,6 +242,8 @@ class UserInfoController extends Controller
 			'address2' => substr($address2, 0, 64),
 			'default' => $default == 1 ? 1 : 0,
 		];
+		$countryInfo = make('app/service/address/CountryService')->loadData($country_code2, 'dialing_code');
+		$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$phone;
 		if (empty($address_id)) {
 			$data['mem_id'] = userId();
 			$rst = make('app/service/member/AddressService')->insert($data);

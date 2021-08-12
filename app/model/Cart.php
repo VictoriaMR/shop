@@ -9,4 +9,6 @@ class Cart extends Base
 
 	protected $_table = 'cart';
 	protected $_primaryKey = 'cart_id';
+
+	protected $_addTime = 'add_time';
 }

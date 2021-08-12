@@ -41,6 +41,53 @@
 			</li>
 		</ul>
 	</div>
+	<div class="layer">
+		<div class="order-content mt12">
+			<a class="relative top-title block" href="<?php echo url('userInfo/orderList');?>">
+				<p class="f14 f600 left">Order</p>
+				<p class="right c9" >
+					<span>All</span>
+					<span class="iconfont icon-xiangyou1"></span>
+				</p>
+				<div class="clear"></div>
+			</a>
+			<div class="mt10 order-status-list">
+				<ul class="f0">
+					<li>
+						<a href="<?php echo url('userInfo/orderList', ['status'=>1]);?>" class="block">
+							<span class="iconfont icon-xinyongqia"></span>
+							<p>Pending</p>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('userInfo/orderList', ['status'=>2]);?>" class="block">
+							<span class="iconfont icon-zengsong"></span>
+							<p>Processing</p>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('userInfo/orderList', ['status'=>3]);?>" class="block">
+							<span class="iconfont icon-wuliu"></span>
+							<p>Shipped</p>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('userInfo/orderList', ['status'=>4]);?>" class="block">
+							<span class="iconfont icon-xinxi"></span>
+							<p>Review</p>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('userInfo/orderList', ['status'=>5]);?>" class="block">
+							<span class="iconfont icon-tuikuan"></span>
+							<p>Refund</p>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<a class="btn btn-black w100 mt32 block" href="<?php echo url('login/logout');?>">SIGN OUT</a>
+	</div>
 </div>
 <div id="info-edit-modal" class="modal hidden">
 	<div class="mask"></div>

@@ -6,7 +6,7 @@ const HISTORY = {
 			const obj = $(this).parent();
 			const id = obj.data('key');
 			TIPS.loading(obj);
-			$.post(URI+'userInfo/delHistory', {id:id}, function(res){
+			$.post(URI+'userInfo/deleteHistory', {id:id}, function(res){
 				TIPS.loadout(obj);
 				if (res.code === '200') {
 					TIPS.success(res.message);

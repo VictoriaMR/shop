@@ -86,3 +86,21 @@
 	background: #404040;
 	color: #fff;
 }
+#userinfo-page .order-content {
+	padding: 0.08rem 0.06rem 0.12rem 0.06rem;
+	background: #fff;
+	border-radius: 0.08rem;
+}
+#userinfo-page .order-content .top-title .right {
+	position: relative;
+	top: 0.03rem;
+}
+#userinfo-page .order-content .order-status-list li {
+	width: 20%;
+	display: inline-block;
+	font-size: 0.12rem;
+	text-align: center;
+}
+#userinfo-page .order-content .order-status-list li .iconfont {
+	font-size: 0.2rem;
+}
