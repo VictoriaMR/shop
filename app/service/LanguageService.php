@@ -53,7 +53,7 @@ class LanguageService extends Base
 	public function priceFormat($price, $type=null)
 	{
 		if (empty($this->info)) {
-			$this->info = $this->getInfoCache(lanId());
+			$this->info = $this->getInfoCache($this->lanId());
 		}
 		$price = sprintf('%.2f', $price * $this->info['rate']);
 		$arr = [
@@ -67,12 +67,20 @@ class LanguageService extends Base
 	public function priceSymbol($type=2)
 	{
 		if (empty($this->info)) {
-			$this->info = $this->getInfoCache(lanId());
+			$this->info = $this->getInfoCache($this->lanId());
 		}
 		$arr = [
 			'2' => $this->info['symbol'],
 			'3' => $this->info['currency'].$this->info['symbol'],
 		];
 		return $arr[$type] ?? '';
+	}
+
+	public function currency()
+	{
+		if (empty($this->info)) {
+			$this->info = $this->getInfoCache($this->lanId());
+		}
+		return $this->info['currency'] ?? '';
 	}
 }

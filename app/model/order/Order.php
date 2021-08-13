@@ -1,6 +1,6 @@
 <?php
 
-namespace app\model;
+namespace app\model\order;
 use app\model\Base;
 
 class Order extends Base

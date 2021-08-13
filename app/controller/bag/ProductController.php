@@ -37,7 +37,7 @@ class ProductController extends Controller
 		$this->assign('skuInfo', $skuId ? $info['sku'][$skuId] : []);
 		$this->assign('skuNo', siteId().$info['cate_id'].($skuId ? 'S'.$skuId : $spuId));
 		$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
-		$this->assign('maxStock', max(array_column($info['sku'], 'stock')));
+		$this->assign('stock', $skuId ? $info['sku'][$skuId]['stock'] : max(array_column($info['sku'], 'stock')));
 		$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 		$this->assign('_title', $info['name']);
 		$this->assign('_seo', $info['name'].implode(' ', $info['attv']));

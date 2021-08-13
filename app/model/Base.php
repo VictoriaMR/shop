@@ -10,6 +10,9 @@ class Base
 	protected $_primaryKey;
 	protected $_memId;
 	protected $_siteId;
+	protected $_lanId;
+	protected $_addTime;
+	protected $_updateTime;
 
 	private function instance()
 	{
@@ -18,6 +21,9 @@ class Base
 		}
 		$this->_instance->database($this->_connect);
 		$this->_instance->table($this->_table);
+		$this->_instance->setParam('_addTime', $this->_addTime);
+		$this->_instance->setParam('_updateTime', $this->_updateTime);
+
 		return $this->_instance;
 	}
 
@@ -74,6 +80,14 @@ class Base
 			$this->_siteId = siteId();
 		}
 		return $this->_siteId;
+	}
+
+	public function lanId()
+	{
+		if (!$this->_lanId) {
+			$this->_lanId = lanId();
+		}
+		return $this->_lanId;
 	}
 
 	public function __call($func, $arg)

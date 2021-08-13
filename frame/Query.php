@@ -25,6 +25,12 @@ final class Query
 		return $this;
 	}
 
+	public function setParam($name, $value)
+	{
+		$this->$name = $value;
+		return $this;
+	}
+
 	public function where($columns, $operator=null, $value=null)
 	{
 		if (empty($columns)) return $this;
@@ -136,12 +142,15 @@ final class Query
 			throw new \Exception('MySQL Error, no found table', 1);
 		}
 		if (!is_array(current($data))) $data = [$data];
-		$fields = array_keys(current($data));
 		$insertTime = [];
 		if (!empty($this->_addTime)) {
 			$insertTime = explode(',', $this->_addTime);
 		}
-		$data = array_map(function($value) use ($data, $insertTime){
+		if (!empty($this->_updateTime)) {
+			$insertTime = array_merge($insertTime, explode(',', $this->_updateTime));
+		}
+		$fields = array_merge(array_keys(current($data)), $insertTime);
+		$data = array_map(function($value) use ($insertTime){
 			if (!empty($insertTime)) {
 				foreach ($insertTime as $v) {
 					$value[$v] = now();
@@ -152,7 +161,7 @@ final class Query
 			}
 			return implode(',', $value);
 		}, $data);
-		$sql = sprintf('INSERT INTO %s (%s) VALUES %s', $this->_table, '`'.implode('`,`', $fields).'`', '(' . implode('), (', $data).')');
+		$sql = sprintf('INSERT INTO `%s` (%s) VALUES %s', $this->_table, '`'.implode('`,`', $fields).'`', '(' . implode('), (', $data).')');
 		return $this->getQuery($sql);
 	}
 
@@ -170,9 +179,9 @@ final class Query
 		}
 		$whereString = $this->analyzeWhere();
 		if (!empty($whereString)){
-			$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, implode(',', $tempArr), $whereString);
+			$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, implode(',', $tempArr), $whereString);
 		} else{
-			$sql = sprintf('UPDATE %s SET %s', $this->_table, implode(',', $tempArr));
+			$sql = sprintf('UPDATE `%s` SET %s', $this->_table, implode(',', $tempArr));
 		}
 		return $this->getQuery($sql);
 	}
@@ -181,7 +190,7 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $value.'='.$value.' + '.$num, $whereString);
+		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.'='.$value.' + '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -189,8 +198,8 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $value.'='.$value.' - '.$num, $whereString);
-		return $this->getQuery($sql, $this->_param);
+		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.'='.$value.' - '.$num, $whereString);
+		return $this->getQuery($sql);
 	}
 
 	public function insertGetId($data)
@@ -219,7 +228,7 @@ final class Query
 			throw new \Exception('MySQL Error, table not exist!', 1);
 		}
 		$whereString = $this->analyzeWhere();
-		$sql = sprintf('SELECT %s FROM %s', empty($this->_columns) ? '*' : rtrim($this->_columns, ','), $this->_table);
+		$sql = sprintf('SELECT %s FROM `%s`', empty($this->_columns) ? '*' : rtrim($this->_columns, ','), $this->_table);
 		if (!empty($whereString)) {
 			$sql .= ' WHERE ' . $whereString;
 		}

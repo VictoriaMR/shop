@@ -5,6 +5,8 @@ namespace app\service;
 abstract class Base
 {
     protected $baseModel;
+    protected $_error = [];
+
     private function __clone() {}
     
     abstract protected function getModel();
@@ -15,5 +17,15 @@ abstract class Base
             $this->getModel();
         }
         return $this->baseModel->$func(...$arg);
+    }
+
+    protected function setError($message)
+    {
+        $this->_error[] = $message;
+    }
+
+    public function getError()
+    {
+        return $this->_error;
     }
 }

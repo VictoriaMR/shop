@@ -1,11 +1,11 @@
-<?php $router = router()->getRoute(); if (!(in_array($router['path'], ['userInfo']) && in_array($router['func'], ['address']))){ ?>
+<?php $router = router()->getRoute(); if (!(in_array($router['path'], ['userInfo', 'checkout', 'product']) && in_array($router['func'], ['address', 'index']))){ ?>
 <div id="pb-footbar">
 	<a class="tab<?php echo $router['path']=='index'?' active':'';?>" href="<?php echo url('');?>">
 		<span class="iconfont icon-shouye<?php echo $router['path']=='index'?'fill':'';?>"></span>
 		<p class="text">home</p>
 	</a>
 	<a class="tab<?php echo $router['path']=='cart'?' active':'';?>" href="<?php echo url('cart');?>">
-		<span class="iconfont icon-gouwuche<?php echo $router['path']=='cart'?'fill':'';?>"></span>
+		<span class="iconfont footer icon-gouwuche<?php echo $router['path']=='cart'?'fill':'';?>"></span>
 		<p class="text">cart</p>
 	</a>
 	<a class="tab<?php echo $router['path']=='category'?' active':'';?>" href="<?php echo url('category');?>">

@@ -37,7 +37,7 @@
 		</div>
 		<p class="mt4 c9 tc">
 			<span class="left">SKU: <?php echo $skuNo;?></span>
-			<span>Stock: <?php echo $skuId ? $skuInfo['stock'] : $maxStock;?></span>
+			<span>Stock: <?php echo $stock;?></span>
 			<?php if ($saleTotal){?>
 			<span class="right">Sold: <?php echo $saleTotal;?></span>
 			<?php } ?>
@@ -137,7 +137,7 @@
 					</p>
 					<p class="stock c6">
 						<span>STOCK: </span>
-						<span class="number"><?php echo $skuId ? $skuInfo['stock'] : $maxStock;?></span>
+						<span class="number"><?php echo $stock;?></span>
 					</p>
 					<p class="select-text c6">
 						<span>SELECT: </span>
@@ -167,9 +167,9 @@
 				<?php } ?>
 				<div class="item stock-content">
 					<p class="title left">Quantity</p>
-					<div class="right quantity" data-stock="9999">
-						<button class="plus"><span class="iconfont icon-jiahao1"></span></button>
-						<input type="text" class="num" value="1" maxlength="4">
+					<div class="right quantity" data-stock="<?php echo $stock;?>">
+						<button class="plus <?php echo $stock > 0 ? '' : 'disabled';?>" <?php echo $stock > 0 ? '' : 'disabled="disabled"';?>><span class="iconfont icon-jiahao1"></span></button>
+						<input type="text" class="num" value="<?php echo $stock > 0 ? 1 : 0;?>" maxlength="4">
 						<button class="minus disabled" disabled="disabled"><span class="iconfont icon-jianhao"></span></button>
 					</div>
 					<div class="clear"></div>

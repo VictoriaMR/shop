@@ -9,7 +9,7 @@
 		<ul class="cart-list checked">
 			<?php foreach($checkedList as $value) {?>
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
-				<div class="table<?php echo $value['out_of_stock'] ? ' opac5' : '';?>">
+				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
 						<div class="relative">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
@@ -54,8 +54,8 @@
 							<i class="iconfont icon-shanchu"></i>
 							<span>Remove</span>
 						</button>
-						<?php if ($value['out_of_stock']) {?>
-						<button class="btn-error">Out of stock</button>
+						<?php if ($value['out_of_stock'] || empty($value['status'])) {?>
+						<button class="btn-error"><?php echo empty($value['status']) ? 'Disabled' : 'Out of stock';?></button>
 						<?php } ?>
 					</div>
 					<div class="quantity tcell w25" data-stock="<?php echo $value['stock'];?>">
@@ -80,7 +80,10 @@
 				<?php } ?>
 			</ul>
 		</div>
-		<button class="btn btn-black w100">CHECKOUT</button>
+		<button class="btn btn-black w100 checkout-btn">
+			<span class="iconfont icon-danxuan"></span>
+			<span>SECURE CHECKOUT</span>
+		</button>
 		<div class="mt10 papay-btn">
 			
 		</div>
@@ -100,7 +103,7 @@
 		<ul class="cart-list mt20">
 			<?php foreach($unCheckList as $value) {?>
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
-				<div class="table<?php echo $value['out_of_stock'] ? ' opac5' : '';?>">
+				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
 						<div class="relative">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
@@ -143,8 +146,8 @@
 							<i class="iconfont icon-shanchu"></i>
 							<span>Remove</span>
 						</button>
-						<?php if ($value['out_of_stock']) {?>
-						<button class="btn-error">Out of stock</button>
+						<?php if ($value['out_of_stock'] || empty($value['status'])) {?>
+						<button class="btn-error"><?php echo empty($value['status']) ? 'Disabled' : 'Out of stock';?></button>
 						<?php } ?>
 					</div>
 					<div class="quantity tcell w25 tr">

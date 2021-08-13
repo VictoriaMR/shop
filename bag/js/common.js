@@ -170,8 +170,8 @@ const CART = {
 				$('.icon-gouwuche').addClass('icon-gouwuchefill').removeClass('icon-gouwuche');
 				$('.icon-gouwuchefill').parent().append('<span class="red-number">'+(res.data > 99 ? 99 : res.data)+'</>');
 			} else {
-				$('.icon-gouwuchefill').addClass('icon-gouwuche').removeClass('icon-gouwuchefill');
 				$('.icon-gouwuche').parent().find('.red-number').remove();
+				$('.icon-gouwuchefill').not('.footer').addClass('icon-gouwuche').removeClass('icon-gouwuchefill');
 			}
 		});
 	}

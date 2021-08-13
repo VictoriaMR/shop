@@ -18,7 +18,7 @@ class CartController extends Controller
 		$priceTotal = 0;
 		if (!empty($list)) {
 			foreach ($list as $key => $value) {
-				if ($value['quantity'] > $value['stock']) {
+				if ($value['quantity'] == 0 || $value['quantity'] > $value['stock']) {
 					$value['out_of_stock'] = true;
 				} else {
 					$value['out_of_stock'] = false;
@@ -137,11 +137,15 @@ class CartController extends Controller
 			$rst = $cartService->insert($where);
 		} else {
 			$num += $cartSkuIno['quantity'];
-			if ($skuInfo['stock'] < $num) {
-				$num = $skuInfo['stock'];
+			if ($skuInfo['stock'] > $cartSkuIno['quantity']) {
+				if ($skuInfo['stock'] < $num) {
+					$num = $skuInfo['stock'];
+				}
+				$where = ['quantity' => $num];
+				$rst = $cartService->updateData($cartSkuIno['cart_id'], $where);
+			} else {
+				$rst = true;
 			}
-			$where = ['quantity' => $num];
-			$rst = $cartService->updateData($cartSkuIno['cart_id'], $where);
 		}
 		if ($rst) {
 			$this->success('Add to cart success, go and check it out.');
@@ -202,12 +206,12 @@ class CartController extends Controller
 		}
 	}
 
-	public function check()
+	public function setChecked()
 	{
 		$id = (int)ipost('id');
 		$check = (int)ipost('check', 0);
 		if (empty($id)) {
-			$this->error('Move cart\'s Param error');
+			$this->error('Cart\'s Param error');
 		}
 		$where = [
 			'cart_id' => $id,
@@ -218,6 +222,17 @@ class CartController extends Controller
 			$this->success($check ? 'This item has been move to your cart list.' : 'This item has been save for later from your cart list.');
 		} else {
 			$this->error($check ? 'This item move to your cart list failed.' : 'This item save for later from your cart list failed.');
+		}
+	}
+
+	public function check()
+	{
+		$service = make('app/service/CartService');
+		$rst = $service->check();
+		if ($rst) {
+			$this->success(url('checkout'));
+		} else {
+			$this->error('Sorry, your cart checkout failed, Please reload the cart page and confirm that product purchasable.');
 		}
 	}
 

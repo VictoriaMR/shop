@@ -30,7 +30,7 @@ const CARTPAGE = {
 			const id = obj.data('id');
 			const check = $(this).hasClass('save-for-later') ? 0 : 1;
 			TIPS.loading(obj);
-			$.post(URI+'cart/check', {id: id, check: check}, function(res){
+			$.post(URI+'cart/setChecked', {id: id, check: check}, function(res){
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					setTimeout(function(){
@@ -188,6 +188,22 @@ const CARTPAGE = {
 				}
 			});
 		});
+		//checkout
+		$('#cart-summary .checkout-btn').on('click', function(){
+			if ($('.cart-list.checked .item').length === 0) {
+				TIPS.error('Sorry, your selected cart product was empty.');
+				return false;
+			}
+			TIPS.loading();
+			$.post(URI+'cart/check', {}, function(res){
+				TIPS.loadout();
+				if (res.code === '200') {
+					window.location.href = res.data;
+				} else {
+					TIPS.error(res.message);
+				}
+			});
+		});
 	},
 	initEditPage: function(data){
 		if (!data) {
@@ -309,7 +325,6 @@ const CARTPAGE = {
 		const stock = parseInt(pObj.data('stock'));
 		const num = parseInt(pObj.find('.num').val());
 		if (stock <= 1) {
-			pObj.find('.num').val(1);
 			pObj.find('.plus').attr('disabled', true).addClass('disabled');
 			pObj.find('.minus').attr('disabled', true).addClass('disabled');
 		} else {

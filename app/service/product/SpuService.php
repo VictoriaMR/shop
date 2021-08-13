@@ -64,8 +64,12 @@ class SpuService extends Base
 		}
 
 		foreach ($info['sku'] as $key => $value) {
-			$value['price'] = $languageService->priceFormat($value['price'], 2);
-			$value['original_price'] = $languageService->priceFormat($value['original_price'], 2);
+			$temp = $languageService->priceFormat($value['price']);
+			$value['price'] = $temp[1];
+			$value['price_format'] = $temp[2];
+			$temp = $languageService->priceFormat($value['original_price']);
+			$value['original_price'] = $temp[1];
+			$value['original_price_format'] = $temp[2];
 			$value['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
 			$name = [];
 			foreach ($info['skuAttv'][$key] as $v) {

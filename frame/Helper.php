@@ -156,7 +156,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 }
 function getUniqueName(){
 	$arr = explode(' ', microtime());
-	return str_replace('.', '', $arr[0] + $arr[1]);
+	return str_replace([':', ' ', '-', '0.'], '', now().$arr[0]);
 }
 function lanId(){
 	$lanId = session()->get('site_language_id');

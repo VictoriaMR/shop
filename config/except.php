@@ -11,5 +11,6 @@ return [
 		'search' => true,
 		'api' => true,
 		'pagenotfound' => true,
+		'checkout' => true,
 	],
 ];

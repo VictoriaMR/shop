@@ -85,7 +85,12 @@ const PRODUCT = {
 			if (!_this.skuId) {
 				return false;
 			}
-			_this.addToCart($('.quantity .num').val());
+			const quantity = $('.quantity .num').val();
+			if (quantity == 0) {
+				TIPS.error('Sorry, That product was out of stock.');
+				return false;
+			}
+			_this.addToCart(quantity);
 		});
 		//属性点击
 		$('.sku-attr-list .attr-item li').on('click', function(){
@@ -105,7 +110,12 @@ const PRODUCT = {
 				$('#sku-select').trigger('click');
 				return false;
 			}
-			_this.addToCart(1);
+			const quantity = $('.quantity .num').val();
+			if (quantity == 0) {
+				TIPS.error('Sorry, That product was out of stock.');
+				return false;
+			}
+			_this.addToCart(quantity);
 		});
 		//checkout 按钮
 		$('.checkout-btn').on('click', function(){
@@ -241,7 +251,7 @@ const PRODUCT = {
 		const stock = parseInt(pObj.data('stock'));
 		const num = parseInt(pObj.find('.num').val());
 		if (stock <= 1) {
-			pObj.find('.num').val(1);
+			pObj.find('.num').val(stock);
 			pObj.find('.plus').attr('disabled', true).addClass('disabled');
 			pObj.find('.minus').attr('disabled', true).addClass('disabled');
 		} else {

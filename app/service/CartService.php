@@ -65,11 +65,38 @@ class CartService extends Base
 	public function getList()
 	{
 		$list = $this->getListData(['mem_id' => $this->userId()], 'cart_id,sku_id,quantity,checked', 0, 0, ['cart_id'=>'desc']);
-		$skuService = make('app/service/product/SkuService');
-		$lanId = lanId();
-		foreach ($list as $key => $value) {
-			$list[$key] += $skuService->getInfoCache($value['sku_id'], $lanId);
+		if (!empty($list)) {
+			$skuService = make('app/service/product/SkuService');
+			$skuList = $skuService->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,status,stock');
+			$skuList = array_column($skuList, null, 'sku_id');
+			foreach ($list as $key => $value) {
+				$list[$key] = array_merge($value, $skuService->getInfoCache($value['sku_id'], $this->lanId()), $skuList[$value['sku_id']]);
+			}
 		}
 		return $list;
+	}
+
+	public function check()
+	{
+		$list = $this->getListData(['mem_id' => $this->userId(), 'checked'=>1], 'cart_id,sku_id,quantity');
+		if (empty($list)) {
+			return false;
+		}
+		$skuService = make('app/service/product/SkuService');
+		$skuList = $skuService->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,spu_id,status,stock');
+		$skuList = array_column($skuList, null, 'sku_id');
+
+		foreach ($list as $value) {
+			if (empty($skuList[$value['sku_id']])) {
+				return false;
+			}
+			if ($skuList[$value['sku_id']]['status'] != $skuService->getConst('STATUS_OPEN')) {
+				return false;
+			}
+			if ($value['quantity'] > $skuList[$value['sku_id']]['stock']) {
+				return false;
+			}
+		}
+		return true;
 	}
 }

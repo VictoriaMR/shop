@@ -1,0 +1,28 @@
+#checkout-page .header {
+	height: 0.36rem;
+	padding: 0.08rem 0.08rem 0.04rem 0;
+}
+#checkout-page .header img {
+	width: 0.24rem;
+	height: 0.24rem;
+	margin-right: 0.08rem;
+	float: left;
+}
+#checkout-page .header .checkout-tips{
+	color: #83B293;
+	font-size: 0.14rem;
+	display: inline-block;
+	line-height: 0.24rem;
+	float: left;
+}
+#checkout-page .header-nav {
+	padding: 0.06rem 0 0.12rem 0;
+	text-align: center;
+	color: #666666;
+}
+#checkout-page .info-content {
+	padding-top: 0.2rem;
+}
+#checkout-page .info-content .address .address-info {
+	padding: 0.08rem 0.24rem 0.12rem 0;
+}

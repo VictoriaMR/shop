@@ -12,17 +12,13 @@ class Controller
 
 	protected function result($code, $data=[], $options=[])
 	{
-		if (IS_AJAX) {
-			$data = [
-				'code' => $code,
-				'data' => $data,
-				'message' => '',
-			];
-			header('Content-Type:application/json; charset=utf-8');
-			echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
-		} else {
-			$this->assign('error_message', $options['message']);
-		}
+		$data = [
+			'code' => $code,
+			'data' => $data,
+			'message' => '',
+		];
+		header('Content-Type:application/json; charset=utf-8');
+		echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
 		\App::runOver();
 	}
 
