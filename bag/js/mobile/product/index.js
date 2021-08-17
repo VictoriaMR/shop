@@ -119,8 +119,19 @@ const PRODUCT = {
 		});
 		//checkout 按钮
 		$('.checkout-btn').on('click', function(){
-			if (!_this.skuId) {
+			if (!_this.skuId && !$('#sku-select-modal').is(':visible')) {
 				$('#sku-select').trigger('click');
+				return false;
+			}
+			let check = true;
+			$('.sku-attr-list .attr-item').each(function(){
+				if ($(this).find('li.active').length === 0) {
+					_this.attrError($(this), 'Please select '+$(this).find('.title').text());
+					check = false;
+				}
+			});
+			if (!check) {
+				_this.errorTipsTimeout();
 				return false;
 			}
 			TIPS.loading();

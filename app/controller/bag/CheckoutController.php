@@ -10,6 +10,32 @@ class CheckoutController extends Controller
 		html()->addCss();
 		html()->addJs();
 		
+		//获取地址
+		$memId = userId();
+		$addressData = make('app/service/member/AddressService')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
+		if (empty($addressData)) {
+			$shipAddress = $billAddress = [];
+		} else {
+			foreach ($addressData as $value) {
+				if ($value['is_default']) {
+					$shipAddress = $value;
+				}
+				if ($value['is_bill']) {
+					$billAddress = $value;
+				}
+			}
+			if (empty($shipAddress)) {
+				$shipAddress = array_shift($addressData);
+			}
+			if (empty($billingAddress)) {
+				$billAddress = $shipAddress;
+			}
+		}
+		dd($shipAddress, $billAddress);
+		$this->assign($shipAddress, $shipAddress);
+		$this->assign($shipAddress, $shipAddress);
+		$this->assign('_title', 'Checkout - '.site()->getName());
+
 		$this->view();
 	}
 

@@ -80,7 +80,7 @@ const ADDRESS = {
 					_this.stop = true;
 					let html = '';
 					for (let i=0; i<res.data.length;i++) {
-						html += '<li class="item'+(res.data[i].default==='1'?' active':'')+'" data-id="'+res.data[i].address_id+'">\
+						html += '<li class="item'+(res.data[i].is_default==='1'?' active':'')+'" data-id="'+res.data[i].address_id+'">\
 							<div class="info">\
 								<p class="e2">'+res.data[i].first_name+' '+res.data[i].last_name+'</p>\
 								<p class="e2">'+res.data[i].phone+'</p>\
@@ -89,7 +89,7 @@ const ADDRESS = {
 								if (res.data[i].tax_number){
 									html += '<p class="e2">'+res.data[i].tax_number+'</p>';
 								}
-						html += '<button class="btn24 default-btn'+(res.data[i].default==='1'?' active':'')+'">DEFAULT</button>\
+						html += '<button class="btn24 default-btn'+(res.data[i].is_default==='1'?' active':'')+'">DEFAULT</button>\
 							</div>\
 							<div class="btn-content mt14">\
 								<button class="btn24 btn-black edit-btn">Edit</button>\

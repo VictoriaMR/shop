@@ -124,7 +124,7 @@ class UserInfoController extends Controller
 
 	protected function getAddressList($page=1, $size=10)
 	{
-		$list = make('app/service/member/AddressService')->getListData(['mem_id'=>userId()], '*', $page, $size, ['`default`'=>'desc','address_id'=>'desc']);
+		$list = make('app/service/member/AddressService')->getListData(['mem_id'=>userId()], '*', $page, $size, ['is_default'=>'desc','address_id'=>'desc']);
 		if (!empty($list)) {
 			$countryList = array_unique(array_column($list, 'country_code2'));
 			$countryList = make('app/service/address/CountryService')->getListData(['code2'=>['in', $countryList]], 'code2,name_en');
@@ -149,8 +149,8 @@ class UserInfoController extends Controller
 		if (!$service->getCountData($where)) {
 			$this->error('That address was not exist!');
 		}
-		$service->updateData(['mem_id'=>$memId], ['default'=>0]);
-		$service->updateData($id, ['default'=>1]);
+		$service->updateData(['mem_id'=>$memId], ['is_default'=>0]);
+		$service->updateData($id, ['is_default'=>1]);
 		$this->success();
 	}
 
@@ -207,7 +207,7 @@ class UserInfoController extends Controller
 		$state = ipost('state');
 		$address1 = ipost('address1');
 		$address2 = ipost('address2');
-		$default = (int)ipost('default');
+		$is_default = (int)ipost('is_default');
 		if (empty($country_code2)) {
 			$this->error('Country is required');
 		}
@@ -240,7 +240,7 @@ class UserInfoController extends Controller
 			'state' => substr($state, 0, 32),
 			'address1' => substr($address1, 0, 64),
 			'address2' => substr($address2, 0, 64),
-			'default' => $default == 1 ? 1 : 0,
+			'is_default' => $is_default == 1 ? 1 : 0,
 		];
 		$countryInfo = make('app/service/address/CountryService')->loadData($country_code2, 'dialing_code');
 		$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$phone;

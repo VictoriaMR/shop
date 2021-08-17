@@ -130,7 +130,7 @@ foreach ($tempArr as $value) {
 				<a href="javascript:;" class="block mt10 tr default-btn">
 					<span class="iconfont icon-fangxingxuanzhong"></span>
 					<span>Set default</span>
-					<input type="hidden" name="default" value="0" maxlength="1">
+					<input type="hidden" name="is_default" value="0" maxlength="1">
 				</a>
 			</div>
 		</form>
