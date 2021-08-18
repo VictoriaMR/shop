@@ -11,6 +11,9 @@ class CheckoutController extends Controller
 		html()->addCss('common/address');
 		html()->addJs();
 		html()->addJs('common/address');
+
+		$skuId = (int)ipost('sku_id');
+		$quantity = (int)ipost('quantity', 1);
 		
 		//获取地址
 		$memId = userId();
@@ -33,6 +36,21 @@ class CheckoutController extends Controller
 				$billAddress = $shipAddress;
 			}
 		}
+
+		//获取选中的产品, 直接购买或者购物车购买
+		if (empty($skuId)) {
+			$where = [
+				'mem_id' => userId(),
+				'checked' => 1,
+			];
+			$skuList = make('app/service/CartService')->getListData($where, 'sku_id,quantity', 0, 0, ['cate_id'=>'desc']);
+			$skuList = array_column($skuList, 'stock', 'sku_id');
+		} else {
+			$skuList = [$skuId => $quantity];
+		}
+
+		// foreach ()
+
 		// dd($shipAddress, $billAddress);
 		$this->assign('shipAddress', $shipAddress);
 		$this->assign('billAddress', $billAddress);

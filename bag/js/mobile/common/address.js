@@ -74,11 +74,11 @@ const ADDRESSBOOK = {
 		//点击选择
 		$('#address-book').on('click', '.default-btn', function(){
 			const obj = $(this).find('.iconfont');
-			if (obj.hasClass('icon-fangxingxuanzhong')) {
-				obj.removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingxuanzhongfill');
+			if (obj.hasClass('icon-fangxingweixuanzhong')) {
+				obj.removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhongfill');
 				$(this).find('input').val('1');
 			} else {
-				obj.removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingxuanzhong');
+				obj.removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingweixuanzhong');
 				$(this).find('input').val('0');
 			}
 		});
