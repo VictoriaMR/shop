@@ -1,3 +1,6 @@
+#address-book {
+	z-index: 106;
+}
 #address-book .dialog {
 	height: calc(100% - 0.32rem);
 	bottom: 0.16rem;

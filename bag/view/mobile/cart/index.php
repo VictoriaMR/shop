@@ -11,12 +11,10 @@
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
 				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
-						<div class="relative">
-							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
-							<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
-								<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
-							</button>
-						</div>
+						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+						<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
+							<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
+						</button>
 					</div>
 					<div class="info tcell">
 						<a class="e2 product-name" href="<?php echo $value['url'];?>"><?php echo $value['name'];?></a>
@@ -105,12 +103,10 @@
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
 				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
-						<div class="relative">
-							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
-							<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
-								<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
-							</button>
-						</div>
+						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+						<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
+							<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
+						</button>
 					</div>
 					<div class="info tcell">
 						<a class="e2 product-name" href="<?php echo $value['url'];?>"><?php echo $value['name'];?></a>

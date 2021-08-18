@@ -105,17 +105,19 @@ const ADDRESSBOOK = {
 				$('#address-book .dialog .content').animate({'scrollTop': top}, 200);
 				return false;
 			}
-			if (_this.callback) {
-				_this.callback();
-				return;
-			}
 			TIPS.loading($('#address-book .dialog'));
 			$.post(URI+'userInfo/editAddress', $('#address-book form').serializeArray(), function(res) {
 				if (res.code === '200') {
 					TIPS.success(res.message);
-					setTimeout(function(){
-						window.location.reload();
-					}, 500);
+					if (_this.callback) {
+						TIPS.loadout($('#address-book .dialog'));
+						_this.callback();
+						return;
+					} else {
+						setTimeout(function(){
+							window.location.reload();
+						}, 500);
+					}
 				} else {
 					TIPS.loadout($('#address-book .dialog'));
 					TIPS.error(res.message);
@@ -207,9 +209,8 @@ const ADDRESSBOOK = {
 			$('#address-book .list-title .title').text('ADD ADDRESS');
 		}
 	},
-	loadData: function(id, callback) {
+	loadData: function(id) {
 		const _this = this;
-		_this.callback = callback;
 		_this.show();
 		TIPS.loading($('#address-book .dialog'));
 		$.post(URI+'userInfo/getAddressInfo', {id: id}, function(res){
@@ -238,4 +239,7 @@ const ADDRESSBOOK = {
 		}
 		return zoneList;
 	},
+	setCallback: function(callback) {
+		this.callback = callback;
+	}
 };

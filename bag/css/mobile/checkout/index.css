@@ -21,8 +21,87 @@
 	color: #666666;
 }
 #checkout-page .info-content {
-	padding-top: 0.2rem;
+	padding: 0.12rem;
+}
+#checkout-page .info-content .address .item .title {
+	padding-bottom: 0.06rem;
+	border-bottom: 0.01rem solid #e5e5e5;
+}
+#checkout-page .info-content .address .address-info-content {
+	display: table;
+	width: 100%;
+	min-height: 0.36rem;
+}
+#checkout-page .info-content .address .address-info-content .iconfont-tcell {
+	width: 0.24rem;
+	text-align: center;
+	font-size: 0.18rem;
 }
 #checkout-page .info-content .address .address-info {
-	padding: 0.08rem 0.24rem 0.12rem 0;
+	padding-left: 0.1rem;
+	font-size: 0.14rem;
+	color: #404040;
+}
+#checkout-page .info-content .address .address-info p {
+	margin-bottom: 0.02rem;
+}
+#checkout-page .info-content .address .address-info p:last-child {
+	margin-bottom: 0;
+}
+#my-address-list .close-btn {
+	position: absolute;
+	top: 0.16rem;
+	left: 0.16rem;
+	height: 0.30rem;
+	width: 0.30rem;
+	line-height: 0.3rem;
+	z-index: 105;
+	font-size: 0.18rem;
+	padding: 0;
+	font-weight: 600;
+}
+#my-address-list .content {
+	position: absolute;
+	width: calc(100% - 0.62rem);
+	height: 100%;
+	background: #fff;
+	z-index: 105;
+	right: 0;
+	top: 0;
+	padding: 0.12rem;
+	-webkit-transition: 0.3s -webkit-transform;
+	transition: 0.3s -webkit-transform;
+	transition: 0.3s transform;
+	transition: 0.3s transform, 0.3s -webkit-transform;
+	-webkit-transform: translateX(100%);
+	transform: translateX(100%);
+}
+#my-address-list .content.popup {
+	-webkit-transform: translateX(0);
+	transform: translateX(0);
+}
+#my-address-list .content .address-list {
+	margin-top: 0.10rem;
+	height: calc(100% - 0.66rem);
+	overflow-y: scroll;
+	border-top: 0.01rem solid #e5e5e5;
+}
+#my-address-list .content .address-list .item {
+	padding: 0.1rem 0.24rem 0.1rem 0;
+	border-bottom: 0.01rem solid #e5e5e5;
+	font-size: 0.14rem;
+	position: relative;
+}
+#my-address-list .content .address-list .item p {
+	margin-bottom: 0.02rem;
+}
+#my-address-list .content .address-list .item p:last-child {
+	margin-bottom: 0;
+}
+#my-address-list .content .address-list .item .iconfont {
+	position: absolute;
+	top: calc(50% - 0.09rem);
+	right: 0.03rem;
+	font-size: 0.18rem;
+	color: #999999;
 }

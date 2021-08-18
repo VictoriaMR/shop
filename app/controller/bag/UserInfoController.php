@@ -185,10 +185,11 @@ class UserInfoController extends Controller
 			'address_id' => $id,
 			'mem_id' => userId(),
 		];
-		$info = make('app/service/member/AddressService')->loadData($id);
+		$info = make('app/service/member/AddressService')->loadData($where);
 		if (empty($info)) {
 			$this->error('Sorry, That address was not exist!');
 		} else {
+			$info['country'] = make('app/service/address/CountryService')->getName($info['country_code2']);
 			$this->success($info);
 		}
 	}

@@ -70,7 +70,8 @@ class CartService extends Base
 			$skuList = $skuService->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,status,stock');
 			$skuList = array_column($skuList, null, 'sku_id');
 			foreach ($list as $key => $value) {
-				$list[$key] = array_merge($value, $skuService->getInfoCache($value['sku_id'], $this->lanId()), $skuList[$value['sku_id']]);
+				$tempData = $skuService->getInfoCache($value['sku_id'], $this->lanId());
+				$list[$key] = array_merge($value, $tempData ? $tempData : [], $skuList[$value['sku_id']]);
 			}
 		}
 		return $list;

@@ -55,6 +55,9 @@ body {
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+.iconfont.f600 {
+	font-weight: 600;
+}
 
 .icon-danxuanfill:before {
 	content: "\e71e";

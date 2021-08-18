@@ -70,11 +70,12 @@ const ADDRESS = {
 	},
 	getPgae: function() {
 		const _this = this;
-		const page = parseInt($('.address-list').data('page')) + 1;
-		const size = parseInt($('.address-list').data('size'))
+		const obj = $('.address-list');
+		const page = parseInt(obj.data('page')) + 1;
+		const size = parseInt(obj.data('size'))
 		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
 			if (res.code === '200') {
-				$('.address-list').data('page', page);
+				obj.data('page', page);
 				$('.address-content').find('.page-loading-block').remove();
 				if (res.data.length > 0) {
 					_this.stop = true;
@@ -97,7 +98,7 @@ const ADDRESS = {
 							</div>\
 						</li>';
 					}
-					$('.address-list').append(html);
+					obj.append(html);
 				}
 			}
 		});

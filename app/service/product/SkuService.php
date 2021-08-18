@@ -23,7 +23,7 @@ class SkuService extends Base
 
 	public function getInfo($skuId, $lanId=1)
 	{
-		$info = $this->loadData(['sku_id'=>$skuId, 'status'=>$this->getConst('STATUS_OPEN')], 'spu_id,attach_id,stock,price,original_price');
+		$info = $this->loadData($skuId, 'spu_id,attach_id,stock,price,original_price');
 		if (!$info) {
 			return false;
 		}

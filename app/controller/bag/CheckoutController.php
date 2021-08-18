@@ -8,7 +8,9 @@ class CheckoutController extends Controller
 	public function index()
 	{	
 		html()->addCss();
+		html()->addCss('common/address');
 		html()->addJs();
+		html()->addJs('common/address');
 		
 		//获取地址
 		$memId = userId();
@@ -31,9 +33,9 @@ class CheckoutController extends Controller
 				$billAddress = $shipAddress;
 			}
 		}
-		dd($shipAddress, $billAddress);
-		$this->assign($shipAddress, $shipAddress);
-		$this->assign($shipAddress, $shipAddress);
+		// dd($shipAddress, $billAddress);
+		$this->assign('shipAddress', $shipAddress);
+		$this->assign('billAddress', $billAddress);
 		$this->assign('_title', 'Checkout - '.site()->getName());
 
 		$this->view();
