@@ -27,7 +27,7 @@
 	<div class="bg-f info-content">
 		<div class="address">
 			<div class="item shipping-address-item relative" data-id="<?php echo $shipAddress['address_id'] ?? 0;?>">
-				<p class="f18 f600 title">Shipping Address</p>
+				<p class="f16 f600 title">Shipping Address</p>
 				<?php if (empty($shipAddress)) {?>
 				<a href="javascript:;" class="empty-address address-info-content mt6">
 					<div class="tcell f14 tl">
@@ -62,7 +62,7 @@
 			</div>
 			<?php if (!empty($billAddress)) {?>
 			<div class="item billing-address-item relative mt12<?php echo $shipAddress['address_id'] == $billAddress['address_id'] ? ' hide' : '';?>" data-id="<?php echo $billAddress['address_id'];?>">
-				<p class="f18 f600 title">Billing Address</p>
+				<p class="f16 f600 title">Billing Address</p>
 				<a href="javascript:;" class="address-info-content mt6">
 					<div class="address-info">
 						<p><?php echo trim($billAddress['first_name'].' '.$billAddress['last_name']);?></p>
