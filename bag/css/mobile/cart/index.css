@@ -23,11 +23,16 @@
 	position: relative;
 }
 #cart-page .cart-list .item .image {
-	width: 1.02rem;
+	width: 0.95rem;
+	vertical-align: top;
+}
+#cart-page .cart-list .item .image-tcell {
+	width: 0.95rem;
+	height: 0.95rem;
 	position: relative;
 }
 #cart-page .cart-list .item .info {
-	width: calc(100% - 1.02rem);
+	width: calc(100% - 0.95rem);
 	padding-left: 0.08rem;
 	vertical-align: top;
 	text-align: left;

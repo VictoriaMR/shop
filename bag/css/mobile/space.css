@@ -1,3 +1,6 @@
+.mt0 {
+	margin-top: 0 !important
+}
 .mt2 {
 	margin-top: .02rem
 }
@@ -198,4 +201,7 @@
 }
 .p20 {
 	padding: 0.2rem;
+}
+.p22 {
+	padding: 0.22rem;
 }

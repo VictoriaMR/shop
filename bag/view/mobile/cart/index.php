@@ -11,10 +11,12 @@
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
 				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
-						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
-						<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
-							<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
-						</button>
+						<div class="image-tcell tcell">
+							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+							<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
+								<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
+							</button>
+						</div>
 					</div>
 					<div class="info tcell">
 						<a class="e2 product-name" href="<?php echo $value['url'];?>"><?php echo $value['name'];?></a>
@@ -79,7 +81,6 @@
 			</ul>
 		</div>
 		<button class="btn btn-black w100 checkout-btn">
-			<span class="iconfont icon-danxuan"></span>
 			<span>SECURE CHECKOUT</span>
 		</button>
 		<div class="mt10 papay-btn">
@@ -103,10 +104,12 @@
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
 				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
-						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
-						<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
-							<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
-						</button>
+						<div class="image-tcell tcell">
+							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+							<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
+								<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
+							</button>
+						</div>
 					</div>
 					<div class="info tcell">
 						<a class="e2 product-name" href="<?php echo $value['url'];?>"><?php echo $value['name'];?></a>

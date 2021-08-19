@@ -63,9 +63,9 @@ class OrderService extends Base
 		//当前货币
 		$currency = make('app/service/LanguageService')->currency();
 		//保险
-		$insuranceFree = $insurance ? sprintf('%.2f', $productTotal*0.05) : 0;
+		$insuranceFree = $insurance ? $this->getInsurance($productTotal) : 0;
 		//运费
-		$shippingFee = 0;
+		$shippingFee = $this->getShippingFee($productTotal);
 		$insert = [
 			'order_no' => substr(getUniqueName(), 2, -2),
 			'site_id' => $this->siteId(),
@@ -97,5 +97,26 @@ class OrderService extends Base
 		make('app/service/order/ProductAttributeService')->insert($insert);
 		$this->commit();
 		return $orderId;
+	}
+
+	public function getShippingFee($total)
+	{
+		if ($total < 20) {
+			return 1.99;
+		} elseif ($total < 40) {
+			return 2.99;
+		} elseif ($total < 60) {
+			return 3.99;
+		} else {
+			return 4.99;
+		}
+	}
+
+	public function getInsurance($total)
+	{
+		if ($total > 49) {
+			return 2.99;
+		}
+		return 1.99;
 	}
 }

@@ -227,8 +227,7 @@ class CartController extends Controller
 
 	public function check()
 	{
-		$service = make('app/service/CartService');
-		$rst = $service->check();
+		$rst = make('app/service/CartService')->check();
 		if ($rst) {
 			$this->success(url('checkout'));
 		} else {

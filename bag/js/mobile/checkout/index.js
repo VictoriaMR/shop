@@ -64,6 +64,29 @@ const CHECKOUTINDEX = {
 				_this.callback($(this).data('id'));
 			}
 		});
+		//保险点击
+		$('.insurance-btn').on('click', function(){
+			const obj = $(this).find('.iconfont').eq(0);
+			if (obj.hasClass('icon-fangxingweixuanzhong')) {
+				obj.removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhongfill');
+				$('input[name="insurance"]').val(1);
+			} else {
+				obj.removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingweixuanzhong');
+				$('input[name="insurance"]').val(0);
+			}
+			_this.calculateOrderFee();
+		});
+		//保险提示
+		$('.insurance-btn .icon-tishi').on('click', function(e){
+			e.stopPropagation();
+			const obj = $(this).parent().find('.help-tips');
+			if (obj.is(':visible')) {
+				obj.hide();
+			} else {
+				obj.show();
+			}
+		});
+		_this.calculateOrderFee();
 	},
 	addressShow: function(callback) {
 		const _this = this;
@@ -140,6 +163,7 @@ const CHECKOUTINDEX = {
 				}
 				pObj.data('id', id).find('input').val(id);
 				_this.initBillingAddressId();
+				_this.selectLogistics();
 			} else {
 				TIPS.error(res.message);
 			}
@@ -151,5 +175,57 @@ const CHECKOUTINDEX = {
 		} else {
 			$('.billing-address-item [name="billing_address_id"]').val($('.billing-address-item').data('id'));
 		}
+	},
+	calculateOrderFee: function() {
+		const obj = $('.order-summary-content');
+		TIPS.loading(obj);
+		$.post(URI+'checkout/calculateOrderFee', $('#checkout-form').serializeArray(), function(res) {
+			TIPS.loadout(obj);
+			if (res.code === '200') {
+				let html = '';
+				fee_list = res.data.fee_list;
+				for (let i=0; i<fee_list.length; i++) {
+					html += '<div class="row '+(fee_list[i].type===0?'originalprice-row':'')+'">\
+								<p class="name left">'+fee_list[i].name+':</p>\
+								<p class="value f600 right">'+fee_list[i].value_format+'</p>\
+								<p class="clear"></p>\
+							</div>';
+				}
+				html += '<div class="line"></div>\
+							<div class="row mt10 f600">\
+								<p class="name left">'+res.data.name+':</p>\
+								<p class="value f600 right">'+res.data.value_format+'</p>\
+								<p class="clear"></p>\
+							</div>';
+				obj.find('.order-content').html(html);
+			}
+		});
+	},
+	selectLogistics: function() {
+		if ($('.shipping-method-content .logistics-list').length === 0) {
+			return false;
+		}
+		const obj = $('.shipping-method-content');
+		TIPS.loading(obj);
+		$.post(URI+'checkout/selectLogistics', $('#checkout-form').serializeArray(), function(res) {
+			TIPS.loadout(obj);
+			if (res.code === '200') {
+				let html = '';
+				for (let i=0; i<res.data.length;i++) {
+					html += '<div class="item">\
+								<span class="iconfont icon-'+(i===0?'yuanxingxuanzhongfill':'yuanxingweixuanzhong')+'"></span>\
+								<div class="row f16 f600">\
+									<span>'+res.data[i].name+'</span>\
+									<span class="ml12">'+res.data[i].fee+'</span>\
+								</div>';
+								if (res.data[i].tips) {
+									html += '<p class="c6 mt4">'+res.data[i].tips+'</p>';
+								}
+							html += '</div>';
+				}
+				obj.find('.logistics-list').html(html);
+			}
+			console.log(res, 'res')
+		});
 	}
 };
