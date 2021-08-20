@@ -22,10 +22,7 @@
 }
 #checkout-page .info-content {
 	padding: 0.12rem;
-}
-#checkout-page .info-content {
-	padding: 0.12rem;
-	margin-top: 0.1rem;
+	margin-bottom: 0.1rem;
 	position: relative;
 }
 #checkout-page .info-content .title {

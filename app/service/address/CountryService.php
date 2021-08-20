@@ -10,8 +10,16 @@ class CountryService extends Base
 		$this->baseModel = make('app/model/address/Country');
 	}
 
-	public function getName($code2)
+	public function getName($code2, $lanId=2)
 	{
-		return $this->loadData($code2, 'name_en')['name_en'] ?? '';
+		$nameEn = $this->loadData($code2, 'name_en')['name_en'] ?? '';
+		if ($lanId == 2) {
+			return $nameEn;
+		}
+		$temp = make('app/service/address/CountryLanguageService')->loadData(['country_code2'=>$code2, 'lan_id'=>$lanId], 'name');
+		if (empty($temp['name'])) {
+			return $nameEn;
+		}
+		return $temp['name'];
 	}
 }

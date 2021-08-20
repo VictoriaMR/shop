@@ -17,22 +17,6 @@ class CheckoutController extends Controller
 		$skuId = (int)input('id');
 		$quantity = (int)input('quantity');
 
-		//获取选中的产品, 直接购买或者购物车购买
-		$error = '';
-		if (empty($skuId)) {
-			$where = [
-				'mem_id' => userId(),
-				'checked' => 1,
-			];
-			$skuList = make('app/service/CartService')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
-			if (empty($skuList)) {
-				$error = 'Sorry, we don\'t find any product here, Maybe your shopping cart was Empty. Please check your shopping cart and check it out';
-			} else {
-				$skuList = array_column($skuList, 'quantity', 'sku_id');
-			}
-		} else {
-			$skuList = [$skuId => $quantity];
-		}
 		if (empty($info['list'])) {
 			$error = 'Sorry, we don\'t find any product here, Maybe your shopping cart was Empty. Please check your shopping cart and check it out';
 		} else {
@@ -82,7 +66,7 @@ class CheckoutController extends Controller
 
 		$this->assign('skuId', $skuId);
 		$this->assign('quantity', $quantity);
-		$this->assign('error', $error);
+		$this->assign('error', $error ?? '');
 		$this->assign('_title', 'Checkout - '.site()->getName());
 
 		$this->view();
@@ -231,10 +215,10 @@ class CheckoutController extends Controller
 				continue;
 			}
 			$tempInfo = $skuService->getInfoCache($key, lanId());
-			$list[$key] = ['quantity' => $value];
+			$skuList[$key] = ['quantity' => $value];
 			$productTotal += $tempInfo['price']*$value;
 			$productOriginalTotal += $tempInfo['original_price']*$value;
-			$list[$key] += $tempInfo;
+			$skuList[$key] += $tempInfo;
 		}
 		return [
 			'total' => sprintf('%.2f', $productTotal),

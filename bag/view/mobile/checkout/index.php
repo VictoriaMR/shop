@@ -30,7 +30,7 @@
 	<form id="checkout-form">
 		<input type="hidden" name="id" value="<?php echo $skuId;?>">
 		<input type="hidden" name="quantity" value="<?php echo $quantity;?>">
-		<div class="bg-f info-content mt0">
+		<div class="bg-f info-content">
 			<div class="address">
 				<div class="item shipping-address-item relative" data-id="<?php echo $shipAddress['address_id'] ?? 0;?>">
 					<p class="f16 f600 title">Shipping Address</p>

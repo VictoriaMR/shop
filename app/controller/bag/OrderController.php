@@ -1,14 +1,20 @@
 <?php
 
 namespace app\controller\bag;
-
 use app\controller\Controller;
-use frame\Html;
 
 class OrderController extends Controller
 {
 	public function index()
 	{	
-		return view();
+		$this->view();
+	}
+
+	protected function getOrderList()
+	{
+		$status = input('status');
+		if (!is_null($status)) {
+			
+		}
 	}
 }

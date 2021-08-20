@@ -24,6 +24,7 @@
 	width: 25%;
 	text-align: center;
 	font-size: 0.12rem;
+	position: relative;
 }
 #userinfo-page .nav-list ul li .iconfont {
 	font-size: 0.2rem;
@@ -100,6 +101,7 @@
 	display: inline-block;
 	font-size: 0.12rem;
 	text-align: center;
+	position: relative;
 }
 #userinfo-page .order-content .order-status-list li .iconfont {
 	font-size: 0.2rem;

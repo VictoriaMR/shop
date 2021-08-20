@@ -25,10 +25,24 @@ class UserInfoController extends Controller
 		$historyTotal = make('app/service/member/HistoryService')->getCountData($where);
 		//地址统计
 		$addressTotal = make('app/service/member/AddressService')->getCountData($where);
+		//订单统计
+		$orderService = make('app/service/order/OrderService');
+		$where['status'] = ['in', [
+			$orderService->getConst('STATUS_WAIT_PAY'),
+			$orderService->getConst('STATUS_PAIED'),
+			$orderService->getConst('STATUS_SHIPPED'),
+			$orderService->getConst('STATUS_FINISHED'),
+			$orderService->getConst('STATUS_REFUND'),
+		]];
+		$where['is_review'] = 0;
+		$where['is_delete'] = 0;
+		$orderTotal = $orderService->where($where)->field('count(*) as count, status')->groupBy('status')->get();
+		$orderTotal = array_column($orderTotal, 'count', 'status');
 
 		$this->assign('collectionTotal', $collectionTotal);
 		$this->assign('historyTotal', $historyTotal);
 		$this->assign('addressTotal', $addressTotal);
+		$this->assign('orderTotal', $orderTotal);
 		$this->assign('info', $info);
 		$this->assign('_title', 'My Info - '.site()->getName());
 		$this->view();
@@ -181,17 +195,11 @@ class UserInfoController extends Controller
 	public function getAddressInfo()
 	{
 		$id = (int)ipost('id');
-		$where = [
-			'address_id' => $id,
-			'mem_id' => userId(),
-		];
-		$info = make('app/service/member/AddressService')->loadData($where);
+		$info = make('app/service/member/AddressService')->getInfo($id);
 		if (empty($info)) {
 			$this->error('Sorry, That address was not exist!');
-		} else {
-			$info['country'] = make('app/service/address/CountryService')->getName($info['country_code2']);
-			$this->success($info);
 		}
+		$this->success($info);
 	}
 
 	public function editAddress()
@@ -241,6 +249,7 @@ class UserInfoController extends Controller
 			'state' => substr($state, 0, 32),
 			'address1' => substr($address1, 0, 64),
 			'address2' => substr($address2, 0, 64),
+			'lan_id' => lanId(),
 			'is_default' => $is_default == 1 ? 1 : 0,
 		];
 		$countryInfo = make('app/service/address/CountryService')->loadData($country_code2, 'dialing_code');

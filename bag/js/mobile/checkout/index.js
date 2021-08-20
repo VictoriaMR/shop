@@ -88,8 +88,15 @@ const CHECKOUTINDEX = {
 		});
 		//生成订单
 		$('#place-order-btn').on('click', function(){
+			const obj = $('.order-summary-content');
+			TIPS.loading(obj);
 			$.post(URI+'checkout/createOrder', $('#checkout-form').serializeArray(), function(res) {
-
+				TIPS.loadout(obj);
+				if (res.code === '200') {
+					window.location.href = res.data;
+				} else {
+					TIPS.error(res.message);
+				}
 			});
 		})
 		_this.calculateOrderFee();

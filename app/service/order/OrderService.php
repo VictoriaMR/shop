@@ -12,6 +12,12 @@ class OrderService extends Base
 
 	public function createOrder($skuIdArr, $shippingAddressId, $billingAddressId, $couponId=0, $insurance=false)
 	{
+		//递送地址 账单地址
+		$addressService = make('app/service/member/AddressService');
+		$shippingAddress = $addressService->getInfo($shippingAddressId);
+		if (count($addressList) != 2) {
+			return false;
+		}
 		//获取sku信息
 		$skuService = make('app/service/product/SkuService');
 		$where = [
@@ -95,6 +101,14 @@ class OrderService extends Base
 			}, $orderProductAttr[$value['sku_id']]));
 		}
 		make('app/service/order/ProductAttributeService')->insert($insert);
+
+		$insert = [];
+		foreach ($addressList as $value) {
+			$insert[] = [
+
+			];
+		}
+
 		$this->commit();
 		return $orderId;
 	}
