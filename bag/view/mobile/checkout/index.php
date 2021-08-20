@@ -58,14 +58,16 @@
 							<span class="iconfont icon-xiangyou1"></span>
 						</div>
 					</a>
+					<input type="hidden" name="shipping_address_id" value="<?php echo $shipAddress['address_id'] ?? 0;?>">
 					<?php } ?>
 					<div class="border mt6"></div>
-					<input type="hidden" name="shipping_address_id" value="<?php echo $shipAddress['address_id'] ?? 0;?>">
 				</div>
+				<?php if (!empty($shipAddress)) {?>
 				<div class="set-billing-as-shipping mt6">
 					<span class="iconfont icon-<?php echo $shipAddress['address_id'] == $billAddress['address_id'] ? 'fangxingxuanzhongfill' : 'fangxingweixuanzhong';?>"></span>
 					<span class="tips">Billing address same as shipping</span>
 				</div>
+				<?php }?>
 				<?php if (!empty($billAddress)) {?>
 				<div class="item billing-address-item relative mt12<?php echo $shipAddress['address_id'] == $billAddress['address_id'] ? ' hide' : '';?>" data-id="<?php echo $billAddress['address_id'];?>">
 					<p class="f16 f600 title">Billing Address</p>
@@ -191,7 +193,7 @@
 					<p class="clear"></p>
 				</div>
 			</div>
-			<button type="button" class="btn btn-black w100 mt20">PLACE ORDER</button>
+			<button type="button" class="btn btn-black w100 mt20" id="place-order-btn<?php echo empty($shipAddress) ? ' disabled':'';?>" <?php echo empty($shipAddress) ? 'disabled="disabled"':'';?>>PLACE ORDER</button>
 		</div>
 	</form>
 	<?php } else {?>

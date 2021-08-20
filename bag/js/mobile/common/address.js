@@ -227,7 +227,9 @@ const ADDRESSBOOK = {
 		$('#address-book .mask').fadeOut(300, function(){
 			$('#address-book').hide();
 		});
-		TIPS.start();
+		if (!this.callback) {
+			TIPS.start();
+		}
 	},
 	getZoneList: function (countryCode2){
 		let zoneList = [];

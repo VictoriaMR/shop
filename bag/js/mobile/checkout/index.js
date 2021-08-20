@@ -86,6 +86,12 @@ const CHECKOUTINDEX = {
 				obj.show();
 			}
 		});
+		//生成订单
+		$('#place-order-btn').on('click', function(){
+			$.post(URI+'checkout/createOrder', $('#checkout-form').serializeArray(), function(res) {
+
+			});
+		})
 		_this.calculateOrderFee();
 	},
 	addressShow: function(callback) {
@@ -98,12 +104,14 @@ const CHECKOUTINDEX = {
 			if ($('#my-address-list .address-list .item').length === 0) {
 				_this.loadAddress();
 			}
+			TIPS.stop();
 		}, 50);
 	},
 	addressClose: function() {
 		$('#my-address-list .content').removeClass('popup');
 		$('#my-address-list .mask').fadeOut(200, function(){
 			$('#my-address-list').hide();
+			TIPS.start();
 		});
 	},
 	loadAddress: function() {
@@ -136,7 +144,7 @@ const CHECKOUTINDEX = {
 					obj.append(html);
 				}
 			}
-			TIPS.loadout(obj);
+			TIPS.loadout(obj, true);
 		});
 	},
 	reloadAddress: function(obj, id) {

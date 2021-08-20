@@ -105,7 +105,7 @@ class OrderService extends Base
 			return 1.99;
 		} elseif ($total < 40) {
 			return 2.99;
-		} elseif ($total < 60) {
+		} elseif ($total < 100) {
 			return 3.99;
 		} else {
 			return 4.99;

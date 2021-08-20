@@ -12,6 +12,8 @@ class CheckoutController extends Controller
 		html()->addJs();
 		html()->addJs('common/address');
 
+		$info = $this->getCheckoutData();
+
 		$skuId = (int)input('id');
 		$quantity = (int)input('quantity');
 
@@ -31,8 +33,9 @@ class CheckoutController extends Controller
 		} else {
 			$skuList = [$skuId => $quantity];
 		}
-
-		if (empty($error)) {
+		if (empty($info['list'])) {
+			$error = 'Sorry, we don\'t find any product here, Maybe your shopping cart was Empty. Please check your shopping cart and check it out';
+		} else {
 			//获取地址
 			$memId = userId();
 			$addressData = make('app/service/member/AddressService')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
@@ -54,50 +57,25 @@ class CheckoutController extends Controller
 					$billAddress = $shipAddress;
 				}
 			}
-			//sku列表
-			$skuService = make('app/service/product/SkuService');
-			$tempSkuList = $skuService->getListData(['sku_id'=> ['in', array_keys($skuList)]], 'sku_id,spu_id,status,stock');
-			$tempSkuList = array_column($tempSkuList, null, 'sku_id');
-
-			$productTotal = 0;
-			foreach ($skuList as $key => $value) {
-				if (empty($tempSkuList[$key])) {
-					$error = 'Sorry, we don\'t find any product here, that products was not exist, Please try agin later.';
-					break;
-				}
-				if ($tempSkuList[$key]['status'] != $skuService->getConst('STATUS_OPEN')) {
-					$error = 'Sorry, we don\'t find any product here, that products was not able to buy, Please try agin later.';
-					break;
-				}
-				if ($value > $tempSkuList[$key]['stock']) {
-					$error = 'Sorry, we don\'t find any product here, that products was out of stock, Please try agin later.';
-					break;
-				}
-				$tempInfo = $skuService->getInfoCache($key, lanId());
-				$skuList[$key] = $tempSkuList[$key];
-				$skuList[$key]['quantity'] = $value;
-				$productTotal += $tempInfo['price']*$value;
-				$skuList[$key] += $tempInfo;
-			}
 
 			if (empty($shipAddress)) {
 				$logisticsList = [];
 				$insuranceFee = 0;
 			} else {
-				$languageService = make('app/service/LanguageService');
 				$orderService = make('app/service/order/OrderService');
+				$symbol = make('app/service/LanguageService')->priceSymbol(2);
 				$logisticsList = [[
 					'name' => 'Express Shipping',
-					'fee' => $languageService->priceSymbol(2).$orderService->getShippingFee($productTotal),
+					'fee' => $symbol.$orderService->getShippingFee($info['total']),
 					'time_first' => 5,
 					'time_second' => 9,
 					'tips' => 'It may takes 5 - 9 Days. With Detailed Tracking Information. Need Correct Phone Number.'
 				]];
-				$insuranceFee = $languageService->priceSymbol(2).$orderService->getInsurance($productTotal);
+				$insuranceFee = $symbol.$orderService->getInsurance($info['total']);
 			}
 			$this->assign('insuranceFee', $insuranceFee);
 			$this->assign('logisticsList', $logisticsList);
-			$this->assign('skuList', $skuList);
+			$this->assign('skuList', $info['list']);
 			$this->assign('shipAddress', $shipAddress);
 			$this->assign('billAddress', $billAddress);
 		}
@@ -112,7 +90,7 @@ class CheckoutController extends Controller
 
 	public function createOrder()
 	{
-		$skuIds = (int)ipost('sku_id');
+		$skuIds = (int)ipost('id');
 		$quantity = (int)ipost('quantity', 1);
 		$shippingAddressId = ipost('shipping_address_id');
 		$billingAddressId = ipost('billing_address_id');
@@ -220,9 +198,6 @@ class CheckoutController extends Controller
 		$quantity = (int)input('quantity');
 		$address_id = (int)input('shipping_address_id');
 
-		if (empty($address_id)) {
-			$this->error('The shipping method is valid.');
-		}
 		if (empty($skuId)) {
 			$where = [
 				'mem_id' => userId(),
@@ -236,7 +211,7 @@ class CheckoutController extends Controller
 			$skuList = [$skuId => $quantity];
 		}
 		if (empty($skuList)) {
-			$this->error('The shipping method is valid.');
+			return [];
 		}
 		//获取数值总额
 		$skuService = make('app/service/product/SkuService');
@@ -245,6 +220,7 @@ class CheckoutController extends Controller
 		$productTotal = 0;
 		$productOriginalTotal = 0;
 		foreach ($skuList as $key => $value) {
+			unset($skuList[$key]);
 			if (empty($tempSkuList[$key])) {
 				continue;
 			}
@@ -255,14 +231,14 @@ class CheckoutController extends Controller
 				continue;
 			}
 			$tempInfo = $skuService->getInfoCache($key, lanId());
-			$skuList[$key] = ['quantity' => $value];
+			$list[$key] = ['quantity' => $value];
 			$productTotal += $tempInfo['price']*$value;
 			$productOriginalTotal += $tempInfo['original_price']*$value;
-			$skuList[$key] += $tempInfo;
+			$list[$key] += $tempInfo;
 		}
 		return [
-			'total' => $productTotal,
-			'original_total' => $productOriginalTotal,
+			'total' => sprintf('%.2f', $productTotal),
+			'original_total' => sprintf('%.2f', $productOriginalTotal),
 			'list' => $skuList,
 		];
 	}
