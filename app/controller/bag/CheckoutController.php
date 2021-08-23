@@ -226,4 +226,13 @@ class CheckoutController extends Controller
 			'list' => $skuList,
 		];
 	}
+
+	public function payOrder()
+	{
+		html()->addCss();
+		html()->addJs();
+
+		$this->assign('_title', 'Checkout, Pay Order - '.site()->getName());
+		$this->view();
+	}
 }

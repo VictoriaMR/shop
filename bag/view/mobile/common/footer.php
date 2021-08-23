@@ -1,4 +1,5 @@
-<?php $router = router()->getRoute(); if (!(in_array($router['path'], ['checkout', 'product', 'order']) && in_array($router['func'], ['address', 'index'])) && !(in_array($router['path'], ['userInfo']) && in_array($router['func'], ['index']))){ ?>
+<?php $router = router()->getRoute();
+if (!in_array($router['path'], ['checkout']) && !in_array($router['path'].'_'.$router['func'], ['product_index'])){ ?>
 <div class="p22"></div>
 <div id="pb-footbar">
 	<a class="tab<?php echo $router['path']=='index'?' active':'';?>" href="<?php echo url('');?>">

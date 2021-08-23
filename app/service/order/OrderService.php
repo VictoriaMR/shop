@@ -13,10 +13,23 @@ class OrderService extends Base
 	public function createOrder($skuIdArr, $shippingAddressId, $billingAddressId, $couponId=0, $insurance=false)
 	{
 		//递送地址 账单地址
+		$where = [
+			'address_id' => $shippingAddressId,
+			'mem_id' => $this->userId(),
+		];
 		$addressService = make('app/service/member/AddressService');
-		$shippingAddress = $addressService->getInfo($shippingAddressId);
-		if (count($addressList) != 2) {
+		$shippingAddress = $addressService->loadData($where);
+		if (empty($shippingAddress)) {
 			return false;
+		}
+		if ($shippingAddressId == $billingAddressId) {
+			$billingAddress = $shippingAddress;
+		} else {
+			$where['address_id'] = $billingAddressId;
+			$billingAddress = $addressService->loadData($billingAddressId);
+			if (empty($billingAddress)) {
+				return false;
+			}
 		}
 		//获取sku信息
 		$skuService = make('app/service/product/SkuService');
@@ -103,11 +116,35 @@ class OrderService extends Base
 		make('app/service/order/ProductAttributeService')->insert($insert);
 
 		$insert = [];
-		foreach ($addressList as $value) {
-			$insert[] = [
-
-			];
-		}
+		$insert[] = [
+			'order_id' => $orderId,
+			'type' => 0,
+			'first_name' => $shippingAddress['first_name'],
+			'last_name' => $shippingAddress['last_name'],
+			'country_code2' => $shippingAddress['country_code2'],
+			'zone_id' => $shippingAddress['zone_id'],
+			'state' => $shippingAddress['state'],
+			'city' => $shippingAddress['city'],
+			'address1' => $shippingAddress['address1'],
+			'address2' => $shippingAddress['address2'],
+			'postcode' => $shippingAddress['postcode'],
+			'tax_number' => $shippingAddress['tax_number'],
+		];
+		$insert[] = [
+			'order_id' => $orderId,
+			'type' => 1,
+			'first_name' => $billingAddress['first_name'],
+			'last_name' => $billingAddress['last_name'],
+			'country_code2' => $billingAddress['country_code2'],
+			'zone_id' => $billingAddress['zone_id'],
+			'state' => $billingAddress['state'],
+			'city' => $billingAddress['city'],
+			'address1' => $billingAddress['address1'],
+			'address2' => $billingAddress['address2'],
+			'postcode' => $billingAddress['postcode'],
+			'tax_number' => $billingAddress['tax_number'],
+		];
+		make('app/service/order/AddressService')->insert($insert);
 
 		$this->commit();
 		return $orderId;
