@@ -156,7 +156,7 @@
 						<?php } else { ?>
 						<li class="item-image<?php echo count($value)==1||in_array($vv, $skuAttrSelect)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>">
 							<div class="attv-image tcell">
-								<img data-src="<?php echo $info['attvImage'][$vv];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+								<img data-src="<?php echo $info['attvImage'][$vv]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 							</div>
 						</li>
 						<?php } ?>

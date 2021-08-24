@@ -67,7 +67,7 @@ class CheckoutController extends Controller
 		$this->assign('skuId', $skuId);
 		$this->assign('quantity', $quantity);
 		$this->assign('error', $error ?? '');
-		$this->assign('_title', 'Checkout - '.site()->getName());
+		$this->assign('_title', 'Checkout, Place Order - '.site()->getName());
 
 		$this->view();
 	}
@@ -146,7 +146,7 @@ class CheckoutController extends Controller
 			$insuranceFee = $orderService->getInsurance($info['total']);
 			$list[] = [
 				'type' => 3,
-				'name' => 'Shipping Guarantee:',
+				'name' => 'Shipping Guarantee',
 				'value' => $insuranceFee,
 				'value_format' => $symbol.$insuranceFee,
 			];
@@ -232,6 +232,18 @@ class CheckoutController extends Controller
 		html()->addCss();
 		html()->addJs();
 
+		$orderId = (int)iget('id');
+		$error = '';
+		if (empty($orderId)) {
+			$error = 'Sorry, The order id is required.';
+		}
+
+		if (empty($error)) {
+			$orderInfo = make('app/service/order/OrderService')->getInfo($orderId);
+			$this->assign('orderInfo', $orderInfo);
+		}
+
+		$this->assign('error', $error);
 		$this->assign('_title', 'Checkout, Pay Order - '.site()->getName());
 		$this->view();
 	}

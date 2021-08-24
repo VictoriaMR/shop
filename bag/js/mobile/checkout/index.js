@@ -206,8 +206,8 @@ const CHECKOUTINDEX = {
 								<p class="clear"></p>\
 							</div>';
 				}
-				html += '<div class="line"></div>\
-							<div class="row mt10 f600">\
+				html += '<div class="line mt12"></div>\
+							<div class="row mt12 f600">\
 								<p class="name left">'+res.data.name+':</p>\
 								<p class="value f600 right">'+res.data.value_format+'</p>\
 								<p class="clear"></p>\

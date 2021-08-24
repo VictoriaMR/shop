@@ -83,4 +83,11 @@ class LanguageService extends Base
 		}
 		return $this->info['currency'] ?? '';
 	}
+
+	public function getSymbolByCurrency($currency)
+	{
+		$list = $this->getListCache();
+		$list = array_column($list, 'symbol', 'currency');
+		return $list[$currency] ?? '';
+	}
 }

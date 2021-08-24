@@ -70,6 +70,7 @@ class OrderService extends Base
 						'attr_name' => $info['attr'][$k],
 						'attv_id' => $vv,
 						'attv_name' => $info['attv'][$vv],
+						'attach_id' => empty($info['attvImage'][$vv]) ? 0 : $info['attvImage'][$vv]['attach_id'],
 					];
 				}
 			}
@@ -169,5 +170,83 @@ class OrderService extends Base
 			return 2.99;
 		}
 		return 1.99;
+	}
+
+	public function getInfo($orderId)
+	{
+		$where = [
+			'order_id' => $orderId,
+			'mem_id' => $this->userId(),
+			'is_delete' => 0
+		];
+		$data = [];
+		$temp = $this->loadData($where);
+		if (empty($temp)) {
+			return false;
+		}
+		$data['base'] = $temp;
+		//递送地址 账单地址
+		$temp = make('app/service/order/AddressService')->getListData(['order_id'=>$orderId]);
+		$temp = array_column($temp, null, 'type');
+		$data['shipping_address'] = $temp[0];
+		$data['billing_address'] = $temp[1];
+		//产品
+		$temp = make('app/service/order/ProductService')->getListData(['order_id'=>$orderId]);
+		$data['product'] = $temp;
+		$ids = array_column($temp, 'order_product_id');
+		//产品属性
+		$temp = make('app/service/order/ProductAttributeService')->getListData(['order_product_id'=>['in', $ids]]);
+		//sku图片
+		$ids = array_column($data['product'], 'attach_id');
+		$ids = array_unique(array_merge($ids, array_column($temp, 'attach_id')));
+		$imageArr = make('app/service/AttachmentService')->getList(['attach_id'=>['in', $ids]]);
+		$imageArr = array_column($imageArr, null, 'attach_id');
+		$orderProductOriginPrice = 0;
+		$symbol = make('app/service/LanguageService')->getSymbolByCurrency($data['base']['currency']);
+		foreach ($data['product'] as $key => $value) {
+			$value['attr'] = [];
+			foreach ($temp as $ak => $av) {
+				if ($value['order_product_id'] == $av['order_product_id']) {
+					$av['image'] = empty($imageArr[$av['attach_id']]) ? '' : $imageArr[$av['attach_id']]['url'];
+					$value['attr'][] = $av;
+				}
+			}
+			$value['price_format'] = $symbol.$value['price'];
+			$value['original_price_format'] = $symbol.$value['original_price'];
+			$value['image'] = empty($imageArr[$value['attach_id']]) ? '' : $imageArr[$value['attach_id']]['url'];
+			$data['product'][$key] = $value;
+			$orderProductOriginPrice += $value['quantity']*$value['original_price'];
+		}
+		$temp = [];
+		$orderProductOriginPrice = sprintf('%.2f', $orderProductOriginPrice);
+		$data['base']['order_total_format'] = $symbol.$data['base']['order_total'];
+		$temp[] = [
+			'type' => 0,
+			'name' => 'Product Original Total',
+			'value' => $orderProductOriginPrice,
+			'value_format' => $symbol.$orderProductOriginPrice,
+		];
+		$temp[] = [
+			'type' => 1,
+			'name' => 'Product Total',
+			'value' => $data['base']['product_total'],
+			'value_format' => $symbol.$data['base']['product_total'],
+		];
+		$temp[] = [
+			'type' => 2,
+			'name' => 'Shipping Fee',
+			'value' => $data['base']['shipping_fee'],
+			'value_format' => $symbol.$data['base']['shipping_fee'],
+		];
+		if ($data['base']['insurance_free'] > 0) {
+			$temp[] = [
+				'type' => 3,
+				'name' => 'Shipping Guarantee',
+				'value' => $data['base']['insurance_free'],
+				'value_format' => $symbol.$data['base']['insurance_free'],
+			];	
+		}
+		$data['fee_list'] = $temp;
+		return $data;
 	}
 }

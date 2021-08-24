@@ -60,7 +60,7 @@ class SpuService extends Base
 
 		foreach ($info['attvImage'] as $key => $value) {
 			if (empty($value)) continue;
-			$info['attvImage'][$key] = $imageArr[$value]['url'] ?? '';
+			$info['attvImage'][$key] = $imageArr[$value] ?? [];
 		}
 
 		foreach ($info['sku'] as $key => $value) {

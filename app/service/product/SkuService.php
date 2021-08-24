@@ -43,7 +43,7 @@ class SkuService extends Base
 		$info['image'] =  $imageArr[$info['attach_id']]['url'] ?? '';
 		foreach ($info['attvImage'] as $key => $value) {
 			if (empty($value)) continue;
-			$info['attvImage'][$key] = $imageArr[$value]['url'] ?? '';
+			$info['attvImage'][$key] = $imageArr[$value] ?? [];
 		}
 		//获取语言
 		$info['name'] = make('app/service/product/LanguageService')->loadData(['spu_id'=>$info['spu_id'], 'lan_id'=>['in', [1, $lanId]]], 'name', ['lan_id'=>'desc'])['name'] ?? '';

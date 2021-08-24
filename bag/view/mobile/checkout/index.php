@@ -33,7 +33,7 @@
 		<div class="bg-f info-content">
 			<div class="address">
 				<div class="item shipping-address-item relative" data-id="<?php echo $shipAddress['address_id'] ?? 0;?>">
-					<p class="f16 f600 title">Shipping Address</p>
+					<p class="f14 f700 title">Shipping Address</p>
 					<?php if (empty($shipAddress)) {?>
 					<a href="javascript:;" class="empty-address address-info-content mt6">
 						<div class="tcell f14 tl">
@@ -70,7 +70,7 @@
 				<?php }?>
 				<?php if (!empty($billAddress)) {?>
 				<div class="item billing-address-item relative mt12<?php echo $shipAddress['address_id'] == $billAddress['address_id'] ? ' hide' : '';?>" data-id="<?php echo $billAddress['address_id'];?>">
-					<p class="f16 f600 title">Billing Address</p>
+					<p class="f14 f700 title">Billing Address</p>
 					<a href="javascript:;" class="address-info-content mt6">
 						<div class="address-info">
 							<p><?php echo trim($billAddress['first_name'].' '.$billAddress['last_name']);?></p>
@@ -92,7 +92,7 @@
 			</div>
 		</div>
 		<div class="info-content bg-f shipping-method-content">
-			<p class="f16 f600 title">Shipping Method</p>
+			<p class="f14 f700 title">Shipping Method</p>
 			<?php if (empty($logisticsList)){?>
 			<div class="empty-tips f14 mt12">
 				<p>Please set your address first!</p>
@@ -102,7 +102,7 @@
 				<?php foreach ($logisticsList as $key => $value){?>
 				<div class="item">
 					<span class="iconfont icon-<?php echo $key==0?'yuanxingxuanzhongfill':'yuanxingweixuanzhong';?>"></span>
-					<div class="row f16 f600">
+					<div class="row f14 f700">
 						<span><?php echo $value['name'];?></span>
 						<span class="ml12"><?php echo $value['fee'];?></span>
 					</div>
@@ -131,7 +131,7 @@
 			<?php }?>
 		</div>
 		<div class="info-content bg-f">
-			<p class="f16 f600 title">Shipping Bag</p>
+			<p class="f14 f700 title">Shipping Bag</p>
 			<ul class="product-list">
 				<?php foreach($skuList as $key => $value) {?>
 				<li class="item" data-id="<?php echo $key;?>">
@@ -174,25 +174,8 @@
 			</ul>
 		</div>
 		<div class="info-content bg-f order-summary-content">
-			<p class="f16 f600 title">Order Summary</p>
-			<div class="order-content">
-				<div class="row">
-					<p class="name left">Product Total:</p>
-					<p class="value f600 right">$86.7</p>
-					<p class="clear"></p>
-				</div>
-				<div class="row">
-					<p class="name left">Product Total:</p>
-					<p class="value f600 right">$86.7</p>
-					<p class="clear"></p>
-				</div>
-				<div class="line"></div>
-				<div class="row mt10 f600">
-					<p class="name left">Product Total:</p>
-					<p class="value f600 right">$86.7</p>
-					<p class="clear"></p>
-				</div>
-			</div>
+			<p class="f14 f700 title">Order Summary</p>
+			<div class="order-content"></div>
 			<button type="button" class="btn btn-black w100 mt20" id="place-order-btn<?php echo empty($shipAddress) ? ' disabled':'';?>" <?php echo empty($shipAddress) ? 'disabled="disabled"':'';?>>PLACE ORDER</button>
 		</div>
 	</form>
@@ -222,9 +205,7 @@
 		<div class="mt10 tr">
 			<button type="button" class="btn24 btn-black add-new-address">New Address</button>
 		</div>
-		<div class="address-list" data-page="0" data-size="10">
-
-		</div>
+		<div class="address-list" data-page="0" data-size="10"></div>
 	</div>
 </div>
 <script type="text/javascript">
