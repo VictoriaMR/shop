@@ -7,6 +7,7 @@
 				<span class="iconfont icon-gouwuche"></span>
 			</a>
 		</div>
+		<?php if (empty($error)) {?>
 		<div class="header-nav">
 			<span class="f600 c40">Shipping Address</span>
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
@@ -14,6 +15,7 @@
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
 			<span class="f600 c40">Payment Info</span>
 		</div>
+		<?php } ?>
 	</div>
 	<?php if (empty($error)) {?>
 	<div class="bg-f info-content">
@@ -53,7 +55,6 @@
 		<div class="item">
 			<p class="title">
 				<span class="f14 f700">Shipping Address</span>
-				<button class="btn24 btn-black right">Edit</button>
 			</p>
 			<a href="javascript:;" class="address-info-content mt6">
 				<div class="address-info">
@@ -73,7 +74,7 @@
 		<div class="item">
 			<p class="title">
 				<span class="f14 f700">Billing Address</span>
-				<button class="btn24 btn-black right">Edit</button>
+				<button class="btn24 btn-black right address-edit-btn" data-order_id="<?php echo $orderInfo['base']['order_id'];?>">Edit</button>
 			</p>
 			<a href="javascript:;" class="address-info-content mt6">
 				<div class="address-info">
@@ -132,6 +133,12 @@
 			<?php } ?>
 		</ul>
 	</div>
+	<?php $this->load('common/address');?>
+	<script type="text/javascript">
+	$(function(){
+		CHECKOUTPAYORDER.init();
+	});
+	</script>
 	<?php } else {?>
 	<div class="info-content bg-f tc">
 		<p class="f14"><?php echo $error;?></p>

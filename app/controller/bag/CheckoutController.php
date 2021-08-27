@@ -230,16 +230,20 @@ class CheckoutController extends Controller
 	public function payOrder()
 	{
 		html()->addCss();
+		html()->addCss('common/address');
 		html()->addJs();
+		html()->addJs('common/address');
 
 		$orderId = (int)iget('id');
 		$error = '';
 		if (empty($orderId)) {
-			$error = 'Sorry, The order id is required.';
+			$error = 'Sorry, we don\'t find any order info here. Please check your order list or try agin later';
 		}
-
 		if (empty($error)) {
 			$orderInfo = make('app/service/order/OrderService')->getInfo($orderId);
+			if (empty($orderInfo)) {
+				$error = 'Sorry, we don\'t find any order info here. Please check your order list or try agin later';
+			}
 			$this->assign('orderInfo', $orderInfo);
 		}
 

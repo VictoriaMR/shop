@@ -106,6 +106,10 @@ const ADDRESSBOOK = {
 				return false;
 			}
 			TIPS.loading($('#address-book .dialog'));
+			if (_this.saveCallback) {
+				_this.saveCallback($('#address-book form').serializeArray());
+				return;
+			}
 			$.post(URI+'userInfo/editAddress', $('#address-book form').serializeArray(), function(res) {
 				if (res.code === '200') {
 					TIPS.success(res.message);
@@ -116,7 +120,7 @@ const ADDRESSBOOK = {
 					} else {
 						setTimeout(function(){
 							window.location.reload();
-						}, 500);
+						}, 200);
 					}
 				} else {
 					TIPS.loadout($('#address-book .dialog'));
@@ -182,6 +186,9 @@ const ADDRESSBOOK = {
 		} else {
 			data.phone = data.phone.split(' ')[1];
 		}
+		if (typeof data.default === 'undefined') {
+			$('#address-book form .default-btn').hide();
+		}
 		for (const i in data) {
 			if (typeof data[i] == 'undefined') data[i] = '';
 			$('#address-book form [name="'+i+'"]').attr('value', data[i]);
@@ -203,7 +210,7 @@ const ADDRESSBOOK = {
 					break;
 			}
 		}
-		if (data.address_id) {
+		if (data.first_name) {
 			$('#address-book .list-title .title').text('EDIT ADDRESS');
 		} else {
 			$('#address-book .list-title .title').text('ADD ADDRESS');
@@ -243,5 +250,8 @@ const ADDRESSBOOK = {
 	},
 	setCallback: function(callback) {
 		this.callback = callback;
-	}
+	},
+	setSaveCallback: function(callback) {
+		this.saveCallback = callback;
+	},
 };
