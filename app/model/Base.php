@@ -11,6 +11,7 @@ class Base
 	protected $_memId;
 	protected $_siteId;
 	protected $_lanId;
+	protected $_currencyId;
 	protected $_addTime;
 	protected $_updateTime;
 
@@ -88,6 +89,14 @@ class Base
 			$this->_lanId = lanId();
 		}
 		return $this->_lanId;
+	}
+
+	public function currencyId()
+	{
+		if (!$this->_currencyId) {
+			$this->_currencyId = currencyId();
+		}
+		return $this->_currencyId;
 	}
 
 	public function __call($func, $arg)

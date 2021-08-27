@@ -3,13 +3,13 @@
 namespace app\service;
 use app\service\Base;
 
-class LanguageService extends Base
+class CurrencyService extends Base
 {	
-	const CACHE_KEY = 'language:';
+	const CACHE_KEY = 'currency:';
 
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/Language');
+		$this->baseModel = make('app/model/Currency');
 	}
 
 	public function getInfo($code)

@@ -37,7 +37,7 @@ final class Query
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) {
-					if (!empty($value[1])) {
+					if (isset($value[1])) {
 						$this->_where[] = [$key, $value[0], $value[1]];
 					}
 				} else {
@@ -157,7 +157,7 @@ final class Query
 				}
 			}
 			foreach ($value as $k => $v) {
-				$value[$k] = "'".addslashes($v)."'";
+				$value[$k] = (is_numeric($v) ? (int)$v : "'".addslashes($v)."'");
 			}
 			return implode(',', $value);
 		}, $data);
@@ -165,7 +165,7 @@ final class Query
 		return $this->getQuery($sql);
 	}
 
-	public function update(array $data=[])
+	public function update(array $data=[], $returnSql=false)
 	{
 		if (empty($data)) return false;
 		$tempArr = [];
@@ -175,13 +175,16 @@ final class Query
 			}
 		}
 		foreach ($data as $key => $value) {
-			$tempArr[] = '`'.$key.'`'.'='."'".addslashes($value)."'";
+			$tempArr[] = '`'.$key.'`'.' = '.(is_numeric($value) ? (int)$value : "'".addslashes($value)."'");
 		}
 		$whereString = $this->analyzeWhere();
 		if (!empty($whereString)){
 			$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, implode(',', $tempArr), $whereString);
 		} else{
 			$sql = sprintf('UPDATE `%s` SET %s', $this->_table, implode(',', $tempArr));
+		}
+		if ($returnSql) {
+			return $sql;
 		}
 		return $this->getQuery($sql);
 	}
@@ -190,7 +193,7 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.'='.$value.' + '.$num, $whereString);
+		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.' = '.$value.' + '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -198,7 +201,7 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.'='.$value.' - '.$num, $whereString);
+		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.' = '.$value.' - '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -269,18 +272,18 @@ final class Query
 				if ($operator == 'IN' || $operator == 'NOT IN') {
 					$valueStr = '';
 					foreach ($value as $v) {
-						if (is_string($v)) {
-							$valueStr .= "'".addslashes($v)."',";
-						} else {
+						if (is_numeric($v)) {
 							$valueStr .= (int)$v;
 							$valueStr .= ',';
+						} else {
+							$valueStr .= "'".addslashes($v)."',";
 						}
 					}
 
-					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $fv, $operator, rtrim($valueStr, ','));
+					$tempStr .= sprintf('%s `%s` %s (%s)', $fk == 0 ? '' : $type, $fv, $operator, rtrim($valueStr, ','));
 				} else {
-					$value = is_string($value) ? "'".addslashes($value)."'" : (int) $value;
-					$tempStr .= sprintf('%s %s %s %s', $fk == 0 ? '' : $type, $fv, $operator, $value);
+					$value = is_numeric($value) ? (int) $value : "'".addslashes($value)."'";
+					$tempStr .= sprintf('%s `%s` %s %s', $fk == 0 ? '' : $type, $fv, $operator, $value);
 				}
 			}
 			$whereString .= $start.$tempStr.$end;
@@ -312,7 +315,6 @@ final class Query
 
 	private function clear()
 	{
-		$this->_table = '';
 		$this->_columns = '';
 		$this->_where = [];
 		$this->_groupBy = '';
@@ -334,5 +336,76 @@ final class Query
 	public function commit()
 	{
 		return $this->getQuery('commit');
+	}
+
+	public function move($where, $type='top')
+	{
+		$list = $this->orderBy('sort', 'asc')->get();
+		if (empty($list)) {
+			return false;
+		}
+		//组装成$where条件数据
+		$tempList = [];
+		$whereKeyArr = array_keys($where);
+		foreach ($list as $value) {
+			$uniqueKey = '';
+			foreach ($whereKeyArr as $wv) {
+				$uniqueKey .= $value[$wv].'-';
+			}
+			$uniqueKey = trim($uniqueKey, '-');
+			if (!isset($tempList[$uniqueKey])) {
+				$tempList[$uniqueKey] = 0;
+			}
+		}
+		$whereKey = implode('-', $where);
+		if (!isset($tempList[$whereKey])) {
+			return false;
+		}
+		switch ($type) {
+			case 'top'://顶部
+				unset($tempList[$whereKey]);
+				$tempList = [$whereKey=>0] + $tempList;
+				break;
+			case 'end'://底部
+				unset($tempList[$whereKey]);
+				$tempList = $tempList + [$whereKey=>0];
+				break;
+			case 'up'://向上
+				$tempList = array_keys($tempList);
+				$index = array_search($whereKey, $tempList);
+				if ($index > 0) {
+					$temp = $tempList[$index-1];
+					$tempList[$index-1] = $whereKey;
+					$tempList[$index] = $temp;
+				}
+				$tempList = array_flip($tempList);
+				break;
+			case 'down'://向下
+				$tempList = array_keys($tempList);
+				$index = array_search($whereKey, $tempList);
+				if ($index < count($tempList) - 1) {
+					$temp = $tempList[$index+1];
+					$tempList[$index+1] = $whereKey;
+					$tempList[$index] = $temp;
+				}
+				$tempList = array_flip($tempList);
+				break;
+		}
+		// 重新排序生成批量sql
+		$index = 0;
+		$sql = [];
+		$sql = sprintf('UPDATE `%s` SET `sort` = CASE', $this->_table);
+		foreach ($tempList as $key => $value) {
+			$tempArr = explode('-', $key);
+			$where = [];
+			foreach ($tempArr as $key => $value) {
+				$where[$whereKeyArr[$key]] = $value;
+			}
+			$this->clear();
+			$sql .= sprintf(' WHEN %s THEN %d', $this->where($where)->analyzeWhere(), $index);
+			$index ++;
+		}
+		$sql .= ' END';
+		return $this->getQuery($sql);
 	}
 }

@@ -159,15 +159,14 @@ function getUniqueName(){
 	return str_replace([':', ' ', '-', '0.'], '', now().$arr[0]);
 }
 function lanId(){
-	$lanId = session()->get('site_language_id');
-	if (empty($lanId)) {
-		$lanId = defined('APP_LANGUAGE') ? APP_LANGUAGE : 2;
-	}
-	return $lanId;
+	return session()->get('site_language_id', 'en');
 }
 function siteId(){
 	return APP_SITE_ID;
 }
 function userId(){
 	return session()->get(APP_TEMPLATE_TYPE.'_info.mem_id', 0);
+}
+function currencyId(){
+	return session()->get('site_currency_id', 'USD');
 }

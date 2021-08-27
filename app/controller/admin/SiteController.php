@@ -28,18 +28,24 @@ class SiteController extends Controller
 		html()->addJs();
 		$page = iget('page', 1);
 		$size = iget('size', 20);
-		$total = make('app/service/SiteService')->getCountData();
+		$siteService = make('app/service/site/SiteService');
+		$where = ['site_id' => ['>', 0]];
+		$total = $siteService->getCountData($where);
 		if ($total > 0) {
-			$list = make('app/service/SiteService')->getListData([], '*', $page, $size);
+			$list = $siteService->getListData($where, 'site_id,name,domain,title,remark,add_time', $page, $size);
+			//获取站点对应的语言和货币
+			$languageService = make('app/service/site/LanguageRelationService');
+			$currencyService = make('app/service/site/CurrencyRelationService');
+			foreach ($list as $key => $value) {
+				$value['language'] = $languageService->getListCache($value['site_id']);
+				$value['currency'] = $currencyService->getListCache($value['site_id']);
+				$list[$key] = $value;
+			}
 		}
-
-		//语言列表
-		$language = make('app/service/LanguageService')->getListCache();
 
 		$this->assign('total', $total);
 		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
-		$this->assign('language', $language);
 		$this->view();
 	}
 

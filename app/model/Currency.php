@@ -3,8 +3,8 @@
 namespace app\model;
 use app\model\Base;
 
-class Language extends Base
+class Currency extends Base
 {
-	protected $_table = 'language';
+	protected $_table = 'currency';
 	protected $_primaryKey = 'code';
 }
