@@ -43,17 +43,6 @@ class Category extends Base
 		$this->view();
 	}
 
-	protected function transfer()
-	{
-		$trCode = ipost('tr_code');
-		$name = ipost('name');
-		if (empty($trCode) || empty($name)) {
-			$this->error('参数错误');
-		}
-		$rst = make('app/service/Translate')->getTranslate($name, $trCode);
-		$this->success($rst);
-	}
-
 	protected function getCateInfo()
 	{
 		$cateId = (int)ipost('cate_id');

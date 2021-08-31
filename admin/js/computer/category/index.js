@@ -9,7 +9,7 @@ const CATEGORYLIST = {
 		//新增修改
 		$('.btn.modify').on('click', function(){
 			var btnobj = $(this);
-			var id = btnobj.data('id');
+			var id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
 			CATEGORYLIST.loadData(id, function(data){
 				CATEGORYLIST.initData(data);
@@ -21,7 +21,7 @@ const CATEGORYLIST = {
 		$('.btn.add').on('click', function(event){
 			event.stopPropagation();
 			var btnobj = $(this);
-			var id = btnobj.data('id');
+			var id = btnobj.parents('.item').data('id');
 			var data = {parent_id: id};
 			CATEGORYLIST.initData(data);
 			$('#dealbox').dealboxShow();
@@ -37,7 +37,7 @@ const CATEGORYLIST = {
 		//多语言配置
 		$('.glyphicon-globe').on('click', function(){
 			const _thisobj = $(this);
-			const id = _thisobj.data('id');
+			const id = _thisobj.parents('.item').data('id');
 			post(URI+'category', {opn: 'getCateLanguage', cate_id: id}, function(data){
 				const obj = $('#dealbox-language');
 				obj.find('input[name="cate_id"]').val(id);
@@ -143,7 +143,7 @@ const CATEGORYLIST = {
 		//删除子分类
 		$('.btn.delete').on('click', function(){
 			var btnobj = $(this);
-			var id = btnobj.data('id');
+			var id = btnobj.parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
 				obj.button('loading');
 				post(URI+'category', {opn: 'deleteCategory', cate_id: id}, function(){

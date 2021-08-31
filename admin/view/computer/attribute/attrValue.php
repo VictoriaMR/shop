@@ -1,15 +1,5 @@
-<div class="container-fluid" id="category-list">
-	<div class="row-item">
-		<div class="left">
-			<button class="btn btn-primary update-btn" type="button" style="width: 100px; margin-right: 20px;"><i class="glyphicon glyphicon-asterisk"></i> 更新数据</button>
-		</div>
-		<div class="right">
-			<button class="btn btn-info sort-btn disabled" type="button" style="width: 150px; margin-right: 20px;"><i class="glyphicon glyphicon-asterisk"></i> 保存排序</button>
-			<button class="btn btn-success modify" data-id="0" type="button" style="width: 150px;"><i class="glyphicon glyphicon-plus"></i> 添加类目</button>
-		</div>
-		<div class="clear"></div>
-	</div>
-	<table class="table table-hover mt20" id="data-list">
+<div class="container-fluid" id="attribute-list">
+	<table class="table table-hover mt10">
 		<tbody>
 			<tr>
 				<th class="col-md-1">ID</th>
@@ -25,10 +15,10 @@
 			</tr>
 			<?php } else {?>
 			<?php foreach ($list as $key => $value) { ?>
-			<tr class="item<?php echo $value['level']==0 ? ' info' : '';?>" data-lev="<?php echo $value['level'];?>" data-id="<?php echo $value['cate_id'];?>" data-pid="<?php echo $value['parent_id'];?>">
-				<td class="col-md-1"><?php echo $value['cate_id'];?></td>
+			<tr class="item" data-id="<?php echo $value['attv_id'];?>">
+				<td class="col-md-1"><?php echo $value['attv_id'];?></td>
 				<td class="col-md-3">
-					<div class="left text-content" <?php echo $value['level'] ? 'style="padding-left:'.($value['level']*20).'px;"' : '';?>>
+					<div class="left text-content">
 						<span class="glyphicon glyphicon-globe"></span>
 						&nbsp;
 						<span class="cate_name"><?php echo $value['name'];?></span>
@@ -45,7 +35,6 @@
 				</td>
 				<td class="col-md-2">
 					<button class="btn btn-primary btn-xs ml4 modify"><span class="glyphicon glyphicon-edit"></span>&nbsp;修改</button>
-					<button class="btn btn-success btn-xs ml4 add"><span class="glyphicon glyphicon-plus"></span>&nbsp;增加</button>
 					<button class="btn btn-danger btn-xs ml4 delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
 				</td>
 			</tr>
@@ -60,10 +49,9 @@
 	<div class="centerShow">
 		<form class="form-horizontal">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
-			<div class="f24 dealbox-title">品类管理</div>
-			<input type="hidden" name="cate_id" value="0">
-			<input type="hidden" name="parent_id" value="0">
-			<input type="hidden" name="opn" value="editInfo">
+			<div class="f24 dealbox-title">属性管理</div>
+			<input type="hidden" name="id" value="0">
+			<input type="hidden" name="opn" value="editAttvInfo">
 			<div class="input-group">
 				<div class="input-group-addon"><span>名称：</span></div>
 				<input type="text" class="form-control" name="name" autocomplete="off">
@@ -79,9 +67,9 @@
 		<form class="form-horizontal">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">多语言配置</div>
-			<input type="hidden" name="cate_id" value="0">
-			<input type="hidden" name="cate_name" value="">
-			<input type="hidden" name="opn" value="editLanguage">
+			<input type="hidden" name="id" value="0">
+			<input type="hidden" name="name" value="">
+			<input type="hidden" name="opn" value="editAttvLanguage">
 			<table class="table table-bordered table-hover">
 				<tbody></tbody>
 			</table>
@@ -91,6 +79,6 @@
 </div>
 <script type="text/javascript">
 $(function(){
-	CATEGORYLIST.init();
+	ATTRIBUTE.init();
 });
 </script>
