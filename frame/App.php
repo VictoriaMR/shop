@@ -23,7 +23,7 @@ class App
 		//路由解析
 		$info = router()->analyze()->getRoute();
 		//执行方法
-		$class = 'app\\controller\\'.$info['class'].'\\'.$info['path'].'Controller';
+		$class = 'app\\controller\\'.$info['class'].'\\'.$info['path'].'';
 
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
@@ -33,7 +33,7 @@ class App
 		} else {
 			throw new \Exception($class.' '.$info['func'].' was not exist!', 1);
 		}
-		self::runOver();
+		// self::runOver();
 	}
 
 	private static function autoload($abstract, $params=null) 

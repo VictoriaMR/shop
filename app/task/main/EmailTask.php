@@ -19,14 +19,14 @@ class EmailTask extends TaskDriver
 
 	public function run()
 	{
-		$emailService = make('app/service/email/EmailService');
-		$list = $emailService->getListData(['status'=>0], 'email_id');
+		$email = make('app/service/email/Email');
+		$list = $email->getListData(['status'=>0], 'email_id');
 		if (empty($list)) {
 			$this->taskSleep(300);
 			return false;
 		} else {
 			foreach ($list as $value) {
-				$emailService->sendEmailById($value['email_id']);
+				$email->sendEmailById($value['email_id']);
 			}
 		}
 		return true;

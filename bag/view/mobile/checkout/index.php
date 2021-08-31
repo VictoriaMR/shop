@@ -47,7 +47,7 @@
 					<a href="javascript:;" class="address-info-content mt6">
 						<div class="address-info">
 							<p><?php echo trim($shipAddress['first_name'].' '.$shipAddress['last_name']);?></p>
-							<p><?php echo $shipAddress['city'].' '.($shipAddress['state'] ? $shipAddress['state'].' ' : '').make('app/service/address/CountryService')->getName($shipAddress['country_code2']).', '.$shipAddress['postcode'];?></p>
+							<p><?php echo $shipAddress['city'].' '.($shipAddress['state'] ? $shipAddress['state'].' ' : '').make('app/service/address/Country')->getName($shipAddress['country_code2']).', '.$shipAddress['postcode'];?></p>
 							<p><?php echo trim($shipAddress['address1'].' '.$shipAddress['address2']);?></p>
 							<p><?php echo $shipAddress['phone'];?></p>
 							<?php if (!empty($shipAddress['tax_number'])){?>
@@ -74,7 +74,7 @@
 					<a href="javascript:;" class="address-info-content mt6">
 						<div class="address-info">
 							<p><?php echo trim($billAddress['first_name'].' '.$billAddress['last_name']);?></p>
-							<p><?php echo $billAddress['city'].' '.($billAddress['state'] ? $billAddress['state'].' ' : '').make('app/service/address/CountryService')->getName($billAddress['country_code2']).', '.$billAddress['postcode'];?></p>
+							<p><?php echo $billAddress['city'].' '.($billAddress['state'] ? $billAddress['state'].' ' : '').make('app/service/address/Country')->getName($billAddress['country_code2']).', '.$billAddress['postcode'];?></p>
 							<p><?php echo trim($billAddress['address1'].' '.$billAddress['address2']);?></p>
 							<p><?php echo $billAddress['phone'];?></p>
 							<?php if (!empty($billAddress['tax_number'])){?>

@@ -1,4 +1,4 @@
-<?php $recommendList = make('app/service/product/SpuService')->getRecommend();?>
+<?php $recommendList = make('app/service/product/Spu')->getRecommend();?>
 <?php if (!empty($recommendList)) {?>
 <div id="recommend-page">
 	<div class="list-title flex layer">

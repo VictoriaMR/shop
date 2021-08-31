@@ -19,7 +19,7 @@ class QueueTask extends TaskDriver
 
 	public function run()
 	{
-		$service = make('app/service/QueueService');
+		$service = make('app/service/Queue');
 		if ($service->count()) {
 			$data = $service->getInfo();
 			$func = $data['method'];

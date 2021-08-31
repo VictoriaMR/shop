@@ -19,8 +19,8 @@ class CompressStaticTask extends TaskDriver
 
 	public function run()
 	{
-		$systemStaticFileService = make('app/service/SystemStaticFile');
-		$staticList = $systemStaticFileService->getListData(['status'=>0]);
+		$systemStaticFile = make('app/service/SystemStaticFile');
+		$staticList = $systemStaticFile->getListData(['status'=>0]);
 		if (!empty($staticList)) {
 			$urlArr = [
 				'js' => 'https://javascript-minifier.com/raw',
@@ -32,7 +32,7 @@ class CompressStaticTask extends TaskDriver
 				if (is_file($file)) {
 					$source = file_get_contents($file);
 					if (empty($source)) {
-						$systemStaticFileService->updateData($value['static_id'], ['status'=>1]);
+						$systemStaticFile->updateData($value['static_id'], ['status'=>1]);
 						continue;
 					}
 					switch($value['type']) {
@@ -49,7 +49,7 @@ class CompressStaticTask extends TaskDriver
 					}
 					if (!empty($reponse)) {
 						file_put_contents($file, str_replace(PHP_EOL, '', $reponse));
-						$systemStaticFileService->updateData($value['static_id'], ['status'=>1]);
+						$systemStaticFile->updateData($value['static_id'], ['status'=>1]);
 					}
 				}
 			}

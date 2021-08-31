@@ -31,7 +31,7 @@
 					<?php echo implode(' | ', array_column($value['currency'], 'name'));?>
 				</td>
 				<td class="col-md-2">
-					<button class="btn btn-primary btn-xs modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
+					<a href="<?php echo url('site/siteInfo', ['id'=>$value['site_id']]);?>" class="btn btn-primary btn-xs mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 配置</a>
 					<button class="btn btn-danger btn-xs delete mt2" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>
 				</td>
 			</tr>

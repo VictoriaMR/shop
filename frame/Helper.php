@@ -66,7 +66,7 @@ function db($db=null){
 	return \App::make('frame/Connection')->setDb($db);
 }
 function site(){
-	return make('app/service/SiteService');
+	return \App::make('app/service/site/Site');
 }
 function url($url=null, $param=null, $domain=null) {
     return router()->buildUrl($url, $param, $domain);
@@ -105,7 +105,7 @@ function now($time=null){
 	return date('Y-m-d H:i:s', $time ? $time : time());
 }
 function appT($text){
-	return make('App/Services/TranslateService')->getText($text);
+	return \App::make('app/service/Translate')->getText($text);
 }
 function utf8len($string){
 	return mb_strlen($string, 'UTF-8');
@@ -153,6 +153,9 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	    $len--;
 	}
 	return $rStr;
+}
+function strTrim($str){
+	return trim($str, " \t\n\r\0\x0B ");
 }
 function getUniqueName(){
 	$arr = explode(' ', microtime());
