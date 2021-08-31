@@ -1,13 +1,13 @@
 <?php 
 
-namespace app\service\product;
+namespace app\service\description;
 use app\service\Base;
 
 class Description extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/product/Description');
+		$this->baseModel = make('app/model/description/Description');
 	}
 
 	public function addNotExist($name)

@@ -100,8 +100,18 @@
 									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('category');?>"></a>
 								</li>
 								<li data-src="<?php echo url('product');?>" class="selected">
-									<span class="glyphicon glyphicon-th-list"></span>
+									<span class="glyphicon glyphicon-th-large"></span>
 									<span class="ml6">产品管理</span>
+									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('product');?>"></a>
+								</li>
+								<li data-src="<?php echo url('attribute');?>" class="selected">
+									<span class="glyphicon glyphicon-th-list"></span>
+									<span class="ml6">属性管理</span>
+									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('product');?>"></a>
+								</li>
+								<li data-src="<?php echo url('description');?>" class="selected">
+									<span class="glyphicon glyphicon-th"></span>
+									<span class="ml6">描述管理</span>
 									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('product');?>"></a>
 								</li>
 							</ul>
