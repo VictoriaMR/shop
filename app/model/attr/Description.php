@@ -1,6 +1,6 @@
 <?php
 
-namespace app\model\description;
+namespace app\model\attr;
 use app\model\Base;
 
 class Description extends Base

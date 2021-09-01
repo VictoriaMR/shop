@@ -1,8 +1,0 @@
-CREATE TABLE `site_static_file` (
-  `static_id` int NOT NULL AUTO_INCREMENT COMMENT '自增ID',
-  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
-  `type` varchar(8) NOT NULL DEFAULT '' COMMENT '类型',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
-  PRIMARY KEY (`static_id`),
-  UNIQUE KEY `IDX_UNI` (`name`,`type`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci

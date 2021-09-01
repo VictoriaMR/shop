@@ -52,4 +52,12 @@ class Language extends Base
 		}
 		return $list;
 	}
+
+	public function getTransList()
+	{
+		$list = $this->getListCache();
+		$list = array_column($list, null, 'code');
+		unset($list['zh']);
+		return $list;
+	}
 }

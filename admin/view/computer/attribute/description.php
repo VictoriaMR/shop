@@ -36,8 +36,8 @@
 			</tr>
 			<?php } else {?>
 			<?php foreach ($list as $key => $value) { ?>
-			<tr class="item" data-id="<?php echo $value['attr_id'];?>">
-				<td class="col-md-1"><?php echo $value['attr_id'];?></td>
+			<tr class="item" data-id="<?php echo $value['desc_id'];?>">
+				<td class="col-md-1"><?php echo $value['desc_id'];?></td>
 				<td class="col-md-3">
 					<div class="left text-content">
 						<span class="glyphicon glyphicon-globe"></span>
@@ -73,10 +73,10 @@
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">属性管理</div>
 			<input type="hidden" name="id" value="0">
-			<input type="hidden" name="opn" value="editAttrInfo">
+			<input type="hidden" name="opn" value="editDescInfo">
 			<div class="input-group">
 				<div class="input-group-addon"><span>名称：</span></div>
-				<input type="text" class="form-control" name="name" autocomplete="off">
+				<textarea type="text" class="form-control" name="name" autocomplete="off" maxlength="255"></textarea>
 			</div>
 			<button type="button" class="btn btn-primary btn-lg w100 save-btn">确认</button>
 		</form>
@@ -90,8 +90,8 @@
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">多语言配置</div>
 			<input type="hidden" name="id" value="0">
-			<input type="hidden" name="name" value="">
-			<input type="hidden" name="opn" value="editAttrLanguage">
+			<input type="hidden" name="name" value="" maxlength="255">
+			<input type="hidden" name="opn" value="editDescLanguage">
 			<table class="table table-bordered table-hover">
 				<tbody></tbody>
 			</table>
@@ -101,6 +101,6 @@
 </div>
 <script type="text/javascript">
 $(function(){
-	ATTRIBUTE.init();
+	DESCRIPTION.init();
 });
 </script>

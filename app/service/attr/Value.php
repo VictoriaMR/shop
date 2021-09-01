@@ -12,6 +12,40 @@ class Value extends Base
 		return $this->baseModel = make('app/model/attr/Value');
 	}
 
+	public function getList($where, $page=1, $size=20)
+	{
+		$list = $this->getListData($where, '*', $page, $size, ['attv_id'=>'desc']);
+		if (!empty($list)) {
+			//翻译字段 统计
+			$tempArr = array_column($list, 'attv_id');
+			$tempArr = make('app/service/attr/ValueLanguage')->where(['attv_id'=>['in', $tempArr]])->field('count(*) as count, attv_id')->groupBy('attv_id')->get();
+			$tempArr = array_column($tempArr, 'count', 'attv_id');
+			//需要翻译的语言列表
+			$languageList = make('app/service/Language')->getTransList();
+			$len = count($languageList);
+			$transArr = [
+				0 => [],
+				1 => [],
+				2 => [],
+			];
+			foreach ($list as $key => $value) {
+				$status = empty($tempArr[$value['attv_id']]) ? 0 : ($tempArr[$value['attv_id']] < $len ? 1 : 2);
+
+				if ($status != $value['status']) {
+					$transArr[$status][] = $value['attv_id'];
+				}
+
+				$value['is_translate'] = $status;
+				$list[$key] = $value;
+			}
+			foreach ($transArr as $key => $value) {
+				if (empty($value)) continue;
+				$this->updateData(['attv_id'=>['in', $value]], ['status'=>$key]);
+			}
+		}
+		return $list;
+	}
+
 	public function addNotExist($name)
 	{
 		if (empty($name)) {

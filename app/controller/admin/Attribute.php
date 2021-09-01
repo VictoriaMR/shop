@@ -10,6 +10,7 @@ class Attribute extends Base
 		$this->_arr = [
 			'index' => '属性管理',
 			'attrValue' => '属性值管理',
+			'description' => '描述值管理',
 		];
 		$this->_default = '属性管理';
 	}
@@ -24,38 +25,30 @@ class Attribute extends Base
 			$this->error('非法请求');
 		}
 
-		html()->addCss();
 		html()->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
 		$keyword = trim(iget('keyword'));
-
+		$status = iget('status', -1);
 		$where = [];
 		if (!empty($keyword)) {
 			$where['name'] = ['like', '%'.$keyword.'%'];
 		}
+		if ($status >= 0) {
+			$where['status'] = $status;
+		}
 		$buteService = make('app/service/attr/Bute');
 		$total = $buteService->getCountData($where); 
 		if ($total > 0) {
-			$list = $buteService->getListData($where, '*', $page, $size, ['attr_id'=>'desc']);
-
-			$tempArr = array_column($list, 'attr_id');
-			$tempArr = make('app/service/attr/ButeLanguage')->where(['attr_id'=>['in', $tempArr]])->field('count(*) as count, attr_id')->groupBy('attr_id')->get();
-			$tempArr = array_column($tempArr, 'count', 'attr_id');
-			$languageList = make('app/service/Language')->getListCache();
-			$languageList = array_column($languageList, null, 'code');
-			unset($languageList['zh']);
-			$len = count($languageList);
-			foreach ($list as $key => $value) {
-				$value['is_translate'] = empty($tempArr[$value['attr_id']]) ? 0 : ($tempArr[$value['attr_id']] < $len ? 1 : 2);
-				$list[$key] = $value;
-			}
-
+			$list = $buteService->getList($where, $page, $size);
 		}
 
 		$this->_init();
+		$this->assign('status', $status);
+		$this->assign('keyword', $keyword);
 		$this->assign('total', $total);
+		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
 		$this->view();
 	}
@@ -78,9 +71,8 @@ class Attribute extends Base
 		}
 		$info = make('app/service/attr/ButeLanguage')->getListData(['attr_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getListCache();
+		$languageList = make('app/service/Language')->getTransList();
 		foreach ($languageList as $key => $value) {
-			if ($value['code'] == 'zh') continue;
 			$info[$value['code']] = [
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
@@ -121,13 +113,21 @@ class Attribute extends Base
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$language = ipost('language');
-		if (!empty($language)) {
-			$services = make('app/service/attr/ButeLanguage');
-			foreach ($language as $key => $value) {
-				$services->setNxLanguage($id, $key, strTrim($value));
-			}
+		$language = array_filter(ipost('language'));
+		if (empty($language)) {
+			$this->error('翻译值不能全部为空');
 		}
+		$services = make('app/service/attr/ButeLanguage');
+		foreach ($language as $key => $value) {
+			$services->setNxLanguage($id, $key, strTrim($value));
+		}
+		$len = count(make('app/service/Language')->getTransList());
+		if ($len <= count($language)) {
+			$status = 2;
+		} else {
+			$status = 1;
+		}
+		make('app/service/attr/Bute')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -161,38 +161,30 @@ class Attribute extends Base
 			$this->error('非法请求');
 		}
 
-		html()->addCss();
 		html()->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
 		$keyword = trim(iget('keyword'));
-
+		$status = iget('status', -1);
 		$where = [];
 		if (!empty($keyword)) {
 			$where['name'] = ['like', '%'.$keyword.'%'];
 		}
+		if ($status >= 0) {
+			$where['status'] = $status;
+		}
 		$buteService = make('app/service/attr/Value');
 		$total = $buteService->getCountData($where); 
 		if ($total > 0) {
-			$list = $buteService->getListData($where, '*', $page, $size, ['attv_id'=>'desc']);
-
-			$tempArr = array_column($list, 'attv_id');
-			$tempArr = make('app/service/attr/ValueLanguage')->where(['attv_id'=>['in', $tempArr]])->field('count(*) as count, attv_id')->groupBy('attv_id')->get();
-			$tempArr = array_column($tempArr, 'count', 'attv_id');
-			$languageList = make('app/service/Language')->getListCache();
-			$languageList = array_column($languageList, null, 'code');
-			unset($languageList['zh']);
-			$len = count($languageList);
-			foreach ($list as $key => $value) {
-				$value['is_translate'] = empty($tempArr[$value['attv_id']]) ? 0 : ($tempArr[$value['attv_id']] < $len ? 1 : 2);
-				$list[$key] = $value;
-			}
-
+			$list = $buteService->getList($where, $page, $size);
 		}
 
 		$this->_init();
+		$this->assign('status', $status);
+		$this->assign('keyword', $keyword);
 		$this->assign('total', $total);
+		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
 		$this->view();
 	}
@@ -215,9 +207,8 @@ class Attribute extends Base
 		}
 		$info = make('app/service/attr/ValueLanguage')->getListData(['attv_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getListCache();
+		$languageList = make('app/service/Language')->getTransList();
 		foreach ($languageList as $key => $value) {
-			if ($value['code'] == 'zh') continue;
 			$info[$value['code']] = [
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
@@ -258,13 +249,21 @@ class Attribute extends Base
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$language = ipost('language');
-		if (!empty($language)) {
-			$services = make('app/service/attr/ValueLanguage');
-			foreach ($language as $key => $value) {
-				$services->setNxLanguage($id, $key, strTrim($value));
-			}
+		$language = array_filter(ipost('language'));
+		if (empty($language)) {
+			$this->error('翻译值不能全部为空');
 		}
+		$services = make('app/service/attr/ValueLanguage');
+		foreach ($language as $key => $value) {
+			$services->setNxLanguage($id, $key, strTrim($value));
+		}
+		$len = count(make('app/service/Language')->getTransList());
+		if ($len <= count($language)) {
+			$status = 2;
+		} else {
+			$status = 1;
+		}
+		make('app/service/attr/Value')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -279,6 +278,146 @@ class Attribute extends Base
 		if ($rst) {
 			//删除属性关联
 			$rst = make('app/service/product/AttributeRelation')->deleteData(['attv_id'=>$id]);
+		}
+		if ($rst) {
+			$this->addLog('删除属性-'.$id);
+			$this->success('删除成功');
+		} else {
+			$this->error('删除失败');
+		}
+	}
+
+	public function description()
+	{
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['getDescInfo', 'getDescLanguage', 'transfer', 'editDescInfo', 'editDescLanguage', 'deleteDescInfo'])) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
+
+		html()->addJs();
+
+		$page = iget('page', 1);
+		$size = iget('size', 40);
+		$keyword = trim(iget('keyword'));
+		$status = iget('status', -1);
+		$where = [];
+		if (!empty($keyword)) {
+			$where['name'] = ['like', '%'.$keyword.'%'];
+		}
+		if ($status >= 0) {
+			$where['status'] = $status;
+		}
+		$buteService = make('app/service/attr/Description');
+		$total = $buteService->getCountData($where); 
+		if ($total > 0) {
+			$list = $buteService->getList($where, $page, $size);
+		}
+
+		$this->_init();
+		$this->assign('status', $status);
+		$this->assign('keyword', $keyword);
+		$this->assign('total', $total);
+		$this->assign('size', $size);
+		$this->assign('list', $list ?? []);
+		$this->view();
+	}
+
+	protected function getDescInfo()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$info = make('app/service/attr/Description')->loadData($id);
+		$this->success($info, '');
+	}
+
+	protected function getDescLanguage()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$info = make('app/service/attr/DescriptionLanguage')->getListData(['desc_id'=>$id]);
+		$info = array_column($info, null, 'lan_id');
+		$languageList = make('app/service/Language')->getTransList();
+		foreach ($languageList as $key => $value) {
+			$info[$value['code']] = [
+				'lan_id' => $value['code'],
+				'tr_code' => $value['tr_code'],
+				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
+				'language_name' => $value['name2'],
+			];
+		}
+		$this->success($info, '');
+	}
+
+	protected function editDescInfo()
+	{
+		$id = (int) ipost('id');
+		$name = trim(ipost('name'));
+		if (empty($name)) {
+			$this->error('名称不能为空');
+		}
+		$data = [
+			'name' => $name,
+		];
+		$descService = make('app/service/attr/Description');
+		if (empty($id)) {
+			$result = $descService->insert($data);
+			$this->addLog('新增属性-'.$result);
+		} else {
+			if ($descService->getCountData(['desc_id'=>['<>', $id], 'name'=>$name])) {
+				$this->error('名称已存在');
+			}
+			$this->addLog('修改属性信息-'.$id);
+			$result = $descService->updateData($id, ['name'=>$name]);
+		}
+		if ($result) {
+			$this->success('操作成功');
+		} else {
+			$this->error('操作失败');
+		}
+	}
+
+	protected function editDescLanguage()
+	{
+		$id = (int) ipost('id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$language = array_filter(ipost('language'));
+		if (empty($language)) {
+			$this->error('翻译值不能全部为空');
+		}
+		$services = make('app/service/attr/DescriptionLanguage');
+		foreach ($language as $key => $value) {
+			$services->setNxLanguage($id, $key, strTrim($value));
+		}
+		$len = count(make('app/service/Language')->getTransList());
+		if ($len <= count($language)) {
+			$status = 2;
+		} else {
+			$status = 1;
+		}
+		make('app/service/attr/Description')->updateData($id, ['status'=>$status]);
+		$this->addLog('修改属性语言-'.$id);
+		$this->success('操作成功');
+	}
+
+	protected function deleteDescInfo()
+	{
+		$id = (int) ipost('id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$rst = make('app/service/attr/Description')->deleteData($id);
+		if ($rst) {
+			//删除属性关联
+			$rst = make('app/service/product/DescriptionRelation')->deleteData(['name_id,value_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);

@@ -1,0 +1,10 @@
+CREATE TABLE `attachment` (
+  `attach_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '文件名称',
+  `type` varchar(10) NOT NULL DEFAULT '' COMMENT '文件类型',
+  `cate` varchar(10) NOT NULL DEFAULT '' COMMENT '站点',
+  `size` mediumint(9) NOT NULL DEFAULT '0' COMMENT '大小',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`attach_id`),
+  UNIQUE KEY `IDX_UNIQUE` (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
