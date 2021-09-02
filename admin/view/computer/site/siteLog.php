@@ -35,8 +35,3 @@
         </tbody>
     </table>
 </div>
-<script type="text/javascript">
-$(function(){
-	SITELOG.init();
-});
-</script>

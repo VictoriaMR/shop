@@ -121,8 +121,3 @@
 		<div class="claer"></div>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	INDEX.init();
-});
-</script>

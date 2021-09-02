@@ -111,8 +111,3 @@
 	</form>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	SITE.init();
-});
-</script>

@@ -1,4 +1,7 @@
-var SITE = {
+$(function(){
+	SITE.init();
+});
+const SITE = {
 	init: function() {
 		$('#site-page .btn.add-btn').on('click', function(){
 			SITE.initInfo('新增');
@@ -28,12 +31,12 @@ var SITE = {
 			const value = obj.next().text();
 	    	post(URI+'site', {opn: 'getSiteLanguage', name: name, id: id}, function(data){
 	    		obj.button('reset');
-	    		var showObj = $('#dealbox-language');
+	    		const showObj = $('#dealbox-language');
 	    		showObj.find('input[name="name"]').val(name);
 	    		showObj.find('input[name="value"]').val(value);
 	    		showObj.find('input[name="site_id"]').val(id);
 	    		showObj.find('table textarea').val('');
-	    		for (var i in data) {
+	    		for (const i in data) {
 	    			showObj.find('table textarea[name="language['+data[i].lan_id+']"]').val(data[i].value);
 	    		}
 	    		showObj.dealboxShow();
@@ -78,7 +81,7 @@ var SITE = {
 			};
 		}
 		const obj = $('#dealbox-info');
-		for (var i in data) {
+		for (const i in data) {
 			obj.find('[name="'+i+'"]').val(data[i]);
 		}
 		obj.dealboxShow(title);

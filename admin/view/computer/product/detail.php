@@ -1,4 +1,7 @@
 <div class="detail-page" data-id="<?php echo $info['spu_id'];?>">
+	<?php if (empty($info)) {?>
+	<p class="cred tc">找不到产品</p>
+	<?php } else { ?>
 	<dl class="field-row">
 		<dt>产品PID：</dt>
 		<dd class="red"><?php echo $info['spu_id'];?></dd>
@@ -37,6 +40,19 @@
 			</dd>
 		</dd>
 	</dl>
+	<dl class="field-row">
+		<dt>产品名称：</dt>
+		<dd>
+			<dd>
+				<span class="glyphicon glyphicon-globe"></span>
+				<span class="name"><?php echo $info['name'];?></span>
+			</dd>
+			<dd>
+				<button type="button" class="btn btn-primary btn-xs category-btn">修改</button>
+			</dd>
+		</dd>
+	</dl>
+	<?php } ?>
 </div>
 <div id="status-dealbox" class="hidden">
 	<div class="mask"></div>

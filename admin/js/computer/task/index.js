@@ -1,8 +1,11 @@
+$(function(){
+	TASK.init();
+});
 const TASK = {
-	init: function(enable) {
+	init: function() {
 		const _this = this;
 		_this.loading = true;
-		_this.enable = enable;
+		_this.enable = $('#task-page').data('status');
 		_this.initData();
 		clearInterval(_this.interval);
 		_this.interval = setInterval(function(){
@@ -11,6 +14,7 @@ const TASK = {
 				_this.initData();
 			}
 		}, 5000);
+		TASK.click();
 	},
 	initData: function() {
 		const _this = this;

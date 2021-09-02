@@ -89,8 +89,3 @@
 		</form>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	CATEGORYLIST.init();
-});
-</script>

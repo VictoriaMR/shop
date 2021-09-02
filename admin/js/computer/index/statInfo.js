@@ -1,18 +1,23 @@
-var STATINFO = {
+$(function(){
+	STATINFO.init();
+})
+const STATINFO = {
 	init: function() {
-		this.getInfo();
-		var setInterval = window.setInterval(function(){
-			STATINFO.getInfo();
+		const _this = this;
+		_this.getInfo();
+		clearInterval(_this.setInterval);
+		_this.setInterval = window.setInterval(function(){
+			_this.getInfo();
 		}, 5000);
 	},
 	getInfo: function() {
 		post(URI + 'index/statInfo', {opn: 'getSystemInfo'}, function(data){
-			STATINFO.initdata(data);
+			_this.initdata(data);
 		});
 	},
 	initdata: function(data) {
 		if (data) {
-			for (var i in data) {
+			for (const i in data) {
 				$('#' + i).text(data[i]);
 			}
 		}

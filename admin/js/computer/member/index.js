@@ -1,7 +1,10 @@
-var MEMBERLIST = {
+$(function(){
+	MEMBERLIST.init();
+});
+const MEMBERLIST = {
 	init: function() {
 	    $('#add-data-btn').on('click', function(){
-	    	var obj = $(this);
+	    	const obj = $(this);
 	    	obj.button('loading');
 	    	MEMBERLIST.initDealbox(0, function(){
 	    		obj.button('reset');
@@ -17,22 +20,22 @@ var MEMBERLIST = {
 	    	});
 	    });
 	    $('#dealbox .switch_botton').on('click', function(){
-	    	var status = $(this).data('status');
+	    	let status = $(this).data('status');
 	    	status = status == 0 ? 1 : 0;
 	    	$(this).switchBtn(status);
 	    	$(this).next().val(status);
 	    });
 	    //改变状态按钮
 	    $('#data-list .switch_botton').on('click', function(){
-	    	var obj = $(this);
-	    	var status = obj.data('status') == 0 ? 1 : 0;
+	    	const obj = $(this);
+	    	const status = obj.data('status') == 0 ? 1 : 0;
 	    	post(URI+'member', {opn:'modify', mem_id: $(this).parents('tr').data('id'), status: status}, function(data) {
 	    		obj.switchBtn(status);
 	    	});
 	    });
 	    //修改
 	    $('#data-list .btn.modify').on('click', function(){
-	    	var obj = $(this);
+	    	const obj = $(this);
 	    	obj.button('loading');
 	    	MEMBERLIST.initDealbox(obj.parents('tr').data('id'), function(){
 	    		obj.button('reset');
@@ -49,11 +52,11 @@ var MEMBERLIST = {
 		}
 	},
 	dealboxData: function(data, callback) {
-		var obj = $('#dealbox');
+		const obj = $('#dealbox');
 		obj.find('input:not(.no_replace)').val('');
 		if (data) {
 			obj.find('.dealbox-title').text('编辑管理员');
-			for (var i in data) {
+			for (const i in data) {
 				obj.find('[name="'+i+'"]').val(data[i]);
 				obj.find('[name="'+i+'"]:not(.no_show)').show();
 			}
@@ -61,10 +64,9 @@ var MEMBERLIST = {
 			obj.find('.dealbox-title').text('新增管理员');
 			obj.find('input[name="salt"]').hide();
 		}
+		let status = 0;
 		if (typeof data.status !== 'undefinded') {
-			var status = data.status;
-		} else {
-			status = 0;
+			status = data.status;
 		}
 		obj.find('.switch_botton').switchBtn(status);
 		obj.dealboxShow();

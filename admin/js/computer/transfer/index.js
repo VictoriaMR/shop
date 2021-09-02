@@ -1,3 +1,6 @@
+$(function(){
+	TRANSFER.init();
+});
 const TRANSFER = {
 	init: function() {
 		//新增按钮

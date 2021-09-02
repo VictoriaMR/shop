@@ -1,3 +1,6 @@
+$(function(){
+	ATTRIBUTE.init();
+});
 const ATTRIBUTE = {
 	init: function() {
 		const _this = this;

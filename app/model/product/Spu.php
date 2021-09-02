@@ -10,6 +10,7 @@ class Spu extends Base
 
 	const STATUS_CLOSE = 0;
 	const STATUS_OPEN = 1;
+	const STATUS_OUT_OF_STOCK = 2;//无库存
 	const CACHE_INFO_KEY = 'spu-info:';
 	const CACHE_EXPIRE_TIME = 3600*24;
 
@@ -18,6 +19,7 @@ class Spu extends Base
 		$arr = [
 			self::STATUS_CLOSE => '下架',
 			self::STATUS_OPEN => '上架',
+			self::STATUS_OUT_OF_STOCK => '无库存',
 		];
 		if (is_null($status)) {
 			return $arr;

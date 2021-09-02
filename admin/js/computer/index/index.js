@@ -1,4 +1,7 @@
-var INDEX = {
+$(function(){
+	INDEX.init();
+});
+const INDEX = {
 	init: function() {
 		//左1切换大小
 		$('#index-page .left-one .toggle').on('click', function() {

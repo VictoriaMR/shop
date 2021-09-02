@@ -1,4 +1,4 @@
-<div id="task-page" class="container-fluid">
+<div id="task-page" class="container-fluid" data-status="<?php echo $enabled;?>">
 	<div class="row-item">
 		<div class="left" style="padding-top: 10px;">
 		系统状态：<?php if($enabled){echo '<span style="color:#5cb85c;">开启</span>';}else{echo '<span style="color:#e7502b;">关闭</span>';}?> 
@@ -30,9 +30,3 @@
 		</table>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	TASK.init(<?php echo $enabled;?>);
-	TASK.click();
-});
-</script>

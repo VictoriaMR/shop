@@ -38,7 +38,7 @@ const URI = "<?php echo env('APP_DOMAIN');?>";
 	<ul class="nav nav-tabs">
 		<?php foreach ($_tag as $key => $value) {?>
 		<li<?php if($_func == $key) echo ' class="active"';?>>
-			<a href="<?php echo url($_path.'/'.$key);?>"><?php echo $value;?></a>
+			<a href="<?php echo url($_path.'/'.$key, $_func == $key ? iget() : []);?>"><?php echo $value;?></a>
 		</li>
 		<?php } ?>
 	</ul>

@@ -118,9 +118,9 @@ class Spu extends Base
 			return false;
 		}
 		//名称
-		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId,'lan_id'=>1])['name'];
+		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId,'lan_id'=>'zh'])['name'];
 		//图片
-		$info['image'] = make('app/service/product/SpuImage')->getListBySpuId($spuId);
+		$info['image'] = make('app/service/product/SpuImage')->getInfoBySpuId($spuId);
 		
 		return $info;
 	}

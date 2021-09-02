@@ -34,8 +34,3 @@
         </tbody>
     </table>
 </div>
-<script type="text/javascript">
-$(function(){
-	SITECACHE.init();
-});
-</script>

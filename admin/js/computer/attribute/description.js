@@ -1,3 +1,6 @@
+$(function(){
+	DESCRIPTION.init();
+});
 const DESCRIPTION = {
 	init: function() {
 		const _this = this;

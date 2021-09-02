@@ -29,10 +29,10 @@ class Product extends Base
 		$spu = make('app/service/product/Spu');
 		$statusList = $spu->getStatusList();
 		//站点
-		$siteList = make('app/service/Site')->getListData([], 'site_id,name');
+		$siteList = make('app/service/site/Site')->getListData([], 'site_id,name');
 		$siteList = array_column($siteList, 'name', 'site_id');
 		//分类
-		$cateList = make('app/service/Category')->getListFormat();
+		$cateList = make('app/service/category/Category')->getListFormat();
 		$cateList = array_column($cateList, null, 'cate_id');
 		$where = [];
 		if (in_array($status, array_keys($statusList), true)) {
@@ -42,7 +42,7 @@ class Product extends Base
 			$where['site_id'] = $site;
 		}
 		if ($cate > 0) {
-			$spuIdArr = make('app/service/Category')->getSpuIdByCateId($cate);
+			$spuIdArr = make('app/service/category/Category')->getSpuIdByCateId($cate);
 			if (empty($spuIdArr)) {
 				$where = ['spu_id' => 0];
 			} else {
@@ -88,30 +88,31 @@ class Product extends Base
 		html()->addCss();
 		html()->addJs();
 		$id = (int)iget('id');
-		$spu = make('app/service/product/Spu');
-		$info = $spu->getAdminInfo($id);
-		if (empty($info)) {
-			$this->error('产品不存在');
-		}
-		//spu状态
-		$spu = make('app/service/product/Spu');
-		$statusList = $spu->getStatusList();
-		//产品分类
-		$cateList = make('app/service/Category')->getListFormat();
-		$cateList = array_column($cateList, null, 'cate_id');
+		$spuService = make('app/service/product/Spu');
+		$info = $spuService->getAdminInfo($id);
+		if (!empty($info)) {
+			//spu状态
+			$statusList = $spuService->getStatusList();
+			//产品分类
+			$cateList = make('app/service/category/Category')->getListFormat();
+			$cateList = array_column($cateList, null, 'cate_id');
 
-		$cateInfo = $this->getCateInfo($cateList, $info['cate_id']);
-		
-		$this->assign('info', $info);
-		$this->assign('statusList', $statusList);
-		$this->assign('cateList', $cateList);
-		$this->assign('cateInfo', $cateInfo);
+			$cateInfo = $this->getCateInfo($cateList, $info['cate_id']);
+
+			$this->assign('info', $info);
+			$this->assign('statusList', $statusList);
+			$this->assign('cateList', $cateList);
+			$this->assign('cateInfo', $cateInfo);
+		}
 		$this->view();
 	}
 
 	protected function getCateInfo($cateList, $cateId)
 	{
 		$returnData = [];
+		if (empty($cateList[$cateId])) {
+			return [];
+		}
 		$returnData[] = $cateList[$cateId];
 		if ($cateList[$cateId]['parent_id'] > 0) {
 			$returnData = array_merge($this->getCateInfo($cateList, $cateList[$cateId]['parent_id']), $returnData);

@@ -139,8 +139,3 @@
 	</div>
 	<div class="clear"></div>
 </div>
-<script type="text/javascript">
-$(function(){
-	STATINFO.init();
-})
-</script>

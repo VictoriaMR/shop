@@ -99,8 +99,3 @@
 		</form>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	DESCRIPTION.init();
-});
-</script>

@@ -28,8 +28,3 @@
 		<button id="login-btn" type="button" class="btn btn-primary btn-lg w100 mt20">登录</button>
 	</form>
 </div>
-<script type="text/javascript">
-$(function(){
-	LOGIN.init();
-});
-</script>
