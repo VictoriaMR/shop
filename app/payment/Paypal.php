@@ -2,7 +2,6 @@
 
 namespace app\payment;
 
-class Paypal extends PaymentMethod
+class PayPal extends PaymentMethod
 {
-	
 }

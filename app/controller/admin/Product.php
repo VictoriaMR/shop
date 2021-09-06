@@ -7,9 +7,9 @@ class Product extends Base
 {
 	public function __construct()
 	{
-        $this->_arr = [
-            'index' => 'SPU列表',
-        ];
+		$this->_arr = [
+			'index' => 'SPU列表',
+		];
 		$this->_default = '产品管理';
 	}
 

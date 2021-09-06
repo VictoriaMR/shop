@@ -37,6 +37,10 @@
 								<span class="glyphicon glyphicon-th"></span>
 								<span class="ml6">产品管理</span>
 							</li>
+							<li data-title="财务管理" data-to="caiwu">
+								<span class="glyphicon glyphicon-piggy-bank"></span>
+								<span class="ml6">财务管理</span>
+							</li>
 							<li data-title="系统设置" data-to="systemInfo">
 								<span class="glyphicon glyphicon-cog"></span>
 								<span class="ml6">系统设置</span>
@@ -89,6 +93,20 @@
 									<span class="glyphicon glyphicon-sort"></span>
 									<span class="ml6">站点文本</span>
 									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('transfer');?>"></a>
+								</li>
+							</ul>
+						</div>
+						<div class="item" data-for="caiwu">
+							<ul>
+								<li data-src="<?php echo url('currency');?>" class="selected">
+									<span class="glyphicon glyphicon-yen"></span>
+									<span class="ml6">货币管理</span>
+									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('currency');?>"></a>
+								</li>
+								<li data-src="<?php echo url('payment');?>" class="selected">
+									<span class="glyphicon glyphicon-credit-card"></span>
+									<span class="ml6">支付管理</span>
+									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('payment');?>"></a>
 								</li>
 							</ul>
 						</div>
