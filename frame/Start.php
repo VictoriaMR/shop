@@ -10,6 +10,7 @@ if (is_file(ROOT_PATH.'vendor'.DS.'autoload.php')) {
 App::init();
 if (!IS_CLI) {
 	@session_start();
+	ini_set('session.cookie_httponly', 1);
 	define('IS_MOBILE', request()->isMobile());
 	define('IS_AJAX', request()->isAjax());
 	App::run();
