@@ -106,7 +106,7 @@ class Category extends Base
 			$list = $this->field('cate_id, avatar')->where('parent_id', '>', 0)->orderBy(['(sale_total+visit_total)'=>'desc', 'sort'=>'asc'])->page(1, $size)->get();
 			if (!empty($list)) {
 				$cateIdArr = array_column($list, 'cate_id');
-				$lanArr = make('app/model/CategoryLanguage')->where(['cate_id'=>['in', $cateIdArr], 'lan_id'=>$lanId])->field('cate_id,name')->get();
+				$lanArr = make('app/model/Category/Language')->where(['cate_id'=>['in', $cateIdArr], 'lan_id'=>$lanId])->field('cate_id,name')->get();
 				$lanArr = array_column($lanArr, 'name', 'cate_id');
 				foreach ($list as $key => $value) {
 					$value['name'] = $lanArr[$value['cate_id']] ?? '';

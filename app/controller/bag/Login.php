@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\bag;
-use app\controller\;
+use app\controller\Base;
 
-class Login extends 
+class Login extends Base
 {
 	public function index()
 	{	
