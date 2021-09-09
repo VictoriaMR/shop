@@ -34,25 +34,27 @@ class Member extends Base
 		if (!empty($password) && !$this->checkPassword($password, $info['password'], $info['salt'])){
 			return false;
 		}
-		return $this->loginSuccess($info,$type == 'email');
+		return $this->loginSuccess($info);
+	}
+
+	public function loginById($memId)
+	{
+		$info = $this->loadData($memId);
+		if (empty($info)) {
+			return false;
+		}
+		return $this->loginSuccess($info);
 	}
 
 	public function logout()
 	{
-		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
-		//删除登陆token
-		$tokenCacheKey = $this->getCacheKey('', $info['mem_id']);
-		$token = redis(2)->get($tokenCacheKey);
-		redis(2)->del($tokenCacheKey);
-		if ($token) {
-			redis(2)->del($this->getCacheKey($token));
-		}
 		session()->set(APP_TEMPLATE_TYPE.'_info');
+		make('frame/Cookie')->clear();
 		$this->addLog(['type'=>1]);
 		return true;
 	}
 
-	protected function loginSuccess($info, $keepLogin=false)
+	protected function loginSuccess($info)
 	{
 		$data = [
 			'mem_id' => $info['mem_id'],
@@ -68,37 +70,8 @@ class Member extends Base
 		session()->set(APP_TEMPLATE_TYPE.'_info', $data);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
 		$this->addLog(['type'=>0]);
-		if ($keepLogin) {
-			$tokenCacheKey = $this->getCacheKey('', $info['mem_id']);
-			$token = redis(2)->get($tokenCacheKey);
-			if ($token) {
-				redis(2)->expire($tokenCacheKey, $this->getConst('TOKEN_CACHE_TIMEOUT'));
-				redis(2)->expire($this->getCacheKey($token), $this->getConst('TOKEN_CACHE_TIMEOUT'));
-			} else {
-				$token = randString(32);
-				redis(2)->set($tokenCacheKey, $token, $this->getConst('TOKEN_CACHE_TIMEOUT'));
-				redis(2)->set($this->getCacheKey($token), $info['mem_id'], $this->getConst('TOKEN_CACHE_TIMEOUT'));
-			}
-		}
-		return $token ?? true;
-	}
-
-	protected function getCacheKey($token='', $memId='')
-	{
-		return 'login-token:'.siteId().':'.$token.$memId;
-	}
-
-	public function loginByToken($token)
-	{
-		$tokenCacheKey = $this->getCacheKey($token);
-		$memId = redis(2)->get($tokenCacheKey);
-		if (empty($memId)) {
-			return false;
-		}
-		$info = $this->loadData($memId);
-		if (empty($info)) return false;
-		if (empty($info['status'])) return false;
-		return $this->loginSuccess($info);
+		make('frame/Cookie')->login($info['mem_id']);
+		return true;
 	}
 
 	protected function checkPassword($inPassword, $sourcePassword, $salt='')

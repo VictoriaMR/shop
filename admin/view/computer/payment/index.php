@@ -94,24 +94,26 @@
 				<h4 class="modal-title">配置信息</h4>
 			</div>
 			<div class="modal-body">
-				<div class="form-group">
-					<label for="account" class="col-sm-2 control-label">账号名称:</label>
-					<div class="col-sm-9">
-						<input class="form-control" rows="3" name="account" autocomplete="off" readonly="readonly"/>
+				<form class="form-horizontal" role="form" method="post" action="#">
+					<div class="form-group">
+						<label for="secret_key" class="col-sm-3 control-label">App Key:</label>
+						<div class="col-sm-9">
+							<textarea class="form-control" rows="3" name="app_key" autocomplete="off" readonly="readonly"></textarea>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label for="merchant_id" class="col-sm-2 control-label">商户号:</label>
-					<div class="col-sm-9">
-						<input class="form-control" rows="3" name="merchant_id" autocomplete="off" readonly="readonly"/>
+					<div class="form-group">
+						<label for="secret_key" class="col-sm-3 control-label">Secret Key:</label>
+						<div class="col-sm-9">
+							<textarea class="form-control" rows="3" name="secret_key" autocomplete="off" readonly="readonly"></textarea>
+						</div>
 					</div>
-				</div>
-				<div class="form-group">
-					<label for="secret_key" class="col-sm-2 control-label">Secret Key:</label>
-					<div class="col-sm-9">
-						<textarea class="form-control" rows="3" name="secret_key" autocomplete="off" readonly="readonly"></textarea>
+					<div class="form-group">
+						<label for="secret_key" class="col-sm-3 control-label">WebHook Key:</label>
+						<div class="col-sm-9">
+							<textarea class="form-control" rows="3" name="webhook_key" autocomplete="off" readonly="readonly"></textarea>
+						</div>
 					</div>
-				</div>
+				</form>
 			</div>
 		</div>
 	</div>

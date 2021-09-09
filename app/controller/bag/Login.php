@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\bag;
-use app\controller\;
+use app\controller\Base;
 
-class Login extends 
+class Login extends Base
 {
 	public function index()
 	{	
@@ -176,7 +176,7 @@ class Login extends
 		}
 		redis(2)->del($this->getCacheKey($param['email']));
 		redis(2)->del($this->getCacheKey($param['email'], 'except'));
-		$this->success(['token'=>$rst, 'url'=>session()->get('callback_url')]);
+		$this->success(['url'=>session()->get('callback_url')]);
 	}
 
 	public function loginToken()

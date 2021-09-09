@@ -61,9 +61,7 @@ class Login extends Base
 
 	public function logout()
 	{
-		$log = make('app\service\admin\Logger');
-		$log->addLog(['type' => $log->getConst('TYPE_LOGOUT')]);
-		session()->set(APP_TEMPLATE_TYPE.'_info');
+		$log = make('app\service\admin\Member')->logout();
 		redirect(url('login'));
 	}
 

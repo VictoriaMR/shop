@@ -44,7 +44,7 @@ class Base
 	public function updateData($where, $data)
 	{
 		if (!is_array($where)) {
-			$where = [$this->_primaryKey => (int)$where];
+			$where = [$this->_primaryKey => $where];
 		}
 		return $this->instance()->where($where)->update($data);
 	}
@@ -52,7 +52,7 @@ class Base
 	public function deleteData($where)
 	{
 		if (!is_array($where)) {
-			$where = [$this->_primaryKey => (int)$where];
+			$where = [$this->_primaryKey => $where];
 		}
 		return $this->instance()->where($where)->delete();
 	}
