@@ -176,7 +176,7 @@ class Login extends Base
 		}
 		redis(2)->del($this->getCacheKey($param['email']));
 		redis(2)->del($this->getCacheKey($param['email'], 'except'));
-		$this->success(['token'=>$rst, 'url'=>session()->get('callback_url')]);
+		$this->success(['url'=>session()->get('callback_url')]);
 	}
 
 	public function loginToken()

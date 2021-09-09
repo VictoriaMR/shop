@@ -12,6 +12,55 @@ class Cookie
 		'httponly' => true,
 	];
 
+	public function init()
+	{
+		$uuid = $this->get('uuid');
+		if (empty($uuid)) {
+			$this->set('uuid', randString(32), 3600*24*365);
+		} else {
+			//自动登录
+			$uuidInfo = make('app/service/member/Uuid')->getInfo($uuid);
+			if (!empty($uuidInfo['mem_id'])) {
+				switch (substr($uuidInfo['mem_id'], 0, 1)) {
+					case '1':
+						$memberService = make('app/service/Member');
+						break;
+					case '5':
+						$memberService = make('app/service/admin/Member');
+						break;
+					default:
+						break;
+				}
+				if (!empty($memberService)) {
+					$memberService->loginById($uuidInfo['mem_id']);
+					session()->set('site_language_id', $uuidInfo['lan_id']);
+				}
+			}
+			session()->set('cookie.setcookie', 1);
+			//更新默认语言
+		}
+	}
+
+	public function login($memId)
+	{
+		$uuidService = make('app/service/member/Uuid');
+		$where = [
+			'uuid' => $this->get('uuid'),
+			'site_id' => siteId(),
+		];
+		if ($uuidService->getCountData($where)) {
+			return false;
+		}
+		$where['mem_id'] = $memId;
+		$where['lan_id'] = lanId();
+		return $uuidService->insert($where);
+	}
+
+	public function updateLanguage()
+	{
+		return make('app/service/member/Uuid')->updateData($this->get('uuid'), ['lan_id'=>lanId()]);
+	}
+
 	public function set($name, $value='', $option=null)
 	{
 		$config = $this->config;
@@ -52,13 +101,6 @@ class Cookie
 		}
 	}
 
-	public function delete($name)
-	{
-		$config = $this->$config;
-		unset($_COOKIE[$name]);
-		return setcookie($name, '', $_SERVER['REQUEST_TIME'] - 3600, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
-	}
-
 	private function jsonFormat(&$val, $key, $type='encode')
 	{
 		if (!empty($val)) {
@@ -71,7 +113,9 @@ class Cookie
 		if (empty($_COOKIE)) {
 			return false;
 		}
-		$config = $this->$config;
+		session()->set('cookie.setcookie', 0);
+		make('app/service/member/Uuid')->deleteData($this->get('uuid'));
+		$config = $this->config;
 		foreach ($_COOKIE as $key => $val) {
 			setcookie($key, '', $_SERVER['REQUEST_TIME'] - 3600, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
 		}

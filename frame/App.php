@@ -27,13 +27,17 @@ class App
 
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
+			if (!session()->get('cookie.setcookie')) {
+				//Cookie初始化
+				self::make('frame/Cookie')->init();
+			}
 			//中间件
 			self::make('app/middleware/VerifyToken')->handle($info);
 			call_user_func_array($callArr, []);
 		} else {
 			throw new \Exception($class.' '.$info['func'].' was not exist!', 1);
 		}
-		// self::runOver();
+		self::runOver();
 	}
 
 	private static function autoload($abstract, $params=null) 

@@ -15,6 +15,13 @@ class Payment extends Base
 
 	public function index()
 	{	
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['getInfo'])) {
+				$this->$opn();
+			}
+			$this->error('未知请求');
+		}
 		html()->addJs();
 
 		$type = iget('type');
@@ -54,5 +61,18 @@ class Payment extends Base
 		$this->assign('sandBoxList', $sandBoxList);
 		$this->_init();
 		$this->view();
+	}
+
+	protected function getInfo()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('参数不正确');
+		}
+		$info = make('app/service/payment/Payment')->loadData($id, 'app_key,secret_key,webhook_key');
+		if (empty($info)) {
+			$this->error('找不到数据');
+		}
+		$this->success($info, '');
 	}
 }
