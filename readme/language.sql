@@ -13,6 +13,8 @@ MySQL - 5.7.30-log : Database - prettybag
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 /*Table structure for table `admin_member` */
 
+DROP TABLE IF EXISTS `admin_member`;
+
 CREATE TABLE `admin_member` (
   `mem_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
@@ -38,6 +40,8 @@ insert  into `admin_member`(`mem_id`,`name`,`nickname`,`mobile`,`email`,`avatar`
 (50001,'Victoria','Victoria','18825071640','849376723@qq.com','',0,1,'$2y$10$QKCFbwVstP/SBYnvwZZYk.AyU0oKy0CBJ6JtnLgAvBu4BAXhRikOy','vict','2021-03-31 09:36:54',NULL,'2021-09-09 10:55:45');
 
 /*Table structure for table `attachment` */
+
+DROP TABLE IF EXISTS `attachment`;
 
 CREATE TABLE `attachment` (
   `attach_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -206,6 +210,8 @@ insert  into `attachment`(`attach_id`,`name`,`type`,`cate`,`size`,`add_time`) va
 
 /*Table structure for table `attribute` */
 
+DROP TABLE IF EXISTS `attribute`;
+
 CREATE TABLE `attribute` (
   `attr_id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `name` varchar(120) NOT NULL DEFAULT '',
@@ -223,6 +229,8 @@ insert  into `attribute`(`attr_id`,`name`,`status`) values
 
 /*Table structure for table `attribute_language` */
 
+DROP TABLE IF EXISTS `attribute_language`;
+
 CREATE TABLE `attribute_language` (
   `attr_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值ID',
   `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
@@ -233,6 +241,8 @@ CREATE TABLE `attribute_language` (
 /*Data for the table `attribute_language` */
 
 /*Table structure for table `attrvalue` */
+
+DROP TABLE IF EXISTS `attrvalue`;
 
 CREATE TABLE `attrvalue` (
   `attv_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -265,6 +275,8 @@ insert  into `attrvalue`(`attv_id`,`name`,`status`) values
 
 /*Table structure for table `attrvalue_language` */
 
+DROP TABLE IF EXISTS `attrvalue_language`;
+
 CREATE TABLE `attrvalue_language` (
   `attv_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值ID',
   `lan_id` varchar(4) NOT NULL DEFAULT '0' COMMENT '语言码',
@@ -290,6 +302,8 @@ insert  into `attrvalue_language`(`attv_id`,`lan_id`,`name`) values
 
 /*Table structure for table `cart` */
 
+DROP TABLE IF EXISTS `cart`;
+
 CREATE TABLE `cart` (
   `cart_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
@@ -311,6 +325,8 @@ insert  into `cart`(`cart_id`,`mem_id`,`sku_id`,`quantity`,`checked`,`add_time`,
 (11,10001,2,1,0,'2021-08-12 15:21:09',NULL);
 
 /*Table structure for table `category` */
+
+DROP TABLE IF EXISTS `category`;
 
 CREATE TABLE `category` (
   `cate_id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -642,6 +658,8 @@ insert  into `category`(`cate_id`,`parent_id`,`name`,`status`) values
 
 /*Table structure for table `category_language` */
 
+DROP TABLE IF EXISTS `category_language`;
+
 CREATE TABLE `category_language` (
   `cate_id` smallint(6) NOT NULL,
   `lan_id` varchar(4) NOT NULL DEFAULT '',
@@ -671,6 +689,8 @@ insert  into `category_language`(`cate_id`,`lan_id`,`name`) values
 (370,'zht','窗戶裝潢');
 
 /*Table structure for table `country` */
+
+DROP TABLE IF EXISTS `country`;
 
 CREATE TABLE `country` (
   `code2` varchar(2) NOT NULL COMMENT '2字母代码',
@@ -930,6 +950,8 @@ insert  into `country`(`code2`,`code3`,`dialing_code`,`name_cn`,`name_en`,`sort`
 
 /*Table structure for table `country_language` */
 
+DROP TABLE IF EXISTS `country_language`;
+
 CREATE TABLE `country_language` (
   `country_code2` varchar(2) NOT NULL COMMENT '国家二字码',
   `lan_id` tinyint(1) NOT NULL COMMENT '语言ID',
@@ -940,6 +962,8 @@ CREATE TABLE `country_language` (
 /*Data for the table `country_language` */
 
 /*Table structure for table `currency` */
+
+DROP TABLE IF EXISTS `currency`;
 
 CREATE TABLE `currency` (
   `code` varchar(3) NOT NULL COMMENT '货币符号',
@@ -964,6 +988,8 @@ insert  into `currency`(`code`,`name`,`symbol`,`rate`) values
 ('USD','美元','$',0.174240);
 
 /*Table structure for table `description` */
+
+DROP TABLE IF EXISTS `description`;
 
 CREATE TABLE `description` (
   `desc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1078,6 +1104,8 @@ insert  into `description`(`desc_id`,`name`,`status`) values
 
 /*Table structure for table `description_language` */
 
+DROP TABLE IF EXISTS `description_language`;
+
 CREATE TABLE `description_language` (
   `desc_id` int(11) NOT NULL DEFAULT '0' COMMENT '描述ID',
   `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
@@ -1102,6 +1130,8 @@ insert  into `description_language`(`desc_id`,`lan_id`,`name`) values
 (128,'zht','200W單燈標配');
 
 /*Table structure for table `email` */
+
+DROP TABLE IF EXISTS `email`;
 
 CREATE TABLE `email` (
   `email_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1139,6 +1169,8 @@ insert  into `email`(`email_id`,`site_id`,`account_id`,`mem_id`,`lan_id`,`type`,
 
 /*Table structure for table `email_account` */
 
+DROP TABLE IF EXISTS `email_account`;
+
 CREATE TABLE `email_account` (
   `account_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '发件人签名',
@@ -1160,6 +1192,8 @@ insert  into `email_account`(`account_id`,`name`,`address`,`smtp`,`smtp_ssl`,`em
 
 /*Table structure for table `email_account_used` */
 
+DROP TABLE IF EXISTS `email_account_used`;
+
 CREATE TABLE `email_account_used` (
   `site_id` tinyint(4) NOT NULL COMMENT '站点ID',
   `account_id` tinyint(4) NOT NULL COMMENT 'email账户ID',
@@ -1173,6 +1207,8 @@ insert  into `email_account_used`(`site_id`,`account_id`,`add_time`) values
 (80,1,'2021-07-30 14:14:52');
 
 /*Table structure for table `language` */
+
+DROP TABLE IF EXISTS `language`;
 
 CREATE TABLE `language` (
   `code` varchar(4) NOT NULL DEFAULT '' COMMENT '主键码',
@@ -1194,6 +1230,8 @@ insert  into `language`(`code`,`tr_code`,`name`,`name2`) values
 ('zht','cht','中文繁體','中文繁体');
 
 /*Table structure for table `member` */
+
+DROP TABLE IF EXISTS `member`;
 
 CREATE TABLE `member` (
   `mem_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
@@ -1224,6 +1262,8 @@ insert  into `member`(`mem_id`,`site_id`,`first_name`,`last_name`,`mobile`,`emai
 (10002,80,'Victory','Bluker','','849376725@qq.com','',0,1,0,'$2y$10$9S3d2tdQhlMPtktPdBZS.eFehMcaLKC4o7qt9JiWnRESK6G.KTQli','KOI5','2021-08-09 14:43:25','2021-08-27 10:26:11','2021-08-27 10:26:11');
 
 /*Table structure for table `member_address` */
+
+DROP TABLE IF EXISTS `member_address`;
 
 CREATE TABLE `member_address` (
   `address_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1308,6 +1348,8 @@ insert  into `member_address`(`address_id`,`mem_id`,`first_name`,`last_name`,`co
 
 /*Table structure for table `member_collect` */
 
+DROP TABLE IF EXISTS `member_collect`;
+
 CREATE TABLE `member_collect` (
   `coll_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
@@ -1328,6 +1370,8 @@ insert  into `member_collect`(`coll_id`,`mem_id`,`spu_id`,`add_time`) values
 (52,10001,2,'2021-08-12 17:46:44');
 
 /*Table structure for table `member_history` */
+
+DROP TABLE IF EXISTS `member_history`;
 
 CREATE TABLE `member_history` (
   `his_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1357,6 +1401,8 @@ insert  into `member_history`(`his_id`,`mem_id`,`spu_id`,`add_date`,`add_time`) 
 
 /*Table structure for table `member_uuid` */
 
+DROP TABLE IF EXISTS `member_uuid`;
+
 CREATE TABLE `member_uuid` (
   `uuid` varchar(32) NOT NULL COMMENT 'uuid',
   `site_id` tinyint(2) NOT NULL DEFAULT '0' COMMENT '站点ID',
@@ -1372,6 +1418,8 @@ insert  into `member_uuid`(`uuid`,`site_id`,`mem_id`,`lan_id`,`add_time`) values
 ('r95E2V6IJWI0gUOiXEMTpaJKquVXfwDz',0,50001,'en','2021-09-09 10:55:45');
 
 /*Table structure for table `message` */
+
+DROP TABLE IF EXISTS `message`;
 
 CREATE TABLE `message` (
   `message_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1391,6 +1439,8 @@ insert  into `message`(`message_id`,`group_key`,`mem_id`,`lan_id`,`content`,`add
 
 /*Table structure for table `message_member` */
 
+DROP TABLE IF EXISTS `message_member`;
+
 CREATE TABLE `message_member` (
   `item_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `group_key` varchar(32) NOT NULL DEFAULT '' COMMENT '聊天组key',
@@ -1404,6 +1454,8 @@ CREATE TABLE `message_member` (
 /*Data for the table `message_member` */
 
 /*Table structure for table `order` */
+
+DROP TABLE IF EXISTS `order`;
 
 CREATE TABLE `order` (
   `order_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1447,6 +1499,8 @@ insert  into `order`(`order_id`,`order_no`,`site_id`,`mem_id`,`status`,`coupon_i
 
 /*Table structure for table `order_address` */
 
+DROP TABLE IF EXISTS `order_address`;
+
 CREATE TABLE `order_address` (
   `order_address_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单ID',
@@ -1475,6 +1529,8 @@ insert  into `order_address`(`order_address_id`,`order_id`,`type`,`first_name`,`
 (4,10018,1,'V','I','LA',0,'ssss','guangzhou','toria','123123123','+856 18825071642','0000','8888');
 
 /*Table structure for table `order_product` */
+
+DROP TABLE IF EXISTS `order_product`;
 
 CREATE TABLE `order_product` (
   `order_product_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1506,6 +1562,8 @@ insert  into `order_product`(`order_product_id`,`order_id`,`sku_id`,`attach_id`,
 (18,10018,3,10,'Pure cashmere British single guest cashmere hat female two-color double-sided men\'s tide autumn and winter warm knitting - 可调节 枣红',4,69.60,105.10);
 
 /*Table structure for table `order_product_attribute` */
+
+DROP TABLE IF EXISTS `order_product_attribute`;
 
 CREATE TABLE `order_product_attribute` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1550,6 +1608,8 @@ insert  into `order_product_attribute`(`item_id`,`order_product_id`,`attr_id`,`a
 
 /*Table structure for table `payment` */
 
+DROP TABLE IF EXISTS `payment`;
+
 CREATE TABLE `payment` (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `type` tinyint(4) NOT NULL COMMENT '类型',
@@ -1571,6 +1631,8 @@ insert  into `payment`(`payment_id`,`type`,`status`,`is_sandbox`,`name`,`app_key
 
 /*Table structure for table `payment_used` */
 
+DROP TABLE IF EXISTS `payment_used`;
+
 CREATE TABLE `payment_used` (
   `site_id` tinyint(1) NOT NULL COMMENT '站点ID',
   `type` tinyint(1) NOT NULL COMMENT '支付类型',
@@ -1583,6 +1645,8 @@ CREATE TABLE `payment_used` (
 /*Data for the table `payment_used` */
 
 /*Table structure for table `product_attribute_used` */
+
+DROP TABLE IF EXISTS `product_attribute_used`;
 
 CREATE TABLE `product_attribute_used` (
   `sku_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'skuID',
@@ -1628,6 +1692,8 @@ insert  into `product_attribute_used`(`sku_id`,`attr_id`,`attv_id`,`attach_id`,`
 (15,3,17,137,2);
 
 /*Table structure for table `product_description` */
+
+DROP TABLE IF EXISTS `product_description`;
 
 CREATE TABLE `product_description` (
   `desc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1747,6 +1813,8 @@ insert  into `product_description`(`desc_id`,`name`) values
 
 /*Table structure for table `product_description_language` */
 
+DROP TABLE IF EXISTS `product_description_language`;
+
 CREATE TABLE `product_description_language` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
   `desc_id` int(11) NOT NULL DEFAULT '0' COMMENT '描述ID',
@@ -1764,6 +1832,8 @@ insert  into `product_description_language`(`item_id`,`desc_id`,`lan_id`,`name`)
 (3,3,'1','材质');
 
 /*Table structure for table `product_description_used` */
+
+DROP TABLE IF EXISTS `product_description_used`;
 
 CREATE TABLE `product_description_used` (
   `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -1827,6 +1897,8 @@ insert  into `product_description_used`(`item_id`,`spu_id`,`name_id`,`value_id`,
 (51,4,102,103,0);
 
 /*Table structure for table `product_introduce` */
+
+DROP TABLE IF EXISTS `product_introduce`;
 
 CREATE TABLE `product_introduce` (
   `spu_id` bigint(20) NOT NULL COMMENT 'spuID',
@@ -2064,6 +2136,8 @@ insert  into `product_introduce`(`spu_id`,`attach_id`,`sort`) values
 
 /*Table structure for table `product_language` */
 
+DROP TABLE IF EXISTS `product_language`;
+
 CREATE TABLE `product_language` (
   `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'spuID',
   `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
@@ -2081,6 +2155,8 @@ insert  into `product_language`(`spu_id`,`lan_id`,`name`) values
 (4,'zh','烧烤签子不锈钢羊肉串烤肉烤串家用商用钢签用品工具铁签子字钎子');
 
 /*Table structure for table `product_sku` */
+
+DROP TABLE IF EXISTS `product_sku`;
 
 CREATE TABLE `product_sku` (
   `sku_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
@@ -2120,6 +2196,8 @@ insert  into `product_sku`(`sku_id`,`spu_id`,`site_id`,`status`,`attach_id`,`sto
 
 /*Table structure for table `product_spu` */
 
+DROP TABLE IF EXISTS `product_spu`;
+
 CREATE TABLE `product_spu` (
   `spu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `site_id` tinyint(4) NOT NULL DEFAULT '0' COMMENT '站点ID',
@@ -2147,6 +2225,8 @@ insert  into `product_spu`(`spu_id`,`site_id`,`cate_id`,`status`,`rank`,`attach_
 
 /*Table structure for table `product_spu_data` */
 
+DROP TABLE IF EXISTS `product_spu_data`;
+
 CREATE TABLE `product_spu_data` (
   `spu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'spuID',
   `site_id` tinyint(4) NOT NULL COMMENT '站点ID',
@@ -2170,6 +2250,8 @@ insert  into `product_spu_data`(`spu_id`,`site_id`,`supplier_id`,`item_id`,`item
 (4,80,2,639481984749,'https://item.taobao.com/item.htm?id=639481984749','米尚户外烧烤用品','//shop145619525.taobao.com/',0,NULL);
 
 /*Table structure for table `product_spu_image` */
+
+DROP TABLE IF EXISTS `product_spu_image`;
 
 CREATE TABLE `product_spu_image` (
   `spu_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'skuID',
@@ -2205,6 +2287,8 @@ insert  into `product_spu_image`(`spu_id`,`attach_id`,`sort`) values
 
 /*Table structure for table `site` */
 
+DROP TABLE IF EXISTS `site`;
+
 CREATE TABLE `site` (
   `site_id` tinyint(4) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
@@ -2225,6 +2309,8 @@ insert  into `site`(`site_id`,`name`,`domain`,`title`,`keyword`,`description`,`r
 
 /*Table structure for table `site_currency_used` */
 
+DROP TABLE IF EXISTS `site_currency_used`;
+
 CREATE TABLE `site_currency_used` (
   `site_id` int(11) NOT NULL COMMENT '对应站点ID',
   `code` varchar(4) NOT NULL DEFAULT '' COMMENT '语言码',
@@ -2241,6 +2327,8 @@ insert  into `site_currency_used`(`site_id`,`code`,`sort`) values
 
 /*Table structure for table `site_language` */
 
+DROP TABLE IF EXISTS `site_language`;
+
 CREATE TABLE `site_language` (
   `site_id` tinyint(1) NOT NULL COMMENT '站点ID',
   `lan_id` varchar(4) NOT NULL COMMENT '语言码',
@@ -2252,6 +2340,8 @@ CREATE TABLE `site_language` (
 /*Data for the table `site_language` */
 
 /*Table structure for table `site_language_used` */
+
+DROP TABLE IF EXISTS `site_language_used`;
 
 CREATE TABLE `site_language_used` (
   `site_id` int(11) NOT NULL COMMENT '对应站点ID',
@@ -2267,6 +2357,8 @@ insert  into `site_language_used`(`site_id`,`code`,`sort`) values
 (80,'zh',0);
 
 /*Table structure for table `site_static_file` */
+
+DROP TABLE IF EXISTS `site_static_file`;
 
 CREATE TABLE `site_static_file` (
   `static_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
@@ -2368,6 +2460,8 @@ insert  into `site_static_file`(`static_id`,`name`,`type`,`status`) values
 
 /*Table structure for table `translate` */
 
+DROP TABLE IF EXISTS `translate`;
+
 CREATE TABLE `translate` (
   `tran_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `name` varchar(150) NOT NULL DEFAULT '' COMMENT '名称',
@@ -2383,6 +2477,8 @@ insert  into `translate`(`tran_id`,`name`,`type`,`value`) values
 (1,'搜索宝贝','en','search');
 
 /*Table structure for table `zone` */
+
+DROP TABLE IF EXISTS `zone`;
 
 CREATE TABLE `zone` (
   `zone_id` int(11) NOT NULL AUTO_INCREMENT,
@@ -2493,6 +2589,8 @@ insert  into `zone`(`zone_id`,`zone_code`,`country_code2`,`name_cn`,`name_en`,`s
 (94,'WY','US','怀俄明州','Wyoming',57);
 
 /*Table structure for table `zone_languge` */
+
+DROP TABLE IF EXISTS `zone_languge`;
 
 CREATE TABLE `zone_languge` (
   `zone_id` int(11) NOT NULL COMMENT '省洲ID',
