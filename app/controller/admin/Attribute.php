@@ -141,7 +141,7 @@ class Attribute extends Base
 		$rst = make('app/service/attr/Bute')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttributeRelation')->deleteData(['attr_id'=>$id]);
+			$rst = make('app/service/product/AttributeUsed')->deleteData(['attr_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -277,7 +277,7 @@ class Attribute extends Base
 		$rst = make('app/service/attr/Value')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttributeRelation')->deleteData(['attv_id'=>$id]);
+			$rst = make('app/service/product/AttributeUsed')->deleteData(['attv_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -417,7 +417,7 @@ class Attribute extends Base
 		$rst = make('app/service/attr/Description')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/DescriptionRelation')->deleteData(['name_id,value_id'=>$id]);
+			$rst = make('app/service/product/DescriptionUsed')->deleteData(['name_id,value_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);

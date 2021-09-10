@@ -3,11 +3,11 @@
 namespace app\service\product;
 use app\service\Base;
 
-class AttrRelation extends Base
+class AttrUsed extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/product/AttributeRelation');
+		$this->baseModel = make('app/model/product/AttributeUsed');
 	}
 
 	public function getListById($skuId, $lanId=1, $simple=false)

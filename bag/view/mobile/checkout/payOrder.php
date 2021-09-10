@@ -22,10 +22,22 @@
 		<div class="item">
 			<p class="f14 f700 title">Payment Method</p>
 			<div class="payment-content">
-				
+				<?php echo $payTemplate;?>
 			</div>
+			<?php if (count($methodList) > 1){?>
 			<p class="middle-tips">OR</p>
 			<button class="btn btn-black w100">Choose another payment method</button>
+			<?php }?>
+			<div class="payment-stripe-wallet-pay-content">
+                <?php echo make('app/payment/stripe/Wallet')->pay([
+                    'order_id' => $orderInfo['base']['order_id'],
+                    'payment_init_success'=> 'mobilePayInit',
+                    'style' => [
+                        'theme' => 'dark',
+                        'height' => '48px',
+                    ],
+                ]);?>
+            </div>
 		</div>
 	</div>
 	<div class="bg-f info-content">
@@ -134,11 +146,6 @@
 		</ul>
 	</div>
 	<?php $this->load('common/address');?>
-	<script type="text/javascript">
-	$(function(){
-		CHECKOUTPAYORDER.init();
-	});
-	</script>
 	<?php } else {?>
 	<div class="info-content bg-f tc">
 		<p class="f14"><?php echo $error;?></p>

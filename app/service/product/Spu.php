@@ -50,7 +50,7 @@ class Spu extends Base
 		//spu描述
 		$info['description'] = make('app/service/product/Description')->getListById($spuId, $lanId);
 
-		$info += make('app/service/product/AttrRelation')->getListById(array_keys($info['sku']), $lanId);
+		$info += make('app/service/product/AttrUsed')->getListById(array_keys($info['sku']), $lanId);
 		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
 
 		if (!empty($tempArr = array_diff($skuImageList, array_keys($imageArr)))) {
@@ -304,7 +304,7 @@ class Spu extends Base
 					];
 				}
 				if (!empty($insert)) {
-					make('app/service/product/AttrRelation')->insert($insert);
+					make('app/service/product/AttrUsed')->insert($insert);
 				}
 			}
 		} else {
@@ -350,7 +350,7 @@ class Spu extends Base
 				'value_id' => $descArr[$value['value']],
 			];
 		}
-		make('app/service/product/DescriptionRelation')->addDescRelation($insert);
+		make('app/service/product/DescriptionUsed')->addDescUsed($insert);
 		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
 		redis(2)->hDel($cacheKey, $data['bc_product_id']);
 		return true;

@@ -41,4 +41,39 @@ class Currency extends Base
 		}
 		return $rst;
 	}
+
+	public function priceSymbol($type)
+	{
+		$info = $this->getInfoCache(currencyId());
+		switch ($type) {
+			case '1':
+				return $info['code'];
+			case '2':
+				return $info['symbol'];
+		}
+		return '';
+	}
+
+	public function priceFormat($price)
+	{
+		$info = $this->getInfoCache(currencyId());
+		$price = sprintf('%.2f', $price*$info['rate']);
+		return [
+			1 => $price,
+			2 => $info['symbol'].$price,
+			3 => $info['code'].$price,
+		];
+	}
+
+	public function getSymbolByCode($code, $type=2)
+	{
+		$info = $this->getInfoCache($code);
+		switch ($type) {
+			case '1':
+				return $info['code'];
+			case '2':
+				return $info['symbol'];
+		}
+		return '';
+	}
 }

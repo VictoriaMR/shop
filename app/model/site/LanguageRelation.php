@@ -3,7 +3,7 @@
 namespace app\model\site;
 use app\model\Base;
 
-class LanguageRelation extends Base
+class LanguageUsed extends Base
 {
-	protected $_table = 'site_language_relation';
+	protected $_table = 'site_language_used';
 }

@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\bag;
-use app\controller\;
+use app\controller\Base;
 
-class Checkout extends 
+class Checkout extends Base
 {
 	public function index()
 	{	
@@ -231,10 +231,11 @@ class Checkout extends
 	{
 		html()->addCss();
 		html()->addCss('common/address');
-		html()->addJs();
 		html()->addJs('common/address');
+		html()->addJs();
 
 		$orderId = (int)iget('id');
+		$method = iget('method');
 		$error = '';
 		if (empty($orderId)) {
 			$error = 'Sorry, we don\'t find any order info here. Please check your order list or try agin later';
@@ -244,6 +245,24 @@ class Checkout extends
 			if (empty($orderInfo)) {
 				$error = 'Sorry, we don\'t find any order info here. Please check your order list or try agin later';
 			}
+			//获取支付列表
+			$methodList = make('app/payment/PaymentMethod')::sortedMethodList();
+			if (!empty($methodList)) {
+				if (empty($method)) {
+					$method = key($methodList);
+				}
+				$paymentService = make($methodList[$method]['class']);
+				$payTemplate = $paymentService->pay($orderId);
+				if($payTemplate === false){
+					$payTemplate = $paymentService->getError(true);
+					if(empty($payTemplate)){
+						$payTemplate = 'The current payment method is not available, please choose another payment method or contact customer service';
+					}
+				}
+				$this->assign('payTemplate', $payTemplate);
+			}
+
+			$this->assign('methodList', $methodList);
 			$this->assign('orderInfo', $orderInfo);
 		}
 

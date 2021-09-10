@@ -177,7 +177,7 @@ class Order extends Base
 		$where = [
 			'order_id' => $orderId,
 			'mem_id' => $this->userId(),
-			'is_delete' => 0
+			'is_delete' => 0,
 		];
 		$data = [];
 		$temp = $this->loadData($where);
@@ -202,7 +202,7 @@ class Order extends Base
 		$imageArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $ids]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		$orderProductOriginPrice = 0;
-		$symbol = make('app/service/Language')->getSymbolByCurrency($data['base']['currency']);
+		$symbol = make('app/service/currency')->getSymbolByCode($data['base']['currency']);
 		foreach ($data['product'] as $key => $value) {
 			$value['attr'] = [];
 			foreach ($temp as $ak => $av) {

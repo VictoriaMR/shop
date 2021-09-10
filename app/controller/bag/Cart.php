@@ -41,8 +41,7 @@ class Cart extends Base
 			$list = array_column($list, 'spu_id');
 		}
 		$summary = [];
-		$language = make('app/service/Language');
-		$symbol = $language->priceSymbol(2);
+		$symbol = make('app/service/Currency')->priceSymbol(2);
 		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 		$priceTotal = sprintf('%.2f', $priceTotal);
 		$summary[] = [

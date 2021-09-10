@@ -141,9 +141,5 @@ foreach ($tempArr as $value) {
 	</div>
 </div>
 <script type="text/javascript">
-$(function(){
-	ADDRESSBOOK.init({
-		zone_list: <?php echo json_encode($zoneList, JSON_UNESCAPED_UNICODE);?>
-	});
-})
+const zone_list = <?php echo json_encode($zoneList, JSON_UNESCAPED_UNICODE);?>;
 </script>

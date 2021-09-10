@@ -33,8 +33,8 @@ class Site extends Base
 		if ($total > 0) {
 			$list = $site->getListData($where, 'site_id,name,domain,title,remark,add_time', $page, $size);
 			//获取站点对应的语言和货币
-			$language = make('app/service/site/LanguageRelation');
-			$currency = make('app/service/site/CurrencyRelation');
+			$language = make('app/service/site/LanguageUsed');
+			$currency = make('app/service/site/CurrencyUsed');
 			foreach ($list as $key => $value) {
 				$value['language'] = $language->getListCache($value['site_id']);
 				$value['currency'] = $currency->getListCache($value['site_id']);

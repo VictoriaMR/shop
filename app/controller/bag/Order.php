@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\bag;
-use app\controller\;
+use app\controller\Base;
 
-class Order extends 
+class Order extends Base
 {
 	public function index()
 	{	
