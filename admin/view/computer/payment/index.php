@@ -62,12 +62,12 @@
 					<span class="glyphicon glyphicon-eye-open"></span>
 				</td>
 				<td class="col-md-1">
-					<div class="switch_botton" data-status="<?php echo $value['status'];?>">
+					<div class="switch_botton" data-status="<?php echo $value['status'];?>" data-type="status">
 						<div class="switch_status <?php echo $value['status'] == 1 ? 'on' : 'off';?>"></div>
 					</div>
 				</td>
 				<td class="col-md-1">
-					<div class="switch_botton" data-status="<?php echo $value['is_sandbox'];?>">
+					<div class="switch_botton" data-status="<?php echo $value['is_sandbox'];?>" data-type="is_sandbox">
 						<div class="switch_status <?php echo $value['is_sandbox'] == 1 ? 'on' : 'off';?>"></div>
 					</div>
 				</td>
@@ -114,6 +114,90 @@
 						</div>
 					</div>
 				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="modal fade" id="partEdit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" data-keyboard="false">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title">添加账号</h4>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal" role="form" method="post" action="#">
+					<input type="hidden" name="opn" value='editInfo'>
+					<input type="hidden" name="payment_id" value="0">
+					<div class="form-group">
+						<label for="account" class="col-sm-2 control-label">账号:</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" rows="2" name="name" autocomplete="off" placeholder="账户名称" required="required" maxlength="150"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="secret" class="col-sm-2 control-label">账号类型:</label>
+						<div class="col-sm-8">
+							<select class="form-control" name="type">
+								<option>请选择账号类型</option>
+								<?php foreach($typeList as $key => $value) {?>
+								<option value="<?php echo $key;?>"><?php echo $value;?></option>
+								<?php }?>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="client_id" class="col-sm-2 control-label">App Key:</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" rows="3" name="app_key" autocomplete="off" placeholder="公钥" required="required" maxlength="150"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="secret" class="col-sm-2 control-label">Secret Key:</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" rows="3" name="secret_key" autocomplete="off" placeholder="私钥" required="required" maxlength="150"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="secret" class="col-sm-2 control-label">Webhook Key:</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" rows="3" name="webhook_key" autocomplete="off" placeholder="网络钩子密钥" maxlength="150"></textarea>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="is_sandbox" class="col-sm-2 control-label">沙盒:</label>
+						<div class="col-sm-8">
+							<label class="radio-inline">
+								<input type="radio" name="is_sandbox" value="0"> 正式
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="is_sandbox" value="1"> 测试
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="is_sandbox" class="col-sm-2 control-label">状态:</label>
+						<div class="col-sm-8">
+							<label class="radio-inline">
+								<input type="radio" name="status" class="status" value="0"> 停用
+							</label>
+							<label class="radio-inline">
+								<input type="radio" name="status" class="status"  value="1"> 启用
+							</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label for="remark" class="col-sm-2 control-label">备注:</label>
+						<div class="col-sm-8">
+							<textarea class="form-control" rows="2" name="remark" autocomplete="off" placeholder="内部使用备注" maxlength="64"></textarea>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-primary save">保存</button>
 			</div>
 		</div>
 	</div>

@@ -60,17 +60,17 @@ abstract class PaymentMethod
 	public static function methodList()
 	{
 		return [
-			'paypal' => [
+			self::PAYMENT_TYPE_PAYPAL => [
 				'type' => self::PAYMENT_TYPE_PAYPAL,
 				'name' => 'PayPal',
 				'class' => 'app/payment/paypal/PayPal',
 			],
-			'stripe_card' => [
+			self::PAYMENT_TYPE_STRIPE_CARD => [
 				'type' => self::PAYMENT_TYPE_STRIPE_CARD,
 				'name' => 'Stripe Card',
 				'class' => 'app/payment/stripe/Card',
 			],
-			'stripe_wallet' => [
+			self::PAYMENT_TYPE_STRIPE_WALLET => [
 				'type' => self::PAYMENT_TYPE_STRIPE_WALLET,
 				'name' => 'Stripe Wallet',
 				'class' => 'app/payment/stripe/Wallet',
