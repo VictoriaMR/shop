@@ -54,15 +54,19 @@ class Currency extends Base
 		return '';
 	}
 
-	public function priceFormat($price)
+	public function priceFormat($price, $type=null)
 	{
 		$info = $this->getInfoCache(currencyId());
 		$price = sprintf('%.2f', $price*$info['rate']);
-		return [
+		$arr = [
 			1 => $price,
 			2 => $info['symbol'].$price,
 			3 => $info['code'].$price,
 		];
+		if (is_null($type)) {
+			return $arr;
+		}
+		return $arr[$type];
 	}
 
 	public function getSymbolByCode($code, $type=2)

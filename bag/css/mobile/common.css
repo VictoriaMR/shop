@@ -273,11 +273,11 @@ a {
 	display: none;
 }
 .btn-light-black {
-	background-color: #707070;
+	background-color: #404040;
 	color: #ffffff;
 }
 .btn-black {
-	background-color: #404040;
+	background-color: #000000;
 	color: #ffffff;
 }
 .btn-white {
@@ -631,6 +631,8 @@ a {
 	width: calc(100% - 1.6rem);
 	font-size: 0.16rem;
 	text-align: center;
+	padding: 0 !important;
+	border: none !important;
 }
 .list-title .line {
 	width: 100%;

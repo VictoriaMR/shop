@@ -18,7 +18,7 @@ class Checkout extends Base
 		$quantity = (int)input('quantity');
 
 		if (empty($info['list'])) {
-			$error = 'Sorry, we don\'t find any product here, Maybe your shopping cart was Empty. Please check your shopping cart and check it out';
+			$error = appT('checkout_error');
 		} else {
 			//获取地址
 			$memId = userId();
@@ -53,7 +53,7 @@ class Checkout extends Base
 					'fee' => $symbol.$order->getShippingFee($info['total']),
 					'time_first' => 5,
 					'time_second' => 9,
-					'tips' => 'It may takes 5 - 9 Days. With Detailed Tracking Information. Need Correct Phone Number.'
+					'tips' => appT('shipping_tips', ['start'=>5, 'end'=>9]),
 				]];
 				$insuranceFee = $symbol.$order->getInsurance($info['total']);
 			}
@@ -80,10 +80,10 @@ class Checkout extends Base
 		$billingAddressId = ipost('billing_address_id');
 		$insurance = ipost('insurance', 0);
 		if (empty($shippingAddressId)) {
-			$this->error('Sorry, That shipping address is required.');
+			$this->error(appT('shipping_address_required'));
 		}
 		if (empty($billingAddressId)) {
-			$this->error('Sorry, That billing address is required.');
+			$this->error(appT('billing_address_required'));
 		}
 		$skuList = [];
 		if (empty($skuIds)) {
@@ -93,12 +93,12 @@ class Checkout extends Base
 			];
 			$skuList = make('app/service/Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
 			if (empty($skuList)) {
-				$this->error('Sorry, Your cart\'s checked product was empty.');
+				$this->error(appT('checked_empty'));
 			}
 			$skuList = array_column($skuList, 'quantity', 'sku_id');
 		} else {
 			if (empty($skuIds)) {
-				$this->error('Sorry, Product was empty.');
+				$this->error(appT('checked_empty'));
 			}
 			$skuList = [$skuIds=>$quantity];
 		}
@@ -110,7 +110,7 @@ class Checkout extends Base
 			}
 			$this->success(url('checkout/payOrder', ['id'=>$rst]));
 		} else {
-			$this->error('Sorry, Create order failed.');
+			$this->error(appT('create_order_error'));
 		}
 	}
 
@@ -124,20 +124,20 @@ class Checkout extends Base
 		$symbol = $language->priceSymbol(2);
 		$list[] = [
 			'type' => 0,
-			'name' => 'Product Original Total',
+			'name' => appT('product_original_total'),
 			'value' => $info['original_total'],
 			'value_format' => $symbol.$info['original_total'],
 		];
 		$list[] = [
 			'type' => 1,
-			'name' => 'Product Total',
+			'name' => appT('product_total'),
 			'value' => $info['total'],
 			'value_format' => $symbol.$info['total'],
 		];
 		$shippingFee = $order->getShippingFee($info['total']);
 		$list[] = [
 			'type' => 2,
-			'name' => 'Shipping Fee',
+			'name' => appT('shipping_fee'),
 			'value' => $shippingFee,
 			'value_format' => $symbol.$shippingFee,
 		];
@@ -146,7 +146,7 @@ class Checkout extends Base
 			$insuranceFee = $order->getInsurance($info['total']);
 			$list[] = [
 				'type' => 3,
-				'name' => 'Shipping Guarantee',
+				'name' => appT('shipping_guarantee'),
 				'value' => $insuranceFee,
 				'value_format' => $symbol.$insuranceFee,
 			];
@@ -154,7 +154,7 @@ class Checkout extends Base
 		}
 		$data = [
 			'fee_list' => $list,
-			'name' => 'Order Total',
+			'name' => appT('order_total'),
 			'value' => sprintf('%.2f', $orderTotal),
 			'value_format' => $symbol.$orderTotal,
 		];
@@ -167,11 +167,11 @@ class Checkout extends Base
 		$language = make('app/service/Language');
 		$order = make('app/service/order/Order');
 		$logisticsList = [[
-			'name' => 'Express Shipping',
+			'name' => appT('express_shipping'),
 			'fee' => $language->priceSymbol(2).$order->getShippingFee($info['total']),
 			'time_first' => 5,
 			'time_second' => 9,
-			'tips' => 'It may takes 5 - 9 Days. With Detailed Tracking Information. Need Correct Phone Number.'
+			'tips' => appT('shipping_tips', ['start'=>5, 'end'=>9]),
 		]];
 		$this->success($logisticsList);
 	}
@@ -238,36 +238,43 @@ class Checkout extends Base
 		$method = iget('method');
 		$error = '';
 		if (empty($orderId)) {
-			$error = 'Sorry, we don\'t find any order info here. Please check your order list or try agin later';
+			$error = appT('order_error');
 		}
 		if (empty($error)) {
 			$orderInfo = make('app/service/order/Order')->getInfo($orderId);
 			if (empty($orderInfo)) {
-				$error = 'Sorry, we don\'t find any order info here. Please check your order list or try agin later';
-			}
-			//获取支付列表
-			$methodList = make('app/payment/PaymentMethod')::sortedMethodList();
-			if (!empty($methodList)) {
-				if (empty($method)) {
+				$error = appT('order_error');
+			} else {
+				//获取支付列表
+				$methodList = make('app/payment/PaymentMethod')::sortedMethodList();
+				if (!empty($methodList) && empty($method)) {
 					$method = key($methodList);
 				}
-				$paymentService = make($methodList[$method]['class']);
-				$payTemplate = $paymentService->pay($orderId);
-				if($payTemplate === false){
-					$payTemplate = $paymentService->getError(true);
-					if(empty($payTemplate)){
-						$payTemplate = 'The current payment method is not available, please choose another payment method or contact customer service';
-					}
-				}
-				$this->assign('payTemplate', $payTemplate);
+				$this->assign('method', $method);
+				$this->assign('methodList', $methodList);
+				$this->assign('orderInfo', $orderInfo);
 			}
-
-			$this->assign('methodList', $methodList);
-			$this->assign('orderInfo', $orderInfo);
 		}
 
 		$this->assign('error', $error);
 		$this->assign('_title', 'Checkout, Pay Order - '.site()->getName());
 		$this->view();
+	}
+
+	public function payOrderAjax()
+	{
+		$method = (int)ipost('method');
+		$orderId = (int)ipost('order_id');
+		$orderTotal = ipost('order_total');
+		$currency = ipost('currency');
+		$countryCode2 = ipost('country_code2');
+		if (empty($method)) {
+			$this->error(appT('payment_method_error'));
+		}
+		if (empty($orderId)) {
+
+		} else {
+			
+		}
 	}
 }

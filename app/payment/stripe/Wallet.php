@@ -17,7 +17,7 @@ class Wallet extends Stripe
 			$this->setOrderId($data['order_id']);
 			$orderInfo = $this->getOrderInfo();
 			if (empty($orderInfo)) {
-				return '';
+				return false;
 			}
 			$data['currency'] = $orderInfo['base']['currency'];
 			$data['country_code2'] = $orderInfo['shipping_address']['country_code2'];
@@ -27,15 +27,11 @@ class Wallet extends Stripe
 		if (empty($path)) {
 			return false;
 		}
-		// dd($this->getOrderInfo());
-		return $this->getTemplate($path, [
-			'order_id' => $data['order_id'] ?? 0,
-			'config'=>$this->config, 
-			'method'=>$this->type,
-			'order_total' => $this->getAmount($data['order_total'], $data['currency']), 
-			'currency' => strtolower($data['currency']), 
-			'country_code2' => 'US', 
-			'data' => $data,
-		]);
+		$data['order_total_format'] = make('app/service/Currency')->priceSymbol(2).$data['order_total'];
+		$data['order_total'] = $this->getAmount($data['order_total'], $data['currency']);
+		$data['currency'] = strtolower($data['currency']);
+		$data['config'] = $this->config;
+		$data['method'] = $this->type;
+		return $this->getTemplate($path, $data);
 	}
 }

@@ -78,7 +78,7 @@ abstract class PaymentMethod
 			],
 			self::PAYMENT_TYPE_STRIPE_CARD => [
 				'type' => self::PAYMENT_TYPE_STRIPE_CARD,
-				'name' => 'Stripe Card',
+				'name' => appT('Credit Card'),
 				'class' => 'app/payment/stripe/Card',
 			],
 			self::PAYMENT_TYPE_STRIPE_WALLET => [
