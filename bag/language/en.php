@@ -41,4 +41,5 @@ return [
 	'my' => 'My',
 	'shopping_bag' => 'Shopping Bag',
 	'search' => 'Search',
+	'contact_us' => 'Contact Us',
 ];

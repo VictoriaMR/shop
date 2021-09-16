@@ -331,7 +331,7 @@ a {
 }
 .cover .top-search-icon {
 	position: absolute;
-	top: 0;
+	top: 0.11rem;
 	right: 0.12rem;
 }
 #scroll-top {

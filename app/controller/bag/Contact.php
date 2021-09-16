@@ -1,16 +1,16 @@
 <?php
 
 namespace app\controller\bag;
-use app\controller\;
+use app\controller\Base;
 
-class Contact extends 
+class Contact extends Base
 {
 	public function index()
 	{	
 		html()->addCss();
 		html()->addJs();
 
-		$this->assign('_title', site()->getName().' - Contact Us');
+		$this->assign('_title', appT('contact_us').'-'.site()->getName());
 		$this->view();
 	}
 
