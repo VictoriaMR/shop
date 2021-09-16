@@ -38,4 +38,7 @@ return [
 	'enter_card_exp' => 'Please enter your Card Expiry.',
 	'enter_card_cvv' => 'Please enter your Card Cvv.',
 	'order_status' => 'The order status was',
+	'my' => 'My',
+	'shopping_bag' => 'Shopping Bag',
+	'search' => 'Search',
 ];

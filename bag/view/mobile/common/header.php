@@ -27,6 +27,7 @@
 <script type="text/javascript">
 const URI = "<?php echo env('APP_DOMAIN');?>";
 </script>
+<?php if (empty($_simple_title)){?>
 <?php $router = router()->getRoute();
 if (!in_array($router['path'], ['checkout'])) {?>
 <div class="layer cover">
@@ -38,5 +39,12 @@ if (!in_array($router['path'], ['checkout'])) {?>
 		<span class="iconfont icon-sousuo"></span>
 	</a>
 </div>
-<div class="p20"></div>
+<div class="p22"></div>
+<?php }?>
+<?php } else {?>
+<div class="layer8 cover">
+	<span class="iconfont icon-xiangzuo1 f20 left" onclick="window.history.back('-1');"></span>
+	<div class="tc f16 f600"><?php echo $_simple_title;?></div>
+</div>
+<div class="p22"></div>
 <?php }?>

@@ -23,8 +23,7 @@ class App
 		//路由解析
 		$info = router()->analyze()->getRoute();
 		//执行方法
-		$class = 'app\\controller\\'.$info['class'].'\\'.$info['path'].'';
-
+		$class = 'app/controller/'.$info['class'].'/'.$info['path'].'';
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('cookie.setcookie')) {

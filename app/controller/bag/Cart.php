@@ -61,7 +61,8 @@ class Cart extends Base
 		$this->assign('unCheckList', $unCheckList);
 		$this->assign('collectList', $list);
 		$this->assign('summary', $summary);
-		$this->assign('_title', 'My shopping cart - '.site()->getName());
+		$this->assign('_title', appT('my').' '.appT('shopping_bag').' - '.site()->getName());
+		$this->assign('_simple_title', appT('shopping_bag'));
 		$this->view();
 	}
 

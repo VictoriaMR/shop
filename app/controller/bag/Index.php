@@ -12,7 +12,7 @@ class Index extends Base
 		html()->addJs('slider');
 
 		//分类列表
-		$hotCategory = make('app/service/Category')->getHotCategory(16);
+		// $hotCategory = make('app/service/category/Category')->getHotCategory(16);
 		$banner = [];
 		for ($i=1;$i<6;$i++) {
 			$banner[] = [
@@ -22,7 +22,7 @@ class Index extends Base
 			];
 		}
 		$this->assign('banner', $banner);
-		$this->assign('hot_category', array_chunk($hotCategory, 2));
+		// $this->assign('hot_category', array_chunk($hotCategory, 2));
 		$this->view();
 	}
 }

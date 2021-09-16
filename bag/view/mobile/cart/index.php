@@ -1,5 +1,8 @@
 <div id="cart-page">
 	<?php if (empty($checkedList)) {?>
+	<div class="empty-bag-image">
+		<img src="<?php echo siteUrl('image/common/empty-bag.png');?>">
+	</div>
 	<p class="empty-title">YOUR CART IS EMPTY</p>
 	<div class="continue-btn">
 		<a href="<?php echo url('');?>" class="btn btn-black block">CONTINUE SHOPPING</a>
