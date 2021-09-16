@@ -318,10 +318,16 @@ a {
 	width: 100%;
 	height: 0.44rem;
 	background: #F5F5F5;
-	line-height: 0.44rem;
 	position: fixed;
 	top: 0;
 	z-index: 102;
+}
+.cover .tc {
+	height: 0.44rem;
+	line-height: 0.44rem;
+}
+.cover .icon-xiangzuo1 {
+	margin-top: 0.11rem;
 }
 .cover .top-search-icon {
 	position: absolute;
