@@ -1,7 +1,9 @@
+$(function(){
+	ADDRESSBOOK.init();
+})
 const ADDRESSBOOK = {
-	init: function(data) {
+	init: function() {
 		const _this = this;
-		_this.zone_list = data.zone_list;
 		$('#address-book').on('click', '.top-close-btn,.address-book-mask,.cancel-btn', function(){
 			_this.close();
 		});
@@ -239,14 +241,14 @@ const ADDRESSBOOK = {
 		}
 	},
 	getZoneList: function (countryCode2){
-		let zoneList = [];
+		let tempZoneList = [];
 		if (typeof countryCode2 !== 'string') {
-			return zoneList;
+			return tempZoneList;
 		}
-		if (typeof this.zone_list[countryCode2] !== 'undefined') {
-			zoneList = this.zone_list[countryCode2];
+		if (typeof zone_list[countryCode2] !== 'undefined') {
+			tempZoneList = zone_list[countryCode2];
 		}
-		return zoneList;
+		return tempZoneList;
 	},
 	setCallback: function(callback) {
 		this.callback = callback;

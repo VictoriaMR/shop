@@ -26,20 +26,26 @@ class Site extends Base
 		return $info;
 	}
 
+	public function getName()
+	{
+		$info = $this->getInfoCache();
+		return $info['name'] ?? '';
+	}
+
 	public function getInfoCache()
 	{
 		$cacheKey = $this->getCacheKey();
 		$info = redis()->get($cacheKey);
 		if (false === $info) {
 			$info = $this->getInfo();
-			resdis()->set($cacheKey, $info);
+			redis()->set($cacheKey, $info);
 		}
 		return $info;
 	}
 
 	public function delCache()
 	{
-		return resdis()->del($this->getCacheKey());
+		return redis()->del($this->getCacheKey());
 	}
 
 	public function delSiteCache($siteId)

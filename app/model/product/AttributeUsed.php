@@ -3,9 +3,9 @@
 namespace app\model\product;
 use app\model\Base;
 
-class AttributeRelation extends Base
+class AttributeUsed extends Base
 {
-	protected $_table = 'product_attribute_relation';
+	protected $_table = 'product_attribute_used';
 
 	public function getInfo($fields)
 	{

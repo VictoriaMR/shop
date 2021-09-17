@@ -104,8 +104,23 @@ function input($name='', $default=null){
 function now($time=null){
 	return date('Y-m-d H:i:s', $time ? $time : time());
 }
-function appT($text){
-	return \App::make('app/service/Translate')->getText($text);
+function appT($text, array $replace=[]){
+	$lanId = lanId();
+	$key = 'translate_'.$lanId;
+	if (!isset($GLOBALS[$key])) {
+		$GLOBALS[$key] = include ROOT_PATH.APP_TEMPLATE_TYPE.DS.'language'.DS.$lanId.'.php';
+	}
+	if (isset($GLOBALS[$key][$text])) {
+		$text = $GLOBALS[$key][$text];
+		if (!empty($replace)) {
+			$replaceList = [];
+			foreach ($replace as $key => $value) {
+				$replaceList['{'.$key.'}'] = $value;
+			}
+			$text = strtr($text, $replaceList);
+		}
+	}
+	return $text;
 }
 function utf8len($string){
 	return mb_strlen($string, 'UTF-8');

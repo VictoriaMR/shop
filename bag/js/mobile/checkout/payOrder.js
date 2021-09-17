@@ -1,3 +1,6 @@
+$(function(){
+	CHECKOUTPAYORDER.init();
+});
 const CHECKOUTPAYORDER = {
 	init: function() {
 		//地址编辑

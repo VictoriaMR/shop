@@ -1,0 +1,55 @@
+.order-search-content {
+	width: 100%;
+	float: left;
+	text-align: center;
+}
+.order-search-btn {
+	display: block;
+	width: 82%;
+	height: 0.28rem;
+	line-height: 0.28rem;
+	text-align: left;
+	padding: 0 0.12rem;
+	border-radius: 0.14rem;
+	background: #ddd;
+	margin: 0.06rem auto;
+	overflow: hidden;
+	white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.order-search-btn .iconfont {
+	font-size: 0.14rem;
+	margin-right: 0.04rem;
+}
+.cover .icon-shanchu {
+	position: absolute;
+	right: 0.08rem;
+	top: 0.09rem;
+}
+#order-page .nav-list {
+	min-width: 100%;
+	height: 0.33rem;
+	padding-bottom: 0.02rem;
+	position: fixed;
+	top: 0.4rem;
+	border-top: 0.01rem solid #ccc;
+	white-space: nowrap;
+	overflow-y: scroll;
+}
+#order-page .nav-list li {
+	padding: 0 0.12rem;
+	display: inline-block;
+	font-size: 0;
+}
+#order-page .nav-list li a {
+	display: block;
+	height: 0.30rem;
+	line-height: 0.3rem;
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #767676;
+}
+#order-page .nav-list li a.active {
+	border-bottom: 0.02rem solid #000;
+	color: #000;
+}

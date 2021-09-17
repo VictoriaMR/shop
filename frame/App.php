@@ -1,6 +1,8 @@
 <?php
 class App 
 {
+	private static $appData = [];
+
 	public static function init() 
 	{
 		spl_autoload_register([__CLASS__ , 'autoload']);
@@ -20,11 +22,14 @@ class App
 
 	private static function send()
 	{
+		//复用数据
+		if (APP_SITE_ID > 0) {
+			self::set('site_name', site()->getName());
+		}
 		//路由解析
 		$info = router()->analyze()->getRoute();
 		//执行方法
-		$class = 'app\\controller\\'.$info['class'].'\\'.$info['path'].'';
-
+		$class = 'app/controller/'.$info['class'].'/'.$info['path'].'';
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('cookie.setcookie')) {
@@ -48,6 +53,21 @@ class App
 			return \frame\Container::instance()->autoload(str_replace(DS, '\\', $abstract), $file, $params);
 		}
 		throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
+	}
+
+	public static function set($name, $value)
+	{
+		if (is_null($value)) {
+			unset(self::$appData[$name]);
+		} else {
+			self::$appData[$name] = $value;
+		}
+		return true;
+	}
+
+	public static function get($name)
+	{
+		return self::$appData[$name] ?? null;
 	}
 
 	public static function runOver()

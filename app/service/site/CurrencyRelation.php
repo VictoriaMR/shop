@@ -3,13 +3,13 @@
 namespace app\service\site;
 use app\service\Base;
 
-class CurrencyRelation extends Base
+class CurrencyUsed extends Base
 {
 	const CACHE_KEY = 'site_currency:';
 
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/site/CurrencyRelation');
+		$this->baseModel = make('app/model/site/CurrencyUsed');
 	}
 
 	public function getList($siteId=null)

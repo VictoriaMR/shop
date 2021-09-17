@@ -28,15 +28,15 @@ class Sku extends Base
 			return false;
 		}
 		//价格格式化
-		$language = make('app/service/Language');
-		$temp = $language->priceFormat($info['price']);
+		$currency = make('app/service/Currency');
+		$temp = $currency->priceFormat($info['price']);
 		$info['price'] = $temp[1];
 		$info['price_format'] = $temp[2];
-		$temp = $language->priceFormat($info['original_price']);
+		$temp = $currency->priceFormat($info['original_price']);
 		$info['original_price'] = $temp[1];
 		$info['original_price_format'] = $temp[2];
 		//属性列表
-		$info += make('app/service/product/AttrRelation')->getListById($skuId, $lanId, true);
+		$info += make('app/service/product/AttrUsed')->getListById($skuId, $lanId, true);
 
 		$imageArr = make('app/service/Attachment')->getList(['attach_id'=>['in', array_merge([$info['attach_id']], $info['attvImage'])]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');

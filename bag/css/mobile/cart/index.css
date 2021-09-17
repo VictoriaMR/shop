@@ -1,6 +1,11 @@
 #cart-page {
 	padding: 0.2rem 0;
 }
+#cart-page .empty-bag-image {
+	height: 1rem;
+	width: 1rem;
+	margin: 0.8rem auto 0 auto;
+}
 #cart-page .empty-title {
 	font-size: 0.16rem;
 	text-align: center;

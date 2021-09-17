@@ -1,3 +1,6 @@
+$(function(){
+	CARTPAGE.init();
+});
 const CARTPAGE = {
 	init: function(){
 		const _this = this;

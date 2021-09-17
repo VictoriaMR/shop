@@ -2,36 +2,69 @@
 	<div class="layer">
 		<div class="header">
 			<img src="<?php echo siteUrl('image/common/locked.png');?>">
-			<span class="checkout-tips">SECURE CHECKOUT</span>
+			<span class="checkout-tips"><?php echo appT('secure_checkout');?></span>
 			<a class="right f20 relative" href="<?php echo url('cart');?>">
 				<span class="iconfont icon-gouwuche"></span>
 			</a>
 		</div>
 		<?php if (empty($error)) {?>
 		<div class="header-nav">
-			<span class="f600 c40">Shipping Address</span>
+			<span class="f600 c40"><?php echo appT('shipping_address');?></span>
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
-			<span class="f600 c40">Delivery Method</span>
+			<span class="f600 c40"><?php echo appT('delivery_method');?></span>
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
-			<span class="f600 c40">Payment Info</span>
+			<span class="f600 c40"><?php echo appT('payment_info');?></span>
 		</div>
 		<?php } ?>
 	</div>
 	<?php if (empty($error)) {?>
-	<div class="bg-f info-content">
+	<div class="bg-f info-content payment-info-content">
 		<div class="item">
-			<p class="f14 f700 title">Payment Method</p>
+			<p class="f14 f700 title payment-info-title">
+				<span><?php echo appT('payment_method');?></span>
+				<a href="javascript:;" class="right">
+					<span><?php echo empty($methodList[$method]['name']) ? '' : $methodList[$method]['name'];?></span>
+					<span class="iconfont icon-xiangyou1 f600"></span>
+				</a>
+			</p>
+			<?php $methodTotal = count($methodList); if ($methodTotal){?>
 			<div class="payment-content">
-				
+				<?php echo make($methodList[$method]['class'])->pay($orderInfo['base']['order_id']);?>
 			</div>
-			<p class="middle-tips">OR</p>
-			<button class="btn btn-black w100">Choose another payment method</button>
+			<?php } ?>
+			<?php $payTemplate = make('app/payment/stripe/Wallet')->pay([
+				'order_id' => $orderInfo['base']['order_id'],
+				'payment_init_success'=> $methodTotal ? 'stripeWalletPayInit' : '',
+				'style' => [
+					'theme' => 'dark',
+				],
+			]);?>
+			<?php if ($payTemplate) {?>
+			<div class="payment-stripe-wallet-pay-content">
+				<?php echo $payTemplate;?>
+			</div>
+			<?php if ($methodTotal){?>
+			<script type="text/javascript">
+			function stripeWalletPayInit (ev) {
+			$('.payment-stripe-wallet-pay-content').prepend('<div class="list-title flex mt8 pb8">\
+					<div class="tcell">\
+						<p class="line"></p>\
+					</div>\
+					<p class="title f16 f800"><?php echo appT('or');?></p>\
+					<div class="tcell">\
+						<p class="line"></p>\
+					</div>\
+				</div>');
+			}
+			</script>
+			<?php } ?>
+			<?php } ?>
 		</div>
 	</div>
 	<div class="bg-f info-content">
 		<div class="item">
 			<p class="f14 f600 title">
-				<span class="f700">Order No: </span>
+				<span class="f700"><?php echo appT('order_no');?>: </span>
 				<span class="f600"><?php echo $orderInfo['base']['order_no'];?></span>
 			</p>
 			<div class="order-content">
@@ -44,7 +77,7 @@
 				<?php }?>
 				<div class="line mt12"></div>
 				<div class="row mt12 f600">
-					<p class="name left">Order Total:</p>
+					<p class="name left"><?php echo appT('order_total');?>:</p>
 					<p class="value f600 right"><?php echo $orderInfo['base']['order_total_format'];?></p>
 					<p class="clear"></p>
 				</div>
@@ -54,7 +87,7 @@
 	<div class="bg-f info-content">
 		<div class="item">
 			<p class="title">
-				<span class="f14 f700">Shipping Address</span>
+				<span class="f14 f700"><?php echo appT('shipping_address');?></span>
 			</p>
 			<a href="javascript:;" class="address-info-content mt6">
 				<div class="address-info">
@@ -63,7 +96,7 @@
 					<p><?php echo trim($orderInfo['shipping_address']['address1'].' '.$orderInfo['shipping_address']['address2']);?></p>
 					<p><?php echo $orderInfo['shipping_address']['phone'];?></p>
 					<?php if (!empty($orderInfo['shipping_address']['tax_number'])){?>
-					<p><span class="f12 c6">Tax:&nbsp;</span><?php echo $orderInfo['shipping_address']['tax_number'];?></p>
+					<p><span class="f12 c6"><?php echo appT('tax');?>:&nbsp;</span><?php echo $orderInfo['shipping_address']['tax_number'];?></p>
 					<?php } ?>
 				</div>
 			</a>
@@ -73,7 +106,7 @@
 	<div class="bg-f info-content">
 		<div class="item">
 			<p class="title">
-				<span class="f14 f700">Billing Address</span>
+				<span class="f14 f700"><?php echo appT('billing_address');?></span>
 				<button class="btn24 btn-black right address-edit-btn" data-order_id="<?php echo $orderInfo['base']['order_id'];?>">Edit</button>
 			</p>
 			<a href="javascript:;" class="address-info-content mt6">
@@ -91,7 +124,7 @@
 		</div>
 	</div>
 	<div class="info-content bg-f">
-		<p class="f14 f700 title">Order Product</p>
+		<p class="f14 f700 title"><?php echo appT('order_product');?></p>
 		<ul class="product-list">
 			<?php foreach($orderInfo['product'] as $key => $value) {?>
 			<li class="item" data-id="<?php echo $key;?>">
@@ -134,15 +167,10 @@
 		</ul>
 	</div>
 	<?php $this->load('common/address');?>
-	<script type="text/javascript">
-	$(function(){
-		CHECKOUTPAYORDER.init();
-	});
-	</script>
 	<?php } else {?>
 	<div class="info-content bg-f tc">
-		<p class="f14"><?php echo $error;?></p>
-		<a href="<?php echo url('cart');?>" class="btn btn-black iblock w50 mt20">BACK TO CART</a>
+		<p class="f16 f600 mt20"><?php echo $error;?></p>
+		<a href="<?php echo url('cart');?>" class="btn btn-black iblock w50 mt30"><?php echo appT('BACK TO CART');?></a>
 	</div>
 	<?php }?>
 </div>

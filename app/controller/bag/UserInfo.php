@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\bag;
-use app\controller\;
+use app\controller\Base;
 
-class UserInfo extends 
+class UserInfo extends Base
 {
 	public function index()
 	{	
@@ -44,7 +44,7 @@ class UserInfo extends
 		$this->assign('addressTotal', $addressTotal);
 		$this->assign('orderTotal', $orderTotal);
 		$this->assign('info', $info);
-		$this->assign('_title', 'My Info - '.site()->getName());
+		$this->assign('_title', appT('my_info'));
 		$this->view();
 	}
 

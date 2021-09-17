@@ -1,3 +1,4 @@
+<?php $this->load('common/nav_header');?>
 <?php if (!empty($banner)) { ?>
 <div class="banner relative">
 	<ul>
@@ -35,6 +36,4 @@
 	</ul>
 </div>
 <?php } ?>
-<script type="text/javascript">
-$('.banner').slider();
-</script>
+<?php $this->load('common/nav_footer');?>

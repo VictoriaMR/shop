@@ -59,7 +59,7 @@ class Description extends Base
 	
 	public function getListById($spuId, $lanId=1)
 	{
-		$list = make('app/service/product/DescriptionRelation')->getListData(['spu_id'=>$spuId], 'name_id,value_id', 0, 0);
+		$list = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId], 'name_id,value_id', 0, 0);
 		$descIdArr = array_unique(array_merge(array_column($list, 'name_id'), array_column($list, 'value_id')));
 		$descArr = $this->getListData(['desc_id'=>['in', $descIdArr]]);
 		$descArr = array_column($descArr, 'name', 'desc_id');

@@ -3,13 +3,13 @@
 namespace app\service\site;
 use app\service\Base;
 
-class LanguageRelation extends Base
+class LanguageUsed extends Base
 {
 	const CACHE_KEY = 'site_language:';
 
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/site/LanguageRelation');
+		$this->baseModel = make('app/model/site/LanguageUsed');
 	}
 
 	public function getList($siteId=null)

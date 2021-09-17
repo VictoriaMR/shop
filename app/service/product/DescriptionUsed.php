@@ -3,14 +3,14 @@
 namespace app\service\product;
 use app\service\Base;
 
-class DescriptionRelation extends Base
+class DescriptionUsed extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/product/DescriptionRelation');
+		$this->baseModel = make('app/model/product/DescriptionUsed');
 	}
 
-	public function addDescRelation(array $insert)
+	public function addDescUsed(array $insert)
 	{
 		if (empty($insert)) {
 			return false;

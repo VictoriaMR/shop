@@ -172,13 +172,14 @@ class Order extends Base
 		return 1.99;
 	}
 
-	public function getInfo($orderId)
+	public function getInfo($orderId, $isAdmin=false)
 	{
 		$where = [
-			'order_id' => $orderId,
-			'mem_id' => $this->userId(),
-			'is_delete' => 0
+			'order_id' => $orderId
 		];
+		if (!$isAdmin) {
+			$where['mem_id'] = userId();
+		}
 		$data = [];
 		$temp = $this->loadData($where);
 		if (empty($temp)) {
@@ -202,7 +203,7 @@ class Order extends Base
 		$imageArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $ids]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		$orderProductOriginPrice = 0;
-		$symbol = make('app/service/Language')->getSymbolByCurrency($data['base']['currency']);
+		$symbol = make('app/service/Currency')->getSymbolByCode($data['base']['currency']);
 		foreach ($data['product'] as $key => $value) {
 			$value['attr'] = [];
 			foreach ($temp as $ak => $av) {
@@ -248,5 +249,29 @@ class Order extends Base
 		}
 		$data['fee_list'] = $temp;
 		return $data;
+	}
+
+	public function getList(array $where=[], $page=1, $size=10)
+	{
+		$fields = 'order_id,order_no,status,product_total,order_total,add_time';
+		$list = $this->getListData($where, $fields, $page, $size, ['order_id'=>'desc']);
+		if (!empty($list)) {
+			//订单产品
+			$orderProductArr = make('app/service/order/Product')->getListData(['order_id'=>['in', array_column($list, 'order_id')]]);
+			//属性
+			$attrArr = make('app/service/order/ProductAttribute')->getListData(['order_product_id'=>['in', array_column($orderProductArr, 'order_product_id')]], 'order_product_id,attr_name,attv_name,attach_id', 0, 0, ['item_id'=>'asc']);
+			//属性图片
+			$attachIdArr = array_filter(array_column($attrArr, 'attach_id'));
+			$attachIdArr = array_merge($attachIdArr, array_column($orderProductArr, 'attach_id'));
+			//文件
+			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+			
+		}
+		foreach ($list as $key => $value) {
+
+		}
+
+		dd($list);
 	}
 }

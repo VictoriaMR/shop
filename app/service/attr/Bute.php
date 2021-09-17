@@ -61,7 +61,7 @@ class Bute extends Base
 
 	public function getListById($attrId, $lanId=1)
 	{
-		$list = $this->getListData(['attr_id'=>['in', $attrId]], 'attr_id,name', 0, 0, ['sort'=>'asc']);
+		$list = $this->getListData(['attr_id'=>['in', $attrId]], 'attr_id,name');
 		$lanArr = make('app/service/attr/ButeLanguage')->getListData(['attr_id'=>['in', $attrId], 'lan_id'=>$lanId], 'attr_id,name');
 		$lanArr = array_column($lanArr, 'name', 'attr_id');
 		foreach ($list as $key => $value) {

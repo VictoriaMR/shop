@@ -1,3 +1,6 @@
+$(function(){
+	USERINFO.init();
+});
 const USERINFO = {
 	init: function() {
 		const _this = this;

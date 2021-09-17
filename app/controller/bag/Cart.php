@@ -41,8 +41,7 @@ class Cart extends Base
 			$list = array_column($list, 'spu_id');
 		}
 		$summary = [];
-		$language = make('app/service/Language');
-		$symbol = $language->priceSymbol(2);
+		$symbol = make('app/service/Currency')->priceSymbol(2);
 		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 		$priceTotal = sprintf('%.2f', $priceTotal);
 		$summary[] = [
@@ -62,7 +61,7 @@ class Cart extends Base
 		$this->assign('unCheckList', $unCheckList);
 		$this->assign('collectList', $list);
 		$this->assign('summary', $summary);
-		$this->assign('_title', 'My shopping cart - '.site()->getName());
+		$this->assign('_title', appT('my').' '.appT('shopping_bag'));
 		$this->view();
 	}
 
