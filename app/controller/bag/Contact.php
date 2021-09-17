@@ -10,7 +10,7 @@ class Contact extends Base
 		html()->addCss();
 		html()->addJs();
 
-		$this->assign('_title', appT('contact_us').'-'.site()->getName());
+		$this->assign('_title', appT('contact_us'));
 		$this->view();
 	}
 

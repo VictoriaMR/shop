@@ -8,7 +8,7 @@ class Search extends Base
 {
 	public function index()
 	{	
-		$this->assign('_title', appT('search').' - '.site()->getName());
+		$this->assign('_title', appT('search'));
 		$this->view();
 	}
 }

@@ -23,6 +23,8 @@ class Index extends Base
 		}
 		$this->assign('banner', $banner);
 		// $this->assign('hot_category', array_chunk($hotCategory, 2));
+
+		$this->assign('_title', 'home');
 		$this->view();
 	}
 }

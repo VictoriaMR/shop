@@ -7,6 +7,22 @@ class Order extends Base
 {
 	public function index()
 	{	
+		html()->addCss();
+		html()->addJs();
+		$status = (int)iget('status');
+		$page = iget('page', 1);
+		$size = iget('size', 10);
+
+		$where = ['mem_id'=>userId(), 'is_delete'=>0];
+		if ($status) {
+			$where['status'] = $status;
+		}
+
+		$list = make('app/service/order/Order')->getList($where, $page, $size);
+
+		$this->assign('list', $list);
+		$this->assign('status', $status);
+		$this->assign('_title', appT('my_order'));
 		$this->view();
 	}
 
@@ -93,5 +109,17 @@ class Order extends Base
 		} else {
 			$this->error('Update your billing address failed.');
 		}
+	}
+
+	public function search()
+	{
+		$this->assign('_title', appT('order_search'));
+		$this->view();
+	}
+
+	public function trash()
+	{
+		$this->assign('_title', appT('order_trash'));
+		$this->view();
 	}
 }

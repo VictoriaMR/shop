@@ -53,7 +53,7 @@ class Debug
 		}
 		view()->assign('trace', $trace);
 		view()->assign('runtime', $runtime);
-		view()->load('frame/pagetrace', false);
+		view()->load('frame/pagetrace', [], false);
 	}
 
 	public function runlog($msg='', $type='')

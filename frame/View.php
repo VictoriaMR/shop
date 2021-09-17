@@ -32,7 +32,7 @@ class View
 		return ob_get_clean();
 	}
 
-	private function getTemplate($template, $match = true)
+	private function getTemplate($template, $match=true)
 	{
 		if ($match) {
 			$matchPath = '';
@@ -58,8 +58,8 @@ class View
 		return $this;
 	}
 
-	public function load($template = '', $match = true)
+	public function load($template='', $data=[], $match=true)
 	{
-		$this->fetch($this->getTemplate($template, $match));
+		$this->fetch($this->getTemplate($template, $match), $data);
 	}
 }

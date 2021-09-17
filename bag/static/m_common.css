@@ -316,23 +316,31 @@ a {
 }
 .cover {
 	width: 100%;
-	height: 0.44rem;
+	height: 0.4rem;
 	background: #F5F5F5;
 	position: fixed;
 	top: 0;
 	z-index: 102;
 }
 .cover .tc {
-	height: 0.44rem;
-	line-height: 0.44rem;
+	height: 0.4rem;
+	line-height: 0.4rem;
 }
 .cover .icon-xiangzuo1 {
-	margin-top: 0.11rem;
+	position: absolute;
+	left: 0.08rem;
+	top: 0.09rem;
 }
 .cover .top-search-icon {
 	position: absolute;
 	top: 0.11rem;
 	right: 0.12rem;
+}
+.cover-top-padding {
+	padding: 0.2rem;
+}
+.cover-footer-padding {
+	padding: 0.22rem;
 }
 #scroll-top {
 	position: fixed;
@@ -370,7 +378,8 @@ a {
 	position: relative;
 }
 #pb-footbar .tab.active {
-	font-weight: 700
+	font-weight: 700;
+	color: #000;
 }
 #pb-footbar .tab .iconfont {
 	font-size: 0.22rem

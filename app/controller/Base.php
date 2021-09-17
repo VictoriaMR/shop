@@ -47,6 +47,9 @@ class Base
 
 	protected function assign($name, $value=null)
 	{
+		if ($name == '_title') {
+			$value .= '-'.\App::get('site_name');
+		}
 		return view()->assign($name, $value);
 	}
 

@@ -1,4 +1,6 @@
-(function ($) {
+$(function(){
+	$('.banner').slider();
+});(function ($) {
 $.fn.slider = function (options) {
 	const slideContainer = this;
 	const slider = this.find('ul'); // 轮播图节点

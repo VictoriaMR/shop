@@ -27,7 +27,7 @@ class Login extends Base
 		}
 		html()->addCss();
 		html()->addJs();
-		$this->assign('_title', 'login');
+		$this->assign('_title', appT('login'));
 		$this->view();
 	}
 

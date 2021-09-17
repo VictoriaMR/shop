@@ -67,7 +67,7 @@ class Checkout extends Base
 		$this->assign('skuId', $skuId);
 		$this->assign('quantity', $quantity);
 		$this->assign('error', $error ?? '');
-		$this->assign('_title', 'Checkout, Place Order - '.site()->getName());
+		$this->assign('_title', 'Checkout, Place Order - ');
 
 		$this->view();
 	}

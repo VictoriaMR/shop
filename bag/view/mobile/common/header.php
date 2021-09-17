@@ -27,24 +27,3 @@
 <script type="text/javascript">
 const URI = "<?php echo env('APP_DOMAIN');?>";
 </script>
-<?php if (empty($_simple_title)){?>
-<?php $router = router()->getRoute();
-if (!in_array($router['path'], ['checkout'])) {?>
-<div class="layer cover">
-	<div class="tc">
-		<a class="<?php if ($router['path'] == 'newIn' && $router['func'] == 'index'){ echo 'f18 f600';}else{echo 'f14 c9';}?>" href="<?php echo url('newIn');?>">New In</a>
-		<a class="ml20 <?php if ($router['path'] == 'index' && $router['func'] == 'index'){ echo 'f18 f600';}else{echo 'f14 c9';}?>" href="<?php echo url('');?>">Refer</a>
-	</div>
-	<a class="f18 top-search-icon" href="<?php echo url('search');?>">
-		<span class="iconfont icon-sousuo"></span>
-	</a>
-</div>
-<div class="p22"></div>
-<?php }?>
-<?php } else {?>
-<div class="layer8 cover">
-	<span class="iconfont icon-xiangzuo1 f20 left" onclick="window.history.back('-1');"></span>
-	<div class="tc f16 f600"><?php echo $_simple_title;?></div>
-</div>
-<div class="p22"></div>
-<?php }?>

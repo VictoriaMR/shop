@@ -18,7 +18,7 @@
 			<li>
 				<a href="<?php echo url('userInfo/wishList');?>" class="block">
 					<span class="iconfont icon-xihuan"></span>
-					<p>Wish</p>
+					<p><?php echo appT('Wish');?></p>
 					<?php if ($collectionTotal > 0){?>
 					<span class="red-number"><?php echo $collectionTotal > 99 ? 99 : $collectionTotal;?></span>
 					<?php }?>
@@ -27,7 +27,7 @@
 			<li>
 				<a href="<?php echo url('userInfo/history');?>" class="block">
 					<span class="iconfont icon-zuji"></span>
-					<p>History</p>
+					<p><?php echo appT('History');?></p>
 					<?php if ($historyTotal > 0){?>
 					<span class="red-number"><?php echo $historyTotal > 99 ? 99 : $historyTotal;?></span>
 					<?php }?>
@@ -36,7 +36,7 @@
 			<li>
 				<a href="<?php echo url('userInfo/address');?>" class="block">
 					<span class="iconfont icon-zuobiao"></span>
-					<p>Address</p>
+					<p><?php echo appT('Address');?></p>
 					<?php if ($addressTotal > 99 ? 99 : $addressTotal > 0){?>
 					<span class="red-number"><?php echo $addressTotal > 99 ? 99 : $addressTotal;?></span>
 					<?php }?>
@@ -45,7 +45,7 @@
 			<li>
 				<a href="<?php echo url('userInfo/coupon');?>" class="block">
 					<span class="iconfont icon-youhuiquan"></span>
-					<p>Coupon</p>
+					<p><?php echo appT('Coupon');?></p>
 				</a>
 			</li>
 		</ul>
@@ -53,11 +53,66 @@
 	<div class="layer">
 		<div class="order-content mt12">
 			<a class="relative top-title block" href="<?php echo url('order');?>">
-				<p class="f14 f600 left">Order</p>
+				<p class="f14 f600 left"><?php echo appT('my_order');?></p>
 				<p class="right c9" >
-					<span>All</span>
+					<span><?php echo appT('all');?></span>
 					<span class="iconfont icon-xiangyou1"></span>
 				</p>
+				<div class="clear"></div>
+			</a>
+			<div class="mt10 order-status-list">
+				<ul class="f0">
+					<li>
+						<a href="<?php echo url('order', ['status'=>1]);?>" class="block">
+							<span class="iconfont icon-xinyongqia"></span>
+							<p><?php echo appT('pending');?></p>
+							<?php if (!empty($orderTotal[1])){?>
+							<span class="red-number"><?php echo $orderTotal[1] > 99 ? 99 : $orderTotal[1];?></span>
+							<?php } ?>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('order', ['status'=>2]);?>" class="block">
+							<span class="iconfont icon-zengsong"></span>
+							<p><?php echo appT('processing');?></p>
+							<?php if (!empty($orderTotal[2])){?>
+							<span class="red-number"><?php echo $orderTotal[2] > 99 ? 99 : $orderTotal[2];?></span>
+							<?php } ?>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('order', ['status'=>3]);?>" class="block">
+							<span class="iconfont icon-wuliu"></span>
+							<p><?php echo appT('shipped');?></p>
+							<?php if (!empty($orderTotal[3])){?>
+							<span class="red-number"><?php echo $orderTotal[3] > 99 ? 99 : $orderTotal[3];?></span>
+							<?php } ?>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('order', ['status'=>4]);?>" class="block">
+							<span class="iconfont icon-xinxi"></span>
+							<p><?php echo appT('review');?></p>
+							<?php if (!empty($orderTotal[4])){?>
+							<span class="red-number"><?php echo $orderTotal[4] > 99 ? 99 : $orderTotal[4];?></span>
+							<?php } ?>
+						</a>
+					</li>
+					<li>
+						<a href="<?php echo url('order', ['status'=>5]);?>" class="block">
+							<span class="iconfont icon-tuikuan"></span>
+							<p><?php echo appT('refund');?></p>
+							<?php if (!empty($orderTotal[5])){?>
+							<span class="red-number"><?php echo $orderTotal[5] > 99 ? 99 : $orderTotal[5];?></span>
+							<?php } ?>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+		<div class="order-content mt12">
+			<a class="relative top-title block" href="<?php echo url('order');?>">
+				<p class="f14 f600 left"><?php echo appT('more_services');?></p>
 				<div class="clear"></div>
 			</a>
 			<div class="mt10 order-status-list">
@@ -80,37 +135,10 @@
 							<?php } ?>
 						</a>
 					</li>
-					<li>
-						<a href="<?php echo url('order', ['status'=>3]);?>" class="block">
-							<span class="iconfont icon-wuliu"></span>
-							<p>Shipped</p>
-							<?php if (!empty($orderTotal[3])){?>
-							<span class="red-number"><?php echo $orderTotal[3] > 99 ? 99 : $orderTotal[3];?></span>
-							<?php } ?>
-						</a>
-					</li>
-					<li>
-						<a href="<?php echo url('order', ['status'=>4]);?>" class="block">
-							<span class="iconfont icon-xinxi"></span>
-							<p>Review</p>
-							<?php if (!empty($orderTotal[4])){?>
-							<span class="red-number"><?php echo $orderTotal[4] > 99 ? 99 : $orderTotal[4];?></span>
-							<?php } ?>
-						</a>
-					</li>
-					<li>
-						<a href="<?php echo url('order', ['status'=>5]);?>" class="block">
-							<span class="iconfont icon-tuikuan"></span>
-							<p>Refund</p>
-							<?php if (!empty($orderTotal[5])){?>
-							<span class="red-number"><?php echo $orderTotal[5] > 99 ? 99 : $orderTotal[5];?></span>
-							<?php } ?>
-						</a>
-					</li>
 				</ul>
 			</div>
 		</div>
-		<a class="btn btn-black w100 mt32 block" href="<?php echo url('login/logout');?>">SIGN OUT</a>
+		<a class="btn btn-black w100 mt32 block" href="<?php echo url('login/logout');?>"><?php echo appt('sign_out');?></a>
 	</div>
 </div>
 <div id="info-edit-modal" class="modal hidden">
@@ -179,8 +207,4 @@
 		</div>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	USERINFO.init();
-});
-</script>
+<?php $this->load('common/nav_footer');?>

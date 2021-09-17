@@ -1,3 +1,4 @@
+<?php $this->load('common/back_header', ['_simple_title' => appT('shopping_bag')]);?>
 <div id="cart-page">
 	<?php if (empty($checkedList)) {?>
 	<div class="empty-bag-image">
