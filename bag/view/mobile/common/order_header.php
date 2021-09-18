@@ -1,5 +1,5 @@
 <div class="layer8 cover">
-	<span class="iconfont icon-xiangzuo1 f20 left" onclick="window.history.back('-1');"></span>
+	<a class="iconfont icon-xiangzuo1 f20 left" href="<?php echo url('userInfo');?>"></a>
 	<div class="order-search-content">
 		<a class="order-search-btn" href="<?php echo url('order/search');?>">
 			<span class="iconfont icon-sousuo"></span>

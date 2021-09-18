@@ -15,5 +15,7 @@ class Order extends Base
 	const STATUS_PAIED = 2;//待发货
 	const STATUS_SHIPPED = 3;//运输中
 	const STATUS_FINISHED = 4;//已完成
-	const STATUS_REFUND = 5;//退款
+	const STATUS_PART_REFUND = 5;//部分退款
+	const STATUS_FULL_REFUND = 6;//全部退款
+	const STATUS_REFUNDING = 7; //退款中
 }

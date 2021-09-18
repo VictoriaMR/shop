@@ -1,0 +1,1 @@
+<p class="mt12 tc pb6"><?php echo appT('copyright');?> ©<?php echo '2019-'.date('Y');?> <?php echo strtoupper(\App::get('site_name'));?> <?php echo appT('all_rights');?></p>

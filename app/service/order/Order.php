@@ -253,7 +253,7 @@ class Order extends Base
 
 	public function getList(array $where=[], $page=1, $size=10)
 	{
-		$fields = 'order_id,order_no,status,product_total,order_total,add_time';
+		$fields = 'order_id,order_no,status,currency,product_total,order_total,is_review,add_time';
 		$list = $this->getListData($where, $fields, $page, $size, ['order_id'=>'desc']);
 		if (!empty($list)) {
 			//订单产品
@@ -266,12 +266,62 @@ class Order extends Base
 			//文件
 			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
-			
-		}
-		foreach ($list as $key => $value) {
+			//产品属性归类
+			$tempArr = [];
+			foreach ($attrArr as $value) {
+				if (!isset($tempArr[$value['order_product_id']])) {
+					$tempArr[$value['order_product_id']] = [];
+				}
+				if (!empty($value['attach_id'])) {
+					$value['image'] = $attachArr[$value['attach_id']] ?? '';
+				}
+				$tempArr[$value['order_product_id']][] = $value;
+			}
+			$attrArr = $tempArr;
+			//产品图片
+			$tempArr = [];
+			foreach ($orderProductArr as $value) {
+				if (!isset($tempArr[$value['order_id']])) {
+					$tempArr[$value['order_id']] = [];
+				}
+				$value['image'] = $attachArr[$value['attach_id']] ?? '';
+				$value['attr'] = $attrArr[$value['order_product_id']];
+				$tempArr[$value['order_id']][] = $value;
+			}
+			$orderProductArr = $tempArr;
+			//订单产品归类
+			$currencyService = make('app/service/Currency');
+			$currencyArr = array_unique(array_column($list, 'currency'));
+			$tempArr = [];
+			foreach ($currencyArr as $value) {
+				$tempArr[$value] = $currencyService->getSymbolByCode($value);
+			}
+			$currencyArr = $tempArr;
 
+			foreach ($list as $key => $value) {
+				$value['product'] = $orderProductArr[$value['order_id']];
+				$value['status_text'] = $this->getappTStatus($value['status']);
+				$value['currency_symbol'] = $currencyArr[$value['currency']] ?? '';
+				$value['url'] = url('order/detail', ['id'=>$value['order_id']]);
+				$value['add_time_format'] = date('j M, Y', strtotime($value['add_time']));
+				$list[$key] = $value;
+			}
 		}
+		return $list;
+	}
 
-		dd($list);
+	protected function getappTStatus($status)
+	{
+		$arr = [
+			$this->getConst('STATUS_CANCEL') => 'cancel',
+			$this->getConst('STATUS_WAIT_PAY') => 'wait_pay',
+			$this->getConst('STATUS_PAIED') => 'paid',
+			$this->getConst('STATUS_SHIPPED') => 'shipped',
+			$this->getConst('STATUS_FINISHED') => 'completed',
+			$this->getConst('STATUS_PART_REFUND') =>'part_refund',
+			$this->getConst('STATUS_FULL_REFUND') => 'full_refund',
+			$this->getConst('STATUS_REFUNDING') => 'refunding',
+		];
+		return appT($arr[$status]);
 	}
 }

@@ -9,28 +9,88 @@ class Order extends Base
 	{	
 		html()->addCss();
 		html()->addJs();
-		$status = (int)iget('status');
-		$page = iget('page', 1);
-		$size = iget('size', 10);
-
-		$where = ['mem_id'=>userId(), 'is_delete'=>0];
-		if ($status) {
-			$where['status'] = $status;
-		}
-
-		$list = make('app/service/order/Order')->getList($where, $page, $size);
+		
+		$list = $this->getOrderList();
 
 		$this->assign('list', $list);
-		$this->assign('status', $status);
+		$this->assign('status', input('status'));
+		$this->assign('page', input('page', 1));
+		$this->assign('size', input('size', 10));
 		$this->assign('_title', appT('my_order'));
 		$this->view();
 	}
 
 	protected function getOrderList()
 	{
-		$status = input('status');
-		if (!is_null($status)) {
-			
+		$status = (int)input('status');
+		$page = input('page', 1);
+		$size = input('size', 10);
+
+		$where = ['mem_id'=>userId(), 'is_delete'=>0];
+		if ($status) {
+			$where['status'] = $status;
+		}
+		return make('app/service/order/Order')->getList($where, $page, $size);
+	}
+
+	public function getOrderListAjax()
+	{
+		$this->success($this->getOrderList(), '');
+	}
+
+	public function repurchase()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		if (!make('app/service/order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$id])) {
+			$this->error(appT('order_error'));
+		}
+		$list = make('app/service/order/Product')->getListData(['order_id'=>$id], 'sku_id,quantity');
+		$cartService = make('app/service/Cart');
+		foreach ($list as $value) {
+			$cartService->addToCart($value['sku_id'], $value['quantity']);
+		}
+		$this->success(['url'=>url('cart')], '');
+	}
+
+	public function delete()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		$orderService = make('app/service/order/Order');
+		if (!$orderService->getCountData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>1])) {
+			$this->error(appT('order_error'));
+		}
+		$rst = $orderService->updateData($id, ['is_delete'=>1]);
+		if ($rst) {
+			$this->success();
+		} else {
+			$this->error();
+		}
+	}
+
+	public function refund()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		$orderService = make('app/service/order/Order');
+		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>2]);
+
+		if (empty($info)) {
+			$this->error(appT('order_error'));
+		}
+		$rst = $orderService->updateData($id, ['status'=>7]);
+		if ($rst) {
+			make('app/service/order/StatusHistory')->addLog($id, 7, $info['lan_id']);
+			$this->success();
+		} else {
+			$this->error();
 		}
 	}
 

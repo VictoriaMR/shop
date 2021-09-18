@@ -10,7 +10,7 @@ class Cart extends Base
 		$this->baseModel = make('app/model/Cart');
 	}
 
-	public function addToCart($skuId, $quantity=1, $spuId=0)
+	public function addToCart($skuId, $quantity=1)
 	{
 		$where = [
 			'mem_id' => $this->userId(),
@@ -21,8 +21,6 @@ class Cart extends Base
 			return $this->where('cart_id', $cartId)->increment('quantity');
 		}
 		$where['quantity'] = $quantity;
-		$where['add_time'] = now();
-		$where['update_time'] = now();
 		return $this->insert($where);
 	}
 

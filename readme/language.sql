@@ -37,7 +37,7 @@ CREATE TABLE `admin_member` (
 /*Data for the table `admin_member` */
 
 insert  into `admin_member`(`mem_id`,`name`,`nickname`,`mobile`,`email`,`avatar`,`sex`,`status`,`password`,`salt`,`add_time`,`update_time`,`login_time`) values 
-(50001,'Victoria','Victoria','18825071640','849376723@qq.com','',0,1,'$2y$10$QKCFbwVstP/SBYnvwZZYk.AyU0oKy0CBJ6JtnLgAvBu4BAXhRikOy','vict','2021-03-31 09:36:54',NULL,'2021-09-09 10:55:45');
+(50001,'Victoria','Victoria','18825071640','849376723@qq.com','',0,1,'$2y$10$QKCFbwVstP/SBYnvwZZYk.AyU0oKy0CBJ6JtnLgAvBu4BAXhRikOy','vict','2021-03-31 09:36:54',NULL,'2021-09-10 11:33:05');
 
 /*Table structure for table `attachment` */
 
@@ -310,19 +310,21 @@ CREATE TABLE `cart` (
   `sku_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SKUID',
   `quantity` smallint(6) NOT NULL DEFAULT '0' COMMENT '数量',
   `checked` tinyint(4) NOT NULL DEFAULT '1' COMMENT '是否选中',
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT 'uuid',
   `add_time` timestamp NULL DEFAULT NULL COMMENT '记录时间',
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`cart_id`),
   UNIQUE KEY `IDX_UNI` (`mem_id`,`sku_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `cart` */
 
-insert  into `cart`(`cart_id`,`mem_id`,`sku_id`,`quantity`,`checked`,`add_time`,`update_time`) values 
-(1,5,2,1,1,NULL,NULL),
-(4,10002,7,1,1,'2021-08-09 15:24:12',NULL),
-(10,10002,2,5,1,'2021-08-10 15:02:20','2021-08-10 15:20:05'),
-(11,10001,2,1,0,'2021-08-12 15:21:09',NULL);
+insert  into `cart`(`cart_id`,`mem_id`,`sku_id`,`quantity`,`checked`,`uuid`,`add_time`,`update_time`) values 
+(1,5,2,1,1,'',NULL,NULL),
+(4,10002,7,1,1,'','2021-08-09 15:24:12',NULL),
+(10,10002,2,5,1,'','2021-08-10 15:02:20','2021-08-10 15:20:05'),
+(11,10001,2,1,0,'','2021-08-12 15:21:09',NULL),
+(12,10001,3,6,1,'','2021-09-18 17:42:30','2021-09-18 17:42:30');
 
 /*Table structure for table `category` */
 
@@ -1258,7 +1260,7 @@ CREATE TABLE `member` (
 
 insert  into `member`(`mem_id`,`site_id`,`first_name`,`last_name`,`mobile`,`email`,`avatar`,`sex`,`status`,`verify`,`password`,`salt`,`add_time`,`update_time`,`login_time`) values 
 (10000,80,'Victory','Bluker','','849376723@qq.com','',0,1,0,'','','2021-07-29 13:32:26',NULL,'2021-08-06 15:04:05'),
-(10001,80,'Victoria','Blueker','+1 18825071642','849376724@qq.com','avatar/b0e9d103617f036384d321b3c123b728.jpeg',0,1,0,'$2y$10$U4wL32GKBd6pDPhPTWqvautldjZAKROgaEYReWKHkwJSoz1OqzUZa','VmIb','2021-08-09 10:59:55','2021-09-09 10:57:07','2021-09-09 10:57:07'),
+(10001,80,'Victoria','Blueker','+1 18825071642','849376724@qq.com','avatar/b0e9d103617f036384d321b3c123b728.jpeg',0,1,0,'$2y$10$U4wL32GKBd6pDPhPTWqvautldjZAKROgaEYReWKHkwJSoz1OqzUZa','VmIb','2021-08-09 10:59:55','2021-09-17 14:20:15','2021-09-17 14:20:15'),
 (10002,80,'Victory','Bluker','','849376725@qq.com','',0,1,0,'$2y$10$9S3d2tdQhlMPtktPdBZS.eFehMcaLKC4o7qt9JiWnRESK6G.KTQli','KOI5','2021-08-09 14:43:25','2021-08-27 10:26:11','2021-08-27 10:26:11');
 
 /*Table structure for table `member_address` */
@@ -1415,6 +1417,7 @@ CREATE TABLE `member_uuid` (
 /*Data for the table `member_uuid` */
 
 insert  into `member_uuid`(`uuid`,`site_id`,`mem_id`,`lan_id`,`add_time`) values 
+('lKsPNbAy4RpnO98tGx0QsmFW6ZuYuKnK',80,10001,'en','2021-09-10 15:45:11'),
 ('r95E2V6IJWI0gUOiXEMTpaJKquVXfwDz',0,50001,'en','2021-09-09 10:55:45');
 
 /*Table structure for table `message` */
@@ -1465,7 +1468,7 @@ CREATE TABLE `order` (
   `status` tinyint(3) NOT NULL DEFAULT '1' COMMENT '订单状态',
   `coupon_id` int(11) NOT NULL DEFAULT '0' COMMENT '优惠券使用ID',
   `payment_id` tinyint(3) NOT NULL DEFAULT '0' COMMENT '支付方式ID',
-  `lan_id` tinyint(3) NOT NULL DEFAULT '0' COMMENT '下单语言',
+  `lan_id` varchar(3) NOT NULL DEFAULT '' COMMENT '下单语言',
   `currency` varchar(3) NOT NULL DEFAULT '' COMMENT '下单货币',
   `insurance_free` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '保险费用',
   `coupon_free` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '优惠券使用折扣',
@@ -1483,19 +1486,19 @@ CREATE TABLE `order` (
 /*Data for the table `order` */
 
 insert  into `order`(`order_id`,`order_no`,`site_id`,`mem_id`,`status`,`coupon_id`,`payment_id`,`lan_id`,`currency`,`insurance_free`,`coupon_free`,`shipping_fee`,`product_total`,`order_total`,`pay_time`,`add_time`,`update_time`,`is_review`,`is_delete`) values 
-(10003,'210813150642080846',80,10001,1,0,0,2,'USD',0.00,0.00,0.00,69.44,69.44,NULL,NULL,NULL,0,0),
-(10004,'210813152259516219',80,10001,2,0,0,2,'USD',0.00,0.00,0.00,69.44,69.44,NULL,'2021-08-13 15:22:59','2021-08-13 15:22:59',0,0),
-(10005,'210813152623065266',80,10001,2,0,0,2,'USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:26:23','2021-08-13 15:26:23',0,0),
-(10006,'210813152649077323',80,10001,3,0,0,2,'USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:26:49','2021-08-13 15:26:49',0,0),
-(10007,'210813152649808388',80,10001,4,0,0,2,'USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:26:49','2021-08-13 15:26:49',0,0),
-(10010,'210813153153213085',80,10001,4,0,0,2,'USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:31:53','2021-08-13 15:31:53',1,0),
-(10011,'210813153225012747',80,10001,1,0,0,2,'USD',0.00,0.00,0.00,347.20,347.20,NULL,'2021-08-13 15:32:25','2021-08-13 15:32:25',0,0),
-(10012,'210813153453206898',80,10001,1,0,0,2,'USD',0.00,0.00,0.00,69.44,69.44,NULL,'2021-08-13 15:34:53','2021-08-13 15:34:53',0,0),
-(10013,'210813153644031125',80,10001,1,0,0,2,'USD',0.00,0.00,0.00,7152.32,7152.32,NULL,'2021-08-13 15:36:44','2021-08-13 15:36:44',0,0),
-(10014,'210813160217282918',80,10001,1,0,0,2,'USD',0.00,0.00,0.00,318.40,318.40,NULL,'2021-08-13 16:02:17','2021-08-13 16:02:17',0,0),
-(10015,'210820113856843886',80,10001,1,0,0,2,'USD',0.00,0.00,3.99,80.16,84.15,NULL,'2021-08-20 11:38:56','2021-08-20 11:38:56',0,0),
-(10017,'210823110423589034',80,10001,1,1,0,2,'USD',0.00,0.00,3.99,80.16,84.15,NULL,'2021-08-23 11:04:23','2021-08-23 11:04:23',0,0),
-(10018,'210823175732966930',80,10001,1,1,0,2,'USD',0.00,0.00,4.99,278.40,283.39,NULL,'2021-08-23 17:57:32','2021-08-23 17:57:32',0,0);
+(10003,'210813150642080846',80,10001,1,0,0,'en','USD',0.00,0.00,0.00,69.44,69.44,NULL,NULL,NULL,0,0),
+(10004,'210813152259516219',80,10001,2,0,0,'en','USD',0.00,0.00,0.00,69.44,69.44,NULL,'2021-08-13 15:22:59','2021-08-13 15:22:59',0,0),
+(10005,'210813152623065266',80,10001,7,0,0,'en','USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:26:23','2021-09-18 19:06:32',0,0),
+(10006,'210813152649077323',80,10001,3,0,0,'en','USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:26:49','2021-08-13 15:26:49',0,0),
+(10007,'210813152649808388',80,10001,4,0,0,'en','USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:26:49','2021-08-13 15:26:49',0,0),
+(10010,'210813153153213085',80,10001,4,0,0,'en','USD',0.00,0.00,0.00,6944.00,6944.00,NULL,'2021-08-13 15:31:53','2021-08-13 15:31:53',1,0),
+(10011,'210813153225012747',80,10001,1,0,0,'en','USD',0.00,0.00,0.00,347.20,347.20,NULL,'2021-08-13 15:32:25','2021-08-13 15:32:25',0,0),
+(10012,'210813153453206898',80,10001,6,0,0,'en','USD',0.00,0.00,0.00,69.44,69.44,NULL,'2021-08-13 15:34:53','2021-08-13 15:34:53',0,0),
+(10013,'210813153644031125',80,10001,5,0,0,'en','USD',0.00,0.00,0.00,7152.32,7152.32,NULL,'2021-08-13 15:36:44','2021-08-13 15:36:44',0,0),
+(10014,'210813160217282918',80,10001,4,0,0,'en','USD',0.00,0.00,0.00,318.40,318.40,NULL,'2021-08-13 16:02:17','2021-08-13 16:02:17',1,0),
+(10015,'210820113856843886',80,10001,3,0,0,'en','USD',0.00,0.00,3.99,80.16,84.15,NULL,'2021-08-20 11:38:56','2021-08-20 11:38:56',0,0),
+(10017,'210823110423589034',80,10001,3,1,0,'en','USD',0.00,0.00,3.99,80.16,84.15,NULL,'2021-08-23 11:04:23','2021-09-18 19:02:10',0,0),
+(10018,'210823175732966930',80,10001,0,1,0,'en','USD',0.00,0.00,4.99,278.40,283.39,NULL,'2021-08-23 17:57:32','2021-09-18 18:06:13',0,1);
 
 /*Table structure for table `order_address` */
 
@@ -1523,10 +1526,10 @@ CREATE TABLE `order_address` (
 /*Data for the table `order_address` */
 
 insert  into `order_address`(`order_address_id`,`order_id`,`type`,`first_name`,`last_name`,`country_code2`,`zone_id`,`state`,`city`,`address1`,`address2`,`phone`,`postcode`,`tax_number`) values 
-(1,10017,0,'V8888','I8888','LA',0,'ssss','guangzhou','toria','123123123','','0000','8888'),
-(2,10017,1,'V8888','I8888','LA',0,'ssss','guangzhou','toria','123123123','','0000','8888'),
-(3,10018,0,'V8888','I8888','LA',0,'ssss','guangzhou','toria','123123123','','0000','8888'),
-(4,10018,1,'V','I','LA',0,'ssss','guangzhou','toria','123123123','+856 18825071642','0000','8888');
+(1,10017,0,'V8888','I8888','US',0,'ssss','guangzhou','toria','123123123','','0000','8888'),
+(2,10017,1,'V8888','I8888','US',0,'ssss','guangzhou','toria','123123123','','0000','8888'),
+(3,10018,0,'V8888','I8888','US',0,'ssss','guangzhou','toria','123123123','','0000','8888'),
+(4,10018,1,'V','I','US',0,'ssss','guangzhou','toria','123123123','+856 18825071642','0000','8888');
 
 /*Table structure for table `order_product` */
 
@@ -1606,13 +1609,31 @@ insert  into `order_product_attribute`(`item_id`,`order_product_id`,`attr_id`,`a
 (27,18,1,'尺码',1,'可调节',0),
 (28,18,2,'颜色分类',4,'枣红',12);
 
+/*Table structure for table `order_status_history` */
+
+DROP TABLE IF EXISTS `order_status_history`;
+
+CREATE TABLE `order_status_history` (
+  `item_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `order_id` int(10) NOT NULL COMMENT '订单ID',
+  `status` tinyint(1) NOT NULL COMMENT '状态ID',
+  `info` varchar(512) NOT NULL COMMENT '备注信息',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`item_id`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=114 DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+
+/*Data for the table `order_status_history` */
+
+insert  into `order_status_history`(`item_id`,`order_id`,`status`,`info`,`add_time`) values 
+(113,10005,7,'Order Refunding','2021-09-18 19:06:32');
+
 /*Table structure for table `payment` */
 
 DROP TABLE IF EXISTS `payment`;
 
 CREATE TABLE `payment` (
   `payment_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `type` tinyint(4) NOT NULL COMMENT '类型',
+  `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '类型',
   `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态',
   `is_sandbox` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否沙盒',
   `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
@@ -1622,7 +1643,7 @@ CREATE TABLE `payment` (
   `remark` varchar(64) NOT NULL DEFAULT '' COMMENT '备注',
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`payment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `payment` */
 
@@ -1634,15 +1655,21 @@ insert  into `payment`(`payment_id`,`type`,`status`,`is_sandbox`,`name`,`app_key
 DROP TABLE IF EXISTS `payment_used`;
 
 CREATE TABLE `payment_used` (
-  `site_id` tinyint(1) NOT NULL COMMENT '站点ID',
-  `type` tinyint(1) NOT NULL COMMENT '支付类型',
-  `payment_id` int(11) NOT NULL COMMENT '支付账户ID',
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '支付类型',
+  `payment_id` int(11) NOT NULL DEFAULT '0' COMMENT '支付账户ID',
   `sort` tinyint(1) NOT NULL DEFAULT '0' COMMENT '排序',
   `add_time` timestamp NULL DEFAULT NULL COMMENT '增加时间',
-  PRIMARY KEY (`site_id`,`type`,`payment_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`type`,`payment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `payment_used` */
+
+insert  into `payment_used`(`item_id`,`site_id`,`type`,`payment_id`,`sort`,`add_time`) values 
+(2,80,3,1,0,'2021-09-10 15:17:39'),
+(4,80,2,1,0,'2021-09-10 15:39:21');
 
 /*Table structure for table `product_attribute_used` */
 
@@ -2291,9 +2318,9 @@ DROP TABLE IF EXISTS `site`;
 
 CREATE TABLE `site` (
   `site_id` tinyint(4) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
+  `path` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
   `domain` varchar(64) NOT NULL DEFAULT '' COMMENT '域名',
-  `title` varchar(64) NOT NULL DEFAULT '' COMMENT 'title',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT 'title',
   `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'keyword',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'desc',
   `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '内部使用备注',
@@ -2303,7 +2330,7 @@ CREATE TABLE `site` (
 
 /*Data for the table `site` */
 
-insert  into `site`(`site_id`,`name`,`domain`,`title`,`keyword`,`description`,`remark`,`add_time`) values 
+insert  into `site`(`site_id`,`path`,`domain`,`name`,`keyword`,`description`,`remark`,`add_time`) values 
 (0,'admin','https://lmr.admin.cn/','管理后台','','','','2021-08-27 18:01:45'),
 (80,'bag','https://lmr.bag.cn/','PrettyBag','Litfad.com采用简化的商业模式，提供面向客户的服务；整合资源，提高运营效率，同时降低流通和交易成本。Litfad致力于为客户提供“快速、卓越、有价值”的购物体验。Litfad.com涵盖家庭照明产品，如吊灯、吊灯、壁灯、水晶灯、工业风格照明等。在线产品的SKU总数超过10万。','Litfad.com采用简化的商业模式，提供面向客户的服务；整合资源，提高运营效率，同时降低流通和交易成本。Litfad致力于为客户提供“快速、卓越、有价值”的购物体验。Litfad.com涵盖家庭照明产品，如吊灯、吊灯、壁灯、水晶灯、工业风格照明等。在线产品的SKU总数超过10万。','','2021-08-27 18:01:45');
 
@@ -2367,7 +2394,7 @@ CREATE TABLE `site_static_file` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   PRIMARY KEY (`name`,`type`),
   KEY `static_id` (`static_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=86 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=91 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*Data for the table `site_static_file` */
 
@@ -2391,6 +2418,7 @@ insert  into `site_static_file`(`static_id`,`name`,`type`,`status`) values
 (28,'admin/static/c_member_index','js',0),
 (80,'admin/static/c_payment_index','css',0),
 (81,'admin/static/c_payment_index','js',0),
+(86,'admin/static/c_payment_paymentUsed','js',0),
 (78,'admin/static/c_product_detail','css',0),
 (79,'admin/static/c_product_detail','js',0),
 (19,'admin/static/c_product_index','css',0),
@@ -2415,6 +2443,8 @@ insert  into `site_static_file`(`static_id`,`name`,`type`,`status`) values
 (12,'bag/static/c_index_index','js',0),
 (22,'bag/static/c_login_index','css',0),
 (23,'bag/static/c_login_index','js',0),
+(89,'bag/static/c_order_index','css',0),
+(90,'bag/static/c_order_index','js',0),
 (49,'bag/static/c_pageNotFound_index','css',0),
 (43,'bag/static/c_product_index','css',0),
 (44,'bag/static/c_product_index','js',0),
@@ -2442,6 +2472,8 @@ insert  into `site_static_file`(`static_id`,`name`,`type`,`status`) values
 (18,'bag/static/m_login_index','js',0),
 (68,'bag/static/m_newIn_index','css',0),
 (69,'bag/static/m_newIn_index','js',0),
+(87,'bag/static/m_order_index','css',0),
+(88,'bag/static/m_order_index','js',0),
 (36,'bag/static/m_pageNotFound_index','css',0),
 (37,'bag/static/m_product_index','css',0),
 (38,'bag/static/m_product_index','js',0),
@@ -2469,12 +2501,23 @@ CREATE TABLE `translate` (
   `value` varchar(150) NOT NULL DEFAULT '' COMMENT '值',
   PRIMARY KEY (`tran_id`),
   UNIQUE KEY `IDX_UNION` (`name`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
 
 /*Data for the table `translate` */
 
 insert  into `translate`(`tran_id`,`name`,`type`,`value`) values 
-(1,'搜索宝贝','en','search');
+(1,'搜索宝贝','en','search'),
+(2,'name','',''),
+(3,'card_number','',''),
+(4,'expiry','',''),
+(5,'cvv','',''),
+(6,'loading','',''),
+(7,'enter_name','',''),
+(8,'enter_card_number','',''),
+(9,'enter_card_expiration','',''),
+(10,'enter_cvv_number','',''),
+(11,'order_status','',''),
+(12,'pay','','');
 
 /*Table structure for table `zone` */
 

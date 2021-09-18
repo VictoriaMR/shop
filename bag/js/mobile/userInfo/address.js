@@ -72,7 +72,7 @@ const ADDRESS = {
 		const _this = this;
 		const obj = $('.address-list');
 		const page = parseInt(obj.data('page')) + 1;
-		const size = parseInt(obj.data('size'))
+		const size = parseInt(obj.data('size'));
 		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);

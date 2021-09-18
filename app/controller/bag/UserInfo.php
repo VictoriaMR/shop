@@ -32,7 +32,8 @@ class UserInfo extends Base
 			$order->getConst('STATUS_PAIED'),
 			$order->getConst('STATUS_SHIPPED'),
 			$order->getConst('STATUS_FINISHED'),
-			$order->getConst('STATUS_REFUND'),
+			$order->getConst('STATUS_PART_REFUND'),
+			$order->getConst('STATUS_FULL_REFUND'),
 		]];
 		$where['is_review'] = 0;
 		$where['is_delete'] = 0;

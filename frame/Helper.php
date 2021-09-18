@@ -104,8 +104,10 @@ function input($name='', $default=null){
 function now($time=null){
 	return date('Y-m-d H:i:s', $time ? $time : time());
 }
-function appT($text, array $replace=[]){
-	$lanId = lanId();
+function appT($text, array $replace=[], $lanId=''){
+	if (empty($lanId)) {
+		$lanId = lanId();
+	}
 	$key = 'translate_'.$lanId;
 	if (!isset($GLOBALS[$key])) {
 		$GLOBALS[$key] = include ROOT_PATH.APP_TEMPLATE_TYPE.DS.'language'.DS.$lanId.'.php';
