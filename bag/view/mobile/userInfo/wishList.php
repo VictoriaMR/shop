@@ -1,10 +1,11 @@
+<?php $this->load('common/back_header', ['_simple_title'=>appT('my_wish')]);?>
 <div id="wish-page">
 	<div class="layer">
 		<div class="list-title flex">
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
-			<p class="title">WISH LIST</p>
+			<p class="title"><?php echo appT('wish_list');?></p>
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
@@ -40,8 +41,3 @@
 		<?php } ?>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	WISH.init();
-});
-</script>

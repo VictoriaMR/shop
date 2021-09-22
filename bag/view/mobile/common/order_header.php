@@ -5,7 +5,6 @@
 			<span class="iconfont icon-sousuo"></span>
 			<span class="c6"><?php echo appT('Product Name/Order NO.');?></span>
 		</a>
-		
 	</div>
 	<a href="<?php echo url('order/trash');?>" class="f20 right iconfont icon-shanchu"></a>
 </div>

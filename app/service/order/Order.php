@@ -92,6 +92,7 @@ class Order extends Base
 			'mem_id' => $this->userId(),
 			'coupon_id' => $couponId,
 			'lan_id' => $this->lanId(),
+			'is_moblie' => IS_MOBILE ? 1 : 0,
 			'currency' => $currency,
 			'insurance_free' => $insuranceFree,
 			'coupon_free' => $couponFree,
@@ -253,7 +254,7 @@ class Order extends Base
 
 	public function getList(array $where=[], $page=1, $size=10)
 	{
-		$fields = 'order_id,order_no,status,currency,product_total,order_total,is_review,add_time';
+		$fields = 'order_id,order_no,status,currency,product_total,order_total,is_review,add_time,is_delete';
 		$list = $this->getListData($where, $fields, $page, $size, ['order_id'=>'desc']);
 		if (!empty($list)) {
 			//订单产品
@@ -323,5 +324,35 @@ class Order extends Base
 			$this->getConst('STATUS_REFUNDING') => 'refunding',
 		];
 		return appT($arr[$status]);
+	}
+
+	public function getListByKeyword($where, $keyword, $page=1, $size=10)
+	{
+		if (empty($keyword)) {
+			return [];
+		}
+		$idArr = [];
+		$tempWhere = $where;
+		$tempWhere['order_no'] = ['like', $keyword];
+		$list = $this->getListData($tempWhere, 'order_id');
+		if (!empty($list)) {
+			$idArr = array_column($list, 'order_id');
+		}
+		//订单产品关键字搜索
+		$tempWhere = [];
+		foreach ($where as $key => $value) {
+			$tempWhere['a.'.$key] = $value;
+		}
+		$tempWhere['b.`name`'] = ['like', '%'.$keyword.'%'];
+		$list = $this->table('`order` as a')->leftJoin('order_product as b', 'a.order_id', 'b.order_id')->where($tempWhere, 'a.order_id')->get();
+		if (!empty($list)) {
+			$idArr = array_merge($idArr, array_column($list, 'order_id'));
+		}
+		if (empty($idArr)) {
+			$where = ['order_id'=>0];
+		} else {
+			$where['order_id'] = ['in', array_unique($idArr)];
+		}
+		return $this->getList($where, $page, $size);
 	}
 }

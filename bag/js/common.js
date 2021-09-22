@@ -144,8 +144,8 @@ const TIPS = {
 			<div class="mask"></div>\
 			<div class="content">\
 				<button class="btn24 btn-black close-btn top-close-btn">Close</button>\
-				<p class="layer mt20 tc f16 f600">'+message+'</p>\
-				<div class="footer layer mt20">\
+				<p class="layer mt20 tc f16 f600 pb20">'+message+'</p>\
+				<div class="footer layer">\
 					<button class="btn32 close-btn">Cancel</button>\
 					<button class="btn32 btn-black right confirm-btn">Confirm</button>\
 				</div>\
@@ -190,13 +190,17 @@ function guid() {
 	return (S4()+S4()+'-'+S4()+'-'+S4()+'-'+S4()+'-'+S4()+S4()+S4());
 }
 function appT(name) {
-	if (typeof js_language_text === 'undefined') {
-		return name;
+	if (typeof js_language_text !== 'undefined') {
+		if (typeof js_language_text[name] !== 'undefined') {
+			return js_language_text[name];
+		}
 	}
-	if (typeof js_language_text[name] === 'undefined') {
-		return name;
+	if (typeof js_language_text_common !== 'undefined') {
+		if (typeof js_language_text_common[name] !== 'undefined') {
+			return js_language_text_common[name];
+		}
 	}
-	return js_language_text[name];
+	return name;
 }
 (function($){
 	$.fn.bigImage = function(){

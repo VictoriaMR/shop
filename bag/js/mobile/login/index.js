@@ -58,11 +58,11 @@ const LOGIN = {
 			$('#login-page .register').toggle();
 		});
 		$('#login-page .agreement').on('click', function(){
-			if ($(this).find('.icon-fangxingxuanzhong').length > 0) {
-				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingxuanzhongfill');
+			if ($(this).find('.icon-fangxingweixuanzhong').length > 0) {
+				$(this).find('.iconfont').removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhongfill');
 				$(this).find('input').val(1);
 			} else {
-				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingxuanzhong');
+				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingweixuanzhong');
 				$(this).find('input').val(0);
 			}
 		});

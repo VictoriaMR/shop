@@ -21,9 +21,9 @@ class Address extends Base
 			return [];
 		}
 		//获取国家名称
-		$info['country'] = make('app/service/address/Country')->getName($info['country_code2'], $info['lan_id']);
+		$info['country'] = make('app/service/address/Country')->getName($info['country_code2']);
 		if (!empty($info['zone_id'])) {
-			$info['state'] = make('app/service/address/Zone')->getName($info['zon_id'], $info['lan_id']);
+			$info['state'] = make('app/service/address/Zone')->getName($info['zon_id']);
 		}
 		return $info;
 	}

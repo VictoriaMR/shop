@@ -1,11 +1,10 @@
 $(function(){
-	ORDERINDEX.init();
+	ORDERSEARCH.init();
 });
-const ORDERINDEX = {
+const ORDERSEARCH = {
 	init: function() {
 		// 滚动条居中
 		const _this = this;
-		_this.navInitScoller();
 		//滚动翻页
 		if ($('.order-list').length > 0 && $('.order-list').height() > $(window).height()) {
 			_this.initLoad();
@@ -86,14 +85,6 @@ const ORDERINDEX = {
 			});
 		});
 	},
-	navInitScoller: function() {
-		const pObj = $('#order-page .nav-list');
-		const obj = $('#order-page .nav-list a.active').parent();
-		const diff = obj.offset().left + obj.width() / 2 - pObj.width() / 2;
-		if (diff > 0) {
-			pObj.scrollLeft(diff);
-		}
-	},
 	initLoad: function() {
 		const _this = this;
 		_this.stop = true;
@@ -115,8 +106,8 @@ const ORDERINDEX = {
 		const obj = $('.order-list');
 		const page = parseInt(obj.data('page')) + 1;
 		const size = parseInt(obj.data('size'));
-		const status = $('.nav-list a.active').data('status');
-		$.post(URI+'order/getOrderListAjax', {page:page, size:size, status: status}, function(res){
+		const keyword = $('.order-search-content [name="keyword"]').val();
+		$.post(URI+'order/getSearchOrderListAjax', {page:page, size:size, keyword: keyword}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
 				$('.order-list').find('.page-loading-block').remove();

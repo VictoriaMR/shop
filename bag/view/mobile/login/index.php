@@ -1,5 +1,6 @@
 <div id="login-page">
-	<div class="login">
+	<a href="javascript:;" onclick="window.history.back(-1);" class="iconfont icon-guanbi1"></a>
+	<div class="login mt32">
 		<div class="title">
 			<p>LOG IN</p>
 		</div>
@@ -33,8 +34,8 @@
 					<span class="change-verify-btn">Sign in with Password</span>
 				</div>
 				<div class="mt32">
+					<button class="btn btn-black login-btn w100">LOG IN</button>
 					<div class="flex">
-						<button class="btn btn-black login-btn">LOG IN</button>
 						<div class="relative verify-code">
 							<p class="help-btn">Need Help?</p>
 							<div class="help-tips">
@@ -53,7 +54,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="register hide">
+	<div class="register mt32 hide">
 		<div class="title">
 			<p>CREATE AN ACCOUNT</p>
 		</div>
@@ -77,7 +78,7 @@
 				</div>
 			</div>
 			<div class="mt18 agreement">
-				<span class="iconfont icon-fangxingxuanzhong f16"></span>
+				<span class="iconfont icon-fangxingweixuanzhong f16"></span>
 				<span class="c6">Sign up for our email list</span>
 				<input type="hidden" name="agreement" value="0">
 			</div>

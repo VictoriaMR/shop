@@ -460,25 +460,25 @@ class Spu extends Base
 		$list = $this->getListData(['spu_id'=>['in'=>$id]], 'spu_id,attach_id,min_price,max_price,original_price');
 		$spuList = array_column($list, 'spu_id');
 		//获取语言
-		$lanArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuList], 'lan_id'=>['in', [1, lanId()]]], 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
+		$lanArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuList], 'lan_id'=>['in', ['en', lanId()]]], 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
 		$lanArr = array_column($lanArr, 'name', 'spu_id');
 		//获取图片集
 		$attachArr = array_unique(array_column($list, 'attach_id'));
 		$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 		$attachArr = array_column($attachArr, 'url', 'attach_id');
-		$language = make('app/service/Language');
+		$currency = make('app/service/Currency');
 		//格式化数组
 		foreach($list as $key => $value) {
 			$value['name'] = $lanArr[$value['spu_id']] ?? '';
 			$value['url'] = router()->urlFormat($value['name'], 'p', ['id'=>$value['spu_id']]);
 			$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
-			$temp = $language->priceFormat($value['min_price']);
+			$temp = $currency->priceFormat($value['min_price']);
 			$value['min_price'] = $temp[1];
 			$value['min_price_format'] = $temp[2];
-			$temp = $language->priceFormat($value['max_price']);
+			$temp = $currency->priceFormat($value['max_price']);
 			$value['max_price'] = $temp[1];
 			$value['max_price_format'] = $temp[2];
-			$temp = $language->priceFormat($value['original_price']);
+			$temp = $currency->priceFormat($value['original_price']);
 			$value['original_price'] = $temp[1];
 			$value['original_price_format'] = $temp[2];
 			$list[$key] = $value;

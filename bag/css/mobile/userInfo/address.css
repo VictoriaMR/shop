@@ -22,10 +22,19 @@
 	top: -0.01rem;
 	right: -0.01rem;
 }
-#address-page .address-list .item .default-btn.active {
-	background: #404040;
-	color: #fff;
-}
 #address-page .address-list .item.active p:first-child {
 	width: 80%;
+}
+#address-page .address-list .item .iconfont {
+	font-size: 0.18rem;
+	position: absolute;
+	top: 0.04rem;
+	right: 0.04rem;
+	color: #ddd;
+}
+#address-page .address-list .item .iconfont.icon-wuliu {
+	right: 0.30rem;
+}
+#address-page .address-list .item .iconfont.active {
+	color: #000;
 }

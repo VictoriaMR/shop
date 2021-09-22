@@ -5,7 +5,7 @@ use app\model\Base;
 
 class Order extends Base
 {
-	protected $_table = 'order';
+	protected $_table = '`order`';
 	protected $_primaryKey = 'order_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
@@ -18,4 +18,6 @@ class Order extends Base
 	const STATUS_PART_REFUND = 5;//部分退款
 	const STATUS_FULL_REFUND = 6;//全部退款
 	const STATUS_REFUNDING = 7; //退款中
+
+	const ORDER_WAIT_PAY_TIME = 7 * 24 * 3600;
 }

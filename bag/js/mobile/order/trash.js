@@ -1,11 +1,10 @@
 $(function(){
-	ORDERINDEX.init();
+	ORDERTRASH.init();
 });
-const ORDERINDEX = {
+const ORDERTRASH = {
 	init: function() {
 		// 滚动条居中
 		const _this = this;
-		_this.navInitScoller();
 		//滚动翻页
 		if ($('.order-list').length > 0 && $('.order-list').height() > $(window).height()) {
 			_this.initLoad();
@@ -25,74 +24,6 @@ const ORDERINDEX = {
 				});
 			});
 		});
-		//删除
-		$('.order-list').on('click', '.delete-btn', function(){
-			const id = $(this).parents('.item').data('id');
-			TIPS.confirm(appT('order_delete_confirm'), function(obj){
-				TIPS.loadingBtn(obj);
-				$.post(URI+'order/delete', {id: id}, function(res){
-					if (res.code === '200') {
-						window.location.reload();
-					} else {
-						TIPS.error(res.message);
-						TIPS.loadoutBtn(obj);
-					}
-				});
-			});
-		});
-		//退款
-		$('.order-list').on('click', '.refund-btn', function(){
-			const id = $(this).parents('.item').data('id');
-			TIPS.confirm(appT('order_refund_confirm'), function(obj){
-				TIPS.loadingBtn(obj);
-				$.post(URI+'order/refund', {id: id}, function(res){
-					if (res.code === '200') {
-						window.location.reload();
-					} else {
-						TIPS.error(res.message);
-						TIPS.loadoutBtn(obj);
-					}
-				});
-			});
-		});
-		//完成
-		$('.order-list').on('click', '.complete-btn', function(){
-			const id = $(this).parents('.item').data('id');
-			TIPS.confirm(appT('order_complete_confirm'), function(obj){
-				TIPS.loadingBtn(obj);
-				$.post(URI+'order/complete', {id: id}, function(res){
-					if (res.code === '200') {
-						window.location.reload();
-					} else {
-						TIPS.error(res.message);
-						TIPS.loadoutBtn(obj);
-					}
-				});
-			});
-		});
-		//取消订单
-		$('.order-list').on('click', '.cancel-btn', function(){
-			const id = $(this).parents('.item').data('id');
-			TIPS.confirm(appT('order_cancel_confirm'), function(obj){
-				TIPS.loadingBtn(obj);
-				$.post(URI+'order/cancel', {id: id}, function(res){
-					if (res.code === '200') {
-						window.location.reload();
-					} else {
-						TIPS.error(res.message);
-						TIPS.loadoutBtn(obj);
-					}
-				});
-			});
-		});
-	},
-	navInitScoller: function() {
-		const pObj = $('#order-page .nav-list');
-		const obj = $('#order-page .nav-list a.active').parent();
-		const diff = obj.offset().left + obj.width() / 2 - pObj.width() / 2;
-		if (diff > 0) {
-			pObj.scrollLeft(diff);
-		}
 	},
 	initLoad: function() {
 		const _this = this;
@@ -115,8 +46,7 @@ const ORDERINDEX = {
 		const obj = $('.order-list');
 		const page = parseInt(obj.data('page')) + 1;
 		const size = parseInt(obj.data('size'));
-		const status = $('.nav-list a.active').data('status');
-		$.post(URI+'order/getOrderListAjax', {page:page, size:size, status: status}, function(res){
+		$.post(URI+'order/getOrderListAjax', {page:page, size:size, is_delete: 1}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
 				$('.order-list').find('.page-loading-block').remove();
@@ -130,8 +60,7 @@ const ORDERINDEX = {
 						const order = data[i];
 						html += `<div class="item" data-id="`+order.order_id+`">
 							<a class="block" href="`+order.url+`">
-								<p class="status-title">`+order.status_text+`</p>
-								<div class="mt8 c6">
+								<div class="c6">
 									<p class="left e1 w50">`+order.add_time_format+`</p>
 									<p class="e1 w50 right tr">`+appT('no')+`: `+order.order_no+`</p>
 									<div class="clear"></div>
@@ -180,32 +109,11 @@ const ORDERINDEX = {
 						}
 						html += `</div>
 							</a>`;
-						if (order.status < 5){
-							html += `<div class="order-list-footer mt10">`;
-							if (order.status == 0) {
-								html += `<button class="btn24 delete-btn">`+appT('delete')+`</button>
-										<button class="btn24 btn-black right repurchase-btn">`+appT('repurchase')+`</button>`;
-							}
-							if (order.status == 1) {
-								html += `<button class="btn24 cancel-btn">`+appT('cancel')+`</button>
-										<a class="btn24 btn-black right ml6" href="`+URI+`/checkout/payOrder.html?id=`+order.order_id+`">`+appT('checkout')+`</a>`;
-							}
-							if (order.status == 2) {
-								html += `button class="btn24 right ml6 refund-btn">`+appT('refund')+`</button>`;
-							}
-							if (order.status == 3) {
-								html += `<button class="btn24 btn-black right ml6 complete-btn">`+appT('complete')+`</button>`;
-							}
-							if (order.status == 4 && !order.is_review) {
-								html += `<a class="btn24 btn-black right ml6" href="`+URI+`/order/review.html?id=`+order.order_id+`">`+appT('review')+`</a>`;
-							}
-							if (order.status == 3 || order.status == 4) {
-								html += `<a class="btn24 right ml6 bg-ef" href="`+URI+`/order/logistics.html?id=`+order.order_id+`">`+appT('logistics')+`</a>`;
-							}
-							html += `<div class="clear"></div>
-									</div>`;
-						}
-					html += `</div>`;
+						html += `<div class="order-list-footer mt10">
+									<button class="btn24 btn-black right repurchase-btn">`+appT('repurchase')+`</button>
+										<div class="clear"></div>
+								</div>
+								</div>`;
 					}
 					obj.append(html);
 				}

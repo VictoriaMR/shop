@@ -1,3 +1,10 @@
+#login-page .icon-guanbi1{
+	font-size: 0.22rem;
+	color: #404040;
+	position: absolute;
+	top: 0.16rem;
+	right: 0.16rem;
+}
 #login-page .title {
 	font-size: 0.24rem;
 	text-align: center;
@@ -77,7 +84,7 @@
 #login-page .help-tips {
 	display: none;
 	position: absolute;
-	left: -1.04rem;
+	left: 0;
 	top: -1.17rem;
 	width: 2.8rem;
 	background: #FFFFFF;
@@ -92,7 +99,7 @@
 	height: 0;
 	position: absolute;
 	bottom: -0.1rem;
-	left: calc(50% - 0.09rem);
+	left: 0.25rem;
 }
 #login-page .border-up-empty span {
 	display: block;

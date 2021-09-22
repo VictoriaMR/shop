@@ -1,10 +1,11 @@
+<?php $this->load('common/back_header', ['_simple_title'=>appT('my_visit')]);?>
 <div id="history-page">
 	<div class="layer">
 		<div class="list-title flex">
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
-			<p class="title">HISTORY LIST</p>
+			<p class="title"><?php echo appT('history_list');?></p>
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
@@ -43,8 +44,3 @@
 		<?php } ?>
 	</div>
 </div>
-<script type="text/javascript">
-$(function(){
-	HISTORY.init();
-});
-</script>

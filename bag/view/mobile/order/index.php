@@ -25,7 +25,7 @@
 	<div class="p20"></div>
 	<?php if (empty($list)){ ?>
 	<div class="order-list-empty layer tc">
-		<div class="mt64">
+		<div>
 			<img src="<?php echo siteUrl('image/common/no_info.png');?>">
 		</div>
 		<p class="mt20"><?php echo appT('empty_info');?></p>
@@ -85,6 +85,9 @@
 			</a>
 			<?php if ($item['status'] < 5){?>
 			<div class="order-list-footer mt10">
+				<?php if ($item['is_delete']){?>
+				<button class="btn24 btn-black right repurchase-btn"><?php echo appT('repurchase');?></button>
+				<?php } else {?>
 				<?php if ($item['status'] == 0){?>
 				<button class="btn24 delete-btn"><?php echo appT('delete');?></button>
 				<button class="btn24 btn-black right repurchase-btn"><?php echo appT('repurchase');?></button>
@@ -107,29 +110,31 @@
 				<?php if (in_array($item['status'], [3, 4])){?>
 				<a class="btn24 right ml6 bg-ef" href="<?php echo url('order/logistics', ['id'=>$item['order_id']]);?>"><?php echo appT('logistics');?></a>
 				<?php } ?>
+				<?php }?>
 				<div class="clear"></div>
 			</div>
 			<?php }?>
 		</div>
 		<?php } ?>
 	</div>
+	<script type="text/javascript">
+	const js_language_text = {
+		no: '<?php echo appT('no');?>',
+		delete: '<?php echo appT('delete');?>',
+		repurchase: '<?php echo appT('repurchase');?>',
+		cancel: '<?php echo appT('cancel');?>',
+		checkout: '<?php echo appT('checkout');?>',
+		refund: '<?php echo appT('refund');?>',
+		complete: '<?php echo appT('complete');?>',
+		review: '<?php echo appT('review');?>',
+		logistics: '<?php echo appT('logistics');?>',
+		order_repurchase_confirm: '<?php echo appT('order_repurchase_confirm');?>',
+		order_delete_confirm: '<?php echo appT('order_delete_confirm');?>',
+		order_refund_confirm: '<?php echo appT('order_refund_confirm');?>',
+		order_complete_confirm: '<?php echo appT('order_complete_confirm');?>',
+		order_cancel_confirm: '<?php echo appT('order_cancel_confirm');?>',
+		loading: '<?php echo appT('loading');?>',
+	};
+	</script>
 	<?php } ?>
 </div>
-<script type="text/javascript">
-const js_language_text = {
-	no: '<?php echo appT('no');?>',
-	delete: '<?php echo appT('delete');?>',
-	repurchase: '<?php echo appT('repurchase');?>',
-	cancel: '<?php echo appT('cancel');?>',
-	checkout: '<?php echo appT('checkout');?>',
-	refund: '<?php echo appT('refund');?>',
-	complete: '<?php echo appT('complete');?>',
-	review: '<?php echo appT('review');?>',
-	logistics: '<?php echo appT('logistics');?>',
-	order_repurchase_comfirm: '<?php echo appT('order_repurchase_comfirm');?>',
-	order_delete_comfirm: '<?php echo appT('order_delete_comfirm');?>',
-	order_refund_comfirm: '<?php echo appT('order_refund_comfirm');?>',
-	loading: '<?php echo appT('loading');?>',
-};
-</script>
-<?php $this->load('common/simple_footer');?>

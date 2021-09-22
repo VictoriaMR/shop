@@ -453,12 +453,11 @@ a {
 	width: 100%;
 	padding: 0.12rem;
 }
-.modal .dialog .footer .btn {
+.modal .dialog .footer .btn { 
 	width: 1.2rem;
 }
 .confirm-modal .content {
 	width: 3.2rem;
-	min-height: 1.6rem;
 	position: fixed;
 	left: calc(50% - 1.6rem);
 	top: calc(50% - 0.8rem);

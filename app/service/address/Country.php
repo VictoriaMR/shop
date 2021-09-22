@@ -12,7 +12,7 @@ class Country extends Base
 
 	public function getName($code2, $lanId=2)
 	{
-		$nameEn = $this->loadData($code2, 'name_en')['name_en'] ?? '';
+		return $this->loadData($code2, 'name_en')['name_en'] ?? '';
 		if ($lanId == 2) {
 			return $nameEn;
 		}

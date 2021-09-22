@@ -20,11 +20,11 @@ class UserInfo extends Base
 			'mem_id' => $info['mem_id'],
 		];
 		//收藏统计
-		$collectionTotal = make('app/service/member/Collect')->getCountData($where);
+		//$collectionTotal = make('app/service/member/Collect')->getCountData($where);
 		//足迹统计
-		$historyTotal = make('app/service/member/History')->getCountData($where);
+		//$historyTotal = make('app/service/member/History')->getCountData($where);
 		//地址统计
-		$addressTotal = make('app/service/member/Address')->getCountData($where);
+		//$addressTotal = make('app/service/member/Address')->getCountData($where);
 		//订单统计
 		$order = make('app/service/order/Order');
 		$where['status'] = ['in', [
@@ -40,10 +40,10 @@ class UserInfo extends Base
 		$orderTotal = $order->where($where)->field('count(*) as count, status')->groupBy('status')->get();
 		$orderTotal = array_column($orderTotal, 'count', 'status');
 
-		$this->assign('collectionTotal', $collectionTotal);
-		$this->assign('historyTotal', $historyTotal);
-		$this->assign('addressTotal', $addressTotal);
-		$this->assign('orderTotal', $orderTotal);
+		$this->assign('collectionTotal', $collectionTotal ?? 0);
+		$this->assign('historyTotal', $historyTotal ?? 0);
+		$this->assign('addressTotal', $addressTotal ?? 0);
+		$this->assign('orderTotal', $orderTotal ?? 0);
 		$this->assign('info', $info);
 		$this->assign('_title', appT('my_info'));
 		$this->view();
@@ -133,13 +133,13 @@ class UserInfo extends Base
 		$this->assign('list', $list);
 		$this->assign('page', $page);
 		$this->assign('size', $size);
-		$this->assign('_title', 'My address - '.site()->getName());
+		$this->assign('_title', appT('my_address'));
 		$this->view();
 	}
 
 	protected function getAddressList($page=1, $size=10)
 	{
-		$list = make('app/service/member/Address')->getListData(['mem_id'=>userId()], '*', $page, $size, ['is_default'=>'desc','address_id'=>'desc']);
+		$list = make('app/service/member/Address')->getListData(['mem_id'=>userId()], '*', $page, $size, ['is_default'=>'desc', 'is_bill'=>'desc','address_id'=>'desc']);
 		if (!empty($list)) {
 			$countryList = array_unique(array_column($list, 'country_code2'));
 			$countryList = make('app/service/address/Country')->getListData(['code2'=>['in', $countryList]], 'code2,name_en');
@@ -166,6 +166,23 @@ class UserInfo extends Base
 		}
 		$service->updateData(['mem_id'=>$memId], ['is_default'=>0]);
 		$service->updateData($id, ['is_default'=>1]);
+		$this->success();
+	}
+
+	public function setAddressBillDefault()
+	{
+		$id = (int)ipost('id');
+		$memId = userId();
+		$where = [
+			'address_id' => $id,
+			'mem_id' => $memId,
+		];
+		$service = make('app/service/member/Address');
+		if (!$service->getCountData($where)) {
+			$this->error('That address was not exist!');
+		}
+		$service->updateData(['mem_id'=>$memId], ['is_bill'=>0]);
+		$service->updateData($id, ['is_bill'=>1]);
 		$this->success();
 	}
 
@@ -218,6 +235,7 @@ class UserInfo extends Base
 		$address1 = ipost('address1');
 		$address2 = ipost('address2');
 		$is_default = (int)ipost('is_default');
+		$is_bill = (int)ipost('is_bill');
 		if (empty($country_code2)) {
 			$this->error('Country is required');
 		}
@@ -250,8 +268,8 @@ class UserInfo extends Base
 			'state' => substr($state, 0, 32),
 			'address1' => substr($address1, 0, 64),
 			'address2' => substr($address2, 0, 64),
-			'lan_id' => lanId(),
 			'is_default' => $is_default == 1 ? 1 : 0,
+			'is_bill' => $is_bill == 1 ? 1 : 0,
 		];
 		$countryInfo = make('app/service/address/Country')->loadData($country_code2, 'dialing_code');
 		$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$phone;
@@ -281,7 +299,7 @@ class UserInfo extends Base
 
 		$this->assign('list', $list);
 
-		$this->assign('_title', 'My Wish List - '.site()->getName());
+		$this->assign('_title', appT('my_wish'));
 
 		$this->view();
 	}
@@ -360,5 +378,11 @@ class UserInfo extends Base
 		} else {
 			$this->error('Sorry, That history product was removed failed.');
 		}
+	}
+
+	public function coupon()
+	{
+		$this->assign('_title', appT('my_coupon'));
+		$this->view();
 	}
 }

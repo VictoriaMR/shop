@@ -161,7 +161,7 @@ final class Query
 			}
 			return implode(',', $value);
 		}, $data);
-		$sql = sprintf('INSERT INTO `%s` (%s) VALUES %s', $this->_table, '`'.implode('`,`', $fields).'`', '(' . implode('), (', $data).')');
+		$sql = sprintf('INSERT INTO %s (%s) VALUES %s', $this->_table, implode(',', $fields), '(' . implode('), (', $data).')');
 		return $this->getQuery($sql);
 	}
 
@@ -175,14 +175,10 @@ final class Query
 			}
 		}
 		foreach ($data as $key => $value) {
-			$tempArr[] = '`'.$key.'`'.' = '.(is_numeric($value) ? (int)$value : "'".addslashes($value)."'");
+			$tempArr[] = $key.' = '.(is_numeric($value) ? (int)$value : "'".addslashes($value)."'");
 		}
 		$whereString = $this->analyzeWhere();
-		if (!empty($whereString)){
-			$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, implode(',', $tempArr), $whereString);
-		} else{
-			$sql = sprintf('UPDATE `%s` SET %s', $this->_table, implode(',', $tempArr));
-		}
+		$sql = sprintf('UPDATE %s SET %s %s', $this->_table, implode(',', $tempArr), empty($whereString) ? '' : 'WHERE '.$whereString);
 		if ($returnSql) {
 			return $sql;
 		}
@@ -193,7 +189,7 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.' = '.$value.' + '.$num, $whereString);
+		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $value.' = '.$value.' + '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -201,7 +197,7 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE `%s` SET %s WHERE %s', $this->_table, $value.' = '.$value.' - '.$num, $whereString);
+		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $value.' = '.$value.' - '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -231,7 +227,7 @@ final class Query
 			throw new \Exception('MySQL Error, table not exist!', 1);
 		}
 		$whereString = $this->analyzeWhere();
-		$sql = sprintf('SELECT %s FROM `%s`', empty($this->_columns) ? '*' : rtrim($this->_columns, ','), $this->_table);
+		$sql = sprintf('SELECT %s FROM %s', empty($this->_columns) ? '*' : rtrim($this->_columns, ','), $this->_table);
 		if (!empty($whereString)) {
 			$sql .= ' WHERE ' . $whereString;
 		}
@@ -280,10 +276,10 @@ final class Query
 						}
 					}
 
-					$tempStr .= sprintf('%s `%s` %s (%s)', $fk == 0 ? '' : $type, $fv, $operator, rtrim($valueStr, ','));
+					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $fv, $operator, rtrim($valueStr, ','));
 				} else {
 					$value = is_numeric($value) ? (int) $value : "'".addslashes($value)."'";
-					$tempStr .= sprintf('%s `%s` %s %s', $fk == 0 ? '' : $type, $fv, $operator, $value);
+					$tempStr .= sprintf('%s %s %s %s', $fk == 0 ? '' : $type, $fv, $operator, $value);
 				}
 			}
 			$whereString .= $start.$tempStr.$end;
@@ -394,7 +390,7 @@ final class Query
 		// 重新排序生成批量sql
 		$index = 0;
 		$sql = [];
-		$sql = sprintf('UPDATE `%s` SET `sort` = CASE', $this->_table);
+		$sql = sprintf('UPDATE %s SET sort = CASE', $this->_table);
 		foreach ($tempList as $key => $value) {
 			$tempArr = explode('-', $key);
 			$where = [];
