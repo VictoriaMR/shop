@@ -28,7 +28,6 @@ class View
 		ob_implicit_flush(0);
 		extract($data, EXTR_OVERWRITE);
 		include $template;
-		// 获取并清空缓存
 		return ob_get_clean();
 	}
 
@@ -36,9 +35,7 @@ class View
 	{
 		if ($match) {
 			$matchPath = '';
-			if (env('APP_VIEW_MATCH')) {
-				$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
-			}
+			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
 			if (empty($template)) {
 				$_route = router()->getRoute();
 				$template = $_route['path'].DS.$_route['func'];

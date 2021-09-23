@@ -191,7 +191,7 @@ const ORDERINDEX = {
 										<a class="btn24 btn-black right ml6" href="`+URI+`/checkout/payOrder.html?id=`+order.order_id+`">`+appT('checkout')+`</a>`;
 							}
 							if (order.status == 2) {
-								html += `button class="btn24 right ml6 refund-btn">`+appT('refund')+`</button>`;
+								html += `<button class="btn24 right ml6 refund-btn">`+appT('refund')+`</button>`;
 							}
 							if (order.status == 3) {
 								html += `<button class="btn24 btn-black right ml6 complete-btn">`+appT('complete')+`</button>`;

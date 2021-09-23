@@ -50,12 +50,12 @@ class Base
 		if ($name == '_title') {
 			$value .= '-'.\App::get('site_name');
 		}
-		return view()->assign($name, $value);
+		return make('frame/View')->assign($name, $value);
 	}
 
 	protected function view($name='')
 	{
-		return view()->display($name);
+		return make('frame/View')->display($name);
 	}
 
 	protected function _init()

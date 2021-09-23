@@ -12,9 +12,9 @@ class Redis
 	private function connect() 
 	{
 		$this->_link = new \Redis();
-		$this->_link->connect(env('REDIS_HOST', '127.0.0.1'), env('REDIS_PORT', '6379'), self::DEFAULT_CONNECT_TIME);
-		if (!empty(env('REDIS_PASSWORD'))) {
-			$this->_link->auth(env('REDIS_PASSWORD'));
+		$this->_link->connect(config('env.REDIS_HOST', '127.0.0.1'), config('env.REDIS_PORT', '6379'), self::DEFAULT_CONNECT_TIME);
+		if (!empty(config('env.REDIS_PASSWORD'))) {
+			$this->_link->auth(config('env.REDIS_PASSWORD'));
 		}
 		return true;
 	}

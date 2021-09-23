@@ -14,8 +14,8 @@ class Checkout extends Base
 
 		$info = $this->getCheckoutData();
 
-		$skuId = (int)input('id');
-		$quantity = (int)input('quantity');
+		$skuId = (int)ipost('id');
+		$quantity = (int)ipost('quantity');
 
 		if (empty($info['list'])) {
 			$error = appT('checkout_error');
@@ -257,7 +257,7 @@ class Checkout extends Base
 		}
 
 		$this->assign('error', $error);
-		$this->assign('_title', 'Checkout, Pay Order - '.site()->getName());
+		$this->assign('_title', 'Checkout, Pay Order - ');
 		$this->view();
 	}
 

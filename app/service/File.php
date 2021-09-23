@@ -20,7 +20,7 @@ class File
         $attachment = make('app/service/Attachment');
         $data = $attachment->getAttachmentByName($name);
         if (empty($data)) {
-            $path = ROOT_PATH.env('FILE_CENTER').DS.$cate.DS;
+            $path = ROOT_PATH.config('env.FILE_CENTER').DS.$cate.DS;
             //创建目录
             if (!is_dir($path)) {
                 mkdir($path, 0777, true);
@@ -59,7 +59,7 @@ class File
         if (!in_array($cate, self::FILE_TYPE)) return false;
         //生成临时文件
         $ext = pathinfo($url, PATHINFO_EXTENSION);
-        $dir = ROOT_PATH.env('FILE_CENTER').DS;
+        $dir = ROOT_PATH.config('env.FILE_CENTER').DS;
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }

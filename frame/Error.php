@@ -6,7 +6,7 @@ class Error
 {
 	public function register()
 	{
-		if (env('APP_DEBUG')) {
+		if (config('env.APP_DEBUG')) {
 			error_reporting(E_ALL);
 		} else {
 			error_reporting(0);
@@ -16,7 +16,7 @@ class Error
 		register_shutdown_function([$this, 'shutdownDebug']);
 	}
 
-	public function errorDebug($errno, $errStr, $errfile = '', $errline = '')
+	public function errorDebug($errno, $errStr, $errfile='', $errline='')
 	{
 		$this->errorEcho($errfile, $errline, $errStr);
 	}
@@ -52,17 +52,16 @@ class Error
 
 	protected function errorEcho($file, $line, $message)
 	{
-		debug()->runlog($file.PHP_EOL.$line.PHP_EOL.$message);
+		make('frame/Debug')->runlog($file.PHP_EOL.$line.PHP_EOL.$message);
 		if (IS_CLI) {
 			echo 'File: '.$file.PHP_EOL;
 			echo 'Line: '.$line.PHP_EOL;
 			echo 'Error Message: '.$message.PHP_EOL;
 		} else {
-			if (env('APP_DEBUG')) {
+			if (config('env.APP_DEBUG')) {
 				echo 'File: '.$file.'<br />';
 				echo 'Line: '.$line.'<br />';
 				echo 'Error Message: '.$message.'<br />';
-				echo 'Uri: '.($_SERVER['REQUEST_METHOD'] ?? '').' '.($_SERVER['HTTP_HOST'] ?? '').' '.($_SERVER['REQUEST_URI'] ?? '').'<br />';
 				$this->echoParmas();
 			} else {
 				redirect(url('pageNotFound'));

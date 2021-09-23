@@ -51,9 +51,10 @@ class Debug
 					break;
 			}
 		}
-		view()->assign('trace', $trace);
-		view()->assign('runtime', $runtime);
-		view()->load('frame/pagetrace', [], false);
+		$object = make('frame/View');
+		$object->assign('trace', $trace);
+		$object->assign('runtime', $runtime);
+		$object->load('frame/pagetrace', [], false);
 	}
 
 	public function runlog($msg='', $type='')

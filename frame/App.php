@@ -9,23 +9,21 @@ class App
 		self::make('frame/Error')->register();
 	}
 
-	public static function run() 
-	{
-		self::init();
-		self::send();
-	}
-
 	public static function make($abstract, $params=null)
 	{
 		return self::autoload($abstract, $params);
 	}
 
-	private static function send()
+	public static function send()
 	{
-		//复用数据
-		if (APP_SITE_ID > 0) {
-			self::set('site_name', site()->getName());
+		//获取站点数据
+		$info = redis(0)->hGet('domain_config_site_info', $_SERVER['HTTP_HOST']);
+		if (empty($info)) {
+			redirect('https://www.simby.com');
 		}
+		define('APP_TEMPLATE_TYPE', $info['path']);
+		define('APP_SITE_ID', $info['site_id']);
+		self::set('site_name', $info['title']);
 		//路由解析
 		$info = router()->analyze()->getRoute();
 		//执行方法
@@ -72,12 +70,12 @@ class App
 
 	public static function runOver()
 	{
-		if (env('APP_DEBUG')) {
-			debug()->runlog();
+		if (config('env.APP_DEBUG')) {
+			make('frame/Debug')->runlog();
 			if (!IS_CLI && !IS_AJAX) {
 				$router = router()->getRoute();
 				if (!($router['path'] == 'index' && $router['func'] == 'index')) {
-					debug()->init();
+					make('frame/Debug')->init();
 				}
 			}
 		}

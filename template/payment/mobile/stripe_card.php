@@ -195,7 +195,7 @@
 		loadBtn: function (complete) {
 			const obj = $('#payment-stripe-card-submit');
 			if (complete) {
-				obj.attr('disabled', false).text("<?php echo appT('pay', ['amount' => $order_total_format]);?>");
+				obj.attr('disabled', false).text("<?php echo appT('pay', ['{amount}' => $order_total_format]);?>");
 				TIPS.loadout(obj.parent());
 			} else {
 				obj.attr('disabled', true).text("<?php echo appT('loading');?>");

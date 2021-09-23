@@ -55,7 +55,6 @@ final class Router
 					$this->_route['path'] = $this->getPath($this->_route['path']);
 				}
 			}
-
 			if (empty($this->_route['path'])) {
 				$temp = explode('/', $pathInfo['path']);
 				if (count($temp) > 1) {
@@ -89,24 +88,16 @@ final class Router
 
 	public function getRoute($name='')
 	{
-		if (empty($name)) {
-			return $this->_route;
-		}
+		if (empty($name)) return $this->_route;
 		return $this->_route[$name] ?? '';
 	}
 
 	public function buildUrl($url=null, $param=null, $domain=null)
 	{
-		if (is_null($url)) {
-			$url = $this->_route['path'].DS.$this->_route['func'];
-		}
-		if (!empty($url)) {
-			$url .= defined('TEMPLATE_SUFFIX') ? '.'.TEMPLATE_SUFFIX : '';
-		}
-		if (!empty($param)) {
-			$url .= '?' . http_build_query($param);
-		}
-		return (is_null($domain) ? env('APP_DOMAIN') : $domain).$url;
+		if (is_null($url)) $url = $this->_route['path'].DS.$this->_route['func'];
+		if (!empty($url)) $url .= defined('TEMPLATE_SUFFIX') ? '.'.TEMPLATE_SUFFIX : '';
+		if (!empty($param)) $url .= '?' . http_build_query($param);
+		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$url;
 	}
 
 	public function urlFormat($name, $type, $param=[])
@@ -116,19 +107,10 @@ final class Router
 		$name = str_replace(' ', '-' , $name);
 		$name .= '-'.$type;
 		$name = preg_replace('/-{1,}/', '-', $name);
-		
-		if (isset($param['id'])) {
-			$name .= '-'.$param['id'];
-		}
-		if (isset($param['page'])) {
-			$name .= '-page-'.$param['page'];
-		}
-		if (isset($param['size'])) {
-			$name .= '-size-'.$param['size'];
-		}
-		if (defined('TEMPLATE_SUFFIX')) {
-			$name .= '.'.TEMPLATE_SUFFIX;
-		}
-		return env('APP_DOMAIN').$name;
+		if (isset($param['id'])) $name .= '-'.$param['id'];
+		if (isset($param['page'])) $name .= '-page-'.$param['page'];
+		if (isset($param['size'])) $name .= '-size-'.$param['size'];
+		if (defined('TEMPLATE_SUFFIX')) $name .= '.'.TEMPLATE_SUFFIX;
+		return config('env.APP_DOMAIN').$name;
 	}
 }

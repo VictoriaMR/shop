@@ -37,9 +37,7 @@ final class Query
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) {
-					if (isset($value[1])) {
-						$this->_where[] = [$key, $value[0], $value[1]];
-					}
+					$this->_where[] = [$key, $value[0], $value[1]];
 				} else {
 					$this->_where[] = [$key, '=', $value];
 				}
@@ -54,11 +52,6 @@ final class Query
 		return $this;
 	}
 
-	public function whereIn($column, $value=[])
-	{
-		return $this->where($column, 'IN', $value);
-	}
-
 	public function leftJoin($table, $linkForm, $linkTo)
 	{
 		$this->_table = sprintf('%s LEFT JOIN %s ON %s = %s', $this->_table, $table, $linkForm, $linkTo);
@@ -70,10 +63,10 @@ final class Query
 		if (empty($columns)) return $this;
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
-				$this->_orderBy .= $key.' '.strtoupper($value).',';
+				$this->_orderBy .= $key.' '.$value.',';
 			}
 		} else {
-			$this->_orderBy .= $columns.' '.strtoupper($operator).',';
+			$this->_orderBy .= $columns.' '.$operator.',';
 		}
 		return $this;
 	}
@@ -113,20 +106,11 @@ final class Query
 		return $this->get()[0] ?? [];
 	}
 
-	public function value($name='')
+	public function value($name)
 	{
-		if (!empty($name)) {
-			$this->_columns = $name;
-		}
+		$this->_columns = $name;
 		$info = $this->find();
-		if (empty($info)) {
-			return '';
-		}
-		if (empty($name)) {
-			return $info;
-		} else {
-			return $info[$name] ?? '';
-		}
+		return $info[$name] ?? '';
 	}
 
 	public function count()
@@ -135,12 +119,8 @@ final class Query
 		return $this->find()['count'] ?? 0;
 	}
 
-	public function insert(array $data=[])
+	public function insert(array $data)
 	{
-		if (empty($data)) return false;
-		if (empty($this->_table)) {
-			throw new \Exception('MySQL Error, no found table', 1);
-		}
 		if (!is_array(current($data))) $data = [$data];
 		$insertTime = [];
 		if (!empty($this->_addTime)) {
@@ -151,13 +131,11 @@ final class Query
 		}
 		$fields = array_merge(array_keys(current($data)), $insertTime);
 		$data = array_map(function($value) use ($insertTime){
-			if (!empty($insertTime)) {
-				foreach ($insertTime as $v) {
-					$value[$v] = now();
-				}
-			}
 			foreach ($value as $k => $v) {
 				$value[$k] = (is_numeric($v) ? (int)$v : "'".addslashes($v)."'");
+			}
+			foreach ($insertTime as $v) {
+				$value[$v] = "'".now()."'";
 			}
 			return implode(',', $value);
 		}, $data);
@@ -165,23 +143,20 @@ final class Query
 		return $this->getQuery($sql);
 	}
 
-	public function update(array $data=[], $returnSql=false)
+	public function update(array $data, $returnSql=false)
 	{
-		if (empty($data)) return false;
 		$tempArr = [];
-		if (!empty($this->_updateTime)) {
-			foreach(explode(',', $this->_updateTime) as $value) {
-				$data[$value] = now();
-			}
-		}
 		foreach ($data as $key => $value) {
 			$tempArr[] = $key.' = '.(is_numeric($value) ? (int)$value : "'".addslashes($value)."'");
 		}
-		$whereString = $this->analyzeWhere();
-		$sql = sprintf('UPDATE %s SET %s %s', $this->_table, implode(',', $tempArr), empty($whereString) ? '' : 'WHERE '.$whereString);
-		if ($returnSql) {
-			return $sql;
+		if (!empty($this->_updateTime)) {
+			foreach(explode(',', $this->_updateTime) as $value) {
+				$tempArr[] = $value." = '".now()."'";
+			}
 		}
+		$whereString = $this->analyzeWhere();
+		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, implode(',', $tempArr), $whereString);
+		if ($returnSql) return $sql;
 		return $this->getQuery($sql);
 	}
 
@@ -212,20 +187,12 @@ final class Query
 
 	public function delete()
 	{
-		$whereString = $this->analyzeWhere();
-		if (!empty($whereString)){
-			$sql = sprintf('DELETE FROM %s WHERE %s', $this->_table, $whereString);
-		} else{
-			$sql = sprintf('TRUNCATE TABLE %s', $this->_table);
-		}
+		$sql = sprintf('DELETE FROM %s WHERE %s', $this->_table, $this->analyzeWhere());
 		return $this->getQuery($sql);
 	}
 
 	private function getSql()
 	{
-		if (empty($this->_table)) {
-			throw new \Exception('MySQL Error, table not exist!', 1);
-		}
 		$whereString = $this->analyzeWhere();
 		$sql = sprintf('SELECT %s FROM %s', empty($this->_columns) ? '*' : rtrim($this->_columns, ','), $this->_table);
 		if (!empty($whereString)) {
@@ -275,7 +242,6 @@ final class Query
 							$valueStr .= "'".addslashes($v)."',";
 						}
 					}
-
 					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $fv, $operator, rtrim($valueStr, ','));
 				} else {
 					$value = is_numeric($value) ? (int) $value : "'".addslashes($value)."'";
@@ -291,7 +257,7 @@ final class Query
 	public function getQuery($sql)
 	{
 		$this->clear();
-		if (env('APP_DEBUG')) {
+		if (config('env.APP_DEBUG')) {
 			$GLOBALS['exec_sql'][] = $sql;
 		}
 		$conn = db($this->_database);

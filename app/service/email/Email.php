@@ -132,7 +132,7 @@ class Email extends Base
 
 		$status = $mail->send();
 		if (!$status) {
-			debug()->addLog($mail->ErrorInfo, 'email_error');
+			make('frame/Debug')->addLog($mail->ErrorInfo, 'email_error');
 		}
 		return $status;
 	}

@@ -280,9 +280,8 @@ class Order extends Base
 		if (empty($id)) {
 			$error = appT('order_error');
 		} else {
-			$where = ['mem_id'=>userId(), 'order_id'=>$id];
 			$orderService = make('app/service/order/Order');
-			$orderInfo = $orderService->getInfo($where);
+			$orderInfo = $orderService->getInfo($id);
 			if (empty($orderInfo)) {
 				$error = appT('order_error');
 			} else {
@@ -297,6 +296,7 @@ class Order extends Base
 						}
 						$orderInfo = $orderService->getInfo($id);
 					}
+					$orderInfo['base']['last_pay_time'] = (int)((strtotime($orderInfo['base']['add_time']) + $orderService->getConst('ORDER_WAIT_PAY_TIME') - time()) / 86400);
 				}
 			}
 		}

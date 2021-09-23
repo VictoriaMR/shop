@@ -11,9 +11,7 @@ class Html
 	{
 		$matchPath = '';
 		if ($match) {
-			if (env('APP_VIEW_MATCH')) {
-				$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
-			}
+			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
 			if (empty($name)) {
 				$_route = router()->getRoute();
 				$name = $_route['path'].DS.$_route['func'];
@@ -32,9 +30,7 @@ class Html
 	{
 		$matchPath = '';
 		if ($match) {
-			if (env('APP_VIEW_MATCH')) {
-				$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
-			}
+			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
 			if (empty($name)) {
 				$_route = router()->getRoute();
 				$name = $_route['path'].DS.$_route['func'];
