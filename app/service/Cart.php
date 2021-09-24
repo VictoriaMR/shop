@@ -53,16 +53,21 @@ class Cart extends Base
 
 	public function getCartCount()
 	{
-		$where = [
-			'mem_id' => $this->userId(),
-			'checked' => $this->getConst('CART_CHECKED'),
-		];
+		$where = $this->getWhere();
+		$where['checked'] = 1;
 		return $this->loadData($where, 'SUM(quantity) as quantity')['quantity'] ?? 0;
+	}
+
+	protected function getWhere()
+	{
+		$memId = $this->userId();
+		if (empty($memId)) return ['uuid' => make('frame/Cookie')->get('uuid'), 'mem_id'=>0];
+		else return ['mem_id' => $memId];
 	}
 
 	public function getList()
 	{
-		$list = $this->getListData(['mem_id' => $this->userId()], 'cart_id,sku_id,quantity,checked', 0, 0, ['cart_id'=>'desc']);
+		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,checked', 0, 0, ['cart_id'=>'desc']);
 		if (!empty($list)) {
 			$sku = make('app/service/product/Sku');
 			$skuList = $sku->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,status,stock');

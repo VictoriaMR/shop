@@ -37,7 +37,7 @@ class View
 			$matchPath = '';
 			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
 			if (empty($template)) {
-				$_route = router()->getRoute();
+				$_route = \App::get('router');
 				$template = $_route['path'].DS.$_route['func'];
 			}
 			$template = APP_TEMPLATE_TYPE.DS.'view'.DS.$matchPath.$template;

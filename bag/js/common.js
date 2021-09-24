@@ -304,16 +304,5 @@ $(function(){
 	if ($('.icon-gouwuche, .icon-gouwuchefill').length > 0) {
 		CART.init();
 	}
-	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
-		if (res.code === 10000 || res.code === '10000') {
-			if (location.pathname.substring(0, 6) !== '/login') {
-				const token = localStorage.getItem('login_token');
-				$.post(URI+'login/loginToken', {token: token}, function(res){
-					if (res.code === 200 || res.code === '200') {
-						window.location.href = res.data.url ? res.data.url : URI;
-					}
-				});
-			}
-		}
-	});
+	$.post(URI+'api/stat', {url: window.location.pathname});
 });

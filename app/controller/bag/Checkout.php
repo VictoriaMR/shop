@@ -18,56 +18,50 @@ class Checkout extends Base
 		$quantity = (int)ipost('quantity');
 
 		if (empty($info['list'])) {
-			$error = appT('checkout_error');
+			$error = distT('checkout_error');
 		} else {
 			//获取地址
 			$memId = userId();
-			$addressData = make('app/service/member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
-			if (empty($addressData)) {
-				$shipAddress = $billAddress = [];
-			} else {
-				foreach ($addressData as $value) {
-					if ($value['is_default']) {
-						$shipAddress = $value;
+			if (!empty($memId)) {
+				$addressData = make('app/service/member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
+				if (!empty($addressData)) {
+					foreach ($addressData as $value) {
+						if ($value['is_default']) {
+							$shipAddress = $value;
+						}
+						if ($value['is_bill']) {
+							$billAddress = $value;
+						}
 					}
-					if ($value['is_bill']) {
-						$billAddress = $value;
+					if (empty($shipAddress)) {
+						$shipAddress = array_shift($addressData);
 					}
-				}
-				if (empty($shipAddress)) {
-					$shipAddress = array_shift($addressData);
-				}
-				if (empty($billingAddress)) {
-					$billAddress = $shipAddress;
+					if (empty($billingAddress)) {
+						$billAddress = $shipAddress;
+					}
+					$order = make('app/service/order/Order');
+					$symbol = make('app/service/Currency')->priceSymbol(2);
+					$logisticsList = [[
+						'name' => appT('express_shipping'),
+						'fee' => $symbol.$order->getShippingFee($info['total']),
+						'time_first' => 5,
+						'time_second' => 9,
+						'tips' => appT('shipping_tips', ['{start}'=>5, '{end}'=>9]),
+					]];
+					$insuranceFee = $symbol.$order->getInsurance($info['total']);
+					$this->assign('insuranceFee', $insuranceFee);
+					$this->assign('logisticsList', $logisticsList);
+					$this->assign('shipAddress', $shipAddress);
+					$this->assign('billAddress', $billAddress);
 				}
 			}
-
-			if (empty($shipAddress)) {
-				$logisticsList = [];
-				$insuranceFee = 0;
-			} else {
-				$order = make('app/service/order/Order');
-				$symbol = make('app/service/Language')->priceSymbol(2);
-				$logisticsList = [[
-					'name' => 'Express Shipping',
-					'fee' => $symbol.$order->getShippingFee($info['total']),
-					'time_first' => 5,
-					'time_second' => 9,
-					'tips' => appT('shipping_tips', ['start'=>5, 'end'=>9]),
-				]];
-				$insuranceFee = $symbol.$order->getInsurance($info['total']);
-			}
-			$this->assign('insuranceFee', $insuranceFee);
-			$this->assign('logisticsList', $logisticsList);
 			$this->assign('skuList', $info['list']);
-			$this->assign('shipAddress', $shipAddress);
-			$this->assign('billAddress', $billAddress);
 		}
 
 		$this->assign('skuId', $skuId);
 		$this->assign('quantity', $quantity);
 		$this->assign('error', $error ?? '');
-		$this->assign('_title', 'Checkout, Place Order - ');
+		$this->assign('_title', distT('checkout'));
 
 		$this->view();
 	}
@@ -178,9 +172,9 @@ class Checkout extends Base
 
 	protected function getCheckoutData()
 	{
-		$skuId = (int)input('id');
-		$quantity = (int)input('quantity');
-		$address_id = (int)input('shipping_address_id');
+		$skuId = (int)ipost('id');
+		$quantity = (int)ipost('quantity');
+		$address_id = (int)ipost('shipping_address_id');
 
 		if (empty($skuId)) {
 			$where = [

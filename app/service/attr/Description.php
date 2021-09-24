@@ -57,14 +57,14 @@ class Description extends Base
 		return $this->insertGetId(['name'=>$name]);
 	}
 	
-	public function getListById($spuId, $lanId=1)
+	public function getListById($spuId, $lanId='en')
 	{
 		$list = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId], 'name_id,value_id', 0, 0);
 		$descIdArr = array_unique(array_merge(array_column($list, 'name_id'), array_column($list, 'value_id')));
 		$descArr = $this->getListData(['desc_id'=>['in', $descIdArr]]);
 		$descArr = array_column($descArr, 'name', 'desc_id');
 		//获取语言
-		$lanArr = make('app/service/product/DescriptionLanguage')->getListData(['desc_id'=>['in', $descIdArr], 'lan_id'=>$lanId], 0, 0, 'desc_id,name');
+		$lanArr = make('app/service/attr/DescriptionLanguage')->getListData(['desc_id'=>['in', $descIdArr], 'lan_id'=>$lanId], 0, 0, 'desc_id,name');
 		$lanArr = array_column($lanArr, 'name', 'desc_id');
 		foreach ($list as $key=>$value) {
 			$value['name'] = empty($lanArr[$value['name_id']]) ? $descArr[$value['name_id']] : $lanArr[$value['name_id']];

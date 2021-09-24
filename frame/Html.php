@@ -13,7 +13,7 @@ class Html
 		if ($match) {
 			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
 			if (empty($name)) {
-				$_route = router()->getRoute();
+				$_route = \App::get('router');
 				$name = $_route['path'].DS.$_route['func'];
 			}
 		}
@@ -32,7 +32,7 @@ class Html
 		if ($match) {
 			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
 			if (empty($name)) {
-				$_route = router()->getRoute();
+				$_route = \App::get('router');
 				$name = $_route['path'].DS.$_route['func'];
 			}
 		}
@@ -50,7 +50,7 @@ class Html
 		if (empty($this->_CSS)) {
 			return [];
 		}
-		$_route = router()->getRoute();
+		$_route = \App::get('router');
 		return $this->addStaticFile($this->_CSS, $_route['path'].'_'.$_route['func'], 'css');
 	}
 
@@ -59,7 +59,7 @@ class Html
 		if (empty($this->_JS)) {
 			return [];
 		}
-		$_route = router()->getRoute();
+		$_route = \App::get('router');
 		return $this->addStaticFile($this->_JS, $_route['path'].'_'.$_route['func'], 'js');
 	}
 

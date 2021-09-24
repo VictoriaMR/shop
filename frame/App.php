@@ -17,17 +17,16 @@ class App
 	public static function send()
 	{
 		//获取站点数据
-		$info = redis(0)->hGet('domain_config_site_info', $_SERVER['HTTP_HOST']);
-		if (empty($info)) {
-			redirect('https://www.simby.com');
-		}
+		$info = redis()->hGet('domain_config_site_info', $_SERVER['HTTP_HOST']);
+		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
 		define('APP_TEMPLATE_TYPE', $info['path']);
 		define('APP_SITE_ID', $info['site_id']);
 		self::set('site_name', $info['title']);
 		//路由解析
-		$info = router()->analyze()->getRoute();
+		self::make('frame/Router')->analyze();
+		$info = self::get('router');
 		//执行方法
-		$class = 'app/controller/'.$info['class'].'/'.$info['path'].'';
+		$class = 'app/controller/'.$info['class'].'/'.$info['path'];
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('cookie.setcookie')) {
@@ -35,7 +34,7 @@ class App
 				self::make('frame/Cookie')->init();
 			}
 			//中间件
-			self::make('app/middleware/VerifyToken')->handle($info);
+			if ($info['class'] == 'admin') self::make('app/middleware/VerifyToken')->handle($info);
 			call_user_func_array($callArr, []);
 		} else {
 			throw new \Exception($class.' '.$info['func'].' was not exist!', 1);
@@ -46,7 +45,6 @@ class App
 	private static function autoload($abstract, $params=null) 
 	{
 		$file = ROOT_PATH.str_replace('\\', DS, $abstract).'.php';
-
 		if (is_file($file)) {
 			return \frame\Container::instance()->autoload(str_replace(DS, '\\', $abstract), $file, $params);
 		}
@@ -55,29 +53,22 @@ class App
 
 	public static function set($name, $value)
 	{
-		if (is_null($value)) {
-			unset(self::$appData[$name]);
-		} else {
-			self::$appData[$name] = $value;
-		}
+		if (is_null($value)) unset(self::$appData[$name]);
+		else self::$appData[$name] = $value;
 		return true;
 	}
 
-	public static function get($name)
+	public static function get($name, $key=null)
 	{
-		return self::$appData[$name] ?? null;
+		if (is_null($key)) return self::$appData[$name] ?? null;
+		else return empty(self::$appData[$name][$key]) ? null : self::$appData[$name][$key];
 	}
 
 	public static function runOver()
 	{
 		if (config('env.APP_DEBUG')) {
 			make('frame/Debug')->runlog();
-			if (!IS_CLI && !IS_AJAX) {
-				$router = router()->getRoute();
-				if (!($router['path'] == 'index' && $router['func'] == 'index')) {
-					make('frame/Debug')->init();
-				}
-			}
+			if (!(IS_CLI || IS_AJAX)) make('frame/Debug')->init();
 		}
 		exit();
 	}

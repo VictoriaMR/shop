@@ -24,7 +24,7 @@ class Logger extends Base
 		$data['system'] = request()->getSystem();
 		$data['agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		if (!isset($data['path'])) {
-			$data['path'] = implode('/', router()->getRoute());
+			$data['path'] = implode('/', \App::get('router'));
 		}
 		$data['ip'] = request()->getIp();
 		$data['add_time'] = now();

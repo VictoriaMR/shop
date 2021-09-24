@@ -664,7 +664,7 @@ a {
 .list-title .line {
 	width: 100%;
 	height: 0.02rem;
-	background: #EEEEEE;
+	background: #FFF;
 	display: inline-block;
 }
 .error-tips {

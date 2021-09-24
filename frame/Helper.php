@@ -84,11 +84,11 @@ function iget($name='', $default=null){
 function now($time=null){
 	return date('Y-m-d H:i:s', $time ? $time : time());
 }
-function appT($text, $replace=[], $lanId=''){
+function appT($text, $replace=[], $lanId='', $type='common'){
 	if (empty($lanId)) $lanId = lanId();
-	$key = 'translate_'.$lanId;
+	$key = 'translate_'.$type.'_'.$lanId;
 	if (!isset($GLOBALS[$key])) {
-		$file = ROOT_PATH.APP_TEMPLATE_TYPE.DS.'language'.DS.$lanId.'.php';
+		$file = ROOT_PATH.APP_TEMPLATE_TYPE.DS.'language'.DS.$type.DS.$lanId.'.php';
 		if (is_file($file)) $GLOBALS[$key] = include $file;
 		else $GLOBALS[$key] = null;
 	}
@@ -99,6 +99,9 @@ function appT($text, $replace=[], $lanId=''){
 		}
 	}
 	return $text;
+}
+function distT($text, $replace=[], $lanId=''){
+	return appT($text, $replace, $lanId, \App::get('router', 'path'));
 }
 function utf8len($string){
 	return mb_strlen($string, 'UTF-8');

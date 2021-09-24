@@ -1,15 +1,15 @@
-<?php $this->load('common/back_header', ['_simple_title' => appT('shopping_bag')]);?>
+<?php $this->load('common/back_header', ['_simple_title' => distT('shopping_bag')]);?>
 <div id="cart-page">
 	<?php if (empty($checkedList)) {?>
 	<div class="empty-bag-image">
 		<img src="<?php echo siteUrl('image/common/empty-bag.png');?>">
 	</div>
-	<p class="empty-title">YOUR CART IS EMPTY</p>
+	<p class="empty-title"><?php echo distT('cart_empty_tips');?></p>
 	<div class="continue-btn">
-		<a href="<?php echo url('');?>" class="btn btn-black block">CONTINUE SHOPPING</a>
+		<a href="<?php echo url('');?>" class="btn btn-black block"><?php echo distT('continue_shopping')?></a>
 	</div>
 	<?php } else {?>
-	<div class="layer pb24">
+	<div class="layer">
 		<ul class="cart-list checked">
 			<?php foreach($checkedList as $value) {?>
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
@@ -17,9 +17,11 @@
 					<div class="image tcell">
 						<div class="image-tcell tcell">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+							<?php if (!empty($isLogin)){?>
 							<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
 								<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
 							</button>
+							<?php }?>
 						</div>
 					</div>
 					<div class="info tcell">
@@ -27,9 +29,9 @@
 						<div class="field-row">
 							<div class="attr-content">
 								<?php foreach ($value['attv'] as $k => $v) {?>
-								<?php if (!empty($value['attvImage'][$k])) {?>
+								<?php if (!empty($value['attvImage'][$k]['url'])) {?>
 								<div class="attr-item attr-image">
-									<img data-src="<?php echo $value['attvImage'][$k];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+									<img data-src="<?php echo $value['attvImage'][$k]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 									<span class="e1"><?php echo $v;?></span>
 									<i class="iconfont icon-xiangxia2"></i>
 									<div class="clear"></div>
@@ -53,10 +55,10 @@
 				</div>
 				<div class="table mt8 w100">
 					<div class="btn-content tcell w75 tl">
-						<button class="move-cart save-for-later">Save for later</button>
+						<button class="move-cart save-for-later"><?php echo distT('save_for_later');?></button>
 						<button class="remove-btn">
 							<i class="iconfont icon-shanchu"></i>
-							<span>Remove</span>
+							<span><?php echo distT('remove');?></span>
 						</button>
 						<?php if ($value['out_of_stock'] || empty($value['status'])) {?>
 						<button class="btn-error"><?php echo empty($value['status']) ? 'Disabled' : 'Out of stock';?></button>
@@ -73,11 +75,11 @@
 		</ul>
 	</div>
 	<div id="cart-summary">
-		<p class="f18">Cart Summary</p>
+		<p class="f18"><?php echo distT('cart_summary');?></p>
 		<div class="content">
 			<ul>
 				<?php foreach ($summary as $value){?>
-				<li <?php echo $value['type'] == 2 ? 'class="f700"' : '';?>>
+				<li <?php echo $value['type'] == 2 ? 'class="f700 f16"' : '';?>>
 					<span><?php echo $value['name'];?></span>
 					<span class="right"><?php echo $value['price_format'];?></span>
 				</li>
@@ -85,20 +87,31 @@
 			</ul>
 		</div>
 		<button class="btn btn-black w100 checkout-btn">
-			<span>SECURE CHECKOUT</span>
+			<span><?php echo appT('secure_checkout');?></span>
 		</button>
 		<div class="mt10 papay-btn">
 			
 		</div>
 	</div>
+	<div class="m-modal hide" id="sku-select-modal">
+		<div class="mask"></div>
+		<div class="dialog layer">
+			<span class="iconfont icon-guanbi2"></span>
+			<div class="contentfill">
+			</div>
+			<div class="dialog-footer">
+				<button class="btn btn-black w100 confirm-btn"><?php echo appT('confirm');?></button>
+			</div>
+		</div>
+	</div>
 	<?php } ?>
 	<?php if (!empty($unCheckList)){?>
-	<div class="layer pb24">
+	<div class="layer pb10">
 		<div class="list-title flex">
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
-			<p class="title">MY SAVED ITEMS</p>
+			<p class="title"><?php echo distT('saved_items');?></p>
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
@@ -110,9 +123,11 @@
 					<div class="image tcell">
 						<div class="image-tcell tcell">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+							<?php if (!empty($isLogin)){?>
 							<button class="like-block" data-id="<?php echo $value['spu_id'];?>">
 								<span class="iconfont icon-xihuan<?php echo in_array($value['spu_id'], $collectList) ? 'fill' : '';?>"></span>
 							</button>
+							<?php }?>
 						</div>
 					</div>
 					<div class="info tcell">
@@ -120,9 +135,9 @@
 						<div class="field-row">
 							<div class="attr-content">
 								<?php foreach ($value['attv'] as $k => $v) {?>
-								<?php if (!empty($value['attvImage'][$k])) {?>
+								<?php if (!empty($value['attvImage'][$k]['url'])) {?>
 								<div class="attr-item attr-image">
-									<img data-src="<?php echo $value['attvImage'][$k];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+									<img data-src="<?php echo $value['attvImage'][$k]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 									<span class="e1"><?php echo $v;?></span>
 									<div class="clear"></div>
 								</div>
@@ -144,13 +159,13 @@
 				</div>
 				<div class="table mt8 w100">
 					<div class="btn-content tcell w75 tl">
-						<button class="move-cart move-to-cart">Move to cart</button>
+						<button class="move-cart move-to-cart"><?php echo distT('move_to_cart');?></button>
 						<button class="remove-btn">
 							<i class="iconfont icon-shanchu"></i>
-							<span>Remove</span>
+							<span><?php echo distT('remove');?></span>
 						</button>
 						<?php if ($value['out_of_stock'] || empty($value['status'])) {?>
-						<button class="btn-error"><?php echo empty($value['status']) ? 'Disabled' : 'Out of stock';?></button>
+						<button class="btn-error"><?php echo empty($value['status']) ? distT('Disabled') : distT('out_of_stock');?></button>
 						<?php } ?>
 					</div>
 					<div class="quantity tcell w25 tr">
@@ -164,14 +179,4 @@
 	<?php } ?>
 	<?php $this->load('common/recommend');?>
 </div>
-<div class="m-modal hide" id="sku-select-modal">
-	<div class="mask"></div>
-	<div class="dialog layer">
-		<span class="iconfont icon-guanbi2"></span>
-		<div class="contentfill">
-		</div>
-		<div class="dialog-footer">
-			<button class="btn btn-black w100 confirm-btn">CONFIRM</button>
-		</div>
-	</div>
-</div>
+<?php $this->load('common/simple_footer');?>

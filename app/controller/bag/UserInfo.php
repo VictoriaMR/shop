@@ -112,9 +112,9 @@ class UserInfo extends Base
 		}
 		$rst = make('app/service/member/Collect')->collectProduct($spuId);
 		if ($rst) {
-			$this->success($rst, $rst == 1 ? 'That product was add to your wish list success' : 'That product was removed from your wish list success');
+			$this->success($rst, $rst == 1 ? distT('add_wish') : distT('remove_wish'));
 		} else {
-			$this->error('collect failed');
+			$this->error(distT('wish_error'));
 		}
 	}
 

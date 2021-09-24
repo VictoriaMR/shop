@@ -11,7 +11,7 @@ class Request
 
 	public function isAjax()
 	{
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
+		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest') !== false) {
 			return true;
 		} else {
 			return $this->input('is_ajax', false);
@@ -22,7 +22,7 @@ class Request
 	{
 		if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], 'wap')) return true;
 		if (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) return true;
-		if (isset($_SERVER['HTTP_ACCEPT']) && strpos(strtoupper($_SERVER['HTTP_ACCEPT']), 'V ND.WAP.WML')) return true;
+		if (isset($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'V ND.WAP.WML')) return true;
 		if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up\.browser|up\.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) return true;
 		return false;
 	}
@@ -71,11 +71,11 @@ class Request
 	{
 		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		if (empty($agent)) return '未知设备';
-		if (strpos($agent, 'Chrome') !== false) return 'Chrome';
-		if (strpos($agent, 'Safari') !== false) return 'Safari';
-		if (strpos($agent, 'MSIE') !== false) return 'MSIE';
-		if (strpos($agent, 'Firefox') !== false) return 'Firefox';
-		if (strpos($agent, 'Opera') !== false) return 'Opera';
+		if (stripos($agent, 'Chrome') !== false) return 'Chrome';
+		if (stripos($agent, 'Safari') !== false) return 'Safari';
+		if (stripos($agent, 'MSIE') !== false) return 'Msie';
+		if (stripos($agent, 'Firefox') !== false) return 'Firefox';
+		if (stripos($agent, 'Opera') !== false) return 'Opera';
 		return 'Other';
 	}
 
@@ -83,13 +83,13 @@ class Request
 	{
 		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		if (empty($agent)) return '未知操作系统';
-		if (strpos($agent, 'android') !== false) return 'Android';
-		if (strpos($agent, 'iphone') !== false) return 'iPhone';
-		if (strpos($agent, 'win') !== false) return 'Windows';
-		if (strpos($agent, 'mac') !== false) return 'MAC';
-		if (strpos($agent, 'linux') !== false) return 'Linux';
-		if (strpos($agent, 'unix') !== false) return 'Unix';
-		if (strpos($agent, 'bsd') !== false) return 'BSD';
+		if (stripos($agent, 'android') !== false) return 'Android';
+		if (stripos($agent, 'iphone') !== false) return 'iPhone';
+		if (stripos($agent, 'win') !== false) return 'Windows';
+		if (stripos($agent, 'mac') !== false) return 'Mac';
+		if (stripos($agent, 'linux') !== false) return 'Linux';
+		if (stripos($agent, 'unix') !== false) return 'Unix';
+		if (stripos($agent, 'bsd') !== false) return 'Bsd';
 		return 'Other';
 	}
 }

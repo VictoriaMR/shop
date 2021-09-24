@@ -66,7 +66,7 @@ class Base
 		} else {
 			$this->_nav = array_merge(['default' => $this->_default], $this->_arr);
 		}
-		$router = router()->getRoute();
+		$router = \App::get('router');
 		$this->assign('_tag', $this->_tag);
 		$this->assign('_nav', $this->_nav);
 		$this->assign('_tagShow', $this->_tagShow);
