@@ -77,4 +77,14 @@ class Api extends Base
 			$this->error('加入队列失败');
 		}
 	}
+
+	public function notice()
+	{
+		$url = trim(ipost('url'));
+		if (empty($url)) {
+			$this->error('url 不能为空');
+		}
+		make('app/service/supplier/Url')->addUrl($url);
+		$this->success();
+	}
 }

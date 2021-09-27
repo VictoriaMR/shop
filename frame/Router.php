@@ -26,10 +26,10 @@ final class Router
 			if (empty($pathInfo['path'])) {
 				$router['path'] = 'index';
 				$router['func'] = 'index';
-			} elseif(APP_TEMPLATE_TYPE != 'admin') {
+			} else {
 				$pathInfo['path'] = explode('.', $pathInfo['path'])[0];
 				$routerArr = explode('-', $pathInfo['path']);
-				if (!empty($routerArr) && count($routerArr) > 1) {
+				if (APP_TEMPLATE_TYPE != 'admin' && !empty($routerArr) && count($routerArr) > 1) {
 					$routerArr = array_reverse($routerArr);
 					if (count($routerArr) > 1) {
 						foreach ($routerArr as $key => $value) {
