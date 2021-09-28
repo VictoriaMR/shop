@@ -70,6 +70,9 @@ function mediaUrl($url, $width=''){
 function isCli(){
 	return stripos(php_sapi_name(), 'cli') !== false;
 }
+function isWin(){
+	return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+}
 function isJson($string){
 	if (is_array($string)) return $string;
 	$temp = json_decode($string, true); 

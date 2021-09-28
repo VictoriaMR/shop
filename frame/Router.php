@@ -89,7 +89,7 @@ final class Router
 	public function buildUrl($url=null, $param=null, $domain=null)
 	{
 		$router = \App::get('router');
-		if (is_null($url)) $url = $info['path'].DS.$info['func'];
+		if (is_null($url)) $url = $router['path'].DS.$router['func'];
 		if (!empty($url)) $url .= defined('TEMPLATE_SUFFIX') ? '.'.TEMPLATE_SUFFIX : '';
 		if (!empty($param)) $url .= '?' . http_build_query($param);
 		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$url;

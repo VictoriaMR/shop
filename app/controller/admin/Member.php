@@ -7,11 +7,11 @@ class Member extends Base
 {
 	public function __construct()
 	{
-        $this->_arr = [
-            'index' => '人员列表',
-            'log' => '日志',
-        ];
-        $this->_default = '管理人员';
+		$this->_arr = [
+			'index' => '人员列表',
+			'log' => '日志',
+		];
+		$this->_default = '管理人员';
 	}
 
 	public function index()

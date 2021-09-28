@@ -25,26 +25,12 @@
 					</div>
 					<div class="nav-content">
 						<ul>
-							<li data-title="概览" data-to="about-view">
-								<span class="glyphicon glyphicon-eye-open"></span>
-								<span class="ml6">概览</span>
+							<?php foreach ($funcList as $value){?>
+							<li data-title="<?php echo $value['name'];?>" data-to="<?php echo $value['value'];?>">
+								<span class="glyphicon glyphicon-<?php echo $value['icon'];?>"></span>
+								<span class="ml6"><?php echo $value['name'];?></span>
 							</li>
-							<li data-title="管理人员" data-to="guanliyuan">
-								<span class="glyphicon glyphicon-object-align-left"></span>
-								<span class="ml6">管理人员</span>
-							</li>
-							<li data-title="产品管理" data-to="product">
-								<span class="glyphicon glyphicon-th"></span>
-								<span class="ml6">产品管理</span>
-							</li>
-							<li data-title="财务管理" data-to="caiwu">
-								<span class="glyphicon glyphicon-piggy-bank"></span>
-								<span class="ml6">财务管理</span>
-							</li>
-							<li data-title="系统设置" data-to="systemInfo">
-								<span class="glyphicon glyphicon-cog"></span>
-								<span class="ml6">系统设置</span>
-							</li>
+							<?php }?>
 						</ul>
 					</div>
 				</div>
@@ -54,81 +40,19 @@
 						<span class="glyphicon glyphicon-backward" title="收起"></span>
 					</div>
 					<div class="nav-son-content">
-						<div class="item" data-for="about-view">
+						<?php foreach ($funcList as $value){?>
+						<div class="item" data-for="<?php echo $value['value'];?>">
 							<ul>
-								<li data-src="<?php echo url('index/statInfo');?>" class="selected">
-									<span class="glyphicon glyphicon-user"></span>
-									<span class="ml6">全部概览</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('index/statInfo');?>"></a>
+								<?php foreach ($value['son'] as $sv){?>
+								<li data-src="<?php echo url($sv['value']);?>">
+									<span class="glyphicon glyphicon-<?php echo $sv['icon'];?>"></span>
+									<span class="ml6"><?php echo $sv['name'];?></span>
+									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url($sv['value']);?>"></a>
 								</li>
+								<?php } ?>
 							</ul>
 						</div>
-						<div class="item" data-for="guanliyuan">
-							<ul>
-								<li data-src="<?php echo url('member');?>" class="selected">
-									<span class="glyphicon glyphicon-user"></span>
-									<span class="ml6">人员列表</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('member');?>"></a>
-								</li>
-							</ul>
-						</div>
-						<div class="item" data-for="systemInfo">
-							<ul>
-								<li data-src="<?php echo url('task');?>" class="selected">
-									<span class="glyphicon glyphicon-tasks"></span>
-									<span class="ml6">任务管理</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('task');?>"></a>
-								</li>
-								<li data-src="<?php echo url('systemInfo');?>" class="selected">
-									<span class="glyphicon glyphicon-cloud"></span>
-									<span class="ml6">服务器信息</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('systemInfo');?>"></a>
-								</li>
-								<li data-src="<?php echo url('site');?>" class="selected">
-									<span class="glyphicon glyphicon-certificate"></span>
-									<span class="ml6">站点管理</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('site');?>"></a>
-								</li>
-								<li data-src="<?php echo url('transfer');?>" class="selected">
-									<span class="glyphicon glyphicon-sort"></span>
-									<span class="ml6">站点文本</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('transfer');?>"></a>
-								</li>
-							</ul>
-						</div>
-						<div class="item" data-for="caiwu">
-							<ul>
-								<li data-src="<?php echo url('currency');?>" class="selected">
-									<span class="glyphicon glyphicon-yen"></span>
-									<span class="ml6">货币管理</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('currency');?>"></a>
-								</li>
-								<li data-src="<?php echo url('payment');?>" class="selected">
-									<span class="glyphicon glyphicon-credit-card"></span>
-									<span class="ml6">支付管理</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('payment');?>"></a>
-								</li>
-							</ul>
-						</div>
-						<div class="item" data-for="product">
-							<ul>
-								<li data-src="<?php echo url('category');?>" class="selected">
-									<span class="glyphicon glyphicon-sort-by-attributes"></span>
-									<span class="ml6">产品分类</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('category');?>"></a>
-								</li>
-								<li data-src="<?php echo url('product');?>" class="selected">
-									<span class="glyphicon glyphicon-th-large"></span>
-									<span class="ml6">产品管理</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('product');?>"></a>
-								</li>
-								<li data-src="<?php echo url('attribute');?>" class="selected">
-									<span class="glyphicon glyphicon-th-list"></span>
-									<span class="ml6">属性管理</span>
-									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo url('attribute');?>"></a>
-								</li>
-							</ul>
-						</div>
+						<?php } ?>
 					</div>
 				</div>
 			</div>
