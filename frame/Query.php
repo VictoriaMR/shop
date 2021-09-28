@@ -12,6 +12,7 @@ final class Query
 	private $_orderBy='';
 	private $_offset;
 	private $_limit=1;
+	private $_specialKey = ['status', 'name', 'order'];
 
 	public function database($database=null)
 	{
@@ -21,7 +22,7 @@ final class Query
 
 	public function table($table = '')
 	{
-		$this->_table = $table;
+		$this->_table = $this->formatKey($table);
 		return $this;
 	}
 
@@ -54,7 +55,7 @@ final class Query
 
 	public function leftJoin($table, $linkForm, $linkTo)
 	{
-		$this->_table = sprintf('%s LEFT JOIN %s ON %s = %s', $this->_table, $table, $linkForm, $linkTo);
+		$this->_table = sprintf('%s LEFT JOIN %s ON %s = %s', $this->_table, $this->formatKey($table), $linkForm, $linkTo);
 		return $this;
 	}
 
@@ -126,16 +127,16 @@ final class Query
 		if (!empty($this->_addTime)) {
 			$insertTime = explode(',', $this->_addTime);
 		}
-		if (!empty($this->_updateTime)) {
-			$insertTime = array_merge($insertTime, explode(',', $this->_updateTime));
-		}
 		$fields = array_merge(array_keys(current($data)), $insertTime);
+		foreach ($fields as $key => $value) {
+			$fields[$key] = $this->formatKey($value);
+		}
 		$data = array_map(function($value) use ($insertTime){
 			foreach ($value as $k => $v) {
-				$value[$k] = (is_numeric($v) ? (int)$v : "'".addslashes($v)."'");
+				$value[$k] = $this->formatValue($k, $v);
 			}
 			foreach ($insertTime as $v) {
-				$value[$v] = "'".now()."'";
+				$value[$v] = $this->formatValue($v, now());
 			}
 			return implode(',', $value);
 		}, $data);
@@ -147,11 +148,11 @@ final class Query
 	{
 		$tempArr = [];
 		foreach ($data as $key => $value) {
-			$tempArr[] = $key.' = '.(is_numeric($value) ? (int)$value : "'".addslashes($value)."'");
+			$tempArr[] = $this->formatKey($key).' = '.$this->formatValue($key, $value);
 		}
 		if (!empty($this->_updateTime)) {
 			foreach(explode(',', $this->_updateTime) as $value) {
-				$tempArr[] = $value." = '".now()."'";
+				$tempArr[] = $this->formatKey($value).' = '.$this->formatValue($value, now());
 			}
 		}
 		$whereString = $this->analyzeWhere();
@@ -160,11 +161,25 @@ final class Query
 		return $this->getQuery($sql);
 	}
 
+	protected function formatKey($key)
+	{
+		$key = trim($key);
+		if (in_array($key, $this->_specialKey)) return '`'.$key.'`';
+		return $key;
+	}
+
+	protected function formatValue($key, $value)
+	{
+		$value = trim($value);
+		if (in_array($key, $this->_intFields)) return (int)$value;
+		return "'".addslashes($value)."'";
+	}
+
 	public function increment($value, $num=1) 
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $value.' = '.$value.' + '.$num, $whereString);
+		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $this->formatKey($value).' = '.$this->formatKey($value).' + '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -172,7 +187,7 @@ final class Query
 	{
 		$whereString = $this->analyzeWhere();
 		if (empty($whereString)) return false;
-		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $value.' = '.$value.' - '.$num, $whereString);
+		$sql = sprintf('UPDATE %s SET %s WHERE %s', $this->_table, $this->formatKey($value).' = '.$this->formatKey($value).' - '.$num, $whereString);
 		return $this->getQuery($sql);
 	}
 
@@ -231,21 +246,14 @@ final class Query
 			}
 			$tempStr = '';
 			foreach ($fields as $fk => $fv) {
-				$fv = trim($fv);
 				if ($operator == 'IN' || $operator == 'NOT IN') {
 					$valueStr = '';
 					foreach ($value as $v) {
-						if (is_numeric($v)) {
-							$valueStr .= (int)$v;
-							$valueStr .= ',';
-						} else {
-							$valueStr .= "'".addslashes($v)."',";
-						}
+						$valueStr .= $this->formatValue($fv, $v).',';
 					}
-					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $fv, $operator, rtrim($valueStr, ','));
+					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, rtrim($valueStr, ','));
 				} else {
-					$value = is_numeric($value) ? (int) $value : "'".addslashes($value)."'";
-					$tempStr .= sprintf('%s %s %s %s', $fk == 0 ? '' : $type, $fv, $operator, $value);
+					$tempStr .= sprintf('%s %s %s %s', $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, $this->formatValue($fv, $value));
 				}
 			}
 			$whereString .= $start.$tempStr.$end;
@@ -298,76 +306,5 @@ final class Query
 	public function commit()
 	{
 		return $this->getQuery('commit');
-	}
-
-	public function move($where, $type='top')
-	{
-		$list = $this->orderBy('sort', 'asc')->get();
-		if (empty($list)) {
-			return false;
-		}
-		//组装成$where条件数据
-		$tempList = [];
-		$whereKeyArr = array_keys($where);
-		foreach ($list as $value) {
-			$uniqueKey = '';
-			foreach ($whereKeyArr as $wv) {
-				$uniqueKey .= $value[$wv].'-';
-			}
-			$uniqueKey = trim($uniqueKey, '-');
-			if (!isset($tempList[$uniqueKey])) {
-				$tempList[$uniqueKey] = 0;
-			}
-		}
-		$whereKey = implode('-', $where);
-		if (!isset($tempList[$whereKey])) {
-			return false;
-		}
-		switch ($type) {
-			case 'top'://顶部
-				unset($tempList[$whereKey]);
-				$tempList = [$whereKey=>0] + $tempList;
-				break;
-			case 'end'://底部
-				unset($tempList[$whereKey]);
-				$tempList = $tempList + [$whereKey=>0];
-				break;
-			case 'up'://向上
-				$tempList = array_keys($tempList);
-				$index = array_search($whereKey, $tempList);
-				if ($index > 0) {
-					$temp = $tempList[$index-1];
-					$tempList[$index-1] = $whereKey;
-					$tempList[$index] = $temp;
-				}
-				$tempList = array_flip($tempList);
-				break;
-			case 'down'://向下
-				$tempList = array_keys($tempList);
-				$index = array_search($whereKey, $tempList);
-				if ($index < count($tempList) - 1) {
-					$temp = $tempList[$index+1];
-					$tempList[$index+1] = $whereKey;
-					$tempList[$index] = $temp;
-				}
-				$tempList = array_flip($tempList);
-				break;
-		}
-		// 重新排序生成批量sql
-		$index = 0;
-		$sql = [];
-		$sql = sprintf('UPDATE %s SET sort = CASE', $this->_table);
-		foreach ($tempList as $key => $value) {
-			$tempArr = explode('-', $key);
-			$where = [];
-			foreach ($tempArr as $key => $value) {
-				$where[$whereKeyArr[$key]] = $value;
-			}
-			$this->clear();
-			$sql .= sprintf(' WHEN %s THEN %d', $this->where($where)->analyzeWhere(), $index);
-			$index ++;
-		}
-		$sql .= ' END';
-		return $this->getQuery($sql);
 	}
 }

@@ -5,10 +5,11 @@ use app\model\Base;
 
 class Order extends Base
 {
-	protected $_table = '`order`';
+	protected $_table = 'order';
 	protected $_primaryKey = 'order_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
+	protected $_intFields = ['order_id', 'site_id', 'mem_id', 'status', 'coupon_id', 'payment_id', 'is_mobile', 'is_review', 'is_delete'];
 
 	const STATUS_CANCEL = 0;//取消订单
 	const STATUS_WAIT_PAY = 1; //等待支付
@@ -19,5 +20,5 @@ class Order extends Base
 	const STATUS_FULL_REFUND = 6;//全部退款
 	const STATUS_REFUNDING = 7; //退款中
 
-	const ORDER_WAIT_PAY_TIME = 7 * 24 * 3600;
+	const ORDER_WAIT_PAY_TIME = 7 * 24 * 3600; //最大订单待支付时间
 }

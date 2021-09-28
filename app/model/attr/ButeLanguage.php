@@ -6,4 +6,5 @@ use app\model\Base;
 class ButeLanguage extends Base
 {
 	protected $_table = 'attribute_language';
+	protected $_intFields = ['item_id', 'attr_id'];
 }

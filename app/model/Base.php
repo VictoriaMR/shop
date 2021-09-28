@@ -14,6 +14,7 @@ class Base
 	protected $_currencyId;
 	protected $_addTime;
 	protected $_updateTime;
+	protected $_intFields = [];
 
 	private function instance()
 	{
@@ -24,7 +25,7 @@ class Base
 		$this->_instance->table($this->_table);
 		$this->_instance->setParam('_addTime', $this->_addTime);
 		$this->_instance->setParam('_updateTime', $this->_updateTime);
-
+		$this->_instance->setParam('_intFields', $this->_intFields);
 		return $this->_instance;
 	}
 

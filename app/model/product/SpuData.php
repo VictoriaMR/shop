@@ -7,4 +7,5 @@ class SpuData extends Base
 {
 	protected $_table = 'product_spu_data';
 	protected $_primaryKey = 'spu_id';
+	protected $_intFields = ['spu_id', 'supplier_id', 'supplier_id', 'check_result'];
 }
