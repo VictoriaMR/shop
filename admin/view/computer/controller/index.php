@@ -1,8 +1,6 @@
 <div class="container-fluid" id="function-list">
 	<div class="row-item">
 		<button class="btn btn-success add-btn" type="button"><i class="glyphicon glyphicon-plus"></i>添加新功能</button>
-        <button class="btn btn-info open-btn" type="button"><i class="glyphicon glyphicon-triangle-bottom"></i> 全部展开</button>
-        <button class="btn btn-info close-btn" type="button"><i class="glyphicon glyphicon-triangle-top"></i> 全部折叠</button>
 	</div>
 	<table class="table table-hover mt20" id="data-list">
 		<tbody>
@@ -13,14 +11,16 @@
 				<th class="col-md-1">排序</th>
 				<th class="col-md-2">操作</th>
 			</tr>
-			<?php if (empty($list)){ ?>
+			<?php $sonControllerCount = 0; if (empty($list)){ ?>
 			<tr>
 				<td colspan="8">
 					<div class="tc orange">暂无数据</div>
 				</td>
 			</tr>
 			<?php } else {?>
-			<?php foreach ($list as $value) { ?>
+			<?php foreach ($list as $value) {
+				$sonControllerCount += count($value['son']);
+			?>
 			<tr class="item" data-id="<?php echo $value['con_id'];?>" data-pid="<?php echo $value['parent_id'];?>">
 				<td class="col-md-1"><?php echo $value['con_id'];?></td>
 				<td class="col-md-1">
@@ -68,6 +68,7 @@
 			<?php }?>
 		</tbody>
 	</table>
+	<p>合计 <?php echo count($list);?> 个功能分组，<?php echo $sonControllerCount;?>个子功能；</p>
 </div>
 <!-- 管理弹窗 -->
 <div id="dealbox" class="hidden">
@@ -81,11 +82,11 @@
 			<input type="hidden" name="opn" value="editInfo">
 			<div class="input-group">
 				<div class="input-group-addon"><span>名称：</span></div>
-				<input type="text" class="form-control" name="name" autocomplete="off" placeholder="显示的名称">
+				<input type="text" class="form-control" name="name" autocomplete="off" placeholder="显示的名称" maxlength="32">
 			</div>
 			<div class="input-group">
 				<div class="input-group-addon"><span>控制器：</span></div>
-				<input type="text" class="form-control" name="value" autocomplete="off" placeholder="控制器名称">
+				<input type="text" class="form-control" name="value" autocomplete="off" placeholder="控制器名称" maxlength="32">
 			</div>
 			<div class="input-group">
 				<div class="input-group-addon"><span>图标：</span></div>
@@ -98,7 +99,7 @@
 			</div>
 			<div class="input-group">
 				<div class="input-group-addon"><span>排序：</span></div>
-				<input type="text" class="form-control" name="sort" autocomplete="off" placeholder="排序">
+				<input type="text" class="form-control" name="sort" autocomplete="off" placeholder="排序" maxlength="5">
 			</div>
 			<button type="button" class="btn btn-primary btn-lg w100 save-btn">确认</button>
 		</form>

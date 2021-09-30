@@ -21,7 +21,7 @@ class App
 		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
 		define('APP_TEMPLATE_TYPE', $info['path']);
 		define('APP_SITE_ID', $info['site_id']);
-		self::set('site_name', $info['title']);
+		self::set('site_name', $info['name']);
 		//路由解析
 		self::make('frame/Router')->analyze();
 		$info = self::get('router');

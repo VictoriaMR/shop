@@ -26,11 +26,14 @@ body{SCROLLBAR-ARROW-COLOR:#2c5784;SCROLLBAR-FACE-COLOR:#D1E2EF;SCROLLBAR-DARKSH
 .input::placeholder{color:#666666}
 .input:focus{outline:none}
 .left{float:left}
+.flex{display:flex}
 .hide,.hidden{display:none}
 .right{float:right}
 .w30{width:30%}
 .w35{width:35%}
+.w40{width:40%}
 .w50{width:50% !important}
+.w60{width:60%}
 .w65{width:65%}
 .w70{width:70%}
 .w100{width:100%}

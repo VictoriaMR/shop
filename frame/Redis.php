@@ -6,7 +6,7 @@ class Redis
 {
 	private $_link;
 	private $_db;
-	const DEFAULT_EXT_TIME = 60;
+	const DEFAULT_EXT_TIME = 3600;
 	const DEFAULT_CONNECT_TIME = 5;
 
 	private function connect() 
@@ -34,10 +34,12 @@ class Redis
 	public function __call($func, $arg)
 	{
 		if (is_null($this->_link)) return false;
-		if ($func != 'hMset' && !empty($arg[1]) && is_array($arg[1])) {
+		if ($func != 'hMset' && isset($arg[1]) && is_array($arg[1])) {
 			$arg[1] = json_encode($arg[1], JSON_UNESCAPED_UNICODE);
-		} elseif ($func == 'hSet' && !empty($arg[2]) && is_array($arg[2])) {
+		} elseif ($func == 'hSet' && isset($arg[2]) && is_array($arg[2])) {
 			$arg[2] = json_encode($arg[2], JSON_UNESCAPED_UNICODE);
+		} elseif ($func == 'set'){
+			if (!isset($arg[2])) $arg[2] = self::DEFAULT_EXT_TIME;
 		}
 		$info = $this->_link->$func(...$arg);
 		if ($info) {

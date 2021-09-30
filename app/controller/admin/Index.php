@@ -19,7 +19,7 @@ class Index extends Base
 		html()->addCss();
 		html()->addJs();
 		//功能列表
-		$funcList = make('app/service/function/Controller')->getList();
+		$funcList = make('app/service/controller/Controller')->getList();
 		$this->assign('funcList', $funcList);
 		$this->assign('info', session()->get('admin_info'));
 		$this->view();
