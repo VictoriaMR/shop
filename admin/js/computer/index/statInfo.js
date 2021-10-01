@@ -11,6 +11,7 @@ const STATINFO = {
 		}, 5000);
 	},
 	getInfo: function() {
+		const _this = this;
 		post(URI + 'index/statInfo', {opn: 'getSystemInfo'}, function(data){
 			_this.initdata(data);
 		});

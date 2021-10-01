@@ -9,6 +9,7 @@ class Cart extends Base
 
 	protected $_table = 'cart';
 	protected $_primaryKey = 'cart_id';
-
 	protected $_addTime = 'add_time';
+	protected $_updateTime = 'update_time';
+	protected $_intFields = ['cart_id', 'mem_id', 'sku_id', 'quantity', 'checked'];
 }

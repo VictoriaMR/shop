@@ -1,3 +1,6 @@
+$(function(){
+	ADDRESS.init();
+});
 const ADDRESS = {
 	init: function() {
 		const _this = this;
@@ -7,9 +10,26 @@ const ADDRESS = {
 				return false;
 			}
 			const id = $(this).parents('.item').data('id');
-			TIPS.confirm('Make this address default?', function(){
+			TIPS.confirm(appT('set_default_confirm'), function(){
 				TIPS.loading($('#confirm-modal .content'));
 				$.post(URI+'userInfo/setAddressDefault', {id: id}, function(res){
+					if (res.code === '200') {
+						window.location.reload();
+					} else {
+						TIPS.loadout($('#confirm-modal .content'));
+						TIPS.error(res.message);
+					}
+				});
+			});
+		});
+		$('.address-list').on('click', '.item .default-bill-btn', function(){
+			if ($(this).hasClass('active')) {
+				return false;
+			}
+			const id = $(this).parents('.item').data('id');
+			TIPS.confirm(appT('set_default_bill_confirm'), function(){
+				TIPS.loading($('#confirm-modal .content'));
+				$.post(URI+'userInfo/setAddressBillDefault', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -72,7 +92,7 @@ const ADDRESS = {
 		const _this = this;
 		const obj = $('.address-list');
 		const page = parseInt(obj.data('page')) + 1;
-		const size = parseInt(obj.data('size'))
+		const size = parseInt(obj.data('size'));
 		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);

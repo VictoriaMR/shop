@@ -1,4 +1,4 @@
-<?php $router = router()->getRoute();?>
+<?php $router = \App::get('router');?>
 <div class="cover-footer-padding"></div>
 <div id="pb-footbar">
 	<a class="tab<?php echo $router['path']=='index'?' active':'';?>" href="<?php echo url('');?>">

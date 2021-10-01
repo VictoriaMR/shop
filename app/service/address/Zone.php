@@ -12,7 +12,7 @@ class Zone extends Base
 
 	public function getName($id, $lanId=2)
 	{
-		$nameEn = $this->loadData($id, 'name_en')['name_en'] ?? '';
+		return $this->loadData($id, 'name_en')['name_en'] ?? '';
 		if ($lanId == 2) {
 			return $nameEn;
 		}

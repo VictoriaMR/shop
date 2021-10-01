@@ -70,7 +70,7 @@ class Task
 			$rstSign = '';
 			exec($cmd.' > /dev/null 2>&1 &', $out, $rstSign);
 		}
-		env('APP_DEBUG') && debug()->runlog($cmd, 'task');
+		config('env.APP_DEBUG') && debug()->runlog($cmd, 'task');
 		return true;
 	}
 

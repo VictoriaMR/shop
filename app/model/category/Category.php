@@ -7,14 +7,5 @@ class Category extends Base
 {
 	protected $_table = 'category';
 	protected $_primaryKey = 'cate_id';
-
-	public function getInfo($fields)
-	{
-		return $this->loadData(null, $fields);
-	}
-
-	public function create(array $data) 
-	{
-		return $this->insertGetId($data);
-	}
+	protected $_intFields = ['cate_id', 'parent_id', 'status'];
 }

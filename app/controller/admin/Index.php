@@ -18,6 +18,9 @@ class Index extends Base
 	{
 		html()->addCss();
 		html()->addJs();
+		//功能列表
+		$funcList = make('app/service/controller/Controller')->getList();
+		$this->assign('funcList', $funcList);
 		$this->assign('info', session()->get('admin_info'));
 		$this->view();
 	}
@@ -40,7 +43,6 @@ class Index extends Base
 		$viewerInfo = $log->getIpDateStat();
 		//系统信息
 		$cpuInfo = $this->getCpuInfo();
-
 		$mysqlVersion = $log->getQuery('SELECT version() AS version')[0] ?? [];
 
 		$this->assign('viewAgentInfo', $viewAgentInfo);
@@ -55,7 +57,7 @@ class Index extends Base
     protected function getCpuInfo()
     {
         $returnData = [];
-        if (request()->isWin()) {
+        if (isWin()) {
             $cmd = 'wmic cpu get name,numberofcores';
             exec($cmd, $out);
             if (empty($out)) {
@@ -72,7 +74,7 @@ class Index extends Base
 
 	protected function getSystemInfo()
     {
-    	if (request()->isWin()) {
+    	if (isWin()) {
     		$returnData = $this->sys_windows();
     	} else {
     		$returnData = $this->sys_linux();

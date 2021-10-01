@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>管理后台<?php echo empty($_title) ? '' : '-'.$_title;?></title>
+	<title><?php echo $_title ?? '';?></title>
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -19,7 +19,7 @@
 <body>
 <div id="progressing"></div>
 <script type="text/javascript">
-const URI = "<?php echo env('APP_DOMAIN');?>";
+const URI = "<?php echo config('env.APP_DOMAIN');?>";
 </script>
 <?php if (!empty($_nav)) {?>
 <div id="header-nav" class="container-fluid">

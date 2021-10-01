@@ -125,6 +125,13 @@ const TIPS = {
 			}
 		});
 	},
+	loadingBtn: function(obj, msg) {
+		obj.data('text', obj.text());
+		obj.text(msg ? msg : appT('loading')).attr('disabled', true);
+	},
+	loadoutBtn: function(obj) {
+		obj.text(obj.data('text')).attr('disabled', false);
+	},
 	start: function() {
 		$('body').css({'overflow': 'auto'});
 	},
@@ -137,10 +144,10 @@ const TIPS = {
 			<div class="mask"></div>\
 			<div class="content">\
 				<button class="btn24 btn-black close-btn top-close-btn">Close</button>\
-				<p class="layer mt32 tc f16 f600">'+message+'</p>\
+				<p class="layer mt20 tc f16 f600 pb20">'+message+'</p>\
 				<div class="footer layer">\
-					<button class="btn32 close-btn">CANCEL</button>\
-					<button class="btn32 btn-black right confirm-btn">CONFIRM</button>\
+					<button class="btn32 close-btn">Cancel</button>\
+					<button class="btn32 btn-black right confirm-btn">Confirm</button>\
 				</div>\
 			</div>\
 		</div>');
@@ -150,7 +157,7 @@ const TIPS = {
 		});
 		$('body').on('click', '#confirm-modal .confirm-btn', function(){
 			if (callback) {
-				callback()
+				callback($(this))
 			} else {
 				TIPS.confirmClose();
 			}
@@ -181,6 +188,19 @@ function S4() {
 }
 function guid() {
 	return (S4()+S4()+'-'+S4()+'-'+S4()+'-'+S4()+'-'+S4()+S4()+S4());
+}
+function appT(name) {
+	if (typeof js_language_text !== 'undefined') {
+		if (typeof js_language_text[name] !== 'undefined') {
+			return js_language_text[name];
+		}
+	}
+	if (typeof js_language_text_common !== 'undefined') {
+		if (typeof js_language_text_common[name] !== 'undefined') {
+			return js_language_text_common[name];
+		}
+	}
+	return name;
 }
 (function($){
 	$.fn.bigImage = function(){
@@ -284,16 +304,5 @@ $(function(){
 	if ($('.icon-gouwuche, .icon-gouwuchefill').length > 0) {
 		CART.init();
 	}
-	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
-		if (res.code === 10000 || res.code === '10000') {
-			if (location.pathname.substring(0, 6) !== '/login') {
-				const token = localStorage.getItem('login_token');
-				$.post(URI+'login/loginToken', {token: token}, function(res){
-					if (res.code === 200 || res.code === '200') {
-						window.location.href = res.data.url ? res.data.url : URI;
-					}
-				});
-			}
-		}
-	});
+	$.post(URI+'api/stat', {url: window.location.pathname});
 });

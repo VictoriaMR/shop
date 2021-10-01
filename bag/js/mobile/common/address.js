@@ -138,15 +138,15 @@ const ADDRESSBOOK = {
 			let html = '<input type="hidden" name="state" required="required" value="" maxlength="32">\
 						<div class="selection mt2">\
 						<div class="selector-icon">\
-							<span class="e1 f14 pr12">Please select</span>\
+							<span class="e1 f14 pr12">'+appT('please_select')+'</span>\
 							<i class="iconfont icon-xiangxia1"></i>\
 						</div>\
 						<div class="selector-content">\
 							<div class="selector-search">\
 								<button type="button" class="btn"><i class="iconfont icon-sousuo"></i></button>\
-								<input type="input" class="input" placeholder="Quick find">\
+								<input type="input" class="input" placeholder="'+appT('quick_find')+'">\
 								<div class="clear"></div>\
-								<p class="empty-selector tc c6 f12 mt6 hide">Result empty</p>\
+								<p class="empty-selector tc c6 f12 mt6 hide">'+appT('result_empty')+'</p>\
 							</div>\
 							<ul class="selector">';
 							for (let i=0; i<data.length; i++) {
@@ -177,7 +177,8 @@ const ADDRESSBOOK = {
 				city: '',
 				country_code2: '',
 				address_id: 0,
-				default: '1',
+				is_default: '0',
+				is_bill: '0',
 				first_name: '',
 				last_name: '',
 				phone: '',
@@ -188,12 +189,13 @@ const ADDRESSBOOK = {
 		} else {
 			data.phone = data.phone.split(' ')[1];
 		}
-		if (typeof data.default === 'undefined') {
+		if (typeof data.is_default === 'undefined') {
 			$('#address-book form .default-btn').hide();
 		}
 		for (const i in data) {
 			if (typeof data[i] == 'undefined') data[i] = '';
-			$('#address-book form [name="'+i+'"]').attr('value', data[i]);
+			const obj = $('#address-book form [name="'+i+'"]');
+			obj.val(data[i]);
 			switch (i) {
 				case 'country_code2':
 					$('#address-book form .country-selector li[value="'+data[i]+'"]').trigger('click');
@@ -203,19 +205,20 @@ const ADDRESSBOOK = {
 						$('#address-book form .zone-selection').find('input').attr('value', data.state);
 					}
 					break;
-				case 'default':
-					if (data.default === '1') {
-						$('#address-book form .default-btn .iconfont').removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingxuanzhongfill');
+				case 'is_default':
+				case 'is_bill':
+					if (data[i] === '1') {
+						obj.parent().find('.iconfont').removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhongfill');
 					} else {
-						$('#address-book form .default-btn .iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingxuanzhong');
+						obj.parent().find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingweixuanzhong');
 					}
 					break;
 			}
 		}
 		if (data.first_name) {
-			$('#address-book .list-title .title').text('EDIT ADDRESS');
+			$('#address-book .list-title .title').text(appT('edit_address'));
 		} else {
-			$('#address-book .list-title .title').text('ADD ADDRESS');
+			$('#address-book .list-title .title').text(appT('add_address'));
 		}
 	},
 	loadData: function(id) {

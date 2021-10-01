@@ -41,6 +41,7 @@
 	-webkit-box-orient: vertical;
 	margin-top: 0.10rem;
 	font-size: 0.13rem;
+	min-height: 0.36rem;
 }
 .product-list .original_price {
 	margin-left: 0.04rem;

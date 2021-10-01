@@ -1,5 +1,5 @@
 #cart-page {
-	padding: 0.2rem 0;
+	padding: 0.1rem 0;
 }
 #cart-page .empty-bag-image {
 	height: 1rem;
@@ -22,7 +22,7 @@
 }
 #cart-page .cart-list .item {
 	padding: 0.16rem 0.08rem;
-	margin-bottom: 0.04rem;
+	margin-bottom: 0.1rem;
 	background: #fff;
 	border-radius: 0.08rem;
 	position: relative;
@@ -154,9 +154,6 @@
 	background: #efefef;
 	border: 0.01rem solid #707070;
 }
-#sku-select-modal .confirm-btn {
-	border-radius: 0.08rem;
-}
 #sku-select-modal .sku-image {
 	width: 1rem;
 	height: 1rem;
@@ -218,12 +215,12 @@
 }
 #cart-summary {
 	padding: 0.16rem;
+	margin-top: 0.2rem;
 	background: #fff;
 	margin-bottom: 0.2rem;
 	position: relative;
 }
 #cart-summary .content {
-	padding: 0.16rem 0 0.08rem 0;
 	font-size: 0.14rem;
 }
 #cart-summary .content li {

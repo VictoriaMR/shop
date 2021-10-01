@@ -254,7 +254,7 @@ const CARTPAGE = {
 							} else {
 								html += '<li class="item-image'+(data.attrMap[i].length===1||skuAttrSelect.indexOf(data.attrMap[i][j])>=0?' active':'')+'" data-id="'+data.attrMap[i][j]+'" title="'+data.attv[data.attrMap[i][j]]+'">\
 											<div class="attv-image tcell">\
-												<img data-src="'+data.attvImage[data.attrMap[i][j]]+'" src="'+URI+'image/common/noimg.svg" class="lazyload">\
+												<img data-src="'+data.attvImage[data.attrMap[i][j]].url+'" src="'+URI+'image/common/noimg.svg" class="lazyload">\
 											</div>\
 										</li>';
 							}
@@ -345,13 +345,12 @@ const CARTPAGE = {
 		}
 	},
 	initSummary: function(){
-		CART.init();
 		TIPS.loading($('#cart-summary'));
 		$.post(URI+'cart/cartSummary', {}, function(res){
 			let html = '';
 			if (res.code === '200') {
 				for (let i=0; i<res.data.length; i++) {
-					html += '<li '+(res.data[i].type === 2 ? 'class="f700"':'')+'>\
+					html += '<li '+(res.data[i].type === 2 ? 'class="f700 f16"':'')+'>\
 								<span>'+res.data[i].name+'</span>\
 								<span class="right">'+res.data[i].price_format+'</span>\
 							</li>';

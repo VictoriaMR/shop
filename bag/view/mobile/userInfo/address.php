@@ -1,25 +1,26 @@
+<?php $this->load('common/back_header', ['_simple_title'=>appT('my_address')]);?>
 <div id="address-page" class="layer mt20">
 	<div class="list-title flex">
 		<div class="tcell">
 			<p class="line"></p>
 		</div>
-		<p class="title">MY ADDRESSES</p>
+		<p class="title"><?php echo appT('address_list');?></p>
 		<div class="tcell">
 			<p class="line"></p>
 		</div>
 	</div>
 	<div class="address-content mt18">
 		<div class="title">
-			<span>ADDRESSES</span>
-			<button class="btn24 btn-black right add-new-address">Add an Address</button>
+			<span><?php echo appT('addresses');?></span>
+			<button class="btn24 btn-black right add-new-address"><?php echo appT('add_address');?></button>
 		</div>
 		<?php if (empty($list)) {?>
-		<p class="f18 f600 tc mt32">Your address is empty</p>
-		<p class="f14 mt18 tc">Please click the add button to add a new address.</p>
+		<p class="f18 f600 tc mt32"><?php echo appT('address_empty');?></p>
+		<p class="f14 mt18 tc"><?php echo appT('click_to_add_address');?></p>
 		<?php } else {?>
 		<ul class="address-list mt22" data-page="<?php echo $page;?>" data-size="<?php echo $size;?>">
 			<?php foreach ($list as $value){?>
-			<li class="item<?php echo $value['is_default']?' active':'';?>" data-id="<?php echo $value['address_id'];?>">
+			<li class="item<?php echo $value['is_default']||$value['is_bill']?' active':'';?>" data-id="<?php echo $value['address_id'];?>">
 				<div class="info">
 					<p class="e2"><?php echo $value['first_name'].' '.$value['last_name'];?></p>
 					<p class="e2"><?php echo $value['phone'];?></p>
@@ -28,11 +29,12 @@
 					<?php if (!empty($value['tax_number'])){?>
 					<p class="e2"><?php echo $value['tax_number'];?></p>
 					<?php }?>
-					<button class="btn24 default-btn<?php echo $value['is_default']?' active':'';?>">DEFAULT</button>
+					<span class="iconfont default-btn icon-wuliu<?php echo $value['is_default']?' active':'';?>"></span>
+					<span class="iconfont default-bill-btn icon-dingdan<?php echo $value['is_bill']?' active':'';?>"></span>
 				</div>
 				<div class="btn-content mt14">
-					<button class="btn24 btn-black edit-btn">Edit</button>
-					<button class="btn24 ml16 delete-btn">Delete</button>
+					<button class="btn24 btn-black edit-btn"><?php echo appT('edit');?></button>
+					<button class="btn24 ml16 delete-btn"><?php echo appT('delete');?></button>
 				</div>
 			</li>
 			<?php } ?>
@@ -42,7 +44,8 @@
 </div>
 <?php $this->load('common/address');?>
 <script type="text/javascript">
-$(function(){
-	ADDRESS.init();
-});
+const js_language_text = {
+	set_default_confirm: '<?php echo appT('set_default_confirm');?>',
+	set_default_bill_confirm: '<?php echo appT('set_default_bill_confirm');?>',
+};
 </script>

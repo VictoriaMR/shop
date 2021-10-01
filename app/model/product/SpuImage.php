@@ -5,15 +5,7 @@ use app\model\Base;
 
 class SpuImage extends Base
 {
-	//表名
 	protected $_table = 'product_spu_image';
-
-	public function getInfoBySpuId($spuId)
-	{
-		$info = $this->where(['spu_id'=>(int)$spuId])->field('attach_id')->get();
-		if (empty($info)) {
-			return [];
-		}
-		return array_column($info, 'attach_id');
-	}
+	protected $_primaryKey = 'item_id';
+	protected $_intFields = ['item_id', 'spu_id', 'attach_id', 'sort'];
 }

@@ -7,30 +7,137 @@ class Order extends Base
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addJs();
 		$status = (int)iget('status');
 		$page = iget('page', 1);
 		$size = iget('size', 10);
+
+		html()->addCss();
+		html()->addJs();
 
 		$where = ['mem_id'=>userId(), 'is_delete'=>0];
 		if ($status) {
 			$where['status'] = $status;
 		}
-
 		$list = make('app/service/order/Order')->getList($where, $page, $size);
 
 		$this->assign('list', $list);
 		$this->assign('status', $status);
+		$this->assign('page', $page);
+		$this->assign('size', $size);
 		$this->assign('_title', appT('my_order'));
 		$this->view();
 	}
 
-	protected function getOrderList()
+	public function getOrderListAjax()
 	{
-		$status = input('status');
-		if (!is_null($status)) {
-			
+		$status = (int)ipost('status');
+		$page = (int)ipost('page', 1);
+		$size = (int)ipost('size', 10);
+		$isDelete = (int)ipost('is_delete', 0);
+		$where = ['mem_id'=>userId(), 'is_delete'=>$isDelete];
+		if ($status) {
+			$where['status'] = $status;
+		}
+		$list = make('app/service/order/Order')->getList($where, $page, $size);
+
+		$this->success($list, '');
+	}
+
+	public function repurchase()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		if (!make('app/service/order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$id])) {
+			$this->error(appT('order_error'));
+		}
+		$list = make('app/service/order/Product')->getListData(['order_id'=>$id], 'sku_id,quantity');
+		$cartService = make('app/service/Cart');
+		foreach ($list as $value) {
+			$cartService->addToCart($value['sku_id'], $value['quantity']);
+		}
+		$this->success(['url'=>url('cart')], '');
+	}
+
+	public function delete()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		$orderService = make('app/service/order/Order');
+		if (!$orderService->getCountData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_WAIT_PAY')])) {
+			$this->error(appT('order_error'));
+		}
+		$rst = $orderService->updateData($id, ['is_delete'=>1]);
+		if ($rst) {
+			$this->success();
+		} else {
+			$this->error();
+		}
+	}
+
+	public function refund()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		$orderService = make('app/service/order/Order');
+		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_PAIED')]);
+		if (empty($info)) {
+			$this->error(appT('order_error'));
+		}
+		$status = $orderService->getConst('STATUS_REFUNDING');
+		$rst = $orderService->updateData($id, ['status'=>$status]);
+		if ($rst) {
+			make('app/service/order/StatusHistory')->addLog($id, $status, $info['lan_id']);
+			$this->success();
+		} else {
+			$this->error();
+		}
+	}
+
+	public function complete()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		$orderService = make('app/service/order/Order');
+		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_SHIPPED')]);
+		if (empty($info)) {
+			$this->error(appT('order_error'));
+		}
+		$status = $orderService->getConst('STATUS_FINISHED');
+		$rst = $orderService->updateData($id, ['status'=>$status]);
+		if ($rst) {
+			make('app/service/order/StatusHistory')->addLog($id, $status, $info['lan_id']);
+			$this->success();
+		} else {
+			$this->error();
+		}
+	}
+
+	public function cancel()
+	{
+		$id = (int)ipost('id');
+		if (empty($id)) {
+			$this->error(appT('order_error'));
+		}
+		$orderService = make('app/service/order/Order');
+		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_WAIT_PAY')]);
+		if (empty($info)) {
+			$this->error(appT('order_error'));
+		}
+		$status = $orderService->getConst('STATUS_CANCEL');
+		$rst = $orderService->updateData($id, ['status'=>$status]);
+		if ($rst) {
+			make('app/service/order/StatusHistory')->addLog($id, $status, $info['lan_id']);
+			$this->success();
+		} else {
+			$this->error();
 		}
 	}
 
@@ -113,13 +220,88 @@ class Order extends Base
 
 	public function search()
 	{
+		html()->addCss();
+		html()->addJs();
+
+		$page = iget('page', 1);
+		$size = iget('size', 10);
+		$keyword = trim(iget('keyword'));
+
+		if (!empty($keyword)) {
+			$where = ['mem_id'=>userId(), 'is_delete'=>0];
+			$list = make('app/service/order/Order')->getListByKeyword($where, $keyword, $page, $size);
+		}
+
+		$this->assign('page', $page);
+		$this->assign('size', $size);
+		$this->assign('keyword', $keyword);
+		$this->assign('list', $list ?? []);
 		$this->assign('_title', appT('order_search'));
 		$this->view();
 	}
 
+	public function getSearchOrderListAjax()
+	{
+		$page = iget('page', 1);
+		$size = iget('size', 10);
+		$keyword = trim(iget('keyword'));
+
+		if (!empty($keyword)) {
+			$where = ['mem_id'=>userId(), 'is_delete'=>0];
+			$list = make('app/service/order/Order')->getListByKeyword($where, $keyword, $page, $size);
+		}
+		$this->success($list ?? [], '');
+	}
+
 	public function trash()
 	{
+		html()->addCss();
+		html()->addJs();
+
+		$page = iget('page', 1);
+		$size = iget('size', 10);
+
+		$where = ['mem_id'=>userId(), 'is_delete'=>1];
+		$list = make('app/service/order/Order')->getList($where, $page, $size);
+
+		$this->assign('page', $page);
+		$this->assign('size', $size);
+		$this->assign('list', $list);
 		$this->assign('_title', appT('order_trash'));
+		$this->view();
+	}
+
+	public function detail()
+	{
+		html()->addCss();
+		html()->addJs();
+
+		$id = (int)iget('id');
+		if (empty($id)) {
+			$error = appT('order_error');
+		} else {
+			$orderService = make('app/service/order/Order');
+			$orderInfo = $orderService->getInfo($id);
+			if (empty($orderInfo)) {
+				$error = appT('order_error');
+			} else {
+				//检查订单状态
+				if ($orderInfo['base']['status'] == $orderService->getConst('STATUS_WAIT_PAY')) {
+					if ($orderInfo['base']['add_time'] < now(time()-$orderService->getConst('ORDER_WAIT_PAY_TIME'))) {
+						//取消订单
+						$status = $orderService->getConst('STATUS_CANCEL');
+						$rst = $orderService->updateData($id, ['status'=>$status]);
+						if ($rst) {
+							make('app/service/order/StatusHistory')->addLog($id, $status, $orderInfo['base']['lan_id']);
+						}
+						$orderInfo = $orderService->getInfo($id);
+					}
+					$orderInfo['base']['last_pay_time'] = (int)((strtotime($orderInfo['base']['add_time']) + $orderService->getConst('ORDER_WAIT_PAY_TIME') - time()) / 86400);
+				}
+			}
+		}
+		$this->assign('orderInfo', $orderInfo ?? []);
+		$this->assign('_title', appT('order_detail'));
 		$this->view();
 	}
 }

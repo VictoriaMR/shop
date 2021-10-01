@@ -8,7 +8,10 @@
 				</td>
 			</tr>
 			<?php } else {?>
-			<?php foreach ($list as $value) {?>
+			<?php foreach ($list as $value) {
+				$value = trim($value);
+				if (empty($value)) continue;
+			?>
 			<tr>
 				<td><?php echo $value;?></td>
 			</tr>

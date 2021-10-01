@@ -49,6 +49,9 @@
 .mt32 {
 	margin-top: .32rem
 }
+.mt64 {
+	margin-top: .64rem
+}
 .ml2 {
 	margin-left: .02rem
 }
@@ -210,4 +213,7 @@
 }
 .p22 {
 	padding: 0.22rem;
+}
+.pt10 {
+	padding-top: 0.1rem;
 }

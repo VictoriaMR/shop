@@ -44,7 +44,7 @@ class Currency extends Base
 
 	public function priceSymbol($type)
 	{
-		$info = $this->getInfoCache(currencyId());
+		$info = $this->getInfoCache($this->currencyId());
 		switch ($type) {
 			case '1':
 				return $info['code'];
@@ -56,7 +56,7 @@ class Currency extends Base
 
 	public function priceFormat($price, $type=null)
 	{
-		$info = $this->getInfoCache(currencyId());
+		$info = $this->getInfoCache($this->currencyId());
 		$price = sprintf('%.2f', $price*$info['rate']);
 		$arr = [
 			1 => $price,

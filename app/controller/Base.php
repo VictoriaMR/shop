@@ -50,12 +50,12 @@ class Base
 		if ($name == '_title') {
 			$value .= '-'.\App::get('site_name');
 		}
-		return view()->assign($name, $value);
+		return make('frame/View')->assign($name, $value);
 	}
 
 	protected function view($name='')
 	{
-		return view()->display($name);
+		return make('frame/View')->display($name);
 	}
 
 	protected function _init()
@@ -66,7 +66,7 @@ class Base
 		} else {
 			$this->_nav = array_merge(['default' => $this->_default], $this->_arr);
 		}
-		$router = router()->getRoute();
+		$router = \App::get('router');
 		$this->assign('_tag', $this->_tag);
 		$this->assign('_nav', $this->_nav);
 		$this->assign('_tagShow', $this->_tagShow);

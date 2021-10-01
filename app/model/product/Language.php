@@ -6,6 +6,8 @@ use app\model\Base;
 class Language extends Base
 {
 	protected $_table = 'product_language';
+	protected $_primaryKey = 'item_id';
+	protected $_intFields = ['item_id', 'spu_id', ''];
 
 	public function getInfo($fields)
 	{

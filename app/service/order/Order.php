@@ -92,6 +92,7 @@ class Order extends Base
 			'mem_id' => $this->userId(),
 			'coupon_id' => $couponId,
 			'lan_id' => $this->lanId(),
+			'is_moblie' => IS_MOBILE ? 1 : 0,
 			'currency' => $currency,
 			'insurance_free' => $insuranceFree,
 			'coupon_free' => $couponFree,
@@ -146,8 +147,9 @@ class Order extends Base
 			'tax_number' => $billingAddress['tax_number'],
 		];
 		make('app/service/order/Address')->insert($insert);
-
 		$this->commit();
+		//生成日志
+		make('app/service/order/StatusHistory')->addLog($orderId, 1, $this->lanId());
 		return $orderId;
 	}
 
@@ -185,6 +187,8 @@ class Order extends Base
 		if (empty($temp)) {
 			return false;
 		}
+		$temp['add_time_format'] = date('j M, Y', strtotime($temp['add_time']));
+		$temp['status_text'] = $this->getappTStatus($temp['status'], $temp['lan_id']);
 		$data['base'] = $temp;
 		//递送地址 账单地址
 		$temp = make('app/service/order/Address')->getListData(['order_id'=>$orderId]);
@@ -248,12 +252,14 @@ class Order extends Base
 			];	
 		}
 		$data['fee_list'] = $temp;
+		//历史
+		$data['status_history'] = make('app/service/order/StatusHistory')->getListData(['order_id'=>$orderId], '*', 0, 0, ['item_id'=>'desc']);
 		return $data;
 	}
 
 	public function getList(array $where=[], $page=1, $size=10)
 	{
-		$fields = 'order_id,order_no,status,product_total,order_total,add_time';
+		$fields = 'order_id,order_no,status,lan_id,currency,product_total,order_total,is_review,add_time,is_delete';
 		$list = $this->getListData($where, $fields, $page, $size, ['order_id'=>'desc']);
 		if (!empty($list)) {
 			//订单产品
@@ -266,12 +272,92 @@ class Order extends Base
 			//文件
 			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
-			
-		}
-		foreach ($list as $key => $value) {
+			//产品属性归类
+			$tempArr = [];
+			foreach ($attrArr as $value) {
+				if (!isset($tempArr[$value['order_product_id']])) {
+					$tempArr[$value['order_product_id']] = [];
+				}
+				if (!empty($value['attach_id'])) {
+					$value['image'] = $attachArr[$value['attach_id']] ?? '';
+				}
+				$tempArr[$value['order_product_id']][] = $value;
+			}
+			$attrArr = $tempArr;
+			//产品图片
+			$tempArr = [];
+			foreach ($orderProductArr as $value) {
+				if (!isset($tempArr[$value['order_id']])) {
+					$tempArr[$value['order_id']] = [];
+				}
+				$value['image'] = $attachArr[$value['attach_id']] ?? '';
+				$value['attr'] = $attrArr[$value['order_product_id']];
+				$tempArr[$value['order_id']][] = $value;
+			}
+			$orderProductArr = $tempArr;
+			//订单产品归类
+			$currencyService = make('app/service/Currency');
+			$currencyArr = array_unique(array_column($list, 'currency'));
+			$tempArr = [];
+			foreach ($currencyArr as $value) {
+				$tempArr[$value] = $currencyService->getSymbolByCode($value);
+			}
+			$currencyArr = $tempArr;
 
+			foreach ($list as $key => $value) {
+				$value['product'] = $orderProductArr[$value['order_id']];
+				$value['status_text'] = $this->getappTStatus($value['status'], $value['lan_id']);
+				$value['currency_symbol'] = $currencyArr[$value['currency']] ?? '';
+				$value['url'] = url('order/detail', ['id'=>$value['order_id']]);
+				$value['add_time_format'] = date('j M, Y', strtotime($value['add_time']));
+				$list[$key] = $value;
+			}
 		}
+		return $list;
+	}
 
-		dd($list);
+	protected function getappTStatus($status, $lanId)
+	{
+		$arr = [
+			$this->getConst('STATUS_CANCEL') => 'cancel',
+			$this->getConst('STATUS_WAIT_PAY') => 'wait_pay',
+			$this->getConst('STATUS_PAIED') => 'paid',
+			$this->getConst('STATUS_SHIPPED') => 'shipped',
+			$this->getConst('STATUS_FINISHED') => 'completed',
+			$this->getConst('STATUS_PART_REFUND') =>'part_refund',
+			$this->getConst('STATUS_FULL_REFUND') => 'full_refund',
+			$this->getConst('STATUS_REFUNDING') => 'refunding',
+		];
+		return appT($arr[$status], [], $lanId);
+	}
+
+	public function getListByKeyword($where, $keyword, $page=1, $size=10)
+	{
+		if (empty($keyword)) {
+			return [];
+		}
+		$idArr = [];
+		$tempWhere = $where;
+		$tempWhere['order_no'] = ['like', $keyword];
+		$list = $this->getListData($tempWhere, 'order_id');
+		if (!empty($list)) {
+			$idArr = array_column($list, 'order_id');
+		}
+		//订单产品关键字搜索
+		$tempWhere = [];
+		foreach ($where as $key => $value) {
+			$tempWhere['a.'.$key] = $value;
+		}
+		$tempWhere['b.`name`'] = ['like', '%'.$keyword.'%'];
+		$list = $this->table('`order` as a')->leftJoin('order_product as b', 'a.order_id', 'b.order_id')->where($tempWhere, 'a.order_id')->get();
+		if (!empty($list)) {
+			$idArr = array_merge($idArr, array_column($list, 'order_id'));
+		}
+		if (empty($idArr)) {
+			$where = ['order_id'=>0];
+		} else {
+			$where['order_id'] = ['in', array_unique($idArr)];
+		}
+		return $this->getList($where, $page, $size);
 	}
 }

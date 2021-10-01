@@ -3,44 +3,44 @@ $(function(){
 });
 const MEMBERLIST = {
 	init: function() {
-	    $('#add-data-btn').on('click', function(){
-	    	const obj = $(this);
-	    	obj.button('loading');
-	    	MEMBERLIST.initDealbox(0, function(){
-	    		obj.button('reset');
-	    	});
-	    });
-	    //保存按钮
-	    $('#dealbox .btn.save').on('click', function(){
-	    	if (!$(this).parents('form').formFilter()) {
-	    		return false;
-	    	}
-	    	post(URI+'member', $(this).parents('form').serializeArray(), function(data){
-	    		window.location.reload();
-	    	});
-	    });
-	    $('#dealbox .switch_botton').on('click', function(){
-	    	let status = $(this).data('status');
-	    	status = status == 0 ? 1 : 0;
-	    	$(this).switchBtn(status);
-	    	$(this).next().val(status);
-	    });
-	    //改变状态按钮
-	    $('#data-list .switch_botton').on('click', function(){
-	    	const obj = $(this);
-	    	const status = obj.data('status') == 0 ? 1 : 0;
-	    	post(URI+'member', {opn:'modify', mem_id: $(this).parents('tr').data('id'), status: status}, function(data) {
-	    		obj.switchBtn(status);
-	    	});
-	    });
-	    //修改
-	    $('#data-list .btn.modify').on('click', function(){
-	    	const obj = $(this);
-	    	obj.button('loading');
-	    	MEMBERLIST.initDealbox(obj.parents('tr').data('id'), function(){
-	    		obj.button('reset');
-	    	});
-	    });
+		$('#add-data-btn').on('click', function(){
+			const obj = $(this);
+			obj.button('loading');
+			MEMBERLIST.initDealbox(0, function(){
+				obj.button('reset');
+			});
+		});
+		//保存按钮
+		$('#dealbox .btn.save').on('click', function(){
+			if (!$(this).parents('form').formFilter()) {
+				return false;
+			}
+			post(URI+'member', $(this).parents('form').serializeArray(), function(data){
+				window.location.reload();
+			});
+		});
+		$('#dealbox .switch_botton').on('click', function(){
+			let status = $(this).data('status');
+			status = status == 0 ? 1 : 0;
+			$(this).switchBtn(status);
+			$(this).next().val(status);
+		});
+		//改变状态按钮
+		$('#data-list .switch_botton').on('click', function(){
+			const obj = $(this);
+			const status = obj.data('status') == 0 ? 1 : 0;
+			post(URI+'member', {opn:'modify', mem_id: $(this).parents('tr').data('id'), status: status}, function(data) {
+				obj.switchBtn(status);
+			});
+		});
+		//修改
+		$('#data-list .btn.modify').on('click', function(){
+			const obj = $(this);
+			obj.button('loading');
+			MEMBERLIST.initDealbox(obj.parents('tr').data('id'), function(){
+				obj.button('reset');
+			});
+		});
 	},
 	initDealbox: function(mem_id, callback) {
 		if (mem_id) {

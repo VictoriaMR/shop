@@ -7,6 +7,9 @@ class Sku extends Base
 {
 	protected $_table = 'product_sku';
 	protected $_primaryKey = 'sku_id';
+	protected $_addTime = 'add_time';
+	protected $_updateTime = 'update_time';
+	protected $_intFields = ['sku_id', 'spu_id', 'site_id', 'status', 'attach_id', 'stock', 'sale_total'];
 
 	const STATUS_CLOSE = 0;
 	const STATUS_OPEN = 1;

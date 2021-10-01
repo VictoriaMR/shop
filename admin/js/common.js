@@ -40,8 +40,7 @@ function confirm(msg, callbck) {
 		obj.hide();
 	});
 	obj.on('click', '.btn.confirm', function(){
-		obj.hide();
-		callbck($(this));
+		callbck($(this), obj);
 	});
 }
 function post(uri, param, success, error) {
