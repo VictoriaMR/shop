@@ -1,7 +1,7 @@
 <div class="container-fluid">
 	<div class="w50 left pr10 mt10">
-		<p class="boxTitle">网站基本信息</p>
-		<table width="100%" border="0" cellspacing="0" cellpadding="7" class="table">
+		<p class="f16 f600">网站基本信息</p>
+		<table width="100%" border="0" cellspacing="0" cellpadding="7" class="table mt10">
 			<tbody>
 				<tr>
 					<td width="130">系统</td>
@@ -73,8 +73,8 @@
     	</table>
 	</div>
 	<div class="w50 left pl10 mt10">
-		<p class="boxTitle">服务器信息</p>
-		<table width="100%" border="0" cellspacing="0" cellpadding="7" class="table">
+		<p class="f16 f600">服务器信息</p>
+		<table width="100%" border="0" cellspacing="0" cellpadding="7" class="table mt10">
 			<tbody>
 				<?php if (!empty($cpuInfo['Name'])) {?>
 				<tr>

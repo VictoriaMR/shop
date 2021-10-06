@@ -51,6 +51,9 @@ function redis($db=0){
 function db($db=null){
 	return \App::make('frame/Connection')->setDb($db);
 }
+function page($size=null, $total=null, $current=null){
+	return \App::make('frame/Paginator')->make($size, $total, $current);
+}
 function url($url=null, $param=null, $domain=null) {
     return router()->buildUrl($url, $param, $domain);
 }

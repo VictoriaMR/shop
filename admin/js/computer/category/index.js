@@ -38,7 +38,8 @@ const CATEGORYLIST = {
 			});
 		});
 		//多语言配置
-		$('.glyphicon-globe').on('click', function(){
+		$('.glyphicon-globe').on('click', function(event){
+			event.stopPropagation();
 			const _thisobj = $(this);
 			const id = _thisobj.parents('.item').data('id');
 			post(URI+'category', {opn: 'getCateLanguage', cate_id: id}, function(data){

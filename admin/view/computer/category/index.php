@@ -1,14 +1,5 @@
 <div class="container-fluid" id="category-list">
-	<div class="row-item">
-		<div class="left">
-			<button class="btn btn-primary update-btn" type="button" style="width: 100px; margin-right: 20px;"><i class="glyphicon glyphicon-asterisk"></i> 更新数据</button>
-		</div>
-		<div class="right">
-			<button class="btn btn-info sort-btn disabled" type="button" style="width: 150px; margin-right: 20px;"><i class="glyphicon glyphicon-asterisk"></i> 保存排序</button>
-			<button class="btn btn-success modify" data-id="0" type="button" style="width: 150px;"><i class="glyphicon glyphicon-plus"></i> 添加类目</button>
-		</div>
-		<div class="clear"></div>
-	</div>
+	<button class="btn btn-success modify" data-id="0" type="button" style="width: 150px;"><i class="glyphicon glyphicon-plus"></i> 添加类目</button>
 	<table class="table table-hover mt20" id="data-list">
 		<tbody>
 			<tr>

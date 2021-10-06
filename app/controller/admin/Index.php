@@ -8,6 +8,7 @@ class Index extends Base
 	public function __construct()
 	{
 		$this->_arr = [
+			'index' => '首页',
 			'statInfo' => '统计信息',
 		];
 		$this->_tagShow = false;
@@ -22,13 +23,12 @@ class Index extends Base
 		$funcList = make('app/service/controller/Controller')->getList();
 		$this->assign('funcList', $funcList);
 		$this->assign('info', session()->get('admin_info'));
+		$this->_init();
 		$this->view();
 	}
 
 	public function statInfo()
 	{
-		html()->addCss();
-		html()->addJs();
 		if (request()->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getSystemInfo'])) {
@@ -36,6 +36,7 @@ class Index extends Base
 			}
 			$this->error('非法请求');
 		}
+		html()->addJs();
 		$log = make('app/service/Logger');
 		//浏览设备统计
 		$viewAgentInfo = $log->getStats('browser');
@@ -50,7 +51,6 @@ class Index extends Base
 		$this->assign('cpuInfo', $cpuInfo);
 		$this->assign('mysqlVersion', $mysqlVersion['version'] ?? '');
 		$this->_init();
-
 		$this->view();
 	}
 
