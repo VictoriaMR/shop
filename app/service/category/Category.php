@@ -83,9 +83,9 @@ class Category extends Base
 		if (!isset($list[$id])) {
 			return [];
 		}
-		$returnData[] = $list[$id];
 		$id = $list[$id]['parent_id'];
 		if (isset($list[$id])) {
+			$returnData[] = $list[$id];
 			$returnData = array_merge($returnData, $this->getParentCategoryById($list, $id));
 		}
 		return $returnData;

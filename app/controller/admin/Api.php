@@ -38,12 +38,12 @@ class Api extends Base
 		if (!in_array($cate, $this->_cateArr)) {
 			$this->error('没有权限操作'.$cate.'文件夹');
 		}
-		$file = make('app/service/File');
-		$result = $file->upload($file, $cate);
-		if (empty($result)) {
-			$this->error('上传失败');
+		$fileService = make('app/service/File');
+		$result = $fileService->upload($file, $cate);
+		if ($result) {
+			$this->success($result);
 		}
-		$this->success($result);
+		$this->error('上传失败');
 	}
 
 	public function stat()

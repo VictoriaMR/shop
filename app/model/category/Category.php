@@ -7,5 +7,5 @@ class Category extends Base
 {
 	protected $_table = 'category';
 	protected $_primaryKey = 'cate_id';
-	protected $_intFields = ['cate_id', 'parent_id', 'status'];
+	protected $_intFields = ['cate_id', 'parent_id', 'status', 'attach_id'];
 }

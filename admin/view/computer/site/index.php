@@ -70,11 +70,11 @@
 		</div>
 		<div class="input-group">
 			<div class="input-group-addon"><span>Keyword</span>：</div>
-			<textarea class="form-control" name="keyword" required="required" autocomplete="off" rows="4"></textarea>
+			<textarea class="form-control" name="keyword" autocomplete="off" rows="4"></textarea>
 		</div>
 		<div class="input-group">
 			<div class="input-group-addon"><span>Desc</span>：</div>
-			<textarea class="form-control" name="description" required="required" autocomplete="off" rows="4"></textarea>
+			<textarea class="form-control" name="description" autocomplete="off" rows="4"></textarea>
 		</div>
 		<button type="botton" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
 	</form>

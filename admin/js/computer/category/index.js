@@ -172,10 +172,16 @@ const CATEGORYLIST = {
 			}
 			$('.item[data-lev="0"]').show();
 		});
-
-		// this.sortInit();
-		// this.sortClick();
-		
+		$('#data-list .avatar-hover img').imageUpload('category', function(data, obj){
+			const id = obj.parents('tr').data('id');
+			$.post(URI+'category', {opn: 'modifyCategory', id: id, attach_id: data.attach_id}, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
 	},
 	loadData: function(id, callback) {
 		if (id) {
@@ -201,63 +207,5 @@ const CATEGORYLIST = {
 			obj.find('input[name="image"]').val('');
 		}
 		return true;
-	},
-	sortInit: function() {
-		const trobj = $('#category-list table tr.item');
-		trobj.find('.glyphicon').removeClass('disabled');
-		$('#category-list table tr.item').each(function(index, item) {
-			const obj = $(this);
-			const lev = obj.data('lev');
-			if (lev == 0) {
-				if (obj.prevAll('[data-lev="0"]').length == 0) {
-					obj.find('.glyphicon-arrow-up,.glyphicon-chevron-up').addClass('disabled');
-				}
-				if (obj.nextAll('[data-lev="0"]').length == 0) {
-					obj.find('.glyphicon-arrow-down,.glyphicon-chevron-down').addClass('disabled');
-				}
-			} else {
-				const prevLev = obj.prev().data('lev');
-				const nextLev = obj.next().data('lev');
-				if (lev !== prevLev) {
-					obj.find('.glyphicon-arrow-up,.glyphicon-chevron-up').addClass('disabled');
-				}
-				if (lev !== nextLev) {
-					obj.find('.glyphicon-arrow-down,.glyphicon-chevron-down').addClass('disabled');
-				}
-			}
-		});
-	},
-	sortClick: function() {
-		$('.sort-btn-content .glyphicon').on('click', function(){
-			if ($(this).hasClass('disabled')) return false;
-			$('.btn.sort-btn').removeClass('disabled');
-			const obj = $(this).parents('tr');
-			const sort = $(this).data('sort');
-			const lev = obj.data('lev');
-			if (lev == 0) {
-				const removeObj = obj.nextUntil('[data-lev="'+lev+'"]');
-				if (sort == 'top') {
-					$('[data-lev="0"]:first').before(obj);
-				} else if (sort == 'up') {
-					obj.prevAll('[data-lev="0"]').eq(0).before(obj);
-				} else if (sort == 'down') {
-					obj.nextAll('[data-lev="0"]').eq(0).nextUntil('[data-lev="0"]').eq(-1).after(obj);
-				} else if (sort == 'bottom') {
-					$('[data-lev="0"]:last').nextUntil('[data-lev="0"]').eq('-1').after(obj);
-				}
-				obj.after(removeObj);
-			} else {
-				if (sort == 'top') {
-					obj.prevAll('[data-lev="'+lev+'"]').eq(-1).before(obj);
-				} else if (sort == 'up') {
-					obj.prev().before(obj);
-				} else if (sort == 'down') {
-					obj.next().after(obj);
-				} else if (sort == 'bottom') {
-					obj.nextUntil('[data-lev="0"]').eq(-1).after(obj);
-				}
-			}
-			CATEGORYLIST.sortInit();
-		});
 	},
 };

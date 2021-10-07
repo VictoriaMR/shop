@@ -51,6 +51,33 @@ const SITECATEGORY = {
 				});
 			});
 		});
+		//上传图片
+		$('#data-list .avatar-hover img').imageUpload('category', function(data, obj){
+			const id = obj.parents('tr').data('id');
+			$.post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, attach_id: data.attach_id}, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
+		//更新input框数据
+		$('#data-list input').on('blur', function(){
+			const id = $(this).parents('tr').data('id');
+			const name = this.name;
+			const value = $(this).val();
+			$.post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, [name]: value}, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+					if (name === 'sort') {
+						window.location.reload();
+					}
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
 	},
 	initData: function(data) {
 		if (!data) {

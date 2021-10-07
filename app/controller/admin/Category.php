@@ -18,7 +18,7 @@ class Category extends Base
 	{	
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'transfer'])) {
+			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'transfer', 'modifyCategory'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -33,8 +33,15 @@ class Category extends Base
 		$languageList = array_column($languageList, null, 'code');
 		unset($languageList['zh']);
 		$len = count($languageList);
+		//图片
+		$attachArr = array_filter(array_column($list, 'attach_id'));
+		if (!empty($attachArr)) {
+			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+		}
 		foreach ($list as $key => $value) {
 			$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
+			$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
 			$list[$key] = $value;
 		}
 		
@@ -147,11 +154,29 @@ class Category extends Base
 		$this->success($rst, '');
 	}
 
+	protected function modifyCategory()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('参数不正确');
+		}
+		$attachId = ipost('attach_id');
+		$data = [];
+		if (!empty($attachId)) {
+			$data['attach_id'] = $attachId;
+		}
+		$rst = make('app/service/category/Category')->updateData($id, $data);
+		if ($rst) {
+			$this->success('操作成功');
+		}
+		$this->error('操作失败');
+	}
+
 	public function siteCategory()
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['editSiteCategory', 'deleteSiteCategory'])) {
+			if (in_array($opn, ['editSiteCategory', 'deleteSiteCategory', 'modifySiteCategory'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -238,5 +263,38 @@ class Category extends Base
 			$this->success('删除成功');
 		}
 		$this->error('删除失败');
+	}
+
+	protected function modifySiteCategory()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('参数不正确');
+		}
+		$attachId = ipost('attach_id');
+		$sort = ipost('sort');
+		$saleTotal = ipost('sale_total');
+		$visitTotal = ipost('visit_total');
+		$data = [];
+		if (!empty($attachId)) {
+			$data['attach_id'] = $attachId;
+		}
+		if (!is_null($sort)) {
+			$data['sort'] = $sort;
+		}
+		if (!is_null($saleTotal)) {
+			$data['sale_total'] = $saleTotal;
+		}
+		if (!is_null($visitTotal)) {
+			$data['visit_total'] = $visitTotal;
+		}
+		if (empty($data)) {
+			$this->error('参数不正确');
+		}
+		$rst = make('app/service/site/CategoryUsed')->updateData($id, $data);
+		if ($rst) {
+			$this->success('操作成功');
+		}
+		$this->error('操作失败');
 	}
 }

@@ -42,6 +42,10 @@
 				<th class="col-md-1">ID</th>
 				<th class="col-md-2">站点</th>
 				<th class="col-md-2">分类</th>
+				<th class="col-md-1">头像</th>
+				<th class="col-md-1">排序</th>
+				<th class="col-md-1">销售数</th>
+				<th class="col-md-1">浏览数</th>
 				<th class="col-md-2">操作</th>
 			</tr>
 			<?php if (empty($list)){ ?>
@@ -64,6 +68,20 @@
 					<br />
 					<?php } ?>
 					<span class="f600"><?php echo $tempCateList[$value['cate_id']]['name'];?></span>
+				</td>
+				<td class="col-md-1">
+					<div class="avatar-hover">
+						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['avatar'];?>" class="lazyload">
+					</div>
+				</td>
+				<td class="col-md-1">
+					<input type="text" name="sort" value="<?php echo $value['sort'];?>" class="form-control">
+				</td>
+				<td class="col-md-1">
+					<input type="text" name="sale_total" value="<?php echo $value['sale_total'];?>" class="form-control">
+				</td>
+				<td class="col-md-1">
+					<input type="text" name="visit_total" value="<?php echo $value['visit_total'];?>" class="form-control">
 				</td>
 				<td class="col-md-2">
 					<button class="btn btn-danger btn-xs ml4 delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>

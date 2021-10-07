@@ -92,12 +92,12 @@ class Site extends Base
 	{
 		$id = ipost('site_id');
 		$name = ipost('name');
-		$domain = ipost('domain');
+		$path = ipost('path');
 		$keyword = ipost('keyword');
 		$description = ipost('description');
 		$data = [
 			'name' => $name,
-			'domain' => $domain,
+			'path' => $path,
 			'keyword' => $keyword,
 			'description' => $description,
 		];
