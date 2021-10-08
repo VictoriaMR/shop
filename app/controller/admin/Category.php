@@ -36,7 +36,7 @@ class Category extends Base
 		//图片
 		$attachArr = array_filter(array_column($list, 'attach_id'));
 		if (!empty($attachArr)) {
-			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 		}
 		foreach ($list as $key => $value) {

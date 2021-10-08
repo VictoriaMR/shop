@@ -7,6 +7,7 @@ class Index extends Base
 {
 	public function index()
 	{
+		make('app/task/main/Queue')->run();
 		html()->addCss();
 		html()->addJs();
 		html()->addJs('slider');

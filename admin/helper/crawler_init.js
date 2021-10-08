@@ -13,7 +13,7 @@ const CRAWLERINIt = {
 		const _this = this;
 		//获取基本数据
 		HELPERINIT.request({action: 'request', value: 'api/getHelperData', cache_key: 'helper_all_data_cache'}, function(res) {
-			if (res.code === 200) {
+			if (res.code === '200') {
 				_this.bodyPageInit();
 				_this.crawlerPageinit(res.data);
 			} else {
@@ -31,8 +31,8 @@ const CRAWLERINIt = {
 			body.appendChild(bodyPage);
 			const html = '<div class="top-content">\
 							<div class="crawler-button">\
-								<button onclick="CRAWLER.reload()">刷新</button>\
-								<button id="add-category">添加分类</button>\
+								<button onclick="CRAWLERINIt.reload_crawlerPage()">刷新</button>\
+								<button id="clawler-after-btn">跳过</button>\
 								<span class="error-msg"></span>\
 							</div>\
 							<button id="crawler-show-btn">展开</button>\
@@ -70,8 +70,8 @@ const CRAWLERINIt = {
 	},
 	crawlerPage: function(info, data) {
 		const _this = this;
-		const category = info.category;
-		const site = info.site;
+		_this.category = info.site_category;
+		_this.site = info.site;
 		let crawlerPage = document.getElementById('item-content');
 		let count = 0;
 		let html = `<form id="crawler_form">
@@ -94,9 +94,9 @@ const CRAWLERINIt = {
 						<div class="productAttLine">
 							<div class="label">站点:</div>
 							<div class="fill_in">
-								<select name="bc_product_site">
+								<select name="bc_product_site" class="bc_product_site">
 									<option value="">请选择站点</option>
-									` + _this.getSiteHtml(site) + `
+									` + _this.getSiteHtml() + `
 								</select>
 							</div>
 							<div class="clear"></div>
@@ -105,9 +105,8 @@ const CRAWLERINIt = {
 							<div class="productAttLine">
 								<div class="label">产品分类:</div>
 								<div class="fill_in">
-									<select name="bc_product_category">
+									<select name="bc_product_category" class="bc_product_category">
 										<option value="">请选择分类</option>
-										` + _this.getCategoryHtml(category) + `
 									</select>
 								</div>
 								<div class="clear"></div>
@@ -280,10 +279,29 @@ const CRAWLERINIt = {
 				HELPERINIT.request({action: 'request', value: 'api/addProduct', param:param}, function(res) {
 					_thisobj.classList.remove('loading');
 					_thisobj.innerHTML = '上传产品';
-					if (res.code !== 200) {
-						document.querySelector('.crawler-button .error-msg').innerText = res.message;
-					} else {
-						document.querySelector('.crawler-button .error-msg').innerText = '';
+					document.querySelector('.crawler-button .error-msg').innerText = res.message;
+					if (res.code === '200') {
+						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
+					}
+				});
+			}
+		}
+		obj = document.getElementById('clawler-after-btn');
+		if (obj) {
+			obj.onclick = function () {
+				if (this.className.indexOf('loading') !== -1) {
+					return false;
+				}
+				const param = _this.serializeForm(document.getElementById('crawler_form'));
+				let _thisobj = this;
+				_thisobj.innerHTML = '数据发送中...';
+				_thisobj.classList.add('loading');
+				HELPERINIT.request({action: 'request', value: 'api/addAfter', param:param}, function(res) {
+					_thisobj.classList.remove('loading');
+					_thisobj.innerHTML = '跳过';
+					document.querySelector('.crawler-button .error-msg').innerText = res.message;
+					if (res.code === '200') {
+						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
 					}
 				});
 			}
@@ -334,25 +352,18 @@ const CRAWLERINIt = {
 			if (this.innerText === '展开') {
 				status = '1';
 			}
-			HELPERINIT.request({action:'setCache', cache_key:'crawler_show_status', value:status}, function(){
+			HELPERINIT.request({action:'setCache', cache_key:'crawler_show_status', value:status, expire:-1}, function(){
 				_this.crawlerPageShow(status);
 			});
 		}
-		//添加分类
-		// document.getElementById('add-category').onclick = function() {
-		// 	const count = document.querySelectorAll('#category .productAttLine').length;
-		// 	let div = document.createElement('div');
-		// 	div.setAttribute('class', 'productAttLine');
-		// 	div.innerHTML = `<div class="label">产品分类:</div>
-		// 					<div class="fill_in">
-		// 						<select name="bc_product_category[`+count+`]">
-		// 							<option value="">请选择分类</option>
-		// 							`+_this.categoryHtml+`
-		// 						</select>
-		// 					</div>
-		// 					<div class="clear"></div>`;
-		// 	document.getElementById('category').appendChild(div);
-		// }
+		//站点改变切换分类
+		obj = document.querySelector('#crawler_page .bc_product_site');
+		if (obj) {
+			obj.onchange = function(){
+				const index = obj.selectedIndex;
+				_this.getCategoryHtml(obj.options[index].value);
+			}
+		}
 	},
 	reload_crawlerPage: function() {
 		//删除缓存
@@ -363,27 +374,26 @@ const CRAWLERINIt = {
 			window.postMessage({ type: 'reload_page_js', value: 'googleHelper/crawler.js'}, "*");
 		});
 	},
-	getSiteHtml: function(list) {
+	getSiteHtml: function() {
 		let html = '';
-		for (let i = 0; i < list.length; i++) {
-			html += '<option value="'+list[i].site_id+'">'+list[i].name+'</option>';
+		const list = this.site;
+		if (list) {
+			for (let i = 0; i < list.length; i++) {
+				html += '<option value="'+list[i].site_id+'">'+list[i].name+'</option>';
+			}	
 		}
 		return html;
 	},
-	getCategoryHtml: function(list) {
-		this.categoryHtml = '';
-		for (let i = 0; i < list.length; i++) {
-			let padding = '';
-			for (let j = 0; j < list[i].level; j++) {
-				padding += '&nbsp;&nbsp;&nbsp;';
+	getCategoryHtml: function(siteId) {
+		let html = '';
+		const list = this.category[siteId];
+		if (list) {
+			html = '<option value="">请选择分类</option>';
+			for (let i = 0; i < list.length; i++) {
+				html += '<option value="'+list[i].cate_id+'">'+list[i].name+'</option>';
 			}
-			let disabled = '';
-			if (list[i].level === 0) {
-				disabled = 'disabled="disabled"';
-			}
-			this.categoryHtml += '<option '+disabled+' value="'+list[i].cate_id+'">'+padding+list[i].name+'</option>';
 		}
-		return this.categoryHtml;
+		document.querySelector('#crawler_page .bc_product_category').innerHTML = html;
 	},
 	serializeForm: function(formobj) {
 		let formData = new FormData(formobj);

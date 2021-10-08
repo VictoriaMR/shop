@@ -6,8 +6,7 @@ use Workerman\Protocols\Http;
 if(PHP_SAPI != 'cli') exit('must run in cli');
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT_PATH', dirname(__DIR__).DS);
-$autoload = ROOT_PATH.'extra'.DS.'socket'.DS.'autoload.php';
-require $autoload;
+require ROOT_PATH.'extra'.DS.'socket'.DS.'autoload.php';
 
 function config($name) {
 	global $config;
@@ -20,9 +19,8 @@ function config($name) {
 	}
 	return $config[$name];
 }
-function param($name=null) {
-	if (is_null($name)) return $_POST;
-	return $_POST[$name] ?? null;
+function param($param, $name=null, $default=null) {
+	return $param[$name] ?? $default;
 }
 function result($data, $code=0, $msg='') {
 	return json_encode(['code'=>$code, 'data'=>$data, 'msg'=>$msg], JSON_UNESCAPED_UNICODE);
@@ -34,8 +32,9 @@ function now() {
 // 全局数组保存
 $config = config('socket');//socket配置
 $token = config('token');//token
-$uuid = [];//登录用户客户端
-$autoUuid = [];//自动客户端
+$UuidArr = [];//登录用户客户端
+$crawlerUuidArr = [];//自动客户端
+$checkUuidArr = [];//维护客户端
 
 $sslOption = [];
 if ($config['ssl']) {
@@ -50,58 +49,49 @@ $io->on('connection', function($socket) {
 	$socket->on('ioPing', function($e) use($socket) {
 		$socket->emit('ioPong', 'Pong');
 	});
-	//普通注册事件
+	//登录事件
 	$socket->on('login', function($param) use($socket) {
 		if (isset($socket->uuid)) return true;
-		if (strlen($param) != 32) {
+		$uuid = param($param, 'uuid');
+		if (strlen($uuid) != 32) {
 			$socket->emit('ioClose', 'param error');
 			return false;
 		}
-		global $uuid;
-		$socket->join($param);
-		$socket->uuid = $param;
+		$type = param($param, 'type');
+		$type = (explode('_', $type)[1] ?? '').'UuidArr';
+		global $$type;
+		$socket->join($uuid);
+		$socket->uuid = $uuid;
 
-		$uuid[$param] = [];
-		$uuid[$param]['ip'] = $socket->conn->remoteAddress;
-		$uuid[$param]['loginTime'] = time();
+		$$type[$uuid] = $param;
+		$$type[$uuid]['ip'] = $socket->conn->remoteAddress;
+		$$type[$uuid]['loginTime'] = time();
 
-		$socket->emit('loginSuccess', now().' client socket login success with: '.$param);
+		$socket->emit('loginSuccess', 'client socket login success with: '.$uuid);
 	});
-	//自动登录事件
-	$socket->on('autoLogin', function($param) use($socket) {
-		if (isset($socket->uuid)) return true;
-		if (strlen($param) != 32) {
-			$socket->emit('ioClose', 'param error');
-			return false;
-		}
-		global $autoUuid;
-		$socket->join($param);
-		$socket->uuid = $param;
-
-		$autoUuid[$param] = [];
-		$autoUuid[$param]['ip'] = $socket->conn->remoteAddress;
-		$autoUuid[$param]['loginTime'] = time();
-		$autoUuid[$param]['is_free'] = 1;
-
-		$socket->emit('loginSuccess', now().' client socket login success with: '.$param);
-	});
-	//是否在线
-	$socket->on('isOnline', function($param) use($socket) {
+	//登出事件
+	$socket->on('logout', function($param) use($socket) {
 		if (!isset($socket->uuid)) return false;
-		if (empty($param['uuid'])) return false;
-		global $uuid;
-		$rst = [];
-		foreach (explode(',', $param['uuid']) as $v){
-			$rst[$v] = isset($uuid[$v]) ? true : false;
-		}
-		$socket->emit('online', $rst);
+		$socket->disconnect();
 	});
 	//断开连接
 	$socket->on('disconnect', function($param) use($socket) {
 		if (!isset($socket->uuid)) return false;
-		global $uuid, $autoUuid;
-		unset($uuid[$socket->uuid]);
-		unset($autoUuid[$socket->uuid]);
+		global $UuidArr, $autoUuidArr, $checkUuidArr;
+		unset($UuidArr[$socket->uuid]);
+		unset($autoUuidArr[$socket->uuid]);
+		unset($checkUuidArr[$socket->uuid]);
+	});
+	//更新参数
+	$socket->on('update', function($param) use($socket) {
+		if (!isset($socket->uuid)) return false;
+		$type = param($param, 'type');
+		$type = (explode('_', $type)[1] ?? '').'UuidArr';
+		global $$type;
+		$uuid = $socket->uuid;
+		$$type[$uuid] = array_merge($$type[$uuid], $param);
+		print_r($$type);
+		$socket->emit('updateSuccess', 'client param updated success with: '.$uuid);
 	});
 });
 //推送端口
@@ -111,56 +101,40 @@ $io->on('workerStart', function() use($config, $sslOption) {
 		$worker->transport = 'ssl';
 	}
 	// 当http客户端发来数据时触发
-	$worker->onMessage = function($httpWorker, $data) {
-		Http::header('Content-Type: application/json');
+	$worker->onMessage = function($httpWorker, $request) {
 		global $token;
 		// 接口验证
-		if (param('token') == $token) {
-			switch (param('act')) {
-				case 'push'://推送
-					$message = param('message');
-					$to = param('to');
-					if (empty($message)) {
-						return $httpWorker->send(result([], 10000, 'Invalid request parameter'));
-					}
-					$rst = [];
-					if ($to == 'all') {
-						$to = array_keys($uuid);
-					} else {
-						$to = explode(',', $to);
-					}
-					global $io, $uuid;
-					foreach ($to as $key => $value) {
-						if (isset($uuid[$value])) {
-							$io->to($value)->emit('message', $message);
-							$rst[$value] = true;
-						}
-					}
-					return $httpWorker->send(result($rst, 200, 'push result'));
-					break;
+		$param = $request->post();
+		if (param($param, 'token') == $token) {
+			switch (param($param, 'act')) {
 				case 'online': //登陆用户在线
-					global $uuid;
-					return $httpWorker->send(result(array_keys($uuid), 200, 'online client'));
-					break;
-				case 'autoOnline'://自动客户端空闲在线
-					global $autoUuid;
+					$type = param($param, 'type', '').'UuidArr';
+					global $$type;
 					$temp = [];
-					foreach ($autoUuid as $key => $value) {
+					foreach ($$type as $key => $value) {
 						if (isset($value['is_free']) && $value['is_free']) {
+							$temp[] = $key;
+						} else {
 							$temp[] = $key;
 						}
 					}
 					return $httpWorker->send(result($temp, 200, 'online client'));
 					break;
-				case 'autoDeal'://发送自动任务
-					$uuid = param('uuid');
-					if (empty($uuid) || strlen($uuid) != 32) {
+				case 'push'://发送自动任务
+					$uuid = param($param, 'uuid');
+					if (empty($uuid)) {
 						return $httpWorker->send(result([], 10000, 'Invalid request parameter: uuid'));
 					} else {
-						global $io, $autoUuid;
-						$autoUuid[$uuid]['is_free'] = false;
-						$io->to($param['uuid'])->emit('autoDeal', param());
-						return $httpWorker->send(result([], 200, 'send to '.$uuid.' success'));
+						$type = param($param, 'type', '').'UuidArr';
+						global $io, $$type;
+						if (!is_array($uuid)) $uuid = [$uuid];
+						foreach ($uuid as $value) {
+							if (isset($$type[$value])) {
+								$$type[$value]['is_free'] = false;
+								$io->to($value)->emit(param($param, 'toType'), $param['data']);
+							}
+						}
+						return $httpWorker->send(result([], 200, 'send success'));
 					}
 					break;
 			}

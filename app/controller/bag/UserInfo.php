@@ -92,7 +92,7 @@ class UserInfo extends Base
 		if (empty($attach_id)) {
 			$this->error('Param error');
 		}
-		$info = make('app/service/Attachment')->getAttachmentById($attach_id);
+		$info = make('app/service/attachment/Attachment')->getAttachmentById($attach_id);
 		if (empty($info)) {
 			$this->error('File was not exist.');
 		}

@@ -3,7 +3,7 @@
 namespace app\task\main;
 use app\task\TaskDriver;
 
-class CompressStaticTask extends TaskDriver
+class CompressStatic extends TaskDriver
 {
 	public function __construct($process=[])
 	{
@@ -13,7 +13,7 @@ class CompressStaticTask extends TaskDriver
 			// 每运行6小时退出一次
 			$this->runTimeLimit = 60*60*6;
 		}
-		$this->config['info'] = '静态文件压缩进程';
+		$this->config['info'] = '静态文件压缩任务';
 		$this->config['cron'] = ['* 3 * * *']; //每天3点整运行
 	}
 

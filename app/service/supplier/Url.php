@@ -16,9 +16,7 @@ class Url extends Base
 		$data = $this->getItemId($domain, $url);
 		$data['name'] = $domain;
 		$where = ['name'=>$data['name'], 'item_id'=>$data['item_id']];
-		if ($this->getCountData($where)) {
-			return $this->where($where)->increment('total', 1);
-		}
+		if ($this->getCountData($where)) return true;
 		return $this->insert($data);
 	}
 

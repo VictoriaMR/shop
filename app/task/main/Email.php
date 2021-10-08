@@ -3,7 +3,7 @@
 namespace app\task\main;
 use app\task\TaskDriver;
 
-class QueueTask extends TaskDriver
+class Email extends TaskDriver
 {
 	public function __construct($process=[])
 	{
@@ -13,26 +13,22 @@ class QueueTask extends TaskDriver
 			// 每运行6小时退出一次
 			$this->runTimeLimit = 60*60*6;
 		}
-		$this->config['info'] = '延时队列任务';
+		$this->config['info'] = '邮件发送任务';
 		$this->config['cron'] = ['* * * * *']; //ayaways run
 	}
 
 	public function run()
 	{
-		$service = make('app/service/Queue');
-		if ($service->count()) {
-			$data = $service->getInfo();
-			$func = $data['method'];
-			$rst = make($data['class'])->$func($data['param']);
-			$service->pop();
-			if ($rst !== true) {
-				$data['queue_error'] = $rst;
-				$service->dealFalse($data);
-			}
-			return true;
-		} else {
+		$email = make('app/service/email/Email');
+		$list = $email->getListData(['status'=>0], 'email_id');
+		if (empty($list)) {
 			$this->taskSleep(300);
 			return false;
+		} else {
+			foreach ($list as $value) {
+				$email->sendEmailById($value['email_id']);
+			}
 		}
+		return true;
 	}
 }

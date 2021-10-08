@@ -3,9 +3,11 @@ const HELPERINIT = {
 		//获取域名
 		this.domain = this.getDomain();
 		//爬取数据控制
-		if (this.isItemPage(this.domain)) {
-			this.crawlerItem();
-		}
+		this.crawlerItem();
+		//自动入库
+		this.autoCrawlerItem();
+		//产品维护
+		this.autoCheckItem();
 	},
 	getUrl: function(callback) {
 		this.request({action: 'getUrl'}, callback);
@@ -93,9 +95,37 @@ const HELPERINIT = {
 	},
 	crawlerItem: function() {
 		const _this = this;
-		_this.request({action: 'getCache', cache_key: 'crawler_switch_status'}, function(res){
-			if (res.data && res.data === '1') {
-				_this.loadStatic('js', 'helper/crawler_init.js');
+		if (_this.isItemPage(_this.domain)) {
+			_this.request({action: 'getCache', cache_key: 'crawler_switch_status'}, function(res){
+				if (res.data === '1') {
+					_this.loadStatic('js', 'helper/crawler_init.js');
+				}
+			});
+		}
+	},
+	autoCrawlerItem: function(){
+		const _this = this;
+		if (_this.isItemPage(_this.domain)) {
+			_this.request({action: 'getCache', cache_key: 'auto_crawler_switch_status'}, function(res){
+				if (res.data === '1') {
+					_this.request({action: 'initSocket', key: 'auto_crawler'}, function(res){
+						_this.loadStatic('js', 'helper/crawler_init.js');
+					});
+				} else {
+					_this.request({action: 'sotpSocket', key: 'auto_crawler'});
+				}
+			});
+		}
+	},
+	autoCheckItem: function(){
+		const _this = this;
+		_this.request({action: 'getCache', cache_key: 'auto_check_switch_status'}, function(res){
+			if (res.data === '1') {
+				_this.request({action: 'initSocket', key: 'auto_check'}, function(res){
+					_this.loadStatic('js', 'helper/check_init.js');
+				});
+			} else {
+				_this.request({action: 'sotpSocket', key: 'auto_check'});
 			}
 		});
 	},

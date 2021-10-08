@@ -122,6 +122,7 @@ final class Query
 
 	public function insert(array $data)
 	{
+		if (empty($data)) return false;
 		if (!is_array(current($data))) $data = [$data];
 		$insertTime = [];
 		if (!empty($this->_addTime)) {
@@ -146,6 +147,7 @@ final class Query
 
 	public function update(array $data, $returnSql=false)
 	{
+		if (empty($data)) return false;
 		$tempArr = [];
 		foreach ($data as $key => $value) {
 			$tempArr[] = $this->formatKey($key).' = '.$this->formatValue($key, $value);
@@ -193,6 +195,7 @@ final class Query
 
 	public function insertGetId($data)
 	{
+		if (empty($data)) return false;
 		$result = $this->insert($data);
 		if (!$result) return false;
 		$result = $this->getQuery('SELECT LAST_INSERT_ID() AS last_insert_id');
