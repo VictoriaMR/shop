@@ -47,22 +47,21 @@ class Description extends Base
 	public function addNotExist($nameArr)
 	{
 		if (empty($nameArr)) return false;
+		$nameArr = array_unique($nameArr);
 		//获取已存在属性
 		$list = $this->getListData(['name'=>['in', $nameArr]], 'desc_id,name');
-		if (!empty($list)) {
-			$list = array_column($list, 'desc_id', 'name');
-			$nameArr = array_diff($nameArr, array_keys($list));
-			if (empty($nameArr)) {
-				return $list;
-			}
-			$tempArr = [];
-			foreach ($nameArr as $value) {
-				$tempArr[] = ['name' => $value];
-			}
-			$this->insert($tempArr);
-			$list = $this->getListData(['name'=>['in', $nameArr]], 'desc_id,name');
-			$list = array_column($list, 'desc_id', 'name');
+		$list = array_column($list, 'desc_id', 'name');
+		$diffArr = array_diff($nameArr, array_keys($list));
+		if (empty($diffArr)) {
+			return $list;
 		}
+		$tempArr = [];
+		foreach ($diffArr as $value) {
+			$tempArr[] = ['name' => $value];
+		}
+		$this->insert($tempArr);
+		$list = $this->getListData(['name'=>['in', $nameArr]], 'desc_id,name');
+		$list = array_column($list, 'desc_id', 'name');
 		return $list;
 	}
 	

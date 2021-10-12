@@ -13,7 +13,7 @@ class DataHelper extends TaskDriver
 			// 每运行6小时退出一次
 			$this->runTimeLimit = 60*60*6;
 		}
-		$this->config['info'] = '数据数据任务';
+		$this->config['info'] = '数据入库任务';
 		$this->config['cron'] = ['* * * * *']; //每天3点整运行
 	}
 

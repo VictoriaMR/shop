@@ -150,7 +150,6 @@ class Spu extends Base
 				$firstImage = $value;
 			}
 		}
-
 		if (empty($spuImageArr)) return false;
 
 		$allImageArr = $spuImageArr;
@@ -174,8 +173,8 @@ class Spu extends Base
 		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'product');
 
 		//转换成键值对
-		$attrArr = $attribute->addNotExist(array_unique($attrArr));
-		$attrValueArr = $attrvalue->addNotExist(array_unique($attrValueArr));
+		$attrArr = $attribute->addNotExist($attrArr);
+		$attrValueArr = $attrvalue->addNotExist($attrValueArr);
 
 		$where = [
 			'item_id' => $data['bc_product_id'],
@@ -208,8 +207,7 @@ class Spu extends Base
 				'supplier' => $data['bc_site_id'],
 				'item_id' => $data['bc_product_id'],
 				'item_url' => $data['bc_product_url'],
-				'shop_name' => $data['bc_shop_name'],
-				'shop_url' => $data['bc_shop_url'],
+				'shop_id' => make('app/service/supplier/Shop')->addNotExist(['url'=>$data['bc_shop_url'], 'name'=>$data['bc_shop_name']]),
 			];
 			$spuData->insert($insert);
 			//spu图片组
@@ -273,9 +271,9 @@ class Spu extends Base
 		$insert = [];
 		$count = 1;
 		$allImageArr = array_unique(explode(',', $data['bc_product_des_picture']));
-		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'introduce');
+		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'introduce', false);
 		foreach ($allImageArr as $value) {
-			$insert[] = [
+			$insert[$spuId.'-'.$value] = [
 				'spu_id' => $spuId,
 				'attach_id' => $value,
 				'sort' => $count++,

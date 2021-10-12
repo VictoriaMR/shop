@@ -17,14 +17,14 @@ class Product extends Base
 	{	
 		html()->addCss();
 		
-		$status = (int)iget('status', -1);
-		$site = (int)iget('site', -1);
-		$cate = (int)iget('cate', 0);
-		$stime = trim(iget('stime'));
-		$etime = trim(iget('etime'));
-		$spuId = (int)iget('spu_id');
-		$page = (int)iget('page', 1);
-		$size = (int)iget('size', 20);
+		$status = iget('status', -1);
+		$site = iget('site', -1);
+		$cate = iget('cate', 0);
+		$stime = iget('stime');
+		$etime = iget('etime');
+		$spuId = iget('spu_id');
+		$page = iget('page', 1);
+		$size = iget('size', 30);
 		//spu状态
 		$spu = make('app/service/product/Spu');
 		$statusList = $spu->getStatusList();
@@ -82,9 +82,6 @@ class Product extends Base
 			$this->error('未知请求');
 		}
 
-		$this->_arr['detail'] = 'SPU详情';
-		$this->_init();
-
 		html()->addCss();
 		html()->addJs();
 		$id = (int)iget('id');
@@ -104,6 +101,8 @@ class Product extends Base
 			$this->assign('cateList', $cateList);
 			$this->assign('cateInfo', $cateInfo);
 		}
+		$this->_arr['detail'] = 'SPU详情';
+		$this->_init();
 		$this->view();
 	}
 

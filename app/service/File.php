@@ -121,6 +121,7 @@ class File
 						'attach_id' => $data['attach_id'],
 						'url_md5' => $value,
 					];
+					unlink($tempName);
 				} else {
 					unset($urlArr[$key]);
 					continue;

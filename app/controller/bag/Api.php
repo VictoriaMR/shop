@@ -21,7 +21,7 @@ class Api extends Base
 	}
 
 	public function upload()
-	{	
+	{
 		$file = $_FILES['file'] ?? [];
 		if (empty($file)) {
 			$this->error('上传数据为空');

@@ -177,49 +177,51 @@ const CRAWLERINIt = {
 			}
 			html += `</div></div>`;
 		} else {
-			html += `<div class="productAttLine">
-						<div class="picTitle" style="margin-bottom: 0px;">SKU：</div>
-						<div class="pdtPicHere">
-							<div class="sku-item flex">
-								<div class="cancel-btn">x</div>
-								<div class="flex w100">
-						<div class="sku_img">`;
-			if (data.sku.sku_img) {
-				html += `<img src="` + data.sku.sku_img + `">
-							<input type="hidden" name="bc_sku[` + count + `][img]" value="` + data.sku.sku_img + `"/>`;
-			}
-			html += `</div>`;
-			if (data.sku.pvs) {
-				html += '<div class="flex1">';
-				html += `<div class="flex">
-							<div style="width:32px;">
-							<span>属性:</span>
-						</div>
-						<div class="flex1 sku-attr">`;
-				if (data.sku.pvs.length) {
-					for (let j=0;j<data.sku.pvs.length;j++) {
-						html += `<div>
-									<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku.pvs[j].text + `"/>
-									<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
-								</div>`;
-					}
-				} else {
-					for (let j in data.sku.pvs) {
-						html += `<div>
-									<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku.pvs[j].text + `"/>
-									<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
-								</div>`;
-					}
+			if (data.sku) {
+				html += `<div class="productAttLine">
+							<div class="picTitle" style="margin-bottom: 0px;">SKU：</div>
+							<div class="pdtPicHere">
+								<div class="sku-item flex">
+									<div class="cancel-btn">x</div>
+									<div class="flex w100">
+							<div class="sku_img">`;
+				if (data.sku.sku_img) {
+					html += `<img src="` + data.sku.sku_img + `">
+								<input type="hidden" name="bc_sku[` + count + `][img]" value="` + data.sku.sku_img + `"/>`;
 				}
+				html += `</div>`;
+				if (data.sku.pvs) {
+					html += '<div class="flex1">';
+					html += `<div class="flex">
+								<div style="width:32px;">
+								<span>属性:</span>
+							</div>
+							<div class="flex1 sku-attr">`;
+					if (data.sku.pvs.length) {
+						for (let j=0;j<data.sku.pvs.length;j++) {
+							html += `<div>
+										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku.pvs[j].text + `"/>
+										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
+									</div>`;
+						}
+					} else {
+						for (let j in data.sku.pvs) {
+							html += `<div>
+										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku.pvs[j].text + `"/>
+										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
+									</div>`;
+						}
+					}
+					html += `</div></div>`;
+				}
+				html += `<div class="flex price-stock">
+									<div style="margin-right: 12px;">价格: <input name="bc_sku[` + count + `][price]" value="` + data.sku.price + `"/></div>
+									<div>库存: <input name="bc_sku[` + count + `][stock]" value="` + data.sku.stock + `"/></div>
+								</div>
+							</div>
+						</div></div>`;
 				html += `</div></div>`;
 			}
-			html += `<div class="flex price-stock">
-								<div style="margin-right: 12px;">价格: <input name="bc_sku[` + count + `][price]" value="` + data.sku.price + `"/></div>
-								<div>库存: <input name="bc_sku[` + count + `][stock]" value="` + data.sku.stock + `"/></div>
-							</div>
-						</div>
-					</div></div>`;
-			html += `</div></div>`;
 		}
 		if (data.pdt_picture) {
 			html += `<div class="clear"></div>

@@ -90,7 +90,6 @@ $io->on('connection', function($socket) {
 		global $$type;
 		$uuid = $socket->uuid;
 		$$type[$uuid] = array_merge($$type[$uuid], $param);
-		print_r($$type);
 		$socket->emit('updateSuccess', 'client param updated success with: '.$uuid);
 	});
 });
@@ -112,8 +111,10 @@ $io->on('workerStart', function() use($config, $sslOption) {
 					global $$type;
 					$temp = [];
 					foreach ($$type as $key => $value) {
-						if (isset($value['is_free']) && $value['is_free']) {
-							$temp[] = $key;
+						if (isset($value['is_free'])) {
+							if ($value['is_free']) {
+								$temp[] = $key;
+							}
 						} else {
 							$temp[] = $key;
 						}

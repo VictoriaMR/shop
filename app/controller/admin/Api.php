@@ -76,25 +76,26 @@ class Api extends Base
 	public function addProduct()
 	{
 		$data = ipost();
-		$cacheKey = 'queue-add-product:'.ipost('bc_site_id');
-		if (redis(2)->hExists($cacheKey, ipost('bc_product_id'))) {
+		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
+		if (redis(2)->hExists($cacheKey, $data['bc_product_id'])) {
 			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
 			$this->success('加入队列成功');
 		}
-		if (empty(ipost('bc_product_category'))) {
+		if (empty($data['bc_product_category'])) {
 			$this->error('产品分类不能为空');
 		}
-		if (empty(ipost('bc_product_site'))) {
+		if (empty($data['bc_product_site'])) {
 			$this->error('站点不能为空');
 		}
-		$data = [
+		$rst = make('app/service/Queue')->push([
 			'class' => 'app/service/product/Spu',
 			'method' => 'addProduct',
-			'param' => ipost(),
-		];
-		$rst = make('app/service/Queue')->push($data);
+			'param' => $data,
+		]);
 		if ($rst) {
-			redis(2)->hSet($cacheKey, ipost('bc_product_id'), 1);
+			redis(2)->hSet($cacheKey, $data['bc_product_id'], 1);
+			//启动任务
+			make('frame/Task')->taskStart('Queue');
 			//更新待入库状态
 			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
 			$this->success('加入队列成功');

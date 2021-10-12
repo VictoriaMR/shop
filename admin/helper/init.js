@@ -95,27 +95,23 @@ const HELPERINIT = {
 	},
 	crawlerItem: function() {
 		const _this = this;
-		if (_this.isItemPage(_this.domain)) {
-			_this.request({action: 'getCache', cache_key: 'crawler_switch_status'}, function(res){
-				if (res.data === '1') {
-					_this.loadStatic('js', 'helper/crawler_init.js');
-				}
-			});
-		}
+		_this.request({action: 'getCache', cache_key: 'crawler_switch_status'}, function(res){
+			if (res.data === '1') {
+				_this.loadStatic('js', 'helper/crawler_init.js');
+			}
+		});
 	},
 	autoCrawlerItem: function(){
 		const _this = this;
-		if (_this.isItemPage(_this.domain)) {
-			_this.request({action: 'getCache', cache_key: 'auto_crawler_switch_status'}, function(res){
-				if (res.data === '1') {
-					_this.request({action: 'initSocket', key: 'auto_crawler'}, function(res){
-						_this.loadStatic('js', 'helper/crawler_init.js');
-					});
-				} else {
-					_this.request({action: 'sotpSocket', key: 'auto_crawler'});
-				}
-			});
-		}
+		_this.request({action: 'getCache', cache_key: 'auto_crawler_switch_status'}, function(res){
+			if (res.data === '1') {
+				_this.request({action: 'initSocket', key: 'auto_crawler'}, function(res){
+					_this.loadStatic('js', 'helper/crawler_init.js');
+				});
+			} else {
+				_this.request({action: 'sotpSocket', key: 'auto_crawler'});
+			}
+		});
 	},
 	autoCheckItem: function(){
 		const _this = this;

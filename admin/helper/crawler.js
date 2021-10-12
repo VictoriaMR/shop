@@ -122,21 +122,28 @@ const CRAWLER = {
     get1688DesPic: function(data, callback) {
         const _this = this;
         if (typeof offer_details === 'undefined') {
-            const des_url = document.getElementById('desc-lazyload-container').getAttribute('data-tfs-url');
-            HELPERINIT.loadStaticUrl('js', des_url, '', function(){
-                _this.get1688DesPicUrl(data, callback);
-            });
+            const obj = document.getElementById('desc-lazyload-container');
+            if (obj) {
+                const des_url = document.getElementById('desc-lazyload-container').getAttribute('data-tfs-url');
+                HELPERINIT.loadStaticUrl('js', des_url, '', function(){
+                    _this.get1688DesPicUrl(data, callback);
+                });
+            } else {
+                _this.get1688DesPicUrl({}, callback);
+            }
         } else {
             _this.get1688DesPicUrl(data, callback);
         }
     },
     get1688DesPicUrl: function(data, callback) {
         let des_picture = [];
-        const des_pic_craw = offer_details.content.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
-        for(let i=0; i<des_pic_craw.length; i++){
-            const src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
-            if (this.filterUrl(src)){
-                des_picture.push(src);
+        if (typeof offer_details !== 'undefined') {
+            const des_pic_craw = offer_details.content.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
+            for(let i=0; i<des_pic_craw.length; i++){
+                const src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
+                if (this.filterUrl(src)){
+                    des_picture.push(src);
+                }
             }
         }
         data['des_picture'] = des_picture;
