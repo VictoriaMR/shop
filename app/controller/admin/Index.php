@@ -121,9 +121,11 @@ class Index extends Base
 		$data['memory_used'] = sprintf('%.2f', ($memData[1] + ($swapData[1] ?? 0)) / 1024);
 		$data['memory_free_rate'] = sprintf('%.2f', ($data['memory_total'] - $data['memory_used']) / $data['memory_total'] * 100);
 		$data['loadpercentage'] = ((sys_getloadavg()[0] ?? 0)*100).'%';
-		$data['disk_total_space'] = get1024Peck(disk_total_space('/'));
-		$data['disk_free_space'] = get1024Peck(disk_free_space('/'));
-		$data['disk_used_space'] = get1024Peck(disk_total_space('/') - disk_free_space('/'));
+		$total = disk_total_space('/');
+		$free = disk_free_space('/');
+		$data['disk_total_space'] = get1024Peck($total);
+		$data['disk_free_space'] = get1024Peck($free);
+		$data['disk_used_space'] = get1024Peck($total - $free);
 		return $data;
 	}
 }
