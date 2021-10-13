@@ -43,7 +43,7 @@ class Index extends Base
 		//每日浏览人数统计
 		$viewerInfo = $log->getIpDateStat();
 		//系统信息
-		$cpuInfo = $this->getCpuInfo();
+		$cpuInfo = $this->getSystemInfo();
 		$mysqlVersion = $log->getQuery('SELECT version() AS version')[0] ?? [];
 
 		$this->assign('viewAgentInfo', $viewAgentInfo);
@@ -54,33 +54,15 @@ class Index extends Base
 		$this->view();
 	}
 
-    protected function getCpuInfo()
-    {
-        $returnData = [];
-        if (isWin()) {
-            $cmd = 'wmic cpu get name,numberofcores';
-            exec($cmd, $out);
-            if (empty($out)) {
-                return $returnData;
-            }
-            $nameArr = array_values(array_filter(explode('  ', $out[0])));
-            $valueArr = array_values(array_filter(explode('  ', $out[1])));
-            foreach ($nameArr as $key => $value) {
-                $returnData[$value] = $valueArr[$key] ?? '';
-            }
-        }
-        return $returnData;
-    }
-
 	protected function getSystemInfo()
-    {
-    	if (isWin()) {
-    		$returnData = $this->sys_windows();
-    	} else {
-    		$returnData = $this->sys_linux();
-    	}
-        $this->success($returnData, '');
-    }
+	{
+		if (isWin()) {
+			$returnData = $this->sys_windows();
+		} else {
+			$returnData = $this->sys_linux();
+		}
+		$this->success($returnData, '');
+	}
 
 	protected function sys_windows()
 	{
