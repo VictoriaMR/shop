@@ -119,7 +119,7 @@ class Index extends Base
 		$data['loadpercentage'] = sys_getloadavg()[0] ?? 0;
 		$data['disk_total_space'] = get1024Peck(disk_total_space('/'));
 		$data['disk_free_space'] = get1024Peck(disk_free_space('/'));
-		$data['disk_used_space'] = disk_free_space(disk_total_space('/') - disk_free_space('/'));
+		$data['disk_used_space'] = get1024Peck(disk_total_space('/') - disk_free_space('/'));
 		return $data;
 	}
 }
