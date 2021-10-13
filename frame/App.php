@@ -17,7 +17,7 @@ class App
 	public static function send()
 	{
 		//获取站点数据
-		$info = redis()->hGet('domain_config_site_info', $_SERVER['HTTP_HOST']);
+		$info = config('domain.'.$_SERVER['HTTP_HOST']);
 		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
 		define('APP_TEMPLATE_TYPE', $info['path']);
 		define('APP_SITE_ID', $info['site_id']);

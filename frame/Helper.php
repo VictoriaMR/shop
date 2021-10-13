@@ -16,6 +16,10 @@ function config($name='', $default=''){
 			return $default;
 		}
 	}
+	if ($name[0] == 'domain') {
+		unset($name[0]);
+		return $GLOBALS['domain'][implode('.', $name)] ?? $default;
+	}
 	$data = $GLOBALS;
 	foreach ($name as $value) {
 		if (isset($data[$value])) {
