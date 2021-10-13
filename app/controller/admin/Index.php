@@ -43,7 +43,11 @@ class Index extends Base
 		//每日浏览人数统计
 		$viewerInfo = $log->getIpDateStat();
 		//系统信息
-		$cpuInfo = $this->getSystemInfo();
+		if (isWin()) {
+			$cpuInfo = $this->sys_windows();
+		} else {
+			$cpuInfo = $this->sys_linux();
+		}
 		$mysqlVersion = $log->getQuery('SELECT version() AS version')[0] ?? [];
 
 		$this->assign('viewAgentInfo', $viewAgentInfo);
