@@ -1,9 +1,13 @@
 <div id="userinfo-page">
 	<div class="top layer16 mt22">
 		<div class="tcell image-avatar f0">
-			<img data-src="<?php echo $info['avatar'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+			<img data-src="<?php echo $info['avatar'] ?? '';?>" src="<?php echo siteUrl('image/common/female.jpg');?>" class="lazyload">
 		</div>
 		<div class="tcell name-content">
+			<?php if (empty($info)){?>
+			<a href="<?php echo url('login');?>">LOGIN</a>
+			<a href="<?php echo url('login');?>">REGISTER</a>
+			<?php } else {?>
 			<?php if (empty($info['name'])){?>
 			<p class="e1 name f16 f600"><?php echo $info['email'];?></p>
 			<?php } else { ?>
@@ -11,6 +15,7 @@
 			<p class="e1 mt4"><?php echo $info['email'];?></p>
 			<?php } ?>
 			<span class="iconfont icon-fankui"></span>
+			<?php }?>
 		</div>
 	</div>
 	<div class="nav-list mt22 f0">
@@ -138,9 +143,14 @@
 				</ul>
 			</div>
 		</div>
-		<a class="btn btn-black w100 mt32 block" href="<?php echo url('login/logout');?>"><?php echo appt('sign_out');?></a>
+		<?php if (empty($info)){?>
+		<a class="btn btn-black w100 mt32 block" href="<?php echo url('login');?>"><?php echo appT('login');?> / <?php echo appT('register');?></a>
+		<?php } else {?>
+		<a class="btn btn-black w100 mt32 block" href="<?php echo url('login/logout');?>"><?php echo appT('sign_out');?></a>
+		<?php }?>
 	</div>
 </div>
+<?php if (!empty($info)){?>
 <div id="info-edit-modal" class="modal hidden">
 	<div class="mask"></div>
 	<div class="dialog">
@@ -207,4 +217,5 @@
 		</div>
 	</div>
 </div>
+<?php }?>
 <?php $this->load('common/nav_footer');?>

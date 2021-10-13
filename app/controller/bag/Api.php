@@ -14,9 +14,6 @@ class Api extends Base
 			'type' => $service->getConst('TYPE_BEHAVIOR'),
 		];
 		$service->addLog($data);
-		if (empty(userId())) {
-			$this->error('need login');
-		}
 		$this->success();
 	}
 

@@ -333,12 +333,9 @@ class Order extends Base
 
 	public function getListByKeyword($where, $keyword, $page=1, $size=10)
 	{
-		if (empty($keyword)) {
-			return [];
-		}
 		$idArr = [];
 		$tempWhere = $where;
-		$tempWhere['order_no'] = ['like', $keyword];
+		$tempWhere['order_id'] = ['like', $keyword];
 		$list = $this->getListData($tempWhere, 'order_id');
 		if (!empty($list)) {
 			$idArr = array_column($list, 'order_id');
