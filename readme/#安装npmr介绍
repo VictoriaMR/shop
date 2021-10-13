@@ -88,6 +88,7 @@ systemctl enable firewalld.service
 firewall-cmd --zone=public --add-port=3306/tcp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --zone=public --add-port=6379/tcp --permanent
 
 #安装 freetype
 wget https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.gz
@@ -181,31 +182,49 @@ extension="redis.so"
 #安装redis
 wget https://download.redis.io/releases/redis-6.2.6.tar.gz
 tar xzf redis
-mv redis /usr/local/redis
 yum -y install tcl
 cd redis 
-make && make install
+make
+make install PREFIX=/usr/local/redis
+cp redis.conf /usr/local/redis/etc
+
 vim /lib/systemd/system/redis.service
 
+  
 [Unit]
 Description=Redis
 After=network.target
-  
+ 
 [Service]
 Type=forking
-ExecStart=/usr/local/redis/redis-server /usr/local/redis/redis.conf 
-ExecStop=/usr/local/redis/redis-cli shutdown
-ExecReload=/bin/kill -s HUP $MAINPID
-PrivateTmp=true
-RestartSec=10
-User=redis
-Group=redis
-LimitCORE=infinity
-LimitNOFILE=10032
-LimitNPROC=10032
+ExecStart=/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf
+ExecStop=/usr/local/redis/bin/redis-cli shutdown
+ 
 [Install]
 WantedBy=multi-user.target
 
-groupadd redis
-useradd -M -g redis -s /sbin/nologin redis
-chown -R redis:redis /usr/local/redis
+# 注释掉绑定ip，允许远程连接
+bind 127.0.0.1 # 注释掉这句
+# 允许后台运行
+daemonize yes
+# 关闭保护模式，否则外部ip无法连接
+protected-mode no
+# 防火墙开启redis端口，默认6379
+firewall-cmd --add-port=6379/tcp --permanent
+firewall-cmd --reload
+firewall-cmd --list-ports
+# 内存设置
+echo 8192 > /proc/sys/net/core/somaxconn ## 最大内存8G
+sysctl vm.overcommit_memory=1  ## 内存超出时开辟内存 
+/etc/sysctl.conf 文件添加
+vm.overcommit_memory = 1
+# 密码设置 redis.conf 文件下添加
+requirepass 123456
+# 不重启设置密码（永久有效），登录之后输入
+config set requirepass 123456
+# 查询密码
+config get requirepass
+# 验证密码
+auth 123456
+# 登录时，验证登录输入一下
+auth 123456

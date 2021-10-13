@@ -16,7 +16,7 @@ class Queue
 			$result = redis(2)->lPush($this->key, $data);
 		}
 		if ($result) {
-			make('frame/Task')->taskStart('QueueTask');
+			make('frame/Task')->taskStart('Queue');
 		}
 		return $result;
 	}

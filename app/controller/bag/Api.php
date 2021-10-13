@@ -10,7 +10,7 @@ class Api extends Base
 		$url = ipost('url');
 		$service = make('app/service/Logger');
 		$data = [
-			'path' => $url,
+			'path' => explode('.', $url)[0],
 			'type' => $service->getConst('TYPE_BEHAVIOR'),
 		];
 		$service->addLog($data);

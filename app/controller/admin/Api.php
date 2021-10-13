@@ -94,8 +94,6 @@ class Api extends Base
 		]);
 		if ($rst) {
 			redis(2)->hSet($cacheKey, $data['bc_product_id'], 1);
-			//启动任务
-			make('frame/Task')->taskStart('Queue');
 			//更新待入库状态
 			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
 			$this->success('加入队列成功');
