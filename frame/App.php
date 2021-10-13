@@ -26,7 +26,7 @@ class App
 		self::make('frame/Router')->analyze();
 		$info = self::get('router');
 		//执行方法
-		$class = 'app/controller/'.$info['class'].'/'.$info['path'];
+		$class = 'app/controller/'.$info['class'].'/'.ucfirst($info['path']);
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('cookie.setcookie')) {
