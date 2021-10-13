@@ -130,7 +130,6 @@ class Spu extends Base
 		if (empty($data['bc_product_category'])) return false;
 		if (empty($data['bc_site_id'])) return false;
 		if (empty($data['bc_product_site'])) return false;
-		$data['bc_product_name'] = trim($data['bc_product_name']);
 		if (empty($data['bc_product_name'])) return false;
 		if (empty($data['bc_sku'])) return false;
 		if (empty($data['bc_product_img'])) return false;
@@ -199,7 +198,6 @@ class Spu extends Base
 				'max_price' => max($priceArr),
 				'original_price' => $this->getOriginalPrice(max($priceArr)), //虚拟原价
 			];
-			//事务开启
 			$spuId = $this->insertGetId($insert);
 			//spu扩展数据
 			$insert = [
@@ -210,6 +208,8 @@ class Spu extends Base
 				'shop_id' => make('app/service/supplier/Shop')->addNotExist(['url'=>$data['bc_shop_url'], 'name'=>$data['bc_shop_name']]),
 			];
 			$spuData->insert($insert);
+			//中文语言
+			make('app/service/product/Language')->insert(['spu_id'=>$spuId, 'lan_id'=>'zh', 'name'=>$data['bc_product_name']]);
 			//spu图片组
 			$insert = [];
 			$count = 1;
