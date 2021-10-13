@@ -23,7 +23,6 @@ class Index extends Base
 		$funcList = make('app/service/controller/Controller')->getList();
 		$this->assign('funcList', $funcList);
 		$this->assign('info', session()->get('admin_info'));
-		$this->_init();
 		$this->view();
 	}
 
