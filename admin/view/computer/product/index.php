@@ -47,7 +47,7 @@
 		<div class="spu-item">
 			<a href="<?php echo $value['url'];?>" class="block">
 				<div class="spu-image">
-					<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-original="<?php echo $value['avatar'];?>">
+					<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['avatar'];?>" class="lazyload">
 				</div>
 				<div class="name-content f600">
 					<div class="spu-name e2 f400"><?php echo $value['name'];?></div>

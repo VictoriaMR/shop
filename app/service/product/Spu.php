@@ -54,7 +54,7 @@ class Spu extends Base
 		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
 
 		if (!empty($tempArr = array_diff($skuImageList, array_keys($imageArr)))) {
-			$list = make('app/service/Attachment')->getList(['attach_id'=>['in', array_unique($tempArr)]]);
+			$list = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($tempArr)]]);
 			$imageArr += array_column($list, null, 'attach_id');
 		}
 
@@ -94,7 +94,7 @@ class Spu extends Base
 		if (!empty($list)) {
 			//图片
 			$attachArr = array_unique(array_column($list, 'attach_id'));
-			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 			//名称
 			$spuIdArr = array_column($list, 'spu_id');
@@ -127,80 +127,59 @@ class Spu extends Base
 
 	public function addProduct($data)
 	{
-		if (empty($data['bc_product_category'])) {
-			return '产品分类不能为空!';
-		}
-		$supplierId = $this->getSupplierSiteId($data['bc_site_id']);
-		if (empty($supplierId)) {
-			return '供应商不能为空!';
-		}
-		if (empty($data['bc_product_site'])) {
-			return '站点不能为空!';
-		}
-		$data['bc_product_name'] = trim($data['bc_product_name']);
-		if (empty($data['bc_product_name'])) {
-			return '产品标题不能为空!';
-		}
-		if (empty($data['bc_sku'])) {
-			return '产品SKU不能为空!';
-		}
-		if (empty($data['bc_product_img'])) {
-			return '产品图片不能为空!';
-		}
+		if (empty($data['bc_product_category'])) return false;
+		if (empty($data['bc_site_id'])) return false;
+		if (empty($data['bc_product_site'])) return false;
+		if (empty($data['bc_product_name'])) return false;
+		if (empty($data['bc_sku'])) return false;
+		if (empty($data['bc_product_img'])) return false;
 		//删除链接后缀
 		$data['bc_product_url'] = $this->getSupplierItemUrl($data['bc_product_url']);
-		if (empty($data['bc_product_url'])) {
-			return '产品链接不能为空!';
-		}
-		$file = make('app/service/File');
+		if (empty($data['bc_product_url'])) return false;
 
 		//上传或者更新图片
 		$spuImageArr = [];
-		$firstImage = [];
+		$firstImage = '';
 		if (!is_array($data['bc_product_img'])) {
 			$data['bc_product_img'] = array_unique(explode(',', $data['bc_product_img']));
 		}
 		foreach ($data['bc_product_img'] as $key => $value) {
-			$url = $this->filterUrl($value);
-			$rst = $file->uploadUrlImage($url, 'product');
-			if (!$rst) {
-				continue;
-			}
-			$spuImageArr[$url] = $rst;
+			$spuImageArr[] = $value;
 			if ($key == 0) {
-				$firstImage = $spuImageArr[$url]['attach_id'];
+				$firstImage = $value;
 			}
 		}
-		$spuImageArr = array_filter($spuImageArr);
-		if (empty($spuImageArr)) {
-			return '产品图片上传失败!';
-		}
+		if (empty($spuImageArr)) return false;
+
+		$allImageArr = $spuImageArr;
 		//属性组
 		$attribute = make('app/service/attr/Bute');
 		$attrvalue = make('app/service/attr/Value');
-		$productLanguage = make('app/service/product/Language');
-		$spuData = make('app/service/product/spuData');
-		$spuImage = make('app/service/product/SpuImage');
 		$attrArr = [];
 		$attrValueArr = [];
+		//获取属性|属性图片
+		$tempImageArr = [];
 		foreach ($data['bc_sku'] as $key => $value) {
+			if (!empty($value['img'])) {
+				$tempImageArr[] = $value['img'];
+			}
 			$attrArr = array_merge($attrArr, array_keys($value['attr']));
 			$attrValueArr = array_merge($attrValueArr, array_column($value['attr'], 'text'));
+			$tempImageArr = array_merge($tempImageArr, array_column($value['attr'], 'img'));
 		}
+		$allImageArr = array_unique(array_merge($allImageArr, array_filter($tempImageArr)));
+		$fileService = make('app/service/File');
+		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'product');
+
 		//转换成键值对
-		$attrArr = array_flip($attrArr);
-		$attrValueArr = array_flip($attrValueArr);
-		foreach ($attrArr as $key => $value) {
-			$attrArr[$key] = $attribute->addNotExist($key);
-		}
-		foreach ($attrValueArr as $key => $value) {
-			$attrValueArr[$key] = $attrvalue->addNotExist($key);
-		}
+		$attrArr = $attribute->addNotExist($attrArr);
+		$attrValueArr = $attrvalue->addNotExist($attrValueArr);
+
 		$where = [
-			'site_id' => $data['bc_product_site'],
 			'item_id' => $data['bc_product_id'],
-			'supplier_id' => $supplierId,
+			'supplier' => $data['bc_site_id'],
 		];	
+		$spuData = make('app/service/product/SpuData');
 		$info = $spuData->loadData($where, 'spu_id');
 		if (empty($info)) {
 			//价格合集
@@ -214,143 +193,117 @@ class Spu extends Base
 				'status' => 0,
 				'site_id' => $data['bc_product_site'],
 				'cate_id' => $data['bc_product_category'],
-				'attach_id' => $firstImage,
+				'attach_id' => $allImageArr[$firstImage] ?? 0,
 				'min_price' => min($priceArr),
 				'max_price' => max($priceArr),
 				'original_price' => $this->getOriginalPrice(max($priceArr)), //虚拟原价
-				'add_time' => now(),
 			];
-			//事务开启
+			$this->start();
 			$spuId = $this->insertGetId($insert);
 			//spu扩展数据
 			$insert = [
 				'spu_id' => $spuId,
-				'site_id' => $data['bc_product_site'],
-				'supplier_id' => $supplierId,
+				'supplier' => $data['bc_site_id'],
 				'item_id' => $data['bc_product_id'],
 				'item_url' => $data['bc_product_url'],
-				'shop_name' => $data['bc_shop_name'],
-				'shop_url' => $data['bc_shop_url'],
+				'shop_id' => make('app/service/supplier/Shop')->addNotExist(['url'=>$data['bc_shop_url'], 'name'=>$data['bc_shop_name']]),
 			];
 			$spuData->insert($insert);
-			//spu 多语言
-			$insert = [
-				'spu_id' => $spuId,
-				'lan_id' => 1,
-				'name' => $data['bc_product_name'],
-			];
-			$productLanguage->insert($insert);
-
+			//中文语言
+			make('app/service/product/Language')->insert(['spu_id'=>$spuId, 'lan_id'=>'zh', 'name'=>$data['bc_product_name']]);
 			//spu图片组
 			$insert = [];
 			$count = 1;
 			foreach ($spuImageArr as $value) {
-				$insert[] = [
-					'spu_id' => $spuId,
-					'attach_id' => $value['attach_id'],
-					'sort' => $count++,
-				];
+				if (isset($allImageArr[$value])) {
+					$insert[] = [
+						'spu_id' => $spuId,
+						'attach_id' => $allImageArr[$value],
+						'sort' => $count++,
+					];
+				}
 			}
 			if (!empty($insert)) {
-				$spuImage->addSpuImage($insert);
+				make('app/service/product/SpuImage')->addSpuImage($insert);
 			}
-
 			//sku
 			$sku = make('app/service/product/Sku');
+			$skuData = make('app/service/product/SkuData');
 			foreach ($data['bc_sku'] as $key => $value) {
 				if (empty($value['stock'])) continue;
-
-				if (!empty($value['img'])) {
-					$value['img'] = $this->filterUrl($value['img']);
-					if (empty($spuImageArr[$value['img']])) {
-						$rst = $file->uploadUrlImage($value['img'], 'product');
-						if (empty($rst)) {
-							continue;
-						}
-						$spuImageArr[$value['img']] = $rst;
-					}
-				}
 				$insert = [
 					'spu_id' => $spuId,
 					'status' => 0,
-					'attach_id' => $spuImageArr[$value['img']]['attach_id'] ?? 0,
+					'attach_id' => empty($value['img']) ? 0 : $allImageArr[$value['img']] ?? 0,
 					'stock' => $value['stock'],
 					'price' => $value['sale_price'],
 					'original_price' => $value['original_price'],
-					'cost_price' => $value['price'],
-					'item_id' => $value['sku_id'],
-					'add_time' => now(),
 				];
 				$skuId = $sku->insertGetId($insert);
+				$insert = [
+					'sku_id' => $skuId,
+					'item_id' => $value['sku_id'],
+					'cost_price' => $value['price'],
+				];
+				$skuData->insert($insert);
 				//属性关联
 				$insert = [];
 				$count = 1;
 				foreach ($value['attr'] as $k => $v) {
-					if (empty($v['img'])) {
-						$attachId = 0;
-					} else {
-						$v['img'] = $this->filterUrl($v['img']);
-						if (empty($spuImageArr[$v['img']])) {
-							$spuImageArr[$v['img']] = $file->uploadUrlImage($v['img'], 'product');
-						}
-						$attachId = $spuImageArr[$v['img']]['attach_id'];
-					}
 					$insert[] = [
 						'sku_id' => $skuId,
 						'attr_id' => $attrArr[$k],
 						'attv_id' => $attrValueArr[$v['text']],
-						'attach_id' => $attachId,
+						'attach_id' => empty($v['img']) ? 0 : $allImageArr[$v['img']] ?? 0,
 						'sort' => $count++,
 					];
 				}
 				if (!empty($insert)) {
-					make('app/service/product/AttrUsed')->insert($insert);
+					make('app/service/product/AttrUsed')->addAttrUsed($skuId, $insert);
 				}
 			}
+			$this->commit();
 		} else {
 			$spuId = $info['spu_id'];
 		}
 		if (empty($spuId)) {
 			return '产品SPU入库失败!';
 		}
-		
 		//spu 介绍图片
 		$insert = [];
 		$count = 1;
-		$data['bc_product_des_picture'] = array_unique(explode(',', $data['bc_product_des_picture']));
-		foreach ($data['bc_product_des_picture'] as $value) {
-			$url = $this->filterUrl($value);
-			if (empty($spuImageArr[$url])) {
-				$spuImageArr[$url] = $file->uploadUrlImage($url, 'introduce', false);
-			}
-			if (empty($spuImageArr[$url]['attach_id'])) continue;
-			if (isset($insert[$spuImageArr[$url]['attach_id']])) continue;
-			$insert[$spuImageArr[$url]['attach_id']] = [
+		$allImageArr = array_unique(explode(',', $data['bc_product_des_picture']));
+		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'introduce', false);
+		foreach ($allImageArr as $value) {
+			$insert[$spuId.'-'.$value] = [
 				'spu_id' => $spuId,
-				'attach_id' => $spuImageArr[$url]['attach_id'],
+				'attach_id' => $value,
 				'sort' => $count++,
 			];
 		}
 		if (!empty($insert)) {
-			make('app/service/product/Introduce')->addIntroduceImage($insert);
+			make('app/service/product/IntroduceUsed')->addIntroduceUsed($spuId, $insert);
 		}
 
 		//spu介绍文本
-		$desc = make('app/service/product/Description');
 		$descArr = [];
 		$insert = [];
+		$descService = make('app/service/attr/Description');
+		$descArr = array_merge(array_column($data['bc_des_text'], 'key'), array_column($data['bc_des_text'], 'value'));
+		$descArr = $descService->addNotExist($descArr);
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$value['key'] = mb_substr(trim($value['key'], chr(0xc2).chr(0xa0)), 0, 120);
-			$value['value'] = mb_substr(trim($value['value'], chr(0xc2).chr(0xa0)), 0, 120);
-			$descArr[$value['key']] = $desc->addNotExist($value['key']);
-			$descArr[$value['value']] = $desc->addNotExist($value['value']);
-			$insert[] = [
+			$nameId = $descArr[$value['key']];
+			$valueId = $descArr[$value['value']];
+			$uniqueid = $nameId.'-'.$valueId;
+			$insert[$uniqueid] = [
 				'spu_id' => $spuId,
-				'name_id' => $descArr[$value['key']],
-				'value_id' => $descArr[$value['value']],
+				'name_id' => $nameId,
+				'value_id' => $valueId,
 			];
 		}
-		make('app/service/product/DescriptionUsed')->addDescUsed($insert);
+		if (!empty($insert)) {
+			make('app/service/product/DescriptionUsed')->addDescUsed($spuId, $insert);
+		}
 		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
 		redis(2)->hDel($cacheKey, $data['bc_product_id']);
 		return true;
@@ -359,28 +312,25 @@ class Spu extends Base
 	protected function getPrice($price)
 	{
 		if ($price < 200) {
-			$price += rand(180, 240);
+			$price += 200;
 		} elseif ($price < 400) {
-			$price += rand(240, 300);
+			$price += 300;
 		} else {
-			$price += rand(300, 400);
+			$price += 400;
 		}
 		return $price;
 	}
 
 	protected function getOriginalPrice($price)
 	{
-		return $price * (rand(10, 60)/100 + 1);
-	}
-
-	protected function getSupplierSiteId($name)
-	{
-		$siteIdArr = [
-			'1688' => 1,
-			'taobao' => 2,
-			'tmall' => 3
-		];
-		return $siteIdArr[$name] ?? 0;
+		if ($price < 200) {
+			$price += 300;
+		} elseif ($price < 400) {
+			$price += 400;
+		} else {
+			$price += 500;
+		}
+		return $price;
 	}
 
 	protected function getSupplierItemUrl($url)
@@ -399,11 +349,6 @@ class Spu extends Base
 			}
 			return $url[0].(empty($id) ? '': '?id='.$id);
 		}
-	}
-
-	protected function filterUrl($url)
-	{
-		return str_replace(['.200x200', '.400x400', '.600x600', '.800x800', '_.webp'], '', explode('?', $url)[0]);
 	}
 
 	public function getRecommend($page=1, $size=20)
@@ -434,7 +379,7 @@ class Spu extends Base
 			$lanArr = array_column($lanArr, 'name', 'spu_id');
 			//获取图片集
 			$attachArr = array_unique(array_column($list, 'attach_id'));
-			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 			$currencyService = make('app/service/Currency');
 			//格式化数组
@@ -467,7 +412,7 @@ class Spu extends Base
 		$lanArr = array_column($lanArr, 'name', 'spu_id');
 		//获取图片集
 		$attachArr = array_unique(array_column($list, 'attach_id'));
-		$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 		$attachArr = array_column($attachArr, 'url', 'attach_id');
 		$currency = make('app/service/Currency');
 		//格式化数组

@@ -9,10 +9,22 @@ class Api extends Base
 
 	public function getHelperData()
 	{
+		$category = make('app/service/category/Category')->getListData([], 'cate_id,name');
+		$category = array_column($category, 'name', 'cate_id');
+		$siteCate = make('app/service/site/CategoryUsed')->getListData([], 'site_id,cate_id', 0, 0, ['sort'=>'asc']);
+		$tempArr = [];
+		foreach ($siteCate as $value) {
+			if (!isset($tempArr[$value['site_id']])) $tempArr[$value['site_id']] = [];
+			$tempArr[$value['site_id']][] = [
+				'cate_id' => $value['cate_id'],
+				'name' => $category[$value['cate_id']],
+			];
+		}
 		$data = [
-			'version' => config('version.admin'),
-			'category' => make('app/service/Category')->getListFormat(),
-			'site' => make('app/service/Site')->getListData(['site_id'=>['<>', '00']]),
+			'version' => config('env.VERSION'),
+			'socket_domain' => config('env.APP_DOMAIN'),
+			'site' => make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name'),
+			'site_category' => $tempArr,
 		];
 		$this->success($data);
 	}
@@ -21,9 +33,17 @@ class Api extends Base
 	{
 		$data = [
 			[
-				'title' => '数据爬取',
+				'title' => '产品入库',
 				'name' => 'crawler',
-			]
+			],
+			[
+				'title' => '产品自动入库',
+				'name' => 'auto_crawler',
+			],
+			[
+				'title' => '产品维护',
+				'name' => 'auto_check',
+			],
 		];
 		$this->success($data);
 	}
@@ -38,12 +58,12 @@ class Api extends Base
 		if (!in_array($cate, $this->_cateArr)) {
 			$this->error('没有权限操作'.$cate.'文件夹');
 		}
-		$file = make('app/service/File');
-		$result = $file->upload($file, $cate);
-		if (empty($result)) {
-			$this->error('上传失败');
+		$fileService = make('app/service/File');
+		$result = $fileService->upload($file, $cate);
+		if ($result) {
+			$this->success($result);
 		}
-		$this->success($result);
+		$this->error('上传失败');
 	}
 
 	public function stat()
@@ -54,28 +74,36 @@ class Api extends Base
 	public function addProduct()
 	{
 		$data = ipost();
-		$cacheKey = 'queue-add-product:'.ipost('bc_site_id');
-		if (redis(2)->hExists($cacheKey, ipost('bc_product_id'))) {
-			$this->error('队列已存在');
+		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
+		if (redis(2)->hExists($cacheKey, $data['bc_product_id'])) {
+			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
+			$this->success('加入队列成功');
 		}
-		if (empty(ipost('bc_product_category'))) {
+		if (empty($data['bc_product_category'])) {
 			$this->error('产品分类不能为空');
 		}
-		if (empty(ipost('bc_product_site'))) {
+		if (empty($data['bc_product_site'])) {
 			$this->error('站点不能为空');
 		}
-		$data = [
+		$rst = make('app/service/Queue')->push([
 			'class' => 'app/service/product/Spu',
 			'method' => 'addProduct',
-			'param' => ipost(),
-		];
-		$rst = make('app/service/Queue')->push($data);
+			'param' => $data,
+		]);
 		if ($rst) {
-			redis(2)->hSet($cacheKey, ipost('bc_product_id'), 1);
+			redis(2)->hSet($cacheKey, $data['bc_product_id'], 1);
+			//更新待入库状态
+			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
 			$this->success('加入队列成功');
 		} else {
 			$this->error('加入队列失败');
 		}
+	}
+
+	public function addAfter()
+	{
+		make('app/service/supplier/Url')->updateData(ipost('supp_id'), ['status'=>1]);
+			$this->success('操作成功');
 	}
 
 	public function notice()

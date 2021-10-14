@@ -10,18 +10,15 @@ class Api extends Base
 		$url = ipost('url');
 		$service = make('app/service/Logger');
 		$data = [
-			'path' => $url,
+			'path' => explode('.', $url)[0],
 			'type' => $service->getConst('TYPE_BEHAVIOR'),
 		];
 		$service->addLog($data);
-		if (empty(userId())) {
-			$this->error('need login');
-		}
 		$this->success();
 	}
 
 	public function upload()
-	{	
+	{
 		$file = $_FILES['file'] ?? [];
 		if (empty($file)) {
 			$this->error('上传数据为空');

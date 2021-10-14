@@ -5,6 +5,8 @@ use app\service\Base;
 
 class Category extends Base
 {
+	protected $_list = [];
+
 	protected function getModel()
 	{
 		$this->baseModel = make('app/model/category/Category');
@@ -18,9 +20,17 @@ class Category extends Base
 		return $info;
 	}
 
+	public function getList()
+	{
+		if (empty($this->_list)) {
+			$this->_list = $this->getListData();
+		}
+		return $this->_list;
+	}
+
 	public function getListFormat()
 	{
-		$list = $this->getListData();
+		$list = $this->getList();
 		if (!$list) return false;
 		$list = $this->listFormat($list, 0, 0);
 		$returnData = [];
@@ -57,6 +67,43 @@ class Category extends Base
 		return true;
 	}
 
+	public function getSubCategoryById($id)
+	{
+		$list = $this->getList();
+		$list = $this->listFormat($list, $id, 0);
+		if (empty($list)) {
+			return [$id];
+		}
+		return $this->getSubCategory($list);
+	}
+
+	public function getParentCategoryById($list, $id)
+	{
+		$returnData = [];
+		if (!isset($list[$id])) {
+			return [];
+		}
+		$id = $list[$id]['parent_id'];
+		if (isset($list[$id])) {
+			$returnData[] = $list[$id];
+			$returnData = array_merge($returnData, $this->getParentCategoryById($list, $id));
+		}
+		return $returnData;
+	}
+
+	protected function getSubCategory($list) 
+	{
+		$returnData = [];
+		foreach ($list as $value) {
+			if (empty($value['son'])) {
+				$returnData[] = $value['cate_id'];
+			} else {
+				$returnData = array_merge($returnData, $this->getSubCategory($value['son']));
+			}
+		}
+		return $returnData;
+	}
+
 	public function hasChildren($id)
 	{
 		return $this->getCountData(['parent_id' => $id]) > 0;
@@ -76,29 +123,9 @@ class Category extends Base
 		return $result;
 	}
 
-    public function updateStat()
-    {
-		$result = make('app/model/product/Spu')->field('cate_id, SUM(sale_total) AS sale_total, SUM(visit_total) AS visit_total')->where('status', 1)->groupBy('cate_id')->get();
-		if (!empty($result)) {
-			$result = array_column($result, null, 'cate_id');
-			foreach ($result as $key => $value) {
-				$data = [
-					'sale_total' => $value['sale_total'],
-					'visit_total' => $value['visit_total'],
-				];
-				$this->updateData($key, $data);
-			}
-		}
-		return true;
-    }
-
-    protected function getCacheKey($suffix='')
-    {
-    	return 'category:list-cache'.$suffix;
-    }
-
-	public function getHotCategory($size=8)
+	protected function getCacheKey($suffix='')
 	{
+<<<<<<< HEAD
 		$lanId = lanId();
 		$cacheKey = $this->getCacheKey('-hot-'.$lanId);
 		$list = redis()->get($cacheKey);
@@ -119,5 +146,8 @@ class Category extends Base
 		}
 
 		return $list;
+=======
+		return 'category:list-cache'.$suffix;
+>>>>>>> 93d136b03aba79b77063f51194dfd7e0115eba27
 	}
 }

@@ -9,7 +9,7 @@ class Task
 	public function start($taskClass='', $lockTimeout=0, $cas='')
 	{
 		if (empty($taskClass)) {
-			$taskClass = 'app\task\MainTask';
+			$taskClass = 'app'.DS.'task'.DS.'MainTask';
 		} else {
 			$taskClass = $this->getStandClassName($taskClass);
 		}
@@ -45,7 +45,7 @@ class Task
 			$locker->holdLock($lock);
 			return $this->localRun($process);
 		} else {
-			debug()->runlog(explode(', ', $process), 'task-error');
+			make('frame/Debug')->runlog($lock.' '.$cas, 'task-error');
 		}
 		return false;
 	}
@@ -63,25 +63,25 @@ class Task
 	{
 		$phpBin = config('task.phpbin');
 		$cmd = $phpBin.' -f '.ROOT_PATH.'command '.$param;
-		if (request()->isWin()) {
+		if (isWin()) {
 			pclose(popen('start /B '.$cmd.' 1>NUL 2>NUL', 'r'));
 		} else {
 			$out = [];
 			$rstSign = '';
 			exec($cmd.' > /dev/null 2>&1 &', $out, $rstSign);
 		}
-		config('env.APP_DEBUG') && debug()->runlog($cmd, 'task');
+		config('env.APP_DEBUG') && make('frame/Debug')->runlog($cmd, 'task');
 		return true;
 	}
 
 	protected function getStandClassName($classname)
 	{
-		return str_replace('-', '\\', trim($classname, ' \t\n\r\0\x0B\\'));
+		return str_replace('-', DS, $classname);
 	}
 
 	public function getKeyByClassName($classname)
 	{
-		return str_replace('\\', '-', $classname);
+		return str_replace(['\\', DS], '-', $classname);
 	}
 
 	public function taskStart($key)

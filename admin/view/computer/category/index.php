@@ -1,20 +1,12 @@
 <div class="container-fluid" id="category-list">
-	<div class="row-item">
-		<div class="left">
-			<button class="btn btn-primary update-btn" type="button" style="width: 100px; margin-right: 20px;"><i class="glyphicon glyphicon-asterisk"></i> 更新数据</button>
-		</div>
-		<div class="right">
-			<button class="btn btn-info sort-btn disabled" type="button" style="width: 150px; margin-right: 20px;"><i class="glyphicon glyphicon-asterisk"></i> 保存排序</button>
-			<button class="btn btn-success modify" data-id="0" type="button" style="width: 150px;"><i class="glyphicon glyphicon-plus"></i> 添加类目</button>
-		</div>
-		<div class="clear"></div>
-	</div>
+	<button class="btn btn-success modify" data-id="0" type="button" style="width: 150px;"><i class="glyphicon glyphicon-plus"></i> 添加类目</button>
 	<table class="table table-hover mt20" id="data-list">
 		<tbody>
 			<tr>
 				<th class="col-md-1">ID</th>
 				<th class="col-md-3">名称</th>
 				<th class="col-md-1">语言配置</th>
+				<th class="col-md-1">头像</th>
 				<th class="col-md-2">操作</th>
 			</tr>
 			<?php if (empty($list)){ ?>
@@ -42,6 +34,11 @@
 					<?php } else {?>
 					<span class="red">未配置</span>
 					<?php } ?>
+				</td>
+				<td class="col-md-1">
+					<div class="avatar-hover">
+						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['avatar'];?>" class="lazyload">
+					</div>
 				</td>
 				<td class="col-md-2">
 					<button class="btn btn-primary btn-xs ml4 modify"><span class="glyphicon glyphicon-edit"></span>&nbsp;修改</button>

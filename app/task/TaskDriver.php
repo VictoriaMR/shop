@@ -26,7 +26,7 @@ abstract class TaskDriver
 	protected $lockTimeout = 600;
 	protected $runCountLimit = -1;
 	protected $runTimeLimit = 0;
-	protected $sleep = 30;
+	protected $sleep = 1;
 
 	public function __construct($process=[])
 	{
@@ -178,10 +178,7 @@ abstract class TaskDriver
 				$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
 				if($result) {
 					// 防止死循环减轻服务器压力
-					if (time() - $runtime < 1 && $this->sleep < 1) {
-						sleep($this->sleep);
-					}
-					if ($this->sleep >= 1) {
+					if (time() - $runtime < 1) {
 						sleep($this->sleep);
 					}
 					$runtime = time();

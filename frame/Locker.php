@@ -36,6 +36,7 @@ class Locker
 			$this->lock[$name] = $cas;
 			return true;
 		}
+		dd(self::LOCKERPREFIX.$name, $lock, $cas);
 		return false;
 	}
 

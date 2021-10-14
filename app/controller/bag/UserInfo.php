@@ -11,34 +11,36 @@ class UserInfo extends Base
 		html()->addJs();
 
 		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
-		$info['name'] = trim($info['first_name'].' '.$info['last_name']);
-		$temp = explode(' ', $info['mobile']);
-		$info['dialing_code'] = $temp[0];
-		$info['phone'] = $temp[1] ?? '';
+		if (!empty($info)) {
+			$info['name'] = trim($info['first_name'].' '.$info['last_name']);
+			$temp = explode(' ', $info['mobile']);
+			$info['dialing_code'] = $temp[0];
+			$info['phone'] = $temp[1] ?? '';
 
-		$where = [
-			'mem_id' => $info['mem_id'],
-		];
-		//收藏统计
-		//$collectionTotal = make('app/service/member/Collect')->getCountData($where);
-		//足迹统计
-		//$historyTotal = make('app/service/member/History')->getCountData($where);
-		//地址统计
-		//$addressTotal = make('app/service/member/Address')->getCountData($where);
-		//订单统计
-		$order = make('app/service/order/Order');
-		$where['status'] = ['in', [
-			$order->getConst('STATUS_WAIT_PAY'),
-			$order->getConst('STATUS_PAIED'),
-			$order->getConst('STATUS_SHIPPED'),
-			$order->getConst('STATUS_FINISHED'),
-			$order->getConst('STATUS_PART_REFUND'),
-			$order->getConst('STATUS_FULL_REFUND'),
-		]];
-		$where['is_review'] = 0;
-		$where['is_delete'] = 0;
-		$orderTotal = $order->where($where)->field('count(*) as count, status')->groupBy('status')->get();
-		$orderTotal = array_column($orderTotal, 'count', 'status');
+			$where = [
+				'mem_id' => $info['mem_id'],
+			];
+			//收藏统计
+			//$collectionTotal = make('app/service/member/Collect')->getCountData($where);
+			//足迹统计
+			//$historyTotal = make('app/service/member/History')->getCountData($where);
+			//地址统计
+			//$addressTotal = make('app/service/member/Address')->getCountData($where);
+			//订单统计
+			$order = make('app/service/order/Order');
+			$where['status'] = ['in', [
+				$order->getConst('STATUS_WAIT_PAY'),
+				$order->getConst('STATUS_PAIED'),
+				$order->getConst('STATUS_SHIPPED'),
+				$order->getConst('STATUS_FINISHED'),
+				$order->getConst('STATUS_PART_REFUND'),
+				$order->getConst('STATUS_FULL_REFUND'),
+			]];
+			$where['is_review'] = 0;
+			$where['is_delete'] = 0;
+			$orderTotal = $order->where($where)->field('count(*) as count, status')->groupBy('status')->get();
+			$orderTotal = array_column($orderTotal, 'count', 'status');
+		}
 
 		$this->assign('collectionTotal', $collectionTotal ?? 0);
 		$this->assign('historyTotal', $historyTotal ?? 0);
@@ -92,7 +94,7 @@ class UserInfo extends Base
 		if (empty($attach_id)) {
 			$this->error('Param error');
 		}
-		$info = make('app/service/Attachment')->getAttachmentById($attach_id);
+		$info = make('app/service/attachment/Attachment')->getAttachmentById($attach_id);
 		if (empty($info)) {
 			$this->error('File was not exist.');
 		}
@@ -139,7 +141,9 @@ class UserInfo extends Base
 
 	protected function getAddressList($page=1, $size=10)
 	{
-		$list = make('app/service/member/Address')->getListData(['mem_id'=>userId()], '*', $page, $size, ['is_default'=>'desc', 'is_bill'=>'desc','address_id'=>'desc']);
+		$memId = userId();
+		if (!$memId) return [];
+		$list = make('app/service/member/Address')->getListData(['mem_id'=>$memId], '*', $page, $size, ['is_default'=>'desc', 'is_bill'=>'desc','address_id'=>'desc']);
 		if (!empty($list)) {
 			$countryList = array_unique(array_column($list, 'country_code2'));
 			$countryList = make('app/service/address/Country')->getListData(['code2'=>['in', $countryList]], 'code2,name_en');
@@ -331,13 +335,14 @@ class UserInfo extends Base
 		$list = $this->getHistoryList($page, $size);
 
 		$this->assign('list', $list);
-		$this->assign('_title', 'My History List - '.site()->getName());
+		$this->assign('_title', appT('my_history'));
 		$this->view();
 	}
 
 	protected function getHistoryList($page=1, $size=10)
 	{
 		$memId = userId();
+		if (!$memId) return [];
 		$list = make('app/service/member/History')->getListData(['mem_id'=>$memId], '*', $page, $size, ['his_id'=>'desc']);
 		if (!empty($list)) {
 			$spuIdArr = array_unique(array_column($list, 'spu_id'));

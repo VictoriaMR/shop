@@ -1,20 +1,19 @@
 <?php 
 
-namespace app\service;
+namespace app\service\attachment;
 use app\service\Base;
 
 class Attachment extends Base
 {	
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/Attachment');
+		$this->baseModel = make('app/model/attachment/Attachment');
 	}
 
 	public function addIfNot(array $data)
 	{
 		$info = $this->loadData(['name'=>$data['name']], 'attach_id');
 		if (empty($info)) {
-			$data['add_time'] = now();
 			return $this->insertGetId($data);
 		}
 		return $info['attach_id'];

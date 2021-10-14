@@ -1,0 +1,22 @@
+2021-10-07 17:35:38 pid:1 Error: Call to undefined method Workerman\Protocols\Http::header() in D:\www\shop\extra\socket.php:115
+Stack trace:
+#0 D:\www\shop\extra\socket\workerman\workerman\Connection\TcpConnection.php(637): {closure}(Object(Workerman\Connection\TcpConnection), Object(Workerman\Protocols\Http\Request))
+#1 D:\www\shop\extra\socket\workerman\workerman\Events\Select.php(293): Workerman\Connection\TcpConnection->baseRead(Resource id #33)
+#2 D:\www\shop\extra\socket\workerman\workerman\Worker.php(2430): Workerman\Events\Select->loop()
+#3 D:\www\shop\extra\socket\workerman\workerman\Worker.php(1418): Workerman\Worker->run()
+#4 D:\www\shop\extra\socket\workerman\workerman\Worker.php(1361): Workerman\Worker::forkWorkersForWindows()
+#5 D:\www\shop\extra\socket\workerman\workerman\Worker.php(542): Workerman\Worker::forkWorkers()
+#6 D:\www\shop\extra\socket.php(175): Workerman\Worker::runAll()
+#7 {main}
+2021-10-07 17:35:38 pid:1 Worker process terminated
+2021-10-07 17:54:27 pid:1 Error: Call to undefined function dd() in D:\www\shop\extra\socket.php:117
+Stack trace:
+#0 D:\www\shop\extra\socket\workerman\workerman\Connection\TcpConnection.php(637): {closure}(Object(Workerman\Connection\TcpConnection), Object(Workerman\Protocols\Http\Request))
+#1 D:\www\shop\extra\socket\workerman\workerman\Events\Select.php(293): Workerman\Connection\TcpConnection->baseRead(Resource id #33)
+#2 D:\www\shop\extra\socket\workerman\workerman\Worker.php(2430): Workerman\Events\Select->loop()
+#3 D:\www\shop\extra\socket\workerman\workerman\Worker.php(1418): Workerman\Worker->run()
+#4 D:\www\shop\extra\socket\workerman\workerman\Worker.php(1361): Workerman\Worker::forkWorkersForWindows()
+#5 D:\www\shop\extra\socket\workerman\workerman\Worker.php(542): Workerman\Worker::forkWorkers()
+#6 D:\www\shop\extra\socket.php(176): Workerman\Worker::runAll()
+#7 {main}
+2021-10-07 17:54:27 pid:1 Worker process terminated

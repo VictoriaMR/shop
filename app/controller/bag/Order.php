@@ -14,13 +14,15 @@ class Order extends Base
 		html()->addCss();
 		html()->addJs();
 
-		$where = ['mem_id'=>userId(), 'is_delete'=>0];
-		if ($status) {
-			$where['status'] = $status;
+		if (userId()) {
+			$where = ['mem_id'=>userId(), 'is_delete'=>0];
+			if ($status) {
+				$where['status'] = $status;
+			}
+			$list = make('app/service/order/Order')->getList($where, $page, $size);
 		}
-		$list = make('app/service/order/Order')->getList($where, $page, $size);
 
-		$this->assign('list', $list);
+		$this->assign('list', $list ?? []);
 		$this->assign('status', $status);
 		$this->assign('page', $page);
 		$this->assign('size', $size);
@@ -34,13 +36,14 @@ class Order extends Base
 		$page = (int)ipost('page', 1);
 		$size = (int)ipost('size', 10);
 		$isDelete = (int)ipost('is_delete', 0);
-		$where = ['mem_id'=>userId(), 'is_delete'=>$isDelete];
-		if ($status) {
-			$where['status'] = $status;
+		if (userId()) {
+			$where = ['mem_id'=>userId(), 'is_delete'=>$isDelete];
+			if ($status) {
+				$where['status'] = $status;
+			}
+			$list = make('app/service/order/Order')->getList($where, $page, $size);
 		}
-		$list = make('app/service/order/Order')->getList($where, $page, $size);
-
-		$this->success($list, '');
+		$this->success($list ?? [], '');
 	}
 
 	public function repurchase()
@@ -227,7 +230,7 @@ class Order extends Base
 		$size = iget('size', 10);
 		$keyword = trim(iget('keyword'));
 
-		if (!empty($keyword)) {
+		if (userId()) {
 			$where = ['mem_id'=>userId(), 'is_delete'=>0];
 			$list = make('app/service/order/Order')->getListByKeyword($where, $keyword, $page, $size);
 		}
@@ -261,12 +264,14 @@ class Order extends Base
 		$page = iget('page', 1);
 		$size = iget('size', 10);
 
-		$where = ['mem_id'=>userId(), 'is_delete'=>1];
-		$list = make('app/service/order/Order')->getList($where, $page, $size);
+		if (userId()) {
+			$where = ['mem_id'=>userId(), 'is_delete'=>1];
+			$list = make('app/service/order/Order')->getList($where, $page, $size);
+		}
 
 		$this->assign('page', $page);
 		$this->assign('size', $size);
-		$this->assign('list', $list);
+		$this->assign('list', $list ?? []);
 		$this->assign('_title', appT('order_trash'));
 		$this->view();
 	}

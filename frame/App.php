@@ -17,7 +17,7 @@ class App
 	public static function send()
 	{
 		//获取站点数据
-		$info = redis()->hGet('domain_config_site_info', $_SERVER['HTTP_HOST']);
+		$info = config('domain.'.$_SERVER['HTTP_HOST']);
 		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
 		define('APP_TEMPLATE_TYPE', $info['path']);
 		define('APP_SITE_ID', $info['site_id']);
@@ -26,7 +26,7 @@ class App
 		self::make('frame/Router')->analyze();
 		$info = self::get('router');
 		//执行方法
-		$class = 'app/controller/'.$info['class'].'/'.$info['path'];
+		$class = 'app/controller/'.$info['class'].'/'.ucfirst($info['path']);
 		$callArr = [self::autoload($class), $info['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('cookie.setcookie')) {

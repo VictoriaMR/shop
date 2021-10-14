@@ -204,7 +204,7 @@ class Order extends Base
 		//sku图片
 		$ids = array_column($data['product'], 'attach_id');
 		$ids = array_unique(array_merge($ids, array_column($temp, 'attach_id')));
-		$imageArr = make('app/service/Attachment')->getList(['attach_id'=>['in', $ids]]);
+		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $ids]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		$orderProductOriginPrice = 0;
 		$symbol = make('app/service/Currency')->getSymbolByCode($data['base']['currency']);
@@ -270,7 +270,7 @@ class Order extends Base
 			$attachIdArr = array_filter(array_column($attrArr, 'attach_id'));
 			$attachIdArr = array_merge($attachIdArr, array_column($orderProductArr, 'attach_id'));
 			//文件
-			$attachArr = make('app/service/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
+			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 			//产品属性归类
 			$tempArr = [];
@@ -333,12 +333,9 @@ class Order extends Base
 
 	public function getListByKeyword($where, $keyword, $page=1, $size=10)
 	{
-		if (empty($keyword)) {
-			return [];
-		}
 		$idArr = [];
 		$tempWhere = $where;
-		$tempWhere['order_no'] = ['like', $keyword];
+		$tempWhere['order_id'] = ['like', $keyword];
 		$list = $this->getListData($tempWhere, 'order_id');
 		if (!empty($list)) {
 			$idArr = array_column($list, 'order_id');

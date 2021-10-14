@@ -12,17 +12,25 @@ class Bute extends Base
 		return $this->baseModel = make('app/model/attr/Bute');
 	}
 
-	public function addNotExist($name)
+	public function addNotExist($nameArr)
 	{
-		if (empty($name)) {
-			return false;
+		if (empty($nameArr)) return false;
+		$nameArr = array_unique($nameArr);
+		//获取已存在属性
+		$list = $this->getListData(['name'=>['in', $nameArr]], 'attr_id,name');
+		$list = array_column($list, 'attr_id', 'name');
+		$diffArr = array_diff($nameArr, array_keys($list));
+		if (empty($diffArr)) {
+			return $list;
 		}
-		$name = trim($name);
-		$info = $this->loadData(['name'=>$name], 'attr_id');
-		if (!empty($info)) {
-				return $info['attr_id'];
+		$tempArr = [];
+		foreach ($diffArr as $value) {
+			$tempArr[] = ['name' => $value];
 		}
-		return $this->insertGetId(['name'=>$name]);
+		$this->insert($tempArr);
+		$list = $this->getListData(['name'=>['in', $nameArr]], 'attr_id,name');
+		$list = array_column($list, 'attr_id', 'name');
+		return $list;
 	}
 
 	public function getList($where, $page=1, $size=20)

@@ -1,0 +1,239 @@
+# 查看 glibc 版本
+rpm -qi glibc
+
+# 查看 cpu 架构
+arch
+
+# 查看系统版本
+cat /etc/centos-release
+
+# 分配账号权限
+groupadd mysql
+useradd -g mysql mysql
+chown -R mysql:mysql /usr/local/mysql
+chmod -R 755 /usr/local/mysql
+
+groupadd www
+useradd -M -g www -s /sbin/nologin www
+
+#安装mysql 
+yum -y remove mariadb*
+yum -y remove mysql*
+rm -rf /etc/my.cnf
+rm -rf /var/lib/mysql
+
+wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.26-linux-glibc2.17-x86_64-minimal-rebuild.tar
+tar -Jxvf xxx
+mv mysql.xxx /usr/local/mysql
+cd /usr/local/mysql
+vim /etc/mysql.cnf
+
+[mysql_safe]
+# modify
+log-error=/var/log/mysql-error.log
+# modify
+pid-file=/var/run/mysql.pid
+
+#
+# include all files form the config directory
+#
+[mysqld]
+# modify 修改为自己mysql的根目录
+basedir=/usr/local/mysql
+# modify 修改为自己mysql根目录下的data目录，不存在也不要紧
+datadir=/usr/local/mysql/data
+socket=/tmp/mysql.sock
+symbolic-links=0
+# new 设置用户使用mysql
+user=mysql
+# new 缓存连接数
+back_log=200
+# new 最大连接数
+max_connections=500
+# new 使用mysql_native_password插件认证,否则native连不上，会提示需要升级版本
+default_authentication_plugin=mysql_native_password
+# new 服务端使用的字符集默认为UTF8
+character-set-server=utf8mb4
+# new 创建新表时将使用的默认存储引擎
+default-storage-engine=INNODB
+
+# new 
+[mysql]
+# new 设置字符编码为utf8mb4
+default-character-set=utf8mb4
+# new 
+[client]
+# new 其实是废的，需要改端口时才有用
+port=3306
+# new 设置字符编码为utf8mb4
+default-character-set=utf8mb4
+
+#初始化mysql
+cd bin/
+./mysqld --initialize
+
+# 添加自启动
+ln -s /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql
+ln -s /usr/local/mysql/bin/mysql /usr/bin/mysql
+
+#启动 mysql 
+service mysql start
+mysql -u root -p xxx
+
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
+
+use mysql;  
+update user set host='%' where user ='root';
+FLUSH PRIVILEGES;
+
+# 防火墙添加端口
+systemctl enable firewalld.service
+firewall-cmd --zone=public --add-port=3306/tcp --permanent
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --zone=public --add-port=6379/tcp --permanent
+
+#安装 freetype
+wget https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.gz
+tar -Jxvf freexx
+./configure --prefix=/usr/local/freetype --without-harfbuzz
+make && make install
+# 或者
+yum -y install freetype*
+yum -y install libjpeg*
+
+#下载jpeg扩展包
+wget http://www.ijg.org/files/jpegsrc.v8b.tar.gz 
+#解压缩扩展包
+tar -zxvf  jpegsrc.v8b.tar.gz 
+#安装
+cd jpeg-8b
+./configure --prefix=/usr/local/jpeg --enable-shared --enable-static 
+make && make install
+
+#安装php
+tar -zxvf phpxx
+yum install -y gcc gcc-++ gcc-c++ make libxml2 libxml2-devel openssl openssl-devel curl-devel libjpeg libjpeg-devel libpng-devel freetype-devel  autoconf sqlite-devel
+
+yum install -y https://rpms.remirepo.net/enterprise/7/remi/x86_64/oniguruma5php-6.9.6-1.el7.remi.x86_64.rpm
+yum install -y https://rpms.remirepo.net/enterprise/7/remi/x86_64/oniguruma5php-devel-6.9.6-1.el7.remi.x86_64.rpm
+
+cd php-8.0.0
+#选择安装位置等配置
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-fpm --enable-mysqlnd --enable-opcache --enable-mbstring --enable-soap --enable-ftp --with-mysqli --with-openssl --with-curl --enable-pcntl --enable-gd --with-gettext --with-mhash --with-zlib --with-freetype --with-jpeg --enable-shared --enable-static
+ 
+make && make install
+
+cp php.ini-production /usr/local/php8/etc/php.ini
+cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
+cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf
+
+#php.ini
+expose_php = Off
+
+vim /lib/systemd/system/php-fpm.service
+
+[Unit]
+
+Description=php-fpm
+
+After=network.target
+
+[Service]
+
+Type=forking
+
+ExecStart=/usr/local/php/sbin/php-fpm
+
+PrivateTmp=True
+
+[Install]
+
+WantedBy=multi-user.target
+
+#安装 nginx
+tar -zxvf openresty-xxx
+./configure --prefix=/usr/local/openresty --with-http_addition_module --with-http_flv_module --with-http_gzip_static_module --with-http_realip_module --with-http_ssl_module --with-http_stub_status_module --with-http_sub_module --with-http_dav_module --with-http_v2_module
+
+make && make install
+
+vim /lib/systemd/system/nginx.service
+
+[Unit]
+Description=nginx
+After=network.target
+ 
+[Service]
+Type=forking
+ExecStart=/usr/local/openresty/nginx/sbin/nginx
+ExecReload=/usr/local/openresty/nginx/sbin/nginx -s reload
+ExecStop=/usr/local/openresty/nginx/sbin/nginx -s quit
+PrivateTmp=true
+ 
+[Install]
+WantedBy=multi-user.target
+
+
+#安装redis扩展
+wget https://pecl.php.net/get/redis-5.3.4.tgz
+tar -zxvf redis
+cd redis
+
+/usr/local/php/bin/phpize
+
+./configure --with-php-config=/usr/local/php/bin/php-config
+
+make && make install
+
+#php.ini
+extension="redis.so"
+
+#安装redis
+wget https://download.redis.io/releases/redis-6.2.6.tar.gz
+tar xzf redis
+yum -y install tcl
+cd redis 
+make
+make install PREFIX=/usr/local/redis
+cp redis.conf /usr/local/redis/etc
+
+vim /lib/systemd/system/redis.service
+
+  
+[Unit]
+Description=Redis
+After=network.target
+ 
+[Service]
+Type=forking
+ExecStart=/usr/local/redis/bin/redis-server /usr/local/redis/etc/redis.conf
+ExecStop=/usr/local/redis/bin/redis-cli shutdown
+ 
+[Install]
+WantedBy=multi-user.target
+
+# 注释掉绑定ip，允许远程连接
+bind 127.0.0.1 # 注释掉这句
+# 允许后台运行
+daemonize yes
+# 关闭保护模式，否则外部ip无法连接
+protected-mode no
+# 防火墙开启redis端口，默认6379
+firewall-cmd --add-port=6379/tcp --permanent
+firewall-cmd --reload
+firewall-cmd --list-ports
+# 内存设置
+echo 8192 > /proc/sys/net/core/somaxconn ## 最大内存8G
+sysctl vm.overcommit_memory=1  ## 内存超出时开辟内存 
+/etc/sysctl.conf 文件添加
+vm.overcommit_memory = 1
+# 密码设置 redis.conf 文件下添加
+requirepass 123456
+# 不重启设置密码（永久有效），登录之后输入
+config set requirepass 123456
+# 查询密码
+config get requirepass
+# 验证密码
+auth 123456
+# 登录时，验证登录输入一下
+auth 123456

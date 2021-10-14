@@ -25,7 +25,7 @@ class SpuImage extends Base
 	public function getListById($spuId, $attactId=[])
 	{
 		$attachArr = $this->getListData(['spu_id'=>$spuId], 'attach_id', 0, 0, ['sort'=>'asc']);
-		$list = make('app/service/Attachment')->getList(['attach_id'=>['in', array_column($attachArr, 'attach_id')]]);
+		$list = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_column($attachArr, 'attach_id')]]);
 		$list = array_column($list, null, 'attach_id');
 		foreach ($attachArr as $key => $value) {
 			$attachArr[$key] = $list[$value['attach_id']];

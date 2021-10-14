@@ -10,13 +10,17 @@
 		</div>
 	</div>
 	<div class="address-content mt18">
+		<?php if (userId()){?>
 		<div class="title">
 			<span><?php echo appT('addresses');?></span>
 			<button class="btn24 btn-black right add-new-address"><?php echo appT('add_address');?></button>
 		</div>
+		<?php }?>
 		<?php if (empty($list)) {?>
-		<p class="f18 f600 tc mt32"><?php echo appT('address_empty');?></p>
+		<p class="tc f14 mt24 c6"><?php echo appT('address_empty');?></p>
+		<?php if (userId()){?>
 		<p class="f14 mt18 tc"><?php echo appT('click_to_add_address');?></p>
+		<?php }?>
 		<?php } else {?>
 		<ul class="address-list mt22" data-page="<?php echo $page;?>" data-size="<?php echo $size;?>">
 			<?php foreach ($list as $value){?>
@@ -42,6 +46,7 @@
 		<?php } ?>
 	</div>
 </div>
+<?php if (userId()){?>
 <?php $this->load('common/address');?>
 <script type="text/javascript">
 const js_language_text = {
@@ -49,3 +54,4 @@ const js_language_text = {
 	set_default_bill_confirm: '<?php echo appT('set_default_bill_confirm');?>',
 };
 </script>
+<?php }?>

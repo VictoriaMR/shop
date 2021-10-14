@@ -20,10 +20,10 @@ class MainTask extends TaskDriver
 
 	protected function before()
 	{
-		$files = getDirFile(__DIR__.DIRECTORY_SEPARATOR.'main');
+		$files = getDirFile(__DIR__.DS.'main');
 		$files = array_reverse($files);
 		foreach ($files as $key => $value) {
-			$className = __NAMESPACE__.str_replace([__DIR__, '.php'], '', $value);
+			$className = str_replace('\\', DS, __NAMESPACE__).str_replace([__DIR__, '.php'], '', $value);
 			//重新缓存配置
 			$class = make($className);
 			if ($class) {
@@ -31,7 +31,7 @@ class MainTask extends TaskDriver
 				$data = [];
 				$data['boot'] = $this->getInfo('boot', $keyName) == 'off' ? 'off' : 'on';
 				$config = $class->config;
-				$data['info'] = $config['info'];
+				$data['info'] = $config['info'] ?? '';
 				$data['lockTimeout'] = $class->lockTimeout;
 				$data['runTimeLimit'] = $class->runTimeLimit;
 				$data['sleep'] = $class->sleep;
@@ -62,7 +62,7 @@ class MainTask extends TaskDriver
 			$info = $this->getInfo('', $k);
 			if (($info['boot'] ?? '') !== 'off') { // 开始启动任务
 				//运行时间
-				if ($info['runAt'] <= time() && $this->locker->lock($k, $info['lockTimeout'])) {
+				if (($info['runAt'] ?? 0) <= time() && $this->locker->lock($k, $info['lockTimeout'])) {
 					$cas = $this->locker->holdLock($k);
 					try {
 						//下次运行时间

@@ -61,15 +61,19 @@ class Base
 	protected function _init()
 	{
 		$this->_tag = $this->_arr;
-		if (empty($this->_default)) {
-			$this->_nav = $this->_arr;
-		} else {
-			$this->_nav = array_merge(['default' => $this->_default], $this->_arr);
-		}
 		$router = \App::get('router');
-		$this->assign('_tag', $this->_tag);
-		$this->assign('_nav', $this->_nav);
-		$this->assign('_tagShow', $this->_tagShow);
+		if ($router['class'] == 'admin') {
+			if ($router['path'] !== 'index') {
+				if (empty($this->_default)) {
+					$this->_nav = $this->_arr;
+				} else {
+					$this->_nav = array_merge(['default' => $this->_default], $this->_arr);
+				}
+				$this->assign('_tag', $this->_tag);
+				$this->assign('_nav', $this->_nav);
+				$this->assign('_tagShow', $this->_tagShow);
+			}
+		}
 		$this->assign('_path', $router['path']);
 		$this->assign('_func', $router['func']);
 		$this->assign('_title', $this->_tag[$router['func']] ?? '');

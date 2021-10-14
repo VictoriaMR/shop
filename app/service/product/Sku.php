@@ -38,7 +38,7 @@ class Sku extends Base
 		//属性列表
 		$info += make('app/service/product/AttrUsed')->getListById($skuId, $lanId, true);
 
-		$imageArr = make('app/service/Attachment')->getList(['attach_id'=>['in', array_merge([$info['attach_id']], $info['attvImage'])]]);
+		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_merge([$info['attach_id']], $info['attvImage'])]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		$info['image'] =  $imageArr[$info['attach_id']]['url'] ?? '';
 		foreach ($info['attvImage'] as $key => $value) {

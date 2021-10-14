@@ -9,6 +9,7 @@ class Category extends Base
 	{
 		$this->_arr = [
 			'index' => '品类管理',
+			'siteCategory' => '站点品类使用',
 		];
 		$this->_default = '品类管理';
 	}
@@ -17,12 +18,11 @@ class Category extends Base
 	{	
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'updateStat', 'transfer'])) {
+			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'transfer', 'modifyCategory'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addCss();
 		html()->addJs();
 
 		$list = make('app/service/category/Category')->getListFormat();
@@ -33,8 +33,15 @@ class Category extends Base
 		$languageList = array_column($languageList, null, 'code');
 		unset($languageList['zh']);
 		$len = count($languageList);
+		//图片
+		$attachArr = array_filter(array_column($list, 'attach_id'));
+		if (!empty($attachArr)) {
+			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+		}
 		foreach ($list as $key => $value) {
 			$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
+			$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
 			$list[$key] = $value;
 		}
 		
@@ -139,13 +146,155 @@ class Category extends Base
 		}
 	}
 
-	protected function updateStat()
+	protected function transfer()
 	{
-		$result = make('app/service/category/Category')->updateStat();
-		if ($result) {
-			$this->success('更新成功');
-		} else {
-			$this->error('更新失败');
+		$trCode = ipost('tr_code');
+		$name = ipost('name');
+		$rst = make('app/service/Translate')->getText($name, $trCode);
+		$this->success($rst, '');
+	}
+
+	protected function modifyCategory()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('参数不正确');
 		}
+		$attachId = ipost('attach_id');
+		$data = [];
+		if (!empty($attachId)) {
+			$data['attach_id'] = $attachId;
+		}
+		$rst = make('app/service/category/Category')->updateData($id, $data);
+		if ($rst) {
+			$this->success('操作成功');
+		}
+		$this->error('操作失败');
+	}
+
+	public function siteCategory()
+	{
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['editSiteCategory', 'deleteSiteCategory', 'modifySiteCategory'])) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
+
+		html()->addJs();
+		$site = iget('site', -1);
+		$cate = iget('cate', -1);
+		$page = iget('page', 1);
+		$size = iget('size', 30);
+		//站点列表
+		$siteList = make('app/service/site/Site')->getListData([], 'site_id,name');
+		$siteList = array_column($siteList, 'name', 'site_id');
+		//分类列表
+		$cateList = make('app/service/category/Category')->getListFormat();
+		$where = [];
+		if ($site > 0) {
+			$where['site_id'] = $site;
+		}
+		if ($cate > 0) {
+			$where['cate_id'] = $cate;
+		}
+		$cateUsedService = make('app/service/site/CategoryUsed');
+		$total = $cateUsedService->getCountData($where);
+		if ($total > 0) {
+			$list = $cateUsedService->getList($where, $page, $size);
+		}
+		$this->assign('total', $total);
+		$this->assign('list', $list ?? []);
+		$this->assign('size', $size);
+		$this->assign('site', $site);
+		$this->assign('cate', $cate);
+		$this->assign('siteList', $siteList);
+		$this->assign('cateList', $cateList);
+		$this->_init();
+		$this->view();
+	}
+
+	protected function editSiteCategory()
+	{
+		$id = ipost('item_id');
+		$siteId = ipost('site_id');
+		$cateId = ipost('cate_id');
+		if (empty($siteId) || empty($cateId)) {
+			$this->error('参数不正确');
+		}
+		$cateArr = make('app/service/category/Category')->getSubCategoryById($cateId);
+		$cateUsedService = make('app/service/site/CategoryUsed');
+		//获取已有的ID
+		$hasArr = $cateUsedService->getListData(['site_id'=>$siteId, 'cate_id'=>['in', $cateArr]], 'cate_id');
+		if (!empty($hasArr)) {
+			$cateArr = array_diff($cateArr, array_column($hasArr, 'cate_id'));
+		}
+		if (empty($cateArr)) {
+			$this->error('所有分类已存在');
+		}
+		$insert = [];
+		foreach($cateArr as $value) {
+			$insert[] = [
+				'site_id' => $siteId,
+				'cate_id' => $value,
+			];
+		}
+		$cateUsedService->insert($insert);
+		$this->success('添加分类成功');
+	}
+
+	protected function deleteSiteCategory()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('参数不正确');
+		}
+		$cateUsedService = make('app/service/site/CategoryUsed');
+		$info = $cateUsedService->loadData($id, 'site_id,cate_id');
+		if (empty($info)) {
+			$this->error('数据不存在');
+		}
+		if (make('app/service/product/Spu')->getCountData($info)) {
+			$this->error('该分类下有产品, 不能删除');
+		}
+		$rst = $cateUsedService->deleteData($id);
+		if ($rst) {
+			$this->success('删除成功');
+		}
+		$this->error('删除失败');
+	}
+
+	protected function modifySiteCategory()
+	{
+		$id = ipost('id');
+		if (empty($id)) {
+			$this->error('参数不正确');
+		}
+		$attachId = ipost('attach_id');
+		$sort = ipost('sort');
+		$saleTotal = ipost('sale_total');
+		$visitTotal = ipost('visit_total');
+		$data = [];
+		if (!empty($attachId)) {
+			$data['attach_id'] = $attachId;
+		}
+		if (!is_null($sort)) {
+			$data['sort'] = $sort;
+		}
+		if (!is_null($saleTotal)) {
+			$data['sale_total'] = $saleTotal;
+		}
+		if (!is_null($visitTotal)) {
+			$data['visit_total'] = $visitTotal;
+		}
+		if (empty($data)) {
+			$this->error('参数不正确');
+		}
+		$rst = make('app/service/site/CategoryUsed')->updateData($id, $data);
+		if ($rst) {
+			$this->success('操作成功');
+		}
+		$this->error('操作失败');
 	}
 }
