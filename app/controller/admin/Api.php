@@ -102,7 +102,7 @@ class Api extends Base
 
 	public function addAfter()
 	{
-		make('app/service/supplier/Url')->updateData(['name'=>ipost('bc_site_id'), 'item_id'=>ipost('bc_product_id')], ['status'=>1]);
+		make('app/service/supplier/Url')->updateData(ipost('supp_id'), ['status'=>1]);
 			$this->success('操作成功');
 	}
 
