@@ -54,15 +54,7 @@ class SystemInfo extends Base
 
 	public function redis()
 	{
-		$res = redis()->info();
-		$redisInfo = (array) redis();
-		$info = [];
-		foreach ($redisInfo as $val){
-			if (gettype($val) == 'array') {
-				$info = $val;
-			}
-		}
-		$this->assign('info', $info);
+		$this->assign('info', redis()->info());
 		$this->view();
 	}
 
