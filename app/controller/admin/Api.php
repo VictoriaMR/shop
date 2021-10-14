@@ -24,7 +24,7 @@ class Api extends Base
 			'version' => config('env.VERSION'),
 			'socket_ssl' => config('socket.ssl'),
 			'socket_domain' => config('socket.domain'),
-			'socket_port' => config('socket.socket_port'),
+			'socket_port' => config('socket.http_port'),
 			'site' => make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name'),
 			'site_category' => $tempArr,
 		];
