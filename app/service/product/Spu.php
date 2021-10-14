@@ -179,7 +179,7 @@ class Spu extends Base
 			'item_id' => $data['bc_product_id'],
 			'supplier' => $data['bc_site_id'],
 		];	
-		$spuData = make('app/service/product/spuData');
+		$spuData = make('app/service/product/SpuData');
 		$info = $spuData->loadData($where, 'spu_id');
 		if (empty($info)) {
 			//价格合集
