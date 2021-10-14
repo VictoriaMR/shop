@@ -80,7 +80,7 @@ const TASK = {
 	},
 	click: function() {
 		const _this = this;
-		$('#task-page').on('click', '.btn-task', function(){
+		$('#task-page').unbind().on('click', '.btn-task', function(){
 			clearInterval(_this.interval);
 			const _thisobj = $(this);
 			const type = $(this).data('type');
