@@ -11,14 +11,12 @@ class Queue
 	public function push($data, $first=false)
 	{
 		if ($first) {
-			$result = redis(2)->rPush($this->key, $data);
+			redis(2)->rPush($this->key, $data);
 		} else {
-			$result = redis(2)->lPush($this->key, $data);
+			redis(2)->lPush($this->key, $data);
 		}
-		if ($result) {
-			make('frame/Task')->taskStart('Queue');
-		}
-		return $result;
+		make('frame/Task')->taskStart('Queue');
+		return true;
 	}
 
 	public function count()
