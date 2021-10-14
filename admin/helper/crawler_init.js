@@ -59,7 +59,6 @@ const CRAWLERINIt = {
 	crawlerPageinit: function(info) {
 		const _this = this;
 		CRAWLER.getData(function(res) {
-			console.log(res, 'res')
 			if (res.code === 200) {
 				_this.crawlerPage(info, res.data);
 			} else {
@@ -398,8 +397,12 @@ const CRAWLERINIt = {
 		document.querySelector('#crawler_page .bc_product_category').innerHTML = html;
 	},
 	serializeForm: function(formobj) {
-		let formData = new FormData(formobj);
-		return Object.fromEntries(formData.entries());
+		if (formobj) {
+			let formData = new FormData(formobj);
+			return Object.fromEntries(formData.entries());
+		} else {
+			return {};
+		}
 	},
 	initPdtImgValue: function(pobj) {
 		let imgValueObj = pobj.querySelector('.bc_product_picture');
