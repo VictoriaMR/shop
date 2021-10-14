@@ -23,9 +23,7 @@ class IntroduceUsed extends Base
 			$data = array_column($data, null, 'attach_id');
 			$tempData = [];
 			foreach ($list as $value) {
-				if (isset($data[$value])) {
-					$tempData[] = $value;
-				}
+				$tempData[] = $data[$value];
 			}
 			$data = $tempData;
 		}
