@@ -125,29 +125,6 @@ class Category extends Base
 
 	protected function getCacheKey($suffix='')
 	{
-<<<<<<< HEAD
-		$lanId = lanId();
-		$cacheKey = $this->getCacheKey('-hot-'.$lanId);
-		$list = redis()->get($cacheKey);
-		if (empty($list)) {
-			$list = $this->field('cate_id, avatar')->where('parent_id', '>', 0)->orderBy(['(sale_total+visit_total)'=>'desc', 'sort'=>'asc'])->page(1, $size)->get();
-			if (!empty($list)) {
-				$cateIdArr = array_column($list, 'cate_id');
-				$lanArr = make('app/model/Category/Language')->where(['cate_id'=>['in', $cateIdArr], 'lan_id'=>$lanId])->field('cate_id,name')->get();
-				$lanArr = array_column($lanArr, 'name', 'cate_id');
-				foreach ($list as $key => $value) {
-					$value['name'] = $lanArr[$value['cate_id']] ?? '';
-					$value['url'] = router()->urlFormat($value['name'], 'c', ['id'=>$value['cate_id']]);
-					$value['avatar'] = empty($value['avatar']) ? siteUrl('image/common/noimg.svg') : mediaUrl($value['avatar'], 200);
-					$list[$key] = $value;
-				}
-			}
-			redis()->set($cacheKey, $list, strtotime(date('Y-m-d', strtotime('+1 day')).' 00:00:00')-time());
-		}
-
-		return $list;
-=======
 		return 'category:list-cache'.$suffix;
->>>>>>> 93d136b03aba79b77063f51194dfd7e0115eba27
 	}
 }
