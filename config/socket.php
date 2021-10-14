@@ -1,7 +1,7 @@
 <?php
 return [
 	'ssl' => false,
-	'domain' => 'shop.admin.cn',
+	'domain' => url('socket'),
 	'socket_port' => 12008,
 	'worker_port' => 12006,
 ];
