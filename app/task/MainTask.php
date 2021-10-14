@@ -62,7 +62,7 @@ class MainTask extends TaskDriver
 			$info = $this->getInfo('', $k);
 			if (($info['boot'] ?? '') !== 'off') { // 开始启动任务
 				//运行时间
-				if ($info['runAt'] <= time() && $this->locker->lock($k, $info['lockTimeout'])) {
+				if (($info['runAt'] ?? 0) <= time() && $this->locker->lock($k, $info['lockTimeout'])) {
 					$cas = $this->locker->holdLock($k);
 					try {
 						//下次运行时间
