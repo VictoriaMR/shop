@@ -9,7 +9,7 @@ class Task
 	public function start($taskClass='', $lockTimeout=0, $cas='')
 	{
 		if (empty($taskClass)) {
-			$taskClass = 'app\task\MainTask';
+			$taskClass = 'app'.DS.'task'.DS.'MainTask';
 		} else {
 			$taskClass = $this->getStandClassName($taskClass);
 		}
