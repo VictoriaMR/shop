@@ -76,12 +76,12 @@ class Task
 
 	protected function getStandClassName($classname)
 	{
-		return str_replace('-', DS, $classname);
+		return str_replace('-', ['\\', DS], $classname);
 	}
 
 	public function getKeyByClassName($classname)
 	{
-		return str_replace(DS, '-', $classname);
+		return str_replace(['\\', DS], '-', $classname);
 	}
 
 	public function taskStart($key)
