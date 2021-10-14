@@ -31,7 +31,7 @@ class MainTask extends TaskDriver
 				$data = [];
 				$data['boot'] = $this->getInfo('boot', $keyName) == 'off' ? 'off' : 'on';
 				$config = $class->config;
-				$data['info'] = $config['info'];
+				$data['info'] = $config['info'] ?? '';
 				$data['lockTimeout'] = $class->lockTimeout;
 				$data['runTimeLimit'] = $class->runTimeLimit;
 				$data['sleep'] = $class->sleep;
