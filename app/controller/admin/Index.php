@@ -17,7 +17,6 @@ class Index extends Base
 
 	public function index()
 	{
-		dd(config('env.APP_DOMAIN'));
 		html()->addCss();
 		html()->addJs();
 		//功能列表
