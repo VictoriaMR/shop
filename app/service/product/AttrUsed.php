@@ -112,7 +112,7 @@ class AttrUsed extends Base
 				$tempData[$value['attr_id'].'-'.$value['attv_id']] = true;
 			}
 			if (!empty($tempData)) {
-				if (empty($insert[0])) $insert = [$insert];
+				if (!is_array(current($insert))) $insert = [$insert];
 				foreach ($insert as $key => $value) {
 					if (isset($tempData[$value['attr_id'].'-'.$value['attv_id']])) {
 						unset($insert[$key]);

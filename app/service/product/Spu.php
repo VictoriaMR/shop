@@ -301,7 +301,9 @@ class Spu extends Base
 				'value_id' => $valueId,
 			];
 		}
-		make('app/service/product/DescriptionUsed')->addDescUsed($spuId, $insert);
+		if (!empty($insert)) {
+			make('app/service/product/DescriptionUsed')->addDescUsed($spuId, $insert);
+		}
 		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
 		redis(2)->hDel($cacheKey, $data['bc_product_id']);
 		return true;

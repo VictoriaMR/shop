@@ -21,7 +21,7 @@ class DescriptionUsed extends Base
 				$tempData[$value['name_id'].'-'.$value['value_id']] = true;
 			}
 			if (!empty($tempData)) {
-			if (empty($insert[0])) $insert = [$insert];
+				if (!is_array(current($insert))) $insert = [$insert];
 				foreach ($insert as $key => $value) {
 					if (isset($tempData[$value['name_id'].'-'.$value['value_id']])) {
 						unset($insert[$key]);
