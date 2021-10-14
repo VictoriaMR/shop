@@ -234,7 +234,7 @@ class Spu extends Base
 				$insert = [
 					'spu_id' => $spuId,
 					'status' => 0,
-					'attach_id' => empty($allImageArr[$value['img']]) ? 0 : $allImageArr[$value['img']],
+					'attach_id' => empty($value['img']) ? 0 : $allImageArr[$value['img']] ?? 0,
 					'stock' => $value['stock'],
 					'price' => $value['sale_price'],
 					'original_price' => $value['original_price'],
@@ -254,7 +254,7 @@ class Spu extends Base
 						'sku_id' => $skuId,
 						'attr_id' => $attrArr[$k],
 						'attv_id' => $attrValueArr[$v['text']],
-						'attach_id' => empty($allImageArr[$v['img']]) ? 0 : $allImageArr[$v['img']],
+						'attach_id' => empty($v['img']) ? 0 : $allImageArr[$v['img']] ?? 0,
 						'sort' => $count++,
 					];
 				}
