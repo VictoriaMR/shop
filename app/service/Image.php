@@ -95,7 +95,7 @@ class Image
 				$imagefunc = function_exists('imagepng') ? 'imagepng' : '';
 				break;
 		}
-		if ($imagecreatefromfunc == '' || $imagefunc == '') {
+		if (empty($imagecreatefromfunc) || empty($imagefunc)) {
 			return false;
 		}
 	 

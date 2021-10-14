@@ -259,7 +259,7 @@ class Spu extends Base
 					];
 				}
 				if (!empty($insert)) {
-					make('app/service/product/AttrUsed')->insert($insert);
+					make('app/service/product/AttrUsed')->addAttrUsed($skuId, $insert);
 				}
 			}
 			$this->commit();
@@ -282,7 +282,7 @@ class Spu extends Base
 			];
 		}
 		if (!empty($insert)) {
-			make('app/service/product/IntroduceUsed')->addIntroduceImage($spuId, $insert);
+			make('app/service/product/IntroduceUsed')->addIntroduceUsed($spuId, $insert);
 		}
 
 		//spu介绍文本
@@ -292,13 +292,16 @@ class Spu extends Base
 		$descArr = array_merge(array_column($data['bc_des_text'], 'key'), array_column($data['bc_des_text'], 'value'));
 		$descArr = $descService->addNotExist($descArr);
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$insert[] = [
+			$nameId = $descArr[$value['key']];
+			$valueId = $descArr[$value['value']];
+			$uniqueid = $nameId.'-'.$valueId;
+			$insert[$uniqueid] = [
 				'spu_id' => $spuId,
-				'name_id' => $descArr[$value['key']],
-				'value_id' => $descArr[$value['value']],
+				'name_id' => $nameId,
+				'value_id' => $valueId,
 			];
 		}
-		make('app/service/product/DescriptionUsed')->addDescUsed($insert);
+		make('app/service/product/DescriptionUsed')->addDescUsed($spuId, $insert);
 		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
 		redis(2)->hDel($cacheKey, $data['bc_product_id']);
 		return true;

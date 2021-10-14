@@ -10,15 +10,22 @@ class DescriptionUsed extends Base
 		$this->baseModel = make('app/model/product/DescriptionUsed');
 	}
 
-	public function addDescUsed(array $insert)
+	public function addDescUsed($spuId, array $insert)
 	{
-		if (empty($insert)) {
-			return false;
-		}
-		if (!empty($insert[0]) && is_array($insert[0])) {
-			foreach ($insert as $key => $value) {
-				if ($this->getCountData($value)) {
-					unset($insert[$key]);
+		if (empty($insert)) return false;
+		//获取已有的列表
+		$list = $this->getListData(['spu_id'=>$spuId], 'name_id,value_id');
+		if (!empty($list)) {
+			$tempData = [];
+			foreach ($list as $value) {
+				$tempData[$value['name_id'].'-'.$value['value_id']] = true;
+			}
+			if (!empty($tempData)) {
+			if (empty($insert[0])) $insert = [$insert];
+				foreach ($insert as $key => $value) {
+					if (isset($tempData[$value['name_id'].'-'.$value['value_id']])) {
+						unset($insert[$key]);
+					}
 				}
 			}
 		}

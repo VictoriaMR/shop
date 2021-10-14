@@ -7,6 +7,15 @@ arch
 # 查看系统版本
 cat /etc/centos-release
 
+# 分配账号权限
+groupadd mysql
+useradd -g mysql mysql
+chown -R mysql:mysql /usr/local/mysql
+chmod -R 755 /usr/local/mysql
+
+groupadd www
+useradd -M -g www -s /sbin/nologin www
+
 #安装mysql 
 yum -y remove mariadb*
 yum -y remove mysql*
@@ -59,12 +68,6 @@ port=3306
 # new 设置字符编码为utf8mb4
 default-character-set=utf8mb4
 
-# 分配账号权限
-groupadd mysql
-useradd -g mysql mysql
-chown -R mysql:mysql /usr/local/mysql
-chmod -R 755 /usr/local/mysql
-
 #初始化mysql
 cd bin/
 ./mysqld --initialize
@@ -99,6 +102,15 @@ make && make install
 yum -y install freetype*
 yum -y install libjpeg*
 
+#下载jpeg扩展包
+wget http://www.ijg.org/files/jpegsrc.v8b.tar.gz 
+#解压缩扩展包
+tar -zxvf  jpegsrc.v8b.tar.gz 
+#安装
+cd jpeg-8b
+./configure --prefix=/usr/local/jpeg --enable-shared --enable-static 
+make && make install
+
 #安装php
 tar -zxvf phpxx
 yum install -y gcc gcc-++ gcc-c++ make libxml2 libxml2-devel openssl openssl-devel curl-devel libjpeg libjpeg-devel libpng-devel freetype-devel  autoconf sqlite-devel
@@ -108,16 +120,13 @@ yum install -y https://rpms.remirepo.net/enterprise/7/remi/x86_64/oniguruma5php-
 
 cd php-8.0.0
 #选择安装位置等配置
-./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-fpm --enable-mysqlnd --enable-opcache --enable-mbstring --enable-soap --enable-ftp --with-mysqli --with-openssl --with-curl --with-pcntl --enable-gd --with-gettext --with-mhash --with-zlib --with-freetype=/usr/include/freetype2
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-fpm --enable-mysqlnd --enable-opcache --enable-mbstring --enable-soap --enable-ftp --with-mysqli --with-openssl --with-curl --enable-pcntl --enable-gd --with-gettext --with-mhash --with-zlib --with-freetype --with-jpeg --enable-shared --enable-static
  
 make && make install
 
 cp php.ini-production /usr/local/php8/etc/php.ini
 cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
 cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf
-
-groupadd www
-useradd -M -g www -s /sbin/nologin www
 
 #php.ini
 expose_php = Off

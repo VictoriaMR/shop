@@ -10,7 +10,7 @@ class IntroduceUsed extends Base
 		$this->baseModel = make('app/model/product/IntroduceUsed');
 	}
 
-	public function addIntroduceImage($spuId, array $data)
+	public function addIntroduceUsed($spuId, array $data)
 	{
 		$allAttachId = array_column($data, 'attach_id');
 		$list = $this->getListData(['spu_id'=>$spuId, 'attach_id'=>['in', $allAttachId]], 'attach_id');
@@ -21,11 +21,13 @@ class IntroduceUsed extends Base
 				return true;
 			}
 			$data = array_column($data, null, 'attach_id');
+			$tempData = [];
 			foreach ($list as $value) {
 				if (isset($data[$value])) {
-					unset($data[$value]);
+					$tempData[] = $value;
 				}
 			}
+			$data = $tempData;
 		}
 		return $this->insert($data);
 	}
