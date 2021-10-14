@@ -9,7 +9,7 @@ class Api extends Base
 
 	public function getHelperData()
 	{
-		$category = make('app/service/category/category')->getListData([], 'cate_id,name');
+		$category = make('app/service/category/Category')->getListData([], 'cate_id,name');
 		$category = array_column($category, 'name', 'cate_id');
 		$siteCate = make('app/service/site/CategoryUsed')->getListData([], 'site_id,cate_id', 0, 0, ['sort'=>'asc']);
 		$tempArr = [];
