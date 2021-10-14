@@ -293,16 +293,23 @@ const CRAWLERINIt = {
 				if (this.className.indexOf('loading') !== -1) {
 					return false;
 				}
-				const param = _this.serializeForm(document.getElementById('crawler_form'));
 				let _thisobj = this;
 				_thisobj.innerHTML = '数据发送中...';
 				_thisobj.classList.add('loading');
-				HELPERINIT.request({action: 'request', value: 'api/addAfter', param:param}, function(res) {
-					_thisobj.classList.remove('loading');
-					_thisobj.innerHTML = '跳过';
-					document.querySelector('.crawler-button .error-msg').innerText = res.message;
+				HELPERINIT.request({action: 'getCache', cache_key: 'reload_param_cache'}, function(res) {
 					if (res.code === '200') {
-						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
+						HELPERINIT.request({action: 'request', value: 'api/addAfter', param: res.data}, function(res) {
+							_thisobj.classList.remove('loading');
+							_thisobj.innerHTML = '跳过';
+							document.querySelector('.crawler-button .error-msg').innerText = res.message;
+							if (res.code === '200') {
+								HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
+							}
+						});
+					} else {
+						document.querySelector('.crawler-button .error-msg').innerText = '获取缓存数据失败';
+						_thisobj.classList.remove('loading');
+						_thisobj.innerHTML = '跳过';
 					}
 				});
 			}
