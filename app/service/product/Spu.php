@@ -198,6 +198,7 @@ class Spu extends Base
 				'max_price' => max($priceArr),
 				'original_price' => $this->getOriginalPrice(max($priceArr)), //虚拟原价
 			];
+			$this->start();
 			$spuId = $this->insertGetId($insert);
 			//spu扩展数据
 			$insert = [
@@ -261,6 +262,7 @@ class Spu extends Base
 					make('app/service/product/AttrUsed')->insert($insert);
 				}
 			}
+			$this->commit();
 		} else {
 			$spuId = $info['spu_id'];
 		}
