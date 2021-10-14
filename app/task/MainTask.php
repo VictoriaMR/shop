@@ -23,7 +23,7 @@ class MainTask extends TaskDriver
 		$files = getDirFile(__DIR__.DS.'main');
 		$files = array_reverse($files);
 		foreach ($files as $key => $value) {
-			$className = strtr(__NAMESPACE__, '\\', DS).str_replace([__DIR__, '.php'], '', $value);
+			$className = str_replace('\\', DS, __NAMESPACE__).str_replace([__DIR__, '.php'], '', $value);
 			//重新缓存配置
 			$class = make($className);
 			if ($class) {
