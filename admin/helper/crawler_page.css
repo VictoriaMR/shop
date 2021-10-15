@@ -3,8 +3,8 @@
 	right:40px;
 	top:5px;
 	width:auto;
-	min-width: 40px;
-	min-height: 28px;
+	min-width: 54px;
+	min-height: 42px;
 	max-width: 380px;
 	background-color:white;
 	border:3px solid #321679;
@@ -12,6 +12,7 @@
 	border-radius:5px;
 	padding:4px;
 	z-index: 999999999;
+	box-sizing: border-box;
 }
 #crawler_page .tc {
 	text-align: center;
