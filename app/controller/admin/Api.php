@@ -5,11 +5,11 @@ use app\controller\Base;
 
 class Api extends Base
 {
-	protected $_cateArr = ['category'];
+	protected $_cateArr = ['category', 'product', 'introduce'];
 
 	public function getHelperData()
 	{
-		$category = make('app/service/category/Category')->getListData([], 'cate_id,name');
+		$category = make('app/service/category/Category')->getList();
 		$category = array_column($category, 'name', 'cate_id');
 		$siteCate = make('app/service/site/CategoryUsed')->getListData([], 'site_id,cate_id', 0, 0, ['sort'=>'asc']);
 		$tempArr = [];

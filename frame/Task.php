@@ -87,8 +87,8 @@ class Task
 	public function taskStart($key)
 	{
 		$key = self::TASKPREFIX.'app-task-main-'.$key;
-		redis(2)->hSet($key, 'runAt', time());
-		redis(2)->hSet($key, 'nextRun', now());
+		cache(2)->hSet($key, 'runAt', time());
+		cache(2)->hSet($key, 'nextRun', now());
 		return true;
 	}
 }

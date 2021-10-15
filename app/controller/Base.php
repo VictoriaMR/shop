@@ -95,7 +95,7 @@ class Base
 		if (empty($trCode) || empty($name)) {
 			$this->error('参数错误');
 		}
-		$rst = make('app/service/Translate')->getTranslate($name, $trCode);
+		$rst = make('app/service/Translate')->getText($name, $trCode);
 		$this->success($rst);
 	}
 }

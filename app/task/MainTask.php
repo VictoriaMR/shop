@@ -8,7 +8,7 @@ class MainTask extends TaskDriver
 
 	public function __construct($process=[])
 	{
-		redis(2)->del(self::TASKPREFIX.'all');
+		cache(2)->del(self::TASKPREFIX.'all');
 		if (!empty($process)) {
 			$this->lockTimeout = config('task.timeout');
 			$this->runTimeLimit = 0;
@@ -40,7 +40,7 @@ class MainTask extends TaskDriver
 					$data['runAt'] = $this->getNextTimeByCronArray($config['cron']);
 					$data['nextRun'] = $data['runAt'] > 0 ? now($data['runAt']) : 'alwaysRun';
 				}
-				redis(2)->sAdd(self::TASKPREFIX.'all', $keyName);
+				cache(2)->sAdd(self::TASKPREFIX.'all', $keyName);
 				$this->delInfo($keyName);
 				//加入缓存
 				$this->setInfoArray($data, $keyName);

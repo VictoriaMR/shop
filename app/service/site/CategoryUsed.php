@@ -16,8 +16,6 @@ class CategoryUsed extends Base
 	{
 		$list = $this->getListData($where, '*', $page, $size, ['sort'=>'asc']);
 		$cateService = make('app/service/category/Category');
-		$allCateArr = $cateService->getListData();
-		$allCateArr = array_column($allCateArr, null, 'cate_id');
 		//图片
 		$attachArr = array_filter(array_column($list, 'attach_id'));
 		if (!empty($attachArr)) {
@@ -25,7 +23,7 @@ class CategoryUsed extends Base
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 		}
 		foreach ($list as $key => $value) {
-			$value['parent'] = array_reverse($cateService->getParentCategoryById($allCateArr, $value['cate_id']));
+			$value['parent'] = array_reverse($cateService->getParentCategoryById($value['cate_id'], false));
 			$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
 			$list[$key] = $value;
 		}

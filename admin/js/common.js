@@ -45,7 +45,7 @@ function confirm(msg, callbck) {
 }
 function post(uri, param, success, error) {
 	$.post(uri, param, function(res) {
-		if (res.code === 200 || res.code === '200') {
+		if (res.code === '200') {
 			if (res.message) {
 				successTips(res.message)
 			}
@@ -129,6 +129,7 @@ function guid() {
 			h = $(window).innerHeight();
 		}
 		h = (h / 2) - (obj.actual('innerHeight') / 2);
+		h = h < 0 ? 0 : h;
 		obj.css('position','fixed');
 		obj.css('top',h+'px');
 		obj.css('left',w+'px');

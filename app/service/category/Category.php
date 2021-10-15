@@ -77,16 +77,15 @@ class Category extends Base
 		return $this->getSubCategory($list);
 	}
 
-	public function getParentCategoryById($list, $id)
+	public function getParentCategoryById($id, $self=true)
 	{
 		$returnData = [];
-		if (!isset($list[$id])) {
-			return [];
-		}
+		$list = $this->getList();
+		$list = array_column($list, null, 'cate_id');
+		if ($self) $returnData[] = $list[$id];
 		$id = $list[$id]['parent_id'];
 		if (isset($list[$id])) {
-			$returnData[] = $list[$id];
-			$returnData = array_merge($returnData, $this->getParentCategoryById($list, $id));
+			$returnData = array_merge($returnData, $this->getParentCategoryById($id));
 		}
 		return $returnData;
 	}

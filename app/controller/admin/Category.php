@@ -146,14 +146,6 @@ class Category extends Base
 		}
 	}
 
-	protected function transfer()
-	{
-		$trCode = ipost('tr_code');
-		$name = ipost('name');
-		$rst = make('app/service/Translate')->getText($name, $trCode);
-		$this->success($rst, '');
-	}
-
 	protected function modifyCategory()
 	{
 		$id = ipost('id');

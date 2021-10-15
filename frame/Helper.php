@@ -52,6 +52,9 @@ function request(){
 function redis($db=0){
 	return \App::make('frame/Redis')->setDb($db);
 }
+function cache($db=0){
+	return \App::make('frame/Redis')->setDb($db, true);
+}
 function db($db=null){
 	return \App::make('frame/Connection')->setDb($db);
 }

@@ -21,7 +21,7 @@ class Translate
 			$translateStr = $http->get($request);
 			if ($translateStr !== false) {
 				$translateStr = json_decode($translateStr, true);
-				if (!empty($translateStr['trans_result'][0]['dst'])) {
+				if (isset($translateStr['trans_result'][0]['dst'])) {
 					return trim($translateStr['trans_result'][0]['dst']);
 				}
 			}

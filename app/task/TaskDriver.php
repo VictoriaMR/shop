@@ -50,9 +50,9 @@ abstract class TaskDriver
 			$this->locker = make('frame/Locker');
 			$this->tasker = make('frame/Task');
 
-			redis(2)->sAdd(self::TASKPREFIX.'all', $this->lock);
-			redis(2)->hIncrBy(self::TASKPREFIX.$this->lock, 'count', 1);
-			redis(2)->hDel(self::TASKPREFIX.$this->lock, 'loopCount');
+			cache(2)->sAdd(self::TASKPREFIX.'all', $this->lock);
+			cache(2)->hIncrBy(self::TASKPREFIX.$this->lock, 'count', 1);
+			cache(2)->hDel(self::TASKPREFIX.$this->lock, 'loopCount');
 			$this->startUp();
 		}
 	}
@@ -68,7 +68,7 @@ abstract class TaskDriver
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
-		return redis(2)->hSet($key, $field, $value);
+		return cache(2)->hSet($key, $field, $value);
 	}
 
 	protected function delInfo($key='')
@@ -77,7 +77,7 @@ abstract class TaskDriver
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
-		return redis(2)->del($key);
+		return cache(2)->del($key);
 	}
 
 	protected function setInfoArray(array $data, $key='')
@@ -86,7 +86,7 @@ abstract class TaskDriver
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
-		return redis(2)->hMset($key, $data);
+		return cache(2)->hMset($key, $data);
 	}
 
 	protected function getInfo($field='', $key='')
@@ -96,9 +96,9 @@ abstract class TaskDriver
 		}
 		$key = $this->getKey($key);
 		if(empty($field)){
-			return redis(2)->hGetAll($key);
+			return cache(2)->hGetAll($key);
 		} else {
-			return redis(2)->hGet($key, $field);
+			return cache(2)->hGet($key, $field);
 		}
 	}
 
@@ -172,7 +172,7 @@ abstract class TaskDriver
 			$result = true;
 			$runtime = time();
 			while ($result && $this->continueRuning()) {
-				redis(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
+				cache(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
 				$result = $this->run();
 				$usgaMem = memory_get_usage();
 				$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
@@ -346,13 +346,13 @@ abstract class TaskDriver
 
 	protected function taskSleep($time)
 	{
-		$runAt = redis(2)->hGet(self::TASKPREFIX.$this->lock, 'runAt');
+		$runAt = cache(2)->hGet(self::TASKPREFIX.$this->lock, 'runAt');
 		$runAt = ($runAt > 0 ? $runAt : time()) + $time;
 		$data = [
 			'runAt' => $runAt,
 			'nextRun' => $runAt > 0 ? now($runAt) : 'alwaysRun',
 		];
-		return redis(2)->hMset(self::TASKPREFIX.$this->lock, $data);
+		return cache(2)->hMset(self::TASKPREFIX.$this->lock, $data);
 	}
 
 	abstract public function run();

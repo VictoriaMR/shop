@@ -114,14 +114,66 @@ class Spu extends Base
 	public function getAdminInfo($spuId)
 	{
 		$info = $this->loadData($spuId);
-		if (empty($info)) {
-			return false;
-		}
+		if (empty($info)) return false;
+		//分类
+		$info['category'] = array_reverse(make('app/service/category/Category')->getParentCategoryById($info['cate_id']));
+		//SpuData
+		$info['data'] = make('app/service/product/SpuData')->loadData($spuId);
+		$info['shop'] = make('app/service/supplier/Shop')->loadData($info['data']['shop_id']);
 		//名称
 		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId,'lan_id'=>'zh'])['name'];
 		//图片
-		$info['image'] = make('app/service/product/SpuImage')->getInfoBySpuId($spuId);
-		
+		$info['image'] = make('app/service/product/SpuImage')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		//获取sku列表
+		$info['sku'] = make('app/service/product/Sku')->getListData(['spu_id'=>$spuId]);
+		//skuData
+		$skuIdArr = array_column($info['sku'], 'sku_id');
+		$skuData = make('app/service/product/SkuData')->getListData(['sku_id'=>['in', $skuIdArr]]);
+		$skuData = array_column($skuData, null, 'sku_id');
+		//sku属性
+		$attrArr = make('app/service/product/AttrUsed')->getListData(['sku_id'=>['in', $skuIdArr]], '*', 0, 0, ['sort'=>'asc']);
+		//属性值名称
+		$attrBute = make('app/service/attr/Bute')->getListData(['attr_id'=>['in', array_unique(array_column($attrArr, 'attr_id'))]]);
+		$attrBute = array_column($attrBute, null, 'attr_id');
+		$attrValue = make('app/service/attr/Value')->getListData(['attv_id'=>['in', array_unique(array_column($attrArr, 'attv_id'))]]);
+		$attrValue = array_column($attrValue, null, 'attv_id');
+		//图片
+		$attachArr = array_unique(array_merge(array_column($info['image'], 'attach_id'), array_column($info['sku'], 'attach_id'), array_column($attrArr, 'attach_id')));
+		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+		$attachArr = array_column($attachArr, 'url', 'attach_id');
+		//sku 属性归类
+		$skuAttrArr = [];
+		$attrMap = [];
+		foreach ($attrArr as $value) {
+			if (!isset($skuAttrArr[$value['sku_id']])) $skuAttrArr[$value['sku_id']] = [];
+			$value['attr_name'] = isset($attrBute[$value['attr_id']]['name']) ? $attrBute[$value['attr_id']]['name'] : '';
+			$value['attv_name'] = isset($attrValue[$value['attv_id']]['name']) ? $attrValue[$value['attv_id']]['name'] : '';
+			$value['image'] = $attachArr[$value['attach_id']] ?? '';
+			if (!isset($attrMap[$value['attr_id']])) {
+				$attrMap[$value['attr_id']] = [
+					'attr_id' => $value['attr_id'],
+					'attr_name' => $value['attr_name'],
+					'son' => [],
+				];
+			}
+			$attrMap[$value['attr_id']]['son'][$value['attv_id']] = [
+				'attv_id' => $value['attv_id'],
+				'attv_name' => $value['attv_name'],
+				'attach_id' => $value['attach_id'],
+				'image' => $value['image'],
+			];
+			$skuAttrArr[$value['sku_id']][] = $value;
+		}
+		$info['attr_map'] = $attrMap;
+		foreach ($info['sku'] as $key => $value) {
+			$value = array_merge($value, $skuData[$value['sku_id']]);
+			$value['image'] = $attachArr[$value['attach_id']] ?? '';
+			$value['attr'] = $skuAttrArr[$value['sku_id']];
+			$info['sku'][$key] = $value;
+		}
+		foreach ($info['image'] as $key => $value) {
+			$info['image'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
+		}
 		return $info;
 	}
 
@@ -233,7 +285,7 @@ class Spu extends Base
 				if (empty($value['stock'])) continue;
 				$insert = [
 					'spu_id' => $spuId,
-					'status' => 0,
+					'status' => 1,
 					'attach_id' => empty($value['img']) ? 0 : $allImageArr[$value['img']] ?? 0,
 					'stock' => $value['stock'],
 					'price' => $value['sale_price'],
