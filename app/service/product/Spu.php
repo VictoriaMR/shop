@@ -137,6 +137,8 @@ class Spu extends Base
 		$attrBute = array_column($attrBute, null, 'attr_id');
 		$attrValue = make('app/service/attr/Value')->getListData(['attv_id'=>['in', array_unique(array_column($attrArr, 'attv_id'))]]);
 		$attrValue = array_column($attrValue, null, 'attv_id');
+		//描述
+		$info['description'] = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId]);
 		//图片
 		$attachArr = array_unique(array_merge(array_column($info['image'], 'attach_id'), array_column($info['sku'], 'attach_id'), array_column($attrArr, 'attach_id')));
 		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
