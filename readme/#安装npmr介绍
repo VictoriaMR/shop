@@ -56,7 +56,6 @@ default_authentication_plugin=mysql_native_password
 character-set-server=utf8mb4
 # new 创建新表时将使用的默认存储引擎
 default-storage-engine=INNODB
-
 # new 
 [mysql]
 # new 设置字符编码为utf8mb4
@@ -124,7 +123,7 @@ cd php-8.0.0
  
 make && make install
 
-cp php.ini-production /usr/local/php8/etc/php.ini
+cp php.ini-production /usr/local/php/etc/php.ini
 cp /usr/local/php/etc/php-fpm.conf.default /usr/local/php/etc/php-fpm.conf
 cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/www.conf
 
@@ -134,21 +133,15 @@ expose_php = Off
 vim /lib/systemd/system/php-fpm.service
 
 [Unit]
-
 Description=php-fpm
-
 After=network.target
 
 [Service]
-
 Type=forking
-
 ExecStart=/usr/local/php/sbin/php-fpm
-
 PrivateTmp=True
 
 [Install]
-
 WantedBy=multi-user.target
 
 #安装 nginx
@@ -195,7 +188,7 @@ yum -y install tcl
 cd redis 
 make
 make install PREFIX=/usr/local/redis
-cp redis.conf /usr/local/redis/etc
+cp redis.conf /usr/local/redis/etc/redis.conf
 
 vim /lib/systemd/system/redis.service
 
