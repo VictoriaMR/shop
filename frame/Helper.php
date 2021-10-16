@@ -65,7 +65,7 @@ function url($url=null, $param=null, $domain=null) {
     return router()->buildUrl($url, $param, $domain);
 }
 function siteUrl($name){
-	return config('env.APP_DOMAIN').$name.'?v='.config('env.VERSION');
+	return config('env.APP_DOMAIN').$name.'?v='.config('env.APP_VERSION');
 }
 function mediaUrl($url, $width=''){
 	if (!empty($width)) {
@@ -75,7 +75,7 @@ function mediaUrl($url, $width=''){
 	if (strpos($url, 'http') === false) {
 		$url = config('env.FILE_CENTER_DOMAIN').$url;
 	}
-	return $url.'?v='.config('env.VERSION');
+	return $url.'?v='.config('env.APP_VERSION');
 }
 function isCli(){
 	return stripos(php_sapi_name(), 'cli') !== false;
@@ -101,7 +101,7 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 	if (empty($lanId)) $lanId = lanId();
 	$key = 'translate_'.$type.'_'.$lanId;
 	if (!isset($GLOBALS[$key])) {
-		$file = ROOT_PATH.APP_TEMPLATE_TYPE.DS.'language'.DS.$type.DS.$lanId.'.php';
+		$file = ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS.'language'.DS.$type.DS.$lanId.'.php';
 		if (is_file($file)) $GLOBALS[$key] = include $file;
 		else $GLOBALS[$key] = null;
 	}

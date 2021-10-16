@@ -19,6 +19,7 @@ class App
 		//获取站点数据
 		$info = config('domain.'.$_SERVER['HTTP_HOST']);
 		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
+		define('APP_CONTROLLER_TYPE', $info['path'] == 'admin' ? 'admin' : 'home');
 		define('APP_TEMPLATE_TYPE', $info['path']);
 		define('APP_SITE_ID', $info['site_id']);
 		self::set('site_name', $info['name']);

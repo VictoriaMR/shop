@@ -1,0 +1,60 @@
+#address-page .address-content .title span {
+	display: inline-block;
+	height: 0.24rem;
+	line-height: 0.24rem;
+	font-size: 0.18rem;
+}
+#address-page .address-list .item {
+	padding: 0.16rem;
+	background: #fff;
+	margin-bottom: 0.1rem;
+	border: 0.01rem solid #fff;
+	position: relative;
+}
+#address-page .address-list .item p {
+	margin-bottom: 0.02rem;
+}
+#address-page .address-list .item.active {
+	border-color: #404040;
+}
+#address-page .address-list .item .default-btn {
+	position: absolute;
+	top: -0.01rem;
+	right: -0.01rem;
+}
+#address-page .address-list .item .default-btn.active {
+	background: #404040;
+	color: #fff;
+}
+#address-page .address-list .item.active p:first-child {
+	width: 80%;
+}#address-book {
+	z-index: 106;
+}
+#address-book .dialog {
+	height: calc(100% - 0.32rem);
+	bottom: 0.16rem;
+}
+#address-book .dialog .content .item {
+	position: relative;
+}
+#address-book .dialog .content .item .error-tips {
+	top: 0.23rem;
+}
+#address-book .dialog .footer .btn {
+	width: 1.2rem;
+}
+#address-book .dialog .content .title .cred {
+	position: relative;
+	top: 0.04rem;
+}
+#address-book .dialog .content .input,
+#address-book .dialog .content .selection {
+	height: 0.4rem;
+	border: 0.02rem solid #fff;
+	background: #fff;
+}
+#address-book .dialog .content .error .selection,
+#address-book .dialog .content .error .input {
+	border-color: #EB2027;
+}

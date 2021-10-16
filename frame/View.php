@@ -8,7 +8,7 @@ class View
 
 	public function display($template='', $match=true)
 	{
-		$this->fetch(ROOT_PATH.APP_TEMPLATE_TYPE.DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)]);
+		$this->fetch(ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)]);
 	}
 
 	protected function fetch($template, array $data=[])
@@ -40,7 +40,7 @@ class View
 				$_route = \App::get('router');
 				$template = $_route['path'].DS.$_route['func'];
 			}
-			$template = APP_TEMPLATE_TYPE.DS.'view'.DS.$matchPath.$template;
+			$template = 'template'.DS.APP_TEMPLATE_TYPE.DS.'view'.DS.$matchPath.$template;
 		}
 		return ROOT_PATH.$template.'.php';
 	}

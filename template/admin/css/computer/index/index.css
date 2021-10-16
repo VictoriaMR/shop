@@ -1,0 +1,174 @@
+#index-page .header {
+    width: 100%;
+    height: 35px;
+    margin: 0px;
+    background-color: #2b363e;
+}
+#index-page .header .right .glyphicon{
+	font-size: 18px;
+	line-height: 35px;
+	color: #ffffff;
+	margin-right: 16px;
+}
+#index-page .body {
+	width: 100%;
+	height: calc(100vh - 35px);
+	background: #f5f3ef;
+	position: relative;
+}
+#index-page .body .nav-left {
+	width: 256px;
+	height: 100%;
+	background: #e5e6e7;
+	float: left;
+}
+#index-page .body .nav-left .person {
+	width: 100%;
+	height: 48px;
+	padding: 5px 0;
+    background: #354047;
+    position: relative;
+    z-index: 99;
+}
+#index-page .body .nav-left .person .avatar {
+    width: 38px;
+    height: 38px;
+    float: left;
+    border-radius: 19px;
+    overflow: hidden;
+    border: 1px solid #ffffff;
+}
+#index-page .body .nav-left .person .info {
+	float: left;
+	padding-left: 8px;
+	width: calc(100% - 38px);
+}
+#index-page .body .nav-left .person .info .glyphicon-off {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+#index-page .body .nav-left .person .info p {
+	line-height: 19px;
+}
+#index-page .body .nav-left .left-content {
+	width: 100%;
+	height: calc(100% - 48px);
+}
+#index-page .body .nav-left .left-content .left-one {
+	width: calc(100% - 145px);
+	height: 100%;
+	background: #3a444c;
+	float: left;
+}
+#index-page .body .nav-left .left-content .left-one .toggle {
+    width: 100%;
+    text-align: center;
+    height: 25px;
+    line-height: 25px;
+    color: #999ea2;
+    background: #424d56;
+    cursor: pointer;
+}
+#index-page .body .nav-left .left-content .left-one .toggle:hover .glyphicon {
+	color: #ffffff;
+}
+#index-page .body .nav-left .left-content .left-two {
+	width: 145px;
+	height: 100%;
+	background: #e5e6e7;
+	float: left;
+	transition: 0.1s;
+}
+#index-page .body .nav-left .left-content .tooltips {
+	position: absolute;
+	left: 50px;
+	background-color: #000;
+	color: #FFF;
+	height: 24px;
+	line-height: 24px;
+	padding: 0 8px;
+	border-radius: 3px;
+	z-index: 9999;
+}
+#index-page .body .nav-left .left-content .tooltips:after{
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: -10px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-right: 5px solid #000;
+    border-left: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+}
+#index-page .body .nav-left .left-content .left-two .title {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+    font-weight: bold;
+    font-size: 15px;
+    padding-left: 10px;
+    position: relative;
+}
+#index-page .body .nav-left .left-content .left-two .title .glyphicon:hover {
+	color: #e7502b;
+}
+#index-page .body .nav-left .left-content .left-two .title .glyphicon {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+}
+#index-page .nav-content ul>li {
+	width: 100%;
+    text-align: left;
+    padding-left: 12px;
+    height: 40px;
+    font-size: 15px;
+    line-height: 40px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    color: #999ea2;
+    opacity: 0.7;
+    border-bottom: 1px solid #3a444c;
+}
+#index-page .left-content .left-one ul>li:hover {
+	opacity: 1;
+	color: #ffffff;
+	border-color: #2b363e;
+}
+#index-page .left-content .left-one ul>li.select {
+	background-color: #e7502b;
+    opacity: 1;
+    color: #FFF;
+}
+#index-page .left-content .left-two .item {
+	display: none;
+}
+#index-page .left-content .left-two ul>li {
+	height: 35px;
+    line-height: 35px;
+    font-size: 13px;
+    padding-left: 14px;
+    position: relative;
+    cursor: pointer;
+}
+#index-page .left-content .left-two ul>li.select,
+#index-page .left-content .left-two ul>li:hover{
+	background: #ffffff;
+	color: #e7502b;
+}
+#index-page .left-content .left-two .item .glyphicon-link {
+	position: absolute;
+	top: 11px;
+	right: 5px;
+}
+#index-page .body .content-right {
+	width: calc(100% - 256px);
+	height: 100%;
+	position: relative;
+	overflow: hidden;
+	float: left;
+}

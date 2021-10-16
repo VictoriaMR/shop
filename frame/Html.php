@@ -79,7 +79,7 @@ class Html
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.APP_TEMPLATE_TYPE.DS;
+		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS;
 		$file = 'static'.DS.(IS_MOBILE ? 'm_' : 'c_').$name.'.'.$type;
 		if (APP_STATIC && is_file($path.$file)) {
 			return $file;

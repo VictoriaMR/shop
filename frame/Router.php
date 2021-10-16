@@ -17,7 +17,7 @@ final class Router
 	public function analyze()
 	{
 		$pathInfo = trim($_SERVER['REQUEST_URI'], DS);
-		$router['class'] = APP_TEMPLATE_TYPE;
+		$router['class'] = APP_CONTROLLER_TYPE;
 		if (empty($pathInfo)) {
 			$router['path'] = 'index';
 			$router['func'] = 'index';
@@ -29,7 +29,7 @@ final class Router
 			} else {
 				$pathInfo['path'] = explode('.', $pathInfo['path'])[0];
 				$routerArr = explode('-', $pathInfo['path']);
-				if (APP_TEMPLATE_TYPE != 'admin' && !empty($routerArr) && count($routerArr) > 1) {
+				if (APP_CONTROLLER_TYPE != 'admin' && !empty($routerArr) && count($routerArr) > 1) {
 					$routerArr = array_reverse($routerArr);
 					if (count($routerArr) > 1) {
 						foreach ($routerArr as $key => $value) {

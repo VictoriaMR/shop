@@ -1,0 +1,21 @@
+.field-row, .in-field-row {
+	display: flex;
+}
+.field-row {
+	margin-bottom: 15px;
+}
+.in-field-row {
+	margin-bottom: 0;
+}
+.field-row > dt, .in-field-row > dt {
+	min-width: 80px;
+	line-height: 25px;
+	text-align: right;
+}
+.field-row > dd, .in-field-row > dd {
+	margin-left: 15px;
+	line-height: 25px;
+}
+.field-row dt {
+	font-weight: 700;
+}
