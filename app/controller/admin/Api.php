@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class Api extends Base
+class Api extends AdminBase
 {
 	protected $_cateArr = ['category', 'product', 'introduce'];
 

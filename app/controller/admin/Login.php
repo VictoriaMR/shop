@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class Login extends Base
+class Login extends AdminBase
 {
 	public function index()
 	{	
@@ -42,7 +42,7 @@ class Login extends Base
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {
 			$log = make('app\service\admin\Logger');
-        	$log->addLog(['type' => $log->getConst('TYPE_LOGIN_FAIL')]);
+			$log->addLog(['type' => $log->getConst('TYPE_LOGIN_FAIL')]);
 			$this->error('账号或者密码不匹配!');
 		}
 	}
@@ -66,11 +66,9 @@ class Login extends Base
 	}
 
 	public function signature()
-    {
-    	$info = session()->get('admin_info');
-    	if (empty($info)) {
-    		return '';
-    	}
-        make('app/service/Image')->text(ROOT_PATH.'admin/image/computer/signature.png', $info['name'], 12, 30, 10, 80, [235, 235, 235]);
-    }
+	{
+		$info = session()->get('admin_info');
+		if (empty($info)) return '';
+		make('app/service/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', $info['name'], 12, 30, 10, 80, [235, 235, 235]);
+	}
 }

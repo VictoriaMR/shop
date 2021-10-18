@@ -139,8 +139,10 @@ class Spu extends Base
 		$attrValue = array_column($attrValue, null, 'attv_id');
 		//描述
 		$info['description'] = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId]);
+		//描述图片
+		$info['introduce'] = make('app/service/product/IntroduceUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
 		//图片
-		$attachArr = array_unique(array_merge(array_column($info['image'], 'attach_id'), array_column($info['sku'], 'attach_id'), array_column($attrArr, 'attach_id')));
+		$attachArr = array_unique(array_merge(array_column($info['image'], 'attach_id'), array_column($info['sku'], 'attach_id'), array_column($attrArr, 'attach_id'), array_column($info['introduce'], 'attach_id')));
 		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 		$attachArr = array_column($attachArr, 'url', 'attach_id');
 		//sku 属性归类
@@ -176,6 +178,18 @@ class Spu extends Base
 		foreach ($info['image'] as $key => $value) {
 			$info['image'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
 		}
+		foreach ($info['introduce'] as $key => $value) {
+			$info['introduce'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
+		}
+		//描述
+		$descArr = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		$descNameArr = make('app/service/attr/Description')->getListData(['desc_id'=>['in', array_unique(array_merge(array_column($descArr, 'name_id'), array_column($descArr, 'value_id')))]]);
+		$descNameArr = array_column($descNameArr, 'name', 'desc_id');
+		foreach($descArr as $key=>$value) {
+			$descArr[$key]['name'] = $descNameArr[$value['name_id']] ?? '';
+			$descArr[$key]['value'] = $descNameArr[$value['value_id']] ?? '';
+		}
+		$info['desc'] = $descArr;
 		return $info;
 	}
 
@@ -353,6 +367,7 @@ class Spu extends Base
 				'spu_id' => $spuId,
 				'name_id' => $nameId,
 				'value_id' => $valueId,
+				'sort' => $key+1,
 			];
 		}
 		if (!empty($insert)) {

@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class Transfer extends Base
+class Transfer extends AdminBase
 {
 	public function __construct()
 	{
@@ -24,9 +24,9 @@ class Transfer extends Base
 		}
 
 		html()->addJs();
-		$keyword = trim(iget('keyword'));
-		$page = (int)iget('page', 1);
-		$size = (int)iget('size', 20);
+		$keyword = iget('keyword');
+		$page = iget('page', 1);
+		$size = iget('size', 20);
 		$where = [];
 		if (!empty($keyword)) {
 			$where['name'] = ['like', '%'.$keyword.'%'];

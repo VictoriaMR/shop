@@ -173,7 +173,7 @@
 							$count = 0;
 							foreach ($kv['son'] as $value){
 						?>
-						<tr data-id="<?php echo $value['attv_id'];?>">
+						<tr data-attr_id="<?php echo $kv['attr_id'];?>" data-attv_id="<?php echo $value['attv_id'];?>" data-spu_id="<?php echo $info['spu_id'];?>">
 							<?php if ($count == 0){?>
 							<td rowspan="<?php echo count($kv['son']);?>" class="tc">
 								<?php echo $kv['attr_name'];?>
@@ -184,6 +184,9 @@
 								<div class="sku-attr-image">
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
 								</div>
+								<?php if (!empty($value['image'])){?>
+								<button class="btn btn-danger btn-xs delete-attr-image-btn">删除</button>
+								<?php }?>
 							</td>
 						</tr>
 						<?php $count++;}}?>
@@ -191,6 +194,57 @@
 				</table>
 			</div>
 		</div>
+		<div class="w50">
+			<div class="pr10" id="sku-desc-content">
+				<dl class="field-row mt10" style="margin-bottom: 4px">
+					<dt>描述列表	<span class="co f12">(修改)</span>：<button class="btn btn-success btn-xs add-desc-btn">增加</button></dt>
+				</dl>
+				<table class="table table-bordered" width="50%">
+					<tbody>
+						<tr>
+							<th width="40">描述名</th>
+							<th width="50">描述值</th>
+							<th width="10">排序</th>
+							<th width="20">操作</th>
+						</tr>
+						<?php foreach($info['desc'] as $value){?>
+						<tr data-id="<?php echo $value['item_id'];?>">
+							<td><?php echo $value['name'];?></td>
+							<td><?php echo $value['value'];?></td>
+							<td>
+								<input type="text" name="sort" value="<?php echo $value['sort'];?>" class="form-control">
+							</td>
+							<td>
+								<button class="btn btn-primary btn-xs edit-desc-btn"><span class="glyphicon glyphicon-edit"></span> 编辑</button>
+								<button class="btn btn-danger btn-xs delete-desc-btn"><span class="glyphicon glyphicon-trash"></span> 删除</button>
+							</td>
+						</tr>
+						<?php }?>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</dl>
+	<dl class="field-row mt10" style="margin-bottom: 4px">
+		<dt>描述图片：</dt>
+		<dd>
+			<button class="btn btn-success btn-xs upload-introduce-image">上传图片</button>
+		</dd>
+	</dl>
+	<dl>
+		<?php foreach ($info['introduce'] as $key => $value) {?>
+		<div class="spu-introduce-image" data-id="<?php echo $value['attach_id'];?>">
+			<div class="image-tcell">
+				<img src="<?php echo siteUrl('/image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+			</div>
+			<div class="image-btn" data-id="<?php echo $value['item_id'];?>">
+				<a class="btn btn-default btn-xs" target="_blank" href="<?php echo str_replace('/400', '', $value['image']);?>"><span class="glyphicon glyphicon-search"></span></a>
+				<input type="text" name="sort" class="form-control" value="<?php echo $value['sort'];?>" placeholder="排序">
+				<span class="glyphicon glyphicon-trash delete-introduce-btn"></span>
+			</div>
+		</div>
+		<?php }?>
+		<div class="clear"></div>
 	</dl>
 	<?php } ?>
 </div>
@@ -304,6 +358,32 @@
 				<button type="button" class="btn btn-success w30 batch-save-btn">批量修改</button>
 				<button type="button" class="btn btn-primary w30 right save-btn ">确认</button>
 			</div>
+		</form>
+	</div>
+</div>
+<!-- SPU描述文本管理 -->
+<div id="dealbox-desc" class="hidden">
+	<div class="mask"></div>
+	<div class="centerShow">
+		<form class="form-horizontal">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="f24 dealbox-title">描述文本</div>
+			<input type="hidden" name="spu_id" value="<?php echo $info['spu_id'];?>">
+			<input type="hidden" name="item_id" value="0">
+			<input type="hidden" name="opn" value="modifySpuDesc">
+			<div class="input-group">
+				<div class="input-group-addon"><span>描述名: </span></div>
+				<textarea name="name" class="form-control"></textarea>
+			</div>
+			<div class="input-group">
+				<div class="input-group-addon"><span>描述值: </span></div>
+				<textarea name="value" class="form-control"></textarea>
+			</div>
+			<div class="input-group">
+				<div class="input-group-addon"><span>排序: </span></div>
+				<input type="text" name="sort" class="form-control">
+			</div>
+			<button type="button" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
 		</form>
 	</div>
 </div>

@@ -19,6 +19,7 @@
 .field-row dt {
 	font-weight: 700;
 }
+.spu-introduce-image,
 .spu-image {
 	width: 168px;
 	height: 168px;
@@ -30,19 +31,19 @@
     position: relative;
     overflow: hidden;
 }
-.spu-image .image-tcell {
+.image-tcell {
 	display: table-cell;
 	text-align: center;
 	vertical-align: middle;
 }
-.spu-image .image-btn {
+.image-btn {
 	position: absolute;
 	width: 100%;
 	bottom: 0;
 	padding: 4px;
 	background: rgba(0, 0, 0, 0.5);
 }
-.spu-image .image-btn input {
+.image-btn input {
 	max-width: 30px;
 	padding: 1px 5px;
 	height: 22px;
@@ -51,7 +52,10 @@
 	position: relative;
 	top: 1px;
 }
-.spu-image .glyphicon-trash {
+.spu-introduce-image .image-btn input {
+	top: 2px;
+}
+.image-btn .glyphicon-trash {
 	color: #d9534f;
 	font-size: 14px;
 	position: relative;
@@ -64,4 +68,9 @@
 .sku-attr-image {
 	width: 50px;
 	height: 50px;
+	float: left;
+}
+.delete-attr-image-btn {
+	margin-top: 14px;
+	margin-left: 5px;
 }

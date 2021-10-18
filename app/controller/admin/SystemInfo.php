@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class SystemInfo extends Base
+class SystemInfo extends AdminBase
 {
 	//初始化
 	public function __construct()

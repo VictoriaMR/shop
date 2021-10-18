@@ -47,13 +47,12 @@ function confirm(msg, callbck) {
 		obj.hide();
 	});
 	obj.on('click', '.btn.confirm', function(){
-		obj.hide();
-		callbck($(this));
+		callbck($(this), obj);
 	});
 }
 function post(uri, param, success, error) {
 	$.post(uri, param, function(res) {
-		if (res.code === 200 || res.code === '200') {
+		if (res.code === '200') {
 			if (res.message) {
 				successTips(res.message)
 			}
@@ -137,6 +136,7 @@ function guid() {
 			h = $(window).innerHeight();
 		}
 		h = (h / 2) - (obj.actual('innerHeight') / 2);
+		h = h < 0 ? 0 : h;
 		obj.css('position','fixed');
 		obj.css('top',h+'px');
 		obj.css('left',w+'px');
@@ -220,21 +220,16 @@ function guid() {
 			});
 		});
 	};
-	$.fn.imageUpload = function(name, cate, width, height) {
+	$.fn.imageUpload = function(cate, callback) {
 		const obj = $(this);
 		obj.each(function(){
 			const thisobj = $(this);
-			if (typeof width !== 'undefined') {
-				thisobj.attr('width', width)
-			}
-			if (typeof height !== 'undefined') {
-				thisobj.attr('height', height)
-			}
 			thisobj.css({cursor: 'pointer'});
 			const guid_name = guid();
 			thisobj.data('file', guid_name);
 			thisobj.parent().append('<input name="'+guid_name+'" type="file" accept=".bmp,.jpg,.png,.jpeg,image/bmp,image/jpg,image/png,image/jpeg" class="hide" readonly="readonly"/>');
-			thisobj.on('click', function(){
+			thisobj.on('click', function(event){
+				event.stopPropagation();
 				const file = $(this).data('file');
 				$('[name="'+file+'"]').click();
 			});
@@ -254,23 +249,24 @@ function guid() {
 					processData: false,
 					contentType: false,
 					success: function(res) {
-	                    if (res.code == 200) {
-	                    	thisobj.removeClass('loading').attr('src', res.data.url);
-	                    	const $inputObj = thisobj.parent().find('[name="'+name+'"]');
-	                    	if ($inputObj.length === 0) {
-	                    		thisobj.parent().append('<input name="'+name+'" value="'+(res.data.cate+'/'+res.data.name+'.'+res.data.type)+'" class="hide" />');
-	                    	} else {
-	                    		$inputObj.val(res.data.cate+'/'+res.data.name+'.'+res.data.type);
-	                    	}
-	                    } else {
-	                    	errorTips(res.message);
-	                    	thisobj.removeClass('loading').attr('src', thisobj.data('src'));
-	                    }
-	                },
-	                error: function(res) {
-	                	errorTips('网络错误, 上传失败');
-	                	thisobj.removeClass('loading').attr('src', thisobj.data('src'));
-	                }
+						if (res.code == 200) {
+							if (thisobj.get(0).tagName == 'img') {
+								thisobj.removeClass('loading').attr('src', res.data.url);
+							} else {
+								thisobj.removeClass('loading').find('img').attr('src', res.data.url);
+							}
+							if (callback) {
+								callback(res.data, thisobj);
+							}
+						} else {
+							errorTips(res.message);
+							thisobj.removeClass('loading').attr('src', thisobj.data('src'));
+						}
+					},
+					error: function(res) {
+						errorTips('网络错误, 上传失败');
+						thisobj.removeClass('loading').attr('src', thisobj.data('src'));
+					}
 				});
 			});
 		});

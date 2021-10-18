@@ -243,7 +243,11 @@ function guid() {
 					contentType: false,
 					success: function(res) {
 						if (res.code == 200) {
-							thisobj.removeClass('loading').attr('src', res.data.url);
+							if (thisobj.get(0).tagName == 'img') {
+								thisobj.removeClass('loading').attr('src', res.data.url);
+							} else {
+								thisobj.removeClass('loading').find('img').attr('src', res.data.url);
+							}
 							if (callback) {
 								callback(res.data, thisobj);
 							}

@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class Product extends Base
+class Product extends AdminBase
 {
 	public function __construct()
 	{
@@ -76,7 +76,7 @@ class Product extends Base
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo'])) {
+			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage'])) {
 				$this->$opn();
 			}
 			$this->error('未知请求');
@@ -181,7 +181,7 @@ class Product extends Base
 		if ($imageService->getCountData($data)) {
 			$this->success('上传成功');
 		}
-		$data['sort'] = $imageService->getCountData(['spu_id'=>$spuId])+1;
+		$data['sort'] = $imageService->loadData(['spu_id'=>$spuId], 'max(sort) as sort')['sort']+1;
 		$rst = $imageService->insert($data);
 		if ($rst) {
 			$this->success('上传成功');
@@ -269,5 +269,138 @@ class Product extends Base
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
+	}
+
+	protected function modifySkuAttrImage()
+	{
+		$spuId = ipost('spu_id');
+		$attrId = ipost('attr_id');
+		$attvId = ipost('attv_id');
+		$attachId = ipost('attach_id');
+		if (empty($spuId) || empty($attrId) || empty($attvId)) {
+			$this->error('参数不正确');
+		}
+		$skuId = make('app/service/product/Sku')->getListData(['spu_id'=>$spuId], 'sku_id');
+		if (empty($skuId)) {
+			$this->error('SKU ID不能为空');
+		}
+		$skuId = array_column($skuId, 'sku_id');
+		$rst = make('app/service/product/AttrUsed')->updateData(['sku_id'=>['in', $skuId], 'attr_id'=>$attrId, 'attv_id'=>$attvId], ['attach_id'=>$attachId]);
+		if ($rst) {
+			$this->success('更新成功');
+		}
+		$this->error('更新失败');
+	}
+
+	protected function modifySpuDesc()
+	{
+		$id = ipost('item_id');
+		$param = ipost();
+		$data = [];
+		if (isset($param['sort'])) {
+			$data['sort'] = $param['sort'];
+		}
+		if (empty($data)) {
+			$this->error('参数不正确');
+		}
+		if (!empty($param['spu_id'])) {
+			if (empty($param['name'])) {
+				$this->error('描述名不能为空');
+			}
+			if(empty($param['value'])) {
+				$this->error('描述值不能为空');
+			}
+			$descArr = make('app/service/attr/Description')->addNotExist([$param['name'], $param['value']]);
+			$data['name_id'] = $descArr[$param['name']];
+			$data['value_id'] = $descArr[$param['value']];
+			$data['spu_id'] = $param['spu_id'];
+		}
+		if (empty($id)) {
+			$rst = make('app/service/product/DescriptionUsed')->addDescUsed($param['spu_id'], $data);
+		} else {
+			$rst = make('app/service/product/DescriptionUsed')->updateData($id, $data);
+		}
+		if ($rst) {
+			$this->success('操作成功');
+		}
+		$this->error('操作失败');
+	}
+
+	protected function deleteSpuDesc()
+	{
+		$id = ipost('item_id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$rst = make('app/service/product/DescriptionUsed')->deleteData($id);
+		if ($rst) {
+			$this->success('删除成功');
+		}
+		$this->error('删除失败');
+	}
+
+	protected function getSpuDescInfo()
+	{
+		$id = ipost('item_id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$info = make('app/service/product/DescriptionUsed')->loadData($id);
+		if ($info) {
+			$descArr = make('app/service/attr/Description')->getListData(['desc_id'=>['in', [$info['name_id'], $info['value_id']]]]);
+			$descArr = array_column($descArr, 'name', 'desc_id');
+			$info['name'] = $descArr[$info['name_id']];
+			$info['value'] = $descArr[$info['value_id']];
+			$this->success($info, '获取成功');
+		}
+		$this->error('获取失败');
+	}
+
+	protected function modifySpuIntroduceImage()
+	{
+		$id = ipost('item_id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$sort = ipost('sort');
+		$rst = make('app/service/product/IntroduceUsed')->updateData($id, ['sort'=>$sort]);
+		if ($rst) {
+			$this->success('排序成功');
+		}
+		$this->error('排序失败');
+	}
+
+	protected function deleteSpuIntroduceImage()
+	{
+		$id = ipost('item_id');
+		if (empty($id)) {
+			$this->error('ID值不正确');
+		}
+		$sort = ipost('sort');
+		$rst = make('app/service/product/IntroduceUsed')->deleteData($id);
+		if ($rst) {
+			$this->success('删除成功');
+		}
+		$this->error('删除失败');
+	}
+
+	protected function addSpuIntroduceImage()
+	{
+		$spuId = ipost('spu_id');
+		$attachId = ipost('attach_id');
+		if (empty($spuId) || empty($attachId)) {
+			$this->error('参数不正确');
+		}
+		$imageService = make('app/service/product/IntroduceUsed');
+		$data = ['spu_id'=>$spuId, 'attach_id'=>$attachId];
+		if ($imageService->getCountData($data)) {
+			$this->success('上传成功');
+		}
+		$data['sort'] = $imageService->loadData(['spu_id'=>$spuId], 'max(sort) as sort')['sort']+1;
+		$rst = $imageService->insert($data);
+		if ($rst) {
+			$this->success('上传成功');
+		}
+		$this->error('上传失败');
 	}
 }

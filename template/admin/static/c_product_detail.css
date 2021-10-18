@@ -19,3 +19,58 @@
 .field-row dt {
 	font-weight: 700;
 }
+.spu-introduce-image,
+.spu-image {
+	width: 168px;
+	height: 168px;
+	float: left;
+	border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    position: relative;
+    overflow: hidden;
+}
+.image-tcell {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}
+.image-btn {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	padding: 4px;
+	background: rgba(0, 0, 0, 0.5);
+}
+.image-btn input {
+	max-width: 30px;
+	padding: 1px 5px;
+	height: 22px;
+	line-height: 22px;
+	display: inline-block;
+	position: relative;
+	top: 1px;
+}
+.spu-introduce-image .image-btn input {
+	top: 2px;
+}
+.image-btn .glyphicon-trash {
+	color: #d9534f;
+	font-size: 14px;
+	position: relative;
+	top: 3px;
+}
+.sku-image {
+	width: 80px;
+	height: 80px;
+}
+.sku-attr-image {
+	width: 50px;
+	height: 50px;
+	float: left;
+}
+.delete-attr-image-btn {
+	margin-top: 14px;
+	margin-left: 5px;
+}

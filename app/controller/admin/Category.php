@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class Category extends Base
+class Category extends AdminBase
 {
 	public function __construct()
 	{

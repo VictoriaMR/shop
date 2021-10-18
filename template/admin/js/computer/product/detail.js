@@ -3,6 +3,7 @@ $(function(){
 });
 const PRODUCT = {
 	init: function(){
+		const _this = this;
 		$('.status-btn').on('click', function(){
 			$('#status-dealbox').dealboxShow();
 		});
@@ -216,5 +217,151 @@ const PRODUCT = {
 				}
 			});
 		});
+		//SKU属性上传图片
+		$('.sku-attr-image').imageUpload('product', function(data, obj){
+			let param = obj.parents('tr').data();
+			param.opn = 'modifySkuAttrImage';
+			param.attach_id = data.attach_id;
+			$.post(URI+'product/detail', param, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+					window.location.reload();
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
+		//删除sku图片
+		$('.delete-attr-image-btn').on('click', function(){
+			let param = $(this).parents('tr').data();
+			param.opn = 'modifySkuAttrImage';
+			param.attach_id = 0;
+			confirm('确定要删除该属性图片吗?', function(obj){
+				obj.button('loading');
+				$.post(URI+'product/detail', param, function(res){
+					if (res.code === '200') {
+						successTips(res.message);
+						window.location.reload();
+					} else {
+						obj.button('reset');
+						errorTips(res.message);
+					}
+				});
+			});
+		});
+		//描述排序
+		$('#sku-desc-content [name="sort"]').on('blur', function(){
+			const id = $(this).parents('tr').data('id');
+			const sort = $(this).val();
+			$.post(URI+'product/detail', {opn: 'modifySpuDesc', item_id: id, sort: sort}, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+					window.location.reload();
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
+		//删除描述文本
+		$('.delete-desc-btn').on('click', function(){
+			const id = $(this).parents('tr').data('id');
+			confirm('确定要删除该描述文本吗?', function(obj){
+				obj.button('loading');
+				$.post(URI+'product/detail', {opn: 'deleteSpuDesc', item_id: id}, function(res){
+					if (res.code === '200') {
+						successTips(res.message);
+						window.location.reload();
+					} else {
+						errorTips(res.message);
+					}
+				});
+			});
+		});
+		//新增描述性文本
+		$('.add-desc-btn').on('click', function(){
+			_this.initDescShow();
+		});
+		//编辑描述性文本
+		$('.edit-desc-btn').on('click', function(){
+			const _thisobj = $(this);
+			_thisobj.button('loading');
+			const id = _thisobj.parents('tr').data('id');
+			$.post(URI+'product/detail', {opn: 'getSpuDescInfo', item_id: id}, function(res){
+				_thisobj.button('reset');
+				if (res.code === '200') {
+					_this.initDescShow(res.data);
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
+		//保存描述性文本
+		$('#dealbox-desc .save-btn').on('click', function(){
+			const _thisobj = $(this);
+			_thisobj.button('loading');
+			$.post(URI+'product/detail', _thisobj.parent().serializeArray(), function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+					window.location.reload();
+				} else {
+					_thisobj.button('reset');
+					errorTips(res.message);
+				}
+			});
+		});
+		//描述图片排序
+		$('.spu-introduce-image [name="sort"]').on('blur', function(){
+			post(URI+'product/detail', {item_id: $(this).parent().data('id'), attach_id: $(this).parents('.spu-introduce-image').data('id'), sort: $(this).val(), opn: 'modifySpuIntroduceImage'}, function(res) {
+				window.location.reload();
+			});
+		});
+		//删除描述图片
+		$('.spu-introduce-image .delete-introduce-btn').on('click', function(){
+			const id = $(this).parent().data('id');
+			confirm('确定删除该描述图片吗?', function(obj){
+				obj.button('loading');
+				$.post(URI+'product/detail', {item_id: id, opn: 'deleteSpuIntroduceImage'}, function(res) {
+					if (res.code === '200') {
+						successTips(res.message);
+						window.location.reload();
+					} else {
+						obj.button('reset');
+						errorTips(res.message);
+					}
+				});
+			});
+		});
+		//上传描述图片
+		$('.upload-introduce-image').imageUpload('introduce', function(data, obj){
+			const spu_id = $('.detail-page').data('id');
+			obj.button('loading');
+			$.post(URI+'product/detail', {opn: 'addSpuIntroduceImage', spu_id: spu_id, attach_id:data.attach_id}, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+					window.location.reload();
+				} else {
+					obj.button('reset');
+					errorTips(res.message);
+				}
+			});
+		});
+	},
+	initDescShow: function(data) {
+		const obj = $('#dealbox-desc');
+		if (data) {
+			obj.find('.dealbox-title').text('编辑描述文本');
+		} else {
+			data= {
+				item_id: 0,
+				name: '',
+				value: '',
+				sort: 0,
+			};
+			obj.find('.dealbox-title').text('增加描述文本');
+		}
+		for (const i in data) {
+			obj.find('[name="'+i+'"').val(data[i]);
+		}
+		obj.dealboxShow();
 	}
 };

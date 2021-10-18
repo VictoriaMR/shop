@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\admin;
-use app\controller\Base;
+use app\controller\AdminBase;
 
-class Task extends Base
+class Task extends AdminBase
 {
 	const TASKPREFIX ='frame-task:';
 	const LOCKERPREFIX = 'frame-lock:';
