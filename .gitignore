@@ -6,5 +6,4 @@
 /storage
 /.env
 /composer.lock
-/admin/static
-/bag/static
+/template/*/static
