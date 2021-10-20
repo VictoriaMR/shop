@@ -26,23 +26,25 @@ class Category extends AdminBase
 		html()->addJs();
 
 		$list = make('app/service/category/Category')->getListFormat();
-		$cateArr = array_column($list, 'cate_id');
-		$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
-		$cateArr = array_column($cateArr, 'count', 'cate_id');
-		$languageList = make('app/service/Language')->getListCache();
-		$languageList = array_column($languageList, null, 'code');
-		unset($languageList['zh']);
-		$len = count($languageList);
-		//图片
-		$attachArr = array_filter(array_column($list, 'attach_id'));
-		if (!empty($attachArr)) {
-			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-			$attachArr = array_column($attachArr, 'url', 'attach_id');
-		}
-		foreach ($list as $key => $value) {
-			$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
-			$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
-			$list[$key] = $value;
+		if (!empty($list)) {
+			$cateArr = array_column($list, 'cate_id');
+			$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
+			$cateArr = array_column($cateArr, 'count', 'cate_id');
+			$languageList = make('app/service/Language')->getListCache();
+			$languageList = array_column($languageList, null, 'code');
+			unset($languageList['zh']);
+			$len = count($languageList);
+			//图片
+			$attachArr = array_filter(array_column($list, 'attach_id'));
+			if (!empty($attachArr)) {
+				$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+				$attachArr = array_column($attachArr, 'url', 'attach_id');
+			}
+			foreach ($list as $key => $value) {
+				$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
+				$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
+				$list[$key] = $value;
+			}
 		}
 		
 		$this->_init();

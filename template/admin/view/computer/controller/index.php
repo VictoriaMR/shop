@@ -19,7 +19,7 @@
 			</tr>
 			<?php } else {?>
 			<?php foreach ($list as $value) {
-				$sonControllerCount += count($value['son']);
+				$sonControllerCount += count($value['son'] ?? []);
 			?>
 			<tr class="item" data-id="<?php echo $value['con_id'];?>" data-pid="<?php echo $value['parent_id'];?>">
 				<td class="col-md-1"><?php echo $value['con_id'];?></td>
@@ -43,6 +43,7 @@
 					<?php } ?>
 				</td>
 			</tr>
+			<?php if (!empty($value['son'])){?>
 			<?php foreach ($value['son'] as $sv) { ?>
 			<tr class="item" data-id="<?php echo $sv['con_id'];?>" data-pid="<?php echo $sv['parent_id'];?>">
 				<td class="col-md-1"><?php echo $sv['con_id'];?></td>
@@ -63,6 +64,7 @@
 					<button class="btn btn-danger btn-xs ml4 delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
 				</td>
 			</tr>
+			<?php } ?>
 			<?php } ?>
 			<?php } ?>
 			<?php }?>

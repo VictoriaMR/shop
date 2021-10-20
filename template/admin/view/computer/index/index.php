@@ -41,6 +41,7 @@
 					</div>
 					<div class="nav-son-content">
 						<?php foreach ($funcList as $value){?>
+						<?php if (!empty($value['son'])){?>
 						<div class="item" data-for="<?php echo $value['value'];?>">
 							<ul>
 								<?php foreach ($value['son'] as $sv){?>
@@ -52,6 +53,7 @@
 								<?php } ?>
 							</ul>
 						</div>
+						<?php } ?>
 						<?php } ?>
 					</div>
 				</div>

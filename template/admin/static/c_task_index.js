@@ -1,8 +1,11 @@
+$(function(){
+	TASK.init();
+});
 const TASK = {
-	init: function(enable) {
+	init: function() {
 		const _this = this;
 		_this.loading = true;
-		_this.enable = enable;
+		_this.enable = $('#task-page').data('status');
 		_this.initData();
 		clearInterval(_this.interval);
 		_this.interval = setInterval(function(){
@@ -11,6 +14,7 @@ const TASK = {
 				_this.initData();
 			}
 		}, 5000);
+		TASK.click();
 	},
 	initData: function() {
 		const _this = this;
@@ -70,13 +74,13 @@ const TASK = {
 						<button class="btn btn-danger btn-sm btn-task" data-type="shutdown" '+(list[i].boot === 'on' ? '' : 'disabled')+'>停止</button>\
 					</div>\
 				</td>\
-            </tr>';
+			</tr>';
 		}
 		$('table tbody').html(html);
 	},
 	click: function() {
 		const _this = this;
-		$('#task-page').on('click', '.btn-task', function(){
+		$('#task-page').unbind().on('click', '.btn-task', function(){
 			clearInterval(_this.interval);
 			const _thisobj = $(this);
 			const type = $(this).data('type');
@@ -89,7 +93,7 @@ const TASK = {
 				} else {
 					errorTips(res.message);
 				}
-				_this.init();
+				_this.init(_this.enable);
 			});
 		});
 	}
