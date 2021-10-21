@@ -1,0 +1,1045 @@
+/*后台管理人员表*/
+DROP TABLE IF EXISTS `admin_member`;
+CREATE TABLE `admin_member` (
+  `mem_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
+  `nickname` varchar(32) NOT NULL DEFAULT '' COMMENT '昵称',
+  `mobile` varchar(11) NOT NULL DEFAULT '' COMMENT '手机',
+  `email` varchar(32) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `avatar` varchar(60) NOT NULL DEFAULT '' COMMENT '头像',
+  `sex` tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `password` varchar(65) NOT NULL DEFAULT '' COMMENT '密码',
+  `salt` varchar(4) NOT NULL DEFAULT '' COMMENT '随机安全码',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  `login_time` timestamp NULL DEFAULT NULL COMMENT '最后一次登陆时间',
+  PRIMARY KEY (`mem_id`),
+  KEY `IDX_UNI` (`mobile`)
+) ENGINE=InnoDB AUTO_INCREMENT=5000001 DEFAULT CHARSET=utf8mb4;
+
+/*文件表*/
+DROP TABLE IF EXISTS `attachment`;
+CREATE TABLE `attachment` (
+  `attach_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '文件名称md5',
+  `type` varchar(10) NOT NULL DEFAULT '' COMMENT '文件类型',
+  `cate` varchar(10) NOT NULL DEFAULT '' COMMENT '站点',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`attach_id`),
+  UNIQUE KEY `IDX_UNIQUE` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*文件URL映射*/
+DROP TABLE IF EXISTS `attachment_url`;
+CREATE TABLE `attachment_url` (
+  `item_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `attach_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件名ID',
+  `url_md5` char(32) NOT NULL DEFAULT '' COMMENT '链接的md5值',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`url_md5`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*属性名表*/
+DROP TABLE IF EXISTS `attribute`;
+CREATE TABLE `attribute` (
+  `attr_id` int(10) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(120) NOT NULL DEFAULT '',
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`attr_id`),
+  UNIQUE KEY `UNI_NAME` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*属性名多语言*/
+DROP TABLE IF EXISTS `attribute_language`;
+CREATE TABLE `attribute_language` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `attr_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译值',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`attr_id`,`lan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*属性值表*/
+DROP TABLE IF EXISTS `attrvalue`;
+CREATE TABLE `attrvalue` (
+  `attv_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(120) NOT NULL DEFAULT '' COMMENT '属性值名称',
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`attv_id`),
+  UNIQUE KEY `IDX_UNI` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*属性值多语言*/
+DROP TABLE IF EXISTS `attrvalue_language`;
+CREATE TABLE `attrvalue_language` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `attv_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译值',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`attv_id`,`lan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*购物车表*/
+DROP TABLE IF EXISTS `cart`;
+CREATE TABLE `cart` (
+  `cart_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `sku_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SKUID',
+  `quantity` smallint(6) NOT NULL DEFAULT '0' COMMENT '数量',
+  `checked` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否选中',
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT 'UUID',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '记录时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`cart_id`),
+  UNIQUE KEY `IDX_UNI` (`mem_id`,`sku_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*分类表*/
+DROP TABLE IF EXISTS `category`;
+CREATE TABLE `category` (
+  `cate_id` smallint(6) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `parent_id` smallint(6) NOT NULL DEFAULT '0' COMMENT '父ID',
+  `name` varchar(50) NOT NULL DEFAULT '' COMMENT '名称',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '头像',
+  PRIMARY KEY (`cate_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*分类信息*/
+INSERT INTO `category` (`cate_id`,`parent_id`,`name`,`status`,`attach_id`) VALUES (101,0,'女装',0,0),(112,0,'男装',0,0),(116,0,'灯具',0,0),(125,116,'天花板灯',0,0),(126,116,'壁灯',0,0),(127,116,'台灯&落地灯',0,0),(128,116,'吊扇灯&配件',0,0),(129,116,'户外灯',0,0),(130,116,'新型小灯',0,0),(131,116,'商业照明',0,0),(132,116,'灯具配件',0,0),(133,116,'灯泡',0,0),(134,125,'吸顶灯',0,0),(135,125,'枝形吊灯',0,0),(136,125,'吊灯',0,0),(137,125,'轨道灯',0,0),(138,125,'嵌入式灯',0,0),(139,125,'岛灯',0,0),(140,125,'桌球灯',0,0),(141,126,'壁灯',0,0),(142,126,'浴室镜前灯',0,0),(143,126,'图片灯',0,0),(144,126,'橱柜灯',0,0),(145,126,'小夜灯',0,0),(146,126,'阶梯灯',0,0),(147,126,'聚光灯',0,0),(148,127,'台灯',0,0),(149,127,'书桌灯',0,0),(150,127,'地灯',0,0),(151,127,'台灯套装',0,0),(152,127,'灯罩',0,0),(153,128,'吊扇灯',0,0),(156,129,'装饰投影灯',0,0),(157,129,'防洪灯',0,0),(158,129,'地灯',0,0),(159,129,'景观照明',0,0),(160,129,'庭院灯',0,0),(161,129,'柱灯',0,0),(162,129,'绳索灯',0,0),(163,129,'桌面照明',0,0),(164,129,'火把灯',0,0),(165,129,'雨伞灯',0,0),(166,129,'灯具配件',0,0),(167,130,'黑光灯',0,0),(168,130,'夹子书灯',0,0),(169,130,'迪斯科舞灯',0,0),(170,130,'光纤灯',0,0),(171,130,'模型灯',0,0),(172,130,'熔岩灯',0,0),(173,130,'led绳索灯',0,0),(174,130,'霓虹灯',0,0),(175,130,'灯笼纸灯',0,0),(176,130,'纽扣灯',0,0),(177,131,'海湾照明',0,0),(178,131,'紧急照明',0,0),(179,131,'紧急出口照明',0,0),(180,131,'街道路灯',0,0),(181,131,'频闪灯',0,0),(182,132,'天花板底盘装饰',0,0),(183,132,'灯罩补件',0,0),(184,132,'灯饰扣配件',0,0),(185,132,'灯具吊链',0,0),(186,132,'灯具吊杆',0,0),(187,132,'低压转换器',0,0),(188,132,'橱柜吸顶配件',0,0),(189,133,'荧光灯泡',0,0),(190,133,'荧光灯管',0,0),(191,133,'卤素灯泡',0,0),(192,133,'高强度放电灯泡',0,0),(193,133,'白炽灯泡',0,0),(194,133,'氪氙灯泡',0,0),(195,133,'led灯泡',0,0),(196,133,'黑光灯泡',0,0),(197,137,'成套工具',0,0),(198,137,'灯头',0,0),(199,137,'吊灯',0,0),(200,137,'轨道',0,0),(201,137,'配件',0,0),(202,137,'连接器',0,0),(203,138,'外壳',0,0),(204,138,'凹槽',0,0),(205,138,'灯具及装饰套件',0,0),(214,159,'夹板灯',0,0),(215,159,'模型灯',0,0),(216,159,'插地灯',0,0),(217,159,'阶梯灯',0,0),(218,159,'路径灯',0,0),(219,159,'聚光灯',0,0),(220,160,'吸顶灯',0,0),(221,160,'单吊',0,0),(222,160,'壁灯',0,0),(223,163,'灯笼式',0,0),(224,163,'台灯式',0,0),(225,166,'灯油',0,0),(226,166,'低压转换器',0,0),(227,166,'柱灯配件',0,0),(228,112,'外套夹克',0,0),(229,101,'连衣裙',0,0),(230,229,'日常连衣裙',0,0),(231,229,'派对连衣裙',0,0),(232,229,'酒会礼服连衣裙',0,0),(233,229,'正式连衣裙',0,0),(234,229,'职场连衣裙',0,0),(235,229,'婚礼连衣裙',0,0),(236,101,'上衣，t恤&衬衫',0,0),(237,236,'衬衫&排扣衬衫',0,0),(238,236,'紧身连体衣',0,0),(239,236,'polo衫',0,0),(240,236,'吊带背心',0,0),(241,236,'t恤',0,0),(242,236,'长款上衣',0,0),(243,236,'马甲上衣',0,0),(244,101,'毛衣',0,0),(245,244,'开衫',0,0),(246,244,'套头毛衣',0,0),(247,244,'披肩',0,0),(248,244,'马甲针织衫',0,0),(249,101,'卫衣',0,0),(250,101,'牛仔裤',0,0),(251,101,'长裤',0,0),(252,251,'日常长裤',0,0),(253,251,'职场长裤',0,0),(254,251,'晚装长裤',0,0),(255,101,'半身裙',0,0),(256,255,'日常半身裙',0,0),(257,255,'职场半身裙',0,0),(258,255,'晚装半身裙',0,0),(259,101,'短裤',0,0),(260,259,'日常短裤',0,0),(261,259,'牛仔短裤',0,0),(262,101,'打底裤',0,0),(263,101,'运动装',0,0),(264,263,'运动带帽卫衣',0,0),(265,263,'运动套头卫衣',0,0),(266,263,'运动夹克',0,0),(267,263,'运动套装',0,0),(268,263,'运动衬衫&t恤',0,0),(269,263,'运动长裤',0,0),(270,263,'运动打底裤',0,0),(271,263,'运动短裤',0,0),(272,263,'运动半身裙',0,0),(273,263,'运动裤裙',0,0),(274,263,'运动打底类',0,0),(275,263,'运动内衣裤',0,0),(276,263,'运动袜子',0,0),(277,101,'泳装&罩衫',0,0),(278,277,'比基尼',0,0),(279,278,'比基尼上装',0,0),(280,278,'比基尼下装',0,0),(281,278,'比基尼套装',0,0),(282,277,'背心款泳装',0,0),(283,277,'一件式泳装',0,0),(284,277,'罩衫',0,0),(285,277,'沙滩裤',0,0),(286,277,'防晒泳衣',0,0),(287,101,'内衣，睡衣&家居服',0,0),(288,287,'内衣裤',0,0),(289,288,'文胸',0,0),(290,289,'胸贴',0,0),(291,289,'日常文胸',0,0),(292,289,'乳房切除文胸',0,0),(293,289,'聚拢迷你文胸',0,0),(294,289,'运动文胸',0,0),(295,288,'内裤',0,0),(296,295,'丁字裤',0,0),(297,295,'比基尼式内裤',0,0),(298,295,'三角内裤',0,0),(299,295,'平角内裤',0,0),(300,295,'低腰内裤',0,0),(301,288,'情趣内衣',0,0),(302,288,'吊带&背心内衣',0,0),(303,288,'塑身衣',0,0),(304,303,'提臀收腹内裤',0,0),(305,303,'平角塑腿裤',0,0),(306,303,'塑身上装',0,0),(307,303,'束腰带',0,0),(308,303,'塑身连体衣',0,0),(309,303,'塑身裙',0,0),(310,288,'打底内衬',0,0),(311,310,'打底内衬连衣裙',0,0),(312,310,'打底内衬下装',0,0),(313,288,'紧身胸衣',0,0),(314,288,'吊袜带&吊袜腰带',0,0),(315,288,'内衣配件',0,0),(316,315,'乳贴',0,0),(317,315,'胸垫',0,0),(318,315,'肩带',0,0),(319,315,'肩带扣',0,0),(320,287,'睡衣&家居服',0,0),(321,320,'睡衣家居服上装',0,0),(322,320,'睡衣家居服下装',0,0),(323,320,'睡衣家居服套装',0,0),(324,320,'睡袍',0,0),(325,320,'睡裙',0,0),(326,287,'保暖内衣',0,0),(327,326,'保暖内衣上装',0,0),(328,326,'保暖内衣下装',0,0),(329,326,'保暖内衣套装',0,0),(330,101,'连体长裤，连体短裤&背带裤',0,0),(331,330,'连体长裤',0,0),(332,330,'背带裤',0,0),(333,330,'连体短裤',0,0),(334,101,'外套，夹克&马甲',0,0),(335,334,'羽绒服&派克大衣',0,0),(336,334,'羊毛大衣&双排扣大衣',0,0),(337,334,'风衣，雨衣&冲锋衣',0,0),(338,337,'冲锋衣',0,0),(339,337,'雨衣',0,0),(340,337,'风衣',0,0),(341,334,'轻便夹克',0,0),(342,334,'休闲夹克',0,0),(343,334,'牛仔夹克',0,0),(344,334,'皮&仿皮外套夹克',0,0),(345,334,'皮毛&仿皮毛外套夹克',0,0),(346,334,'马甲',0,0),(347,334,'运动类外套夹克',0,0),(348,347,'羊绒外套夹克',0,0),(349,347,'户外风衣冲锋衣',0,0),(350,347,'防风&防雨外套夹克',0,0),(351,101,'西装&西装套装',0,0),(352,351,'西装',0,0),(353,351,'西装套装',0,0),(354,101,'短袜&丝袜',0,0),(355,354,'休闲短袜',0,0),(356,354,'裙装袜&长裤袜',0,0),(357,354,'保暖护腿袜',0,0),(358,354,'连裤袜',0,0),(359,354,'丝袜',0,0),(360,354,'家居保暖袜',0,0),(361,354,'浅口隐形袜',0,0),(362,112,'衬衫上衣',0,0),(363,362,'t恤',0,0),(364,362,'背心',0,0),(365,362,'polo衫',0,0),(366,362,'亨利衫',0,0),(367,362,'排扣衬衫',0,0),(368,362,'正式衬衫',0,0),(369,362,'礼服衬衫',0,0),(370,112,'卫衣',0,0),(371,112,'毛衣',0,0),(372,371,'套头毛衣',0,0),(373,371,'开衫',0,0),(374,371,'polo针织衫',0,0),(375,371,'马甲针织衫',0,0),(376,112,'牛仔裤',0,0),(377,112,'长裤',0,0),(378,377,'正装长裤',0,0),(379,377,'休闲长裤',0,0),(380,112,'短裤',0,0),(381,380,'工装短裤',0,0),(382,380,'牛仔短裤',0,0),(383,380,'无褶短裤',0,0),(384,380,'单褶短裤',0,0),(385,112,'运动装',0,0),(386,385,'运动带帽卫衣',0,0),(387,385,'运动套头卫衣',0,0),(388,385,'运动夹克',0,0),(389,385,'运动t恤衬衫',0,0),(390,385,'运动马甲',0,0),(391,385,'运动长裤',0,0),(392,385,'运动短裤',0,0),(393,385,'运动田径服',0,0),(394,385,'运动打底类',0,0),(395,385,'运动内衣裤',0,0),(396,385,'运动袜子',0,0),(397,385,'运动丁字裤',0,0),(398,112,'泳装',0,0),(399,398,'短款泳裤',0,0),(400,398,'中长款泳裤',0,0),(401,398,'三角泳裤',0,0),(402,398,'水母服',0,0),(403,112,'西装&西装套装',0,0),(404,403,'西装套装',0,0),(405,403,'西装单件',0,0),(406,405,'西装夹克',0,0),(407,405,'西裤',0,0),(408,403,'西装',0,0),(409,403,'礼服西装',0,0),(410,403,'西装马甲',0,0),(411,112,'内衣',0,0),(412,411,'三点式内裤',0,0),(413,411,'拳击紧身内裤',0,0),(414,411,'拳击宽松内裤',0,0),(415,411,'三角内裤',0,0),(416,411,'丁字裤',0,0),(417,411,'塑身衣',0,0),(418,411,'保暖内衣',0,0),(419,418,'保暖内衣上装',0,0),(420,418,'保暖内衣下装',0,0),(421,418,'保暖内衣套装',0,0),(422,411,'平角内裤',0,0),(423,411,'打底衫',0,0),(424,112,'袜子',0,0),(425,424,'休闲袜',0,0),(426,424,'裤装袜',0,0),(427,112,'睡衣&家居服',0,0),(428,427,'睡衣上衣',0,0),(429,427,'睡衣下装',0,0),(430,427,'睡衣套装',0,0),(431,427,'睡袍',0,0),(432,228,'运动类外套夹克',0,0),(433,432,'户外风衣冲锋衣',0,0),(434,432,'运动夹克',0,0),(435,228,'羽绒服',0,0),(436,228,'羊绒外套夹克',0,0),(437,228,'皮&仿皮外套夹克',0,0),(438,228,'轻便夹克',0,0),(439,438,'棉质夹克',0,0),(440,438,'牛仔夹克',0,0),(441,438,'校队棒球服夹克',0,0),(442,438,'冲锋衣',0,0),(443,228,'风衣&雨衣',0,0),(444,228,'马甲',0,0),(445,228,'羊毛外套夹克',0,0),(446,0,'sns热卖品',0,0),(448,446,'sns配件',0,0),(449,0,'窗户装饰',0,0),(450,449,'窗帘',0,0),(451,101,'套装',0,0);
+/*分类多语言*/
+DROP TABLE IF EXISTS `category_language`;
+CREATE TABLE `category_language` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `cate_id` smallint(6) NOT NULL COMMENT '分类ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译值',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`cate_id`,`lan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*后台功能表*/
+DROP TABLE IF EXISTS `controller`;
+CREATE TABLE `controller` (
+  `con_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '父ID',
+  `icon` varchar(32) NOT NULL DEFAULT '' COMMENT '图标',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+  `value` varchar(32) NOT NULL DEFAULT '' COMMENT '值',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`con_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4;
+INSERT INTO `controller` (`con_id`,`parent_id`,`icon`,`name`,`value`,`sort`) VALUES (101,0,'compressed','概览','overview',0),(102,106,'asterisk','功能管理','controller',0),(103,0,'object-align-left','管理人员','management',1),(104,0,'th','产品管理','product',3),(105,0,'piggy-bank','财务管理','finance',2),(106,0,'cog','系统设置','system',4),(107,101,'wrench','系统设备','index/statinfo',0),(108,103,'user','人员列表','member',0),(109,106,'tasks','任务管理','task',0),(110,106,'cloud','服务器信息','systeminfo',0),(111,106,'certificate','站点管理','site',0),(112,105,'yen','货币管理','currency',0),(113,105,'credit-card','支付管理','payment',0),(114,104,'sort-by-attributes','产品分类','category',0),(115,104,'th-large','产品管理','product',0),(116,104,'th-list','属性管理','attribute',0),(117,0,'list-alt','订单管理','order',3),(118,117,'list-alt','订单列表','order',0);
+/*功能图标*/
+DROP TABLE IF EXISTS `controller_icon`;
+CREATE TABLE `controller_icon` (
+  `icon_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '名称',
+  `remark` varchar(32) NOT NULL DEFAULT '' COMMENT '备注',
+  `sort` smallint(5) DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`icon_id`),
+  UNIQUE KEY `IDX_UNI` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4;
+INSERT INTO `controller_icon` (`icon_id`,`name`,`remark`,`sort`) VALUES (101,'asterisk','',0),(102,'plus','',4),(103,'euro','',2),(104,'eur','',3),(105,'minus','',4),(106,'cloud','',5),(107,'envelope','',6),(108,'pencil','',7),(109,'glass','',8),(110,'music','',9),(111,'search','',10),(112,'heart','',11),(113,'star','',12),(114,'star-empty','',13),(115,'user','',14),(116,'film','',15),(117,'th-large','',16),(118,'th','',17),(119,'th-list','',18),(120,'ok','',19),(121,'remove','',20),(122,'zoom-in','',21),(123,'zoom-out','',22),(124,'off','',23),(125,'signal','',24),(126,'cog','',25),(127,'trash','',26),(128,'home','',27),(129,'file','',28),(130,'time','',29),(131,'road','',30),(132,'download-alt','',31),(133,'download','',32),(134,'upload','',33),(135,'inbox','',34),(136,'play-circle','',35),(137,'repeat','',36),(138,'refresh','',37),(139,'list-alt','',38),(140,'lock','',39),(141,'flag','',40),(142,'headphones','',41),(143,'volume-off','',42),(144,'volume-down','',43),(145,'volume-up','',44),(146,'qrcode','',45),(147,'barcode','',46),(148,'tag','',47),(149,'tags','',48),(150,'book','',49),(151,'bookmark','',50),(152,'print','',51),(153,'camera','',52),(154,'font','',53),(155,'bold','',54),(156,'italic','',55),(157,'text-height','',56),(158,'text-width','',57),(159,'align-left','',58),(160,'align-center','',59),(161,'align-right','',60),(162,'align-justify','',61),(163,'list','',62),(164,'indent-left','',63),(165,'indent-right','',64),(166,'facetime-video','',65),(167,'picture','',66),(168,'map-marker','',67),(169,'adjust','',68),(170,'tint','',69),(171,'edit','',70),(172,'share','',71),(173,'check','',72),(174,'move','',73),(175,'step-backward','',74),(176,'fast-backward','',75),(177,'backward','',76),(178,'play','',77),(179,'pause','',78),(180,'stop','',79),(181,'forward','',80),(182,'fast-forward','',81),(183,'step-forward','',82),(184,'eject','',83),(185,'chevron-left','',84),(186,'chevron-right','',85),(187,'plus-sign','',86),(188,'minus-sign','',87),(189,'remove-sign','',88),(190,'ok-sign','',89),(191,'question-sign','',90),(192,'info-sign','',91),(193,'screenshot','',92),(194,'remove-circle','',93),(195,'ok-circle','',94),(196,'ban-circle','',95),(197,'arrow-left','',96),(198,'arrow-right','',97),(199,'arrow-up','',98),(200,'arrow-down','',99),(201,'share-alt','',100),(202,'resize-full','',101),(203,'resize-small','',102),(204,'exclamation-sign','',103),(205,'gift','',104),(206,'leaf','',105),(207,'fire','',106),(208,'eye-open','',107),(209,'eye-close','',108),(210,'warning-sign','',109),(211,'plane','',110),(212,'calendar','',111),(213,'random','',112),(214,'comment','',113),(215,'magnet','',114),(216,'chevron-up','',115),(217,'chevron-down','',116),(218,'retweet','',117),(219,'shopping-cart','',118),(220,'folder-close','',119),(221,'folder-open','',120),(222,'resize-vertical','',121),(223,'resize-horizontal','',122),(224,'hdd','',123),(225,'bullhorn','',124),(226,'bell','',125),(227,'certificate','',126),(228,'thumbs-up','',127),(229,'thumbs-down','',128),(230,'hand-right','',129),(231,'hand-left','',130),(232,'hand-up','',131),(233,'hand-down','',132),(234,'circle-arrow-right','',133),(235,'circle-arrow-left','',134),(236,'circle-arrow-up','',135),(237,'circle-arrow-down','',136),(238,'globe','',137),(239,'wrench','',138),(240,'tasks','',139),(241,'filter','',140),(242,'briefcase','',141),(243,'fullscreen','',142),(244,'dashboard','',143),(245,'paperclip','',144),(246,'heart-empty','',145),(247,'link','',146),(248,'phone','',147),(249,'pushpin','',148),(250,'usd','',149),(251,'gbp','',150),(252,'sort','',151),(253,'sort-by-alphabet','',152),(254,'sort-by-alphabet-alt','',153),(255,'sort-by-order','',154),(256,'sort-by-order-alt','',155),(257,'sort-by-attributes','',156),(258,'sort-by-attributes-alt','',157),(259,'unchecked','',158),(260,'expand','',159),(261,'collapse-down','',160),(262,'collapse-up','',161),(263,'log-in','',162),(264,'flash','',163),(265,'log-out','',164),(266,'new-window','',165),(267,'record','',166),(268,'save','',167),(269,'open','',168),(270,'saved','',169),(271,'import','',170),(272,'export','',171),(273,'send','',172),(274,'floppy-disk','',173),(275,'floppy-saved','',174),(276,'floppy-remove','',175),(277,'floppy-save','',176),(278,'floppy-open','',177),(279,'credit-card','',178),(280,'transfer','',179),(281,'cutlery','',180),(282,'header','',181),(283,'compressed','',182),(284,'earphone','',183),(285,'phone-alt','',184),(286,'tower','',185),(287,'stats','',186),(288,'sd-video','',187),(289,'hd-video','',188),(290,'subtitles','',189),(291,'sound-stereo','',190),(292,'sound-dolby','',191),(293,'sound-5-1','',192),(294,'sound-6-1','',193),(295,'sound-7-1','',194),(296,'copyright-mark','',195),(297,'registration-mark','',196),(298,'cloud-download','',197),(299,'cloud-upload','',198),(300,'tree-conifer','',199),(301,'tree-deciduous','',200),(302,'cd','',201),(303,'save-file','',202),(304,'open-file','',203),(305,'level-up','',204),(306,'copy','',205),(307,'paste','',206),(308,'alert','',207),(309,'equalizer','',208),(310,'king','',209),(311,'queen','',210),(312,'pawn','',211),(313,'bishop','',212),(314,'knight','',213),(315,'baby-formula','',214),(316,'tent','',215),(317,'blackboard','',216),(318,'bed','',217),(319,'apple','',218),(320,'erase','',219),(321,'hourglass','',220),(322,'lamp','',221),(323,'duplicate','',222),(324,'piggy-bank','',223),(325,'scissors','',224),(326,'bitcoin','',225),(327,'btc','',226),(328,'xbt','',227),(329,'yen','',228),(330,'jpy','',229),(331,'ruble','',230),(332,'rub','',231),(333,'scale','',232),(334,'ice-lolly','',233),(335,'ice-lolly-tasted','',234),(336,'education','',235),(337,'option-horizontal','',236),(338,'option-vertical','',237),(339,'menu-hamburger','',238),(340,'modal-window','',239),(341,'oil','',240),(342,'grain','',241),(343,'sunglasses','',242),(344,'text-size','',243),(345,'text-color','',244),(346,'text-background','',245),(347,'object-align-top','',246),(348,'object-align-bottom','',247),(349,'object-align-horizontal','',248),(350,'object-align-left','',249),(351,'object-align-vertical','',250),(352,'object-align-right','',251),(353,'triangle-right','',252),(354,'triangle-left','',253),(355,'triangle-bottom','',254),(356,'triangle-top','',255),(357,'console','',256),(358,'superscript','',257),(359,'subscript','',258),(360,'menu-left','',259),(361,'menu-right','',260),(362,'menu-down','',261),(363,'menu-up','',262);
+
+/*国家表*/
+DROP TABLE IF EXISTS `country`;
+CREATE TABLE `country` (
+  `country_id` smallint(5) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `code2` varchar(2) NOT NULL COMMENT '2字母代码',
+  `code3` varchar(3) NOT NULL COMMENT '3字母代码',
+  `dialing_code` smallint(5) NOT NULL COMMENT '电话区号',
+  `name_cn` varchar(64) NOT NULL COMMENT '内部使用名称',
+  `name` varchar(64) NOT NULL COMMENT '名称',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  PRIMARY KEY (`country_id`),
+  UNIQUE KEY `IDX_UNI` (`code2`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+INSERT INTO `country`(`code2`,`code3`,`dialing_code`,`name_cn`,`name_en`,`sort`,`status`) VALUES 
+('AD','AND',376,'安道尔','Andorra',7,1),
+('AE','ARE',971,'阿拉伯联合酋长国','United Arab Emirates',228,1),
+('AF','AFG',93,'阿富汗','Afghanistan',2,1),
+('AG','ATG',1268,'安提瓜和巴布达','Antigua and Barbuda',10,1),
+('AI','AIA',1264,'安圭拉','Anguilla',9,1),
+('AL','ALB',355,'阿尔巴尼亚','Albania',4,1),
+('AM','ARM',374,'亚美尼亚','Armenia',12,1),
+('AN','ANT',599,'安提瓜和巴布达','Netherlands Antilles',153,1),
+('AO','AGO',244,'安哥拉','Angola',8,1),
+('AR','ARG',54,'阿根廷','Argentina',11,1),
+('AS','ASM',1684,'美属萨摩亚','American Samoa',6,1),
+('AT','AUT',43,'奥地利','Austria',15,1),
+('AU','AUS',61,'澳大利亚','Australia',14,1),
+('AW','ABW',297,'阿鲁巴','Aruba',13,1),
+('AX','ALA',358,'奥兰群岛','Aland Islands',3,1),
+('AZ','AZE',994,'阿塞拜疆','Azerbaijan',16,1),
+('BA','BIH',387,'波黑','Bosnia and Herzegovina',28,1),
+('BB','BRB',1246,'巴巴多斯','Barbados',20,1),
+('BD','BGD',880,'孟加拉国','Bangladesh',19,1),
+('BE','BEL',32,'比利时','Belgium',22,1),
+('BF','BFA',226,'布基纳国','Burkina Faso',35,1),
+('BG','BGR',359,'保加利亚','Bulgaria',34,1),
+('BH','BHR',973,'巴林','Bahrain',18,1),
+('BI','BDI',257,'布隆迪','Burundi',36,1),
+('BJ','BEN',229,'贝宁','Benin',24,1),
+('BM','BMU',1441,'百慕大群岛','Bermuda',25,1),
+('BN','BRN',673,'巴林','Brunei Darussalam',33,1),
+('BO','BOL',591,'玻利维亚','Bolivia',27,1),
+('BR','BRA',55,'巴西','Brazil',30,1),
+('BS','BHS',1242,'巴哈马','Bahamas',17,1),
+('BT','BTN',975,'不丹','Bhutan',26,1),
+('BW','BWA',267,'博茨瓦纳','Botswana',29,1),
+('BY','BLR',375,'白俄罗斯','Belarus',21,1),
+('BZ','BLZ',501,'伯利兹','Belize',23,1),
+('CA','CAN',1,'加拿大','Canada',39,1),
+('CC','CCK',618,'科科斯(基林)群岛','Cocos (Keeling) Islands',47,1),
+('CD','COD',243,'刚果(金)','Congo (Kinshasa)',51,1),
+('CF','CAF',236,'中非','Central African Republic',42,1),
+('CG','COG',242,'刚果','Congo (Brazzaville)',50,1),
+('CH','CHE',41,'瑞士','Switzerland',210,1),
+('CI','CIV',225,'科特迪瓦','Côte d\'Ivoire',54,1),
+('CK','COK',682,'库克群岛','Cook Islands',52,1),
+('CL','CHL',56,'智利','Chile',44,1),
+('CM','CMR',237,'喀麦隆','Cameroon',38,1),
+('CN','CHN',86,'中国','China',45,1),
+('CO','COL',57,'哥伦比亚','Colombia',48,1),
+('CR','CRI',506,'哥斯达黎加','Costa Rica',53,1),
+('CU','CUB',53,'古巴','Cuba',56,1),
+('CV','CPV',238,'佛得角','Cape Verde',40,1),
+('CX','CXR',618,'圣诞岛','Christmas Island',46,1),
+('CY','CYP',357,'塞浦路斯','Cyprus',57,1),
+('CZ','CZE',420,'捷克','Czech Republic',58,1),
+('DE','DEU',49,'德国','Germany',80,1),
+('DJ','DJI',253,'吉布提','Djibouti',60,1),
+('DK','DNK',45,'丹麦','Denmark',59,1),
+('DM','DMA',1767,'多米尼克','Dominica',61,1),
+('DO','DOM',1809,'多米尼加','Dominican Republic',62,1),
+('DZ','DZA',213,'阿尔及利亚','Algeria',5,1),
+('EC','ECU',593,'厄瓜多尔','Ecuador',63,1),
+('EE','EST',372,'爱沙尼亚','Estonia',68,1),
+('EG','EGY',20,'埃及','Egypt',64,1),
+('EH','ESH',212,'西撒哈拉','Western Sahara',238,1),
+('ER','ERI',291,'厄立特里亚','Eritrea',67,1),
+('ES','ESP',34,'西班牙','Spain',203,1),
+('ET','ETH',251,'埃塞俄比亚','Ethiopia',69,1),
+('FI','FIN',358,'芬兰','Finland',73,1),
+('FJ','FJI',679,'斐济','Fiji',72,1),
+('FK','FLK',500,'福克兰群岛（马尔维纳斯群岛）','Falkland Islands (Malvinas)',70,1),
+('FM','FSM',691,'密克罗尼西亚','Micronesia, Federated States of',140,1),
+('FO','FRO',298,'法罗群岛','Faroe Islands',71,1),
+('FR','FRA',33,'法国','France',74,1),
+('GA','GAB',241,'加蓬','Gabon',77,1),
+('GB','GBR',44,'英国','United Kingdom',229,1),
+('GD','GRD',1473,'格林纳达','Grenada',85,1),
+('GE','GEO',995,'格鲁吉亚','Georgia',79,1),
+('GF','GUF',594,'法属圭亚那','French Guiana',75,1),
+('GG','GGY',44,'根西岛','Guernsey',89,1),
+('GH','GHA',233,'加纳','Ghana',81,1),
+('GI','GIB',350,'直布罗陀','Gibraltar',82,1),
+('GL','GRL',299,'格陵兰岛','Greenland',84,1),
+('GM','GMB',220,'冈比亚','Gambia',78,1),
+('GN','GIN',224,'几内亚','Guinea',90,1),
+('GP','GLP',590,'瓜德罗普岛','Guadeloupe',86,1),
+('GQ','GNQ',240,'赤几','Equatorial Guinea',66,1),
+('GR','GRC',30,'希腊','Greece',83,1),
+('GS','SGS',500,'南乔治亚与南三明治群岛','South Georgia and the South Sandwich Islands',201,1),
+('GT','GTM',502,'危地马拉','Guatemala',88,1),
+('GU','GUM',1671,'关岛','Guam',87,1),
+('GW','GNB',245,'几比','Guinea-Bissau',91,1),
+('GY','GUY',592,'圭亚那','Guyana',92,1),
+('HK','HKG',852,'中国香港','Hong Kong, SAR China',96,1),
+('HN','HND',504,'洪都拉斯','Honduras',95,1),
+('HR','HRV',685,'克罗地亚','Croatia',55,1),
+('HT','HTI',509,'海地','Haiti',93,1),
+('HU','HUN',36,'匈牙利','Hungary',97,1),
+('ID','IDN',62,'印尼','Indonesia',100,1),
+('IE','IRL',353,'爱尔兰','Ireland',103,1),
+('IL','ISR',972,'以色列','Israel',105,1),
+('IM','IMN',44,'马恩岛','Isle of Man',104,1),
+('IN','IND',91,'印度','India',99,1),
+('IO','IOT',246,'英属印度洋领土','British Indian Ocean Territory',31,1),
+('IQ','IRQ',964,'伊拉克','Iraq',102,1),
+('IR','IRN',98,'伊朗伊斯兰共和国','Iran, Islamic Republic of',101,1),
+('IS','ISL',354,'冰岛','Iceland',98,1),
+('IT','ITA',39,'意大利','Italy',106,1),
+('JE','JEY',44,'泽西','Jersey',109,1),
+('JM','JAM',1876,'牙买加','Jamaica',107,1),
+('JO','JOR',962,'约旦','Jordan',110,1),
+('JP','JPN',81,'日本','Japan',108,1),
+('KE','KEN',254,'肯尼亚','Kenya',112,1),
+('KG','KGZ',996,'吉尔吉斯斯坦','Kyrgyzstan',117,1),
+('KH','KHM',855,'柬埔寨','Cambodia',37,1),
+('KI','KIR',686,'基里巴斯','Kiribati',113,1),
+('KM','COM',269,'科摩罗','Comoros',49,1),
+('KN','KNA',1869,'圣基茨岛和尼维斯','Saint Kitts and Nevis',182,1),
+('KP','PRK',850,'朝鲜','Korea, Democratic People\'s Republic of',114,1),
+('KR','KOR',82,'韩国','Korea, Republic of',115,1),
+('KW','KWT',965,'科威特','Kuwait',116,1),
+('KY','CYM',1345,'开曼群岛','Cayman Islands',41,1),
+('KZ','KAZ',76,'哈萨克斯坦','Kazakhstan',111,1),
+('LA','LAO',856,'老挝','Laos (Lao PDR)',1,1),
+('LB','LBN',961,'黎巴嫩','Lebanon',119,1),
+('LC','LCA',1758,'圣卢西亚','Saint Lucia',183,1),
+('LI','LIE',423,'列支敦士登','Liechtenstein',123,1),
+('LK','LKA',94,'斯里兰卡','Sri Lanka',204,1),
+('LR','LBR',231,'利比里亚','Liberia',121,1),
+('LS','LSO',266,'莱索托','Lesotho',120,1),
+('LT','LTU',370,'立陶宛','Lithuania',124,1),
+('LU','LUX',352,'卢森堡','Luxembourg',125,1),
+('LV','LVA',371,'拉脱维亚','Latvia',118,1),
+('LY','LBY',218,'利比亚','Libya',122,1),
+('MA','MAR',212,'摩洛哥','Morocco',146,1),
+('MC','MCO',377,'摩纳哥','Monaco',142,1),
+('MD','MDA',373,'摩尔多瓦','Moldova',141,1),
+('ME','MNE',382,'黑山','Montenegro',144,1),
+('MF','MAF',590,'法属圣马丁','Saint-Martin (French part)',186,1),
+('MG','MDG',261,'马达加斯加','Madagascar',128,1),
+('MH','MHL',692,'马绍尔群岛','Marshall Islands',134,1),
+('MK','MKD',389,'马其顿','Macedonia, Republic of',127,1),
+('ML','MLI',223,'马里','Mali',132,1),
+('MM','MMR',95,'缅甸','Myanmar',148,1),
+('MN','MNG',976,'蒙古','Mongolia',143,1),
+('MO','MAC',853,'中国澳门','Macao, SAR China',126,1),
+('MP','MNP',1670,'北马里亚纳群岛','Northern Mariana Islands',161,1),
+('MQ','MTQ',596,'马提尼克','Martinique',135,1),
+('MR','MRT',222,'毛里塔尼亚','Mauritania',136,1),
+('MS','MSR',1664,'蒙特塞拉特岛','Montserrat',145,1),
+('MT','MLT',356,'马耳他','Malta',133,1),
+('MU','MUS',230,'毛里求斯','Mauritius',137,1),
+('MV','MDV',960,'马尔代夫','Maldives',131,1),
+('MW','MWI',265,'马拉维','Malawi',129,1),
+('MX','MEX',52,'墨西哥','Mexico',139,1),
+('MY','MYS',60,'马来西亚','Malaysia',130,1),
+('MZ','MOZ',258,'莫桑比克','Mozambique',147,1),
+('NA','NAM',264,'纳米比亚','Namibia',149,1),
+('NC','NCL',687,'新喀里多尼亚','New Caledonia',154,1),
+('NE','NER',227,'尼日尔','Niger',157,1),
+('NF','NFK',672,'诺福克岛','Norfolk Island',160,1),
+('NG','NGA',234,'尼日利亚','Nigeria',158,1),
+('NI','NIC',505,'尼加拉瓜','Nicaragua',156,1),
+('NL','NLD',31,'荷兰','Netherlands',152,1),
+('NO','NOR',47,'挪威','Norway',162,1),
+('NP','NPL',977,'尼泊尔','Nepal',151,1),
+('NR','NRU',674,'瑙鲁','Nauru',150,1),
+('NU','NIU',683,'纽埃','Niue',159,1),
+('NZ','NZL',64,'新西兰','New Zealand',155,1),
+('OM','OMN',968,'阿曼','Oman',163,1),
+('PA','PAN',507,'巴拿马','Panama',167,1),
+('PE','PER',51,'秘鲁','Peru',170,1),
+('PF','PYF',689,'法属波利尼西亚','French Polynesia',76,1),
+('PG','PNG',675,'巴新','Papua New Guinea',168,1),
+('PH','PHL',63,'菲律宾','Philippines',171,1),
+('PK','PAK',92,'巴基斯坦','Pakistan',164,1),
+('PL','POL',48,'波兰','Poland',173,1),
+('PM','SPM',508,'圣圣皮埃尔和密克隆','Saint Pierre and Miquelon',184,1),
+('PN','PCN',870,'皮特凯恩','Pitcairn',172,1),
+('PR','PRI',1787,'波多黎各','Puerto Rico',175,1),
+('PS','PSE',970,'巴勒斯坦领土','Palestinian Territory',166,1),
+('PT','PRT',351,'葡萄牙','Portugal',174,1),
+('PW','PLW',680,'帕劳','Palau',165,1),
+('PY','PRY',595,'巴拉圭','Paraguay',169,1),
+('QA','QAT',974,'卡塔尔','Qatar',176,1),
+('RE','REU',262,'留尼汪岛','Réunion',177,1),
+('RO','ROU',40,'罗马尼亚','Romania',178,1),
+('RS','SRB',381,'塞尔维亚','Serbia',192,1),
+('RU','RUS',7,'俄罗斯','Russian Federation',179,1),
+('RW','RWA',250,'卢旺达','Rwanda',180,1),
+('SA','SAU',966,'沙特阿拉伯','Saudi Arabia',190,1),
+('SB','SLB',677,'所罗门群岛','Solomon Islands',198,1),
+('SC','SYC',248,'塞舌尔','Seychelles',193,1),
+('SD','SDN',249,'苏丹','Sudan',205,1),
+('SE','SWE',46,'瑞典','Sweden',209,1),
+('SG','SGP',65,'新加坡','Singapore',195,1),
+('SH','SHN',290,'圣海伦娜','Saint Helena',181,1),
+('SI','SVN',386,'斯洛文尼亚','Slovenia',197,1),
+('SJ','SJM',47,'斯瓦尔巴群岛和扬马延岛','Svalbard and Jan Mayen Islands',207,1),
+('SK','SVK',421,'斯洛伐克','Slovakia',196,1),
+('SL','SLE',232,'塞拉利昂','Sierra Leone',194,1),
+('SM','SMR',378,'圣马力诺','San Marino',188,1),
+('SN','SEN',221,'塞内加尔','Senegal',191,1),
+('SO','SOM',252,'索马里','Somalia',199,1),
+('SR','SUR',597,'苏里南','Suriname',206,1),
+('SS','SSD',249,'南苏丹','South Sudan',202,1),
+('ST','STP',239,'圣多美和普林西比','Sao Tome and Principe',189,1),
+('SV','SLV',503,'萨尔瓦多','El Salvador',65,1),
+('SY','SYR',963,'叙利亚','Syrian Arab Republic(Syria)',211,1),
+('SZ','SWZ',268,'斯威士兰','Swaziland',208,1),
+('TC','TCA',1649,'特克斯和凯科斯群岛','Turks and Caicos Islands',224,1),
+('TD','TCD',235,'乍得','Chad',43,1),
+('TG','TGO',228,'多哥','Togo',217,1),
+('TH','THA',66,'泰国','Thailand',215,1),
+('TJ','TJK',992,'塔吉克斯坦','Tajikistan',213,1),
+('TK','TKL',690,'托克劳群岛','Tokelau',218,1),
+('TL','TLS',670,'东帝汶','Timor-Leste',216,1),
+('TM','TKM',993,'土库曼斯坦','Turkmenistan',223,1),
+('TN','TUN',216,'突尼斯','Tunisia',221,1),
+('TO','TON',676,'汤加','Tonga',219,1),
+('TR','TUR',90,'土耳其','Turkey',222,1),
+('TT','TTO',1868,'特立尼达和多巴哥','Trinidad and Tobago',220,1),
+('TV','TUV',688,'图瓦卢','Tuvalu',225,1),
+('TW','TWN',886,'中国台湾','Taiwan, China',212,1),
+('TZ','TZA',255,'坦桑尼亚','Tanzania, United Republic of',214,1),
+('UA','UKR',380,'乌克兰','Ukraine',227,1),
+('UG','UGA',256,'乌干达','Uganda',226,1),
+('US','USA',1,'美国','United States',230,1),
+('UY','URY',598,'乌拉圭','Uruguay',231,1),
+('UZ','UZB',998,'乌兹别克斯坦','Uzbekistan',232,1),
+('VA','VAT',379,'梵蒂冈','Holy See (Vatican City State)',94,1),
+('VC','VCT',1784,'圣文森特和格林纳丁斯','Saint Vincent and Grenadines',185,1),
+('VE','VEN',58,'委内瑞拉','Venezuela',234,1),
+('VG','VGB',1284,'英属维尔京群岛','British Virgin Islands',32,1),
+('VI','VIR',1340,'美属维尔京群岛','Virgin Islands, US',236,1),
+('VN','VNM',84,'越南','Viet Nam',235,1),
+('VU','VUT',678,'瓦努阿图','Vanuatu',233,1),
+('WF','WLF',681,'沃利斯和富图纳群岛','Wallis and Futuna Islands',237,1),
+('WS','WSM',685,'萨摩亚','Samoa',187,1),
+('YE','YEM',967,'也门','Yemen',239,1),
+('YT','MYT',262,'马约特岛','Mayotte',138,1),
+('ZA','ZAF',27,'南非','South Africa',200,1),
+('ZM','ZMB',260,'赞比亚','Zambia',240,1),
+('ZW','ZWE',263,'津巴布韦','Zimbabwe',241,1);
+/*国家地区*/
+DROP TABLE IF EXISTS `country_zone`;
+CREATE TABLE `country_zone` (
+  `zone_id` int(11) NOT NULL AUTO_INCREMENT,
+  `zone_code` varchar(4) NOT NULL DEFAULT '' COMMENT '地区代号',
+  `country_code2` varchar(2) NOT NULL DEFAULT '' COMMENT '国家代号',
+  `name_cn` varchar(64) NOT NULL DEFAULT '' COMMENT '内部使用名称',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`zone_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+insert  into `zone`(`zone_id`,`zone_code`,`country_code2`,`name_cn`,`name_en`,`sort`) values 
+(1,'ACT','AU','澳大利亚首都领地','Australian Capital Territory',1),
+(2,'NSW','AU','新南威尔士州','New South Wales',2),
+(3,'NT','AU','北领地','Northern Territory',3),
+(4,'QLD','AU','昆士兰州','Queensland',4),
+(5,'SA','AU','南澳大利亚州','South Australia',5),
+(6,'TAS','AU','塔斯马尼亚','Tasmania',6),
+(7,'VIC','AU','维多利亚州','Victoria',7),
+(8,'WA','AU','西澳大利亚州','Western Australia',8),
+(9,'AB','CA','阿尔伯塔省','Alberta',1),
+(10,'BC','CA','不列颠哥伦比亚省','British Columbia',2),
+(11,'MB','CA','马尼托巴省','Manitoba',3),
+(12,'NB','CA','新不伦瑞克省','New Brunswick',4),
+(13,'NL','CA','纽芬兰与拉布拉多省','Newfoundland and Labrador',5),
+(14,'NS','CA','新斯科舍省','Nova Scotia',6),
+(15,'NT','CA','西北地区','Northwest Territories',7),
+(16,'NU','CA','努纳武特地区','Nunavut',8),
+(17,'ON','CA','安大略省','Ontario',9),
+(18,'PE','CA','爱德华王子岛省','Prince Edward Island',10),
+(19,'QC','CA','魁北克省','Quebec',11),
+(20,'SK','CA','萨斯喀彻温省','Saskatchewan',12),
+(21,'YT','CA','育空地区','Yukon',13),
+(22,'BB','DE','勃兰登堡','Brandenburg',1),
+(23,'BE','DE','柏林','Berlin',2),
+(24,'BW','DE','巴登-符腾堡','Baden-Wrttemberg',3),
+(25,'BY','DE','拜仁','Bayern',4),
+(26,'HB','DE','不莱梅','Bremen',5),
+(27,'HE','DE','黑森','Hessen',6),
+(28,'HH','DE','汉堡','Hamburg',7),
+(29,'MV','DE','梅克伦堡-前波美尼亚','Mecklenburg-Vorpommern',8),
+(30,'NI','DE','下萨克森','Niedersachsen',9),
+(31,'NRW','DE','北莱茵-威斯特法伦','Nordrhein-Westfalen',10),
+(32,'RP','DE','莱茵兰-普法尔茨','Rheinland-Pfalz',11),
+(33,'SE','DE','萨克森','Sachsen',12),
+(34,'SH','DE','石勒苏益格-荷尔斯泰因','Schleswig-Holstein',13),
+(35,'SL','DE','萨尔','Saarland',14),
+(36,'ST','DE','萨克森-安哈尔特','Sachsen-Anhalt',15),
+(37,'TH','DE','图林根','Thuringen',16),
+(38,'AA','US','美国军事基地','Armed Forces Americas',1),
+(39,'AC','US','加拿大军事基地','Armed Forces Canada',2),
+(40,'AE','US','欧洲军事基地','Armed Forces Europe',3),
+(41,'AF','US','非洲军事基地','Armed Forces Africa',4),
+(42,'AK','US','阿拉斯加州','Alaska',5),
+(43,'AL','US','阿拉巴马州','Alabama',6),
+(44,'AM','US','中东军事基地','Armed Forces Middle East',7),
+(45,'AP','US','太平洋军事基地','Armed Forces Pacific',8),
+(46,'AR','US','阿肯色州','Arkansas',9),
+(47,'AZ','US','亚利桑那州','Arizona',10),
+(48,'CA','US','加利福尼亚州','California',11),
+(49,'CO','US','科罗拉多州','Colorado',12),
+(50,'CT','US','康涅狄格州','Connecticut',13),
+(51,'DC','US','华盛顿哥伦比亚特区','District of Columbia',14),
+(52,'DE','US','特拉华州','Delaware',15),
+(53,'FL','US','佛罗里达州','Florida',16),
+(54,'GA','US','乔治亚州','Georgia',17),
+(55,'HI','US','夏威夷州','Hawaii',18),
+(56,'IA','US','爱荷华州','Iowa',19),
+(57,'ID','US','爱达荷州','Idaho',20),
+(58,'IL','US','伊利诺斯州','Illinois',21),
+(59,'IN','US','印第安纳州','Indiana',22),
+(60,'KS','US','堪萨斯州','Kansas',23),
+(61,'KY','US','肯塔基州','Kentucky',24),
+(62,'LA','US','路易斯安那州','Louisiana',25),
+(63,'MA','US','马萨诸塞州 (麻省、麻州)','Massachusetts',26),
+(64,'MD','US','马里兰州','Maryland',27),
+(65,'ME','US','缅因州','Maine',28),
+(66,'MI','US','密歇根州','Michigan',29),
+(67,'MN','US','明尼苏达州','Minnesota',30),
+(68,'MO','US','密苏里州','Missouri',31),
+(69,'MS','US','密西西比州','Mississippi',32),
+(70,'MT','US','蒙大拿州','Montana',33),
+(71,'NC','US','北卡罗来纳州','North Carolina',34),
+(72,'ND','US','北达科他州','North Dakota',35),
+(73,'NE','US','内布拉斯加州','Nebraska',36),
+(74,'NH','US','新罕布什尔州','New hampshire',37),
+(75,'NJ','US','新泽西州','New jersey',38),
+(76,'NM','US','新墨西哥州','New mexico',39),
+(77,'NV','US','内华达州','Nevada',40),
+(78,'NY','US','纽约州','New York',41),
+(79,'OH','US','俄亥俄州','Ohio',42),
+(80,'OK','US','俄克拉荷马州','Oklahoma',43),
+(81,'OR','US','俄勒冈州','Oregon',44),
+(82,'PA','US','宾夕法尼亚州','Pennsylvania',45),
+(83,'RI','US','罗得岛州','Rhode island',46),
+(84,'SC','US','南卡罗来纳州','South carolina',47),
+(85,'SD','US','南达科他州','South dakota',48),
+(86,'TN','US','田纳西州','Tennessee',49),
+(87,'TX','US','得克萨斯州','Texas',50),
+(88,'UT','US','犹他州','Utah',51),
+(89,'VA','US','弗吉尼亚州','Virginia',52),
+(90,'VT','US','佛蒙特州','Vermont',53),
+(91,'WA','US','华盛顿州','Washington',54),
+(92,'WI','US','威斯康辛州','Wisconsin',55),
+(93,'WV','US','西弗吉尼亚州','West Virginia',56),
+(94,'WY','US','怀俄明州','Wyoming',57);
+
+/*货币表*/
+DROP TABLE IF EXISTS `currency`;
+CREATE TABLE `currency` (
+  `currency_id` tinyint(5) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `code` varchar(3) NOT NULL COMMENT '货币符号',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '货币名称',
+  `symbol` varchar(4) NOT NULL DEFAULT '' COMMENT '符号',
+  `rate` decimal(10,6) NOT NULL DEFAULT '0.000000' COMMENT '汇率',
+  PRIMARY KEY (`currency_id`),
+  UNIQUE KEY `IDX_UNI` (`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+INSERT INTO `currency`(`code`,`name`,`symbol`,`rate`) VALUES 
+('AUD','澳币','A$',0.228000),
+('CAD','加元','C$',0.215000),
+('CNY','人民币','¥',1.000000),
+('EUR','欧元','€',0.151080),
+('GBP','英镑','£',0.132480),
+('HKD','港币','HK$',1.220600),
+('JPY','日元','¥',16.958000),
+('MXN','墨西哥元','M$',3.157520),
+('SGD','新加坡元','S$',0.228625),
+('USD','美元','$',0.174240);
+
+/*语言表*/
+DROP TABLE IF EXISTS `language`;
+CREATE TABLE `language` (
+  `language_id` tinyint(5) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `code` varchar(4) NOT NULL DEFAULT '' COMMENT '主键码',
+  `tr_code` varchar(4) NOT NULL DEFAULT '' COMMENT '翻译码',
+  `name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
+  `name_cn` varchar(20) NOT NULL DEFAULT '' COMMENT '内部使用名称',
+  PRIMARY KEY (`code`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+INSERT INTO `language`(`code`,`tr_code`,`name`,`name_cn`) VALUES 
+('de','de','Deutsch','德语'),
+('en','en','English','英语'),
+('es','spa','Espanol','西班牙语'),
+('fr','fra','Français','法语'),
+('jp','jp','日本語','日本语'),
+('zht','cht','中文繁體','中文繁体');
+
+/*描述文本表*/
+DROP TABLE IF EXISTS `description`;
+CREATE TABLE `description` (
+  `desc_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT '描述值',
+  `status` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`desc_id`),
+  UNIQUE KEY `IDX_UNI` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*描述文本多语言*/
+DROP TABLE IF EXISTS `description_language`;
+CREATE TABLE `description_language` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `desc_id` int(11) NOT NULL DEFAULT '0' COMMENT '描述ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译文本',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`desc_id`,`lan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*邮件表*/
+DROP TABLE IF EXISTS `email`;
+CREATE TABLE `email` (
+  `email_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `account_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'email账户ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '接收人ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `type` tinyint(4) NOT NULL DEFAULT '0' COMMENT '邮件类型',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '发送状态',
+  `content` varchar(32) NOT NULL DEFAULT '' COMMENT '发送内容',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '记录时间',
+  `send_time` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`email_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*邮件账户*/
+DROP TABLE IF EXISTS `email_account`;
+CREATE TABLE `email_account` (
+  `account_id` tinyint(1) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(32) NOT NULL DEFAULT '' COMMENT '发件人签名',
+  `address` varchar(64) NOT NULL DEFAULT '' COMMENT '邮件地址,全部小写',
+  `smtp` varchar(64) NOT NULL DEFAULT '' COMMENT '格式:domain:port',
+  `smtp_ssl` tinyint(4) NOT NULL DEFAULT '0' COMMENT '是否启用ssl,0停用,1启用',
+  `email_user` varchar(32) NOT NULL DEFAULT '' COMMENT '邮箱登录用户名',
+  `password` varchar(64) NOT NULL DEFAULT '' COMMENT '邮箱登录密码',
+  `status` tinyint(4) NOT NULL DEFAULT '0' COMMENT '状态:0停用,1启用',
+  `remark` varchar(125) NOT NULL DEFAULT '' COMMENT '备注说明',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`account_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*站点邮件使用*/
+DROP TABLE IF EXISTS `email_account_used`;
+CREATE TABLE `email_account_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `account_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '账户ID',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '记录时间',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`account_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*前端用户表*/
+DROP TABLE IF EXISTS `member`;
+CREATE TABLE `member` (
+  `mem_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `first_name` varchar(32) NOT NULL DEFAULT '' COMMENT '姓',
+  `last_name` varchar(32) NOT NULL DEFAULT '' COMMENT '名',
+  `mobile` varchar(20) NOT NULL DEFAULT '' COMMENT '手机',
+  `email` varchar(32) NOT NULL DEFAULT '' COMMENT '邮箱',
+  `avatar` varchar(60) NOT NULL DEFAULT '' COMMENT '头像',
+  `sex` tinyint(1) NOT NULL DEFAULT '0' COMMENT '性别',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `verify` tinyint(1) NOT NULL DEFAULT '0' COMMENT '认证',
+  `password` varchar(65) NOT NULL DEFAULT '' COMMENT '密码',
+  `salt` varchar(4) NOT NULL DEFAULT '' COMMENT '随机安全码',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  `login_time` timestamp NULL DEFAULT NULL COMMENT '登陆时间',
+  PRIMARY KEY (`mem_id`),
+  KEY `IDX_UNI` (`email`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb4;
+/*用户地址*/
+DROP TABLE IF EXISTS `member_address`;
+CREATE TABLE `member_address` (
+  `address_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int(11) NOT NULL COMMENT '用户ID',
+  `first_name` varchar(32) NOT NULL COMMENT '姓',
+  `last_name` varchar(32) NOT NULL COMMENT '名',
+  `country_code2` varchar(2) NOT NULL COMMENT '国家2子代码',
+  `country` varchar(64) NOT NULL DEFAULT '' COMMENT '国家',
+  `zone_id` int(11) NOT NULL DEFAULT '0' COMMENT '省份或者州ID',
+  `state` varchar(32) NOT NULL COMMENT '省份，州',
+  `city` varchar(32) NOT NULL COMMENT '城市',
+  `address1` varchar(64) NOT NULL COMMENT '地址1',
+  `address2` varchar(64) NOT NULL DEFAULT '' COMMENT '地址2，可选',
+  `postcode` varchar(10) NOT NULL COMMENT '邮编',
+  `phone` varchar(20) NOT NULL COMMENT '电话',
+  `tax_number` varchar(32) NOT NULL DEFAULT '' COMMENT '税号',
+  `is_default` tinyint(1) NOT NULL DEFAULT '0' COMMENT '默认地址',
+  `is_bill` tinyint(1) NOT NULL DEFAULT '0' COMMENT '账单地址',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`address_id`),
+  KEY `IDX_MEM` (`mem_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*用户收藏*/
+DROP TABLE IF EXISTS `member_collect`;
+CREATE TABLE `member_collect` (
+  `coll_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
+  `add_time` timestamp NOT NULL DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`coll_id`),
+  UNIQUE KEY `IDX_UNI` (`mem_id`,`spu_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+/*浏览历史*/
+DROP TABLE IF EXISTS `member_history`;
+CREATE TABLE `member_history` (
+  `his_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int(11) NOT NULL COMMENT '用户ID',
+  `spu_id` int(11) NOT NULL COMMENT 'SPUID',
+  `add_date` date NOT NULL COMMENT '添加日期',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`his_id`),
+  UNIQUE KEY `IDX_UNI` (`mem_id`,`spu_id`,`add_date`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*用户uuid映射表*/
+DROP TABLE IF EXISTS `member_uuid`;
+CREATE TABLE `member_uuid` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT 'uuid',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`uuid`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*信息表*/
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message` (
+  `message_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `group_id` int(11) NOT NULL DEFAULT '0' COMMENT '聊天组ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT 'uuid',
+  `lan_id` tinyint(4) NOT NULL DEFAULT '0' COMMENT '语言ID',
+  `content` varchar(255) NOT NULL DEFAULT '' COMMENT '消息实体',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`message_id`),
+  KEY `IDX_UNI` (`group_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*消息人*/
+DROP TABLE IF EXISTS `message_member`;
+CREATE TABLE `message_member` (
+  `item_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `group_id` int(11) NOT NULL DEFAULT '0' COMMENT '聊天组ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `uuid` varchar(32) NOT NULL DEFAULT '' COMMENT 'uuid',
+  `unread` int(11) NOT NULL DEFAULT '0' COMMENT '未读数量',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`group_id`,`mem_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*订单表*/
+DROP TABLE IF EXISTS `order`;
+CREATE TABLE `order` (
+  `order_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '订单状态',
+  `coupon_id` int(11) NOT NULL DEFAULT '0' COMMENT '优惠券使用ID',
+  `payment_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '支付方式ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '下单语言',
+  `is_mobile` tinyint(1) NOT NULL DEFAULT '0' COMMENT '下单设备',
+  `currency` varchar(3) NOT NULL DEFAULT '' COMMENT '下单货币',
+  `insurance_free` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '保险费用',
+  `coupon_free` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '优惠券使用折扣',
+  `shipping_fee` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '运费',
+  `product_total` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '商品总价',
+  `order_total` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '订单总价',
+  `pay_time` timestamp NULL DEFAULT NULL COMMENT '支付时间',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '下单时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  `is_review` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否评论',
+  `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',
+  PRIMARY KEY (`order_id`),
+  KEY `IDX_MEM` (`mem_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb4;
+/*订单地址*/
+DROP TABLE IF EXISTS `order_address`;
+CREATE TABLE `order_address` (
+  `order_address_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单ID',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0递送地址 1账单地址',
+  `first_name` varchar(32) NOT NULL DEFAULT '' COMMENT '姓',
+  `last_name` varchar(32) NOT NULL DEFAULT '' COMMENT '名',
+  `country_code2` varchar(2) NOT NULL DEFAULT '' COMMENT '国家二字码',
+  `zone_id` int(11) NOT NULL DEFAULT '0' COMMENT '省洲ID',
+  `state` varchar(32) NOT NULL DEFAULT '' COMMENT '省洲名称',
+  `city` varchar(32) NOT NULL DEFAULT '' COMMENT '城市',
+  `address1` varchar(64) NOT NULL DEFAULT '' COMMENT '地址1',
+  `address2` varchar(64) NOT NULL DEFAULT '' COMMENT '地址2',
+  `phone` varchar(20) NOT NULL DEFAULT '' COMMENT '电话',
+  `postcode` varchar(10) NOT NULL DEFAULT '' COMMENT '邮编',
+  `tax_number` varchar(32) NOT NULL DEFAULT '' COMMENT '税号',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`order_address_id`),
+  UNIQUE KEY `IDX_UNI` (`order_id`,`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*订单产品*/
+DROP TABLE IF EXISTS `order_product`;
+CREATE TABLE `order_product` (
+  `order_product_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单ID',
+  `sku_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SKUID',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SKU图片',
+  `name` varchar(250) NOT NULL DEFAULT '' COMMENT '产品名称',
+  `quantity` smallint(5) NOT NULL DEFAULT '0' COMMENT '数量',
+  `price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '产品成交价',
+  `original_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '产品原价',
+  PRIMARY KEY (`order_product_id`),
+  KEY `IDX_ID` (`order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*订单产品属性*/
+DROP TABLE IF EXISTS `order_product_attribute`;
+CREATE TABLE `order_product_attribute` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `order_product_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单产品ID',
+  `attr_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性id',
+  `attr_name` varchar(120) NOT NULL DEFAULT '' COMMENT '属性名称',
+  `attv_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值id',
+  `attv_name` varchar(120) NOT NULL DEFAULT '0' COMMENT '属性值名称',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '图片ID',
+  PRIMARY KEY (`item_id`),
+  KEY `IDX_ID` (`order_product_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*订单状态变更历史*/
+DROP TABLE IF EXISTS `order_status_history`;
+CREATE TABLE `order_status_history` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `order_id` int(11) NOT NULL DEFAULT '0' COMMENT '订单ID',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态ID',
+  `info` varchar(120) NOT NULL DEFAULT '' COMMENT '备注信息',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`item_id`),
+  KEY `IDX_ID` (`order_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*支付信息表*/
+DROP TABLE IF EXISTS `payment`;
+CREATE TABLE `payment` (
+  `payment_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `is_sandbox` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否沙盒',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+  `app_key` varchar(150) NOT NULL DEFAULT '' COMMENT '公钥',
+  `secret_key` varchar(150) NOT NULL DEFAULT '' COMMENT '私钥',
+  `webhook_key` varchar(150) NOT NULL DEFAULT '' COMMENT '通知密钥',
+  `remark` varchar(64) NOT NULL DEFAULT '' COMMENT '备注',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`payment_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*支付使用*/
+DROP TABLE IF EXISTS `payment_used`;
+CREATE TABLE `payment_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '支付类型',
+  `payment_id` int(11) NOT NULL DEFAULT '0' COMMENT '支付账户ID',
+  `sort` tinyint(1) NOT NULL DEFAULT '0' COMMENT '排序',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '增加时间',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*SKU使用属性*/
+DROP TABLE IF EXISTS `product_attribute_used`;
+CREATE TABLE `product_attribute_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `sku_id` bigint(20) NOT NULL DEFAULT '0' COMMENT 'skuID',
+  `attr_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性名ID',
+  `attv_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值ID',
+  `attach_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '图片ID',
+  `sort` smallint(6) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`sku_id`,`attr_id`,`attv_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*SPU描述文本使用*/
+DROP TABLE IF EXISTS `product_description_used`;
+CREATE TABLE `product_description_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
+  `name_id` int(11) NOT NULL DEFAULT '0' COMMENT '描述名ID',
+  `value_id` int(11) NOT NULL DEFAULT '0' COMMENT '描述值ID',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IND_UNI` (`spu_id`,`name_id`,`value_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*SPU描述图片使用*/
+DROP TABLE IF EXISTS `product_introduce_used`;
+CREATE TABLE `product_introduce_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '图片ID',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`spu_id`,`attach_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*SPU标题多语言*/
+DROP TABLE IF EXISTS `product_language`;
+CREATE TABLE `product_language` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`spu_id`,`lan_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*SKU表*/
+DROP TABLE IF EXISTS `product_sku`;
+CREATE TABLE `product_sku` (
+  `sku_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `spu_id` int(11) NOT NULL COMMENT 'SPUID',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '主图ID',
+  `stock` int(11) NOT NULL DEFAULT '0' COMMENT '库存',
+  `price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '价格',
+  `original_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '原价',
+  `sale_total` mediumint(9) NOT NULL DEFAULT '0' COMMENT '销量',
+  `volume` varchar(20) NOT NULL DEFAULT '' COMMENT '体积:长,宽,高cm',
+  `weight` smallint(5) NOT NULL DEFAULT '0' COMMENT '重量g',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加入时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`sku_id`),
+  KEY `IDX_SPU` (`spu_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+/*SKU其他信息*/
+DROP TABLE IF EXISTS `product_sku_data`;
+CREATE TABLE `product_sku_data` (
+  `sku_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'SKUID',
+  `item_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '源SKUID',
+  `cost_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '成本价格',
+  PRIMARY KEY (`sku_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+/*SPU表*/
+DROP TABLE IF EXISTS `product_spu`;
+CREATE TABLE `product_spu` (
+  `spu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `cate_id` smallint(5) NOT NULL DEFAULT '0' COMMENT '分类ID',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `rank` mediumint(9) NOT NULL DEFAULT '0' COMMENT '综合排名',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '主图ID',
+  `min_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '最小价格',
+  `max_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '最大价格',
+  `original_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '原价',
+  `sale_total` mediumint(9) NOT NULL DEFAULT '0' COMMENT '销量总数',
+  `visit_total` int(11) NOT NULL DEFAULT '0' COMMENT '点击统计',
+  `free_ship` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否免运费',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`spu_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+/*SPU其他信息*/
+DROP TABLE IF EXISTS `product_spu_data`;
+CREATE TABLE `product_spu_data` (
+  `spu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'spuID',
+  `supplier` varchar(10) NOT NULL DEFAULT '' COMMENT '供应商',
+  `item_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '源产品ID',
+  `item_url` varchar(200) NOT NULL DEFAULT '' COMMENT '源产品URL',
+  `shop_id` int(11) NOT NULL DEFAULT '0' COMMENT '店铺ID',
+  `check_result` tinyint(1) NOT NULL DEFAULT '0' COMMENT '检查状态',
+  `check_time` timestamp NULL DEFAULT NULL COMMENT '检查时间',
+  PRIMARY KEY (`spu_id`),
+  UNIQUE KEY `UNI_ID` (`supplier`,`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+/*SPU图片*/
+DROP TABLE IF EXISTS `product_spu_image`;
+CREATE TABLE `product_spu_image` (
+  `item_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
+  `attach_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件ID',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*站点*/
+DROP TABLE IF EXISTS `site`;
+CREATE TABLE `site` (
+  `site_id` tinyint(4) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `path` varchar(32) NOT NULL DEFAULT '' COMMENT '模板',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `keyword` varchar(255) NOT NULL DEFAULT '' COMMENT 'keyword关键字',
+  `description` varchar(255) NOT NULL DEFAULT '' COMMENT 'desc关键字',
+  `remark` varchar(255) NOT NULL DEFAULT '' COMMENT '内部使用备注',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '加入时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`site_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4;
+/*站点分类使用*/
+DROP TABLE IF EXISTS `site_category_used`;
+CREATE TABLE `site_category_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `cate_id` smallint(5) NOT NULL DEFAULT '0' COMMENT '分类ID',
+  `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '文件ID',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序ID',
+  `sale_total` int(11) NOT NULL DEFAULT '0' COMMENT '销量统计',
+  `visit_total` int(11) NOT NULL DEFAULT '0' COMMENT '浏览统计',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`cate_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*站点货币使用*/
+DROP TABLE IF EXISTS `site_currency_used`;
+CREATE TABLE `site_currency_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` int(11) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `code` varchar(4) NOT NULL DEFAULT '' COMMENT '货币码',
+  `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*站点语言使用*/
+DROP TABLE IF EXISTS `site_language_used`;
+CREATE TABLE `site_language_used` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `code` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
+  `sort` smallint(4) NOT NULL DEFAULT '0' COMMENT '排序',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`code`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*站点静态文件*/
+DROP TABLE IF EXISTS `site_static_file`;
+CREATE TABLE `site_static_file` (
+  `static_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '自增ID',
+  `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
+  `type` varchar(8) NOT NULL DEFAULT '' COMMENT '类型',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  PRIMARY KEY (`static_id`),
+  UNIQUE KEY `IDX_UNI` (`name`,`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*站点SEO多语言*/
+DROP TABLE IF EXISTS `site_language`;
+CREATE TABLE `site_language` (
+  `item_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '0' COMMENT '语言ID',
+  `type` varchar(20) NOT NULL DEFAULT '' COMMENT '类型',
+  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '翻译文本',
+  PRIMARY KEY (`item_id`),
+  UNIQUE KEY `IDX_UNI` (`site_id`,`lan_id`,`type`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*站点域名*/
+DROP TABLE IF EXISTS `site_domain`;
+CREATE TABLE `site_domain` (
+  `domain_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
+  `domain` varchar(64) NOT NULL DEFAULT '' COMMENT '域名',
+  `remark` varchar(64) NOT NULL DEFAULT '' COMMENT '备注',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`domain_id`),
+  UNIQUE KEY `IDX_UNI` (`domain`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+/*供应商店铺*/
+DROP TABLE IF EXISTS `supplier_shop`;
+CREATE TABLE `supplier_shop` (
+  `shop_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(120) NOT NULL DEFAULT '' COMMENT '名称',
+  `url` varchar(200) NOT NULL DEFAULT '' COMMENT '链接',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
+  PRIMARY KEY (`shop_id`),
+  UNIQUE KEY `IDX_UNI` (`url`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+/*供应商产品链接*/
+DROP TABLE IF EXISTS `supplier_url`;
+CREATE TABLE `supplier_url` (
+  `supp_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `name` varchar(12) NOT NULL DEFAULT '' COMMENT '平台名称',
+  `item_id` varchar(32) NOT NULL DEFAULT '' COMMENT '产品ID',
+  `url` varchar(255) NOT NULL DEFAULT '' COMMENT '产品链接',
+  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '处理状态',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
+  PRIMARY KEY (`supp_id`),
+  UNIQUE KEY `name` (`name`,`item_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
