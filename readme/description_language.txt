@@ -1,6 +1,0 @@
-CREATE TABLE `description_language` (
-  `desc_id` int(11) NOT NULL DEFAULT '0' COMMENT '描述ID',
-  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言ID',
-  `name` varchar(255) NOT NULL DEFAULT '' COMMENT '翻译文本',
-  PRIMARY KEY (`desc_id`,`lan_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

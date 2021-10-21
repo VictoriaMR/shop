@@ -1,7 +1,0 @@
-CREATE TABLE `category` (
-  `cate_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `parent_id` int(11) NOT NULL DEFAULT '0' COMMENT '上级分类ID',
-  `name` varchar(120) NOT NULL DEFAULT '' COMMENT '名称',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '未翻译0 部分翻译1 全部翻译2',
-  PRIMARY KEY (`cate_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

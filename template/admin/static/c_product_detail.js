@@ -196,6 +196,8 @@ const PRODUCT = {
 				original_price: '原价',
 				cost_price: '成本价',
 				stock: '库存',
+				volume: '体积',
+				weight: '重量',
 			};
 			obj.find('.dealbox-title').text('SKU'+text[name]+'管理');
 			obj.dealboxShow();

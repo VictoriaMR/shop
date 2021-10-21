@@ -1,7 +1,0 @@
-CREATE TABLE `attrvalue` (
-  `attv_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `name` varchar(120) NOT NULL DEFAULT '' COMMENT '属性值名称',
-  `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '未翻译0 部分翻译1 全部翻译2',
-  PRIMARY KEY (`attv_id`),
-  KEY `IDX` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

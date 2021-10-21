@@ -1,6 +1,0 @@
-CREATE TABLE `attrvalue_language` (
-  `attv_id` int(11) NOT NULL DEFAULT '0' COMMENT '属性值ID',
-  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言码',
-  `name` varchar(120) NOT NULL DEFAULT '' COMMENT '翻译值',
-  PRIMARY KEY (`attv_id`,`lan_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

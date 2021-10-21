@@ -121,6 +121,8 @@
 					<th width="90">原价</th>
 					<th width="90">成本价</th>
 					<th width="70">库存</th>
+					<th width="70">体积(cm)</th>
+					<th width="70">重量(g)</th>
 					<th width="60">供应商SKU</th>
 					<th width="140">上架时间</th>
 				</tr>
@@ -146,6 +148,8 @@
 					<td class="can-edit" data-name="original_price"><?php echo $value['original_price'];?></td>
 					<td class="can-edit" data-name="cost_price"><?php echo $value['cost_price'];?></td>
 					<td class="can-edit" data-name="stock"><?php echo $value['stock'];?></td>
+					<td class="can-edit" data-name="volume"><?php echo $value['volume'];?></td>
+					<td class="can-edit" data-name="weight"><?php echo $value['weight'];?></td>
 					<td><?php echo $value['item_id'];?></td>
 					<td>
 						<?php echo $value['add_time'];?><br />

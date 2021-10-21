@@ -32,6 +32,8 @@
     overflow: hidden;
 }
 .image-tcell {
+    width: 168px;
+	height: 168px;
 	display: table-cell;
 	text-align: center;
 	vertical-align: middle;

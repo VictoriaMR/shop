@@ -256,6 +256,12 @@ class Product extends AdminBase
 		if (isset($param['cost_price'])) {
 			$data['cost_price'] = $param['cost_price'];
 		}
+		if (isset($param['volume'])) {
+			$data['volume'] = $param['volume'];
+		}
+		if (isset($param['weight'])) {
+			$data['weight'] = $param['weight'];
+		}
 		if (empty($data)) {
 			$this->error('更新的参数为空');
 		}
