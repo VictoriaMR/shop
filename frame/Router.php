@@ -19,12 +19,12 @@ final class Router
 		$pathInfo = trim($_SERVER['REQUEST_URI'], DS);
 		$router['class'] = APP_CONTROLLER_TYPE;
 		if (empty($pathInfo)) {
-			$router['path'] = 'index';
+			$router['path'] = 'Index';
 			$router['func'] = 'index';
 		} else {
 			$pathInfo = parse_url($pathInfo);
 			if (empty($pathInfo['path'])) {
-				$router['path'] = 'index';
+				$router['path'] = 'Index';
 				$router['func'] = 'index';
 			} else {
 				$pathInfo['path'] = explode('.', $pathInfo['path'])[0];
@@ -58,9 +58,9 @@ final class Router
 				$temp = explode('/', $pathInfo['path']);
 				if (count($temp) > 1) {
 					$router['func'] = array_pop($temp);
-					$router['path'] = implode('/', $temp);
+					$router['path'] = implode('/', array_map('ucfirst',$temp));
 				} else {
-					$router['path'] = $temp[0];
+					$router['path'] = ucfirst($temp[0]);
 					$router['func'] = 'index';
 				}
 			}
@@ -76,12 +76,12 @@ final class Router
 	protected function getPath($path)
 	{
 		$arr = [
-			'spu' => 'product',
-			'p' => 'product',
-			'cate' => 'category',
-			'c' => 'category',
-			'sku' => 'product',
-			's' => 'product',
+			'spu' => 'Product',
+			'p' => 'Product',
+			'cate' => 'Category',
+			'c' => 'Category',
+			'sku' => 'Product',
+			's' => 'Product',
 		];
 		return $arr[$path] ?? $path;
 	}

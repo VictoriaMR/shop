@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\home;
-use app\controller\Base;
+use app\controller\HomeBase;
 
-class UserInfo extends Base
+class UserInfo extends HomeBase
 {
 	public function index()
 	{	

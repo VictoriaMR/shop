@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\home;
-use app\controller\Base;
+use app\controller\HomeBase;
 
-class Api extends Base
+class Api extends HomeBase
 {
 	public function stat()
 	{

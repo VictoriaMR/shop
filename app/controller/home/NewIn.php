@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\home;
-use app\controller\;
+use app\controller\HomeBase;
 
-class NewIn extends 
+class NewIn extends HomeBase
 {
 	public function index()
 	{

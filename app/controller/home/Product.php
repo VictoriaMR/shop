@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\home;
-use app\controller\;
+use app\controller\HomeBase;
 
-class Product extends 
+class Product extends HomeBase
 {
 	public function index()
 	{

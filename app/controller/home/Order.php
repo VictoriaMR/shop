@@ -1,9 +1,9 @@
 <?php
 
 namespace app\controller\home;
-use app\controller\Base;
+use app\controller\HomeBase;
 
-class Order extends Base
+class Order extends HomeBase
 {
 	public function index()
 	{	

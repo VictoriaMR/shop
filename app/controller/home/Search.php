@@ -1,10 +1,9 @@
 <?php
 
 namespace app\controller\home;
-use app\controller\Base;
-use frame\Html;
+use app\controller\HomeBase;
 
-class Search extends Base
+class Search extends HomeBase
 {
 	public function index()
 	{	

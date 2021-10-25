@@ -21,4 +21,20 @@ class Order extends Base
 	const STATUS_REFUNDING = 7; //退款中
 
 	const ORDER_WAIT_PAY_TIME = 7 * 24 * 3600; //最大订单待支付时间
+
+	public function orderStatus($status=null)
+	{
+		$arr = [
+			self::STATUS_CANCEL => '取消订单',
+			self::STATUS_WAIT_PAY => '等待支付',
+			self::STATUS_PAIED => '等待发货',
+			self::STATUS_SHIPPED => '运输中',
+			self::STATUS_FINISHED => '已完成',
+			self::STATUS_PART_REFUND => '部分退款',
+			self::STATUS_FULL_REFUND => '全部退款',
+			self::STATUS_REFUNDING => '退款中',
+		];
+		if (is_null($status)) return $arr;
+		return $arr[$status] ?? '';
+	}
 }
