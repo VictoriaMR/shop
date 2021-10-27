@@ -8,7 +8,6 @@
 	overflow-y: hidden;
 	overflow-x: scroll;
 	font-size: 0;
-	background: #FFFFFF;
 	padding-bottom: 0.12rem;
 	padding-top: 0.08rem;
 }
@@ -18,7 +17,7 @@
 }
 .hot-category-list::-webkit-scrollbar-track {
 	background: #d4d8de;
-	margin: 0 40vw;
+	margin: 0 38vw;
 	border-radius: 0.03rem;
 }
 .hot-category-list::-webkit-scrollbar-thumb {
@@ -28,32 +27,31 @@
 }
 .hot-category-list li {
 	display: inline-block;
-	margin-left: 0.12rem;
-	width: calc((100vw - 0.6rem) / 4);
+	width: calc(100vw / 4);
 	text-align: center;
 }
 .hot-category-list li:last-child {
 	margin-right: 0.12rem;
 }
-.hot-category-list li a:last-child {
-	margin-top: 0.12rem;
+.hot-category-list li .item {
+	display: block;
+	font-size: 0.12rem;
+	width: 100%;
+}
+.hot-category-list li .item:first-child {
+	margin-bottom: 0.12rem;
 }
 .hot-category-list li .cate-img {
 	width: 100%;
-	padding-bottom: 100%;
-	height: 0;
-	text-align: center;
-	position: relative;
-	margin-bottom: 0.04rem;
+	height: 0.5rem;
 	border-radius: 50%;
-	overflow: hidden;
+	display: table-cell;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 0;
 }
-.hot-category-list li .cate-img img {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+.hot-category-list li .item p {
+	min-height: 0.17rem;
 }
 .bg-round {
 	background-image: url(/image/mobile/bg-round.png);
