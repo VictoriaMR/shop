@@ -50,6 +50,9 @@
 	text-align: center;
 	font-size: 0;
 }
+.hot-category-list li .cate-img img {
+	border-radius: 50%;
+}
 .hot-category-list li .item p {
 	min-height: 0.17rem;
 }
