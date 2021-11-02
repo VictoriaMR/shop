@@ -17,7 +17,7 @@ class Index extends Base
 			];
 		}
 		//获取热门分类
-		$cateList = make('app/service/site/CategoryUsed')->getListData(['site_id'=>siteId()], 'cate_id,attach_id', 1, 20, ['sort'=>'desc']);
+		$cateList = make('app/service/site/CategoryUsed')->getListData(['site_id'=>siteId()], 'cate_id,attach_id', 1, 24, ['sort'=>'desc']);
 		$allCate = array_column($cateList, 'cate_id');
 		//获取分类语言
 		$cateLanguage = [];
@@ -40,11 +40,13 @@ class Index extends Base
 			$value['url'] = router()->urlFormat($nameEn, 'category', ['id'=>$value['cate_id']]);
 			$cateList[$key] = $value;
 		}
-		$hotCate = array_slice($cateList, 4);
-		array_splice($cateList, 0, 4);
-		$cateList = array_chunk($cateList, 2);
+		$cateLeftList = array_slice($cateList, 0, 4);
+		$cateRightList = array_slice($cateList, 4, 2);
+		$cateList = array_chunk(array_slice($cateList, 6), 2);
+
 		$this->assign('cateList', $cateList);
-		$this->assign('hotCate', $hotCate);
+		$this->assign('cateLeftList', $cateLeftList);
+		$this->assign('cateRightList', $cateRightList);
 		$this->assign('banner', $banner);
 	}
 }

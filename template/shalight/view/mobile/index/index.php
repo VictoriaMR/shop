@@ -20,17 +20,6 @@
 <?php if (!empty($cateList)){?>
 <div class="category-content">
 	<div class="bg-round"></div>
-	<div class="bg-f pt8">
-		<div class="list-title flex bg-f">
-			<div class="tcell">
-				<p class="line bg-f5"></p>
-			</div>
-			<p class="title"><?php echo distT('shop_by_category');?></p>
-			<div class="tcell">
-				<p class="line bg-f5"></p>
-			</div>
-		</div>
-	</div>
 	<div class="pb4 bg-f">
 		<ul class="hot-category-list">
 			<?php foreach ($cateList as $item){?>
