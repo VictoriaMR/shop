@@ -1,6 +1,6 @@
 <?php $this->load('common/nav_header');?>
 <?php if (!empty($banner)) { ?>
-<div class="banner relative">
+<div class="banner relative" id="top-banner">
 	<ul>
 		<?php foreach ($banner as $key => $value){?>
 		<li class="slider">
@@ -40,4 +40,30 @@
 	</div>
 </div>
 <?php } ?>
+<?php if (!empty($cateLeftList)) {?>
+<div class="layer mt12">
+	<div class="left w50 pr4">
+		<div class="banner relative" id="left-banner">
+			<ul>
+				<?php foreach ($cateLeftList as $key => $value){?>
+				<li class="slider">
+					<a href="<?php echo $value['url'];?>">
+						<img src="<?php echo $value['image'];?>">
+					</a>
+				</li>
+				<?php } ?>
+			</ul>
+			<ol class="pop-content">
+				<?php foreach ($banner as $key => $value){?>
+				<li <?php echo $key==0?'class="active"':'';?>></li>
+				<?php } ?>
+			</ol>
+		</div>
+	</div>
+	<div class="right w50 pl4">
+		
+	</div>
+	<div class="clear"></div>
+</div>
+<?php }?>
 <?php $this->load('common/nav_footer');?>

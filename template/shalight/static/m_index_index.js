@@ -188,5 +188,6 @@ $.fn.slider = function (options) {
 	return slideContainer;
 }
 }(jQuery));$(function(){
-	$('.banner').slider();
+	$('#top-banner').slider();
+	$('#left-banner').slider();
 });

@@ -1,3 +1,4 @@
 $(function(){
-	$('.banner').slider();
+	$('#top-banner').slider();
+	$('#left-banner').slider();
 });
