@@ -306,6 +306,8 @@ class Spu extends Base
 					'stock' => $value['stock'],
 					'price' => $value['sale_price'],
 					'original_price' => $value['original_price'],
+					'weight' => (int)($data['bc_product_weight'] ?? 0),
+					'volume' => $data['bc_product_volume'] ?? '',
 				];
 				$skuId = $sku->insertGetId($insert);
 				$insert = [
@@ -335,7 +337,7 @@ class Spu extends Base
 			$spuId = $info['spu_id'];
 		}
 		if (empty($spuId)) {
-			return '产品SPU入库失败!';
+			return false;
 		}
 		//spu 介绍图片
 		$insert = [];

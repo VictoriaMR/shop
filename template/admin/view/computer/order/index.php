@@ -30,6 +30,16 @@
 				</select>
 			</div>
 			<div class="mr20 form-group mt10">
+				<select class="form-control" name="payment_id" style="min-width:180px">
+					<option value="0" <?php if($status<0){echo 'selected';}?>>请选择支付账号</option>
+					<?php if (!empty($paymentAccount)){?>
+					<?php foreach($paymentAccount as $key=>$value){?>
+					<option value="<?php echo $key;?>" <?php if($payment_id==$key){echo 'selected';}?>><?php echo $value;?></option>
+					<?php }?>
+					<?php }?>
+				</select>
+			</div>
+			<div class="mr20 form-group mt10">
 				<label for="contact">日期:</label>
 				<input class="form-control form_datetime" type="text" value="<?php echo $stime;?>" name="stime" placeholder="开始时间" autocomplete="off"> - 
 				<input class="form-control form_datetime" type="text" value="<?php echo $etime;?>" name="etime" placeholder="结束时间" autocomplete="off">

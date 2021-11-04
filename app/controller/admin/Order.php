@@ -19,6 +19,7 @@ class Order extends AdminBase
 		$size = iget('size', 20);
 		$siteId = iget('site_id', 0);
 		$status = iget('status', -1);
+		$paymentId = iget('payment_id', 0);
 		$orderId = iget('order_id', '');
 		$email = iget('email', '');
 		$stime = iget('stime', '');
@@ -30,6 +31,9 @@ class Order extends AdminBase
 		}
 		if ($status >= 0) {
 			$where['status'] = $status;
+		}
+		if ($paymentId) {
+			$where['payment_id'] = $paymentId;
 		}
 		if ($orderId) {
 			$where['order_id'] = $orderId;
@@ -53,6 +57,13 @@ class Order extends AdminBase
 		//状态列表
 		$orderService = make('app/service/order/Order');
 		$statusList = $orderService->orderStatus();
+		//支付账号
+		$paymentAccount = make('app/service/payment/Payment')->getList([], 0);
+		$paymentAccount = array_map(function($value){
+			$value['name'] = $value['type_name'].' - '.$value['name'];
+			return $value;
+		}, $paymentAccount);
+		$paymentAccount = array_column($paymentAccount, 'name', 'payment_id');
 
 		$total = $orderService->getCountData($where);
 		if ($total > 0) {
@@ -64,11 +75,13 @@ class Order extends AdminBase
 		$this->assign('list', $list ?? []);
 		$this->assign('site_id', $siteId);
 		$this->assign('status', $status);
+		$this->assign('payment_id', $paymentId);
 		$this->assign('order_id', $orderId);
 		$this->assign('email', $email);
 		$this->assign('stime', $stime);
 		$this->assign('etime', $etime);
 		$this->assign('statusList', $statusList);
+		$this->assign('paymentAccount', $paymentAccount);
 		$this->_init();
 		$this->view();
 	}
