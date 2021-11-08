@@ -14,9 +14,6 @@ class Checkout extends HomeBase
 
 		$info = $this->getCheckoutData();
 
-		$skuId = (int)ipost('id');
-		$quantity = (int)ipost('quantity');
-
 		if (empty($info['list'])) {
 			$error = distT('checkout_error');
 		} else {
@@ -58,8 +55,8 @@ class Checkout extends HomeBase
 			$this->assign('skuList', $info['list']);
 		}
 
-		$this->assign('skuId', $skuId);
-		$this->assign('quantity', $quantity);
+		$this->assign('skuId', ipost('id'));
+		$this->assign('quantity', ipost('quantity'));
 		$this->assign('error', $error ?? '');
 		$this->assign('_title', distT('checkout'));
 
@@ -181,6 +178,9 @@ class Checkout extends HomeBase
 				'mem_id' => userId(),
 				'checked' => 1,
 			];
+			if (empty(userId())) {
+				$where['uuid'] = uuId();
+			}
 			$skuList = make('app/service/Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
 			if (!empty($skuList)) {
 				$skuList = array_column($skuList, 'quantity', 'sku_id');

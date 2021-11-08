@@ -61,7 +61,7 @@ class Cart extends Base
 	protected function getWhere()
 	{
 		$memId = $this->userId();
-		if (empty($memId)) return ['uuid' => make('frame/Cookie')->get('uuid'), 'mem_id'=>0];
+		if (empty($memId)) return ['uuid' => uuId(), 'mem_id'=>0];
 		else return ['mem_id' => $memId];
 	}
 

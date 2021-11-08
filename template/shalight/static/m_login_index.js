@@ -58,11 +58,11 @@ const LOGIN = {
 			$('#login-page .register').toggle();
 		});
 		$('#login-page .agreement').on('click', function(){
-			if ($(this).find('.icon-fangxingxuanzhong').length > 0) {
-				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingxuanzhongfill');
+			if ($(this).find('.icon-fangxingweixuanzhong').length > 0) {
+				$(this).find('.iconfont').removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhongfill');
 				$(this).find('input').val(1);
 			} else {
-				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingxuanzhong');
+				$(this).find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingweixuanzhong');
 				$(this).find('input').val(0);
 			}
 		});
@@ -79,9 +79,9 @@ const LOGIN = {
 				return false;
 			}
 			const _thisObj = $(this);
-			_this.loading(_thisObj, 'Send...');
+			TIPS.loadingBtn(_thisObj, 'Send...');
 			$.post(URI+'login/sengCode', {email: email}, function(res) {
-				_this.loaded(_thisObj);
+				TIPS.loadoutBtn(_thisObj);
 				if (res.code === '200') {
 					_this.initSendCode(res.data);
 					TIPS.success(res.message);
@@ -138,13 +138,13 @@ const LOGIN = {
 				param.password = password;
 			}
 			const _thisObj = $(this);
-			_this.loading(_thisObj, 'LOGGING IN...');
+			TIPS.loadingBtn(_thisObj, 'LOGGING IN...');
 			$.post(URI+'login/login', param, function(res) {
 				if (res.code === '200') {
 					localStorage.setItem('login_token', res.data.token);
 					window.location.href = res.data.url ? res.data.url : URI;
 				} else {
-					_this.loaded(_thisObj);
+					TIPS.loadoutBtn(_thisObj);
 					for (let i in res.message) {
 						_this.loginError($('.login [name="'+i+'"]').parent(), res.message[i]);
 					}
@@ -214,7 +214,7 @@ const LOGIN = {
 			param.email = email;
 			param.password = password;
 			const _thisObj = $(this);
-			_this.loading(_thisObj, 'CREATING AN ACCOUNT...');
+			TIPS.loadingBtn(_thisObj, 'CREATING AN ACCOUNT...');
 			$.post(URI+'login/register', param, function(res) {
 				if (res.code === '200') {
 					localStorage.setItem('login_token', res.data.token);
@@ -223,7 +223,7 @@ const LOGIN = {
 						window.location.href = res.data.url ? res.data.url : URI;
 					});
 				} else {
-					_this.loaded(_thisObj);
+					TIPS.loadoutBtn(_thisObj);
 					for (let i in res.message) {
 						_this.loginError($('.register [name="'+i+'"]').parent(), res.message[i]);
 					}
@@ -260,12 +260,5 @@ const LOGIN = {
 		obj.addClass('success');
 		obj.parent().find('.message-tips').remove();
 		obj.parent().append('<p class="message-tips success">'+msg+'</p>');
-	},
-	loading: function(obj, msg) {
-		obj.data('text', obj.text());
-		obj.text(msg).attr('disabled', true);
-	},
-	loaded: function(obj) {
-		obj.text(obj.data('text')).attr('disabled', false);
 	}
 };

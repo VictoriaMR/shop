@@ -1,0 +1,7 @@
+.widget-page-bar li {
+	display: inline-block;
+	font-size: 0;
+}
+.widget-page-bar li a {
+	display: block;
+}

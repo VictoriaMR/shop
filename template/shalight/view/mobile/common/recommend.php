@@ -12,7 +12,7 @@
 			<p class="line"></p>
 		</div>
 	</div>
-	<div class="product-list mt10">
+	<div class="product-list">
 		<ul>
 			<?php foreach ($recommendList as $key => $value){?>
 			<li class="item" data-id="<?php echo $value['spu_id'];?>">
@@ -25,9 +25,9 @@
 						</button>
 						<?php }?>
 					</div>
-					<div class="layer pb10">
+					<div class="layer4 pb4">
 						<p class="name"><?php echo $value['name'];?></p>
-						<div class="mt10">
+						<div class="mt4">
 							<span class="price f14 f600"><?php echo $value['min_price_format'];?></span>
 							<span class="original_price"><?php echo $value['original_price_format'];?></span>
 						</div>

@@ -136,14 +136,10 @@ const PRODUCT = {
 			}
 			TIPS.loading();
 			const quantity = $('.quantity .num').val();
-			$.post(URI+'product/check', {sku_id: _this.skuId, quantity: quantity}, function(res) {
-				if (res.code === '200') {
-					window.location.href = URI+'checkout?id='+_this.skuId+'&quantity='+quantity;
-				} else {
-					TIPS.loadout();
-					TIPS.error(res.message);
-				}
-			});
+			const obj = $('#checkout-form');
+			obj.find('[name="id"]').val(_this.skuId);
+			obj.find('[name="quantity"]').val(quantity);
+			obj.submit();
 		});
 	},
 	addToCart: function(num){
@@ -231,7 +227,8 @@ const PRODUCT = {
 			if ($(this).find('.active').length === 0) {
 				$(this).find('li').each(function(){
 					const id = $(this).data('id');
-					if (filterMap.indexOf(id) >= 0) {
+					console.log(id, 'id')
+					if (filterMap.indexOf(id.toString()) >= 0) {
 						$(this).removeClass('disabled').attr('disabled', false);
 					} else {
 						$(this).addClass('disabled').attr('disabled', true);

@@ -102,6 +102,7 @@ final class Router
 		$name = str_replace(' ', '-' , $name);
 		$name .= $name ? '-'.$type : $type;
 		$name = preg_replace('/-{1,}/', '-', $name);
+		$name = ltrim($name, '-');
 		if (isset($param['id'])) $name .= '-'.$param['id'];
 		if (isset($param['page'])) $name .= '-page-'.$param['page'];
 		if (isset($param['size'])) $name .= '-size-'.$param['size'];

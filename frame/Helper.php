@@ -191,3 +191,6 @@ function currencyId(){
 	}
 	return $id;
 }
+function uuId(){
+	return session()->get(APP_TEMPLATE_TYPE.'_info.uuid', '');
+}

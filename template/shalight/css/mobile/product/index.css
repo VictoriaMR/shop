@@ -43,7 +43,7 @@
 	transition-duration: 300ms;
 }
 #product-page .pop-content li.active {
-	background-color: #5d656b;
+	background-color: #000;
 	opacity: 0.8;
 }
 #product-page .navi-bar {
@@ -81,7 +81,6 @@
 	font-size: 0.15rem;
 	line-height: 0.2rem;
 	font-weight: 600;
-	margin-top: 0.04rem;
 }
 .price {
 	font-size: 0.18rem;
@@ -126,10 +125,21 @@
 #product-page .cart-bottom .left .tab .iconfont{
 	font-size: 0.22rem;
 }
+#product-page .attr-select{
+	padding-top: 0.08rem;
+	padding-bottom: 0.08rem;
+}
 #product-page .attr-select li {
-	height: 0.42rem;
-	line-height: 0.42rem;
+	height: 0.20rem;
+	line-height: 0.20rem;
 	position: relative;
+}
+#product-page #sku-select {
+	height: 0.4rem;
+	line-height: 0.4rem;
+}
+#product-page #description {
+	margin-top: 0.08rem;
 }
 #product-page .attr-select li .title {
 	width: 0.5rem;
@@ -188,6 +198,7 @@
 	float: left;
 	border: 0.02rem solid #ffff;
 	margin-bottom: 0.08rem;
+	margin-right: 0.08rem;
 }
 #sku-select-modal .sku-attr-list .item li.active {
 	border-color: #404040;
@@ -204,7 +215,6 @@
 	padding: 0.03rem;
 	overflow: hidden;
 	border-radius: 50%;
-	margin-right: 0.12rem;
 }
 #sku-select-modal .sku-attr-list .item .attv-image {
 	width: 0.36rem;
@@ -258,7 +268,6 @@
 .product-introduce .introduce-title .title {
 	width: calc(100% - 2.4rem);
 	font-size: 0.14rem;
-	color: #ccc;
 	text-align: center;
 }
 .product-introduce .introduce-title .line {
@@ -268,7 +277,7 @@
 	display: inline-block;
 }
 .product-introduce .introduce-image  {
-	padding: 0.12rem 0;
+	padding: 0.10rem 0;
 	text-align: center;
 }
 .product-introduce .introduce-image p {

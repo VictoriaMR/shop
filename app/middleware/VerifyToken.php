@@ -27,12 +27,7 @@ class VerifyToken
 	private function inExceptArray($route)
 	{
 		//没有在排除的都要求登录
-		$class = strtolower($route['class']);
-		if ($class == 'admin') {
-			$except = config('except.admin');
-		} else {
-			$except = config('except.default');
-		}
+		$except = config('except.'.strtolower($route['class']));
 		$path = strtolower($route['path']);
 		if (!empty($except[$path])) {
 			return true;

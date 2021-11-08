@@ -47,12 +47,13 @@
 		<ul>
 			<li id="sku-select">
 				<p class="title c40 f600">SKU</p>
-				<p class="text e1">
+				<p class="text e1 f600">
+					<span class="attr-text">
 					<?php if (empty($skuAttrSelect)) {?>
 					<span>SELECT </span>
 					<span class="attr-text"><?php echo implode(' ', $info['attr']);?></span>
 					<?php } else {?>
-					<?php foreach ($skuAttrSelect as $value){ echo $info['attv'][$value].' ';} ?>
+					<span class="attr-text"><?php foreach ($skuAttrSelect as $value){ echo $info['attv'][$value].' ';} ?></span>
 					<?php } ?>
 				</p>
 				<span class="iconfont icon-xiangyou1"></span>
@@ -65,7 +66,7 @@
 		</ul>
 	</div>
 	<?php if (!empty($info['introduce'])) {?>
-	<div class="product-introduce mt20">
+	<div class="product-introduce mt10">
 		<div class="introduce-title flex">
 			<div class="tcell">
 				<p class="line"></p>
@@ -182,6 +183,11 @@
 		</div>
 	</div>
 </div>
+<form action="<?php echo url('checkout');?>" id="checkout-form" method="post">
+	<input type="hidden" name="id" value="0">
+	<input type="hidden" name="quantity" value="1">
+	<input type="hidden" name="shipping_address_id" value="0">
+</form>
 <script type="text/javascript">
 $(function(){
 	$('.product-image').slider();

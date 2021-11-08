@@ -1,5 +1,5 @@
 .product-list {
-	padding: 0 0.07rem;
+	padding: 0 0.05rem;
 }
 .product-list .title {
 	padding: 0 0.07rem;
@@ -39,7 +39,7 @@
 	-webkit-line-clamp: 2;
 	overflow:hidden;
 	-webkit-box-orient: vertical;
-	margin-top: 0.10rem;
+	margin-top: 0.08rem;
 	font-size: 0.13rem;
 	min-height: 0.36rem;
 }

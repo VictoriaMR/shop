@@ -52,6 +52,11 @@ a {
 	text-decoration-line: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
+.layer4 {
+	width: 100%;
+	position: relative;
+	padding: 0 0.04rem;
+}
 .layer8 {
 	width: 100%;
 	position: relative;
@@ -60,7 +65,7 @@ a {
 .layer {
 	width: 100%;
 	position: relative;
-	padding: 0 0.12rem;
+	padding: 0 0.10rem;
 }
 .layer16 {
 	width: 100%;
@@ -599,7 +604,6 @@ a {
 }
 .m-modal .dialog .contentfill {
 	height: calc(100% - 0.5rem);
-	padding-bottom: 0.5rem;
 	overflow-y: auto;
 }
 .m-modal .dialog-footer {

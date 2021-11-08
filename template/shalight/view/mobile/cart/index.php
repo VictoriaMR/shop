@@ -28,17 +28,17 @@
 						<a class="e2 product-name" href="<?php echo $value['url'];?>"><?php echo $value['name'];?></a>
 						<div class="field-row">
 							<div class="attr-content">
-								<?php foreach ($value['attv'] as $k => $v) {?>
-								<?php if (!empty($value['attvImage'][$k]['url'])) {?>
+								<?php foreach ($value['skuAttv'][$value['sku_id']] as $k => $v) {?>
+								<?php if (!empty($value['attvImage'][$v]['url'])) {?>
 								<div class="attr-item attr-image">
-									<img data-src="<?php echo $value['attvImage'][$k]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
-									<span class="e1"><?php echo $v;?></span>
+									<img data-src="<?php echo $value['attvImage'][$v]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+									<span class="e1"><?php echo $value['attv'][$v];?></span>
 									<i class="iconfont icon-xiangxia2"></i>
 									<div class="clear"></div>
 								</div>
 								<?php } else { ?>
 								<div class="attr-item">
-									<span class="e1"><?php echo $v;?></span>
+									<span class="e1"><?php echo $value['attv'][$v];?></span>
 									<i class="iconfont icon-xiangxia2"></i>
 								</div>
 								<?php } ?>
@@ -89,7 +89,7 @@
 		<button class="btn btn-black w100 checkout-btn">
 			<span><?php echo appT('secure_checkout');?></span>
 		</button>
-		<div class="mt10 papay-btn">
+		<div class="mt10 paypal-btn">
 			
 		</div>
 	</div>
@@ -116,7 +116,7 @@
 				<p class="line"></p>
 			</div>
 		</div>
-		<ul class="cart-list mt20">
+		<ul class="cart-list mt10">
 			<?php foreach($unCheckList as $value) {?>
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
 				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
@@ -134,16 +134,16 @@
 						<a class="e2 product-name" href="<?php echo $value['url'];?>"><?php echo $value['name'];?></a>
 						<div class="field-row">
 							<div class="attr-content">
-								<?php foreach ($value['attv'] as $k => $v) {?>
-								<?php if (!empty($value['attvImage'][$k]['url'])) {?>
+								<?php foreach ($value['skuAttv'][$value['sku_id']] as $k => $v) {?>
+								<?php if (!empty($value['attvImage'][$v]['url'])) {?>
 								<div class="attr-item attr-image">
-									<img data-src="<?php echo $value['attvImage'][$k]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
-									<span class="e1"><?php echo $v;?></span>
+									<img data-src="<?php echo $value['attvImage'][$v]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+									<span class="e1"><?php echo $value['attv'][$v];?></span>
 									<div class="clear"></div>
 								</div>
 								<?php } else { ?>
 								<div class="attr-item">
-									<span class="e1"><?php echo $v;?></span>
+									<span class="e1"><?php echo $value['attv'][$v];?></span>
 								</div>
 								<?php } ?>
 								<?php } ?>

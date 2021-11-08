@@ -23,6 +23,7 @@ class AttrUsed extends Base
 			$data['attr'][$value['attr_id']] = $value['name'];
 			$data['attrMap'][$value['attr_id']] = [];
 		}
+		$data['attrArr'] = array_keys($data['attr']);
 		//$attv属性
 		$tempArr = array_unique(array_column($list, 'attv_id'));
 		$tempArr = make('app/service/attr/Value')->getListById($tempArr, $lanId);
@@ -31,27 +32,27 @@ class AttrUsed extends Base
 			$data['attv'][$value['attv_id']] = $value['name'];
 			$attvArr[$value['attv_id']] = $key;
 		}
-		$data['skuAttv'] = $data['skuMap'] = $data['attvImage'] = [];
+		$data['skuAttv'] = [];
+		$data['skuMap'] = [];
+		$data['attvImage'] = [];
 		foreach ($list as $key => $value) {
 			$data['attrMap'][$value['attr_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
-			$data['skuAttv'][$value['sku_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
 			$data['skuMap'][$value['sku_id']][$value['attr_id']] = $value['attv_id'];
-
 			$data['attvImage'][$value['attv_id']] = $value['attach_id'];
-		}
-		if ($simple) {
-			return $data;
 		}
 
 		$data['attrMap'] = array_map(function($value) {
 			ksort($value);
 			return array_values($value);
 		}, $data['attrMap']);
-		$data['skuAttv'] = array_map(function($value) {
-			ksort($value);
+		$attrArr = $data['attrArr'];
+		$data['skuAttv'] = array_map(function($value) use($attrArr){
+			array_multisort($attrArr, $value);
 			return array_values($value);
-		}, $data['skuAttv']);
-
+		}, $data['skuMap']);
+		if ($simple) {
+			return $data;
+		}
 		$tempArr = [];
 		foreach ($data['attrMap'] as $key => $value) {
 			foreach ($data['skuMap'] as $k => $v) {

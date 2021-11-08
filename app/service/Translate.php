@@ -1,7 +1,7 @@
 <?php
 namespace app\service;
 class Translate
-{	
+{
 	public function getText($text, $to = 'en', $from = 'zh')
 	{
 		if ($to == $from) return $text;

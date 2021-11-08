@@ -35,7 +35,7 @@ class App
 				self::make('frame/Cookie')->init();
 			}
 			//中间件
-			if ($info['class'] == 'admin') self::make('app/middleware/VerifyToken')->handle($info);
+			self::make('app/middleware/VerifyToken')->handle($info);
 			call_user_func_array($callArr, []);
 		} else {
 			throw new \Exception($class.' '.$info['func'].' was not exist!', 1);

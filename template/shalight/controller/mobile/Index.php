@@ -7,6 +7,8 @@ class Index extends Base
 {
 	public function index()
 	{
+		html()->addCss('common/productList');
+		html()->addCss('common/pagebar');
 		html()->addJs('slider');
 		$banner = [];
 		for ($i=1;$i<6;$i++) {
@@ -49,6 +51,13 @@ class Index extends Base
 			$this->assign('cateRightList', $cateRightList);
 		}
 
+		//获取SPU列表
+		$total = 0;
+		$size = 10;
+		$recommendList = make('app/service/product/Spu')->getRecommend(1, $size, $total);
+		$this->assign('total', $total);
+		$this->assign('size', $size);
+		$this->assign('recommendList', $recommendList);
 		$this->assign('banner', $banner);
 	}
 }

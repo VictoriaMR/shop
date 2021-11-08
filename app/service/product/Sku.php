@@ -47,7 +47,7 @@ class Sku extends Base
 		}
 		//获取语言
 		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$info['spu_id'], 'lan_id'=>['in', [1, $lanId]]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
-		$info['name'] .= ' - '.implode(' ', $info['attv']);
+		$info['name'] .= empty($info['name']) ? implode(' ', $info['attv']) : ' - '.implode(' ', $info['attv']);
 		$info['url'] = router()->urlFormat($info['name'], 's', ['id' => $skuId]);
 		return $info;
 	}

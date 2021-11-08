@@ -135,7 +135,7 @@
 			<ul class="product-list">
 				<?php foreach($skuList as $key => $value) {?>
 				<li class="item" data-id="<?php echo $key;?>">
-					<div class="table">
+					<div class="table w100">
 						<div class="image tcell">
 							<div class="image-tcell tcell">
 								<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
@@ -145,16 +145,16 @@
 							<p class="e2 product-name"><?php echo $value['name'];?></p>
 							<div class="field-row">
 								<div class="attr-content">
-								<?php foreach ($value['attv'] as $k => $v) {?>
-									<?php if (!empty($value['attvImage'][$k])) {?>
+								<?php foreach ($value['skuAttv'][$key] as $k => $v) {?>
+									<?php if (!empty($value['attvImage'][$v]['url'])) {?>
 									<div class="attr-item attr-image">
-										<img data-src="<?php echo $value['attvImage'][$k];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
-										<span class="e1"><?php echo $v;?></span>
+										<img data-src="<?php echo $value['attvImage'][$v]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+										<span class="e1"><?php echo $value['attv'][$v];?></span>
 										<div class="clear"></div>
 									</div>
 									<?php } else { ?>
 									<div class="attr-item">
-										<span class="e1"><?php echo $v;?></span>
+										<span class="e1"><?php echo $value['attv'][$v];?></span>
 									</div>
 									<?php } ?>
 								<?php } ?>

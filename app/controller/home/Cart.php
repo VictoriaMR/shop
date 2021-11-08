@@ -124,7 +124,10 @@ class Cart extends HomeBase
 		if (!$skuInfo) {
 			$this->error(distT('add_invalid'));
 		}
-		$where = ['mem_id' => userId(), 'sku_id' => $skuId];
+		$where = ['sku_id' => $skuId, 'mem_id' => userId()];
+		if (!userId()) {
+			$where['uuid'] = uuId();
+		}
 		$cart = make('app/service/Cart');
 		$cartSkuIno = $cart->loadData($where);
 		if (empty($cartSkuIno)) {
