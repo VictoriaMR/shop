@@ -2,7 +2,7 @@
 	<div class="layer">
 		<div class="header">
 			<img src="<?php echo siteUrl('image/common/locked.png');?>">
-			<span class="checkout-tips">SECURE CHECKOUT</span>
+			<span class="checkout-tips"><?php echo appT('secure_checkout');?></span>
 			<a class="right f20 relative" href="<?php echo url('cart');?>">
 				<span class="iconfont icon-gouwuche"></span>
 			</a>
@@ -10,18 +10,18 @@
 		<?php if (empty($error)) {?>
 		<div class="header-nav">
 			<?php if (empty($shipAddress)){?>
-			<span class="f600 c40">Shipping Address</span>
+			<span class="f600 c40"><?php echo appT('shipping_address');?></span>
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
-			<span>Delivery Method</span>
+			<span><?php echo appT('delivery_method');?></span>
 			<span class="iconfont icon-xiangyou1"></span>
-			<span>Payment Info</span>
+			<span><?php echo appT('payment_info');?></span>
 			<?php } else {?>
 			<span class="iconfont icon-xuanze f600 c40"></span>
-			<span class="f600 c40">Shipping Address</span>
+			<span class="f600 c40"><?php echo appT('shipping_address');?></span>
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
-			<span class="f600 c40">Delivery Method</span>
+			<span class="f600 c40"><?php echo appT('delivery_method');?></span>
 			<span class="iconfont icon-xiangyou1 f600 c40"></span>
-			<span>Payment Info</span>
+			<span><?php echo appT('payment_info');?></span>
 			<?php }?>
 		</div>
 		<?php } ?>
@@ -33,11 +33,11 @@
 		<div class="bg-f info-content">
 			<div class="address">
 				<div class="item shipping-address-item relative" data-id="<?php echo $shipAddress['address_id'] ?? 0;?>">
-					<p class="f14 f700 title">Shipping Address</p>
+					<p class="f14 f700 title"><?php echo appT('shipping_address');?></p>
 					<?php if (empty($shipAddress)) {?>
 					<a href="javascript:;" class="empty-address address-info-content mt6">
 						<div class="tcell f14 tl">
-							<span>Your address was empty! Click to add address.</span>
+							<span><?php echo distT('address_empty');?></span>
 						</div>
 						<div class="tcell iconfont-tcell c9">
 							<span class="iconfont icon-xiangyou1"></span>
@@ -64,12 +64,12 @@
 				</div>
 				<?php if (!empty($shipAddress)) {?>
 				<div class="set-billing-as-shipping mt6">
-					<span class="iconfont icon-<?php echo $shipAddress['address_id'] == $billAddress['address_id'] ? 'fangxingxuanzhongfill' : 'fangxingweixuanzhong';?>"></span>
-					<span class="tips">Billing address same as shipping</span>
+					<span class="iconfont icon-<?php echo $shipAddress['is_bill'] ? 'fangxingxuanzhongfill' : 'fangxingweixuanzhong';?>"></span>
+					<span class="tips"><?php echo distT('same_billing_address');?></span>
 				</div>
 				<?php }?>
 				<?php if (!empty($billAddress)) {?>
-				<div class="item billing-address-item relative mt12<?php echo $shipAddress['address_id'] == $billAddress['address_id'] ? ' hide' : '';?>" data-id="<?php echo $billAddress['address_id'];?>">
+				<div class="item billing-address-item relative mt12<?php echo $shipAddress['is_bill'] ? ' hide' : '';?>" data-id="<?php echo $billAddress['address_id'] ?? 0;?>">
 					<p class="f14 f700 title">Billing Address</p>
 					<a href="javascript:;" class="address-info-content mt6">
 						<div class="address-info">
@@ -86,16 +86,16 @@
 						</div>
 					</a>
 					<div class="border mt6"></div>
-					<input type="hidden" name="billing_address_id" value="<?php echo $billAddress['address_id'];?>">
+					<input type="hidden" name="billing_address_id" value="<?php echo $billAddress['address_id'] ?? 0;?>">
 				</div>
 				<?php } ?>
 			</div>
 		</div>
 		<div class="info-content bg-f shipping-method-content">
-			<p class="f14 f700 title">Shipping Method</p>
+			<p class="f14 f700 title"><?php echo appT('shipping_method');?></p>
 			<?php if (empty($logisticsList)){?>
 			<div class="empty-tips f14 mt12">
-				<p>Please set your address first!</p>
+				<p><?php echo distT('set_address_first');?></p>
 			</div>
 			<?php } else { ?>
 			<div class="logistics-list">
@@ -116,14 +116,14 @@
 			<?php if (!empty($insuranceFee)) {?>
 			<div class="mt6 insurance-btn">
 				<span class="iconfont icon-fangxingweixuanzhong"></span>
-				<span class="c6">Add Shipping Insurance to your order</span>
+				<span class="c6"><?php echo distT('add_insurance');?></span>
 				<span class="f600"><?php echo $insuranceFee;?></span>
 				<span class="iconfont icon-tishi relative"></span>
 				<div class="help-tips">
 					<div class="border-up-empty">
 						<span></span>
 					</div>
-					<span>Insurance offers premium protection and safety for your valuable items during international shipping. We'll reship your package immediately at no extra charge if it's reported lost or damaged.</span>
+					<span><?php echo distT('insurance_tips');?></span>
 				</div>
 				<input type="hidden" name="insurance" value="0">
 			</div>
@@ -174,15 +174,15 @@
 			</ul>
 		</div>
 		<div class="info-content bg-f order-summary-content">
-			<p class="f14 f700 title">Order Summary</p>
+			<p class="f14 f700 title"><?php echo appT('order_summary');?></p>
 			<div class="order-content"></div>
-			<button type="button" class="btn btn-black w100 mt20" id="place-order-btn<?php echo empty($shipAddress) ? ' disabled':'';?>" <?php echo empty($shipAddress) ? 'disabled="disabled"':'';?>>PLACE ORDER</button>
+			<button type="button" class="btn btn-black w100" id="place-order-btn<?php echo empty($shipAddress) ? ' disabled':'';?>" <?php echo empty($shipAddress) ? 'disabled="disabled"':'';?>><?php echo appT('place_order');?></button>
 		</div>
 	</form>
 	<?php } else {?>
 	<div class="info-content bg-f tc">
 		<p class="f14"><?php echo $error;?></p>
-		<a href="<?php echo url('cart');?>" class="btn btn-black iblock w50 mt20">BACK TO CART</a>
+		<a href="<?php echo url('cart');?>" class="btn btn-black iblock w50 mt20"><?php echo distT('back_to_cart');?></a>
 	</div>
 	<?php }?>
 </div>
@@ -195,21 +195,20 @@
 	<div class="content">
 		<div class="list-title flex">
 			<div class="tcell">
-				<p class="line"></p>
+				<p class="line bg-f5"></p>
 			</div>
-			<p class="title">MY ADDRESSES</p>
+			<p class="title"><?php echo distT('my_addresses');?></p>
 			<div class="tcell">
-				<p class="line"></p>
+				<p class="line bg-f5"></p>
 			</div>
 		</div>
 		<div class="mt10 tr">
-			<button type="button" class="btn24 btn-black add-new-address">New Address</button>
+			<button type="button" class="btn24 btn-black add-new-address"><?php echo distT('new_address');?></button>
 		</div>
 		<div class="address-list" data-page="0" data-size="10"></div>
 	</div>
 </div>
 <script type="text/javascript">
-$(function(){
-	CHECKOUTINDEX.init();
-})
+$(function(){CHECKOUTINDEX.init();});
 </script>
+<?php $this->load('common/simple_footer');?>

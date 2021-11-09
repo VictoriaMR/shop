@@ -13,7 +13,7 @@
 		<ul class="cart-list checked">
 			<?php foreach($checkedList as $value) {?>
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
-				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
+				<div class="w100 table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
 						<div class="image-tcell tcell">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
@@ -119,7 +119,7 @@
 		<ul class="cart-list mt10">
 			<?php foreach($unCheckList as $value) {?>
 			<li class="item" data-id="<?php echo $value['cart_id'];?>">
-				<div class="table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
+				<div class="w100 table<?php echo $value['out_of_stock'] || empty($value['status']) ? ' opac5' : '';?>">
 					<div class="image tcell">
 						<div class="image-tcell tcell">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">

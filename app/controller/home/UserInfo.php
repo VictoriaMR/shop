@@ -158,7 +158,7 @@ class UserInfo extends HomeBase
 
 	public function setAddressDefault()
 	{
-		$id = (int)ipost('id');
+		$id = ipost('id');
 		$memId = userId();
 		$where = [
 			'address_id' => $id,
@@ -208,16 +208,30 @@ class UserInfo extends HomeBase
 
 	public function getAddress()
 	{
-		$page = ipost('page', 1);
-		$size = ipost('size', 10);
-		$list = $this->getAddressList($page, $size);
+		if (userId()) {
+			$page = ipost('page', 1);
+			$size = ipost('size', 10);
+			$list = $this->getAddressList($page, $size);
+		} else {
+			$list = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
+		}
 		$this->success($list);
 	}
 
 	public function getAddressInfo()
 	{
-		$id = (int)ipost('id');
-		$info = make('app/service/member/Address')->getInfo($id);
+		$id = ipost('id');
+		if (userId()) {
+			$info = make('app/service/member/Address')->getInfo($id);
+		} else {
+			$list = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
+			foreach ($list as $value) {
+				if ($value['address_id'] ?? 0 == $id) {
+					$info = $value;
+					break;
+				}
+			}
+		}
 		if (empty($info)) {
 			$this->error('Sorry, That address was not exist!');
 		}
@@ -238,8 +252,8 @@ class UserInfo extends HomeBase
 		$state = ipost('state');
 		$address1 = ipost('address1');
 		$address2 = ipost('address2');
-		$is_default = (int)ipost('is_default');
-		$is_bill = (int)ipost('is_bill');
+		$is_default = ipost('is_default');
+		$is_bill = ipost('is_bill');
 		if (empty($country_code2)) {
 			$this->error('Country is required');
 		}
@@ -277,11 +291,18 @@ class UserInfo extends HomeBase
 		];
 		$countryInfo = make('app/service/address/Country')->loadData($country_code2, 'dialing_code');
 		$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$phone;
-		if (empty($address_id)) {
-			$data['mem_id'] = userId();
-			$rst = make('app/service/member/Address')->insert($data);
+		if (empty(userId())) {
+			$addressData = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
+			$data['address_id'] = randString(10, false, false, true);
+			$addressData[] = $data;
+			$rst = session()->set(APP_TEMPLATE_TYPE.'_info.address', $addressData);
 		} else {
-			$rst = make('app/service/member/Address')->updateData(['address_id'=>$address_id, 'mem_id'=>userId()], $data);
+			if (empty($address_id)) {
+				$data['mem_id'] = userId();
+				$rst = make('app/service/member/Address')->insert($data);
+			} else {
+				$rst = make('app/service/member/Address')->updateData(['address_id'=>$address_id, 'mem_id'=>userId()], $data);
+			}
 		}
 		if ($rst) {
 			$this->success($address_id ? 'Edit address success' : 'Add address success');

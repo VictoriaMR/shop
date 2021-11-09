@@ -17,10 +17,12 @@ const CARTPAGE = {
 					if (obj.parent().find('li.item').length <= 1) {
 						setTimeout(function(){
 							window.location.reload();
-						}, 100);
+						}, 200);
 					} else {
-						obj.remove();
-						TIPS.loadout();
+						setTimeout(function(){
+							obj.remove();
+							TIPS.loadout(obj);
+						}, 200);
 					}
 				} else {
 					TIPS.loadout(obj);

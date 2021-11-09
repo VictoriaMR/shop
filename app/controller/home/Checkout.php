@@ -19,38 +19,40 @@ class Checkout extends HomeBase
 		} else {
 			//获取地址
 			$memId = userId();
-			if (!empty($memId)) {
+			if (empty($memId)) {
+				$addressData = session()->get(APP_TEMPLATE_TYPE.'_info.address');
+			} else {
 				$addressData = make('app/service/member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
-				if (!empty($addressData)) {
-					foreach ($addressData as $value) {
-						if ($value['is_default']) {
-							$shipAddress = $value;
-						}
-						if ($value['is_bill']) {
-							$billAddress = $value;
-						}
+			}
+			if (!empty($addressData)) {
+				foreach ($addressData as $value) {
+					if ($value['is_default']) {
+						$shipAddress = $value;
 					}
-					if (empty($shipAddress)) {
-						$shipAddress = array_shift($addressData);
+					if ($value['is_bill']) {
+						$billAddress = $value;
 					}
-					if (empty($billingAddress)) {
-						$billAddress = $shipAddress;
-					}
-					$order = make('app/service/order/Order');
-					$symbol = make('app/service/Currency')->priceSymbol(2);
-					$logisticsList = [[
-						'name' => appT('express_shipping'),
-						'fee' => $symbol.$order->getShippingFee($info['total']),
-						'time_first' => 5,
-						'time_second' => 9,
-						'tips' => appT('shipping_tips', ['{start}'=>5, '{end}'=>9]),
-					]];
-					$insuranceFee = $symbol.$order->getInsurance($info['total']);
-					$this->assign('insuranceFee', $insuranceFee);
-					$this->assign('logisticsList', $logisticsList);
-					$this->assign('shipAddress', $shipAddress);
-					$this->assign('billAddress', $billAddress);
 				}
+				if (empty($shipAddress)) {
+					$shipAddress = array_shift($addressData);
+				}
+				if (empty($billingAddress)) {
+					$billAddress = $shipAddress;
+				}
+				$order = make('app/service/order/Order');
+				$symbol = make('app/service/Currency')->priceSymbol(2);
+				$logisticsList = [[
+					'name' => appT('express_shipping'),
+					'fee' => $symbol.$order->getShippingFee($info['total']),
+					'time_first' => 5,
+					'time_second' => 9,
+					'tips' => appT('shipping_tips', ['{start}'=>5, '{end}'=>9]),
+				]];
+				$insuranceFee = $symbol.$order->getInsurance($info['total']);
+				$this->assign('insuranceFee', $insuranceFee);
+				$this->assign('logisticsList', $logisticsList);
+				$this->assign('shipAddress', $shipAddress);
+				$this->assign('billAddress', $billAddress);
 			}
 			$this->assign('skuList', $info['list']);
 		}
@@ -65,16 +67,20 @@ class Checkout extends HomeBase
 
 	public function createOrder()
 	{
-		$skuIds = (int)ipost('id');
-		$quantity = (int)ipost('quantity', 1);
+		$skuIds = ipost('id');
+		$quantity = ipost('quantity', 1);
 		$shippingAddressId = ipost('shipping_address_id');
 		$billingAddressId = ipost('billing_address_id');
 		$insurance = ipost('insurance', 0);
+		//游客登录
+		if (empty(userId())) {
+
+		}
 		if (empty($shippingAddressId)) {
-			$this->error(appT('shipping_address_required'));
+			$this->error(distT('shipping_address_required'));
 		}
 		if (empty($billingAddressId)) {
-			$this->error(appT('billing_address_required'));
+			$this->error(distT('billing_address_required'));
 		}
 		$skuList = [];
 		if (empty($skuIds)) {
@@ -108,11 +114,11 @@ class Checkout extends HomeBase
 	public function calculateOrderFee()
 	{
 		$info = $this->getCheckoutData();
-		$language = make('app/service/Language');
+		$currencyService = make('app/service/Currency');
 		$order = make('app/service/order/Order');
 		$list = [];
 		$orderTotal = $info['total'];
-		$symbol = $language->priceSymbol(2);
+		$symbol = $currencyService->priceSymbol(2);
 		$list[] = [
 			'type' => 0,
 			'name' => appT('product_original_total'),
@@ -133,7 +139,7 @@ class Checkout extends HomeBase
 			'value_format' => $symbol.$shippingFee,
 		];
 		$orderTotal += $shippingFee;
-		if (!empty(input('insurance'))) {
+		if (!empty(ipost('insurance'))) {
 			$insuranceFee = $order->getInsurance($info['total']);
 			$list[] = [
 				'type' => 3,

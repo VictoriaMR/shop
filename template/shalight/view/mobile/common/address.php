@@ -26,7 +26,7 @@ foreach ($tempArr as $value) {
 			<div class="mt16">
 				<div class="item">
 					<p class="title f700 f14">
-						<span class="text"><?php echo appT('Country');?></span>
+						<span class="text"><?php echo appT('country');?></span>
 						<span class="cred">*</span>
 					</p>
 					<input type="hidden" name="country_code2" required="required" maxlength="2">

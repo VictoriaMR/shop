@@ -37,7 +37,6 @@ class Cookie
 				}
 			}
 			session()->set('cookie.setcookie', 1);
-			//更新默认语言
 		}
 	}
 
@@ -78,7 +77,7 @@ class Cookie
 		}
 		$expire = empty($config['expire']) ? 0 : $_SERVER['REQUEST_TIME'] + intval($config['expire']);
 		$_COOKIE[$name] = $value;
-		session()->set(APP_TEMPLATE_TYPE.'_info.uuid', $name);
+		session()->set(APP_TEMPLATE_TYPE.'_info.'.$name, $value);
 		return setcookie($name, $value, $expire, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
 	}
 

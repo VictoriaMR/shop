@@ -76,7 +76,7 @@
 				<p class="line"></p>
 			</div>
 		</div>
-		<div class="introduce-image">
+		<div class="introduce-image tc">
 			<?php foreach($info['introduce'] as $value){?>
 			<p>
 				<img data-src="<?php echo $value['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
@@ -88,9 +88,9 @@
 	<!-- add cart -->
 	<div class="cart-bottom">
 		<div class="left">
-			<a class="tab" href="<?php echo url('contact');?>">
-				<span class="iconfont icon-kefu"></span>
-				<p class="text">chat</p>
+			<a class="tab relative" href="<?php echo url('cart');?>">
+				<span class="iconfont icon-gouwuche"></span>
+				<p class="text">cart</p>
 			</a>
 			<button class="tab like-block" href="javascript:;">
 				<span class="iconfont icon-xihuan<?php echo $isLiked ? 'fill' : '';?>"></span>
