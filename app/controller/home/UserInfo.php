@@ -248,7 +248,7 @@ class UserInfo extends HomeBase
 		$phone = ipost('phone');
 		$postcode = ipost('postcode');
 		$city = ipost('city');
-		$zone_id = (int)ipost('zone_id');
+		$zone_id = ipost('zone_id');
 		$state = ipost('state');
 		$address1 = ipost('address1');
 		$address2 = ipost('address2');

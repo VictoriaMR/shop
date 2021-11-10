@@ -107,6 +107,12 @@ a {
 	font-size: 0.14rem;
 	color: #666666;
 }
+.input.success {
+	border: 0.01rem solid #1d953f !important;
+}
+.input.error {
+	border: 0.01rem solid #EB2027 !important;
+}
 .selection {
 	height: 100%;
 	width: 100%;

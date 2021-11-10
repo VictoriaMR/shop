@@ -240,3 +240,24 @@
 	font-size: 0.18rem;
 	color: #999999;
 }
+.guest-email-item .input {
+	height: 0.4rem;
+	border: 0.01rem solid #ccc;
+}
+.guest-email-tips a {
+	text-decoration: underline;
+	color: #0075E2;
+	font-size: 0.14rem;
+}
+.guest-email-item .iconfont {
+	position: absolute;
+	font-size: 0.2rem;
+	right: 0.1rem;
+	bottom: 0.08rem;
+}
+.guest-email-item .iconfont.success {
+	color: #1d953f;
+}
+.guest-email-item .iconfont.error {
+	color: #EB2027;
+}

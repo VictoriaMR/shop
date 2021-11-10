@@ -47,4 +47,5 @@ return [
 	'edit_address' => 'Edit Address',
 	'add_address' => 'Add Address',
 	'quick_find' => 'Quick Find',
+	'email_tips' => 'name@example.com',
 ];

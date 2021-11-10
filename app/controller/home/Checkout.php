@@ -21,6 +21,8 @@ class Checkout extends HomeBase
 			$memId = userId();
 			if (empty($memId)) {
 				$addressData = session()->get(APP_TEMPLATE_TYPE.'_info.address');
+				$email = session()->get(APP_TEMPLATE_TYPE.'_info.guest_email', '');
+				$this->assign('email', $email);
 			} else {
 				$addressData = make('app/service/member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
 			}
@@ -74,7 +76,38 @@ class Checkout extends HomeBase
 		$insurance = ipost('insurance', 0);
 		//游客登录
 		if (empty(userId())) {
-
+			$email = session()->get(APP_TEMPLATE_TYPE.'_info.guest_email');
+			if (empty($email)) {
+				$this->error(distT('email_empty'));
+			}
+			//注册
+			$memberService = make('app/service/Member');
+			$memId = $memberService->insertGetId(['site_id'=>siteId(), 'email'=>$email]);
+			if (empty($memId)) {
+				$this->error(distT('regist_error'));
+			}
+			//登录
+			$rst = $memberService->loginById($memId);
+			if (!$rst) {
+				$this->error(distT('regist_error'));
+			}
+			//地址更新
+			$addressData = session()->get(APP_TEMPLATE_TYPE.'_info.address');
+			if (empty($addressData)) {
+				$this->error(distT('address_empty'));
+			}
+			$addressData = array_column($addressData, null, 'address_id');
+			$addressService = make('app/service/member/Address');
+			$countryService = make('app/service/address/Country');
+			foreach ($addressData as $key => $value) {
+				unset($value['address_id']);
+				$countryInfo = $countryService->loadData($value['country_code2'], 'dialing_code');
+				$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$value['phone'];
+				$value['mem_id'] = $memId;
+				$addressData[$key] = $addressService->insertGetId($value);
+			}
+			$shippingAddressId = $addressData[$shippingAddressId] ?? 0;
+			$billingAddressId = $addressData[$billingAddressId] ?? 0;
 		}
 		if (empty($shippingAddressId)) {
 			$this->error(distT('shipping_address_required'));
@@ -107,7 +140,7 @@ class Checkout extends HomeBase
 			}
 			$this->success(url('checkout/payOrder', ['id'=>$rst]));
 		} else {
-			$this->error(appT('create_order_error'));
+			$this->error(distT('create_order_error'));
 		}
 	}
 
@@ -276,5 +309,23 @@ class Checkout extends HomeBase
 		} else {
 			
 		}
+	}
+
+	public function setGuestEmail()
+	{
+		$email = ipost('email');
+		if (empty($email)) {
+			$this->error(distT('email_empty'));
+		}
+		$where = [
+			'site_id' => siteId(),
+			'email' => $email,
+		];
+		$rst = make('app/service/Member')->getCountData($where);
+		if ($rst) {
+			$this->error(distT('email_exist'));
+		}
+		session()->set(APP_TEMPLATE_TYPE.'_info.guest_email', $email);
+		$this->success(distT('regist_able'));
 	}
 }

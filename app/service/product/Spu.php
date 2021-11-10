@@ -440,7 +440,7 @@ class Spu extends Base
 		}
 		$where = ['site_id' => siteId(), 'status'=>$this->getConst('STATUS_OPEN')];
 		if (!empty($spuList)) {
-			$cateList = $this->getListData(['spu_id'=>['in'=>$spuList]], 'cate_id');
+			$cateList = $this->getListData(['spu_id'=>['in', $spuList]], 'cate_id');
 			$where['cate_id'] = ['in', array_column($cateList, 'cate_id')];
 		}
 		$total = $this->getCountData($where);

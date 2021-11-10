@@ -28,6 +28,24 @@
 	</div>
 	<?php if (empty($error)) {?>
 	<form id="checkout-form">
+		<?php if (empty(userId())) {?>
+		<div class="info-content bg-f">
+			<p class="f14 f700 title"><?php echo distT('guest_checkout');?></p>
+			<div class="guest-email-item">
+				<p class="f700 f14 mt8">
+					<span class="text"><?php echo distT('email');?></span>
+					<span class="cred">*</span>
+				</p>
+				<div class="relative">
+					<input type="text" class="input mt2<?php echo $email?' success':'';?>" name="email" value="<?php echo $email;?>" placeholder="<?php echo appT('email_tips');?>">
+					<?php if ($email){?>
+					<span class="iconfont icon-yuanxingxuanzhongfill success"></span>
+					<?php }?>
+				</div>
+				<p class="guest-email-tips mt4 c9"><?php echo distT('guest_email_tips', ['{url}'=>url('login')]);?></p>
+			</div>
+		</div>
+		<?php }?>
 		<input type="hidden" name="id" value="<?php echo $skuId;?>">
 		<input type="hidden" name="quantity" value="<?php echo $quantity;?>">
 		<div class="bg-f info-content">
@@ -70,7 +88,7 @@
 				<?php }?>
 				<?php if (!empty($billAddress)) {?>
 				<div class="item billing-address-item relative mt12<?php echo $shipAddress['is_bill'] ? ' hide' : '';?>" data-id="<?php echo $billAddress['address_id'] ?? 0;?>">
-					<p class="f14 f700 title">Billing Address</p>
+					<p class="f14 f700 title"><?php echo appT('billing_address');?></p>
 					<a href="javascript:;" class="address-info-content mt6">
 						<div class="address-info">
 							<p><?php echo trim($billAddress['first_name'].' '.$billAddress['last_name']);?></p>
@@ -131,7 +149,7 @@
 			<?php }?>
 		</div>
 		<div class="info-content bg-f">
-			<p class="f14 f700 title">Shipping Bag</p>
+			<p class="f14 f700 title"><?php echo distT('purchase_products');?></p>
 			<ul class="product-list">
 				<?php foreach($skuList as $key => $value) {?>
 				<li class="item" data-id="<?php echo $key;?>">
@@ -209,6 +227,11 @@
 	</div>
 </div>
 <script type="text/javascript">
-$(function(){CHECKOUTINDEX.init();});
+$(function(){
+	CHECKOUTINDEX.init({
+		email_empty: '<?php echo distT('email_empty');?>',
+		email_not_match: '<?php echo distT('email_not_match');?>',
+	});
+});
 </script>
 <?php $this->load('common/simple_footer');?>

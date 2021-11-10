@@ -23,7 +23,6 @@ class History extends Base
 		if ($this->getCountData($where)) {
 			return true;
 		}
-		$where['add_time'] = now();
 		return $this->insert($where);
 	}
 }

@@ -1,6 +1,7 @@
 const CHECKOUTINDEX = {
-	init: function() {
+	init: function(data) {
 		const _this = this;
+		_this.data = data;
 		$('.empty-address').on('click', function(){
 			ADDRESSBOOK.setCallback();
 			ADDRESSBOOK.show();
@@ -89,16 +90,53 @@ const CHECKOUTINDEX = {
 		//生成订单
 		$('#place-order-btn').on('click', function(){
 			const obj = $('.order-summary-content');
-			TIPS.loading(obj);
+			const emailObj = $('#checkout-form input[name="email"]');
+			if (emailObj.length > 0) {
+				if (emailObj.val()) {
+					if (!VERIFY.email(emailObj.val())) {
+						TIPS.error(_this.data.email_not_match);
+						emailObj.focus();
+						return false;
+					}
+				} else {
+					TIPS.error(_this.data.email_empty);
+					emailObj.focus();
+					return false;
+				}
+			}
+			TIPS.loading();
 			$.post(URI+'checkout/createOrder', $('#checkout-form').serializeArray(), function(res) {
-				TIPS.loadout(obj);
+				TIPS.loadout();
 				if (res.code === '200') {
 					window.location.href = res.data;
 				} else {
 					TIPS.error(res.message);
 				}
 			});
-		})
+		});
+		//email
+		$('#checkout-form input[name="email"]').on('focus', function(){
+			$(this).removeClass('error').removeClass('success').parent().find('.iconfont').remove();;
+		}).on('blur', function(){
+			if (!VERIFY.email($(this).val())) {
+				TIPS.error(_this.data.email_not_match);
+				$(this).focus();
+				return false;
+			}
+			TIPS.loading();
+			const _thisObj = $(this);
+			$.post('checkout/setGuestEmail', {email: $(this).val()}, function(res){
+				TIPS.loadout();
+				if (res.code === '200') {
+					_thisObj.removeClass('error').addClass('success');
+					_thisObj.parent().append('<span class="iconfont icon-yuanxingxuanzhongfill success"></span>');
+				} else {
+					_thisObj.removeClass('success').addClass('error');
+					_thisObj.parent().append('<span class="iconfont icon-tishifill error"></span>');
+					TIPS.error(res.message);
+				}
+			});
+		});
 		_this.calculateOrderFee();
 	},
 	addressShow: function(callback) {
@@ -193,9 +231,9 @@ const CHECKOUTINDEX = {
 	},
 	calculateOrderFee: function() {
 		const obj = $('.order-summary-content');
-		TIPS.loading(obj);
+		TIPS.loading();
 		$.post(URI+'checkout/calculateOrderFee', $('#checkout-form').serializeArray(), function(res) {
-			TIPS.loadout(obj);
+			TIPS.loadout();
 			if (res.code === '200') {
 				let html = '';
 				fee_list = res.data.fee_list;
