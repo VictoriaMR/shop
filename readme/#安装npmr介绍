@@ -7,14 +7,8 @@ arch
 # 查看系统版本
 cat /etc/centos-release
 
-# 分配账号权限
-groupadd mysql
-useradd -g mysql mysql
-chown -R mysql:mysql /usr/local/mysql
-chmod -R 755 /usr/local/mysql
-
-groupadd www
-useradd -M -g www -s /sbin/nologin www
+# 释放内存 
+echo 3 > /proc/sys/vm/drop_caches
 
 #安装mysql 
 yum -y remove mariadb*
@@ -30,7 +24,7 @@ vim /etc/mysql.cnf
 
 [mysql_safe]
 # modify
-log-error=/var/log/mysql-error.log
+log-error=/data/log/mysql-error.log
 # modify
 pid-file=/var/run/mysql.pid
 
@@ -75,6 +69,15 @@ cd bin/
 ln -s /usr/local/mysql/support-files/mysql.server /etc/init.d/mysql
 ln -s /usr/local/mysql/bin/mysql /usr/bin/mysql
 
+# 分配账号权限
+groupadd mysql
+useradd -g mysql mysql
+chown -R mysql:mysql /usr/local/mysql
+chmod -R 755 /usr/local/mysql
+
+groupadd www
+useradd -M -g www -s /sbin/nologin www
+
 #启动 mysql 
 service mysql start
 mysql -u root -p xxx
@@ -91,6 +94,7 @@ firewall-cmd --zone=public --add-port=3306/tcp --permanent
 firewall-cmd --zone=public --add-port=80/tcp --permanent
 firewall-cmd --zone=public --add-port=443/tcp --permanent
 firewall-cmd --zone=public --add-port=6379/tcp --permanent
+firewall-cmd --list-ports
 
 #安装 freetype
 wget https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.gz
@@ -211,10 +215,7 @@ bind 127.0.0.1 # 注释掉这句
 daemonize yes
 # 关闭保护模式，否则外部ip无法连接
 protected-mode no
-# 防火墙开启redis端口，默认6379
-firewall-cmd --add-port=6379/tcp --permanent
-firewall-cmd --reload
-firewall-cmd --list-ports
+
 # 内存设置
 echo 8192 > /proc/sys/net/core/somaxconn ## 最大内存8G
 sysctl vm.overcommit_memory=1  ## 内存超出时开辟内存 
