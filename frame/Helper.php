@@ -73,7 +73,7 @@ function mediaUrl($url, $width=''){
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
 	if (strpos($url, 'http') === false) {
-		$url = config('env.FILE_CENTER_DOMAIN').$url;
+		$url = config('env.APP_DOMAIN').FILE_CENTER.DS.$url;
 	}
 	return $url.'?v='.config('env.APP_VERSION');
 }
