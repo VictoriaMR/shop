@@ -2,8 +2,7 @@
 /config/env.php
 /config/domain.php
 /vendor
-/runtime
-/storage
+/runtime/*
+/storage/*
 /.env
 /composer.lock
-/template/*/static
