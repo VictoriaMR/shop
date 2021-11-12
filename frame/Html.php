@@ -93,7 +93,7 @@ class Html
 			}
 		}
 		if (!is_dir($path.'static')) {
-			mkdir($path.'static', 0750, true);
+			mkdir($path.'static', 0777, true);
 		}
 		make('app/service/site/StaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, $type);
 		file_put_contents($path.$file, $str);

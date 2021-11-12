@@ -64,7 +64,7 @@ class Debug
 		if (!is_file($destination)) {
 			$path = dirname($destination);
 			if (!is_dir($path)) {
-				mkdir($path, 755, true);
+				mkdir($path, 0777, true);
 			}
 		}
 		// 获取基本信息

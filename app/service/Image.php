@@ -114,7 +114,7 @@ class Image
 
 		$dirPath = dirname($moveto);
 		if (!is_dir($dirPath)) {
-			mkdir($dirPath, 0755, true);
+			mkdir($dirPath, 0777, true);
 		}
 
 		$imagefunc($returnPic, $moveto);
@@ -206,7 +206,7 @@ class Image
 		imagecopyresampled($returnPic, $srcImage, $dst_x + $diff_x, $dst_y + $diff_y, $src_x, $src_y, $real_w, $real_h, $src_w, $src_h);
 		$dirPath = dirname($moveto);
 		if (!is_dir($dirPath)) {
-			mkdir($dirPath, 0755, true);
+			mkdir($dirPath, 0777, true);
 		}
 		$imagefunc($returnPic, $moveto);
 		imagedestroy($returnPic);
