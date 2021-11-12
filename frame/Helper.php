@@ -114,7 +114,7 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 	return $text;
 }
 function distT($text, $replace=[], $lanId=''){
-	return appT($text, $replace, $lanId, \App::get('router', 'path'));
+	return appT($text, $replace, $lanId, lcfirst(\App::get('router', 'path')));
 }
 function utf8len($string){
 	return mb_strlen($string, 'UTF-8');
