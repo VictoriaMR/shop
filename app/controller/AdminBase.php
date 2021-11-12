@@ -15,7 +15,7 @@ class AdminBase extends Base
 		$this->_tag = $this->_arr;
 		$router = \App::get('router');
 		if ($router['class'] == 'admin') {
-			if ($router['path'] !== 'index') {
+			if ($router['path'] !== 'Index') {
 				if (empty($this->_default)) {
 					$this->_nav = $this->_arr;
 				} else {
