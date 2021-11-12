@@ -14,6 +14,9 @@ class Url extends Base
 	{
 		$domain = $this->getDomain($url);
 		$data = $this->getItemId($domain, $url);
+		if (empty($data)) {
+			return false;
+		}
 		$data['name'] = $domain;
 		$where = ['name'=>$data['name'], 'item_id'=>$data['item_id']];
 		if ($this->getCountData($where)) return true;
@@ -55,8 +58,11 @@ class Url extends Base
 				}
 				break;
 		}
+		if (empty($itemId)) {
+			return false;
+		}
 		return [
-			'item_id' => empty($itemId) ? md5($url) : $itemId,
+			'item_id' => $itemId,
 			'url' => $url,
 		];
 	}
