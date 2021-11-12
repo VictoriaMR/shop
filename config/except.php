@@ -13,5 +13,6 @@ return [
 		'cart' => true,
 		'checkout' => true,
 		'userinfo' => true,
+		'pageNotFound' => true,
 	],
 ];
