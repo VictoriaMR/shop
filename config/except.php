@@ -5,6 +5,7 @@ return [
 		'api' => true,
 	],
 	'home' => [
+		'api' => true,
 		'index' => true,
 		'newin' => true,
 		'product' => true,
