@@ -1,3 +1,6 @@
+$(function(){
+	HISTORY.init();
+});
 const HISTORY = {
 	init: function() {
 		//删除

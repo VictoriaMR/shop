@@ -5,6 +5,7 @@ return [
 	'category' => 'Category',
 	'chat' => 'Chat',
 	'me' => 'Me',
+	'need_login' => 'Need Login',
 	'secure_checkout' => 'SECURE CHECKOUT',
 	'shipping_address' => 'Shipping Address',
 	'billing_address' => 'Billing Address',

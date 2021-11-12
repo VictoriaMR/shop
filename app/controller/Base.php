@@ -31,12 +31,12 @@ class Base
 		$this->result('200', $data, $options);
 	}
 
-	protected function error($message='')
+	protected function error($message='', $code='10000')
 	{
 		if (empty($message)) {
 			$message = 'error';
 		}
-		$this->result('10000', [], ['message'=>$message]);
+		$this->result($code, [], ['message'=>$message]);
 	}
 
 	protected function assign($name, $value=null)

@@ -1,11 +1,11 @@
-<?php $this->load('common/back_header', ['_simple_title'=>appT('my_visit')]);?>
+<?php $this->load('common/back_header', ['_simple_title'=>distT('my_visit')]);?>
 <div id="history-page">
 	<div class="layer">
 		<div class="list-title flex">
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
-			<p class="title"><?php echo appT('history_list');?></p>
+			<p class="title"><?php echo distT('history_list');?></p>
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
@@ -13,10 +13,7 @@
 	</div>
 	<div class="product-list mt10">
 		<?php if (empty($list)) {?>
-		<p class="tc f14 mt24 c6">Your history list is empty.</p>
-		<div class="mt24">
-			<?php $this->load('common/recommend');?>
-		</div>
+		<p class="empty-tips"><?php echo distT('history_empty');?></p>
 		<?php } else { ?>
 		<?php foreach ($list as $k => $v){ ?>
 		<p class="title"><?php echo $k;?></p>
@@ -43,4 +40,8 @@
 		<?php } ?>
 		<?php } ?>
 	</div>
+	<?php if (empty($list)){?>
+	<?php $this->load('common/recommend');?>
+	<?php }?>
 </div>
+<?php $this->load('common/simple_footer');?>

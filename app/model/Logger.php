@@ -6,7 +6,7 @@ use app\model\Base;
 class Logger extends Base
 {
 	protected $_connect = 'static';
-	protected $_table = 'visitor_log';
+	protected $_table = 'visitor_logger';
 	protected $_primaryKey = 'log_id';
 	protected $_addTime = 'add_time';
 	protected $_intFields = ['log_id', 'site_id', 'mem_id', 'type', 'is_moblie'];

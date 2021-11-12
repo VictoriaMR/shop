@@ -15,7 +15,7 @@ class VerifyToken
 			}
 			if (IS_AJAX) {
 				header('Content-Type:application/json;charset=utf-8');
-				echo json_encode(['code'=>'10001', 'data'=>'', 'message' => 'need login'], JSON_UNESCAPED_UNICODE);
+				echo json_encode(['code'=>'10001', 'data'=>'', 'message' => appT('need_login')], JSON_UNESCAPED_UNICODE);
 				exit();
 			} else {
 				redirect(url('login'));

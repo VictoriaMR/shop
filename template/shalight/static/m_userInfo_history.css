@@ -1,6 +1,5 @@
 #history-page {
-	padding-top: 0.2rem;
-	padding-bottom: 0.32rem;
+	padding: 0.2rem 0 0.1rem 0;
 }
 #history-page .product-list .remove-btn {
 	position: absolute;
@@ -8,8 +7,14 @@
 	right: 0.05rem;
 	border-top-right-radius: 0.06rem;
 	padding: 0 0.06rem;
+}
+#history-page .empty-tips {
+	font-size: 0.16rem;
+	text-align: center;
+	margin-top: 0.4rem;
+	margin-bottom: 0.6rem;
 }.product-list {
-	padding: 0 0.07rem;
+	padding: 0 0.05rem;
 }
 .product-list .title {
 	padding: 0 0.07rem;
@@ -49,8 +54,9 @@
 	-webkit-line-clamp: 2;
 	overflow:hidden;
 	-webkit-box-orient: vertical;
-	margin-top: 0.10rem;
+	margin-top: 0.08rem;
 	font-size: 0.13rem;
+	min-height: 0.36rem;
 }
 .product-list .original_price {
 	margin-left: 0.04rem;

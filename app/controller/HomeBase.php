@@ -14,4 +14,9 @@ class HomeBase extends Base
 			}
 		}
 	}
+
+	protected function isLogin()
+	{
+		return !empty(userId());
+	}
 }

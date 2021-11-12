@@ -10,8 +10,8 @@ class UserInfo extends HomeBase
 		html()->addCss();
 		html()->addJs();
 
-		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
-		if (!empty($info['mem_id'])) {
+		if ($this->isLogin()) {
+			$info = session()->get(APP_TEMPLATE_TYPE.'_info');
 			$info['name'] = trim($info['first_name'].' '.$info['last_name']);
 			$temp = explode(' ', $info['mobile']);
 			$info['dialing_code'] = $temp[0];
@@ -20,13 +20,13 @@ class UserInfo extends HomeBase
 			$where = [
 				'mem_id' => $info['mem_id'],
 			];
-			//收藏统计
-			//$collectionTotal = make('app/service/member/Collect')->getCountData($where);
-			//足迹统计
-			//$historyTotal = make('app/service/member/History')->getCountData($where);
-			//地址统计
-			//$addressTotal = make('app/service/member/Address')->getCountData($where);
-			//订单统计
+			// 收藏统计
+			$collectionTotal = make('app/service/member/Collect')->getCountData($where);
+			// 足迹统计
+			$historyTotal = make('app/service/member/History')->getCountData($where);
+			// 地址统计
+			$addressTotal = make('app/service/member/Address')->getCountData($where);
+			// 订单统计
 			$order = make('app/service/order/Order');
 			$where['status'] = ['in', [
 				$order->getConst('STATUS_WAIT_PAY'),
@@ -40,19 +40,21 @@ class UserInfo extends HomeBase
 			$where['is_delete'] = 0;
 			$orderTotal = $order->where($where)->field('count(*) as count, status')->groupBy('status')->get();
 			$orderTotal = array_column($orderTotal, 'count', 'status');
+			$this->assign('info', $info);
 		}
-
 		$this->assign('collectionTotal', $collectionTotal ?? 0);
 		$this->assign('historyTotal', $historyTotal ?? 0);
 		$this->assign('addressTotal', $addressTotal ?? 0);
 		$this->assign('orderTotal', $orderTotal ?? 0);
-		$this->assign('info', $info);
 		$this->assign('_title', distT('my_info'));
 		$this->view();
 	}
 
 	public function getInfo()
 	{
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
 		$list = make('app/service/address/Country')->getListData(['status'=>1], 'dialing_code', 0, 0, ['sort'=>'asc']);
 		$list = array_values(array_unique(array_column($list, 'dialing_code')));
 		$this->success($list);
@@ -60,6 +62,9 @@ class UserInfo extends HomeBase
 
 	public function editInfo()
 	{
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
 		$first_name = ipost('first_name');
 		$last_name = ipost('last_name');
 		$dialing_code = ipost('dialing_code');
@@ -90,6 +95,9 @@ class UserInfo extends HomeBase
 
 	public function updateAvatar()
 	{
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
 		$attach_id = ipost('attach_id');
 		if (empty($attach_id)) {
 			$this->error('Param error');
@@ -108,6 +116,9 @@ class UserInfo extends HomeBase
 
 	public function wish()
 	{
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
 		$spuId = ipost('spu_id', 0);
 		if (empty($spuId)) {
 			$this->error('param error');
@@ -124,18 +135,18 @@ class UserInfo extends HomeBase
 	{
 		html()->addCss();
 		html()->addCss('common/address');
+		html()->addCss('common/productList');
 		html()->addJs();
 		html()->addJs('common/address');
-
-		$page = iget('page', 1);
-		$size = iget('size', 10);
-		
-		$list = $this->getAddressList($page, $size);
-
-		$this->assign('list', $list);
-		$this->assign('page', $page);
-		$this->assign('size', $size);
-		$this->assign('_title', appT('my_address'));
+		if ($this->isLogin()) {
+			$page = iget('page', 1);
+			$size = iget('size', 10);
+			$list = $this->getAddressList($page, $size);
+			$this->assign('list', $list);
+			$this->assign('page', $page);
+			$this->assign('size', $size);
+		}
+		$this->assign('_title', distT('my_address'));
 		$this->view();
 	}
 
@@ -158,6 +169,9 @@ class UserInfo extends HomeBase
 
 	public function setAddressDefault()
 	{
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
 		$id = ipost('id');
 		$memId = userId();
 		$where = [
@@ -175,7 +189,10 @@ class UserInfo extends HomeBase
 
 	public function setAddressBillDefault()
 	{
-		$id = (int)ipost('id');
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
+		$id = ipost('id');
 		$memId = userId();
 		$where = [
 			'address_id' => $id,
@@ -192,7 +209,10 @@ class UserInfo extends HomeBase
 
 	public function deleteAddress()
 	{
-		$id = (int)ipost('id');
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
+		$id = ipost('id');
 		$memId = userId();
 		$where = [
 			'address_id' => $id,
@@ -208,7 +228,7 @@ class UserInfo extends HomeBase
 
 	public function getAddress()
 	{
-		if (userId()) {
+		if ($this->isLogin()) {
 			$page = ipost('page', 1);
 			$size = ipost('size', 10);
 			$list = $this->getAddressList($page, $size);
@@ -220,8 +240,8 @@ class UserInfo extends HomeBase
 
 	public function getAddressInfo()
 	{
-		$id = ipost('id');
-		if (userId()) {
+		if ($this->isLogin()) {
+			$id = ipost('id');
 			$info = make('app/service/member/Address')->getInfo($id);
 		} else {
 			$list = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
@@ -240,6 +260,9 @@ class UserInfo extends HomeBase
 
 	public function editAddress()
 	{
+		if (!$this->isLogin()) {
+			$this->error(appT('need_login'), 10001);
+		}
 		$address_id = ipost('address_id');
 		$country_code2 = ipost('country_code2');
 		$tax_number = ipost('tax_number');
@@ -316,16 +339,13 @@ class UserInfo extends HomeBase
 		html()->addCss();
 		html()->addCss('common/productList');
 		html()->addJs();
-
-		$page = iget('page', 1);
-		$size = iget('size', 10);
-
-		$list = $this->getWishList($page, $size);
-
-		$this->assign('list', $list);
-
-		$this->assign('_title', appT('my_wish'));
-
+		if ($this->isLogin()) {
+			$page = iget('page', 1);
+			$size = iget('size', 10);
+			$list = $this->getWishList($page, $size);
+			$this->assign('list', $list);
+		}
+		$this->assign('_title', distT('my_wish'));
 		$this->view();
 	}
 
@@ -408,7 +428,10 @@ class UserInfo extends HomeBase
 
 	public function coupon()
 	{
-		$this->assign('_title', appT('my_coupon'));
+		html()->addCss();
+		html()->addCss('common/productList');
+		html()->addJs();
+		$this->assign('_title', distT('my_coupon'));
 		$this->view();
 	}
 }

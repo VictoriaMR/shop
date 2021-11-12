@@ -1,3 +1,6 @@
+$(function(){
+	ADDRESS.init();
+});
 const ADDRESS = {
 	init: function() {
 		const _this = this;
@@ -7,9 +10,26 @@ const ADDRESS = {
 				return false;
 			}
 			const id = $(this).parents('.item').data('id');
-			TIPS.confirm('Make this address default?', function(){
+			TIPS.confirm(appT('set_default_confirm'), function(){
 				TIPS.loading($('#confirm-modal .content'));
 				$.post(URI+'userInfo/setAddressDefault', {id: id}, function(res){
+					if (res.code === '200') {
+						window.location.reload();
+					} else {
+						TIPS.loadout($('#confirm-modal .content'));
+						TIPS.error(res.message);
+					}
+				});
+			});
+		});
+		$('.address-list').on('click', '.item .default-bill-btn', function(){
+			if ($(this).hasClass('active')) {
+				return false;
+			}
+			const id = $(this).parents('.item').data('id');
+			TIPS.confirm(appT('set_default_bill_confirm'), function(){
+				TIPS.loading($('#confirm-modal .content'));
+				$.post(URI+'userInfo/setAddressBillDefault', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -72,7 +92,7 @@ const ADDRESS = {
 		const _this = this;
 		const obj = $('.address-list');
 		const page = parseInt(obj.data('page')) + 1;
-		const size = parseInt(obj.data('size'))
+		const size = parseInt(obj.data('size'));
 		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
@@ -103,10 +123,12 @@ const ADDRESS = {
 			}
 		});
 	}
-};const ADDRESSBOOK = {
-	init: function(data) {
+};$(function(){
+	ADDRESSBOOK.init();
+})
+const ADDRESSBOOK = {
+	init: function() {
 		const _this = this;
-		_this.zone_list = data.zone_list;
 		$('#address-book').on('click', '.top-close-btn,.address-book-mask,.cancel-btn', function(){
 			_this.close();
 		});
@@ -211,6 +233,10 @@ const ADDRESS = {
 				return false;
 			}
 			TIPS.loading($('#address-book .dialog'));
+			if (_this.saveCallback) {
+				_this.saveCallback($('#address-book form').serializeArray());
+				return;
+			}
 			$.post(URI+'userInfo/editAddress', $('#address-book form').serializeArray(), function(res) {
 				if (res.code === '200') {
 					TIPS.success(res.message);
@@ -221,7 +247,7 @@ const ADDRESS = {
 					} else {
 						setTimeout(function(){
 							window.location.reload();
-						}, 500);
+						}, 200);
 					}
 				} else {
 					TIPS.loadout($('#address-book .dialog'));
@@ -237,15 +263,15 @@ const ADDRESS = {
 			let html = '<input type="hidden" name="state" required="required" value="" maxlength="32">\
 						<div class="selection mt2">\
 						<div class="selector-icon">\
-							<span class="e1 f14 pr12">Please select</span>\
+							<span class="e1 f14 pr12">'+appT('please_select')+'</span>\
 							<i class="iconfont icon-xiangxia1"></i>\
 						</div>\
 						<div class="selector-content">\
 							<div class="selector-search">\
 								<button type="button" class="btn"><i class="iconfont icon-sousuo"></i></button>\
-								<input type="input" class="input" placeholder="Quick find">\
+								<input type="input" class="input" placeholder="'+appT('quick_find')+'">\
 								<div class="clear"></div>\
-								<p class="empty-selector tc c6 f12 mt6 hide">Result empty</p>\
+								<p class="empty-selector tc c6 f12 mt6 hide">'+appT('result_empty')+'</p>\
 							</div>\
 							<ul class="selector">';
 							for (let i=0; i<data.length; i++) {
@@ -276,7 +302,8 @@ const ADDRESS = {
 				city: '',
 				country_code2: '',
 				address_id: 0,
-				default: '1',
+				is_default: '0',
+				is_bill: '0',
 				first_name: '',
 				last_name: '',
 				phone: '',
@@ -287,9 +314,13 @@ const ADDRESS = {
 		} else {
 			data.phone = data.phone.split(' ')[1];
 		}
+		if (typeof data.is_default === 'undefined') {
+			$('#address-book form .default-btn').hide();
+		}
 		for (const i in data) {
 			if (typeof data[i] == 'undefined') data[i] = '';
-			$('#address-book form [name="'+i+'"]').attr('value', data[i]);
+			const obj = $('#address-book form [name="'+i+'"]');
+			obj.val(data[i]);
 			switch (i) {
 				case 'country_code2':
 					$('#address-book form .country-selector li[value="'+data[i]+'"]').trigger('click');
@@ -299,19 +330,20 @@ const ADDRESS = {
 						$('#address-book form .zone-selection').find('input').attr('value', data.state);
 					}
 					break;
-				case 'default':
-					if (data.default === '1') {
-						$('#address-book form .default-btn .iconfont').removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingxuanzhongfill');
+				case 'is_default':
+				case 'is_bill':
+					if (data[i] === '1') {
+						obj.parent().find('.iconfont').removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhongfill');
 					} else {
-						$('#address-book form .default-btn .iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingxuanzhong');
+						obj.parent().find('.iconfont').removeClass('icon-fangxingxuanzhongfill').addClass('icon-fangxingweixuanzhong');
 					}
 					break;
 			}
 		}
-		if (data.address_id) {
-			$('#address-book .list-title .title').text('EDIT ADDRESS');
+		if (data.first_name) {
+			$('#address-book .list-title .title').text(appT('edit_address'));
 		} else {
-			$('#address-book .list-title .title').text('ADD ADDRESS');
+			$('#address-book .list-title .title').text(appT('add_address'));
 		}
 	},
 	loadData: function(id) {
@@ -332,19 +364,24 @@ const ADDRESS = {
 		$('#address-book .mask').fadeOut(300, function(){
 			$('#address-book').hide();
 		});
-		TIPS.start();
+		if (!this.callback) {
+			TIPS.start();
+		}
 	},
 	getZoneList: function (countryCode2){
-		let zoneList = [];
+		let tempZoneList = [];
 		if (typeof countryCode2 !== 'string') {
-			return zoneList;
+			return tempZoneList;
 		}
-		if (typeof this.zone_list[countryCode2] !== 'undefined') {
-			zoneList = this.zone_list[countryCode2];
+		if (typeof zone_list[countryCode2] !== 'undefined') {
+			tempZoneList = zone_list[countryCode2];
 		}
-		return zoneList;
+		return tempZoneList;
 	},
 	setCallback: function(callback) {
 		this.callback = callback;
-	}
+	},
+	setSaveCallback: function(callback) {
+		this.saveCallback = callback;
+	},
 };

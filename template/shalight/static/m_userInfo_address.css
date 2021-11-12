@@ -1,3 +1,6 @@
+#address-page {
+	padding: 0.2rem 0 0.1rem 0;
+}
 #address-page .address-content .title span {
 	display: inline-block;
 	height: 0.24rem;
@@ -22,12 +25,27 @@
 	top: -0.01rem;
 	right: -0.01rem;
 }
-#address-page .address-list .item .default-btn.active {
-	background: #404040;
-	color: #fff;
-}
 #address-page .address-list .item.active p:first-child {
 	width: 80%;
+}
+#address-page .address-list .item .iconfont {
+	font-size: 0.18rem;
+	position: absolute;
+	top: 0.04rem;
+	right: 0.04rem;
+	color: #ddd;
+}
+#address-page .address-list .item .iconfont.icon-wuliu {
+	right: 0.30rem;
+}
+#address-page .address-list .item .iconfont.active {
+	color: #000;
+}
+#address-page .empty-tips {
+	font-size: 0.16rem;
+	text-align: center;
+	margin-top: 0.4rem;
+	margin-bottom: 0.6rem;
 }#address-book {
 	z-index: 106;
 }
@@ -57,4 +75,64 @@
 #address-book .dialog .content .error .selection,
 #address-book .dialog .content .error .input {
 	border-color: #EB2027;
+}.product-list {
+	padding: 0 0.05rem;
+}
+.product-list .title {
+	padding: 0 0.07rem;
+	margin-top: 0.2rem;
+	font-size: 0.16rem;
+	font-weight: 600;
+}
+.product-list li {
+	float: left;
+	width: 50%;
+	margin-top: 0.1rem;
+	padding: 0 0.05rem;
+	position: relative;
+}
+.product-list li a {
+	display: block;
+	background: #fff;
+	border-radius: 0.06rem;
+	overflow: hidden;
+}
+.product-list .img {
+	display: table-cell;
+	width: 1.71rem;
+	height: 1.71rem;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 0;
+	position: relative;
+}
+.product-list .img img {
+	width: 100%;
+}
+.product-list .name {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	overflow:hidden;
+	-webkit-box-orient: vertical;
+	margin-top: 0.08rem;
+	font-size: 0.13rem;
+	min-height: 0.36rem;
+}
+.product-list .original_price {
+	margin-left: 0.04rem;
+	color: #666666;
+	text-decoration: line-through;
+}
+.product-list .like-block {
+	position: absolute;
+	right: 0.05rem;
+	bottom: 0.05rem;
+	width: 0.34rem;
+	height: 0.34rem;
+	border-radius: 50%;
+	font-size: 0.20rem;
+	color: #404040;
+	z-index: 101;
 }

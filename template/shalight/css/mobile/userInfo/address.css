@@ -1,3 +1,6 @@
+#address-page {
+	padding: 0.2rem 0 0.1rem 0;
+}
 #address-page .address-content .title span {
 	display: inline-block;
 	height: 0.24rem;
@@ -37,4 +40,10 @@
 }
 #address-page .address-list .item .iconfont.active {
 	color: #000;
+}
+#address-page .empty-tips {
+	font-size: 0.16rem;
+	text-align: center;
+	margin-top: 0.4rem;
+	margin-bottom: 0.6rem;
 }

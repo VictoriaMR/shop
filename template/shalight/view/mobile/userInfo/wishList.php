@@ -1,11 +1,11 @@
-<?php $this->load('common/back_header', ['_simple_title'=>appT('my_wish')]);?>
+<?php $this->load('common/back_header', ['_simple_title'=>distT('my_wish')]);?>
 <div id="wish-page">
 	<div class="layer">
 		<div class="list-title flex">
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
-			<p class="title"><?php echo appT('wish_list');?></p>
+			<p class="title"><?php echo distT('wish_list');?></p>
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
@@ -13,10 +13,7 @@
 	</div>
 	<div class="product-list mt10">
 		<?php if (empty($list)) {?>
-		<p class="tc f14 mt24 c6">Your wish list is empty.</p>
-		<div class="mt24">
-			<?php $this->load('common/recommend');?>
-		</div>
+		<p class="empty-tips"><?php echo distT('wish_empty');?></p>
 		<?php } else { ?>
 		<ul>
 			<?php foreach ($list as $key => $value){?>
@@ -33,11 +30,15 @@
 						</div>
 					</div>
 				</a>
-				<button class="btn24 btn-black remove-btn">Romove</button>
+				<button class="btn24 btn-black remove-btn"><?php echo distT('remove');?></button>
 			</li>
 			<?php }?>
 		</ul>
 		<p class="clear"></p>
 		<?php } ?>
 	</div>
+	<?php if (empty($list)){?>
+	<?php $this->load('common/recommend');?>
+	<?php }?>
 </div>
+<?php $this->load('common/simple_footer');?>
