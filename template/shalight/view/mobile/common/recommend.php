@@ -1,5 +1,5 @@
 <?php $recommendList = make('app/service/product/Spu')->getRecommend();?>
-<?php if (empty($recommendList)) {
+<?php if (!empty($recommendList)) {
 	$isLogin = userId();
 ?>
 <div id="recommend-page">
