@@ -24,7 +24,7 @@ return [
 	'wish_list' => 'WISH LIST',
 	'my_wish' => 'My Wish',
 	'history_empty' => 'Your History List was empty :-(',
-	'my_visit' => 'My Visit',
+	'my_visit' => 'My Visited',
 	'history_list' => 'HISTORY LIST',
 	'address_empty' => 'Your Address List was empty :-(',
 	'my_address' => 'My Address',
