@@ -106,3 +106,8 @@
 #userinfo-page .order-content .order-status-list li .iconfont {
 	font-size: 0.2rem;
 }
+.txt-footer {
+	width: 100%;
+	position: absolute;
+	bottom: 0;
+}

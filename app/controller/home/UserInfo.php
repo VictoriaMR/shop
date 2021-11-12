@@ -11,7 +11,7 @@ class UserInfo extends HomeBase
 		html()->addJs();
 
 		$info = session()->get(APP_TEMPLATE_TYPE.'_info');
-		if (!empty($info)) {
+		if (!empty($info['mem_id'])) {
 			$info['name'] = trim($info['first_name'].' '.$info['last_name']);
 			$temp = explode(' ', $info['mobile']);
 			$info['dialing_code'] = $temp[0];
@@ -47,7 +47,7 @@ class UserInfo extends HomeBase
 		$this->assign('addressTotal', $addressTotal ?? 0);
 		$this->assign('orderTotal', $orderTotal ?? 0);
 		$this->assign('info', $info);
-		$this->assign('_title', appT('my_info'));
+		$this->assign('_title', distT('my_info'));
 		$this->view();
 	}
 

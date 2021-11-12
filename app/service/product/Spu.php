@@ -439,13 +439,17 @@ class Spu extends Base
 			$collSpuList = array_column($collSpuList, 'spu_id');
 		}
 		$where = ['site_id' => siteId(), 'status'=>$this->getConst('STATUS_OPEN')];
+		$orderBy = [];
 		if (!empty($spuList)) {
 			$cateList = $this->getListData(['spu_id'=>['in', $spuList]], 'cate_id');
-			$where['cate_id'] = ['in', array_column($cateList, 'cate_id')];
+			if (!empty($cateList)) {
+				$orderBy['case when cate_id in ('.implode(',', array_column($cateList, 'cate_id')).') then 1 else 0 end desc'] = 'desc';
+			}
 		}
+		$orderBy['rank'] = 'desc';
 		$total = $this->getCountData($where);
 		if ($total > 0) {
-			$list = $this->getListData($where, 'spu_id,attach_id,min_price,max_price,original_price', $page, $size, ['rank'=>'desc']);
+			$list = $this->getListData($where, 'spu_id,attach_id,min_price,max_price,original_price', $page, $size, $orderBy);
 			if (!empty($list)) {
 				$spuList = array_column($list, 'spu_id');
 				//获取语言

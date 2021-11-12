@@ -48,5 +48,6 @@ return [
 	'add_address' => 'Add Address',
 	'quick_find' => 'Quick Find',
 	'email_tips' => 'name@example.com',
+	'copyright' => 'Copyright',
 	'all_rights' => 'All Rights',
 ];

@@ -1,3 +1,6 @@
+$(function(){
+	WISH.init();
+});
 const WISH = {
 	init: function() {
 		//删除
