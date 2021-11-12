@@ -1043,3 +1043,40 @@ CREATE TABLE `supplier_url` (
   PRIMARY KEY (`supp_id`),
   UNIQUE KEY `name` (`name`,`item_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+
+
+
+DROP TABLE IF EXISTS `admin_logger`;
+
+CREATE TABLE `admin_logger` (
+  `log_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `type` tinyint(1) NOT NULL DEFAULT '0' COMMENT '类型',
+  `system` varchar(10) NOT NULL DEFAULT '' COMMENT '操作系统',
+  `browser` varchar(10) NOT NULL DEFAULT '' COMMENT '浏览器名',
+  `agent` varchar(255) NOT NULL DEFAULT '' COMMENT '设备数据',
+  `path` varchar(255) NOT NULL DEFAULT '' COMMENT '链接',
+  `ip` varchar(15) NOT NULL DEFAULT '' COMMENT 'IP地址',
+  `remark` varchar(120) NOT NULL DEFAULT '' COMMENT '备注',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+
+DROP TABLE IF EXISTS `visitor_log`;
+
+CREATE TABLE `visitor_log` (
+  `log_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(3) NOT NULL DEFAULT '0' COMMENT '站点ID',
+  `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
+  `lan_id` varchar(4) NOT NULL DEFAULT '' COMMENT '语言',
+  `type` tinyint(3) NOT NULL DEFAULT '0' COMMENT '类型',
+  `is_moblie` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否移动端',
+  `system` varchar(10) NOT NULL DEFAULT '' COMMENT '操作系统',
+  `browser` varchar(10) NOT NULL DEFAULT '' COMMENT '浏览器',
+  `agent` varchar(255) NOT NULL DEFAULT '' COMMENT '设备',
+  `path` varchar(64) NOT NULL DEFAULT '' COMMENT '访问路径',
+  `ip` varchar(15) NOT NULL DEFAULT '' COMMENT 'ip地址',
+  `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
+  PRIMARY KEY (`log_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
