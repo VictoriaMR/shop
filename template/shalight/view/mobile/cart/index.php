@@ -177,6 +177,8 @@
 		</ul>
 	</div>
 	<?php } ?>
-	<?php $this->load('common/recommend');?>
+	<div class="recommend-content">
+		<?php $this->load('common/recommend');?>
+	</div>
 </div>
 <?php $this->load('common/simple_footer');?>

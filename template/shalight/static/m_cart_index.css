@@ -226,6 +226,10 @@
 }
 #cart-summary .content li:last-child {
 	border-bottom: none;
+}
+#cart-page .recommend-content {
+	margin-bottom: 0.1rem;
+	min-height: calc(100vh - 4.95rem);
 }.product-list {
 	padding: 0 0.05rem;
 }
