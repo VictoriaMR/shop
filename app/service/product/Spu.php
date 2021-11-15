@@ -249,10 +249,11 @@ class Spu extends Base
 		];	
 		$spuData = make('app/service/product/SpuData');
 		$info = $spuData->loadData($where, 'spu_id');
+		$data['bc_post_fee'] = empty($data['bc_post_fee']) ? 0 : $data['bc_post_fee'];
 		if (empty($info)) {
 			//价格合集
 			foreach ($data['bc_sku'] as $key => $value) {
-				$price = $this->getPrice($value['price']+($data['bc_post_fee'] ?? 0));
+				$price = $this->getPrice($value['price']+$data['bc_post_fee']);
 				$data['bc_sku'][$key]['sale_price'] = $price;
 				$data['bc_sku'][$key]['original_price'] = $this->getOriginalPrice($price);
 			}
