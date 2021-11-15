@@ -107,3 +107,4 @@ $(function(){
 	LOGIN.init();
 });
 </script>
+<?php $this->load('common/txt_footer');?>
