@@ -45,7 +45,7 @@
 							<?php } else {?>
 							<?php foreach ($siteLanguage as $value){?>
 							<tr data-id="<?php echo $value['item_id'];?>" data-code="<?php echo $value['code'];?>">
-								<td><?php echo $languageList[$value['code']]['name2'];?></td>
+								<td><?php echo $languageList[$value['code']]['name'];?></td>
 								<td>
 									<input type="text" name="sort" class="form-control" value="<?php echo $value['sort'];?>">
 								</td>
