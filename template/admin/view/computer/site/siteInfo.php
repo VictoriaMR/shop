@@ -196,7 +196,7 @@
 					<?php } else { $selectLanguage = array_column($siteLanguage, 'code');?>
 					<?php foreach ($languageList as $value){?>
 					<tr data-code="<?php echo $value['code'];?>">
-						<td><?php echo $value['name2'];?></td>
+						<td><?php echo $value['name'];?></td>
 						<td>
 							<?php if (in_array($value['code'], $selectLanguage)){?>
 							<button class="btn btn-danger btn-xs delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
