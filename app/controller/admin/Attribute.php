@@ -141,7 +141,7 @@ class Attribute extends AdminBase
 		$rst = make('app/service/attr/Bute')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttributeUsed')->deleteData(['attr_id'=>$id]);
+			$rst = make('app/service/product/AttrUsed')->deleteData(['attr_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
