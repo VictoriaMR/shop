@@ -182,7 +182,6 @@ abstract class TaskDriver
 						sleep($this->sleep);
 					}
 					$runtime = time();
-					$this->locker->updateLock($this->lock);
 				}
 			}
 			$this->locker->unlock($this->lock);
