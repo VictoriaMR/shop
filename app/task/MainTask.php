@@ -76,7 +76,7 @@ class MainTask extends TaskDriver
 							$this->setInfo('runAt', $nextRunAt, $k);
 						}
 					} catch (\Exception $e) {
-						debug()->runlog($e->getLine().'-'.$e->getFile().'-'.$e->getMessage(), 'task_error');
+						make('frame/Debug')->runlog($e->getLine().'-'.$e->getFile().'-'.$e->getMessage(), 'task_error');
 					}
 				}
 			}

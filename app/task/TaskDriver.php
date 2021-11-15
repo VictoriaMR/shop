@@ -140,7 +140,7 @@ abstract class TaskDriver
 		if ($this->runCountLimit == 0) {
 			return false;
 		}
-		if ( $this->runCountLimit > 0) {
+		if ($this->runCountLimit > 0) {
 			$this->runCountLimit--;
 		}
 		// 设置了运行时间限制的
