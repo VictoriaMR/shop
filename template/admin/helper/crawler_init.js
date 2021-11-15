@@ -112,6 +112,13 @@ const CRAWLERINIt = {
 							</div>
 						</div>
 						<div class="productAttLine">
+							<div class="label">邮费:</div>
+							<div class="fill_in">
+								<input name="bc_post_fee" value="" placeholder="邮费">
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="productAttLine">
 							<div class="label">重量:</div>
 							<div class="fill_in">
 								<input name="bc_product_weight" value="" placeholder="产品重量(g)">

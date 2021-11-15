@@ -252,7 +252,7 @@ class Spu extends Base
 		if (empty($info)) {
 			//价格合集
 			foreach ($data['bc_sku'] as $key => $value) {
-				$price = $this->getPrice($value['price']);
+				$price = $this->getPrice($value['price']+($data['bc_post_fee'] ?? 0));
 				$data['bc_sku'][$key]['sale_price'] = $price;
 				$data['bc_sku'][$key]['original_price'] = $this->getOriginalPrice($price);
 			}
@@ -264,7 +264,7 @@ class Spu extends Base
 				'attach_id' => $allImageArr[$firstImage] ?? 0,
 				'min_price' => min($priceArr),
 				'max_price' => max($priceArr),
-				'original_price' => $this->getOriginalPrice(max($priceArr)), //虚拟原价
+				'original_price' => max(array_column($data['bc_sku'], 'original_price')), //虚拟原价
 			];
 			$this->start();
 			$spuId = $this->insertGetId($insert);
@@ -384,11 +384,11 @@ class Spu extends Base
 	protected function getPrice($price)
 	{
 		if ($price < 200) {
-			$price += 200;
+			$price += 250;
 		} elseif ($price < 400) {
-			$price += 300;
+			$price += 350;
 		} else {
-			$price += 400;
+			$price += 450;
 		}
 		return $price;
 	}
@@ -396,11 +396,11 @@ class Spu extends Base
 	protected function getOriginalPrice($price)
 	{
 		if ($price < 200) {
-			$price += 300;
+			$price += 250 + rand(20, 100);
 		} elseif ($price < 400) {
-			$price += 400;
+			$price += 350 + rand(30, 150);
 		} else {
-			$price += 500;
+			$price += 500 + rand(40, 200);;
 		}
 		return $price;
 	}
