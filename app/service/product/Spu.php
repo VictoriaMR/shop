@@ -240,6 +240,12 @@ class Spu extends Base
 		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'product');
 
 		//转换成键值对
+		foreach ($attrArr as $key => $value) {
+			$attrArr[$key] = strtoupper(strTrim($value));
+		}
+		foreach ($attrValueArr as $key => $value) {
+			$attrValueArr[$key] = strtoupper(strTrim($value));
+		}
 		$attrArr = $attribute->addNotExist($attrArr);
 		$attrValueArr = $attrvalue->addNotExist($attrValueArr);
 
@@ -324,8 +330,8 @@ class Spu extends Base
 				foreach ($value['attr'] as $k => $v) {
 					$insert[] = [
 						'sku_id' => $skuId,
-						'attr_id' => $attrArr[$k],
-						'attv_id' => $attrValueArr[$v['text']],
+						'attr_id' => $attrArr[strtoupper(strTrim($k))],
+						'attv_id' => $attrValueArr[strtoupper(strTrim($v['text']))],
 						'attach_id' => empty($v['img']) ? 0 : $allImageArr[$v['img']] ?? 0,
 						'sort' => $count++,
 					];
