@@ -166,12 +166,12 @@ abstract class TaskDriver
 
 	public function start()
 	{
-		$this->echo('任务启动中 '.now());
-		$this->before();
-		$result = true;
-		$runtime = time();
-		while ($result && $this->continueRuning()) {
-			if ($this->locker->getLock($this->lock, $this->cas)) {
+		if ($this->locker->getLock($this->lock, $this->cas)) {
+			$this->echo('任务启动中 '.now());
+			$this->before();
+			$result = true;
+			$runtime = time();
+			while ($result && $this->continueRuning()) {
 				cache(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
 				$result = $this->run();
 				$usgaMem = memory_get_usage();
@@ -182,13 +182,12 @@ abstract class TaskDriver
 						sleep($this->sleep);
 					}
 					$runtime = time();
+					$this->locker->updateLock($this->lock);
 				}
-			} else {
-				$result = false;
 			}
-		}
-		$this->locker->unlock($this->lock);
-		$this->echo('任务已退出 '.now());
+			$this->locker->unlock($this->lock);
+			$this->echo('任务已退出 '.now());
+        }
 	}
 
 	protected function cronUnitParse($unit, $allowRange)
