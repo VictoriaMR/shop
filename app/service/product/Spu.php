@@ -366,8 +366,8 @@ class Spu extends Base
 		}
 		$descArr = $descService->addNotExist($descArr);
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$nameId = $descArr[strtoupper(strTrim($value['key'])];
-			$valueId = $descArr[strtoupper(strTrim($value['value'])];
+			$nameId = $descArr[strtoupper(strTrim($value['key']))];
+			$valueId = $descArr[strtoupper(strTrim($value['value']))];
 			$uniqueid = $nameId.'-'.$valueId;
 			$insert[$uniqueid] = [
 				'spu_id' => $spuId,
