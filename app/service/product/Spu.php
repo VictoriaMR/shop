@@ -361,8 +361,13 @@ class Spu extends Base
 		$insert = [];
 		$descService = make('app/service/attr/Description');
 		$descArr = array_merge(array_column($data['bc_des_text'], 'key'), array_column($data['bc_des_text'], 'value'));
+		foreach ($descArr as $key => $value) {
+			$descArr[$key] = strtoupper(strTrim($value));
+		}
 		$descArr = $descService->addNotExist($descArr);
 		foreach ($data['bc_des_text'] as $key => $value) {
+			$key = strtoupper(strTrim($key));
+			$value = strtoupper(strTrim($value));
 			$nameId = $descArr[$value['key']];
 			$valueId = $descArr[$value['value']];
 			$uniqueid = $nameId.'-'.$valueId;
