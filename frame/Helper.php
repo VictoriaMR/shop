@@ -158,7 +158,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	return $rStr;
 }
 function strTrim($str){
-	return trim($str, " \t\n\r\0\x0B ");
+	return ltrim($str, " \t\n\r\0\x0B ");
 }
 function getUniqueName(){
 	$arr = explode(' ', microtime());
