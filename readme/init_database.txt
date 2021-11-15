@@ -535,8 +535,8 @@ CREATE TABLE `language` (
   `tr_code` varchar(4) NOT NULL DEFAULT '' COMMENT '翻译码',
   `name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
   `name_cn` varchar(20) NOT NULL DEFAULT '' COMMENT '内部使用名称',
-  PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+  PRIMARY KEY (`language_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 INSERT INTO `language`(`code`,`tr_code`,`name`,`name_cn`) VALUES 
 ('de','de','Deutsch','德语'),
 ('en','en','English','英语'),

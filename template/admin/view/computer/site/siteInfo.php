@@ -108,45 +108,6 @@
 			</div>
 			<div class="clear"></div>
 			<div class="pl16">
-				<div class="item flex">
-					<dt class="cls-dt cls-dt-name">域名:</dt>
-					<dd>
-						<button class="btn btn-success btn-xs" id="add-domain">添加</button>
-					</dd>
-				</div>
-				<div class="item">
-					<table class="table table-bordered table-hover table-wrapper j-lan-table" id="site-domain">
-						<tbody>
-							<tr>
-								<th width="30%">域名</th>
-								<th width="20%">备注</th>
-								<th width="20%">状态</th>
-								<th width="30%">操作</th>
-							</tr>
-							<?php if (empty($siteDomain)){?>
-							<tr>
-								<td colspan="2" class="orange tc">暂无数据</td>
-							</tr>
-							<?php } else {?>
-							<?php foreach ($siteDomain as $value){?>
-							<tr data-id="<?php echo $value['domain_id'];?>">
-								<td><?php echo $value['domain'];?></td>
-								<td><?php echo $value['remark'];?></td>
-								<td>
-									<div class="switch_botton" data-status="<?php echo $value['status'];?>">
-										<div class="switch_status <?php echo $value['status'] == 1 ? 'on' : 'off';?>"></div>
-									</div>
-								</td>
-								<td>
-									<button class="btn btn-primary btn-xs modify"><span class="glyphicon glyphicon-edit"></span>&nbsp;编辑</button>
-									<button class="btn btn-danger btn-xs delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
-								</td>
-							</tr>
-							<?php } ?>
-							<?php } ?>
-						</tbody>
-					</table>
-				</div>
 				<div class="text-content">
 					<div class="item flex" data-id="keyword">
 						<dt class="cls-dt cls-dt-name">Keyword:</dt>
