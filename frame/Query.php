@@ -12,7 +12,7 @@ final class Query
 	private $_orderBy='';
 	private $_offset;
 	private $_limit=1;
-	private $_specialKey = ['status', 'name', 'order', 'system', 'type'];
+	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank'];
 
 	public function database($database=null)
 	{
