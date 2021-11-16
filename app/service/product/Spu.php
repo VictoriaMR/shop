@@ -179,7 +179,7 @@ class Spu extends Base
 			$info['image'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
 		}
 		foreach ($info['introduce'] as $key => $value) {
-			$info['introduce'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
+			$info['introduce'][$key]['image'] = str_replace('/400', '', $attachArr[$value['attach_id']] ?? '');
 		}
 		//描述
 		$descArr = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
