@@ -64,10 +64,10 @@ final class Query
 		if (empty($columns)) return $this;
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
-				$this->_orderBy .= $key.' '.$value.',';
+				$this->_orderBy .= $this->formatKey($key).' '.$value.',';
 			}
 		} else {
-			$this->_orderBy .= $columns.' '.$operator.',';
+			$this->_orderBy .= $this->formatKey($columns).' '.$operator.',';
 		}
 		return $this;
 	}
@@ -75,7 +75,7 @@ final class Query
 	public function groupBy($columns)
 	{
 		if (empty($columns)) return $this;
-		$this->_groupBy .= trim($columns).',';
+		$this->_groupBy .= $this->formatKey(trim($columns)).',';
 		return $this;
 	}
 
