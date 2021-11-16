@@ -161,14 +161,14 @@
 	padding: 0.08rem 0;
 }
 .product-param-list .param-name {
-	width: 20%;
+	width: 33%;
 	float: left;
 	color: #999999;
 	font-weight: 500;
 }
 .product-param-list .param-value {
 	padding-left: 0.12rem;
-	width: 80%;
+	width: 67%;
 	float: left;
 }
 #sku-select-modal .sku-image {
