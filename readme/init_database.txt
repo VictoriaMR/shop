@@ -658,7 +658,7 @@ CREATE TABLE `member_collect` (
   `coll_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
   `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
-  `add_time` timestamp NOT NULL DEFAULT NULL COMMENT '添加时间',
+  `add_time` timestamp DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`coll_id`),
   UNIQUE KEY `IDX_UNI` (`mem_id`,`spu_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

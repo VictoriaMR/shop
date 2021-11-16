@@ -36,17 +36,17 @@
 			<?php } ?>
 		</div>
 		<p class="mt4 c9 tc">
-			<span class="left">SKU: <?php echo $skuNo;?></span>
-			<span>Stock: <?php echo $stock;?></span>
+			<span class="left"><?php echo distT('sku');?>: <?php echo $skuNo;?></span>
+			<span><?php echo distT('stock');?>: <?php echo $stock;?></span>
 			<?php if ($saleTotal){?>
-			<span class="right">Sold: <?php echo $saleTotal;?></span>
+			<span class="right"><?php echo distT('sold');?>: <?php echo $saleTotal;?></span>
 			<?php } ?>
 		</p>
 	</div>
 	<div class="mt10 layer attr-select bg-f">
 		<ul>
 			<li id="sku-select">
-				<p class="title c40 f600">SKU</p>
+				<p class="title c40 f600"><?php echo distT('sku');?></p>
 				<p class="text e1 f600">
 					<span class="attr-text">
 					<?php if (empty($skuAttrSelect)) {?>
@@ -59,7 +59,7 @@
 				<span class="iconfont icon-xiangyou1"></span>
 			</li>
 			<li id="description">
-				<p class="title">PARAM</p>
+				<p class="title"><?php echo distT('param');?></p>
 				<p class="text e1"><?php echo implode(' ', array_column($info['description'], 'name'));?></p>
 				<span class="iconfont icon-xiangyou1"></span>
 			</li>
@@ -67,16 +67,16 @@
 	</div>
 	<?php if (!empty($info['introduce'])) {?>
 	<div class="product-introduce mt10">
-		<div class="introduce-title flex">
+		<div class="list-title flex layer">
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
-			<p class="title">Detail</p>
+			<p class="title"><?php echo distT('introduce');?></p>
 			<div class="tcell">
 				<p class="line"></p>
 			</div>
 		</div>
-		<div class="introduce-image tc">
+		<div class="introduce-image tc mt10">
 			<?php foreach($info['introduce'] as $value){?>
 			<p>
 				<img data-src="<?php echo $value['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
@@ -90,16 +90,16 @@
 		<div class="left">
 			<a class="tab relative" href="<?php echo url('cart');?>">
 				<span class="iconfont icon-gouwuche"></span>
-				<p class="text">cart</p>
+				<p class="text"><?php echo distT('cart');?></p>
 			</a>
 			<button class="tab like-block" href="javascript:;">
 				<span class="iconfont icon-xihuan<?php echo $isLiked ? 'fill' : '';?>"></span>
-				<p class="text">collect</p>
+				<p class="text"><?php echo distT('collect');?></p>
 			</button>
 		</div>
 		<div class="right">
-			<button class="btn btn-light-black add-to-cart">ADD TO CART</button>
-			<button class="btn btn-black checkout-btn">CHECKOUT</button>
+			<button class="btn btn-light-black add-to-cart"><?php echo distT('add_to_cart');?></button>
+			<button class="btn btn-black checkout-btn"><?php echo distT('checkout');?></button>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -108,7 +108,7 @@
 	<div class="mask"></div>
 	<div class="dialog layer">
 		<span class="iconfont icon-guanbi2"></span>
-		<p class="dialog-title">Product parameters</p>
+		<p class="dialog-title"><?php echo distT('product_parameters');?></p>
 		<div class="content">
 			<ul class="product-param-list f15">
 				<?php foreach ($info['description'] as $value){?>
@@ -137,11 +137,11 @@
 						<span class="original_price"><?php echo $info['original_price'];?></span>
 					</p>
 					<p class="stock c6">
-						<span>STOCK: </span>
+						<span><?php echo distT('stock');?>: </span>
 						<span class="number"><?php echo $stock;?></span>
 					</p>
 					<p class="select-text c6">
-						<span>SELECT: </span>
+						<span><?php echo distT('select');?>: </span>
 						<span class="text"><?php echo implode(' ', $info['attr']);?></span>
 					</p>
 				</div>
@@ -167,7 +167,7 @@
 				</div>
 				<?php } ?>
 				<div class="item stock-content">
-					<p class="title left">Quantity</p>
+					<p class="title left"><?php echo distT('quantity');?></p>
 					<div class="right quantity" data-stock="<?php echo $stock;?>">
 						<button class="plus <?php echo $stock > 0 ? '' : 'disabled';?>" <?php echo $stock > 0 ? '' : 'disabled="disabled"';?>><span class="iconfont icon-jiahao1"></span></button>
 						<input type="text" class="num" value="<?php echo $stock > 0 ? 1 : 0;?>" maxlength="4">
@@ -178,8 +178,8 @@
 			</div>
 		</div>
 		<div class="dialog-footer">
-			<button class="btn btn-light-black add-to-cart left w50">ADD TO CART</button>
-			<button class="btn btn-black checkout-btn left w50">CHECKOUT</button>
+			<button class="btn btn-light-black add-to-cart left w50"><?php echo distT('add_to_cart');?></button>
+			<button class="btn btn-black checkout-btn left w50"><?php echo distT('checkout');?></button>
 		</div>
 	</div>
 </div>
