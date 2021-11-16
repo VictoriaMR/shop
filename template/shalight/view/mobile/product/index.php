@@ -76,7 +76,7 @@
 				<p class="line"></p>
 			</div>
 		</div>
-		<div class="introduce-image tc mt10">
+		<div class="introduce-image tc mt10 layer bg-f">
 			<?php foreach($info['introduce'] as $value){?>
 			<p>
 				<img data-src="<?php echo $value['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
