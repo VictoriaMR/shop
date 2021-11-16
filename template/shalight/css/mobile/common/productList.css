@@ -22,8 +22,7 @@
 }
 .product-list .img {
 	display: table-cell;
-	width: 1.71rem;
-	height: 1.71rem;
+	width: 100%;
 	vertical-align: middle;
 	text-align: center;
 	font-size: 0;
