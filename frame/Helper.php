@@ -73,7 +73,7 @@ function mediaUrl($url, $width=''){
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
 	if (strpos($url, 'http') === false) {
-		$url = config('env.APP_DOMAIN').FILE_CENTER.DS.$url;
+		$url = config('env.APP_DOMAIN').config('env.FILE_CENTER').DS.$url;
 	}
 	return $url.'?v='.config('env.APP_VERSION');
 }
@@ -158,7 +158,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	return $rStr;
 }
 function strTrim($str){
-	return trim($str, " \t\n\r\0\x0B ");
+	return ltrim($str, " \t\n\r\0\x0B ");
 }
 function getUniqueName(){
 	$arr = explode(' ', microtime());

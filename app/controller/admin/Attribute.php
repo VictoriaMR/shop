@@ -77,7 +77,7 @@ class Attribute extends AdminBase
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
 				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
-				'language_name' => $value['name2'],
+				'language_name' => $value['name'],
 			];
 		}
 		$this->success($info, '');
@@ -141,7 +141,7 @@ class Attribute extends AdminBase
 		$rst = make('app/service/attr/Bute')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttributeUsed')->deleteData(['attr_id'=>$id]);
+			$rst = make('app/service/product/AttrUsed')->deleteData(['attr_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -213,7 +213,7 @@ class Attribute extends AdminBase
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
 				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
-				'language_name' => $value['name2'],
+				'language_name' => $value['name'],
 			];
 		}
 		$this->success($info, '');
@@ -277,7 +277,7 @@ class Attribute extends AdminBase
 		$rst = make('app/service/attr/Value')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttributeUsed')->deleteData(['attv_id'=>$id]);
+			$rst = make('app/service/product/AttrUsed')->deleteData(['attv_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -349,7 +349,7 @@ class Attribute extends AdminBase
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
 				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
-				'language_name' => $value['name2'],
+				'language_name' => $value['name'],
 			];
 		}
 		$this->success($info, '');

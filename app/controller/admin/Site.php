@@ -59,13 +59,10 @@ class Site extends AdminBase
 			$siteLanguage = make('app/service/site/LanguageUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
 			//货币关联
 			$siteCurrency = make('app/service/site/CurrencyUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
-			//域名
-			$siteDomain =  make('app/service/site/domain')->getListData(['site_id' => $id]);
 			$this->assign('currencyList', $currencyList);
 			$this->assign('languageList', $languageList);
 			$this->assign('siteLanguage', $siteLanguage);
 			$this->assign('siteCurrency', $siteCurrency);
-			$this->assign('siteDomain', $siteDomain);
 		}
 		$this->assign('id', $id);
 		$this->assign('site', $site);

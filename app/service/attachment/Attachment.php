@@ -39,7 +39,7 @@ class Attachment extends Base
 
 	public function urlInfo($info, $width='')
 	{
-		$info['url'] = config('env.FILE_CENTER_DOMAIN').$info['cate'].DS.$info['name'].($width == '' ? '' : DS.$width).'.'.$info['type'];
+		$info['url'] = mediaUrl($info['cate'].DS.$info['name'].($width == '' ? '' : DS.$width).'.'.$info['type']);
 		return $info;
 	}
 

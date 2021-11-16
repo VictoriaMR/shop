@@ -26,9 +26,6 @@ class Queue extends TaskDriver
 			$rst = make($data['class'])->$func($data['param']);
 			if ($rst) {
 				$service->pop();
-			} else {
-				$data['queue_error'] = $rst;
-				$service->dealFalse($data);
 			}
 			return true;
 		} else {

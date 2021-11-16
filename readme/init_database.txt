@@ -16,7 +16,7 @@ CREATE TABLE `admin_member` (
   `login_time` timestamp NULL DEFAULT NULL COMMENT '最后一次登陆时间',
   PRIMARY KEY (`mem_id`),
   KEY `IDX_UNI` (`mobile`)
-) ENGINE=InnoDB AUTO_INCREMENT=5000001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=5000001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*文件表*/
 DROP TABLE IF EXISTS `attachment`;
@@ -28,7 +28,7 @@ CREATE TABLE `attachment` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`attach_id`),
   UNIQUE KEY `IDX_UNIQUE` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*文件URL映射*/
 DROP TABLE IF EXISTS `attachment_url`;
 CREATE TABLE `attachment_url` (
@@ -37,7 +37,7 @@ CREATE TABLE `attachment_url` (
   `url_md5` char(32) NOT NULL DEFAULT '' COMMENT '链接的md5值',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`url_md5`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*属性名表*/
 DROP TABLE IF EXISTS `attribute`;
@@ -47,7 +47,7 @@ CREATE TABLE `attribute` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`attr_id`),
   UNIQUE KEY `UNI_NAME` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*属性名多语言*/
 DROP TABLE IF EXISTS `attribute_language`;
 CREATE TABLE `attribute_language` (
@@ -57,7 +57,7 @@ CREATE TABLE `attribute_language` (
   `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译值',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`attr_id`,`lan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*属性值表*/
 DROP TABLE IF EXISTS `attrvalue`;
@@ -67,7 +67,7 @@ CREATE TABLE `attrvalue` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`attv_id`),
   UNIQUE KEY `IDX_UNI` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*属性值多语言*/
 DROP TABLE IF EXISTS `attrvalue_language`;
 CREATE TABLE `attrvalue_language` (
@@ -77,7 +77,7 @@ CREATE TABLE `attrvalue_language` (
   `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译值',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`attv_id`,`lan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*购物车表*/
 DROP TABLE IF EXISTS `cart`;
@@ -92,7 +92,7 @@ CREATE TABLE `cart` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`cart_id`),
   UNIQUE KEY `IDX_UNI` (`mem_id`,`sku_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*分类表*/
 DROP TABLE IF EXISTS `category`;
@@ -103,7 +103,7 @@ CREATE TABLE `category` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '头像',
   PRIMARY KEY (`cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*分类信息*/
 INSERT INTO `category` (`cate_id`,`parent_id`,`name`,`status`,`attach_id`) VALUES (101,0,'女装',0,0),(112,0,'男装',0,0),(116,0,'灯具',0,0),(125,116,'天花板灯',0,0),(126,116,'壁灯',0,0),(127,116,'台灯&落地灯',0,0),(128,116,'吊扇灯&配件',0,0),(129,116,'户外灯',0,0),(130,116,'新型小灯',0,0),(131,116,'商业照明',0,0),(132,116,'灯具配件',0,0),(133,116,'灯泡',0,0),(134,125,'吸顶灯',0,0),(135,125,'枝形吊灯',0,0),(136,125,'吊灯',0,0),(137,125,'轨道灯',0,0),(138,125,'嵌入式灯',0,0),(139,125,'岛灯',0,0),(140,125,'桌球灯',0,0),(141,126,'壁灯',0,0),(142,126,'浴室镜前灯',0,0),(143,126,'图片灯',0,0),(144,126,'橱柜灯',0,0),(145,126,'小夜灯',0,0),(146,126,'阶梯灯',0,0),(147,126,'聚光灯',0,0),(148,127,'台灯',0,0),(149,127,'书桌灯',0,0),(150,127,'地灯',0,0),(151,127,'台灯套装',0,0),(152,127,'灯罩',0,0),(153,128,'吊扇灯',0,0),(156,129,'装饰投影灯',0,0),(157,129,'防洪灯',0,0),(158,129,'地灯',0,0),(159,129,'景观照明',0,0),(160,129,'庭院灯',0,0),(161,129,'柱灯',0,0),(162,129,'绳索灯',0,0),(163,129,'桌面照明',0,0),(164,129,'火把灯',0,0),(165,129,'雨伞灯',0,0),(166,129,'灯具配件',0,0),(167,130,'黑光灯',0,0),(168,130,'夹子书灯',0,0),(169,130,'迪斯科舞灯',0,0),(170,130,'光纤灯',0,0),(171,130,'模型灯',0,0),(172,130,'熔岩灯',0,0),(173,130,'led绳索灯',0,0),(174,130,'霓虹灯',0,0),(175,130,'灯笼纸灯',0,0),(176,130,'纽扣灯',0,0),(177,131,'海湾照明',0,0),(178,131,'紧急照明',0,0),(179,131,'紧急出口照明',0,0),(180,131,'街道路灯',0,0),(181,131,'频闪灯',0,0),(182,132,'天花板底盘装饰',0,0),(183,132,'灯罩补件',0,0),(184,132,'灯饰扣配件',0,0),(185,132,'灯具吊链',0,0),(186,132,'灯具吊杆',0,0),(187,132,'低压转换器',0,0),(188,132,'橱柜吸顶配件',0,0),(189,133,'荧光灯泡',0,0),(190,133,'荧光灯管',0,0),(191,133,'卤素灯泡',0,0),(192,133,'高强度放电灯泡',0,0),(193,133,'白炽灯泡',0,0),(194,133,'氪氙灯泡',0,0),(195,133,'led灯泡',0,0),(196,133,'黑光灯泡',0,0),(197,137,'成套工具',0,0),(198,137,'灯头',0,0),(199,137,'吊灯',0,0),(200,137,'轨道',0,0),(201,137,'配件',0,0),(202,137,'连接器',0,0),(203,138,'外壳',0,0),(204,138,'凹槽',0,0),(205,138,'灯具及装饰套件',0,0),(214,159,'夹板灯',0,0),(215,159,'模型灯',0,0),(216,159,'插地灯',0,0),(217,159,'阶梯灯',0,0),(218,159,'路径灯',0,0),(219,159,'聚光灯',0,0),(220,160,'吸顶灯',0,0),(221,160,'单吊',0,0),(222,160,'壁灯',0,0),(223,163,'灯笼式',0,0),(224,163,'台灯式',0,0),(225,166,'灯油',0,0),(226,166,'低压转换器',0,0),(227,166,'柱灯配件',0,0),(228,112,'外套夹克',0,0),(229,101,'连衣裙',0,0),(230,229,'日常连衣裙',0,0),(231,229,'派对连衣裙',0,0),(232,229,'酒会礼服连衣裙',0,0),(233,229,'正式连衣裙',0,0),(234,229,'职场连衣裙',0,0),(235,229,'婚礼连衣裙',0,0),(236,101,'上衣，t恤&衬衫',0,0),(237,236,'衬衫&排扣衬衫',0,0),(238,236,'紧身连体衣',0,0),(239,236,'polo衫',0,0),(240,236,'吊带背心',0,0),(241,236,'t恤',0,0),(242,236,'长款上衣',0,0),(243,236,'马甲上衣',0,0),(244,101,'毛衣',0,0),(245,244,'开衫',0,0),(246,244,'套头毛衣',0,0),(247,244,'披肩',0,0),(248,244,'马甲针织衫',0,0),(249,101,'卫衣',0,0),(250,101,'牛仔裤',0,0),(251,101,'长裤',0,0),(252,251,'日常长裤',0,0),(253,251,'职场长裤',0,0),(254,251,'晚装长裤',0,0),(255,101,'半身裙',0,0),(256,255,'日常半身裙',0,0),(257,255,'职场半身裙',0,0),(258,255,'晚装半身裙',0,0),(259,101,'短裤',0,0),(260,259,'日常短裤',0,0),(261,259,'牛仔短裤',0,0),(262,101,'打底裤',0,0),(263,101,'运动装',0,0),(264,263,'运动带帽卫衣',0,0),(265,263,'运动套头卫衣',0,0),(266,263,'运动夹克',0,0),(267,263,'运动套装',0,0),(268,263,'运动衬衫&t恤',0,0),(269,263,'运动长裤',0,0),(270,263,'运动打底裤',0,0),(271,263,'运动短裤',0,0),(272,263,'运动半身裙',0,0),(273,263,'运动裤裙',0,0),(274,263,'运动打底类',0,0),(275,263,'运动内衣裤',0,0),(276,263,'运动袜子',0,0),(277,101,'泳装&罩衫',0,0),(278,277,'比基尼',0,0),(279,278,'比基尼上装',0,0),(280,278,'比基尼下装',0,0),(281,278,'比基尼套装',0,0),(282,277,'背心款泳装',0,0),(283,277,'一件式泳装',0,0),(284,277,'罩衫',0,0),(285,277,'沙滩裤',0,0),(286,277,'防晒泳衣',0,0),(287,101,'内衣，睡衣&家居服',0,0),(288,287,'内衣裤',0,0),(289,288,'文胸',0,0),(290,289,'胸贴',0,0),(291,289,'日常文胸',0,0),(292,289,'乳房切除文胸',0,0),(293,289,'聚拢迷你文胸',0,0),(294,289,'运动文胸',0,0),(295,288,'内裤',0,0),(296,295,'丁字裤',0,0),(297,295,'比基尼式内裤',0,0),(298,295,'三角内裤',0,0),(299,295,'平角内裤',0,0),(300,295,'低腰内裤',0,0),(301,288,'情趣内衣',0,0),(302,288,'吊带&背心内衣',0,0),(303,288,'塑身衣',0,0),(304,303,'提臀收腹内裤',0,0),(305,303,'平角塑腿裤',0,0),(306,303,'塑身上装',0,0),(307,303,'束腰带',0,0),(308,303,'塑身连体衣',0,0),(309,303,'塑身裙',0,0),(310,288,'打底内衬',0,0),(311,310,'打底内衬连衣裙',0,0),(312,310,'打底内衬下装',0,0),(313,288,'紧身胸衣',0,0),(314,288,'吊袜带&吊袜腰带',0,0),(315,288,'内衣配件',0,0),(316,315,'乳贴',0,0),(317,315,'胸垫',0,0),(318,315,'肩带',0,0),(319,315,'肩带扣',0,0),(320,287,'睡衣&家居服',0,0),(321,320,'睡衣家居服上装',0,0),(322,320,'睡衣家居服下装',0,0),(323,320,'睡衣家居服套装',0,0),(324,320,'睡袍',0,0),(325,320,'睡裙',0,0),(326,287,'保暖内衣',0,0),(327,326,'保暖内衣上装',0,0),(328,326,'保暖内衣下装',0,0),(329,326,'保暖内衣套装',0,0),(330,101,'连体长裤，连体短裤&背带裤',0,0),(331,330,'连体长裤',0,0),(332,330,'背带裤',0,0),(333,330,'连体短裤',0,0),(334,101,'外套，夹克&马甲',0,0),(335,334,'羽绒服&派克大衣',0,0),(336,334,'羊毛大衣&双排扣大衣',0,0),(337,334,'风衣，雨衣&冲锋衣',0,0),(338,337,'冲锋衣',0,0),(339,337,'雨衣',0,0),(340,337,'风衣',0,0),(341,334,'轻便夹克',0,0),(342,334,'休闲夹克',0,0),(343,334,'牛仔夹克',0,0),(344,334,'皮&仿皮外套夹克',0,0),(345,334,'皮毛&仿皮毛外套夹克',0,0),(346,334,'马甲',0,0),(347,334,'运动类外套夹克',0,0),(348,347,'羊绒外套夹克',0,0),(349,347,'户外风衣冲锋衣',0,0),(350,347,'防风&防雨外套夹克',0,0),(351,101,'西装&西装套装',0,0),(352,351,'西装',0,0),(353,351,'西装套装',0,0),(354,101,'短袜&丝袜',0,0),(355,354,'休闲短袜',0,0),(356,354,'裙装袜&长裤袜',0,0),(357,354,'保暖护腿袜',0,0),(358,354,'连裤袜',0,0),(359,354,'丝袜',0,0),(360,354,'家居保暖袜',0,0),(361,354,'浅口隐形袜',0,0),(362,112,'衬衫上衣',0,0),(363,362,'t恤',0,0),(364,362,'背心',0,0),(365,362,'polo衫',0,0),(366,362,'亨利衫',0,0),(367,362,'排扣衬衫',0,0),(368,362,'正式衬衫',0,0),(369,362,'礼服衬衫',0,0),(370,112,'卫衣',0,0),(371,112,'毛衣',0,0),(372,371,'套头毛衣',0,0),(373,371,'开衫',0,0),(374,371,'polo针织衫',0,0),(375,371,'马甲针织衫',0,0),(376,112,'牛仔裤',0,0),(377,112,'长裤',0,0),(378,377,'正装长裤',0,0),(379,377,'休闲长裤',0,0),(380,112,'短裤',0,0),(381,380,'工装短裤',0,0),(382,380,'牛仔短裤',0,0),(383,380,'无褶短裤',0,0),(384,380,'单褶短裤',0,0),(385,112,'运动装',0,0),(386,385,'运动带帽卫衣',0,0),(387,385,'运动套头卫衣',0,0),(388,385,'运动夹克',0,0),(389,385,'运动t恤衬衫',0,0),(390,385,'运动马甲',0,0),(391,385,'运动长裤',0,0),(392,385,'运动短裤',0,0),(393,385,'运动田径服',0,0),(394,385,'运动打底类',0,0),(395,385,'运动内衣裤',0,0),(396,385,'运动袜子',0,0),(397,385,'运动丁字裤',0,0),(398,112,'泳装',0,0),(399,398,'短款泳裤',0,0),(400,398,'中长款泳裤',0,0),(401,398,'三角泳裤',0,0),(402,398,'水母服',0,0),(403,112,'西装&西装套装',0,0),(404,403,'西装套装',0,0),(405,403,'西装单件',0,0),(406,405,'西装夹克',0,0),(407,405,'西裤',0,0),(408,403,'西装',0,0),(409,403,'礼服西装',0,0),(410,403,'西装马甲',0,0),(411,112,'内衣',0,0),(412,411,'三点式内裤',0,0),(413,411,'拳击紧身内裤',0,0),(414,411,'拳击宽松内裤',0,0),(415,411,'三角内裤',0,0),(416,411,'丁字裤',0,0),(417,411,'塑身衣',0,0),(418,411,'保暖内衣',0,0),(419,418,'保暖内衣上装',0,0),(420,418,'保暖内衣下装',0,0),(421,418,'保暖内衣套装',0,0),(422,411,'平角内裤',0,0),(423,411,'打底衫',0,0),(424,112,'袜子',0,0),(425,424,'休闲袜',0,0),(426,424,'裤装袜',0,0),(427,112,'睡衣&家居服',0,0),(428,427,'睡衣上衣',0,0),(429,427,'睡衣下装',0,0),(430,427,'睡衣套装',0,0),(431,427,'睡袍',0,0),(432,228,'运动类外套夹克',0,0),(433,432,'户外风衣冲锋衣',0,0),(434,432,'运动夹克',0,0),(435,228,'羽绒服',0,0),(436,228,'羊绒外套夹克',0,0),(437,228,'皮&仿皮外套夹克',0,0),(438,228,'轻便夹克',0,0),(439,438,'棉质夹克',0,0),(440,438,'牛仔夹克',0,0),(441,438,'校队棒球服夹克',0,0),(442,438,'冲锋衣',0,0),(443,228,'风衣&雨衣',0,0),(444,228,'马甲',0,0),(445,228,'羊毛外套夹克',0,0),(446,0,'sns热卖品',0,0),(448,446,'sns配件',0,0),(449,0,'窗户装饰',0,0),(450,449,'窗帘',0,0),(451,101,'套装',0,0);
 /*分类多语言*/
@@ -115,7 +115,7 @@ CREATE TABLE `category_language` (
   `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译值',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`cate_id`,`lan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*后台功能表*/
 DROP TABLE IF EXISTS `controller`;
@@ -127,7 +127,7 @@ CREATE TABLE `controller` (
   `value` varchar(32) NOT NULL DEFAULT '' COMMENT '值',
   `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`con_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO `controller` (`con_id`,`parent_id`,`icon`,`name`,`value`,`sort`) VALUES (101,0,'compressed','概览','overview',0),(102,106,'asterisk','功能管理','controller',0),(103,0,'object-align-left','管理人员','management',1),(104,0,'th','产品管理','product',3),(105,0,'piggy-bank','财务管理','finance',2),(106,0,'cog','系统设置','system',4),(107,101,'wrench','系统设备','index/statInfo',0),(108,103,'user','人员列表','member',0),(109,106,'tasks','任务管理','task',0),(110,106,'cloud','服务器信息','systemInfo',0),(111,106,'certificate','站点管理','site',0),(112,105,'yen','货币管理','currency',0),(113,105,'credit-card','支付管理','payment',0),(114,104,'sort-by-attributes','产品分类','category',0),(115,104,'th-large','产品管理','product',0),(116,104,'th-list','属性管理','attribute',0),(117,0,'list-alt','订单管理','order',3),(118,117,'list-alt','订单列表','order',0);
 /*功能图标*/
 DROP TABLE IF EXISTS `controller_icon`;
@@ -138,7 +138,7 @@ CREATE TABLE `controller_icon` (
   `sort` smallint(5) DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`icon_id`),
   UNIQUE KEY `IDX_UNI` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO `controller_icon` (`icon_id`,`name`,`remark`,`sort`) VALUES (101,'asterisk','',0),(102,'plus','',4),(103,'euro','',2),(104,'eur','',3),(105,'minus','',4),(106,'cloud','',5),(107,'envelope','',6),(108,'pencil','',7),(109,'glass','',8),(110,'music','',9),(111,'search','',10),(112,'heart','',11),(113,'star','',12),(114,'star-empty','',13),(115,'user','',14),(116,'film','',15),(117,'th-large','',16),(118,'th','',17),(119,'th-list','',18),(120,'ok','',19),(121,'remove','',20),(122,'zoom-in','',21),(123,'zoom-out','',22),(124,'off','',23),(125,'signal','',24),(126,'cog','',25),(127,'trash','',26),(128,'home','',27),(129,'file','',28),(130,'time','',29),(131,'road','',30),(132,'download-alt','',31),(133,'download','',32),(134,'upload','',33),(135,'inbox','',34),(136,'play-circle','',35),(137,'repeat','',36),(138,'refresh','',37),(139,'list-alt','',38),(140,'lock','',39),(141,'flag','',40),(142,'headphones','',41),(143,'volume-off','',42),(144,'volume-down','',43),(145,'volume-up','',44),(146,'qrcode','',45),(147,'barcode','',46),(148,'tag','',47),(149,'tags','',48),(150,'book','',49),(151,'bookmark','',50),(152,'print','',51),(153,'camera','',52),(154,'font','',53),(155,'bold','',54),(156,'italic','',55),(157,'text-height','',56),(158,'text-width','',57),(159,'align-left','',58),(160,'align-center','',59),(161,'align-right','',60),(162,'align-justify','',61),(163,'list','',62),(164,'indent-left','',63),(165,'indent-right','',64),(166,'facetime-video','',65),(167,'picture','',66),(168,'map-marker','',67),(169,'adjust','',68),(170,'tint','',69),(171,'edit','',70),(172,'share','',71),(173,'check','',72),(174,'move','',73),(175,'step-backward','',74),(176,'fast-backward','',75),(177,'backward','',76),(178,'play','',77),(179,'pause','',78),(180,'stop','',79),(181,'forward','',80),(182,'fast-forward','',81),(183,'step-forward','',82),(184,'eject','',83),(185,'chevron-left','',84),(186,'chevron-right','',85),(187,'plus-sign','',86),(188,'minus-sign','',87),(189,'remove-sign','',88),(190,'ok-sign','',89),(191,'question-sign','',90),(192,'info-sign','',91),(193,'screenshot','',92),(194,'remove-circle','',93),(195,'ok-circle','',94),(196,'ban-circle','',95),(197,'arrow-left','',96),(198,'arrow-right','',97),(199,'arrow-up','',98),(200,'arrow-down','',99),(201,'share-alt','',100),(202,'resize-full','',101),(203,'resize-small','',102),(204,'exclamation-sign','',103),(205,'gift','',104),(206,'leaf','',105),(207,'fire','',106),(208,'eye-open','',107),(209,'eye-close','',108),(210,'warning-sign','',109),(211,'plane','',110),(212,'calendar','',111),(213,'random','',112),(214,'comment','',113),(215,'magnet','',114),(216,'chevron-up','',115),(217,'chevron-down','',116),(218,'retweet','',117),(219,'shopping-cart','',118),(220,'folder-close','',119),(221,'folder-open','',120),(222,'resize-vertical','',121),(223,'resize-horizontal','',122),(224,'hdd','',123),(225,'bullhorn','',124),(226,'bell','',125),(227,'certificate','',126),(228,'thumbs-up','',127),(229,'thumbs-down','',128),(230,'hand-right','',129),(231,'hand-left','',130),(232,'hand-up','',131),(233,'hand-down','',132),(234,'circle-arrow-right','',133),(235,'circle-arrow-left','',134),(236,'circle-arrow-up','',135),(237,'circle-arrow-down','',136),(238,'globe','',137),(239,'wrench','',138),(240,'tasks','',139),(241,'filter','',140),(242,'briefcase','',141),(243,'fullscreen','',142),(244,'dashboard','',143),(245,'paperclip','',144),(246,'heart-empty','',145),(247,'link','',146),(248,'phone','',147),(249,'pushpin','',148),(250,'usd','',149),(251,'gbp','',150),(252,'sort','',151),(253,'sort-by-alphabet','',152),(254,'sort-by-alphabet-alt','',153),(255,'sort-by-order','',154),(256,'sort-by-order-alt','',155),(257,'sort-by-attributes','',156),(258,'sort-by-attributes-alt','',157),(259,'unchecked','',158),(260,'expand','',159),(261,'collapse-down','',160),(262,'collapse-up','',161),(263,'log-in','',162),(264,'flash','',163),(265,'log-out','',164),(266,'new-window','',165),(267,'record','',166),(268,'save','',167),(269,'open','',168),(270,'saved','',169),(271,'import','',170),(272,'export','',171),(273,'send','',172),(274,'floppy-disk','',173),(275,'floppy-saved','',174),(276,'floppy-remove','',175),(277,'floppy-save','',176),(278,'floppy-open','',177),(279,'credit-card','',178),(280,'transfer','',179),(281,'cutlery','',180),(282,'header','',181),(283,'compressed','',182),(284,'earphone','',183),(285,'phone-alt','',184),(286,'tower','',185),(287,'stats','',186),(288,'sd-video','',187),(289,'hd-video','',188),(290,'subtitles','',189),(291,'sound-stereo','',190),(292,'sound-dolby','',191),(293,'sound-5-1','',192),(294,'sound-6-1','',193),(295,'sound-7-1','',194),(296,'copyright-mark','',195),(297,'registration-mark','',196),(298,'cloud-download','',197),(299,'cloud-upload','',198),(300,'tree-conifer','',199),(301,'tree-deciduous','',200),(302,'cd','',201),(303,'save-file','',202),(304,'open-file','',203),(305,'level-up','',204),(306,'copy','',205),(307,'paste','',206),(308,'alert','',207),(309,'equalizer','',208),(310,'king','',209),(311,'queen','',210),(312,'pawn','',211),(313,'bishop','',212),(314,'knight','',213),(315,'baby-formula','',214),(316,'tent','',215),(317,'blackboard','',216),(318,'bed','',217),(319,'apple','',218),(320,'erase','',219),(321,'hourglass','',220),(322,'lamp','',221),(323,'duplicate','',222),(324,'piggy-bank','',223),(325,'scissors','',224),(326,'bitcoin','',225),(327,'btc','',226),(328,'xbt','',227),(329,'yen','',228),(330,'jpy','',229),(331,'ruble','',230),(332,'rub','',231),(333,'scale','',232),(334,'ice-lolly','',233),(335,'ice-lolly-tasted','',234),(336,'education','',235),(337,'option-horizontal','',236),(338,'option-vertical','',237),(339,'menu-hamburger','',238),(340,'modal-window','',239),(341,'oil','',240),(342,'grain','',241),(343,'sunglasses','',242),(344,'text-size','',243),(345,'text-color','',244),(346,'text-background','',245),(347,'object-align-top','',246),(348,'object-align-bottom','',247),(349,'object-align-horizontal','',248),(350,'object-align-left','',249),(351,'object-align-vertical','',250),(352,'object-align-right','',251),(353,'triangle-right','',252),(354,'triangle-left','',253),(355,'triangle-bottom','',254),(356,'triangle-top','',255),(357,'console','',256),(358,'superscript','',257),(359,'subscript','',258),(360,'menu-left','',259),(361,'menu-right','',260),(362,'menu-down','',261),(363,'menu-up','',262);
 
 /*国家表*/
@@ -154,7 +154,7 @@ CREATE TABLE `country` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   PRIMARY KEY (`country_id`),
   UNIQUE KEY `IDX_UNI` (`code2`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO `country`(`code2`,`code3`,`dialing_code`,`name_cn`,`name_en`,`sort`,`status`) VALUES 
 ('AD','AND',376,'安道尔','Andorra',7,1),
 ('AE','ARE',971,'阿拉伯联合酋长国','United Arab Emirates',228,1),
@@ -407,7 +407,7 @@ CREATE TABLE `country_zone` (
   `name` varchar(64) NOT NULL DEFAULT '' COMMENT '名称',
   `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`zone_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 insert  into `zone`(`zone_id`,`zone_code`,`country_code2`,`name_cn`,`name_en`,`sort`) values 
 (1,'ACT','AU','澳大利亚首都领地','Australian Capital Territory',1),
 (2,'NSW','AU','新南威尔士州','New South Wales',2),
@@ -514,7 +514,7 @@ CREATE TABLE `currency` (
   `rate` decimal(10,6) NOT NULL DEFAULT '0.000000' COMMENT '汇率',
   PRIMARY KEY (`currency_id`),
   UNIQUE KEY `IDX_UNI` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO `currency`(`code`,`name`,`symbol`,`rate`) VALUES 
 ('AUD','澳币','A$',0.228000),
 ('CAD','加元','C$',0.215000),
@@ -535,8 +535,8 @@ CREATE TABLE `language` (
   `tr_code` varchar(4) NOT NULL DEFAULT '' COMMENT '翻译码',
   `name` varchar(20) NOT NULL DEFAULT '' COMMENT '名称',
   `name_cn` varchar(20) NOT NULL DEFAULT '' COMMENT '内部使用名称',
-  PRIMARY KEY (`code`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=COMPACT;
+  PRIMARY KEY (`language_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 INSERT INTO `language`(`code`,`tr_code`,`name`,`name_cn`) VALUES 
 ('de','de','Deutsch','德语'),
 ('en','en','English','英语'),
@@ -553,7 +553,7 @@ CREATE TABLE `description` (
   `status` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`desc_id`),
   UNIQUE KEY `IDX_UNI` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*描述文本多语言*/
 DROP TABLE IF EXISTS `description_language`;
 CREATE TABLE `description_language` (
@@ -563,7 +563,7 @@ CREATE TABLE `description_language` (
   `name` varchar(200) NOT NULL DEFAULT '' COMMENT '翻译文本',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`desc_id`,`lan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*邮件表*/
 DROP TABLE IF EXISTS `email`;
@@ -579,7 +579,7 @@ CREATE TABLE `email` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '记录时间',
   `send_time` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`email_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*邮件账户*/
 DROP TABLE IF EXISTS `email_account`;
 CREATE TABLE `email_account` (
@@ -595,7 +595,7 @@ CREATE TABLE `email_account` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点邮件使用*/
 DROP TABLE IF EXISTS `email_account_used`;
 CREATE TABLE `email_account_used` (
@@ -605,7 +605,7 @@ CREATE TABLE `email_account_used` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '记录时间',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`account_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*前端用户表*/
 DROP TABLE IF EXISTS `member`;
@@ -627,7 +627,7 @@ CREATE TABLE `member` (
   `login_time` timestamp NULL DEFAULT NULL COMMENT '登陆时间',
   PRIMARY KEY (`mem_id`),
   KEY `IDX_UNI` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*用户地址*/
 DROP TABLE IF EXISTS `member_address`;
 CREATE TABLE `member_address` (
@@ -651,17 +651,17 @@ CREATE TABLE `member_address` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`address_id`),
   KEY `IDX_MEM` (`mem_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*用户收藏*/
 DROP TABLE IF EXISTS `member_collect`;
 CREATE TABLE `member_collect` (
   `coll_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',
   `spu_id` int(11) NOT NULL DEFAULT '0' COMMENT 'SPUID',
-  `add_time` timestamp NOT NULL DEFAULT NULL COMMENT '添加时间',
+  `add_time` timestamp DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`coll_id`),
   UNIQUE KEY `IDX_UNI` (`mem_id`,`spu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*浏览历史*/
 DROP TABLE IF EXISTS `member_history`;
 CREATE TABLE `member_history` (
@@ -672,7 +672,7 @@ CREATE TABLE `member_history` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`his_id`),
   UNIQUE KEY `IDX_UNI` (`mem_id`,`spu_id`,`add_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*用户uuid映射表*/
 DROP TABLE IF EXISTS `member_uuid`;
 CREATE TABLE `member_uuid` (
@@ -684,7 +684,7 @@ CREATE TABLE `member_uuid` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`uuid`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*信息表*/
 DROP TABLE IF EXISTS `message`;
@@ -698,7 +698,7 @@ CREATE TABLE `message` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`message_id`),
   KEY `IDX_UNI` (`group_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*消息人*/
 DROP TABLE IF EXISTS `message_member`;
 CREATE TABLE `message_member` (
@@ -710,7 +710,7 @@ CREATE TABLE `message_member` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`group_id`,`mem_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*订单表*/
 DROP TABLE IF EXISTS `order`;
@@ -736,7 +736,7 @@ CREATE TABLE `order` (
   `is_delete` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否删除',
   PRIMARY KEY (`order_id`),
   KEY `IDX_MEM` (`mem_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=100001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*订单地址*/
 DROP TABLE IF EXISTS `order_address`;
 CREATE TABLE `order_address` (
@@ -758,7 +758,7 @@ CREATE TABLE `order_address` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`order_address_id`),
   UNIQUE KEY `IDX_UNI` (`order_id`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*订单产品*/
 DROP TABLE IF EXISTS `order_product`;
 CREATE TABLE `order_product` (
@@ -772,7 +772,7 @@ CREATE TABLE `order_product` (
   `original_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '产品原价',
   PRIMARY KEY (`order_product_id`),
   KEY `IDX_ID` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*订单产品属性*/
 DROP TABLE IF EXISTS `order_product_attribute`;
 CREATE TABLE `order_product_attribute` (
@@ -785,7 +785,7 @@ CREATE TABLE `order_product_attribute` (
   `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '图片ID',
   PRIMARY KEY (`item_id`),
   KEY `IDX_ID` (`order_product_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*订单状态变更历史*/
 DROP TABLE IF EXISTS `order_status_history`;
 CREATE TABLE `order_status_history` (
@@ -796,7 +796,7 @@ CREATE TABLE `order_status_history` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`item_id`),
   KEY `IDX_ID` (`order_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*支付信息表*/
 DROP TABLE IF EXISTS `payment`;
@@ -813,7 +813,7 @@ CREATE TABLE `payment` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`payment_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*支付使用*/
 DROP TABLE IF EXISTS `payment_used`;
 CREATE TABLE `payment_used` (
@@ -825,7 +825,7 @@ CREATE TABLE `payment_used` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '增加时间',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*SKU使用属性*/
 DROP TABLE IF EXISTS `product_attribute_used`;
@@ -838,7 +838,7 @@ CREATE TABLE `product_attribute_used` (
   `sort` smallint(6) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`sku_id`,`attr_id`,`attv_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SPU描述文本使用*/
 DROP TABLE IF EXISTS `product_description_used`;
 CREATE TABLE `product_description_used` (
@@ -849,7 +849,7 @@ CREATE TABLE `product_description_used` (
   `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IND_UNI` (`spu_id`,`name_id`,`value_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SPU描述图片使用*/
 DROP TABLE IF EXISTS `product_introduce_used`;
 CREATE TABLE `product_introduce_used` (
@@ -859,7 +859,7 @@ CREATE TABLE `product_introduce_used` (
   `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`spu_id`,`attach_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SPU标题多语言*/
 DROP TABLE IF EXISTS `product_language`;
 CREATE TABLE `product_language` (
@@ -869,11 +869,12 @@ CREATE TABLE `product_language` (
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '名称',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`spu_id`,`lan_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SKU表*/
 DROP TABLE IF EXISTS `product_sku`;
 CREATE TABLE `product_sku` (
   `sku_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
+  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
   `spu_id` int(11) NOT NULL COMMENT 'SPUID',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '主图ID',
@@ -887,7 +888,7 @@ CREATE TABLE `product_sku` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`sku_id`),
   KEY `IDX_SPU` (`spu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SKU其他信息*/
 DROP TABLE IF EXISTS `product_sku_data`;
 CREATE TABLE `product_sku_data` (
@@ -895,7 +896,7 @@ CREATE TABLE `product_sku_data` (
   `item_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '源SKUID',
   `cost_price` decimal(8,2) NOT NULL DEFAULT '0.00' COMMENT '成本价格',
   PRIMARY KEY (`sku_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SPU表*/
 DROP TABLE IF EXISTS `product_spu`;
 CREATE TABLE `product_spu` (
@@ -914,7 +915,7 @@ CREATE TABLE `product_spu` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`spu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SPU其他信息*/
 DROP TABLE IF EXISTS `product_spu_data`;
 CREATE TABLE `product_spu_data` (
@@ -927,7 +928,7 @@ CREATE TABLE `product_spu_data` (
   `check_time` timestamp NULL DEFAULT NULL COMMENT '检查时间',
   PRIMARY KEY (`spu_id`),
   UNIQUE KEY `UNI_ID` (`supplier`,`item_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*SPU图片*/
 DROP TABLE IF EXISTS `product_spu_image`;
 CREATE TABLE `product_spu_image` (
@@ -936,7 +937,7 @@ CREATE TABLE `product_spu_image` (
   `attach_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '文件ID',
   `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`item_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*站点*/
 DROP TABLE IF EXISTS `site`;
@@ -951,7 +952,7 @@ CREATE TABLE `site` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '加入时间',
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`site_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=81 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点分类使用*/
 DROP TABLE IF EXISTS `site_category_used`;
 CREATE TABLE `site_category_used` (
@@ -964,7 +965,7 @@ CREATE TABLE `site_category_used` (
   `visit_total` int(11) NOT NULL DEFAULT '0' COMMENT '浏览统计',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`cate_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点货币使用*/
 DROP TABLE IF EXISTS `site_currency_used`;
 CREATE TABLE `site_currency_used` (
@@ -974,7 +975,7 @@ CREATE TABLE `site_currency_used` (
   `sort` smallint(5) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点语言使用*/
 DROP TABLE IF EXISTS `site_language_used`;
 CREATE TABLE `site_language_used` (
@@ -984,7 +985,7 @@ CREATE TABLE `site_language_used` (
   `sort` smallint(4) NOT NULL DEFAULT '0' COMMENT '排序',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点静态文件*/
 DROP TABLE IF EXISTS `site_static_file`;
 CREATE TABLE `site_static_file` (
@@ -994,7 +995,7 @@ CREATE TABLE `site_static_file` (
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   PRIMARY KEY (`static_id`),
   UNIQUE KEY `IDX_UNI` (`name`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点SEO多语言*/
 DROP TABLE IF EXISTS `site_language`;
 CREATE TABLE `site_language` (
@@ -1005,7 +1006,7 @@ CREATE TABLE `site_language` (
   `name` varchar(255) NOT NULL DEFAULT '' COMMENT '翻译文本',
   PRIMARY KEY (`item_id`),
   UNIQUE KEY `IDX_UNI` (`site_id`,`lan_id`,`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*站点域名*/
 DROP TABLE IF EXISTS `site_domain`;
 CREATE TABLE `site_domain` (
@@ -1018,7 +1019,7 @@ CREATE TABLE `site_domain` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`domain_id`),
   UNIQUE KEY `IDX_UNI` (`domain`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*供应商店铺*/
 DROP TABLE IF EXISTS `supplier_shop`;
@@ -1030,7 +1031,7 @@ CREATE TABLE `supplier_shop` (
   `update_time` timestamp NULL DEFAULT NULL COMMENT '更新时间',
   PRIMARY KEY (`shop_id`),
   UNIQUE KEY `IDX_UNI` (`url`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*供应商产品链接*/
 DROP TABLE IF EXISTS `supplier_url`;
 CREATE TABLE `supplier_url` (
@@ -1042,7 +1043,7 @@ CREATE TABLE `supplier_url` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '添加时间',
   PRIMARY KEY (`supp_id`),
   UNIQUE KEY `name` (`name`,`item_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
 
@@ -1061,7 +1062,7 @@ CREATE TABLE `admin_logger` (
   `remark` varchar(120) NOT NULL DEFAULT '' COMMENT '备注',
   `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 DROP TABLE IF EXISTS `visitor_log`;
 
@@ -1079,4 +1080,4 @@ CREATE TABLE `visitor_log` (
   `ip` varchar(15) NOT NULL DEFAULT '' COMMENT 'ip地址',
   `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`log_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

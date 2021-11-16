@@ -179,7 +179,7 @@ class Spu extends Base
 			$info['image'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
 		}
 		foreach ($info['introduce'] as $key => $value) {
-			$info['introduce'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
+			$info['introduce'][$key]['image'] = str_replace('/400', '', $attachArr[$value['attach_id']] ?? '');
 		}
 		//描述
 		$descArr = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
@@ -240,6 +240,12 @@ class Spu extends Base
 		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'product');
 
 		//转换成键值对
+		foreach ($attrArr as $key => $value) {
+			$attrArr[$key] = strtoupper(strTrim($value));
+		}
+		foreach ($attrValueArr as $key => $value) {
+			$attrValueArr[$key] = strtoupper(strTrim($value));
+		}
 		$attrArr = $attribute->addNotExist($attrArr);
 		$attrValueArr = $attrvalue->addNotExist($attrValueArr);
 
@@ -249,10 +255,11 @@ class Spu extends Base
 		];	
 		$spuData = make('app/service/product/SpuData');
 		$info = $spuData->loadData($where, 'spu_id');
+		$data['bc_post_fee'] = empty($data['bc_post_fee']) ? 0 : $data['bc_post_fee'];
 		if (empty($info)) {
 			//价格合集
 			foreach ($data['bc_sku'] as $key => $value) {
-				$price = $this->getPrice($value['price']);
+				$price = $this->getPrice($value['price']+$data['bc_post_fee']);
 				$data['bc_sku'][$key]['sale_price'] = $price;
 				$data['bc_sku'][$key]['original_price'] = $this->getOriginalPrice($price);
 			}
@@ -264,7 +271,7 @@ class Spu extends Base
 				'attach_id' => $allImageArr[$firstImage] ?? 0,
 				'min_price' => min($priceArr),
 				'max_price' => max($priceArr),
-				'original_price' => $this->getOriginalPrice(max($priceArr)), //虚拟原价
+				'original_price' => max(array_column($data['bc_sku'], 'original_price')), //虚拟原价
 			];
 			$this->start();
 			$spuId = $this->insertGetId($insert);
@@ -323,8 +330,8 @@ class Spu extends Base
 				foreach ($value['attr'] as $k => $v) {
 					$insert[] = [
 						'sku_id' => $skuId,
-						'attr_id' => $attrArr[$k],
-						'attv_id' => $attrValueArr[$v['text']],
+						'attr_id' => $attrArr[strtoupper(strTrim($k))],
+						'attv_id' => $attrValueArr[strtoupper(strTrim($v['text']))],
 						'attach_id' => empty($v['img']) ? 0 : $allImageArr[$v['img']] ?? 0,
 						'sort' => $count++,
 					];
@@ -361,10 +368,13 @@ class Spu extends Base
 		$insert = [];
 		$descService = make('app/service/attr/Description');
 		$descArr = array_merge(array_column($data['bc_des_text'], 'key'), array_column($data['bc_des_text'], 'value'));
+		foreach ($descArr as $key => $value) {
+			$descArr[$key] = strtoupper(strTrim($value));
+		}
 		$descArr = $descService->addNotExist($descArr);
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$nameId = $descArr[$value['key']];
-			$valueId = $descArr[$value['value']];
+			$nameId = $descArr[strtoupper(strTrim($value['key']))];
+			$valueId = $descArr[strtoupper(strTrim($value['value']))];
 			$uniqueid = $nameId.'-'.$valueId;
 			$insert[$uniqueid] = [
 				'spu_id' => $spuId,
@@ -384,11 +394,11 @@ class Spu extends Base
 	protected function getPrice($price)
 	{
 		if ($price < 200) {
-			$price += 200;
+			$price += 250;
 		} elseif ($price < 400) {
-			$price += 300;
+			$price += 350;
 		} else {
-			$price += 400;
+			$price += 450;
 		}
 		return $price;
 	}
@@ -396,11 +406,11 @@ class Spu extends Base
 	protected function getOriginalPrice($price)
 	{
 		if ($price < 200) {
-			$price += 300;
+			$price += 250 + rand(20, 100);
 		} elseif ($price < 400) {
-			$price += 400;
+			$price += 350 + rand(30, 150);
 		} else {
-			$price += 500;
+			$price += 500 + rand(40, 200);;
 		}
 		return $price;
 	}
