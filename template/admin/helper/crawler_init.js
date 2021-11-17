@@ -450,7 +450,9 @@ const CRAWLERINIt = {
 				count ++;
 			}
 		}
-		imgValueObj.value = value;
+		if (imgValueObj) {
+			imgValueObj.value = value;
+		}
 	}
 };
 CRAWLERINIt.init();
