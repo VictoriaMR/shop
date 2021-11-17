@@ -93,8 +93,10 @@ const PRODUCT = {
 			const obj = $(this);
 			obj.button('loading');
 			post(URI+'product/detail', $('#dealbox-language form').serializeArray(), function(){
-				obj.button('reset');
 				window.location.reload();
+			}, function(res){
+				obj.button('reset');
+				obj.parents('.centerShow').parent().dealboxHide();
 			});
 			return false;
 		});
