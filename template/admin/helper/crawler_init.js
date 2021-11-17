@@ -342,7 +342,7 @@ const CRAWLERINIt = {
 			for (let i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this)
-					POP_PAGE.initPdtImgValue(obj);
+					_this.initPdtImgValue(obj);
 				}
 			}
 		}
@@ -353,7 +353,7 @@ const CRAWLERINIt = {
 			for (let i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this)
-					POP_PAGE.initPdtImgValue(obj);
+					_this.initPdtImgValue(obj);
 				}
 			}
 		}
