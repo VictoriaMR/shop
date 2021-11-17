@@ -440,11 +440,15 @@ const CRAWLERINIt = {
 		}
 		const imgobj = pobj.getElementsByTagName('img');
 		let value = '';
+		let count = 0;
 		for (let i = 0; i < imgobj.length; i++) {
-			if (i > 0) {
-				value += ',';
+			if (imgobj[i].src) {
+				if (count > 0) {
+					value += ',';
+				}
+				value += imgobj[i].src;
+				count ++;
 			}
-			value += imgobj[i].src;
 		}
 		imgValueObj.value = value;
 	}
