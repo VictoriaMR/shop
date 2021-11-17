@@ -35,7 +35,7 @@ class Product extends AdminBase
 		$cateList = make('app/service/category/Category')->getListFormat();
 		$cateList = array_column($cateList, null, 'cate_id');
 		$where = [];
-		if (in_array($status, array_keys($statusList), true)) {
+		if ($status > -1) {
 			$where['status'] = $status;
 		}
 		if ($site >= 0) {

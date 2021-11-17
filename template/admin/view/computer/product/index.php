@@ -1,5 +1,5 @@
 <div class="container-fluid">
-	<form action="<?php echo url();?>" class="form-inline">
+	<form action="<?php echo url('product');?>" class="form-inline" method="get">
 		<div class="form-group mt10 mr20">
 			<input type="text" class="form-control" name="spu_id" value="<?php echo empty($spuId) ? '' : $spuId;?>" placeholder="SPU ID" autocomplete="off">
 		</div>
