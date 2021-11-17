@@ -170,7 +170,6 @@ abstract class TaskDriver
 			$this->echo('任务启动中 '.now());
 			$this->before();
 			$result = true;
-			$runtime = time();
 			while ($result && $this->continueRuning()) {
 				cache(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
 				$result = $this->run();
@@ -178,10 +177,7 @@ abstract class TaskDriver
 				$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
 				if($result) {
 					// 防止死循环减轻服务器压力
-					if (time() - $runtime < 1) {
-						sleep($this->sleep);
-					}
-					$runtime = time();
+					sleep($this->sleep > 1 ? $this->sleep : 1);
 				}
 			}
 			$this->locker->unlock($this->lock);

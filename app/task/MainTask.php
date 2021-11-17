@@ -12,7 +12,7 @@ class MainTask extends TaskDriver
 		if (!empty($process)) {
 			$this->lockTimeout = config('task.timeout');
 			$this->runTimeLimit = 0;
-			$this->sleep = 1;
+			$this->sleep = 5;
 		}
 		$this->config['info'] = '系统核心队列任务';
 		parent::__construct($process);
