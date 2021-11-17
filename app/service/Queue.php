@@ -11,9 +11,9 @@ class Queue
 	public function push($data, $first=false)
 	{
 		if ($first) {
-			redis(2)->rPush($this->key, $data);
+			cache(2)->rPush($this->key, $data);
 		} else {
-			redis(2)->lPush($this->key, $data);
+			cache(2)->lPush($this->key, $data);
 		}
 		make('frame/Task')->taskStart('Queue');
 		return true;
@@ -21,21 +21,21 @@ class Queue
 
 	public function count()
 	{
-		return redis(2)->lLen($this->key);
+		return cache(2)->lLen($this->key);
 	}
 
 	public function pop()
 	{
-		return redis(2)->rPop($this->key);
+		return cache(2)->rPop($this->key);
 	}
 
 	public function getInfo()
 	{
-		return redis(2)->lIndex($this->key, -1);
+		return cache(2)->lIndex($this->key, -1);
 	}
 
 	public function dealFalse($data)
 	{
-		return redis(2)->lPush($this->failedKey, $data);
+		return cache(2)->lPush($this->failedKey, $data);
 	}
 }
