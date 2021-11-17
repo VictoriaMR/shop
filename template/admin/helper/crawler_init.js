@@ -288,9 +288,9 @@ const CRAWLERINIt = {
 	clickInit: function() {
 		const _this = this;
 		//上传产品按钮
-		let obj = document.getElementById('postProduct-btn');
-		if (obj) {
-			obj.onclick = function () {
+		let obj1 = document.getElementById('postProduct-btn');
+		if (obj1) {
+			obj1.onclick = function () {
 				if (this.className.indexOf('loading') !== -1) {
 					return false;
 				}
@@ -308,9 +308,9 @@ const CRAWLERINIt = {
 				});
 			}
 		}
-		obj = document.getElementById('clawler-after-btn');
-		if (obj) {
-			obj.onclick = function () {
+		let obj2 = document.getElementById('clawler-after-btn');
+		if (obj2) {
+			obj2.onclick = function () {
 				if (this.className.indexOf('loading') !== -1) {
 					return false;
 				}
@@ -336,30 +336,30 @@ const CRAWLERINIt = {
 			}
 		}
 		//图片按钮点击删除
-		obj = document.getElementById('pdt_picture');
-		if (obj) {
-			const tobj = obj.querySelectorAll('img');
+		let obj3 = document.getElementById('pdt_picture');
+		if (obj3) {
+			const tobj = obj3.querySelectorAll('img');
 			for (let i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this)
-					_this.initPdtImgValue(obj);
+					_this.initPdtImgValue(obj3);
 				}
 			}
 		}
 		//图片介绍图
-		obj = document.getElementById('pdt_desc_picture');
-		if (obj) {
-			const tobj = obj.querySelectorAll('img');
+		let obj4 = document.getElementById('pdt_desc_picture');
+		if (obj4) {
+			const tobj = obj4.querySelectorAll('img');
 			for (let i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this)
-					_this.initPdtImgValue(obj);
+					_this.initPdtImgValue(obj4);
 				}
 			}
 		}
-		obj = document.getElementById('pdt_des_text');
-		if (obj) {
-			tobj = obj.querySelectorAll('.sku-attr .close');
+		let obj5 = document.getElementById('pdt_des_text');
+		if (obj5) {
+			tobj = obj5.querySelectorAll('.sku-attr .close');
 			for (var i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this);
@@ -367,10 +367,10 @@ const CRAWLERINIt = {
 			}
 		}
 		// sku 点击删除
-		obj = document.querySelectorAll('.cancel-btn');
-		if (obj) {
-			for (let i = 0; i < obj.length; i++) {
-				obj[i].onclick = function(event) {
+		let obj6 = document.querySelectorAll('.cancel-btn');
+		if (obj6) {
+			for (let i = 0; i < obj6.length; i++) {
+				obj6[i].onclick = function(event) {
 					this.parentNode.remove();
 				}
 			}
@@ -386,11 +386,11 @@ const CRAWLERINIt = {
 			});
 		}
 		//站点改变切换分类
-		obj = document.querySelector('#crawler_page .bc_product_site');
-		if (obj) {
-			obj.onchange = function(){
-				const index = obj.selectedIndex;
-				_this.getCategoryHtml(obj.options[index].value);
+		let obj7 = document.querySelector('#crawler_page .bc_product_site');
+		if (obj7) {
+			obj7.onchange = function(){
+				const index = obj7.selectedIndex;
+				_this.getCategoryHtml(obj7.options[index].value);
 			}
 		}
 	},
@@ -433,6 +433,7 @@ const CRAWLERINIt = {
 		}
 	},
 	initPdtImgValue: function(pobj) {
+		console.log(pobj)
 		let imgValueObj = pobj.querySelector('.bc_product_picture');
 		if (imgValueObj === null) {
 			pobj.innerHTML += '<input type="hidden" name="bc_product_img" class="bc_product_picture" value=""/>';
