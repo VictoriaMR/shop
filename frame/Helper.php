@@ -194,3 +194,6 @@ function currencyId(){
 function uuId(){
 	return session()->get(APP_TEMPLATE_TYPE.'_info.uuid', '');
 }
+function hasZht($str){
+	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;
+}

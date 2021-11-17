@@ -1,3 +1,6 @@
+$(function(){
+	LOGIN.init();
+});
 const LOGIN = {
 	init: function () {
 		$('#login-btn').on('click', function() {
