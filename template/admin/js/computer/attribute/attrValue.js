@@ -125,7 +125,7 @@ const ATTRIBUTE = {
 	initData: function(data) {
 		var obj = $('#dealbox');
 		if (data) {
-			obj.find('input[name="id"]').val(data.attr_id);
+			obj.find('input[name="id"]').val(data.attv_id);
 			obj.find('input[name="name"]').val(data.name);
 		} else {
 			obj.find('input[name="id"]').val(0);
