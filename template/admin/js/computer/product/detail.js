@@ -12,9 +12,11 @@ const PRODUCT = {
 		});
 		$('.centerShow .btn.save').on('click', function(){
 			const _thisobj = $(this);
+			_thisobj.button('loading');
 			post(URI+'product/detail', _thisobj.parent().serializeArray(), function(res) {
 				window.location.reload();
 			}, function(res) {
+				_thisobj.button('reset');
 				_thisobj.parents('.centerShow').parent().dealboxHide();
 			});
 		});
