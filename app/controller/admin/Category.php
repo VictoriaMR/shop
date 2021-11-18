@@ -77,7 +77,7 @@ class Category extends AdminBase
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
 				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
-				'language_name' => $value['name2'],
+				'language_name' => $value['name'],
 			];
 		}
 		$this->success($info, '');
