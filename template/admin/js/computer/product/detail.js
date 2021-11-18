@@ -111,10 +111,10 @@ const PRODUCT = {
 		});
 		//删除图片
 		$('.spu-image .glyphicon-trash').on('click', function(){
-			const attach_id = $(this).parents('.spu-image').data('id');
+			const item_id = $(this).parents('.spu-image').data('id');
 			confirm('确定要删除该图片吗?', function(_thisobj){
 				_thisobj.button('loading');
-				$.post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: attach_id, opn: 'deleteSpuImage'}, function(res) {
+				$.post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), item_id: item_id, opn: 'deleteSpuImage'}, function(res) {
 					if (res.code === '200') {
 						successTips(res.message);
 						window.location.reload();

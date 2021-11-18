@@ -155,11 +155,11 @@ class Product extends AdminBase
 	protected function deleteSpuImage()
 	{
 		$spuId = ipost('spu_id');
-		$attachId = ipost('attach_id');
-		if (empty($spuId) || empty($attachId)) {
+		$itemId = ipost('item_id');
+		if (empty($spuId) || empty($itemId)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/product/SpuImage')->deleteData(['spu_id'=>$spuId, 'attach_id'=>$attachId]);
+		$rst = make('app/service/product/SpuImage')->deleteData(['spu_id'=>$spuId, 'item_id'=>$itemId]);
 		if ($rst) {
 			$this->success('删除成功');
 		}
