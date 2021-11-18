@@ -283,13 +283,15 @@
 			<input type="hidden" name="opn" value="editInfo">
 			<input type="hidden" name="is_ajax" value="1">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
-			<div class="f24 dealbox-title">产品状态</div>
+			<div class="f24 dealbox-title">产品分类</div>
 			<div class="input-group">
 				<div class="input-group-addon"><span>分类</span></div>
 				<select class="form-control" name="cate_id">
-					<?php foreach ($siteCate as $value){?>
-					<option value="<?php echo $value['cate_id'];?>" <?php echo $value['cate_id']==$info['cate_id']?'selected':''?>><?php echo $value['name'];?></option>
-					<?php } ?>
+					<?php foreach ($siteCate as $v){?>
+					<option value="<?php echo $v['cate_id'];?>" disabled="disabled"><?php echo $v['name'];?></option>
+					<?php foreach ($v['son'] as $key=>$value) {?>
+					<option value="<?php echo $value['cate_id'];?>" <?php echo $value['cate_id']==$info['cate_id']?'selected':''?>>&nbsp;&nbsp;&nbsp;<?php echo $value['name'];?></option>
+					<?php }} ?>
 				</select>
 			</div>
 			<button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>

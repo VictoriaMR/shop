@@ -12,9 +12,11 @@ const PRODUCT = {
 		});
 		$('.centerShow .btn.save').on('click', function(){
 			const _thisobj = $(this);
+			_thisobj.button('loading');
 			post(URI+'product/detail', _thisobj.parent().serializeArray(), function(res) {
 				window.location.reload();
 			}, function(res) {
+				_thisobj.button('reset');
 				_thisobj.parents('.centerShow').parent().dealboxHide();
 			});
 		});
@@ -91,8 +93,10 @@ const PRODUCT = {
 			const obj = $(this);
 			obj.button('loading');
 			post(URI+'product/detail', $('#dealbox-language form').serializeArray(), function(){
-				obj.button('reset');
 				window.location.reload();
+			}, function(res){
+				obj.button('reset');
+				obj.parents('.centerShow').parent().dealboxHide();
 			});
 			return false;
 		});

@@ -31,7 +31,6 @@ class Category extends Base
 	public function getListFormat()
 	{
 		$list = $this->getList();
-		if (!$list) return false;
 		$list = $this->listFormat($list, 0, 0);
 		$returnData = [];
 		$this->arrayFormat($list, $returnData);
@@ -125,5 +124,24 @@ class Category extends Base
 	protected function getCacheKey($suffix='')
 	{
 		return 'category:list-cache'.$suffix;
+	}
+
+	public function getInCategory(array $cateIdArr=[])
+	{
+		$cateList = $this->getList();
+		if (empty($cateIdArr)) {
+			return $this->listFormat($cateList);
+		} else {
+			$returnData = [];
+			$cateList = array_column($cateList, null, 'cate_id');
+			foreach ($cateIdArr as $value) {
+				if (!isset($returnData[$cateList[$value]['parent_id']])) {
+					$returnData[$cateList[$value]['parent_id']] = $cateList[$cateList[$value]['parent_id']];
+					$returnData[$cateList[$value]['parent_id']]['son'] = [];
+				}
+				$returnData[$cateList[$value]['parent_id']]['son'][$value] = $cateList[$value];
+			}
+			return $returnData;
+		}
 	}
 }

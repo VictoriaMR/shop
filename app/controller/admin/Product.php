@@ -90,12 +90,9 @@ class Product extends AdminBase
 			//spu状态
 			$statusList = $spuService->getStatusList();
 			//站点分类
-			$category = make('app/service/category/Category')->getList();
-			$category = array_column($category, 'name', 'cate_id');
-			$siteCate = make('app/service/site/CategoryUsed')->getListData(['site_id'=>$info['site_id']], 'site_id,cate_id', 0, 0, ['sort'=>'asc']);
-			foreach ($siteCate as $key => $value) {
-				$siteCate[$key]['name'] = $category[$value['cate_id']];
-			}
+			$siteCate = make('app/service/site/CategoryUsed')->getListData(['site_id'=>$info['site_id']], 'cate_id', 0, 0, ['sort'=>'asc']);
+
+			$siteCate = make('app/service/category/Category')->getInCategory(array_column($siteCate, 'cate_id'));
 
 			$this->assign('info', $info);
 			$this->assign('statusList', $statusList);

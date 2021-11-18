@@ -9,19 +9,17 @@ class Api extends AdminBase
 
 	public function getHelperData()
 	{
-		$category = make('app/service/category/Category')->getList();
-		$category = array_column($category, 'name', 'cate_id');
+		$categoryService = make('app/service/category/Category');
 		$siteCate = make('app/service/site/CategoryUsed')->getListData([], 'site_id,cate_id', 0, 0, ['sort'=>'asc']);
 		$tempArr = [];
 		foreach ($siteCate as $value) {
-			if (!isset($tempArr[$value['site_id']])) $tempArr[$value['site_id']] = [];
-			$tempArr[$value['site_id']][] = [
-				'cate_id' => $value['cate_id'],
-				'name' => $category[$value['cate_id']],
-			];
+			$tempArr[$value['site_id']][] = $value['cate_id'];
+		}
+		foreach ($tempArr as $key => $value) {
+			$tempArr[$key] = $categoryService->getInCategory($value);
 		}
 		$data = [
-			'version' => config('env.VERSION'),
+			'version' => config('env.APP_VERSION'),
 			'socket_domain' => config('env.APP_DOMAIN'),
 			'site' => make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name'),
 			'site_category' => $tempArr,
