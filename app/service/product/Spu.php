@@ -190,7 +190,18 @@ class Spu extends Base
 			$descArr[$key]['value'] = $descNameArr[$value['value_id']] ?? '';
 		}
 		$info['desc'] = $descArr;
+		$info['gender_text'] = $this->getGenderText($info['gender']);
 		return $info;
+	}
+
+	protected function getGenderText($gender)
+	{
+		$arr = [
+			'0' => '默认',
+			'1' => '男',
+			'2' => '女',
+		];
+		return $arr[$gender] ?? '';
 	}
 
 	public function addProduct($data)

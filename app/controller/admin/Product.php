@@ -203,6 +203,9 @@ class Product extends AdminBase
 		if (isset($param['cate_id'])) {
 			$data['cate_id'] = $param['cate_id'];
 		}
+		if (isset($param['gender'])) {
+			$data['gender'] = $param['gender'];
+		}
 		if (isset($param['attach_id'])) {
 			$data['attach_id'] = $param['attach_id'];
 		}

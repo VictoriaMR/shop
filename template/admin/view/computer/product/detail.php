@@ -31,6 +31,13 @@
 				</dd>
 			</dl>
 			<dl class="field-row">
+				<dt>性别：</dt>
+				<dd><?php echo $info['gender_text'];?></dd>
+				<dd>
+					<button type="button" class="btn btn-primary btn-xs gender-btn">修改</button>
+				</dd>
+			</dl>
+			<dl class="field-row">
 				<dt>产品名称：</dt>
 				<dd>
 					<span class="glyphicon glyphicon-globe name-trans-btn"></span>
@@ -292,6 +299,28 @@
 					<?php foreach ($v['son'] as $key=>$value) {?>
 					<option value="<?php echo $value['cate_id'];?>" <?php echo $value['cate_id']==$info['cate_id']?'selected':''?>>&nbsp;&nbsp;&nbsp;<?php echo $value['name'];?></option>
 					<?php }} ?>
+				</select>
+			</div>
+			<button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>
+		</form>
+	</div>
+</div>
+<!-- 性别弹窗 -->
+<div id="gender-dealbox" class="hidden">
+	<div class="mask"></div>
+	<div class="centerShow">
+		<form class="form-horizontal">
+			<input type="hidden" name="spu_id" value="<?php echo $info['spu_id'];?>">
+			<input type="hidden" name="opn" value="editInfo">
+			<input type="hidden" name="is_ajax" value="1">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="f24 dealbox-title">产品性别属性</div>
+			<div class="input-group">
+				<div class="input-group-addon"><span>性别</span></div>
+				<select class="form-control" name="gender">
+					<option value="0">默认</option>
+					<option value="1">男</option>
+					<option value="2">女</option>
 				</select>
 			</div>
 			<button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>

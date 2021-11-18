@@ -10,6 +10,9 @@ const PRODUCT = {
 		$('.category-btn').on('click', function(){
 			$('#category-dealbox').dealboxShow();
 		});
+		$('.gender-btn').on('click', function(){
+			$('#gender-dealbox').dealboxShow();
+		});
 		$('.centerShow .btn.save').on('click', function(){
 			const _thisobj = $(this);
 			_thisobj.button('loading');
