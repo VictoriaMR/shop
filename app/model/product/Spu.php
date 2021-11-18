@@ -9,7 +9,7 @@ class Spu extends Base
 	protected $_primaryKey = 'spu_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
-	protected $_intFields = ['spu_id', 'site_id', 'cate_id', 'status', 'rank', 'attach_id', 'sale_total', 'visit_total', 'free_ship'];
+	protected $_intFields = ['spu_id', 'site_id', 'cate_id', 'status', 'gender', 'rank', 'attach_id', 'sale_total', 'visit_total', 'free_ship'];
 
 	const STATUS_CLOSE = 0;
 	const STATUS_OPEN = 1;

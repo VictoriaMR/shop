@@ -267,6 +267,7 @@ class Spu extends Base
 			$insert = [
 				'status' => 0,
 				'site_id' => $data['bc_product_site'],
+				'gender' => $data['bc_product_gender'] ?? 0,
 				'cate_id' => $data['bc_product_category'],
 				'attach_id' => $allImageArr[$firstImage] ?? 0,
 				'min_price' => min($priceArr),

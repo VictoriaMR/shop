@@ -112,6 +112,17 @@ const CRAWLERINIt = {
 							</div>
 						</div>
 						<div class="productAttLine">
+							<div class="label">性别:</div>
+							<div class="fill_in">
+								<select name="bc_product_gender" class="bc_product_gender">
+									<option value="0">默认</option>
+									<option value="1">Mem</option>
+									<option value="2">Women</option>
+								</select>
+							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="productAttLine">
 							<div class="label">邮费:</div>
 							<div class="fill_in">
 								<input name="bc_post_fee" value="" placeholder="邮费">
@@ -418,6 +429,13 @@ const CRAWLERINIt = {
 		const list = this.category[siteId];
 		if (list) {
 			html = '<option value="">请选择分类</option>';
+			for (let i in list) {
+				html += '<option value="'+list[i].cate_id+'" disabled="disabled">'+list[i].name+'</option>';
+				const data = list[i].son;
+				for (let j in data) {
+					html += '<option value="'+data[j].cate_id+'">&nbsp;&nbsp;&nbsp;'+data[j].name+'</option>';
+				}
+			}
 			for (let i = 0; i < list.length; i++) {
 				html += '<option value="'+list[i].cate_id+'">'+list[i].name+'</option>';
 			}
