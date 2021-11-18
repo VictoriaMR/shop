@@ -81,6 +81,9 @@ class Category extends Base
 		$returnData = [];
 		$list = $this->getList();
 		$list = array_column($list, null, 'cate_id');
+		if (!isset($list[$id])) {
+			return $returnData;
+		}
 		if ($self) $returnData[] = $list[$id];
 		$id = $list[$id]['parent_id'];
 		if (isset($list[$id])) {
