@@ -10,6 +10,7 @@ final class Query
 	private $_where;
 	private $_groupBy='';
 	private $_orderBy='';
+	private $_having='';
 	private $_offset;
 	private $_limit=1;
 	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank'];
@@ -76,6 +77,13 @@ final class Query
 	{
 		if (empty($columns)) return $this;
 		$this->_groupBy .= $this->formatKey(trim($columns)).',';
+		return $this;
+	}
+
+	public function having($columns, $operator, $value)
+	{
+		if (empty($columns)) return $this;
+		$this->_having = $this->formatKey($columns).' '.$operator.' '.$value;
 		return $this;
 	}
 
@@ -226,6 +234,9 @@ final class Query
 			$sql .= ' LIMIT ' . $this->_offset;
 			$sql .= ',' . $this->_limit;
 		}
+		if (!empty($this->_having)) {
+			$sql .= ' HAVING ' . rtrim($this->_having, ',');
+		}
 		return $sql;
 	}
 
@@ -292,6 +303,7 @@ final class Query
 		$this->_where = [];
 		$this->_groupBy = '';
 		$this->_orderBy = '';
+		$this->_having = '';
 		$this->_offset = null;
 		$this->_limit = 1;
 	}
