@@ -17,7 +17,7 @@ class App
 	public static function send()
 	{
 		//获取站点数据
-		$info = config('domain.'.$_SERVER['HTTP_HOST']);
+		$info = config('domain.'.str_replace('www.', '', $_SERVER['HTTP_HOST']));
 		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
 		define('APP_CONTROLLER_TYPE', $info['path'] == 'admin' ? 'admin' : 'home');
 		define('APP_TEMPLATE_TYPE', $info['path']);
