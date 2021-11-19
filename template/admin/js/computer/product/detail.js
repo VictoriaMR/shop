@@ -111,7 +111,7 @@ const PRODUCT = {
 		});
 		//删除图片
 		$('.spu-image .glyphicon-trash').on('click', function(){
-			const item_id = $(this).parents('.spu-image').data('id');
+			const item_id = $(this).parents('.spu-image').data('item_id');
 			confirm('确定要删除该图片吗?', function(_thisobj){
 				_thisobj.button('loading');
 				$.post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), item_id: item_id, opn: 'deleteSpuImage'}, function(res) {

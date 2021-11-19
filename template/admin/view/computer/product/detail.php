@@ -94,7 +94,7 @@
 	</dl>
 	<dl>
 		<?php foreach ($info['image'] as $key => $value) {?>
-		<div class="spu-image" data-id="<?php echo $value['item_id'];?>">
+		<div class="spu-image" data-id="<?php echo $value['attach_id'];?>" data-item_id="<?php echo $value['item_id'];?>">
 			<div class="image-tcell">
 				<img src="<?php echo siteUrl('/image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
 			</div>
