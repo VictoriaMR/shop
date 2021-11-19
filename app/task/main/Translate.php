@@ -25,7 +25,8 @@ class Translate extends TaskDriver
 		$transService = make('app/service/Translate');
 		//spu名称
 		$spuService = make('app/service/product/Language');
-		$list = $spuService->field('spu_id,lan_id,name,count(spu_id) as count')->groupBy('spu_id')->having('count', '<', count($language))->get();
+		$sql = 'SELECT * FROM product_language WHERE spu_id IN (SELECT spu_id FROM product_language GROUP BY spu_id HAVING COUNT(*) < '.count($language).' )';
+		$list = $spuService->getQuery($sql);
 		if (!empty($list)) {
 			$tempData = [];
 			foreach ($list as $value) {
