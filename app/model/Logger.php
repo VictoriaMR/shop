@@ -24,7 +24,7 @@ class Logger extends Base
 		$data['is_moblie'] = IS_MOBILE ? 1 : 0;
 		$data['browser'] = request()->getBrowser();
 		$data['system'] = request()->getSystem();
-		$data['agent'] = $_SERVER['HTTP_USER_AGENT'] ?? '';
+		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
 		if (!isset($data['path'])) {
 			$data['path'] = implode('/', \App::get('router'));
 		}
