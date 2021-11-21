@@ -64,7 +64,9 @@ class Error
 				echo 'Error Message: '.$message.'<br />';
 				$this->echoParmas();
 			} else {
-				redirect(url('pageNotFound'));
+				if (\App::get('router', 'path') != 'PageNotFound') {
+					redirect(url('pageNotFound'));
+				}
 			}
 		}
 		exit();
