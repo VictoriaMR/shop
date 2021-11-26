@@ -1,6 +1,6 @@
 <?php
 return [
 	'timeout' => 600,
-	'phpbin' => '/usr/local/php/bin/php',
+	'phpbin' => 'php',
 	'enabled' => true,
 ];

@@ -17,7 +17,7 @@ class Index extends AdminBase
 
 	public function index()
 	{
-		make('app\task\main\Translate')->run();
+		make('app\task\main\SiteMap')->run();
 		html()->addCss();
 		html()->addJs();
 		//功能列表

@@ -22,7 +22,7 @@
 }
 .product-list .img {
 	display: table-cell;
-	width: calc(100% - 0.1rem);
+	width: 100%;
 	height: calc((100vw - 0.3rem)/2);
 	vertical-align: middle;
 	text-align: center;

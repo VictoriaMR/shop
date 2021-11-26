@@ -7,3 +7,4 @@
 /.env
 /composer.lock
 /template/*/static
+/template/*/sitemap
