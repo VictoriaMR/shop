@@ -59,3 +59,32 @@
 	color: #404040;
 	z-index: 101;
 }
+.widget-page-bar {
+	padding: 0.10rem;
+	text-align: center;
+}
+.widget-page-bar .arrow-li {
+	display: inline-block;
+	font-size: 0;
+	height: 0.;
+	width: 0.36rem;
+	height: 0.36rem;
+	text-align: center;
+	margin-right: 7px;
+	background-color: #ddd;
+	border-radius: 0.03rem;
+}
+.widget-page-bar .arrow-li:last-child {
+	margin-right: 0;
+}
+.widget-page-bar .arrow-li a {
+	display: table-cell;
+	width: 0.36rem;
+	height: 0.36rem;
+	vertical-align: middle;
+	text-align: center;
+	font-size: 0.16rem;
+}
+.widget-page-bar .arrow-li .iconfont {
+	font-size: 0.2rem;
+}

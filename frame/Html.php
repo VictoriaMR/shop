@@ -81,7 +81,7 @@ class Html
 	{
 		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS;
 		$file = 'static'.DS.(IS_MOBILE ? 'm_' : 'c_').$name.'.'.$type;
-		if (APP_STATIC && is_file($path.$file)) {
+		if (config('env.APP_STATIC') && is_file($path.$file)) {
 			return $file;
 		}
 		$str = '';

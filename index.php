@@ -4,7 +4,6 @@ ini_set('date.timezone', 'Asia/Shanghai');
 define('APP_TIME_START', microtime(true));
 define('DS', '/');
 define('ROOT_PATH', strtr(__DIR__, '\\', '/').DS);
-define('APP_STATIC', false);
 define('TEMPLATE_SUFFIX', 'html');
 define('IS_CLI', false);
 require ROOT_PATH.'frame'.DS.'App.php';
