@@ -1,6 +1,6 @@
 <?php
 
-namespace template\shalight\controller\mobile;
+namespace template\newsme\controller\mobile;
 use app\controller\Base;
 
 class Index extends Base
