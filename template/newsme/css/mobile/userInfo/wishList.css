@@ -1,0 +1,16 @@
+#wish-page {
+	padding: 0.2rem 0 0.1rem 0;
+}
+#wish-page .product-list .remove-btn {
+	position: absolute;
+	top: 0;
+	right: 0.05rem;
+	border-top-right-radius: 0.06rem;
+	padding: 0 0.06rem;
+}
+#wish-page .empty-tips {
+	font-size: 0.16rem;
+	text-align: center;
+	margin-top: 0.4rem;
+	margin-bottom: 0.6rem;
+}

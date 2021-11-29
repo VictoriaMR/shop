@@ -95,7 +95,7 @@ final class Router
 		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$url;
 	}
 
-	public function urlFormat($name, $type, $param=[])
+	public function urlFormat($name, $type, $param=[], $domain=null)
 	{
 		$name = preg_replace('/[^-A-Za-z0-9\s]/', '', strtolower($name));
 		$name = preg_replace('/( ){2,}/', ' ', $name);
@@ -107,6 +107,6 @@ final class Router
 		if (isset($param['page'])) $name .= '-page-'.$param['page'];
 		if (isset($param['size'])) $name .= '-size-'.$param['size'];
 		if (defined('TEMPLATE_SUFFIX')) $name .= '.'.TEMPLATE_SUFFIX;
-		return config('env.APP_DOMAIN').$name;
+		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$name;
 	}
 }

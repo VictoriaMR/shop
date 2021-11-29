@@ -1,0 +1,49 @@
+#address-page {
+	padding: 0.2rem 0 0.1rem 0;
+}
+#address-page .address-content .title span {
+	display: inline-block;
+	height: 0.24rem;
+	line-height: 0.24rem;
+	font-size: 0.18rem;
+}
+#address-page .address-list .item {
+	padding: 0.16rem;
+	background: #fff;
+	margin-bottom: 0.1rem;
+	border: 0.01rem solid #fff;
+	position: relative;
+}
+#address-page .address-list .item p {
+	margin-bottom: 0.02rem;
+}
+#address-page .address-list .item.active {
+	border-color: #404040;
+}
+#address-page .address-list .item .default-btn {
+	position: absolute;
+	top: -0.01rem;
+	right: -0.01rem;
+}
+#address-page .address-list .item.active p:first-child {
+	width: 80%;
+}
+#address-page .address-list .item .iconfont {
+	font-size: 0.18rem;
+	position: absolute;
+	top: 0.04rem;
+	right: 0.04rem;
+	color: #ddd;
+}
+#address-page .address-list .item .iconfont.icon-wuliu {
+	right: 0.30rem;
+}
+#address-page .address-list .item .iconfont.active {
+	color: #000;
+}
+#address-page .empty-tips {
+	font-size: 0.16rem;
+	text-align: center;
+	margin-top: 0.4rem;
+	margin-bottom: 0.6rem;
+}

@@ -1,0 +1,39 @@
+#forget-page .title {
+	font-size: 0.16rem;
+	text-align: center;
+	padding: 0.3rem 0 0.12rem 0;
+	border-bottom: 0.01rem solid #E5E5E5;
+}
+#forget-page .content {
+	padding: 0.12rem 0.24rem 0.50rem 0.24rem;
+}
+#forget-page .content .tips {
+	font-size: 0.14rem;
+	font-style: italic;
+	text-align: center;
+}
+#forget-page .content .email {
+	margin-top: 0.18rem;
+	padding: 0.32rem 0.24rem;
+	background: #FFFFFF;
+}
+#forget-page .content .email .input {
+	height: 0.4rem;
+	padding: 0 0.16rem;
+	background: #F7F7F7;
+	border: 0.02rem solid #FFFFFF;
+}
+#forget-page .content .email .btn {
+	padding: 0 0.16rem;
+}
+#forget-page .content .email .input:focus {
+	border-color: #000000;
+}
+#forget-page .error .input {
+	border-color: #EB2027;
+}
+#forget-page .error-msg {
+	font-weight: 700;
+	color: #EB2027;
+	margin-top: 0.02rem;
+}
