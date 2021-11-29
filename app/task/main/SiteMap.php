@@ -125,6 +125,7 @@ class SiteMap extends TaskDriver
 			}
 			$this->saveSiteMapIndexXml($value['domain']);
 		}
+		return false;
 	}
 
 	protected function clear()
