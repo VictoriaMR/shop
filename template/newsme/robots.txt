@@ -1,0 +1,1 @@
+sitemap: https://newsme.cf/sitemap.xml
