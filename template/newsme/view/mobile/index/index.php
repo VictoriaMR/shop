@@ -98,7 +98,7 @@
 		</ul>
 		<p class="clear"></p>
 	</div>
-	<?php echo make('app/service/Widget')->pageBar(1, ceil($total/$size));?>
+	<?php echo make('app/service/Widget')->pageBar($page, ceil($total/$size));?>
 </div>
 <?php } ?>
 <?php $this->load('common/nav_footer');?>

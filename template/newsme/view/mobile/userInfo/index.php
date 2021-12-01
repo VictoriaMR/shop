@@ -217,4 +217,4 @@
 	</div>
 </div>
 <?php }?>
-<?php $this->load('common/txt_footer');?>
+<?php $this->load('common/nav_footer');?>

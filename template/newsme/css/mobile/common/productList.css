@@ -60,22 +60,31 @@
 	z-index: 101;
 }
 .widget-page-bar {
+	font-size: 0;
 	padding: 0.10rem;
 	text-align: center;
 }
 .widget-page-bar .arrow-li {
 	display: inline-block;
 	font-size: 0;
-	height: 0.;
 	width: 0.36rem;
 	height: 0.36rem;
 	text-align: center;
-	margin-right: 7px;
+	margin-right: 0.095rem;
 	background-color: #ddd;
 	border-radius: 0.03rem;
+	overflow: hidden;
+}
+.widget-page-bar .arrow-li.disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
 }
 .widget-page-bar .arrow-li:last-child {
 	margin-right: 0;
+}
+.widget-page-bar .arrow-li.active a {
+	background: #000000;
+	color: #ffffff;
 }
 .widget-page-bar .arrow-li a {
 	display: table-cell;

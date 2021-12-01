@@ -51,7 +51,7 @@ final class Router
 						$router['path'] = $routerArr[0];
 					}
 					$router['func'] = 'index';
-					$router['path'] = $this->getPath($router['path']);
+					$router['path'] = empty($router['path']) ? 'Index' : $this->getPath($router['path']);
 				}
 			}
 			if (empty($router['path'])) {
@@ -67,7 +67,7 @@ final class Router
 		}
 		array_shift($_GET);
 		if (count($router) != 3) {
-			throw new \Exception(' router analyed error', 1);
+			throw new \Exception('router analyed error', 1);
 		}
 		\App::set('router', $router);
 		return true;
@@ -108,5 +108,22 @@ final class Router
 		if (isset($param['size'])) $name .= '-size-'.$param['size'];
 		if (defined('TEMPLATE_SUFFIX')) $name .= '.'.TEMPLATE_SUFFIX;
 		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$name;
+	}
+
+	public function setParam($param=[], $url=null)
+	{
+		if (is_null($url)) {
+			$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+		}
+		$url = str_replace('.html', '', $url);
+		foreach ($param as $key=>$value) {
+			if (strpos($url, $key.'-') === false) {
+				$url .= $key.'-'.$value;
+			} else {
+				$str = $key.'-'.$value;
+				$url = preg_replace('/'.$key.'-(\d+)/', $str, $url);
+			}
+		}
+		return $url.'.html';
 	}
 }
