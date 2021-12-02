@@ -68,6 +68,7 @@ class Debug
 			}
 		}
 		// 获取基本信息
+		$current_uri = '';
 		if (IS_CLI) {
 			$current_uri = ' cmd: ' . implode(' ', $_SERVER['argv']);
 		} elseif (isset($_SERVER['HTTP_HOST'])) {
