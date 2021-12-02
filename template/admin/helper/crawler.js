@@ -562,7 +562,7 @@ function get1688(callback){
             });
         }else if(type==2){
             var api_url = 'https://h5api.m.1688.com/h5/mtop.mbox.fc.common.gateway/1.0/';
-            BAYHELPER_INIT.request({action: 'getCookie', host: api_url},function(response) {
+            HELPERINIT.request({action: 'getCookie', host: api_url},function(response) {
                 if (typeof response.cookies !== 'undefined' && response.cookies) {
                     var cookieArr = response.cookies.split(';');
                     var cookiesMatch = '';
@@ -1190,7 +1190,7 @@ function get1688ContactMember(url, callback)
         url = 'https:' + url;
     }
     url = url+'/page/creditdetail.htm';
-    BAYHELPER_INIT.request({action: 'requestChannel', type: 'GET', value: url, dataType: 'html'},function(response) {
+    HELPERINIT.request({action: 'request', type: 'GET', value: url, dataType: 'html'},function(response) {
         let contact = '';
         var nameMatch = response.match(/contactList\:\[([\s\r\n]+)\{name\:"([^"]+)"\}/);
         if (nameMatch) {
