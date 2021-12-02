@@ -406,7 +406,7 @@ const CRAWLERINIt = {
 	},
 	reload_crawlerPage: function() {
 		//删除缓存
-		HELPER.request({action: 'delCache', cache_key: 'crawler_data_cache'}, function() {
+		HELPERINIT.request({action: 'delCache', cache_key: 'crawler_data_cache'}, function() {
 			document.getElementById('googleHelper_crawler_js').remove();
 			document.getElementById('googleHelper_crawler_css').remove();
 			window.postMessage({ type: 'reload_page_css', value: 'googleHelper/crawler.css'}, "*");
