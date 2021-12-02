@@ -294,6 +294,9 @@ class Spu extends Base
 				'item_id' => $data['bc_product_id'],
 				'item_url' => $data['bc_product_url'],
 				'shop_id' => make('app/service/supplier/Shop')->addNotExist(['url'=>$data['bc_shop_url'], 'name'=>$data['bc_shop_name']]),
+				'postage' => $data['bc_post_fee'],
+				'weight' => (int)($data['bc_product_weight'] ?? 0),
+				'volume' => $data['bc_product_volume'] ?? '',
 			];
 			$spuData->insert($insert);
 			//中文语言
@@ -303,7 +306,7 @@ class Spu extends Base
 			$count = 1;
 			foreach ($spuImageArr as $value) {
 				if (isset($allImageArr[$value])) {
-					$insert[] = [
+					$insert[$value] = [
 						'spu_id' => $spuId,
 						'attach_id' => $allImageArr[$value],
 						'sort' => $count++,
@@ -326,8 +329,6 @@ class Spu extends Base
 					'stock' => $value['stock'],
 					'price' => $value['sale_price'],
 					'original_price' => $value['original_price'],
-					'weight' => (int)($data['bc_product_weight'] ?? 0),
-					'volume' => $data['bc_product_volume'] ?? '',
 				];
 				$skuId = $sku->insertGetId($insert);
 				$insert = [
@@ -417,12 +418,14 @@ class Spu extends Base
 
 	protected function getOriginalPrice($price)
 	{
-		if ($price < 200) {
-			$price += 250 + rand(20, 100);
+		if ($price < 100) {
+			$price += 100;
+		} elseif ($price < 200) {
+			$price += 250;
 		} elseif ($price < 400) {
-			$price += 350 + rand(30, 150);
+			$price += 350;
 		} else {
-			$price += 500 + rand(40, 200);;
+			$price += 500;
 		}
 		return $price;
 	}

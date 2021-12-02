@@ -76,7 +76,7 @@ class Product extends AdminBase
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage'])) {
+			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage', 'modifySpuData'])) {
 				$this->$opn();
 			}
 			$this->error('未知请求');
@@ -408,5 +408,20 @@ class Product extends AdminBase
 			$this->success('上传成功');
 		}
 		$this->error('上传失败');
+	}
+
+	protected function modifySpuData()
+	{
+		$spuId = ipost('spu_id');
+		$name = ipost('name');
+		$value = ipost('value');
+		if (empty($spuId) || empty($name)) {
+			$this->error('参数不正确');
+		}
+		$rst = make('app/service/product/SpuData')->updateData($spuId, [$name=>$value]);
+		if ($rst) {
+			$this->success('更新成功');
+		}
+		$this->error('更新失败');
 	}
 }

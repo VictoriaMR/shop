@@ -13,15 +13,27 @@ const PRODUCT = {
 		$('.gender-btn').on('click', function(){
 			$('#gender-dealbox').dealboxShow();
 		});
-		$('.centerShow .btn.save').on('click', function(){
-			const _thisobj = $(this);
-			_thisobj.button('loading');
-			post(URI+'product/detail', _thisobj.parent().serializeArray(), function(res) {
+		$('.data-btn').on('click', function(){
+			const obj = $('#dealbox-data');
+			const title = $(this).parent().prev().prev().text();
+			obj.find('.dealbox-title,.input-group-addon').text(title);
+			obj.find('[name="name"]').val($(this).data('name'));
+			obj.dealboxShow();
+		});
+		//保存SPUData数据 保存语言
+		$('.centerShow .save-btn').on('click', function(){
+			const obj = $(this);
+			if (obj.hasClass('batch-save-btn')) {
+				_thisobj.parent().append('<input type="hidden" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
+			}
+			obj.button('loading');
+			post(URI+'product/detail', obj.parents('form').serializeArray(), function(){
 				window.location.reload();
-			}, function(res) {
-				_thisobj.button('reset');
-				_thisobj.parents('.centerShow').parent().dealboxHide();
+			}, function(res){
+				obj.button('reset');
+				obj.parents('.centerShow').parent().dealboxHide();
 			});
+			return false;
 		});
 		//免邮按钮点击
 		$('.switch_botton.free-ship').on('click', function(){
@@ -91,18 +103,6 @@ const PRODUCT = {
 				}
 			});
 		});
-		//保存语言
-		$('#dealbox-language .save-btn').on('click', function(){
-			const obj = $(this);
-			obj.button('loading');
-			post(URI+'product/detail', $('#dealbox-language form').serializeArray(), function(){
-				window.location.reload();
-			}, function(res){
-				obj.button('reset');
-				obj.parents('.centerShow').parent().dealboxHide();
-			});
-			return false;
-		});
 		//更改排序
 		$('.spu-image input[name="sort"]').on('blur', function(){
 			post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: $(this).parents('.spu-image').data('id'), sort: $(this).val(), opn: 'modifySpuImage'}, function(res) {
@@ -154,20 +154,6 @@ const PRODUCT = {
 			});
 			obj.dealboxShow();
 		});
-		//保存sku主图
-		$('#dealbox-sku-image .save-btn').on('click', function(){
-			const _thisobj = $(this);
-			_thisobj.button('loading');
-			$.post(URI+'product/detail', _thisobj.parents().serializeArray(), function(res) {
-				if (res.code === '200') {
-					successTips(res.message);
-					window.location.reload();
-				} else {
-					errorTips(res.message);
-					_thisobj.button('reset');
-				}
-			});
-		});
 		//上传图片
 		$('.upload-image').imageUpload('product', function(data, obj){
 			obj.button('loading');
@@ -208,23 +194,6 @@ const PRODUCT = {
 			};
 			obj.find('.dealbox-title').text('SKU'+text[name]+'管理');
 			obj.dealboxShow();
-		});
-		//保存
-		$('#dealbox-sku-info').on('click', '.save-btn,.batch-save-btn', function(){
-			const _thisobj = $(this);
-			if (_thisobj.hasClass('batch-save-btn')) {
-				_thisobj.parent().append('<input type="hidden" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
-			}
-			_thisobj.button('loading');
-			$.post(URI+'product/detail', _thisobj.parents('form').serializeArray(), function(res) {
-				if (res.code === '200') {
-					successTips(res.message);
-					window.location.reload();
-				} else {
-					_thisobj.button('reset');
-					errorTips(res.message);
-				}
-			});
 		});
 		//SKU属性上传图片
 		$('.sku-attr-image').imageUpload('product', function(data, obj){
@@ -300,20 +269,6 @@ const PRODUCT = {
 				if (res.code === '200') {
 					_this.initDescShow(res.data);
 				} else {
-					errorTips(res.message);
-				}
-			});
-		});
-		//保存描述性文本
-		$('#dealbox-desc .save-btn').on('click', function(){
-			const _thisobj = $(this);
-			_thisobj.button('loading');
-			$.post(URI+'product/detail', _thisobj.parent().serializeArray(), function(res){
-				if (res.code === '200') {
-					successTips(res.message);
-					window.location.reload();
-				} else {
-					_thisobj.button('reset');
 					errorTips(res.message);
 				}
 			});

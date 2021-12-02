@@ -58,11 +58,12 @@ const CRAWLERINIt = {
 	},
 	crawlerPageinit: function(info) {
 		const _this = this;
-		CRAWLER.getData(function(res) {
-			if (res.code === 200) {
-				_this.crawlerPage(info, res.data);
+		getCrawData(function(code, data, message) {
+			console.log(code, data, message)
+			if (code === 0) {
+				_this.crawlerPage(info, data);
 			} else {
-				document.getElementById('item-content').innerHTML = '<div class="error-msg">'+res.message+'</div>';
+				document.getElementById('item-content').innerHTML = '<div class="error-msg">'+message+'</div>';
 			}
 			_this.clickInit();
 		});
@@ -116,8 +117,8 @@ const CRAWLERINIt = {
 							<div class="fill_in">
 								<select name="bc_product_gender" class="bc_product_gender">
 									<option value="0">默认</option>
-									<option value="1">Mem</option>
-									<option value="2">Women</option>
+									<option value="1">男</option>
+									<option value="2">女</option>
 								</select>
 							</div>
 							<div class="clear"></div>
@@ -184,14 +185,14 @@ const CRAWLERINIt = {
 					if (data.sku[i].pvs.length) {
 						for (let j=0;j<data.sku[i].pvs.length;j++) {
 							html += `<div>
-										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku[i].pvs[j].text + `"/>
+										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku[i].pvs[j].text) + `"/>
 										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku[i].pvs[j].img + `"/>
 									</div>`;
 						}
 					} else {
 						for (let j in data.sku[i].pvs) {
 							html += `<div>
-										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku[i].pvs[j].text + `"/>
+										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku[i].pvs[j].text) + `"/>
 										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku[i].pvs[j].img + `"/>
 									</div>`;
 						}
@@ -231,14 +232,14 @@ const CRAWLERINIt = {
 					if (data.sku.pvs.length) {
 						for (let j=0;j<data.sku.pvs.length;j++) {
 							html += `<div>
-										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku.pvs[j].text + `"/>
+										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku.pvs[j].text) + `"/>
 										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
 									</div>`;
 						}
 					} else {
 						for (let j in data.sku.pvs) {
 							html += `<div>
-										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + data.sku.pvs[j].text + `"/>
+										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku.pvs[j].text) + `"/>
 										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
 									</div>`;
 						}
@@ -276,19 +277,17 @@ const CRAWLERINIt = {
 			}
 			html += `</div></div>`;
 		}
-		if (data.attributes) {
+		if (data.attributes.length > 0) {
 			html += `<div class="clear"></div>
 							<div class="productMainPic">
 								<div class="picTitle">产品描述属性：</div>
 								<div id="pdt_des_text">`;
-			let count = 0
-			for (const i in data.attributes) {
+			for (let i=0; i<data.attributes.length; i++) {
 				html += `<div class="sku-attr">
-							<input type="text" name="bc_des_text[` + count + `][key]" value="` + data.attributes[i].name + `"> - 
-							<input type="text" name="bc_des_text[` + count + `][value]" value="` + data.attributes[i].value + `">
+							<input type="text" name="bc_des_text[`+count+`][key]" value="`+_this.formatStr(data.attributes[i].name)+`"> - 
+							<input type="text" name="bc_des_text[`+i+`][value]" value="`+_this.formatStr(data.attributes[i].value)+`">
 							<div class="cancel-btn">x</div>
 						</div>`;
-				count++;
 			}
 			html += `</div></div>`;
 		}
@@ -451,7 +450,6 @@ const CRAWLERINIt = {
 		}
 	},
 	initPdtImgValue: function(pobj) {
-		console.log(pobj)
 		let imgValueObj = pobj.querySelector('.bc_product_picture');
 		if (imgValueObj === null) {
 			pobj.innerHTML += '<input type="hidden" name="bc_product_img" class="bc_product_picture" value=""/>';
@@ -472,6 +470,52 @@ const CRAWLERINIt = {
 		if (imgValueObj) {
 			imgValueObj.value = value;
 		}
-	}
+	},
+	formatStr: function(str) {
+		const arr = {
+			'   ': ' ',
+			'（': '(',
+			'）': ')',
+			' (': '(',
+			' - ': '-',
+			' -': '-',
+			'- ': '-',
+			' * ': '*',
+			' *': '*',
+			'* ': '*',
+			' CM': 'CM',
+			' cm': 'cm',
+			' / ': '/',
+			' /': '/',
+			'/ ': '/',
+			' , ': ',',
+			', ': ',',
+			' ,': ',',
+			' + ': '+',
+			' +': '+',
+			'+ ': '+',
+			'E 27': 'E27',
+			' ＜ ': '<',
+			' < ': '<',
+			' <': '<',
+			'< ': '<',
+			'≦': '≤',
+			' ≤ ': '≤',
+			' ≤': '≤',
+			'≤ ': '≤',
+			' ~ ': '~',
+			'~ ': '~',
+			' ~': '~',
+			' W': 'W',
+			'，': ',',
+			'、': ',',
+			' mm': 'mm',
+			' MM': 'MM',
+		};
+		for (const i in arr) {
+			str = str.replace(i, arr[i]);
+		}
+		return str;
+	},
 };
 CRAWLERINIt.init();

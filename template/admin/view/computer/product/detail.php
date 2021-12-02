@@ -38,6 +38,27 @@
 				</dd>
 			</dl>
 			<dl class="field-row">
+				<dt>邮费：</dt>
+				<dd><?php echo $info['data']['postage'];?></dd>
+				<dd>
+					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="postage">修改</button>
+				</dd>
+			</dl>
+			<dl class="field-row">
+				<dt>体积：</dt>
+				<dd><?php echo $info['data']['volume'];?></dd>
+				<dd>
+					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="volume">修改</button>
+				</dd>
+			</dl>
+			<dl class="field-row">
+				<dt>重量：</dt>
+				<dd><?php echo $info['data']['weight'];?></dd>
+				<dd>
+					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="weight">修改</button>
+				</dd>
+			</dl>
+			<dl class="field-row">
 				<dt>产品名称：</dt>
 				<dd>
 					<span class="glyphicon glyphicon-globe name-trans-btn"></span>
@@ -57,21 +78,21 @@
 			<div class="pl10">
 				<dl class="field-row">
 					<dt>店铺ID：</dt>
-					<dd><?php echo $info['data']['shop_id'];?></dd>
+					<dd><?php echo empty($info['data']['shop_id'])?'':$info['data']['shop_id'];?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>店铺名称：</dt>
-					<dd><?php echo $info['shop']['name'];?></dd>
+					<dd><?php echo empty($info['shop']['name'])?'':$info['shop']['name'];?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>店铺链接：</dt>
 					<dd>
-						<a href="<?php echo $info['shop']['url'];?>" target="_blank"><?php echo $info['shop']['url'];?> <span class="glyphicon glyphicon-link"></span></a>
+						<a href="<?php echo empty($info['shop']['url'])?'javascript:;':$info['shop']['url'];?>" target="_blank"><?php echo empty($info['shop']['url'])?'':$info['shop']['url'];?> <span class="glyphicon glyphicon-link"></span></a>
 					</dd>
 				</dl>
 				<dl class="field-row">
 					<dt>供应商：</dt>
-					<dd><?php echo $info['data']['supplier'];?></dd>
+					<dd><?php echo empty($info['data']['supplier'])?'':$info['data']['supplier'];?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>供应商SPU：</dt>
@@ -128,8 +149,6 @@
 					<th width="90">原价</th>
 					<th width="90">成本价</th>
 					<th width="70">库存</th>
-					<th width="70">体积(cm)</th>
-					<th width="70">重量(g)</th>
 					<th width="60">供应商SKU</th>
 					<th width="140">上架时间</th>
 				</tr>
@@ -155,8 +174,6 @@
 					<td class="can-edit" data-name="original_price"><?php echo $value['original_price'];?></td>
 					<td class="can-edit" data-name="cost_price"><?php echo $value['cost_price'];?></td>
 					<td class="can-edit" data-name="stock"><?php echo $value['stock'];?></td>
-					<td class="can-edit" data-name="volume"><?php echo $value['volume'];?></td>
-					<td class="can-edit" data-name="weight"><?php echo $value['weight'];?></td>
 					<td><?php echo $value['item_id'];?></td>
 					<td>
 						<?php echo $value['add_time'];?><br />
@@ -277,7 +294,7 @@
 	            	<?php } ?>
 	            </select>
 	        </div>
-	        <button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>
+	        <button type="button" class="btn btn-primary btn-lg btn-block save-btn">确认</button>
 	    </form>
 	</div>
 </div>
@@ -301,7 +318,7 @@
 					<?php }} ?>
 				</select>
 			</div>
-			<button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>
+			<button type="button" class="btn btn-primary btn-lg btn-block save-btn">确认</button>
 		</form>
 	</div>
 </div>
@@ -323,7 +340,7 @@
 					<option value="2">女</option>
 				</select>
 			</div>
-			<button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>
+			<button type="button" class="btn btn-primary btn-lg btn-block save-btn">确认</button>
 		</form>
 	</div>
 </div>
@@ -417,6 +434,24 @@
 			<div class="input-group">
 				<div class="input-group-addon"><span>排序: </span></div>
 				<input type="text" name="sort" class="form-control">
+			</div>
+			<button type="button" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
+		</form>
+	</div>
+</div>
+<!-- SPU扩展数据管理 -->
+<div id="dealbox-data" class="hidden">
+	<div class="mask"></div>
+	<div class="centerShow">
+		<form class="form-horizontal">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="f24 dealbox-title"></div>
+			<input type="hidden" name="spu_id" value="<?php echo $info['spu_id'];?>">
+			<input type="hidden" name="name" value="">
+			<input type="hidden" name="opn" value="modifySpuData">
+			<div class="input-group">
+				<div class="input-group-addon"><span></span></div>
+				<input type="input" name="value" class="form-control" />
 			</div>
 			<button type="button" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
 		</form>
