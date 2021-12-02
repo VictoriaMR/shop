@@ -284,7 +284,7 @@ const CRAWLERINIt = {
 								<div id="pdt_des_text">`;
 			for (let i=0; i<data.attributes.length; i++) {
 				html += `<div class="sku-attr">
-							<input type="text" name="bc_des_text[`+count+`][key]" value="`+_this.formatStr(data.attributes[i].name)+`"> - 
+							<input type="text" name="bc_des_text[`+i+`][key]" value="`+_this.formatStr(data.attributes[i].name)+`"> - 
 							<input type="text" name="bc_des_text[`+i+`][value]" value="`+_this.formatStr(data.attributes[i].value)+`">
 							<div class="cancel-btn">x</div>
 						</div>`;
