@@ -39,9 +39,9 @@ body {
 	background: #f5f5f5
 }
 .layer {
-	max-width: 1300px;
+	max-width: 1400px;
 	margin: 0 auto;
-	margin: 0 10px;
+	padding: 0 30px;
 }
 .left {
 	float: left
