@@ -65,23 +65,21 @@ class Html
 
 	public function getCommonCss()
 	{
-		$name = APP_TEMPLATE_TYPE == 'admin' ? 'admin' : 'default';
-		$arr = config('css')[$name][IS_MOBILE ? 'mobile' : 'computer'];
+		$arr = config('css', APP_TEMPLATE_TYPE=='admin'?'admin':'default')[IS_MOBILE?'mobile':'computer'];
 		return $this->addStaticFile($arr, 'common', 'css');
 	}
 
 	public function getCommonJs()
 	{
-		$name = APP_TEMPLATE_TYPE == 'admin' ? 'admin' : 'default';
-		$arr = config('js')[$name][IS_MOBILE ? 'mobile' : 'computer'];
+		$arr = config('js', APP_TEMPLATE_TYPE=='admin'?'admin':'default')[IS_MOBILE?'mobile':'computer'];
 		return $this->addStaticFile($arr, 'common', 'js');
 	}
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
 		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS;
-		$file = 'static'.DS.(IS_MOBILE ? 'm_' : 'c_').$name.'.'.$type;
-		if (config('env.APP_STATIC') && is_file($path.$file)) {
+		$file = 'static'.DS.(IS_MOBILE?'m_':'c_').$name.'.'.$type;
+		if (\App::get('base_info', 'cache') && is_file($path.$file)) {
 			return $file;
 		}
 		$str = '';
@@ -92,10 +90,7 @@ class Html
 				$str .= trim(file_get_contents($source));
 			}
 		}
-		if (!is_dir($path.'static')) {
-			mkdir($path.'static', 0777, true);
-		}
-		make('app/service/site/StaticFile')->addNotExist(APP_TEMPLATE_TYPE.DS.$file, $type);
+		if (!is_dir($path.'static')) mkdir($path.'static', 0777, true);
 		file_put_contents($path.$file, $str);
 		return $file;
 	}

@@ -8,7 +8,7 @@
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
 	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl(html()->getCommonCss());?>">
-	<?php if (!empty($file = html()->getCss())){?>
+	<?php if (!empty($file=html()->getCss())){?>
 	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>">
 	<?php } ?>
 	<script type="text/javascript" src="<?php echo siteUrl(html()->getCommonJs());?>"></script>
@@ -17,10 +17,8 @@
 	<?php } ?>
 </head>
 <body>
+<script> const URI='<?php echo APP_DOMAIN;?>';</script>
 <div id="progressing"></div>
-<script type="text/javascript">
-const URI = "<?php echo config('env.APP_DOMAIN');?>";
-</script>
 <?php if (!empty($_nav)) {?>
 <div id="header-nav" class="container-fluid">
 	<div class="nav">

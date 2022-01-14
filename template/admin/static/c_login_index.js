@@ -33,7 +33,7 @@ const LOGIN = {
 				return false;
 			}
 			thisobj.button('loading');
-			$.post(URI+'login/login', $(this).parent('form').serializeArray(), function(res) {
+			$.post('login/login', $(this).parent('form').serializeArray(), function(res) {
 				if (res.code === 200 || res.code === '200') {
 					window.location.href = res.data.url;
 				} else {
@@ -51,7 +51,7 @@ const LOGIN = {
 				thisobj.parent().find('iconfont').remove();
 				return false;
 			}
-			$.post(URI+'login/checkCode', {code: code}, function(res) {
+			$.post('login/checkCode', {code: code}, function(res) {
 				if (res.code === 200) {
 					$('#login-error').addClass('hidden');
 				}

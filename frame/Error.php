@@ -6,7 +6,7 @@ class Error
 {
 	public function register()
 	{
-		if (config('env.APP_DEBUG')) {
+		if (\App::get('base_info', 'debug')) {
 			error_reporting(E_ALL);
 		} else {
 			error_reporting(0);
@@ -58,7 +58,7 @@ class Error
 			echo 'Line: '.$line.PHP_EOL;
 			echo 'Error Message: '.$message.PHP_EOL;
 		} else {
-			if (config('env.APP_DEBUG')) {
+			if (\App::get('base_info', 'debug')) {
 				echo 'File: '.$file.'<br />';
 				echo 'Line: '.$line.'<br />';
 				echo 'Error Message: '.$message.'<br />';
@@ -66,7 +66,7 @@ class Error
 			} else {
 				\App::set('app_error', $message);
 				if (\App::get('router', 'path') != 'PageNotFound') {
-					redirect(url('pageNotFound'));
+					// redirect(url('pageNotFound'));
 				}
 			}
 		}

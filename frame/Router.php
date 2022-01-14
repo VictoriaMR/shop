@@ -4,20 +4,9 @@ namespace frame;
 
 final class Router
 {
-	static private $_instance;
-
-	public static function instance() 
-	{
-		if (is_null(self::$_instance)) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
 	public function analyze()
 	{
-		$pathInfo = trim($_SERVER['REQUEST_URI'], DS);
-		$router['class'] = APP_CONTROLLER_TYPE;
+		$pathInfo = trim($_SERVER['REQUEST_URI'], '/');
 		if (empty($pathInfo)) {
 			$router['path'] = 'Index';
 			$router['func'] = 'index';
@@ -27,50 +16,22 @@ final class Router
 				$router['path'] = 'Index';
 				$router['func'] = 'index';
 			} else {
-				$pathInfo['path'] = explode('.', $pathInfo['path'])[0];
-				$routerArr = explode('-', $pathInfo['path']);
-				if (APP_CONTROLLER_TYPE != 'admin' && !empty($routerArr) && count($routerArr) > 1) {
-					$routerArr = array_reverse($routerArr);
-					if (count($routerArr) > 1) {
-						foreach ($routerArr as $key => $value) {
-							if ($key % 2 > 0) {
-								if (in_array($value, ['page', 'size'])) {
-									$_GET[$value] = $routerArr[$key-1];
-								} else {
-									if ($value == 'sku' || $value == 's') {
-										$_GET['sid'] = $routerArr[$key-1];
-									} else {
-										$_GET['id'] = $routerArr[$key-1];
-									}
-									$router['path'] = $value;
-									break;
-								}
-							}
-						}
-					} else {
-						$router['path'] = $routerArr[0];
-					}
-					$router['func'] = 'index';
-					$router['path'] = empty($router['path']) ? 'Index' : $this->getPath($router['path']);
-				}
-			}
-			if (empty($router['path'])) {
-				$temp = explode('/', $pathInfo['path']);
-				if (count($temp) > 1) {
-					$router['func'] = array_pop($temp);
-					$router['path'] = implode('/', array_map('ucfirst',$temp));
+				$pathInfo = explode('/', $pathInfo['path']);
+				$pathInfo[0] = trim($pathInfo[0], '.html');
+				$tempInfo = array_reverse(explode('-', $pathInfo[0]));
+				$c = $this->getPath($tempInfo[1]);
+				if ($c == 'page') {
+					$_GET['page'] = $tempInfo[0];
+					$_GET['id'] = $tempInfo[2] ?? 0;
+					$router['path'] = ucfirst($this->getPath($tempInfo[3] ?? 'Index'));
 				} else {
-					$router['path'] = ucfirst($temp[0]);
-					$router['func'] = 'index';
+					$_GET['id'] = $tempInfo[0] ?? 0;
+					$router['path'] = ucfirst($this->getPath($tempInfo[1] ?? 'Index'));
 				}
+				$router['func'] = empty($pathInfo[1])?'index':lcfirst($pathInfo[1]);
 			}
 		}
-		array_shift($_GET);
-		if (count($router) != 3) {
-			throw new \Exception('router analyed error', 1);
-		}
-		\App::set('router', $router);
-		return true;
+		return $router;
 	}
 
 	protected function getPath($path)
@@ -78,21 +39,20 @@ final class Router
 		$arr = [
 			'spu' => 'Product',
 			'p' => 'Product',
-			'cate' => 'Category',
-			'c' => 'Category',
 			'sku' => 'Product',
 			's' => 'Product',
+			'cate' => 'Category',
+			'c' => 'Category',
 		];
 		return $arr[$path] ?? $path;
 	}
 
-	public function buildUrl($url=null, $param=null, $domain=null)
+	public function buildUrl($url=null)
 	{
 		$router = \App::get('router');
 		if (is_null($url)) $url = $router['path'].DS.$router['func'];
-		if (!empty($url)) $url .= defined('TEMPLATE_SUFFIX') ? '.'.TEMPLATE_SUFFIX : '';
-		if (!empty($param)) $url .= '?' . http_build_query($param);
-		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$url;
+		if (!empty($url) && $router['view_suffix']) $url .= '.'.$router['view_suffix'];
+		return $url;
 	}
 
 	public function urlFormat($name, $type, $param=[], $domain=null)
@@ -107,7 +67,7 @@ final class Router
 		if (isset($param['page'])) $name .= '-page-'.$param['page'];
 		if (isset($param['size'])) $name .= '-size-'.$param['size'];
 		if (defined('TEMPLATE_SUFFIX')) $name .= '.'.TEMPLATE_SUFFIX;
-		return (is_null($domain) ? config('env.APP_DOMAIN') : $domain).$name;
+		return 'https//'.$_SERVER['SERVER_NAME'].'/'.$name;
 	}
 
 	public function setParam($param=[], $url=null)

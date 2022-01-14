@@ -16,27 +16,20 @@ class Cookie
 	{
 		$uuid = $this->get('uuid');
 		if (empty($uuid)) {
-			$this->set('uuid', randString(32), 3600*24*365);
+			$this->set('uuid', randString(32), 3600*24*10);
 		} else {
 			//自动登录
-			$uuidInfo = make('app/service/member/Uuid')->getInfo($uuid);
-			if (!empty($uuidInfo['mem_id'])) {
-				switch (substr($uuidInfo['mem_id'], 0, 1)) {
-					case '1':
-						$memberService = make('app/service/Member');
-						break;
-					case '5':
-						$memberService = make('app/service/admin/Member');
-						break;
-					default:
-						break;
+			$info = make('app/service/member/Uuid')->getInfo($uuid);
+			if (!empty($info['mem_id'])) {
+				if (substr($info['mem_id'], 0, 1) == 5) {
+					$memberService = make('app/service/admin/Member');
+				} else {
+					$memberService = make('app/service/Member');
 				}
-				if (!empty($memberService)) {
-					$memberService->loginById($uuidInfo['mem_id']);
-					session()->set('site_language_id', $uuidInfo['lan_id']);
-				}
+				$memberService->loginById($info['mem_id']);
+				session()->set('site_language_id', $info['lan_id']);
 			}
-			session()->set('cookie.setcookie', 1);
+			session()->set('cookie', 'setcookie', 1);
 		}
 	}
 

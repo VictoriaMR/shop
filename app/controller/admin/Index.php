@@ -19,9 +19,8 @@ class Index extends AdminBase
 	{
 		html()->addCss();
 		html()->addJs();
-		//功能列表
-		$funcList = make('app/service/controller/Controller')->getList();
-		$this->assign('funcList', $funcList);
+
+		$this->assign('funcList', make('app/service/controller/Controller')->getList());
 		$this->assign('info', session()->get('admin_info'));
 		$this->_init();
 		$this->view();

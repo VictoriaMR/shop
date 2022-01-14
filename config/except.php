@@ -1,18 +1,18 @@
 <?php
 return [
 	'admin' => [
-		'login' => true,
-		'api' => true,
+		'Login' => true,
+		'Api' => true,
 	],
 	'home' => [
-		'api' => true,
-		'index' => true,
-		'newin' => true,
-		'product' => true,
-		'login' => true,
-		'cart' => true,
-		'checkout' => true,
-		'userinfo' => true,
-		'pagenotfound' => true,
+		'Api' => true,
+		'Index' => true,
+		'Newin' => true,
+		'Product' => true,
+		'Login' => true,
+		'Cart' => true,
+		'Checkout' => true,
+		'Userinfo' => true,
+		'Pagenotfound' => true,
 	],
 ];

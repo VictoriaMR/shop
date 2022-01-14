@@ -41,14 +41,12 @@ class Base
 
 	protected function assign($name, $value=null)
 	{
-		if ($name == '_title') {
-			$value .= '-'.\App::get('site_name');
-		}
-		return make('frame/View')->assign($name, $value);
+		if ($name == '_title') $value .= '-'.\App::get('base_info', 'name');
+		return make('frame/View')->assign($name=='_title'?$name.'-'.\App::get('base_info', 'name'):$name, $value);
 	}
 
-	protected function view($name='')
+	protected function view($cache=false)
 	{
-		return make('frame/View')->display($name);
+		return make('frame/View')->display('', true, $cache);
 	}
 }

@@ -20,22 +20,24 @@ final class Connection
 	public function setDb($db)
 	{
 		if (is_null($db)) $db = 'default';
-		$config = config('database')[$db];
-		$database = $config['db_database'] ?? '';
+		$config = config('database', $db);
+		if (empty($config)) {
+			throw new \Exception('Connect Error No Database Config', 1);
+		}
 		if (is_null($this->_connect)) {
 			$this->connect(
-				$config['db_host'] ?? '', 
-				$config['db_username'] ?? '', 
-				$config['db_password'] ?? '', 
-				$config['db_port'] ?? '', 
-				$database, 
-				$config['db_charset'] ?? ''
+				$config['db_host'], 
+				$config['db_username'], 
+				$config['db_password'], 
+				$config['db_port'], 
+				$config['db_database'], 
+				$config['db_charset']
 			);
-			$this->_selectdb = $database;
+			$this->_selectdb = $config['db_database'];
 		}
-		if ($this->_selectdb != $database) {
-			$this->_connect->select_db($database);
-			$this->_selectdb = $database;
+		if ($this->_selectdb != $config['db_database']) {
+			$this->_connect->select_db($config['db_database']);
+			$this->_selectdb = $config['db_database'];
 		}
 		return $this->_connect;
 	}

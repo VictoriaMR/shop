@@ -5,6 +5,7 @@ class App
 
 	public static function init() 
 	{
+		self::set('base_info', config('domain', str_replace('www.', '', $_SERVER['SERVER_NAME'])));
 		spl_autoload_register([__CLASS__ , 'autoload']);
 		self::make('frame/Error')->register();
 	}
@@ -16,38 +17,34 @@ class App
 
 	public static function send()
 	{
-		//获取站点数据
-		$info = config('domain.'.str_replace('www.', '', $_SERVER['HTTP_HOST'] ?? ''));
-		if (empty($info)) redirect(config('env.DEFAULT_DOMAIN'));
-		define('APP_CONTROLLER_TYPE', $info['path'] == 'admin' ? 'admin' : 'home');
-		define('APP_TEMPLATE_TYPE', $info['path']);
-		define('APP_SITE_ID', $info['site_id']);
-		self::set('site_name', $info['name']);
+		$baseInfo = self::get('base_info');
+		if (empty($baseInfo)) throw new \Exception($_SERVER['SERVER_NAME'].' was not exist!', 1);
 		//路由解析
-		self::make('frame/Router')->analyze();
-		$info = self::get('router');
+		$router = self::make('frame/Router')->analyze();
+		$router['class'] = $baseInfo['type'];
+		$router['view_suffix'] = $baseInfo['view_suffix'];
+		define('APP_TEMPLATE_TYPE', $baseInfo['type']);
+		define('APP_TEMPLATE_PATH', $baseInfo['path']);
+		define('APP_DOMAIN', 'https://'.$_SERVER['HTTP_HOST'].'/');
+		self::set('router', $router);
 		//执行方法
-		$class = 'app/controller/'.$info['class'].'/'.$info['path'];
-		$callArr = [self::autoload($class), $info['func']];
+		$controller = 'app/controller/'.$router['class'].'/'.$router['path'];
+		$callArr = [self::autoload($controller), $router['func']];
 		if (is_callable($callArr)) {
-			if (!session()->get('cookie.setcookie')) {
-				//Cookie初始化
-				self::make('frame/Cookie')->init();
-			}
-			//中间件
-			self::make('app/middleware/VerifyToken')->handle($info);
+			if (!session()->get('cookie', 'setcookie')) self::make('frame/Cookie')->init();
+			self::make('app/middleware/VerifyToken')->handle($router);
 			call_user_func_array($callArr, []);
 		} else {
-			throw new \Exception($class.' '.$info['func'].' was not exist!', 1);
+			throw new \Exception($router['path'].' '.$router['func'].' was not exist!', 1);
 		}
 		self::runOver();
 	}
 
 	private static function autoload($abstract, $params=null) 
 	{
-		$file = ROOT_PATH.str_replace('\\', DS, $abstract).'.php';
+		$file = ROOT_PATH.$abstract.'.php';
 		if (is_file($file)) {
-			return \frame\Container::instance()->autoload(str_replace(DS, '\\', $abstract), $file, $params);
+			return \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $file, $params);
 		}
 		throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
 	}
@@ -67,10 +64,10 @@ class App
 
 	public static function runOver()
 	{
-		if (config('env.APP_DEBUG')) {
+		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
+		if (self::get('base_info', 'debug')) {
 			make('frame/Debug')->runlog();
-			if (!(IS_CLI || IS_AJAX)) make('frame/Debug')->init();
+			if (!IS_CLI && !IS_AJAX) make('frame/Debug')->init();
 		}
-		exit();
 	}
 }

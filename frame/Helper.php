@@ -6,33 +6,20 @@ function dd(...$arg){
 	}
 	exit();
 }
-function config($name='', $default=''){
-	$name = explode('.', $name);
-	if (!isset($GLOBALS[$name[0]])) {
-		if (is_file($file = ROOT_PATH.'config'.DS.$name[0].'.php')) {
-			$GLOBALS[$name[0]] = require $file;
+function config($type, $name='', $default=''){
+	if (!isset($GLOBALS[$type])) {
+		$file = ROOT_PATH.'config'.DS.$type.'.php';
+		if (is_file($file)) {
+			$GLOBALS[$type] = require $file;
 		} else {
-			$GLOBALS[$name[0]] = null;
+			$GLOBALS[$type] = null;
 			return $default;
 		}
 	}
-	if ($name[0] == 'domain') {
-		unset($name[0]);
-		return $GLOBALS['domain'][implode('.', $name)] ?? $default;
-	}
-	$data = $GLOBALS;
-	foreach ($name as $value) {
-		if (isset($data[$value])) {
-			$data = $data[$value];
-		} else {
-			return $default;
-		}
-	}
-	return $data;
+	return $GLOBALS[$type][$name] ?? $default;
 }
 function redirect($url=''){
-	header('Location:'.$url);
-	exit();
+	header('Location:'.$url);exit();	
 }
 function make($name, $params=null){
 	return \App::make($name, $params);
@@ -65,17 +52,14 @@ function url($url=null, $param=null, $domain=null) {
     return router()->buildUrl($url, $param, $domain);
 }
 function siteUrl($name){
-	return config('env.APP_DOMAIN').$name.'?v='.config('env.APP_VERSION');
+	return APP_DOMAIN.$name.'?v='.config('env', 'APP_VERSION');
 }
 function mediaUrl($url, $width=''){
 	if (!empty($width)) {
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
-	if (strpos($url, 'http') === false) {
-		$url = config('env.APP_DOMAIN').config('env.FILE_CENTER').DS.$url;
-	}
-	return $url.'?v='.config('env.APP_VERSION');
+	return APP_DOMAIN.$url.'?v='.config('env', 'APP_VERSION');
 }
 function isCli(){
 	return stripos(php_sapi_name(), 'cli') !== false;
@@ -87,6 +71,16 @@ function isJson($string){
 	if (is_array($string)) return $string;
 	$temp = json_decode($string, true); 
 	return json_last_error() == JSON_ERROR_NONE ? $temp : $string;
+}
+function isAjax(){
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false;
+}
+function isMobile(){
+	if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], 'wap')) return true;
+	if (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) return true;
+	if (isset($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'V ND.WAP.WML')) return true;
+	if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up\.browser|up\.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) return true;
+	return false;
 }
 function ipost($name='', $default=null){
 	return \App::make('frame/Request')->ipost($name, $default);
@@ -161,38 +155,22 @@ function strTrim($str){
 	return ltrim($str, " \t\n\r\0\x0B ");
 }
 function getUniqueName(){
-	$arr = explode(' ', microtime());
-	return str_replace([':', ' ', '-', '0.'], '', now().$arr[0]);
+	return str_replace([':', ' ', '-', '0.'], '', now().explode(' ', microtime())[0]);
 }
 function lanId(){
-	$id = \App::get('site_language_id');
-	if (empty($id)) {
-		$id = session()->get('site_language_id', 'en');
-		\App::set('site_language_id', $id);
-	}
-	return $id;
+	return session()->get('site_language_id', 'en');
 }
 function siteId(){
-	return APP_SITE_ID;
+	return \App::get('base_info', 'site_id');
 }
 function userId(){
-	$id = \App::get('site_mem_id');
-	if (empty($id)) {
-		$id = session()->get(APP_TEMPLATE_TYPE.'_info.mem_id', 0);
-		\App::set('site_mem_id', $id);
-	}
-	return $id;
+	return session()->get(APP_TEMPLATE_TYPE.'_info', 'mem_id', 0);
 }
 function currencyId(){
-	$id = \App::get('site_currency_id');
-	if (empty($id)) {
-		$id = session()->get('site_currency_id', 'USD');
-		\App::set('site_currency_id', $id);
-	}
-	return $id;
+	return session()->get('site_currency_id', '', 'USD');
 }
 function uuId(){
-	return session()->get(APP_TEMPLATE_TYPE.'_info.uuid', '');
+	return session()->get(APP_TEMPLATE_TYPE.'_info', 'uuid', '');
 }
 function hasZht($str){
 	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;

@@ -7,9 +7,6 @@ class Login extends AdminBase
 {
 	public function index()
 	{	
-		if (userId()) {
-			redirect(url());
-		}
 		html()->addCss();
 		html()->addJs();
 		$this->assign('_title', '登录');
