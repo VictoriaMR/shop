@@ -14,7 +14,7 @@
 	</head>
 <body>
 <script type="text/javascript">
-const URI = "https://lmr.bag.cn/";
+var URI = "https://lmr.bag.cn/";
 </script>
 <div class="cover">
 	<div class="layer f16 f600">
