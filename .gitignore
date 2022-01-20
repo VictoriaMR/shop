@@ -1,6 +1,5 @@
 /.idea
 /config/env.php
-/config/domain.php
 /vendor
 /runtime/*
 /storage/*

@@ -17,13 +17,14 @@ class View
 			$content = $this->getContent($template, $data);
 			$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS;
 			if (!is_dir($path)) mkdir($path, 0777, true);
-			$request_uri = empty($_SERVER['REQUEST_URI']) ? '' : trim($_SERVER['REQUEST_URI'], '/');
+			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
 			if (empty($request_uri)) {
 				$path .= 'index.html';
 			} else {
 				$path .= $request_uri;
 			}
-			dd($path);
+			file_put_contents($path, $content);
+			echo $content;
 		} else {
 			return $this->loadFile($template, $data);
 		}

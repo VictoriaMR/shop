@@ -42,7 +42,7 @@ class Base
 	protected function assign($name, $value=null)
 	{
 		if ($name == '_title') $value .= '-'.\App::get('base_info', 'name');
-		return make('frame/View')->assign($name=='_title'?$name.'-'.\App::get('base_info', 'name'):$name, $value);
+		return make('frame/View')->assign($name, $value);
 	}
 
 	protected function view($cache=false)

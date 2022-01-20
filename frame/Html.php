@@ -65,19 +65,19 @@ class Html
 
 	public function getCommonCss()
 	{
-		$arr = config('css', APP_TEMPLATE_TYPE=='admin'?'admin':'default')[IS_MOBILE?'mobile':'computer'];
+		$arr = config('css', APP_TEMPLATE_TYPE)[IS_MOBILE?'mobile':'computer'];
 		return $this->addStaticFile($arr, 'common', 'css');
 	}
 
 	public function getCommonJs()
 	{
-		$arr = config('js', APP_TEMPLATE_TYPE=='admin'?'admin':'default')[IS_MOBILE?'mobile':'computer'];
+		$arr = config('js', APP_TEMPLATE_TYPE)[IS_MOBILE?'mobile':'computer'];
 		return $this->addStaticFile($arr, 'common', 'js');
 	}
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS;
+		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
 		$file = 'static'.DS.(IS_MOBILE?'m_':'c_').$name.'.'.$type;
 		if (\App::get('base_info', 'cache') && is_file($path.$file)) {
 			return $file;

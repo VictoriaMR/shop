@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>login-Clothes</title>
+	<meta name="renderer" content="webkit|ie-comp|ie-stand">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta http-equiv="Cache-Control" content="no-siteapp" />
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" type="text/css" href="https://lmr.bag.cn/static/c_common.css?v=1.0.0">
+		<link rel="stylesheet" type="text/css" href="https://lmr.bag.cn/static/c_login_index.css?v=1.0.0">
+		<script type="text/javascript" src="https://lmr.bag.cn/static/c_common.js?v=1.0.0"></script>
+		<script type="text/javascript" src="https://lmr.bag.cn/static/c_login_index.js?v=1.0.0"></script>
+	</head>
+<body>
+<script type="text/javascript">
+const URI = "https://lmr.bag.cn/";
+</script>
+<div class="cover">
+	<div class="layer f16 f600">
+		<div class="left">
+			<div class="desc-title">
+				<span>Discover endless dressing styles just right for you</span>
+			</div>
+		</div>
+		<div class="right">
+			<div class="desc-title">
+								<a class="userinfo" href="login.html">Registry</a>
+							</div>
+		</div>
+	</div>
+</div><div class="login-content">
+	<div class="title-content">
+		<a href="/.html">Welcome to Clothes</a>
+	</div>
+	<table width="100%" border="0">
+		<tr>
+			<td width="50%">
+				<div class="signin-content">
+					<p class="title f26 f600">LOG IN</p>
+					<form>
+						<div class="form-item">
+							<div class="f16 f600 input-tips">Email</div>
+							<input class="input" type="text" name="email" value="" placeholder="Email Address">
+						</div>
+						<div class="form-item">
+							<div class="f16 f600 input-tips">Password</div>
+							<input class="input" type="text" name="password" value="" placeholder="Your Password">
+						</div>
+						<button type="button" class="btn btn-black bottom-btn">LOG IN</button>
+						<div class="help relative">
+							<span class="pointer">Help?</span>
+							<div class="help-tips">
+								<div class="border-up-empty">
+									<span></span>
+								</div>
+								<span>When you click 'Send', we will send you a 6 digit code to your email. You can use this code to quick login our website and check your order status. If you don't receive verification code, please check spam box.</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</td>
+			<td width="50%">
+				<div class="register-content">
+					<p class="title f26 f600">REGISTER</p>
+					<form>
+						<div class="form-item">
+							<div class="f16 f600 input-tips">Email</div>
+							<input class="input" type="text" name="email" value="" placeholder="Email Address">
+						</div>
+						<div class="form-item">
+							<div class="f16 f600 input-tips">Password</div>
+							<input class="input" type="text" name="password" value="" placeholder="Your Password">
+						</div>
+						<div class="form-item">
+							<div class="f16 f600 input-tips">Confirm Password</div>
+							<input class="input" type="text" name="re_password" value="" placeholder="Your Confirm Password">
+						</div>
+						<button type="button" class="btn btn-black bottom-btn">REGISTER</button>
+						<p>Your privacy is very important to us, we'll keep your details safe and secure.For more information,<br/>read our privacy policy.</p>
+					</form>
+				</div>
+			</td>
+		</tr>
+	</table>
+</div></body>
+</html>

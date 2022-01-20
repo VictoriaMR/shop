@@ -1,0 +1,71 @@
+.login-content {
+	max-width: 960px;
+	height: 544px;
+	position: absolute;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	right: 0;
+	margin: auto;
+	border-radius: 4px 4px 0px 0px;
+	background-color: #fff;
+	overflow: hidden;
+}
+.login-content .title-content {
+	height: 64px;
+	line-height: 64px;
+	background-color: #F5F5F5;
+	text-align: center;
+	font-size: 24px;
+}
+.login-content .signin-content,
+.login-content .register-content {
+	width: 100%;
+	height: 480px;
+	padding-top: 25px;
+	text-align: center;
+}
+.login-content .signin-content {
+	border-right: 1px solid #CCCCCC;
+}
+.login-content .title {
+	margin-bottom: 20px;
+}
+.login-content form {
+	width: 300px;
+	margin: 0 auto;
+}
+.login-content .form-item {
+	margin-bottom: 20px;
+}
+.login-content .input-tips {
+	text-align: left;
+    margin-bottom: 2px;
+}
+.login-content .bottom-btn {
+	margin-bottom: 20px;
+}
+.help .help-tips {
+	display: none;
+    position: absolute;
+    left: 35px;
+    top: -120px;
+    width: 230px;
+    border: 1px solid #e5e5e5;
+    background: #FFFFFF;
+    padding: 5px 10px;
+    border-radius: 5px;
+    z-index: 99;
+    text-align: left;
+    color: #666666;
+}
+.help .help-tips .border-up-empty {
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #CCCCCC;
+    position: absolute;
+    bottom: -10px;
+    left: 105px;
+}

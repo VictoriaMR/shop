@@ -7,28 +7,29 @@ final class Router
 	public function analyze()
 	{
 		$pathInfo = trim($_SERVER['REQUEST_URI'], '/');
-		if (empty($pathInfo)) {
-			$router['path'] = 'Index';
-			$router['func'] = 'index';
-		} else {
+		$router['path'] = 'Index';
+		$router['func'] = 'index';
+		if (!empty($pathInfo)) {
 			$pathInfo = parse_url($pathInfo);
-			if (empty($pathInfo['path'])) {
-				$router['path'] = 'Index';
-				$router['func'] = 'index';
-			} else {
+			if (!empty($pathInfo['path'])) {
 				$pathInfo = explode('/', $pathInfo['path']);
-				$pathInfo[0] = trim($pathInfo[0], '.html');
+				$pathInfo[0] = str_replace('.html', '', $pathInfo[0]);
 				$tempInfo = array_reverse(explode('-', $pathInfo[0]));
-				$c = $this->getPath($tempInfo[1]);
-				if ($c == 'page') {
-					$_GET['page'] = $tempInfo[0];
-					$_GET['id'] = $tempInfo[2] ?? 0;
-					$router['path'] = ucfirst($this->getPath($tempInfo[3] ?? 'Index'));
+				if (count($tempInfo) > 1) {
+					$c = $this->getPath($tempInfo[1]);
+					if ($c == 'page') {
+						$_GET['page'] = $tempInfo[0];
+						$_GET['id'] = $tempInfo[2] ?? 0;
+						$router['path'] = empty($tempInfo[3])?'Index':ucfirst($this->getPath($tempInfo[3]));
+					} else {
+						$_GET['id'] = $tempInfo[0] ?? 0;
+						$router['path'] = empty($tempInfo[1])?'Index':ucfirst($this->getPath($tempInfo[1]));
+					}
+					$router['func'] = empty($pathInfo[1])?'index':lcfirst($pathInfo[1]);
 				} else {
-					$_GET['id'] = $tempInfo[0] ?? 0;
-					$router['path'] = ucfirst($this->getPath($tempInfo[1] ?? 'Index'));
+					$router['path'] = ucfirst($tempInfo[0]);
+					$router['func'] = 'index';
 				}
-				$router['func'] = empty($pathInfo[1])?'index':lcfirst($pathInfo[1]);
 			}
 		}
 		return $router;

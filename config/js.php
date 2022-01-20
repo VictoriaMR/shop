@@ -4,7 +4,7 @@ return [
 		'computer' => ['jquery', 'common', 'bootstrap', 'bootstrap-plugin'],
 		'mobile' => [],
 	],
-	'default' => [
+	'home' => [
 		'computer' => ['jquery', 'common'],
 		'mobile' => ['jquery', 'common'],
 	],

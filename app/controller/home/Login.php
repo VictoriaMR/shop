@@ -7,9 +7,6 @@ class Login extends HomeBase
 {
 	public function index()
 	{	
-		if (userId()) {
-			redirect();
-		}
 		$email = iget('email');
 		$verifyCode = iget('verify_code');
 		if (!empty($email) && !empty($verifyCode)) {
@@ -28,7 +25,7 @@ class Login extends HomeBase
 		html()->addCss();
 		html()->addJs();
 		$this->assign('_title', appT('login'));
-		$this->view();
+		$this->view(true);
 	}
 
 	public function forget()
