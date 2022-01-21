@@ -41,7 +41,7 @@ class Base
 
 	protected function assign($name, $value=null)
 	{
-		if ($name == '_title') $value .= '-'.\App::get('base_info', 'name');
+		if ($name == '_title') $value .= ' - '.\App::get('base_info', 'name');
 		return make('frame/View')->assign($name, $value);
 	}
 

@@ -1,6 +1,6 @@
 <div class="login-content">
 	<div class="title-content">
-		<a href="<?php echo url('/');?>">Welcome to <?php echo \App::get('base_info', 'name');?></a>
+		<a href="<?php echo url();?>">Welcome to <?php echo \App::get('base_info', 'name');?></a>
 	</div>
 	<table width="100%" border="0">
 		<tr>
@@ -8,17 +8,28 @@
 				<div class="signin-content">
 					<p class="title f26 f600">LOG IN</p>
 					<form>
-						<div class="form-item">
+						<div class="form-item mb20">
 							<div class="f16 f600 input-tips">Email</div>
 							<input class="input" type="text" name="email" value="" placeholder="Email Address">
 						</div>
-						<div class="form-item">
-							<div class="f16 f600 input-tips">Password</div>
-							<input class="input" type="text" name="password" value="" placeholder="Your Password">
+						<div class="password-content">
+							<div class="form-item mb8">
+								<div class="f16 f600 input-tips">Password</div>
+								<input class="input" type="text" name="password" value="" placeholder="Your Password">
+							</div>
+							<p class="change-login-type">Sign in with Verification Code</p>
+						</div>
+						<div class="verification-content hide">
+							<div class="form-item mb8">
+								<div class="f16 f600 input-tips">Verification Code</div>
+								<input class="input" type="text" name="verify_code" value="" placeholder="Your Password">
+							</div>
+							<p class="change-login-type">Sign in with Verification Code</p>
 						</div>
 						<button type="button" class="btn btn-black bottom-btn">LOG IN</button>
 						<div class="help relative">
-							<span class="pointer">Help?</span>
+							<span class="pointer left">Help?</span>
+							<a href="<?php echo url('forgot');?>" class="right">Forgot your password?</a>
 							<div class="help-tips">
 								<div class="border-up-empty">
 									<span></span>
@@ -33,17 +44,18 @@
 				<div class="register-content">
 					<p class="title f26 f600">REGISTER</p>
 					<form>
-						<div class="form-item">
+						<div class="form-item mb20">
 							<div class="f16 f600 input-tips">Email</div>
 							<input class="input" type="text" name="email" value="" placeholder="Email Address">
 						</div>
-						<div class="form-item">
+						<div class="form-item mb8">
 							<div class="f16 f600 input-tips">Password</div>
 							<input class="input" type="text" name="password" value="" placeholder="Your Password">
 						</div>
-						<div class="form-item">
-							<div class="f16 f600 input-tips">Confirm Password</div>
-							<input class="input" type="text" name="re_password" value="" placeholder="Your Confirm Password">
+						<div class="agreement mb20 tl">
+							<span class="iconfont icon-fangxingweixuanzhong f16"></span>
+							<span class="c6">Sign up for our email list</span>
+							<input type="hidden" name="agreement" value="0">
 						</div>
 						<button type="button" class="btn btn-black bottom-btn">REGISTER</button>
 						<p>Your privacy is very important to us, we'll keep your details safe and secure.For more information,<br/>read our privacy policy.</p>

@@ -50,6 +50,7 @@ final class Router
 
 	public function buildUrl($url=null)
 	{
+		if (empty($url)) return '/';
 		$router = \App::get('router');
 		if (is_null($url)) $url = $router['path'].DS.$router['func'];
 		if (!empty($url) && $router['view_suffix']) $url .= '.'.$router['view_suffix'];

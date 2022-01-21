@@ -94,3 +94,6 @@ body {
 .tl {
 	text-align: left;
 }
+.hide {
+	display: none;
+}
