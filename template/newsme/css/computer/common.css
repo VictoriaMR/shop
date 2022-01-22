@@ -71,6 +71,9 @@ body {
 .right {
 	float: right
 }
+.clear {
+	clear: both;
+}
 .desc-title {
 	display: table-cell;
 	height: 35px;

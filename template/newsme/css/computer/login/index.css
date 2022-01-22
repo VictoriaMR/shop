@@ -26,7 +26,7 @@
 .login-content .signin-content,
 .login-content .register-content {
 	width: 100%;
-	height: 480px;
+	height: 406px;
 	padding-top: 25px;
 	text-align: center;
 }
@@ -53,6 +53,9 @@
 	text-decoration: underline;
 	margin-bottom: 20px;
 	cursor: pointer;
+}
+.login-content .input {
+	border: 2px solid #333;
 }
 .help .help-tips {
 	display: none;
@@ -84,4 +87,15 @@
 .login-content .agreement .iconfont {
 	position: relative;
 	top: 2px;
+}
+.verification-content .verification .input {
+	width: calc(100% - 70px);
+	border-top-right-radius: 0;
+	border-bottom-right-radius: 0;
+}
+.verification-content .verification .btn {
+	width: 70px;
+	float: right;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
 }

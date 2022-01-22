@@ -15,12 +15,15 @@ $(function(){
 	$('.login-content .change-login-type').click(function(){
 		var passwordObj = $('.login-content .password-content');
 		var verificationObj = $('.login-content .verification-content');
+		var forgotObj = $('.login-content .forgot-password');
 		if (passwordObj.is(':visible')) {
 			passwordObj.hide();
 			verificationObj.show();
+			forgotObj.hide();
 		} else {
 			verificationObj.hide();
 			passwordObj.show();
+			forgotObj.show();
 		}
 	});
 });

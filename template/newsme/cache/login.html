@@ -39,34 +39,42 @@ var URI = "https://lmr.bag.cn/";
 				<div class="signin-content">
 					<p class="title f26 f600">LOG IN</p>
 					<form>
-						<div class="form-item mb20">
-							<div class="f16 f600 input-tips">Email</div>
-							<input class="input" type="text" name="email" value="" placeholder="Email Address">
-						</div>
-						<div class="password-content">
+						<div class="password-content hide">
+							<div class="form-item mb20">
+								<div class="f16 f600 input-tips">Email</div>
+								<input class="input" type="text" name="email" value="" placeholder="Email Address">
+							</div>
 							<div class="form-item mb8">
 								<div class="f16 f600 input-tips">Password</div>
 								<input class="input" type="text" name="password" value="" placeholder="Your Password">
 							</div>
 							<p class="change-login-type">Sign in with Verification Code</p>
 						</div>
-						<div class="verification-content hide">
+						<div class="verification-content">
+							<div class="form-item mb20 verification">
+								<div class="f16 f600 input-tips">Email</div>
+								<div class="relative">
+									<input class="input" type="text" name="email" value="" placeholder="Email Address">
+									<button type="button" class="btn btn-black">Send</button>
+								</div>
+							</div>
 							<div class="form-item mb8">
 								<div class="f16 f600 input-tips">Verification Code</div>
-								<input class="input" type="text" name="verify_code" value="" placeholder="Your Password">
+								<input class="input" type="text" name="verify_code" value="" placeholder="Verification Code">
 							</div>
-							<p class="change-login-type">Sign in with Verification Code</p>
+							<p class="change-login-type">Sign in with Password</p>
 						</div>
 						<button type="button" class="btn btn-black bottom-btn">LOG IN</button>
 						<div class="help relative">
 							<span class="pointer left">Help?</span>
-							<a href="forgot.html" class="right">Forgot your password?</a>
+							<a href="forgot.html" class="right forgot-password">Forgot your password?</a>
 							<div class="help-tips">
 								<div class="border-up-empty">
 									<span></span>
 								</div>
 								<span>When you click 'Send', we will send you a 6 digit code to your email. You can use this code to quick login our website and check your order status. If you don't receive verification code, please check spam box.</span>
 							</div>
+							<div class="clear"></div>
 						</div>
 					</form>
 				</div>
