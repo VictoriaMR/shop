@@ -10,6 +10,8 @@ cat /etc/centos-release
 # 释放内存 
 echo 3 > /proc/sys/vm/drop_caches
 
+yum install -y gcc gcc-++ gcc-c++ make libxml2 libxml2-devel openssl openssl-devel curl-devel libjpeg libjpeg-devel libpng-devel freetype-devel  autoconf sqlite-devel
+
 #安装mysql 
 yum -y remove mariadb*
 yum -y remove mysql*
@@ -20,7 +22,7 @@ wget https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.26-linux-glibc2.17-
 tar -Jxvf xxx
 mv mysql.xxx /usr/local/mysql
 cd /usr/local/mysql
-vim /etc/mysql.cnf
+vi /etc/my.cnf
 
 [mysql_safe]
 # modify
@@ -35,9 +37,8 @@ pid-file=/var/run/mysql.pid
 # modify 修改为自己mysql的根目录
 basedir=/usr/local/mysql
 # modify 修改为自己mysql根目录下的data目录，不存在也不要紧
-datadir=/usr/local/mysql/data
+datadir=/data/mysql
 socket=/tmp/mysql.sock
-symbolic-links=0
 # new 设置用户使用mysql
 user=mysql
 # new 缓存连接数
@@ -45,7 +46,6 @@ back_log=200
 # new 最大连接数
 max_connections=500
 # new 使用mysql_native_password插件认证,否则native连不上，会提示需要升级版本
-default_authentication_plugin=mysql_native_password
 # new 服务端使用的字符集默认为UTF8
 character-set-server=utf8mb4
 # new 创建新表时将使用的默认存储引擎
@@ -82,7 +82,7 @@ useradd -M -g www -s /sbin/nologin www
 service mysql start
 mysql -u root -p xxx
 
-ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'yiMN842651.3';
 
 use mysql;  
 update user set host='%' where user ='root';
@@ -97,7 +97,7 @@ firewall-cmd --zone=public --add-port=6379/tcp --permanent
 firewall-cmd --list-ports
 
 #安装 freetype
-wget https://download.savannah.gnu.org/releases/freetype/freetype-2.10.0.tar.gz
+wget https://mirror.yongbok.net/nongnu/freetype/freetype-2.11.1.tar.gz --no-check-certificate
 tar -Jxvf freexx
 ./configure --prefix=/usr/local/freetype --without-harfbuzz
 make && make install
@@ -116,7 +116,6 @@ make && make install
 
 #安装php
 tar -zxvf phpxx
-yum install -y gcc gcc-++ gcc-c++ make libxml2 libxml2-devel openssl openssl-devel curl-devel libjpeg libjpeg-devel libpng-devel freetype-devel  autoconf sqlite-devel
 
 yum install -y https://rpms.remirepo.net/enterprise/7/remi/x86_64/oniguruma5php-6.9.6-1.el7.remi.x86_64.rpm
 yum install -y https://rpms.remirepo.net/enterprise/7/remi/x86_64/oniguruma5php-devel-6.9.6-1.el7.remi.x86_64.rpm
@@ -134,7 +133,7 @@ cp /usr/local/php/etc/php-fpm.d/www.conf.default /usr/local/php/etc/php-fpm.d/ww
 #php.ini
 expose_php = Off
 
-vim /lib/systemd/system/php-fpm.service
+vi /lib/systemd/system/php-fpm.service
 
 [Unit]
 Description=php-fpm
@@ -154,7 +153,7 @@ tar -zxvf openresty-xxx
 
 make && make install
 
-vim /lib/systemd/system/nginx.service
+vi /lib/systemd/system/nginx.service
 
 [Unit]
 Description=nginx
@@ -194,7 +193,7 @@ make
 make install PREFIX=/usr/local/redis
 cp redis.conf /usr/local/redis/etc/redis.conf
 
-vim /lib/systemd/system/redis.service
+vi /lib/systemd/system/redis.service
 
   
 [Unit]
