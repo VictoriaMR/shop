@@ -9,6 +9,9 @@ final class Router
 		$pathInfo = trim($_SERVER['REQUEST_URI'], '/');
 		$router = [];
 		if (empty($pathInfo)) {
+			$router['path'] = 'Index';
+			$router['func'] = 'index';
+		} else {
 			$pathInfo = parse_url($pathInfo);
 			if (!empty($pathInfo['path'])) {
 				$pathInfo = explode('/', $pathInfo['path']);
@@ -31,9 +34,6 @@ final class Router
 					$router['func'] = empty($pathInfo[1])?'index':lcfirst($pathInfo[1]);;
 				}
 			}
-		} else {
-			$router['path'] = 'Index';
-			$router['func'] = 'index';
 		}
 		return $router;
 	}
