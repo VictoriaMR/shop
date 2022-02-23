@@ -18,7 +18,7 @@ class App
 	public static function send()
 	{
 		$baseInfo = self::get('base_info');
-		if (empty($baseInfo)) throw new \Exception($_SERVER['SERVER_NAME'].' was not exist!', 1);
+		if (empty($baseInfo)) throw new \Exception($_SERVER['HTTP_HOST'].' was not exist!', 1);
 		//路由解析
 		$router = self::make('frame/Router')->analyze();
 		$router['class'] = $baseInfo['type'];
@@ -42,7 +42,7 @@ class App
 
 	private static function getConfig()
 	{
-		$config = config('domain', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+		$config = config('domain', str_replace('www.', '', $_SERVER['HTTP_HOST']));
 		if (empty($config)) {
 			$config = config('domain');
 			return array_shift($config);
