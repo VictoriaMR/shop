@@ -35,4 +35,14 @@ class Api extends HomeBase
 		}
 		$this->success($result);
 	}
+
+	public function notice()
+	{
+		$url = trim(ipost('url'));
+		if (empty($url)) {
+			$this->error('url 不能为空');
+		}
+		make('app/service/supplier/Url')->addUrl($url);
+		$this->success();
+	}
 }
