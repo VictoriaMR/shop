@@ -16,7 +16,10 @@ function config($type, $name='', $default=''){
 			return $default;
 		}
 	}
-	return $GLOBALS[$type][$name] ?? $default;
+	if (empty($name)) {
+		return empty($GLOBALS[$type])?$default:$GLOBALS[$type];
+	}
+	return empty($GLOBALS[$type][$name])?$default:$GLOBALS[$type][$name];
 }
 function redirect($url=''){
 	header('Location:'.$url);exit();	

@@ -5,7 +5,7 @@ class App
 
 	public static function init() 
 	{
-		self::set('base_info', config('domain', str_replace('www.', '', $_SERVER['SERVER_NAME'])));
+		self::set('base_info', self::getConfig());
 		spl_autoload_register([__CLASS__ , 'autoload']);
 		self::make('frame/Error')->register();
 	}
@@ -38,6 +38,16 @@ class App
 			throw new \Exception($router['path'].' '.$router['func'].' was not exist!', 1);
 		}
 		self::runOver();
+	}
+
+	private static function getConfig()
+	{
+		$config = config('domain', str_replace('www.', '', $_SERVER['SERVER_NAME']));
+		if (empty($config)) {
+			$config = config('domain');
+			return array_shift($config);
+		}
+		return $config;
 	}
 
 	private static function autoload($abstract, $params=null) 
