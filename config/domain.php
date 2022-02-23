@@ -1,6 +1,6 @@
 <?php 
 return [
-	'lmr.bag.cn' => [
+	'newsme.cf' => [
 		'type' => 'home',
 		'cache' => false,
 		'view_suffix' => 'html',
@@ -8,7 +8,7 @@ return [
 		'name' => 'Clothes',
 		'site_id' => '80'
 	],
-	'lmr.upload.cn' => [
+	'shalight.ml' => [
 		'type' => 'home',
 		'cache' => true,
 		'view_suffix' => 'html',
@@ -16,7 +16,7 @@ return [
 		'name' => '',
 		'site_id' => '11'
 	],
-	'lmr.admin.cn' => [
+	'lmrshop.ml' => [
 		'debug' => true,
 		'type' => 'admin',
 		'cache' => false,
