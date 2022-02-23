@@ -6,7 +6,7 @@
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="<?php echo siteUrl('favicon.ico');?>" type="image/x-icon">
 	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl(html()->getCommonCss());?>">
 	<?php if (!empty($file = html()->getCss())){?>
 	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>">
