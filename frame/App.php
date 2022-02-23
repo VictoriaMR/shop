@@ -52,7 +52,7 @@ class App
 
 	private static function autoload($abstract, $params=null) 
 	{
-		$file = ROOT_PATH.$abstract.'.php';
+		$file = ROOT_PATH.strtr($abstract, '\\', DS).'.php';
 		if (is_file($file)) {
 			return \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $file, $params);
 		}
