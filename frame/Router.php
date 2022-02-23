@@ -25,10 +25,11 @@ final class Router
 						$_GET['id'] = $tempInfo[0] ?? 0;
 						$router['path'] = empty($tempInfo[1])?'Index':ucfirst($this->getPath($tempInfo[1]));
 					}
-					$router['func'] = empty($pathInfo[1])?'index':lcfirst($pathInfo[1]);
 				} else {
 					$router['path'] = ucfirst($tempInfo[0]);
-					$router['func'] = 'index';
+				}
+				if (!isset($router['func'])) {
+					$router['func'] = empty($pathInfo[1])?'index':lcfirst($pathInfo[1]);;
 				}
 			}
 		}
