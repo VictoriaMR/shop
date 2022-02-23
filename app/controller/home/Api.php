@@ -38,7 +38,7 @@ class Api extends HomeBase
 
 	public function notice()
 	{
-		$url = trim(ipost('url'));
+		$url = trim(ipost('url', ''));
 		if (empty($url)) {
 			$this->error('url 不能为空');
 		}
