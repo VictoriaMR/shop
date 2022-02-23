@@ -10,7 +10,7 @@ class Url extends Base
 		$this->baseModel = make('app/model/supplier/Url');
 	}
 
-	public function addUrl($url)
+	public function addUrl($url, $priority=0)
 	{
 		$domain = $this->getDomain($url);
 		$data = $this->getItemId($domain, $url);
@@ -20,6 +20,7 @@ class Url extends Base
 		$data['name'] = $domain;
 		$where = ['name'=>$data['name'], 'item_id'=>$data['item_id']];
 		if ($this->getCountData($where)) return true;
+		$data['priority'] = $priority;
 		return $this->insert($data);
 	}
 

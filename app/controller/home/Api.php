@@ -39,10 +39,11 @@ class Api extends HomeBase
 	public function notice()
 	{
 		$url = trim(ipost('url', ''));
+		$priority = (int)ipost('priority');
 		if (empty($url)) {
 			$this->error('url 不能为空');
 		}
-		make('app/service/supplier/Url')->addUrl($url);
+		make('app/service/supplier/Url')->addUrl($url, $priority);
 		$this->success();
 	}
 }
