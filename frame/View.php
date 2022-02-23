@@ -25,31 +25,25 @@ class View
 			}
 			file_put_contents($path, $content);
 			echo $content;
-		} else {
-			return $this->loadFile($template, $data);
+			return true;
 		}
+		return $this->loadFile($template, $data);
 	}
 	private function loadFile($template, array $data)
 	{
 		if (is_file($template)) {
 			extract(array_merge($this->_data, $data), EXTR_OVERWRITE);
 			return include $template;
-		} else {
-			throw new \Exception($template.' was not exist!', 1);
 		}
+		throw new \Exception($template.' was not exist!', 1);
 	}
 
 	private function getContent($template, $data=[])
 	{
-		if (is_file($template)) {
-			ob_start();
-			ob_implicit_flush(0);
-			extract(array_merge($this->_data, $data), EXTR_OVERWRITE);
-			include $template;
-			return ob_get_clean();
-		} else {
-			throw new \Exception($template.' was not exist!', 1);
-		}
+		ob_start();
+		ob_implicit_flush(0);
+		$this->loadFile($template, $data);
+		return ob_get_clean();
 	}
 
 	private function getTemplate($template, $match=true)

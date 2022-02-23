@@ -7,7 +7,7 @@ class Error
 	public function register()
 	{
 		if (\App::get('base_info', 'debug')) {
-			error_reporting(E_ALL);
+			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
 		} else {
 			error_reporting(0);
 		}
