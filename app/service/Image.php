@@ -22,7 +22,7 @@ class Image
 			//随机码宽度
 			$fontsize = rand(18, 24);
 			$angle = rand(0, 30);
-			$x = ($i * ($width - 10) / $len) + 5;
+			$x = intval($i * ($width - 10) / $len) + 5;
 			//随机码高度
 			$y = rand($fontsize, $height - 4);
 			//填充当前字符入画布
