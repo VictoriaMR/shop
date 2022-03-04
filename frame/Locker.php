@@ -9,15 +9,13 @@ class Locker
 
 	public function lock($name, $timeout=100)
 	{
-		if ($timeout < 1) {
-			$timeout = 100;
-		}
 		$cas = randString(32);
 		$lock = redis(2)->set(self::LOCKERPREFIX.$name, $cas, ['nx', 'ex' => $timeout]);
 		if ($lock) {
 			$this->lock[$name] = $cas;
+			return $cas;
 		}
-		return $lock;
+		return false;
 	}
 
 	public function holdLock($name)

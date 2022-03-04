@@ -12,16 +12,16 @@ class Redis
 
 	private function connect() 
 	{
-		if (config('env.REDIS_HOST')) {
+		if (config('env', 'REDIS_HOST')) {
 			$this->_link = new \Redis();
 			try {
-				$this->_link->connect(config('env.REDIS_HOST'), config('env.REDIS_PORT', '6379'), self::DEFAULT_CONNECT_TIME);
+				$this->_link->connect(config('env', 'REDIS_HOST'), config('env', 'REDIS_PORT', '6379'), self::DEFAULT_CONNECT_TIME);
 				$this->_connect = true;
 			} catch (\Exception $e) {
 				make('frame/Debug')->runlog($e->getMessage(), 'redis');
 			}
-			if ($this->_connect && !empty(config('env.REDIS_PASSWORD'))) {
-				$this->_link->auth(config('env.REDIS_PASSWORD'));
+			if ($this->_connect && !empty(config('env', 'REDIS_PASSWORD'))) {
+				$this->_link->auth(config('env', 'REDIS_PASSWORD'));
 			}
 		}
 		return $this->_connect;
@@ -29,7 +29,9 @@ class Redis
 
 	public function setDb($db=0, $force=false)
 	{
-		if (config('env.APP_CACHE') || $force) {
+
+		var_dump(config('env', 'APP_CACHE'));
+		if (config('env', 'APP_CACHE') || $force) {
 			if (is_null($this->_link)) {
 				$this->connect();
 			}

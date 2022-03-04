@@ -16,7 +16,7 @@ return [
 		'name' => '',
 		'site_id' => '11'
 	],
-	'lmrshop.ml' => [
+	'lmr.admin.cn' => [
 		'debug' => true,
 		'type' => 'admin',
 		'cache' => false,

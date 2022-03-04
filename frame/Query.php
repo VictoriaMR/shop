@@ -279,7 +279,7 @@ final class Query
 	public function getQuery($sql)
 	{
 		$this->clear();
-		if (config('env.APP_DEBUG')) {
+		if (config('env', 'APP_DEBUG')) {
 			$GLOBALS['exec_sql'][] = $sql;
 		}
 		$conn = db($this->_database);

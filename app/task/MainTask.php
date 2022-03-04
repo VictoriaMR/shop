@@ -6,9 +6,8 @@ class MainTask extends TaskDriver
 {
 	private $taskList = [];
 
-	public function __construct($process=[])
+	public function __construct()
 	{
-		cache(2)->del(self::TASKPREFIX.'all');
 		if (!empty($process)) {
 			$this->lockTimeout = config('task.timeout');
 			$this->runTimeLimit = 0;
