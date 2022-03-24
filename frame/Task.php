@@ -12,22 +12,17 @@ class Task
 		$this->locker = make('frame/Locker');
 	}
 	
-	public function start($taskClass='', $lockTimeout=0, $cas='')
+	public function start($taskClass, $lockTimeout=0, $cas='')
 	{
-		if ($taskClass=='') {
-			$taskClass = 'app'.DS.'task'.DS.'MainTask';
-		} else {
-			$taskClass = $this->getStandClassName($taskClass);
-		}
+		$taskClass = $this->getStandClassName($taskClass);
+		$lockKey = $this->getKeyByClassName($taskClass);
 		if ($lockTimeout < 1) {
 			$lockTimeout = config('task', 'timeout');
 		}
-		$lockKey = $this->getKeyByClassName($taskClass);
 
 		if ($cas == '') {
 			$cas = $this->locker->lock($lockKey, $lockTimeout);
-			var_dump($cas);
-			dd('123');
+			dd($cas);
 			if (!$cas) {
 				return false;
 			}
@@ -52,7 +47,6 @@ class Task
 	{
 		$phpBin = config('task', 'phpbin');
 		$cmd = $phpBin.' -f '.ROOT_PATH.'command '.$param;
-		dd($cmd);
 		if (isWin()) {
 			pclose(popen('start /B '.$cmd.' 1>NUL 2>NUL', 'r'));
 		} else {
@@ -72,13 +66,5 @@ class Task
 	public function getKeyByClassName($classname)
 	{
 		return strtr($classname, ['\\'=>'-', DS=>'-']);
-	}
-
-	public function taskStart($key)
-	{
-		$key = self::TASKPREFIX.'app-task-main-'.$key;
-		cache(2)->hSet($key, 'runAt', time());
-		cache(2)->hSet($key, 'nextRun', now());
-		return true;
 	}
 }
