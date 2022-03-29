@@ -92,6 +92,7 @@
 	width: calc(100% - 70px);
 	border-top-right-radius: 0;
 	border-bottom-right-radius: 0;
+	border-right: none;
 }
 .verification-content .verification .btn {
 	width: 70px;

@@ -1,3 +1,4 @@
+<?php $this->load('common/simple_header');?>
 <div class="login-content">
 	<div class="title-content">
 		<a href="<?php echo url();?>">Welcome to <?php echo \App::get('base_info', 'name');?></a>
