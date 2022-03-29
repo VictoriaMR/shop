@@ -1,22 +1,22 @@
 <?php 
 return [
-	'newsme.cf' => [
+	'newsme.com' => [
 		'type' => 'home',
 		'cache' => false,
 		'view_suffix' => 'html',
 		'path' => 'newsme',
-		'name' => 'Clothes',
+		'name' => 'NewsME® - Clothes',
 		'site_id' => '80'
 	],
-	'shalight.ml' => [
+	'shalight.com' => [
 		'type' => 'home',
 		'cache' => true,
 		'view_suffix' => 'html',
-		'path' => 'storage',
+		'path' => 'shalight',
 		'name' => '',
-		'site_id' => '11'
+		'site_id' => '81'
 	],
-	'lmr.admin.cn' => [
+	'lmrshop.ml' => [
 		'debug' => true,
 		'type' => 'admin',
 		'cache' => false,

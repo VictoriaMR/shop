@@ -13,9 +13,9 @@ class View
 
 	protected function fetch($template, array $data=[], $cache=false)
 	{	
-		if ($cache) {
+		if ($cache && \App::get('base_info', 'cache')) {
 			$content = $this->getContent($template, $data);
-			$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS;
+			$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS.(IS_MOBILE?'mobile':'computer').DS;
 			if (!is_dir($path)) mkdir($path, 0777, true);
 			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
 			if (empty($request_uri)) {
@@ -49,8 +49,7 @@ class View
 	private function getTemplate($template, $match=true)
 	{
 		if ($match) {
-			$matchPath = '';
-			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
+			$matchPath = (IS_MOBILE?'mobile':'computer').DS;
 			if (empty($template)) {
 				$_route = \App::get('router');
 				$template = lcfirst($_route['path']).DS.$_route['func'];

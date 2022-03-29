@@ -7,12 +7,13 @@ return [
 	'home' => [
 		'Api' => true,
 		'Index' => true,
-		'Newin' => true,
+		'NewIn' => true,
 		'Product' => true,
 		'Login' => true,
 		'Cart' => true,
 		'Checkout' => true,
 		'Userinfo' => true,
+		'Category' => true,
 		'Pagenotfound' => true,
 	],
 ];

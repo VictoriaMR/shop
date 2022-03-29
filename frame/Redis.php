@@ -29,8 +29,6 @@ class Redis
 
 	public function setDb($db=0, $force=false)
 	{
-
-		var_dump(config('env', 'APP_CACHE'));
 		if (config('env', 'APP_CACHE') || $force) {
 			if (is_null($this->_link)) {
 				$this->connect();

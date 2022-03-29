@@ -114,7 +114,7 @@
 	top: 0.04rem;
 }
 #checkout-page .product-list .item .price {
-	font-size: 0.16rem;
+	font-size: 0.14rem;
 	font-weight: 600;
 }
 #checkout-page .product-list .item .original_price {
@@ -124,7 +124,7 @@
 	margin-left: 0.04rem;
 }
 #checkout-page .product-list .item .quantity-num {
-	font-size: 0.16rem;
+	font-size: 0.12rem;
 	font-weight: 600;
 }
 #checkout-page .order-content {

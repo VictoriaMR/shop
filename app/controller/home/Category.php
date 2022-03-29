@@ -10,6 +10,6 @@ class Category extends HomeBase
 		html()->addCss();
 		html()->addJs();
 
-		$this->view();
+		$this->view(true);
 	}
 }

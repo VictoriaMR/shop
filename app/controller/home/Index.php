@@ -9,7 +9,7 @@ class Index extends HomeBase
 	{
 		html()->addCss();
 		html()->addJs();
-		$this->assign('_title', appT('home'));
+		$this->assign('_title', distT('title'));
 		$this->view(true);
 	}
 }

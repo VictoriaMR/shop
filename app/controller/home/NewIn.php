@@ -9,7 +9,8 @@ class NewIn extends HomeBase
 	{
 		html()->addCss();
 		html()->addJs();
-		$this->assign('_title', 'Product\'s New In - '.site()->getName());
-		$this->view();
+		
+		$this->assign('_title', 'Product\'s New In');
+		$this->view(true);
 	}
 }

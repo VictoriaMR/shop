@@ -42,7 +42,7 @@ class Product extends HomeBase
 		$this->assign('_title', $info['name']);
 		$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
 
-		$this->view();
+		$this->view(true);
 	}
 
 	public function check()

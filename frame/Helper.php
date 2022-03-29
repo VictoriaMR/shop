@@ -65,25 +65,21 @@ function mediaUrl($url, $width=''){
 	return APP_DOMAIN.$url.'?v='.config('env', 'APP_VERSION');
 }
 function isCli(){
-	return stripos(php_sapi_name(), 'cli') !== false;
+	return stripos(php_sapi_name(), 'cli')!==false;
 }
 function isWin(){
-	return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN';
+	return strtoupper(substr(PHP_OS, 0, 3))=='WIN';
 }
 function isJson($string){
 	if (is_array($string)) return $string;
 	$temp = json_decode($string, true); 
-	return json_last_error() == JSON_ERROR_NONE ? $temp : $string;
+	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
 }
 function isAjax(){
 	return isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false;
 }
 function isMobile(){
-	if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], 'wap')) return true;
-	if (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) return true;
-	if (isset($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'V ND.WAP.WML')) return true;
-	if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up\.browser|up\.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) return true;
-	return false;
+	return isset($_SERVER['HTTP_USER_AGENT'])&&preg_match('/(android|phone|mobile|iphone|ipod|ipad|mobi|tablet|touch|aarch64|kfapwi)/i', $_SERVER['HTTP_USER_AGENT']);
 }
 function ipost($name='', $default=null){
 	return \App::make('frame/Request')->ipost($name, $default);
@@ -92,13 +88,13 @@ function iget($name='', $default=null){
 	return \App::make('frame/Request')->iget($name, $default);
 }
 function now($time=null){
-	return date('Y-m-d H:i:s', $time ? $time : time());
+	return date('Y-m-d H:i:s', $time?$time:time());
 }
 function appT($text, $replace=[], $lanId='', $type='common'){
-	if (empty($lanId)) $lanId = lanId();
+	if (empty($lanId)) $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
 	if (!isset($GLOBALS[$key])) {
-		$file = ROOT_PATH.'template'.DS.APP_TEMPLATE_TYPE.DS.'language'.DS.$type.DS.$lanId.'.php';
+		$file = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'language'.DS.$type.DS.$lanId.'.php';
 		if (is_file($file)) $GLOBALS[$key] = include $file;
 		else $GLOBALS[$key] = null;
 	}
@@ -135,7 +131,7 @@ function getDirFile($path){
 		$newPath = $path.DIRECTORY_SEPARATOR.$v;
 		if (is_file($newPath)) {
 			$fileItem[] = $newPath;
-		} else if (is_dir($newPath) && $v != '.' && $v != '..') {
+		} elseif (is_dir($newPath)&&$v!='.'&&$v!='..') {
 			$fileItem = array_merge($fileItem, getDirFile($newPath));
 		}
 	}
@@ -160,8 +156,8 @@ function strTrim($str){
 function getUniqueName(){
 	return str_replace([':', ' ', '-', '0.'], '', now().explode(' ', microtime())[0]);
 }
-function lanId(){
-	return session()->get('site_language_id', 'en');
+function lanId($type='id'){
+	return session()->get('site_language_'.$type, '', $type=='code'?'en':1);
 }
 function siteId(){
 	return \App::get('base_info', 'site_id');
@@ -173,7 +169,7 @@ function currencyId(){
 	return session()->get('site_currency_id', '', 'USD');
 }
 function uuId(){
-	return session()->get(APP_TEMPLATE_TYPE.'_info', 'uuid', '');
+	return \App::make('frame/Cookie')->get('uuid');
 }
 function hasZht($str){
 	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;
