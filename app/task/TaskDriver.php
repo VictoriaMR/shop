@@ -5,54 +5,37 @@ namespace app\task;
 abstract class TaskDriver
 {
 	const TASKPREFIX ='frame-task:';
-	protected $startTime;
 	protected $lock ='';
 	protected $cas ='';
-	protected $data = '';
 	protected $locker;
 	protected $tasker;
+    protected $sleep = 1;
 	public $config = [
 		'info' => '任务说明',
-		'cron' => [
-			'second' => '',
-			'hour' => '',
-			'week' => '',
-			'day' => '',
-			'month' => '',
-		],
+		'cron' => ['* * * * *'],
 	];
 	protected $lockTimeout = 600;
-	protected $runCountLimit = -1;
-	protected $runTimeLimit = 0;
-	protected $sleep = 1;
 
 	public function __construct($process=[])
 	{
-		if (empty($process)) {
-			$this->isRealObject = false;
-		} else {
-			set_time_limit(0);
-			$process['lock'] = json_decode(base64_decode($process['lock']), true);
-			list($this->lock, $this->cas) = $process['lock'];
-			$this->startTime = time();
-			// 设置任务当次启动时间
-			$data = [
-				'startTime' => now(),
-				'status' => 'runing',
-				'process.pid' => getmypid(),
-				'process.uid' => getmyuid(),
-				'process.gid' => getmygid(),
-				'process.user' => get_current_user(),
-			];
-			$this->setInfoArray($data);
-			$this->locker = make('frame/Locker');
-			$this->tasker = make('frame/Task');
-
-			cache(2)->sAdd(self::TASKPREFIX.'all', $this->lock);
-			cache(2)->hIncrBy(self::TASKPREFIX.$this->lock, 'count', 1);
-			cache(2)->hDel(self::TASKPREFIX.$this->lock, 'loopCount');
-			$this->startUp();
-		}
+        if ($process) {
+            set_time_limit(0);
+            $process['lock'] = json_decode(base64_decode($process['lock']), true);
+            list($this->lock, $this->cas) = $process['lock'];
+            // 设置任务当次启动时间
+            $data = [
+                'start_time' => now(),
+                'boot' => 'on',
+                'process_pid' => getmypid(),
+                'process_uid' => getmyuid(),
+                'process_gid' => getmygid(),
+                'process_user' => get_current_user(),
+            ];
+            $this->setInfoArray($data);
+            cache(2)->hIncrBy($this->getKey($this->lock), 'count', 1);
+            $this->locker = make('frame/Locker');
+            $this->tasker = make('frame/Task');
+        }
 	}
 
 	protected function getKey($key)
@@ -62,7 +45,7 @@ abstract class TaskDriver
 
 	protected function setInfo($field, $value, $key='')
 	{
-		if (empty($key)) {
+		if (!$key) {
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
@@ -100,11 +83,6 @@ abstract class TaskDriver
 		}
 	}
 
-	protected function startUp($name='')
-	{
-		return $this->setInfo('boot', 'on', $name);
-	}
-
 	protected function echo($msg, $name='')
 	{
 		$this->setInfo('remark', $msg, $name);
@@ -112,37 +90,25 @@ abstract class TaskDriver
 
 	protected function before() {}
 	protected function beforeShutdown() {}
-	protected function beforeRestart() {}
 
 	protected function continueRuning()
 	{
 		if (!$this->updateLock()) {
 			return false;
 		}
-		// 关闭的不运行, 主任务不能关闭
+		// 关闭的不运行
 		$boot = $this->getInfo('boot');
-		if($this->tasker->getKeyByClassName($this->lock) == 'app-task-MainTask' && $boot == 'off') {
-			$boot = 'restart';
-		}
-		if ($boot == 'off') {
+		if ($boot=='offing') {
 			$this->beforeShutdown();
 			return false;
 		}
-		// 重启任务
-		if($boot == 'restart'){
-			$this->beforeRestart();
-			$this->setInfo('boot','on');
-			return false;
-		}
-		// 设定有限运行次数的
-		if ($this->runCountLimit == 0) {
-			return false;
-		}
-		if ($this->runCountLimit > 0) {
-			$this->runCountLimit--;
-		}
-		// 设置了运行时间限制的
-		if ($this->runTimeLimit > 0 && time() - $this->startTime > $this->runTimeLimit) {
+		return true;
+	}
+
+	protected function timeToNextRunAt()
+	{
+		$nextRunAt = $this->getInfo('next_run_at');
+		if ($nextRunAt > 0 && $nextRunAt > now()) {
 			return false;
 		}
 		return true;
@@ -150,203 +116,211 @@ abstract class TaskDriver
 
 	protected function updateLock()
 	{
-		$this->ping();
 		if ($this->locker->update($this->lock, $this->lockTimeout)) {
 			return true;
 		}
 		return false;
 	}
 
-	protected function ping()
-	{
-		$this->setInfo('pingTime', now());
-	}
-
 	public function start()
 	{
 		if ($this->locker->getLock($this->lock, $this->cas)) {
-			$this->echo('任务启动中 '.now());
+			$this->echo('任务处理中 '.now());
 			$this->before();
 			$result = true;
 			while ($result && $this->continueRuning()) {
-				cache(2)->hIncrBy($this->getKey($this->lock), 'loopCount', 1);
-				$result = $this->run();
-				$usgaMem = memory_get_usage();
-				$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
+				if ($this->timeToNextRunAt()) {
+					$this->sleep = 1;
+					cache(2)->hIncrBy($this->getKey($this->lock), 'loop_count', 1);
+					$result = $this->run();
+					$usgaMem = memory_get_usage();
+					$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
+				}
 				if($result) {
 					// 防止死循环减轻服务器压力
-					sleep($this->sleep > 1 ? $this->sleep : 1);
+					sleep($this->sleep);
 				}
 			}
 			$this->locker->unlock($this->lock);
+			$this->setInfo('boot', 'off');
 			$this->echo('任务已退出 '.now());
         }
 	}
 
-	protected function cronUnitParse($unit, $allowRange)
-	{
-		if ($unit == '*') {
-			$range = $allowRange;
-			$step = 1;
-		} else {
-			$step = 1;
-			$str = $unit;
-			if (strpos($str, '/')) {
-				list($str, $step) = explode('/', $str);
-			}
-			if ($str == '*') {
-				$range = $allowRange;
+	public function getNextTimeByCronArray()
+    {
+        $result=false;
+        foreach ($this->config['cron'] as $val){
+			$v=$this->getNextTimeByCron($val);
+			if ($result) {
+				if ($v<$result) {
+					$result=$v;
+				}
 			} else {
-				$range = [];
-				$str = explode(',', $str);
-				foreach ($str as $val) {
-					if (strpos($val, '-')) {
-						$tmp = explode('-', $val);
-						$range = array_merge($range, range($tmp[0], $tmp[1]));
-					} else {
-						$range[] = intval($val);
-					}
-				}
+                $result=$v;
 			}
-		}
-		sort($range);
-		if ($step < 1) {
-			$step = 1;
-		}
-		$i = 0;
-		$result = [];
-		while (isset($range[$i])) {
-			$result[] = $range[$i];
-			$i = $i + $step;
-		}
-		return $result;
-	}
+        }
+        return $result;
+    }
 
-	protected function cronNextVal($range, $val)
-	{
-		reset($range);
-		foreach ($range as $v) {
-			if($v >= $val){
-				return $v;
-			}
-		}
-		return -1;
-	}
+	// 在读取corn配置是个做基本检查和过滤， 包括：格式， 运行的字符，等， 传过来的必须是合规的字串
+    //   按下面格式配置， 可同时配置多条, 日与周同时配置， 忽略周配置
+    //   * * * * *	分 时 日 月 周 (全为*表示持续运行)
+    //   0 3 * * *	数字精确配置, 星号为任意.(每天凌晨3点整)
+    //   15,30 3 * * *	逗号表示枚举 (每天3点15分和3点30分)
+    //   15-30 3 * * *	短线表示范围 (每天的3点15分到30分持续运行)
+    //   0-30/10 3 * * *	斜杠表示间隔 (每天3点0分到30分之间, 每10分钟一次)
+    //   */10 5-8 * * *	斜杠表示间隔 (每天5-8点, 每10分钟一次)
+    // 获取类似linux crontab格式单条配置的下一次运行时间
+    public function getNextTimeByCron($cornStr)
+    {
+        $cornStr=preg_replace('/\s+/', ' ', trim($cornStr));
+        if ($cornStr=='* * * * *') {
+            return now();
+        }
+        $arr=explode(' ', $cornStr);
+        $now=explode('-', date('i-H-d-m-w')); //'m-d-H-i' 月日时分
 
-	protected function getNextTimeByCron($corn)
-	{
-		$corn = trim(preg_replace('/\s+/', ' ', $corn));
-		if ($corn == '* * * * *') {
-			return 0;
-		}
-		$corn = explode(' ', $corn);
-		$now = explode('-', date('i-H-d-m-w'));
-		//确定取值范围
-		$year = date('Y');
-		$minuteRange = $this->cronUnitParse($corn[0], range(0, 59));
-		$hourRange = $this->cronUnitParse($corn[1], range(0, 23));
-		$dayRange = $this->cronUnitParse($corn[2], range(1, date('t')));
-		$monthRange = $this->cronUnitParse($corn[3], range(1, 12));
-		$weekRange = $this->cronUnitParse($corn[4], range(0, 6));
-		//取值
-		$minute = $this->cronNextVal($minuteRange, $now[0] + 1);
-		$step = 0;
-		if ($minute < 0) {
-			$minute = $minuteRange[0];
-			$step = 1;
-		}
-		$hour = $this->cronNextVal($hourRange, $now[1] + $step);
-		$step = 0;
-		if ($hour < 0) {
-			$hour=$hourRange[0];
-			$step = 1;
-		}
-		if ($corn[4] == '*' || $corn[3] != '*') {
-			$day = $this->cronNextVal($dayRange, $now[2] + $step);
-			$step = 0;
-			if ($day < 0) {
-				$day = $dayRange[0];
-				$step = 1;
-			}
-			$month = $this->cronNextVal($monthRange, $now[3] + $step);
-			if ($month < 0) {
-				$month = $monthRange[0];
-				$year++;
-			}
-		} else { // 按周参数计算
-			$week = $this->cronNextVal($weekRange, $now[4]+$step);
-			$basetime = time();
-			if ($week < 0) {
-				$week = $weekRange[0];
-				$basetime = $basetime + (7 - date('w',$basetime) + $week)*24*60*60; // 基础时间递增一周
-			}
-			$basemonth = date('m',$basetime);
-			$month = $this->cronNextVal($monthRange, $basemonth);
-			if ($month < 0 || date('m', $basetime) != $month) {
-				if ($month < 0) {
-					$month = $monthRange[0];
-					$year++;
-				}
-				$basetime = strtotime($year.'-'.$month.'-1 00:00:01');
-				for ($i=0; $i<7; $i++) {
-					$basetime = $basetime + $i*24*3600;
-					$calweek = date('w', $basetime);
-					if ($calweek == $week) {
-						break;
-					}
-				}
-				$day = date('d',$basetime);
-			} else {
-				$day = date('d',$basetime);
-			}
-		}
-		if ($year != date('Y')) {
-			$month = $monthRange[0];
-			$day = $dayRange[0];
-			$hour = $hourRange[0];
-			$minute = $minuteRange[0];
-		}
-		if ($month != date('m')) {
-			$day = $dayRange[0];
-			$hour = $hourRange[0];
-			$minute = $minuteRange[0];
-		}
-		if ($day != date('d')) {
-			$hour = $hourRange[0];
-			$minute = $minuteRange[0];
-		}
-		if ($hour != date('H')) {
-			$minute = $minuteRange[0];
-		}
-		$result = mktime($hour, $minute, 0, $month, $day, $year);
-		return $result > 0 ? $result : false;
-	}
+        //确定取值范围
+        $year=date('Y');
+        $minuteRange=$this->cronUnitParse($arr[0], range(0,59));
+        $hourRange=$this->cronUnitParse($arr[1], range(0,23));
+        $dayRange=$this->cronUnitParse($arr[2], range(1, date('t')));
+        $monthRange=$this->cronUnitParse($arr[3], range(1,12));
+        $weekRange=$this->cronUnitParse($arr[4], range(0,6));
+        //取值
+        $minute=$this->cronNextVal($minuteRange, $now[0]+1);
+        $step=0;
+        if ($minute<0) {
+            $minute=$minuteRange[0];
+            $step=1;
+        }
+        $hour=$this->cronNextVal($hourRange, $now[1]+$step);
+        $step=0;
+        if ($hour<0) {
+            $hour=$hourRange[0];
+            $step=1;
+        }
+        if($arr[4]=='*'||$arr[3]!='*') { // 按日参数计算
+            $day=$this->cronNextVal($dayRange,$now[2]+$step);
+            $step=0;
+            if($day<0){
+                $day=$dayRange[0];
+                $step=1;
+            }
+            $month = $this->cronNextVal($monthRange,$now[3]+$step);
+            if($month<0){
+                $month = $monthRange[0];
+                $year++;
+            }
+        } else { // 按周参数计算
+            $week = $this->cronNextVal($weekRange,$now[4]+$step);
+            $basetime=time();
+            if($week<0){
+                $week=$weekRange[0];
+                $basetime=$basetime+(7-date('w',$basetime)+$week)*24*60*60; // 基础时间递增一周
+            }
+            $basemonth = date('m',$basetime);
+            $month = $this->cronNextVal($monthRange,$basemonth);
+            if($month<0||date('m',$basetime)!=$month){
+                if($month<0) {
+                    $month = $monthRange[0];
+                    $year++;
+                }
+                $basetime = strtotime($year.'-'.$month.'-1 00:00:01');
+                for($i=0;$i<7;$i++){
+                    $basetime = $basetime + $i*24*3600;
+                    $calweek = date('w',$basetime);
+                    if($calweek==$week){
+                        break;
+                    }
+                }
+                $day=date('d',$basetime);
+            } else {
+                $day=date('d',$basetime);
+            }
 
-	protected function getNextTimeByCronArray($cornArray)
-	{
-		$result = false;
-		foreach ($cornArray as $val) {
-			$v = $this->getNextTimeByCron($val);
-			if ($v === false) {
-				return false;
-			}
-			$result === false && $result = $v;
-			if ($v < $result) {
-				$result = $v;
-			}
-		}
-		return $result;
-	}
+        }
+        if($year!=date('Y')){
+            $month=$monthRange[0];
+            $day=$dayRange[0];
+            $hour=$hourRange[0];
+            $minute=$minuteRange[0];
+        }
+        if($month!=date('m')){
+            $day=$dayRange[0];
+            $hour=$hourRange[0];
+            $minute=$minuteRange[0];
+        }
+        if($day!=date('d')){
+            $hour=$hourRange[0];
+            $minute=$minuteRange[0];
+        }
+        if($hour!=date('H')){
+            $minute=$minuteRange[0];
+        }
+        return now(mktime($hour,$minute,0, $month,$day,$year));
+    }
+
+    private function cronUnitParse($unit, $allowRange)
+    {
+        if ($unit=='*') {
+            $range = $allowRange;
+            $step = 1;
+        } else {
+            $step = 1;
+            $str = $unit;
+            if (strpos($str,'/')) {
+                list($str,$step)=explode('/',$str);
+            }
+            if ($str=='*') {
+                $range=$allowRange;
+            } else {
+                $range=[];
+                $str=explode(',', $str);
+                foreach ($str as $val) {
+                    if (strpos($val, '-')) {
+                        $tmp=explode('-', $val);
+                        $range=array_merge($range, range($tmp[0], $tmp[1]));
+                    } else {
+                        $range[]=intval($val);
+                    }
+                }
+            }
+        }
+        sort($range);
+        $step=(int)$step;
+        if ($step<1) {
+            $step=1;
+        }
+        $i=0;
+        $result=[];
+        while (isset($range[$i])) {
+            $result[]=$range[$i];
+            $i=$i + $step;
+        }
+        return $result;
+    }
+
+    private function cronNextVal($range, $val)
+    {
+        reset($range);
+        foreach ($range as $v){
+            if($v>=$val){
+                return $v;
+            }
+        }
+        return -1;
+    }
 
 	protected function taskSleep($time)
 	{
-		$runAt = cache(2)->hGet(self::TASKPREFIX.$this->lock, 'runAt');
-		$runAt = ($runAt > 0 ? $runAt : time()) + $time;
-		$data = [
-			'runAt' => $runAt,
-			'nextRun' => $runAt > 0 ? now($runAt) : 'alwaysRun',
-		];
-		return cache(2)->hMset(self::TASKPREFIX.$this->lock, $data);
+		return $this->setInfo('next_run_at', now(time() + $time));
+	}
+
+	protected function nextRunAt()
+	{
+		return $this->setInfo('next_run_at', $this->getNextTimeByCronArray());
 	}
 
 	abstract public function run();

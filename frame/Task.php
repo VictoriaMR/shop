@@ -22,7 +22,6 @@ class Task
 
 		if ($cas == '') {
 			$cas = $this->locker->lock($lockKey, $lockTimeout);
-			dd($cas);
 			if (!$cas) {
 				return false;
 			}
@@ -60,7 +59,7 @@ class Task
 
 	protected function getStandClassName($classname)
 	{
-		return strtr($classname, '-', DS);
+		return strtr($classname, '-', '/');
 	}
 
 	public function getKeyByClassName($classname)

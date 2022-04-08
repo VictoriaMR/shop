@@ -1,6 +1,6 @@
 <?php 
 return [
-	'newsme.com' => [
+	'newsme.cn' => [
 		'type' => 'home',
 		'cache' => false,
 		'view_suffix' => 'html',
@@ -8,7 +8,7 @@ return [
 		'name' => 'NewsME® - Clothes',
 		'site_id' => '80'
 	],
-	'shalight.com' => [
+	'shalight.cn' => [
 		'type' => 'home',
 		'cache' => true,
 		'view_suffix' => 'html',
@@ -16,8 +16,7 @@ return [
 		'name' => '',
 		'site_id' => '81'
 	],
-	'lmrshop.ml' => [
-		'debug' => true,
+	'shop.admin.cn' => [
 		'type' => 'admin',
 		'cache' => false,
 		'view_suffix' => '',

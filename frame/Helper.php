@@ -128,7 +128,7 @@ function getDirFile($path){
 	$files = scandir($path);
 	$fileItem = [];
 	foreach ($files as $v) {
-		$newPath = $path.DIRECTORY_SEPARATOR.$v;
+		$newPath = $path.DS.$v;
 		if (is_file($newPath)) {
 			$fileItem[] = $newPath;
 		} elseif (is_dir($newPath)&&$v!='.'&&$v!='..') {

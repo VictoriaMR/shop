@@ -6,7 +6,7 @@ class Error
 {
 	public function register()
 	{
-		if (\App::get('base_info', 'debug')) {
+		if (config('env', 'APP_DEBUG')) {
 			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
 		} else {
 			error_reporting(0);
@@ -58,7 +58,7 @@ class Error
 			echo 'Line: '.$line.PHP_EOL;
 			echo 'Error Message: '.$message.PHP_EOL;
 		} else {
-			if (\App::get('base_info', 'debug')) {
+			if (config('env', 'APP_DEBUG')) {
 				echo 'File: '.$file.'<br />';
 				echo 'Line: '.$line.'<br />';
 				echo 'Error Message: '.$message.'<br />';

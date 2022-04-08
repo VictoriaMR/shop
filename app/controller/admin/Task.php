@@ -28,58 +28,53 @@ class Task extends AdminBase
 		}
 		html()->addCss();
 		html()->addJs();
-		$this->assign('enabled', config('task.enabled'));
+		$this->assign('enabled', config('task', 'enabled'));
 		$this->view();
 	}
 
 	protected function taskList()
 	{
-		$taskList = cache(2)->smembers(self::TASKPREFIX.'all');
-		$list = [];
-		if (!empty($taskList)) {
-			$mainIndex = array_search('app-task-MainTask', $taskList);
-			$data = cache(2)->hGetAll(self::TASKPREFIX.$taskList[$mainIndex]);
-			$data['name'] = $taskList[$mainIndex];
-			$list[] = $data;
-			unset($taskList[$mainIndex]);
-			foreach($taskList as $value) {
-				$data = cache(2)->hGetAll(self::TASKPREFIX.$value);
-				$data['name'] = $value;
-				$list[] = $data;
-			}
+		$path = ROOT_PATH.'app'.DS.'task'.DS.'main';
+		$taskList = getDirFile($path);
+		if (empty($taskList)) {
+			$this->error('任务列表为空');
 		}
-		$this->success(['time'=>now(), 'list'=>$list]);
+		foreach($taskList as $key=>$value) {
+			$name = strtr(str_replace([ROOT_PATH, '.php'], '', $value), DS, '/');
+			$cacheKey = strtr(self::TASKPREFIX.$name, '/', '-');
+			$data = cache(2)->hGetAll($cacheKey);
+			if ($data == false) {
+				$object = make($name);
+				$data = [
+					'name' => $name,
+					'boot' => 'off',
+					'info' => $object->config['info'],
+				];
+				cache(2)->hMset($cacheKey, $data);
+			}
+			$taskList[$key] = $data;
+		}
+		$this->success(['time'=>now(), 'list'=>$taskList]);
 	}
 
 	protected function modifyTask()
 	{
 		$type = ipost('type');
-		$key = ipost('key');
-		$enabled = config('task.enabled');
-		if (in_array($type, ['startup_all', 'shutdown_all'])) {
-			$taskList = cache(2)->smembers(self::TASKPREFIX.'all');
-			if (!empty($taskList)) {
-				foreach($taskList as $value) {
-					cache(2)->hSet(self::TASKPREFIX.$value, 'boot', $type == 'startup_all' && $enabled ? 'on' : 'off');
-				}
-			}
-			if ($type == 'startup_all' && $enabled) {
-				make('frame/Task')->start();
-			}
-		} else {
-			if (empty($key)) {
-				$this->error('进程名称不能为空');
-			}
-			if ($type == 'shutdown') {
-				cache(2)->del(self::LOCKERPREFIX.$key);
-			}
-			cache(2)->hSet(self::TASKPREFIX.$key, 'boot', $type == 'startup' && $enabled ? 'on' : 'off');
-			if (!$enabled) {
-				$this->error('当前任务配置未开启');
-			}
-			if ($key == 'app-task-MainTask' && $type == 'startup') {
-				make('frame/Task')->start();
-			}
+		$key = trim(ipost('key', ''));
+		$enabled = config('task', 'enabled');
+		if (!$enabled) {
+			$this->error('系统任务开关未开启');
+		}
+		$key = strtr($key, '/', '-');
+		if (empty($key)) {
+			$this->error('进程名称不能为空');
+		}
+		if ($type == 'startup' && cache(2)->exists(self::LOCKERPREFIX.$key)) {
+			$this->error('进程未停止, 请稍后再试');
+		}
+		cache(2)->hSet(self::TASKPREFIX.$key, 'boot', $type == 'startup' ? 'oning' : 'offing');
+		if ($type == 'startup') {
+			make('frame/Task')->start($key);
 		}
 		$this->success('操作成功');
 	}

@@ -14,18 +14,13 @@ class Base
 		header('Content-Type:application/json; charset=utf-8');
 		echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
 		\App::runOver();
+		exit();
 	}
 
 	protected function success($data=[], $options=null)
 	{
-		if (is_array($data)) {
-			if (is_null($options)) {
-				$options = 'success';
-			}
-		} else {
-			if (is_null($options)) {
-				$options = $data;
-			}
+		if (!is_array($data) && !$options) {
+			$options = $data;
 		}
 		$options = ['message' => $options];
 		$this->result('200', $data, $options);
@@ -33,7 +28,7 @@ class Base
 
 	protected function error($message='', $code='10000')
 	{
-		if (empty($message)) {
+		if (!$message) {
 			$message = 'error';
 		}
 		$this->result($code, [], ['message'=>$message]);

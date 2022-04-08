@@ -7,7 +7,6 @@ class Login extends AdminBase
 {
 	public function index()
 	{	
-		make('frame/Task')->start();
 		html()->addCss();
 		html()->addJs();
 		$this->assign('_title', '登录');

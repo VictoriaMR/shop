@@ -57,7 +57,7 @@ final class Router
 		$router = \App::get('router');
 		if (is_null($url)) $url = $router['path'].DS.$router['func'];
 		if (!empty($url) && $router['view_suffix']) $url .= '.'.$router['view_suffix'];
-		return $url;
+		return APP_DOMAIN.$url;
 	}
 
 	public function urlFormat($name, $type, $param=[], $domain=null)
@@ -72,13 +72,13 @@ final class Router
 		if (isset($param['page'])) $name .= '-page-'.$param['page'];
 		if (isset($param['size'])) $name .= '-size-'.$param['size'];
 		if (defined('TEMPLATE_SUFFIX')) $name .= '.'.TEMPLATE_SUFFIX;
-		return 'https//'.$_SERVER['SERVER_NAME'].'/'.$name;
+		return APP_DOMAIN.$name;
 	}
 
 	public function setParam($param=[], $url=null)
 	{
 		if (is_null($url)) {
-			$url = $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+			$url = APP_DOMAIN.$_SERVER['REQUEST_URI'];
 		}
 		$url = str_replace('.html', '', $url);
 		foreach ($param as $key=>$value) {

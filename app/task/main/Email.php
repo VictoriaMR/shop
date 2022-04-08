@@ -8,13 +8,7 @@ class Email extends TaskDriver
 	public function __construct($process=[])
 	{
 		parent::__construct($process);
-		if ($process !== false) {
-			$this->lockTimeout = config('task.timeout');
-			// 每运行6小时退出一次
-			$this->runTimeLimit = 60*60*6;
-		}
 		$this->config['info'] = '邮件发送任务';
-		$this->config['cron'] = ['* * * * *']; //ayaways run
 	}
 
 	public function run()
@@ -23,7 +17,7 @@ class Email extends TaskDriver
 		$list = $email->getListData(['status'=>0], 'email_id');
 		if (empty($list)) {
 			$this->taskSleep(300);
-			return false;
+			return true;
 		} else {
 			foreach ($list as $value) {
 				$email->sendEmailById($value['email_id']);

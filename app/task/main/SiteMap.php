@@ -18,12 +18,6 @@ class SiteMap extends TaskDriver
 
 	public function __construct($process=[])
 	{
-		parent::__construct($process);
-		if ($process !== false) {
-			$this->lockTimeout = config('task.timeout');
-			// 每运行6小时退出一次
-			$this->runTimeLimit = 60*60*6;
-		}
 		$this->config['info'] = '站点地图任务';
 		$this->config['cron'] = ['1 14 * * 00']; //每周1次
 	}
@@ -125,7 +119,8 @@ class SiteMap extends TaskDriver
 			}
 			$this->saveSiteMapIndexXml($value['domain']);
 		}
-		return false;
+		$this->nextRunAt();
+		return true;
 	}
 
 	protected function clear()

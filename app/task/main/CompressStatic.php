@@ -8,18 +8,13 @@ class CompressStatic extends TaskDriver
 	public function __construct($process=[])
 	{
 		parent::__construct($process);
-		if ($process !== false) {
-			$this->lockTimeout = config('task.timeout');
-			// 每运行6小时退出一次
-			$this->runTimeLimit = 60*60*6;
-		}
 		$this->config['info'] = '静态文件压缩任务';
-		$this->config['cron'] = ['* 3 * * *']; //每天3点整运行
+		$this->config['cron'] = ['0 3 * * *']; //每天3点整运行
 	}
 
 	public function run()
 	{
-		$systemStaticFile = make('app/service/SystemStaticFile');
+		$systemStaticFile = make('app/service/site/StaticFile');
 		$staticList = $systemStaticFile->getListData(['status'=>0]);
 		if (!empty($staticList)) {
 			$urlArr = [
@@ -54,5 +49,7 @@ class CompressStatic extends TaskDriver
 				}
 			}
 		}
+		$this->nextRunAt();
+		return true;
 	}
 }

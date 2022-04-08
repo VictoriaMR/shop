@@ -40,37 +40,37 @@ const TASK = {
 		for (let i=0;i<list.length;i++) {
 			html += '<tr data-key="'+list[i].name+'">\
 				<td>\
-					<li class="cycle-'+(list[i].boot ? list[i].boot :'off')+'"></li>\
+					<li class="cycle-'+(list[i].boot)+'"></li>\
 					<div class="in-1" title="'+list[i].name+'">'+list[i].name+'<br>'+list[i].info+'</div>\
 				</td>\
 				<td>\
-					'+(list[i]['process.gid'] ? list[i]['process.gid']+'<br>' : '')+'\
-					'+(list[i]['process.pid'] ? list[i]['process.pid']+'<br>' : '')+'\
-					'+(list[i]['process.uid'] ? list[i]['process.uid']+'<br>' : '')+'\
-					'+(list[i]['process.user'] ? list[i]['process.user'] : '')+'\
+					'+(list[i]['process_gid'] ? list[i]['process_gid']+'<br>' : '')+'\
+					'+(list[i]['process_pid'] ? list[i]['process_pid']+'<br>' : '')+'\
+					'+(list[i]['process_uid'] ? list[i]['process_uid']+'<br>' : '')+'\
+					'+(list[i]['process_user'] ? list[i]['process_user'] : '')+'\
 				</td>\
 				<td>\
 					<span title="开始时间">'+(list[i].start_time ? list[i].start_time : '')+'</span><br >\
-					<span title="运行时间">'+(list[i].nextRun ? list[i].nextRun : '')+'</span><br >\
-					<span title="使用内存">'+(list[i].memoryUsage ? list[i].memoryUsage : '')+'</span>\
+					<span title="运行时间">'+(list[i].next_run_at ? list[i].next_run_at : '')+'</span><br >\
+					<span title="使用内存">'+(list[i].memory_usage ? list[i].memory_usage : '')+'</span>\
 				</td>\
 				<td>\
-					<li class="cycle-'+(list[i].boot ? list[i].boot :'off')+'"></li>\
+					<li class="cycle-'+(list[i].boot)+'"></li>\
 					<div class="in-1 mt8">\
-						<span class="in-2">'+(list[i].boot ? list[i].boot :'off')+'</span>\
+						<span class="in-2">'+(list[i].boot)+'</span>\
 					</div>\
 				</td>\
 				<td>\
 					<span title="运行次数">'+(list[i].count ? list[i].count : '0')+'</span><br >\
-					<span title="运行次数">'+(list[i].loopCount ? list[i].loopCount : '0')+'</span>\
+					<span title="运行次数">'+(list[i].loop_count ? list[i].loop_count : '0')+'</span>\
 				</td>\
 				<td>\
 					<span>'+(list[i].remark ? list[i].remark : '')+'</span><br >\
-					<span title="下次运行时间">'+(list[i].nextRun ? '下次运行时间:'+list[i].nextRun : '')+'</span><br >\
+					<span title="下次运行时间">'+(list[i].next_run_at ? '下次运行时间:'+list[i].next_run_at : '')+'</span><br >\
 				</td>\
 				<td>\
 					<div class="btn-group" role="group" id="select-status">\
-						<button class="btn btn-success btn-sm btn-task" data-type="startup" '+(list[i].boot === 'on' || !this.enable ? 'disabled' : '')+'>启动</button>\
+						<button class="btn btn-success btn-sm btn-task" data-type="startup" '+(list[i].boot === 'on' || list[i].boot === 'oning' || !this.enable ? 'disabled' : '')+'>启动</button>\
 						<button class="btn btn-danger btn-sm btn-task" data-type="shutdown" '+(list[i].boot === 'on' ? '' : 'disabled')+'>停止</button>\
 					</div>\
 				</td>\

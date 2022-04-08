@@ -3,6 +3,9 @@ $(function(){
 });
 const LOGIN = {
 	init: function () {
+		var phoneObj = $('input[name="phone"]');
+		var codeObj = $('input[name="code"]');
+		var passwordObj = $('input[name="password"]');
 		$('#login-btn').on('click', function() {
 			let msg = '';
 			$('#login-error').addClass('hidden');
@@ -43,7 +46,7 @@ const LOGIN = {
 			});
 		});
 		//验证码自动校正
-		$('input[name="code"]').on('blur', function(){
+		codeObj.on('blur', function(){
 			const code = $(this).val();
 			const thisobj = $(this);
 			if (!VERIFY.code(code)) {
@@ -60,11 +63,22 @@ const LOGIN = {
 		$('input').on('focus', function(){
 			$('#login-error').addClass('hidden');
 		});
+		phoneObj.on('blur', function(){
+			var value = $(this).val();
+			if (value) {
+				localStorage.setItem('login_name', value);
+			}
+		});
 		document.onkeydown = function(e){
 	        var ev = document.all ? window.event : e;
 	        if(ev.keyCode==13) {
 	            $('#login-btn').trigger('click');
 	        }
+	    }
+	    var name = localStorage.getItem('login_name');
+	    if (name) {
+	    	phoneObj.val(name);
+	    	passwordObj.focus();
 	    }
 	}
 };
