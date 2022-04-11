@@ -77,7 +77,7 @@ class App
 		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 		if (config('env', 'APP_DEBUG')) {
 			make('frame/Debug')->runlog();
-			if (!IS_CLI && !IS_AJAX) make('frame/Debug')->init();
+			if (!(IS_CLI || IS_AJAX)) make('frame/Debug')->init();
 		}
 	}
 }

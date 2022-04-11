@@ -19,8 +19,8 @@ class Api extends AdminBase
 			$tempArr[$key] = $categoryService->getInCategory($value);
 		}
 		$data = [
-			'version' => config('env.APP_VERSION'),
-			'socket_domain' => config('env.APP_DOMAIN'),
+			'version' => config('env', 'APP_VERSION'),
+			'socket_domain' => APP_DOMAIN,
 			'site' => make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name'),
 			'site_category' => $tempArr,
 		];
@@ -111,6 +111,16 @@ class Api extends AdminBase
 			$this->error('url 不能为空');
 		}
 		make('app/service/supplier/Url')->addUrl($url);
+		$this->success();
+	}
+
+	public function img()
+	{
+		$url = trim(ipost('url'));
+		if (empty($url)) {
+			$this->error('url 不能为空');
+		}
+		make('app/service/supplier/Image')->addUrl($url);
 		$this->success();
 	}
 }
