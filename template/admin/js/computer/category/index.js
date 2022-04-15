@@ -10,7 +10,8 @@ const CATEGORYLIST = {
 			$(this).next().val(status);
 		});
 		//新增修改
-		$('.btn.modify').on('click', function(){
+		$('.btn.modify').on('click', function(event){
+			event.stopPropagation();
 			const btnobj = $(this);
 			const id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
@@ -60,7 +61,7 @@ const CATEGORYLIST = {
 									<span>'+data[i].language_name+'</span>\
 								</th>\
 								<td class="p0">\
-									<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off">\
+									<input type="text" name="language['+data[i].lan_id+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off">\
 								</td>\
 							</tr>';
 				}
@@ -145,7 +146,8 @@ const CATEGORYLIST = {
 			});
 		});
 		//删除子分类
-		$('.btn.delete').on('click', function(){
+		$('.btn.delete').on('click', function(event){
+			event.stopPropagation();
 			const btnobj = $(this);
 			const id = btnobj.parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
@@ -177,6 +179,23 @@ const CATEGORYLIST = {
 			$.post(URI+'category', {opn: 'modifyCategory', id: id, attach_id: data.attach_id}, function(res){
 				if (res.code === '200') {
 					successTips(res.message);
+				} else {
+					errorTips(res.message);
+				}
+			});
+		});
+		//状态
+		$('#data-list .switch_botton').on('click', function(event){
+			event.stopPropagation();
+			var _thisobj = $(this);
+			let param = {};
+			param.id = _thisobj.parents('tr').data('id');
+			param[_thisobj.data('type')] = _thisobj.data('status') == '1' ? '0' : '1';
+			param.opn = 'modifyCategory';
+			$.post(URI+'category', param, function(res){
+				if (res.code === '200') {
+					successTips(res.message);
+					_thisobj.switchBtn(param.status);
 				} else {
 					errorTips(res.message);
 				}

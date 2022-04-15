@@ -160,16 +160,16 @@ function getUniqueName(){
 	return str_replace([':', ' ', '-', '0.'], '', now().explode(' ', microtime())[0]);
 }
 function lanId($type='id'){
-	return session()->get('site_language_'.$type, '', $type=='code'?'en':1);
+	return session()->get('site_language_'.$type, $type=='code'?'en':1);
 }
 function siteId(){
 	return \App::get('base_info', 'site_id');
 }
 function userId(){
-	return session()->get(APP_TEMPLATE_TYPE.'_info', 'mem_id', 0);
+	return session()->get(APP_TEMPLATE_TYPE.'_info', 0, 'mem_id');
 }
 function currencyId(){
-	return session()->get('site_currency_id', '', 'USD');
+	return session()->get('site_currency_id', 'USD');
 }
 function uuId(){
 	return \App::make('frame/Cookie')->get('uuid');

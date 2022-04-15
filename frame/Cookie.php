@@ -29,7 +29,7 @@ class Cookie
 				$memberService->loginById($info['mem_id']);
 				session()->set('site_language_id', $info['lan_id']);
 			}
-			session()->set('cookie', 'setcookie', 1);
+			session()->set('setcookie', true);
 		}
 	}
 
@@ -70,7 +70,7 @@ class Cookie
 		}
 		$expire = empty($config['expire']) ? 0 : $_SERVER['REQUEST_TIME'] + intval($config['expire']);
 		$_COOKIE[$name] = $value;
-		session()->set(APP_TEMPLATE_TYPE.'_info.'.$name, $value);
+		session()->set(APP_TEMPLATE_TYPE.'_info', $value, $name);
 		return setcookie($name, $value, $expire, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
 	}
 
@@ -106,7 +106,7 @@ class Cookie
 		if (empty($_COOKIE)) {
 			return false;
 		}
-		session()->set('cookie.setcookie', 0);
+		session()->set('setcookie', false);
 		make('app/service/member/Uuid')->deleteData($this->get('uuid'));
 		$config = $this->config;
 		foreach ($_COOKIE as $key => $val) {

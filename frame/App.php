@@ -31,7 +31,9 @@ class App
 		$controller = 'app/controller/'.$router['class'].'/'.$router['path'];
 		$callArr = [self::autoload($controller), $router['func']];
 		if (is_callable($callArr)) {
-			if (!session()->get('cookie', 'setcookie')) self::make('frame/Cookie')->init();
+			if (!session()->get('setcookie', false)) {
+				self::make('frame/Cookie')->init();
+			}
 			self::make('app/middleware/VerifyToken')->handle($router);
 			call_user_func_array($callArr, []);
 		} else {

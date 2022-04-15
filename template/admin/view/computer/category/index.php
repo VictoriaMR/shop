@@ -6,6 +6,8 @@
 				<th class="col-md-1">ID</th>
 				<th class="col-md-3">名称</th>
 				<th class="col-md-1">语言配置</th>
+				<th class="col-md-1">状态</th>
+				<th class="col-md-1">是否展示</th>
 				<th class="col-md-1">头像</th>
 				<th class="col-md-2">操作</th>
 			</tr>
@@ -34,6 +36,16 @@
 					<?php } else {?>
 					<span class="red">未配置</span>
 					<?php } ?>
+				</td>
+				<td>
+					<div class="switch_botton" data-status="<?php echo $value['status'];?>" data-type="status">
+                        <div class="switch_status <?php echo $value['status']?'on':'off';?>"></div>
+                    </div>
+				</td>
+				<td>
+					<div class="switch_botton" data-status="<?php echo $value['show'];?>" data-type="show">
+                        <div class="switch_status <?php echo $value['show']?'on':'off';?>"></div>
+                    </div>
 				</td>
 				<td class="col-md-1">
 					<div class="avatar-hover">

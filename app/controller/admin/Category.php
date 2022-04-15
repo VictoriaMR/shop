@@ -69,18 +69,18 @@ class Category extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$info = make('app/service/category/Language')->getListData(['cate_id'=>$cateId]);
-		$info = array_column($info, null, 'lan_id');
+		$info = array_column($info, 'name', 'lan_id');
 		$languageList = make('app/service/Language')->getListCache();
+		$data = [];
 		foreach ($languageList as $key => $value) {
-			if ($value['code'] == 'zh') continue;
-			$info[$value['code']] = [
-				'lan_id' => $value['code'],
+			$data[] = [
+				'lan_id' => $value['lan_id'],
 				'tr_code' => $value['tr_code'],
-				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
-				'language_name' => $value['name'],
+				'name' => $info[$value['lan_id']] ?? '',
+				'language_name' => $value['name2'],
 			];
 		}
-		$this->success($info, '');
+		$this->success($data, '');
 	}
 
 	protected function editLanguage()
@@ -154,13 +154,25 @@ class Category extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$attachId = ipost('attach_id');
+		$attachId = ipost('attach_id', -1);
+		$status = ipost('status', -1);
+		$show = ipost('show', -1);
 		$data = [];
-		if (!empty($attachId)) {
+		if ($attachId >= 0) {
 			$data['attach_id'] = $attachId;
 		}
-		$rst = make('app/service/category/Category')->updateData($id, $data);
+		if ($status >= 0) {
+			$data ['status'] = $status;
+		}
+		if ($show >= 0) {
+			$data['show'] = $show;
+		}
+		$categoryService = make('app/service/category/Category');
+		$rst = $categoryService->updateData($id, $data);
 		if ($rst) {
+			if ($status == 0 && $categoryService->hasChildren($id)) {
+				$categoryService->updateData(['parent_id'=>$id], ['status'=>$status]);
+			}
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');

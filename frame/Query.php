@@ -13,7 +13,7 @@ final class Query
 	private $_having='';
 	private $_offset;
 	private $_limit=1;
-	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank'];
+	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank', 'show'];
 
 	public function database($database=null)
 	{

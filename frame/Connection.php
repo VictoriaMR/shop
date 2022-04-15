@@ -14,7 +14,7 @@ final class Connection
 		if ($this->_connect->connect_error) {
 			throw new \Exception('Connect Error ('.$this->_connect->connect_errno.') '.$this->_connect->connect_error, 1);
 		}
-		$this->_connect->set_charset($charset);
+		// $this->_connect->set_charset($charset);
 	}
 
 	public function setDb($db)
