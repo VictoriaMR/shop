@@ -222,3 +222,11 @@
 	position: relative;
 }
 #pdt_des_text .sku-attr input{width: 45%;}
+#crawler_page .attr-content {
+	width: calc(100% - 100px);
+	float: left;
+}
+#crawler_page .reload-attr-content {
+	width: 100px;
+	float: left;
+}

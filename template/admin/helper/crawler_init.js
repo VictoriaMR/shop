@@ -58,7 +58,7 @@ const CRAWLERINIt = {
 	},
 	crawlerPageinit: function(info) {
 		const _this = this;
-		getCrawData(function(code, data, message) {
+		CRAWLER.data(function(code, data, message){
 			console.log(code, data, message)
 			if (code === 0) {
 				_this.crawlerPage(info, data);
@@ -71,6 +71,7 @@ const CRAWLERINIt = {
 	crawlerPage: function(info, data) {
 		const _this = this;
 		_this.category = info.site_category;
+		console.log(data)
 		_this.site = info.site;
 		let crawlerPage = document.getElementById('item-content');
 		let count = 0;
@@ -126,7 +127,7 @@ const CRAWLERINIt = {
 						<div class="productAttLine">
 							<div class="label">邮费:</div>
 							<div class="fill_in">
-								<input name="bc_post_fee" value="" placeholder="邮费">
+								<input name="bc_post_fee" value="`+data.post_fee+`" placeholder="邮费">
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -158,6 +159,21 @@ const CRAWLERINIt = {
 							</div>
 							<div class="clear"></div>
 						</div>`;
+		// 属性分区
+		if (data.attr) {
+			html += `<div class="productAttLine">
+						<div class="picTitle" style="margin-bottom: 0;">产品属性名：</div>
+						<div class="attr-content">`;
+			for (var i in data.attr){
+				html += `<input type="text" name="bc_product_attr[]" value="` + data.attr[i].attrName + `" />`
+			}
+			html += `</div>
+					<div class="reload-attr-content">
+						<button id="reload-attr-btn">确定</button>
+					</div>
+					<div class="clear"></div>
+					</div>`;
+		}
 		if (data.multi_sku) {
 			//sku
 			html += `<div class="productAttLine">

@@ -269,12 +269,12 @@ class Spu extends Base
 		$data['bc_post_fee'] = empty($data['bc_post_fee']) ? 0 : $data['bc_post_fee'];
 		if (empty($info)) {
 			//价格合集
+			$priceArr = [];
 			foreach ($data['bc_sku'] as $key => $value) {
-				$price = $this->getPrice($value['price']+$data['bc_post_fee']);
+				$price = $value['price']+$data['bc_post_fee'];
 				$data['bc_sku'][$key]['sale_price'] = $price;
-				$data['bc_sku'][$key]['original_price'] = $this->getOriginalPrice($price);
+				$priceArr[] = $price;
 			}
-			$priceArr = array_column($data['bc_sku'], 'sale_price');
 			$insert = [
 				'status' => 0,
 				'site_id' => $data['bc_product_site'],
@@ -294,7 +294,7 @@ class Spu extends Base
 				'item_id' => $data['bc_product_id'],
 				'item_url' => $data['bc_product_url'],
 				'shop_id' => make('app/service/supplier/Shop')->addNotExist(['url'=>$data['bc_shop_url'], 'name'=>$data['bc_shop_name']]),
-				'postage' => $data['bc_post_fee'],
+				'post_fee' => $data['bc_post_fee'],
 				'weight' => (int)($data['bc_product_weight'] ?? 0),
 				'volume' => $data['bc_product_volume'] ?? '',
 			];
