@@ -169,7 +169,8 @@ const CRAWLERINIt = {
 			}
 			html += `</div>
 					<div class="reload-attr-content">
-						<button id="reload-attr-btn">确定</button>
+						<input type="text" id="attr-break" value="" placeholder="属性分割">
+						<button type="button" id="reload-attr-btn">确定</button>
 					</div>
 					<div class="clear"></div>
 					</div>`;
@@ -461,9 +462,8 @@ const CRAWLERINIt = {
 		if (formobj) {
 			let formData = new FormData(formobj);
 			return Object.fromEntries(formData.entries());
-		} else {
-			return {};
 		}
+		return {};
 	},
 	initPdtImgValue: function(pobj) {
 		let imgValueObj = pobj.querySelector('.bc_product_picture');
@@ -488,6 +488,9 @@ const CRAWLERINIt = {
 		}
 	},
 	formatStr: function(str) {
+		if (typeof str === 'undefined') {
+			return '';
+		}
 		const arr = {
 			'   ': ' ',
 			'（': '(',

@@ -1,1 +1,1 @@
-<p class="mt4 pb6 tc txt-footer"><?php echo appT('copyright');?> ©<?php echo '2020-'.date('Y');?> <?php echo strtoupper(\App::get('site_name'));?> <?php echo appT('all_rights');?></p>
+<p class="mt4 pb6 tc txt-footer"><?php echo appT('copyright');?> ©<?php echo '2020-'.date('Y');?> <?php echo strtoupper(\App::get('site_name') ?? '');?> <?php echo appT('all_rights');?></p>

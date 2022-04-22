@@ -38,8 +38,8 @@ var CRAWLER = {
         return ret;
     },
     itemIdStr: function(str) {
-        str = str.substring(1);//去掉?
-        var param = str.split('&');//以&切割
+        str = str.substring(1);
+        var param = str.split('&');
         for(var k in param){
             if(param[k].substring(0,3)=='id='){
                 return param[k].substring(3);
@@ -51,13 +51,13 @@ var CRAWLER = {
         var ret = false;
         switch (this.domain) {
             case '1688.com':
-                ret = document.querySelector('.captcha-tips').length > 0;
+                ret = document.querySelector('#nocaptcha');
                 break;
             case 'taobao.com':
-                // todo
+                ret = document.querySelector('#nocaptcha');
                 break;
             case 'tmall.com':
-                //todo
+                ret = document.querySelector('#nocaptcha');
                 break;
         }
         return ret;
@@ -66,25 +66,34 @@ var CRAWLER = {
         var ret = false;
         switch (this.domain) {
             case '1688.com':
-                ret = document.querySelector('.mod-detail-offline-title').length>0;
+                ret = document.querySelector('.mod-detail-offline-title');
                 break;
             case 'taobao.com':
-                ret = document.querySelector('.tb-off-sale').length>0;
+                ret = document.querySelector('.tb-off-sale');
                 if (!ret) {
-                    ret = document.querySelector('.tb-btn-buy .tb-disabled').length>0;
+                    ret = document.querySelector('.tb-btn-buy .tb-disabled');
                 }
                 break;
             case 'tmall.com':
-                ret = document.querySelector('.sold-out-recommend').length>0;
+                ret = document.querySelector('.sold-out-recommend');
                 if (!ret) {
-                    ret = document.querySelector('.tb-btn-wait').length>0;
+                    ret = document.querySelector('.tb-btn-wait');
                 }
                 if (!ret) {
-                    ret = document.querySelector('.errorDetail').length>0;
+                    ret = document.querySelector('.errorDetail');
                 }
                 break;
         }
         return ret;
+    },
+    isDescPic: function(src) {
+        var ignore = ['img.taobao.com', 'ma.m.1688.com', 'amos.alicdn.com', 'alisoft.com', 'add_to_favorites.htm', 'img.alicdn.com/NewGualianyingxiao'];
+        for(var i=0; i<ignore.length; i++){
+            if(src.indexOf(ignore[i])!=-1){
+                return false;
+            }
+        }
+        return true;
     },
     data: function(callback) {
         this.init();
@@ -113,23 +122,24 @@ var CRAWLER = {
         }
     },
     get1688: function(callback) {
-        if (!iDetailData && !window.__INIT_DATA) {
+        if (typeof iDetailData === 'undefined' && typeof window.__INIT_DATA == 'undefined') {
             callback(-1, {}, '获取数据失败!请记录当前链接联系开发人员.');
             return false;
         }
         var _this = this;
-        var type = 2;
-        if (iDetailData) {
-            type = 1;
+        var type = 1;
+        if (typeof iDetailData === 'undefined') {
+            type = 2;
         }
 
+        let multi_sku=0;
+        let pdt_picture = [];
         var name = '';
-        var pdt_picture = [];
         if (type == 2) {
             name = window.__GLOBAL_DATA.tempModel.offerTitle;
             for (var i in window.__INIT_DATA.globalData.images) {
                 if (typeof window.__INIT_DATA.globalData.images[i].fullPathImageURI !== 'undefined' && window.__INIT_DATA.globalData.images[i].fullPathImageURI) {
-                    pic.push(window.__INIT_DATA.globalData.images[i].fullPathImageURI);
+                    pdt_picture.push(window.__INIT_DATA.globalData.images[i].fullPathImageURI);
                 }
             }
         } else {
@@ -145,9 +155,30 @@ var CRAWLER = {
             }
         }
 
-        let multi_sku=0;
-        let name = name;
-        let pdt_picture = pdt_picture;
+        
+        if (pdt_picture.length == 0) {
+            var obj = document.querySelectorAll('#dt-tab li');
+            if (obj.length>0) {
+                for (var i = 0; i < obj.length; i++) {
+                    var imgdata = obj[i].getAttribute('data-imgs');
+                    if (imgdata) {
+                        imgdata = JSON.parse(imgdata);
+                        pdt_picture.push(imgdata.original);
+                    }
+                }
+            }
+        }
+        if (pdt_picture.length == 0) {
+            obj=document.querySelectorAll('.img-list-wrapper img.detail-gallery-img');
+            if (obj.length>0) {
+                for (var i = 0; i < obj.length; i++) {
+                    var imgdata = obj[i].getAttribute('src');
+                    if (imgdata) {
+                        pdt_picture.push(imgdata);
+                    }
+                }
+            }
+        }
         let attr={};
         let sku={};
         //多sku
@@ -167,7 +198,6 @@ var CRAWLER = {
                 }
                 attr[attrNameId]={attrName:attrName,attrValue:attrValue};
             }
-            attr_uid = generalUniqueAttrId(attr);
             let skuMap=iDetailData.sku.skuMap;
             for(let k in skuMap){
                 let item=skuMap[k];
@@ -177,8 +207,8 @@ var CRAWLER = {
                 let pvs={};
                 let sku_img='';
                 for(let j=0;j<sku_attr.length;j++){
-                    let attrNameAndImg=get1688AttrNameAndImg(sku_attr[j],attr);
-                    pvs[attrNameAndImg['attrName']]={attr_id:attr_uid['attr_value'][sku_attr[j]],text:sku_attr[j],img:attrNameAndImg['img'],sort:attrNameAndImg['sort']};
+                    let attrNameAndImg=_this.get1688Attr(sku_attr[j],attr);
+                    pvs[attrNameAndImg['attrName']]={text:sku_attr[j],img:attrNameAndImg['img'],sort:attrNameAndImg['sort']};
                     if(attrNameAndImg['img']){
                         sku_img=attrNameAndImg['img'];
                     }
@@ -202,7 +232,6 @@ var CRAWLER = {
                 }
                 attr[attrNameId]={attrName:attrName,attrValue:attrValue};
             }
-            attr_uid = generalUniqueAttrId(attr);
             let skuMap=window.__INIT_DATA.globalData.skuModel.skuInfoMap;
             for(let k in skuMap){
                 let item=skuMap[k];
@@ -211,8 +240,8 @@ var CRAWLER = {
                 let pvs={};
                 let sku_img='';
                 for(let j=0;j<sku_attr.length;j++){
-                    let attrNameAndImg=get1688AttrNameAndImg(sku_attr[j],attr);
-                    pvs[attrNameAndImg['attrName']]={attr_id:attr_uid['attr_value'][sku_attr[j]],text:sku_attr[j],img:attrNameAndImg['img'],sort:attrNameAndImg['sort']};
+                    let attrNameAndImg=_this.get1688Attr(sku_attr[j],attr);
+                    pvs[attrNameAndImg['attrName']]={text:sku_attr[j],img:attrNameAndImg['img'],sort:attrNameAndImg['sort']};
                     if(attrNameAndImg['img']){
                         sku_img=attrNameAndImg['img'];
                     }
@@ -257,18 +286,8 @@ var CRAWLER = {
         }
         ret_data.attributes = attributes;
         //获取描述图片
-        var des_picture = [];
-        ret_data['des_picture'] = des_picture;
         if (offer_details) {
-            var des_pic_craw=offer_details.content.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
-            for(let i=0;i<des_pic_craw.length;i++){
-                var src=des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
-                if(_this.isDescPic(src)){
-                    des_picture.push(src);
-                }
-            }
-            ret_data['des_picture']=des_picture;
-            callback(0, ret_data, '获取成功!');
+            _this.get1688DescPic(ret_data, callback);
         } else {
             var des_url = '';
             if (type == 2) {
@@ -288,33 +307,57 @@ var CRAWLER = {
                 script.charset = 'utf-8';
                 head.appendChild(script);
                 script.onload=script.onreadystatechange=function(){
-                    var des_pic_craw=offer_details.content.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
-                    for(let i=0;i<des_pic_craw.length;i++){
-                        var src=des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
-                        if(_this.isDescPic(src)){
-                            des_picture.push(src);
-                        }
-                    }
-                    ret_data['des_picture'] = des_picture;
-                    callback(0, ret_data,'获取成功!')
+                    _this.get1688DescPic(ret_data, callback);
                 };
             } else {
+                ret_data['des_picture'] = [];
                 callback(0, ret_data, '获取成功!');
             }
         }
+    },
+    get1688Attr: function(attrValue,attr) {
+        for(let k in attr){
+            for(let j in attr[k]['attrValue']){
+                if(attr[k]['attrValue'][j].name==attrValue){
+                    return {attrName:attr[k].attrName,img:attr[k]['attrValue'][j].img,sort:attr[k]['attrValue'][j].sort};
+                }
+            }
+        }
+    },
+    get1688DescPic: function(ret_data, callback) {
+        var des_picture = [];
+        var des_pic_craw = offer_details.content.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
+        for(let i=0; i<des_pic_craw.length; i++){
+            var src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
+            if (this.isDescPic(src)) {
+                des_picture.push(src);
+            }
+        }
+        ret_data['des_picture'] = des_picture;
+        callback(0, ret_data,'获取成功!');
     },
     getTaobao: function(callback) {
         if (typeof Hub === 'undefined') {
             callback(-1, {}, '获取数据失败.');
             return false;
         }
+        var _this = this;
         let multi_sku=0;
-        let name = getTaobaoProductName();
-        let pdt_picture = getTaobaoPdtPicture();
-        let skuDomList=document.querySelectorAll('.J_Prop');
+        let name = '';
+        var obj = document.querySelector('#J_Title h3');
+        if (obj) {
+            name = obj.innerText;
+        }
+        let pdt_picture = [];
+        obj = document.querySelectorAll('#J_UlThumb li img');
+        for (var i = 0; i < obj.length; i++) {
+            imgdata = obj[i].getAttribute('data-src');
+            if (imgdata) {
+                pdt_picture.push(imgdata.replace('_50x50.jpg', ''));
+            }
+        }
         let attr={};
         let sku={};
-        let attr_uid = {};
         if(Hub.config.config.sku.valItemInfo.skuMap){
             //多sku产品
             let interval = setInterval(function() {
@@ -322,6 +365,7 @@ var CRAWLER = {
                     clearInterval(interval);
                     multi_sku=1;
                     let sort = 0;
+                    let skuDomList=document.querySelectorAll('.J_Prop');
                     for(let k=0;k<skuDomList.length;k++){
                         let attrName=skuDomList[k].getElementsByTagName('dt')[0].innerText;//属性名
                         let attrValue={};
@@ -342,7 +386,6 @@ var CRAWLER = {
                         }
                         attr[attrNameId]={attrName:attrName,attrValue:attrValue};
                     }
-                    attr_uid = generalUniqueAttrId(attr);
                     for(let k in Hub.config.config.sku.valItemInfo.skuMap){
                         let item=Hub.config.config.sku.valItemInfo.skuMap[k];
                         let stock;
@@ -366,7 +409,7 @@ var CRAWLER = {
                             }
                             sort = attr[attr_item[0]]['attrValue'][attr_item[1]].sort;
                             let text = attr[attr_item[0]]['attrValue'][attr_item[1]].name;
-                            pvs[attr[attr_item[0]].attrName]={attr_id:attr_uid['attr_value'][text],text:text,img:sku_img,sort:sort};
+                            pvs[attr[attr_item[0]].attrName]={text:text,img:sku_img,sort:sort};
                         }
                         let price;
                         if(typeof g_config.promotion !='undefined' && typeof g_config.promotion.promoData !='undefined' && typeof g_config.promotion.promoData[k] !='undefined'){
@@ -378,7 +421,7 @@ var CRAWLER = {
                         }
                         sku[item.skuId]={pvs:pvs,price:price,stock:stock,sku_img:sku_img};
                     }
-                    let ret_data={sku:sku,attr:attr,name:name,pdt_picture:pdt_picture,multi_sku:multi_sku,product_url: location.href,item_id:isItemPage(),attr_uid:attr_uid,pdt_video:''};
+                    let ret_data={sku:sku,attr:attr,name:name,pdt_picture:pdt_picture,multi_sku:multi_sku,product_url: location.href,item_id:_this.item_id};
                     const attributesDom = document.querySelectorAll('#attributes li');
                     let attributes = [];
                     for (let i=0; i<attributesDom.length;i++) {
@@ -389,9 +432,9 @@ var CRAWLER = {
                     var obj = document.querySelector('#J_WlServiceTitle')
                     ret_data.post_fee = 0;
                     if (obj) {
-                        ret_data.post_fee = obj.innerText.replace('快递 ¥', '');
+                        ret_data.post_fee = obj.innerText.replace('快递 ¥', '').replace('快递 免运费 ', '');
                     }
-                    getTaoBaoData(ret_data, callback);
+                    _this.getTaobaoDescPicData(ret_data, callback);
                 }
             }, 600);
         }else{
@@ -413,11 +456,7 @@ var CRAWLER = {
                     sku.stock = stockObj.innerText;
                 }
             }
-            if (sku.price==0 || sku.price=='' || sku.stock==0 || sku.stock=='') {
-                callback(-1, {}, '获取数据失败!没有获取到价格库存!');
-                return false;
-            }
-            let ret_data={sku:sku,attr:attr,name:name,pdt_picture:pdt_picture,multi_sku:multi_sku,product_url: location.href,item_id:isItemPage(),attr_uid:attr_uid,pdt_video:''};
+            let ret_data={sku:sku,attr:attr,name:name,pdt_picture:pdt_picture,multi_sku:multi_sku,product_url: location.href,item_id:_this.item_id};
             //获取描述属性
             const attributesDom = document.querySelectorAll('#attributes li');
             let attributes = [];
@@ -429,21 +468,160 @@ var CRAWLER = {
             var obj = document.querySelector('#J_WlServiceTitle')
             ret_data.post_fee = 0;
             if (obj) {
-                ret_data.post_fee = obj.innerText.replace('快递 ¥', '');
+                ret_data.post_fee = obj.innerText.replace('快递 ¥', '').replace('快递 免运费 ', '');
             }
-            getTaoBaoData(ret_data, callback);
+            _this.getTaobaoDescPicData(ret_data, callback);
         }
+    },
+    getTaobaoDescPicData: function(ret_data, callback) {
+        var _this = this;
+        if (desc) {
+            _this.getTaobaoDescPic(ret_data, callback);
+        } else {
+            var head = document.querySelector('head');
+            var script = document.createElement('script');
+            script.src = g_config.descUrl;
+            script.type = 'text/javascript';
+            script.charset = 'utf-8';
+            head.appendChild(script);
+            script.onload=script.onreadystatechange=function(){
+                _this.getTaobaoDescPic(ret_data, callback);
+            };
+        }
+    },
+    getTaobaoDescPic: function(ret_data, callback){
+        var des_picture = [];
+        var des_pic_craw=desc.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
+        for(let i=0;i<des_pic_craw.length;i++){
+            var src=des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
+            if(this.isDescPic(src)){
+                des_picture.push(src);
+            }
+        }
+        ret_data['des_picture'] = des_picture;
+        callback(0, ret_data, '获取成功!');
     },
     getTmall: function(callback) {
-
-    },
-    isDescPic: function(src) {
-        var ignore=["img.taobao.com","ma.m.1688.com","amos.alicdn.com","alisoft.com","add_to_favorites.htm","img.alicdn.com/NewGualianyingxiao"];
-        for(var i=0;i<ignore.length;i++){
-            if(src.indexOf(ignore[i])!=-1){
-                return false;
+        if(typeof KISSY =='undefined'){
+            callback(-1, {}, '获取数据失败!');
+            return false;
+        }
+        var _this = this;
+        let multi_sku=0;
+        let name = '';
+        var obj = document.querySelector('#J_DetailMeta .tb-detail-hd h1');
+        if (obj) {
+            name = obj.innerText;
+        }
+        let pdt_picture = [];
+        obj = document.querySelectorAll('#J_UlThumb li img');
+        for (var i = 0; i < obj.length; i++) {
+            var imgdata = obj[i].src.replace('_60x60q90.jpg', '');
+            if (imgdata) {
+                pdt_picture.push(imgdata);
             }
         }
-        return true;
-    }
+        let sku={};
+        let attr={};
+        KISSY.use('detail-model/product',function(e,t){
+            let skuMap = t.instance()['__attrVals']['skuMap'];
+            if(!skuMap){
+                callback(-1, {}, '获取列表失败！');
+                return false;
+            }
+            let skuProp = t.instance()['__attrVals']['skuProp'];
+            if(typeof skuProp=='undefined'){
+                callback(-1, {}, '获取数据失败！');
+                return false;
+            }
+            let skuDomList=document.querySelectorAll('.tb-prop.tm-sale-prop dd li');
+            var sortArr = [];
+            multi_sku=1;
+            let tmpSort = 0;
+            for(let k=0;k<skuDomList.length;k++) { // 记录属性的sort
+                let value = skuDomList[k].attributes['data-value'].nodeValue;
+                sortArr[value] = tmpSort;
+                tmpSort++;
+            }
+            
+            let propertyPics=t.instance()['__attrVals']['propertyPics'];
+            for(let attrNameId in skuProp){
+                let attrName;
+                let attrValue={};
+                for(let attrValueId in skuProp[attrNameId]){
+                    let img='';
+                    if(propertyPics && typeof propertyPics[';'+attrNameId+':'+attrValueId+';'] !='undefined' && typeof propertyPics[';'+attrNameId+':'+attrValueId+';'][0] !='undefined'){
+                        img=propertyPics[';'+attrNameId+':'+attrValueId+';'][0].replace('_40x40q90.jpg', '');
+                    }
+                    let sort=0;
+                    if(sortArr[attrNameId+':'+attrValueId] !='undefined'){
+                        sort=sortArr[attrNameId+':'+attrValueId];
+                    }
+                    attrName=skuProp[attrNameId][attrValueId].label;
+                    attrValue[attrValueId]={name:skuProp[attrNameId][attrValueId].text,img:img,sort:sort};
+                }
+                attr[attrNameId]={attrName:attrName,attrValue:attrValue};
+            }
+            for(let k in skuMap){
+                let item=skuMap[k];
+                let stock=t.instance()['__attrVals']['inventory']['skuQuantity'][item.skuId]['quantity'];
+                if(stock == 0){
+                    //跳过没库存产品
+                    continue;
+                }
+                let attr_arr=k.substr(1,k.length-2).split(';');
+                let pvs={};
+                let sku_img='';
+                let sort;
+                for(let i in attr_arr){
+                    let attr_item=attr_arr[i].split(':');
+                    if(!attr[attr_item[0]]||!attr[attr_item[0]]['attrValue'][attr_item[1]]){
+                        continue;
+                    }
+                    if(attr[attr_item[0]]['attrValue'][attr_item[1]].img){
+                        sku_img=attr[attr_item[0]]['attrValue'][attr_item[1]].img;
+                    }
+                    sort = attr[attr_item[0]]['attrValue'][attr_item[1]].sort;
+                    let text = attr[attr_item[0]]['attrValue'][attr_item[1]].name;
+                    pvs[attr[attr_item[0]].attrName]={text:text,img:sku_img,sort:sort};
+                }
+                let price=item.price;
+                sku[item.skuId]={pvs:pvs,price:price,stock:stock,sku_img:sku_img};
+                let priceInfo=t.instance()['__attrVals']['priceInfo'];
+                //有优惠价 覆盖
+                for(let k in priceInfo){
+                    if(typeof sku[k] !='undefined' && priceInfo[k].promotionList){
+                        sku[k].price=priceInfo[k].promotionList[0].price;
+                    }
+                }
+            }
+
+            let ret_data={sku:sku,attr:attr,name:name,pdt_picture:pdt_picture,multi_sku:multi_sku,product_url: location.href,item_id:_this.item_id};
+            //描述属性
+            let attributes = [];
+            const attributesDom = document.querySelectorAll('#J_AttrUL li');
+            for (let i=0; i<attributesDom.length; i++) {
+                const tempText = attributesDom[i].innerText.split(':');
+                attributes.push({name:tempText[0], value:tempText[1]});
+            }
+            ret_data.attributes = attributes;
+            _this.getTmallDescPicData(ret_data, callback, t.instance()['__attrVals'].config.api.httpsDescUrl);
+        });
+    },
+    getTmallDescPicData: function(ret_data, callback, url) {
+        var _this = this;
+        if(typeof desc === 'undefined'){
+            var head = document.querySelector('head');
+            var script = document.createElement('script');
+            script.src = url;
+            script.type = 'text/javascript';
+            script.charset = 'utf-8';
+            head.appendChild(script);
+            script.onload=script.onreadystatechange=function(){
+                _this.getTaobaoDescPic(ret_data, callback);
+            };
+        }else{
+            _this.getTaobaoDescPic(ret_data, callback);
+        }
+    },
 };
