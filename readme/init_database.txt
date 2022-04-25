@@ -1064,9 +1064,9 @@ CREATE TABLE `admin_logger` (
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-DROP TABLE IF EXISTS `visitor_log`;
+DROP TABLE IF EXISTS `visitor_logger`;
 
-CREATE TABLE `visitor_log` (
+CREATE TABLE `visitor_logger` (
   `log_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT '主键ID',
   `site_id` tinyint(3) NOT NULL DEFAULT '0' COMMENT '站点ID',
   `mem_id` int(11) NOT NULL DEFAULT '0' COMMENT '用户ID',

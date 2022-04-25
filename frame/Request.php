@@ -11,20 +11,12 @@ class Request
 
 	public function isAjax()
 	{
-		if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest') !== false) {
-			return true;
-		} else {
-			return $this->input('is_ajax', false);
-		}
+		return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false) || input('is_ajax', false);
 	}
 
 	public function isMobile()
 	{
-		if (isset($_SERVER['HTTP_VIA']) && stristr($_SERVER['HTTP_VIA'], 'wap')) return true;
-		if (isset($_SERVER['HTTP_X_WAP_PROFILE']) || isset($_SERVER['HTTP_PROFILE'])) return true;
-		if (isset($_SERVER['HTTP_ACCEPT']) && stripos($_SERVER['HTTP_ACCEPT'], 'V ND.WAP.WML')) return true;
-		if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/(blackberry|configuration\/cldc|hp |hp-|htc |htc_|htc-|iemobile|kindle|midp|mmp|motorola|mobile|nokia|opera mini|opera |Googlebot-Mobile|YahooSeeker\/M1A1-R2D2|android|iphone|ipod|mobi|palm|palmos|pocket|portalmmm|ppc;|smartphone|sonyericsson|sqh|spv|symbian|treo|up\.browser|up\.link|vodafone|windows ce|xda |xda_)/i', $_SERVER['HTTP_USER_AGENT'])) return true;
-		return false;
+		return isset($_SERVER['HTTP_USER_AGENT'])&&preg_match('/(android|phone|mobile|iphone|ipod|ipad|mobi|tablet|touch|aarch64|kfapwi)/i', $_SERVER['HTTP_USER_AGENT']);
 	}
 
 	public function ipost($name='', $default=null)

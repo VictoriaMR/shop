@@ -2,7 +2,7 @@
 return [
 	'newsme.cn' => [
 		'type' => 'home',
-		'cache' => false,
+		'cache' => true,
 		'view_suffix' => 'html',
 		'path' => 'newsme',
 		'name' => 'NewsME® - Clothes',

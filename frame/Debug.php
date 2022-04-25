@@ -47,8 +47,6 @@ class Debug
 				case 'sql':
 					$trace[$title] = $GLOBALS['exec_sql'] ?? '';
 					break;
-				default:
-					break;
 			}
 		}
 		$object = make('frame/View');

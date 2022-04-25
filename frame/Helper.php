@@ -76,9 +76,11 @@ function isJson($string){
 	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
 }
 function isAjax(){
+	return \App::make('frame/Request')->isMobile();
 	return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false) || input('is_ajax', false);
 }
 function isMobile(){
+	return \App::make('frame/Request')->isMobile();
 	return isset($_SERVER['HTTP_USER_AGENT'])&&preg_match('/(android|phone|mobile|iphone|ipod|ipad|mobi|tablet|touch|aarch64|kfapwi)/i', $_SERVER['HTTP_USER_AGENT']);
 }
 function ipost($name='', $default=null){

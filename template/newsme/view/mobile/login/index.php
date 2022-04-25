@@ -1,6 +1,6 @@
 <div id="login-page">
 	<a href="javascript:;" onclick="window.history.back(-1);" class="iconfont icon-guanbi1"></a>
-	<div class="login mt32">
+	<form class="login mt32">
 		<div class="title">
 			<p>LOG IN</p>
 		</div>
@@ -53,8 +53,8 @@
 				</div>
 			</div>
 		</div>
-	</div>
-	<div class="register mt32 hide">
+	</form>
+	<form class="register mt32 hide">
 		<div class="title">
 			<p>CREATE AN ACCOUNT</p>
 		</div>
@@ -68,13 +68,13 @@
 			<div class="password mt18">
 				<p class="name">Password</p>
 				<div class="group">
-					<input type="password" name="password" class="input" autocomplete="off" />
+					<input type="password" name="password" class="input" autocomplete="off" placeholder="Please input your password" />
 				</div>
 			</div>
 			<div class="repassword mt18">
 				<p class="name">Confirm Password</p>
 				<div class="group">
-					<input type="password" name="repassword" class="input" autocomplete="off" />
+					<input type="password" name="repassword" class="input" autocomplete="off" placeholder="Please input your password again"/>
 				</div>
 			</div>
 			<div class="mt18 agreement">
@@ -87,7 +87,7 @@
 				<span class="change-login-sign">Had an Account?</pspan>
 			</div>
 		</div>
-	</div>
+	</form>
 </div>
 <?php if (!empty($error)) {?>
 <div id="message-tips" class="error top">

@@ -227,10 +227,15 @@
 }
 #pdt_des_text .sku-attr input{width: 45%;}
 #crawler_page .attr-content {
-	width: calc(100% - 100px);
+	width: calc((100% - 100px) / 3);
 	float: left;
+	padding-right: 12px;
 }
 #crawler_page .reload-attr-content {
 	width: 100px;
 	float: left;
+}
+#crawler_page .attr-content input,
+#crawler_page .reload-attr-content input {
+	margin-bottom: 5px;
 }
