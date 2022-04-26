@@ -201,7 +201,7 @@ class SiteMap extends TaskDriver
 		$filePath = $this->getPath();
 		if (empty($filePath)) return false;
 		if (!is_dir($filePath)) {
-			mkdir($filePath, 0777, true);
+			mkdir($filePath, 0755, true);
 		}
 		//自动命名
 		if (empty($name)) {

@@ -90,7 +90,7 @@ class Html
 				$str .= trim(file_get_contents($source));
 			}
 		}
-		if (!is_dir($path.'static')) mkdir($path.'static', 0777, true);
+		if (!is_dir($path.'static')) mkdir($path.'static', 0755, true);
 		file_put_contents($path.$file, $str);
 		return $file;
 	}

@@ -21,7 +21,7 @@ class File
 			$path = ROOT_PATH.config('env.FILE_CENTER').DS.$cate.DS;
 			//创建目录
 			if (!is_dir($path)) {
-				mkdir($path, 0777, true);
+				mkdir($path, 0755, true);
 			}
 			$saveUrl = $path.$name.'.'.$ext;
 			$result = move_uploaded_file($file['tmp_name'], $saveUrl);
@@ -65,12 +65,12 @@ class File
 		}
 		$dir = ROOT_PATH.config('env.FILE_CENTER').DS;
 		if (!is_dir($dir)) {
-			mkdir($dir, 0777, true);
+			mkdir($dir, 0755, true);
 		}
 		$path = $dir.$cate.DS;
 		//创建目录
 		if (!is_dir($path)) {
-			mkdir($path, 0777, true);
+			mkdir($path, 0755, true);
 		}
 		$http = make('frame/Http');
 		$attachmentService = make('app/service/attachment/Attachment');

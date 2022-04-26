@@ -114,7 +114,7 @@ class Image
 
 		$dirPath = dirname($moveto);
 		if (!is_dir($dirPath)) {
-			mkdir($dirPath, 0777, true);
+			mkdir($dirPath, 0755, true);
 		}
 
 		$imagefunc($returnPic, $moveto);
@@ -138,7 +138,7 @@ class Image
 
 		$movetoPath = pathinfo($moveto, PATHINFO_DIRNAME);
 		if (!is_dir($movetoPath)) {
-			mkdir($movetoPath, 0777, true);
+			mkdir($movetoPath, 0755, true);
 		}
 
 		if ($srcImageWidth == $outputWidth && $srcImageHeight == $outputHeight) {
@@ -206,7 +206,7 @@ class Image
 		imagecopyresampled($returnPic, $srcImage, $dst_x + $diff_x, $dst_y + $diff_y, $src_x, $src_y, $real_w, $real_h, $src_w, $src_h);
 		$dirPath = dirname($moveto);
 		if (!is_dir($dirPath)) {
-			mkdir($dirPath, 0777, true);
+			mkdir($dirPath, 0755, true);
 		}
 		$imagefunc($returnPic, $moveto);
 		imagedestroy($returnPic);
