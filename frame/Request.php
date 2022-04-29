@@ -11,7 +11,7 @@ class Request
 
 	public function isAjax()
 	{
-		return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false) || input('is_ajax', false);
+		return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false)||input('is_ajax', false);
 	}
 
 	public function isMobile()

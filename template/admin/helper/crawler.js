@@ -285,8 +285,34 @@ var CRAWLER = {
             }
         }
         ret_data.attributes = attributes;
+        //店铺属性
+        var shop_name='',shop_id,shop_url='';
+        if(typeof iDetailConfig != 'undefined'){
+            var obj = document.querySelector('meta[property="og:product:nick"]');
+            if(obj){
+                shop_name=obj.content.match(/name=(.*);/)[1];
+            }
+            shop_id=iDetailConfig.memberid;
+            shop_url=iDetailConfig.companySiteLink;
+        }else if(typeof window.__GLOBAL_DATA !='undefined'){
+            var globalData = JSON.parse(window.__GLOBAL_DATA.offerDomain);
+            if (typeof globalData.sellerModel != 'undefined') {
+                shop_name = globalData.sellerModel.companyName;
+                shop_id = globalData.sellerModel.memberId;
+                shop_url = globalData.sellerModel.winportUrl;
+            }
+        }
+        ret_data.shop_name = shop_name;
+        ret_data.shop_id = shop_id;
+        ret_data.shop_url = shop_url;
+        ret_data.post_fee = 0;
+        var obj = document.querySelector('.logistics-express-price');
+        if (obj) {
+            ret_data.post_fee = obj.innerText;
+        }
+
         //获取描述图片
-        if (offer_details) {
+        if (typeof offer_details != 'undefined') {
             _this.get1688DescPic(ret_data, callback);
         } else {
             var des_url = '';
