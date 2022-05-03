@@ -148,7 +148,7 @@ const CRAWLERINIt = {
 						<div class="productAttLine">
 							<div class="label">产品名称:</div>
 							<div class="fill_in">
-								<input name="bc_product_name" value="` + data.name + `" />
+								<input name="bc_product_name" value="` + _this.nameFormat(data.name) + `" />
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -297,15 +297,30 @@ const CRAWLERINIt = {
 			}
 			html += `</div></div>`;
 		}
+		var attributes = {};
 		if (data.attributes.length > 0) {
+			var ignoreArr = _this.attrIgnore();
+			for (let i=0; i<data.attributes.length; i++) {
+				var check = false;
+				for (let j=0; j<ignoreArr.length; j++) {
+					if (data.attributes[i].name.indexOf(ignoreArr[j])>=0 && !check) {
+						check = true;
+					}
+				}
+				if (!check) {
+					attributes[data.attributes[i].name] = data.attributes[i].value;
+				}
+			}
+		}
+		if (attributes) {
 			html += `<div class="clear"></div>
 							<div class="productMainPic">
 								<div class="picTitle">产品描述属性：</div>
 								<div id="pdt_des_text">`;
-			for (let i=0; i<data.attributes.length; i++) {
+			for (var i in attributes) {
 				html += `<div class="sku-attr">
-							<input type="text" name="bc_des_text[`+i+`][key]" value="`+_this.formatStr(data.attributes[i].name)+`"> - 
-							<input type="text" name="bc_des_text[`+i+`][value]" value="`+_this.formatStr(data.attributes[i].value)+`">
+							<input type="text" name="bc_des_text[`+i+`][key]" value="`+_this.formatStr(i)+`"> - 
+							<input type="text" name="bc_des_text[`+i+`][value]" value="`+_this.formatStr(attributes[i])+`">
 							<div class="cancel-btn">x</div>
 						</div>`;
 			}
@@ -314,6 +329,16 @@ const CRAWLERINIt = {
 		html += '</form>';
 		html += `<div class="postProduct" id="postProduct-btn">上传产品</div>`;
 		document.getElementById('item-content').innerHTML = html;
+	},
+	nameFormat: function(name) {
+		var arr = ['跨境', '亚马逊', '欧美'];
+		for (var i=0; i<arr.length; i++) {
+			name = name.replace(arr[i], '');
+		}
+		return name;
+	},
+	attrIgnore: function() {
+		return ['来源', '货源', '产地', '库存', '货号', '品牌', '下游', '销售', '跨境', '成分2'];
 	},
 	clickInit: function() {
 		const _this = this;

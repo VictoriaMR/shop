@@ -17,7 +17,6 @@ class Queue extends TaskDriver
 		if ($service->count()) {
 			$data = $service->getInfo();
 			$func = $data['method'];
-			dd($data);
 			$rst = make($data['class'])->$func($data['param']);
 			if ($rst) {
 				// $service->pop();
