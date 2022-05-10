@@ -23,21 +23,21 @@ const CRAWLERINIt = {
 	},
 	bodyPageInit: function() {
 		const _this = this;
-		let bodyPage = document.getElementById('crawler_page');
+		let bodyPage = document.getElementById('crawler-page');
 		if (!bodyPage) {
 			let body = document.querySelector('body');
 			bodyPage = document.createElement('div');
-			bodyPage.id = 'crawler_page';
+			bodyPage.id = 'crawler-page';
 			body.appendChild(bodyPage);
-			const html = '<div class="top-content">\
-							<div class="crawler-button">\
-								<button onclick="CRAWLERINIt.reload_crawlerPage()">刷新</button>\
-								<button id="clawler-after-btn">跳过</button>\
-								<span class="error-msg"></span>\
-							</div>\
-							<button id="crawler-show-btn">展开</button>\
-						</div>\
-						<div id="item-content"></div>';
+			const html = `<div class="top-content">
+							<div class="button-content">
+								<button class="hide" onclick="CRAWLERINIt.reloadPage()">刷新</button>
+								<button onclick="CRAWLERINIt.goNext()" class="hide">跳过</button>
+								<button id="crawler-show-btn" onclick="CRAWLERINIt.openClose(this)" class="right">展开</button>
+							</div>
+							<div class="error-msg"></div>
+						</div>
+						<div id="item-content"></div>`;
 			bodyPage.innerHTML = html;
 			HELPERINIT.request({action: 'getCache', cache_key: 'crawler_show_status'}, function(res) {
 				_this.crawlerPageShow(res.data === '1' ? '1' : 0);
@@ -45,25 +45,69 @@ const CRAWLERINIt = {
 		}
 		return bodyPage;
 	},
+	reloadPage: function() {
+		//删除缓存
+		HELPERINIT.request({action: 'delCache', cache_key: 'crawler_data_cache'}, function() {
+			document.getElementById('googleHelper_crawler_js').remove();
+			document.getElementById('googleHelper_crawler_css').remove();
+			window.postMessage({ type: 'reload_page_css', value: 'googleHelper/crawler.css'}, "*");
+			window.postMessage({ type: 'reload_page_js', value: 'googleHelper/crawler.js'}, "*");
+		});
+	},
+	goNext: function() {
+		var _this = this;
+		let _thisobj = document.getElementById('clawler-after-btn');
+		if (_thisobj.className.indexOf('loading') !== -1) {
+			return false;
+		}
+		_thisobj.innerHTML = '数据发送中...';
+		_thisobj.classList.add('loading');
+		HELPERINIT.request({action: 'getCache', cache_key: 'reload_param_cache'}, function(res) {
+			if (res.code === '200') {
+				HELPERINIT.request({action: 'request', value: 'api/addAfter', param: res.data}, function(res) {
+					_this.error(res.message);
+					if (res.code === '200') {
+						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
+					}
+				});
+			} else {
+				_this.error('获取缓存数据失败');
+			}
+			_thisobj.classList.remove('loading');
+			_thisobj.innerHTML = '跳过';
+		});
+	},
+	openClose: function(e){
+		//展开/关闭详情
+		var _this = this;
+		var _thisobj = document.getElementById('crawler-show-btn');
+		let status = '0';
+		if (_thisobj.innerText === '展开') {
+			status = '1';
+		}
+		HELPERINIT.request({action:'setCache', cache_key:'crawler_show_status', value:status, expire:-1}, function(){
+			_this.crawlerPageShow(status);
+		});
+	},
+	error: function(msg) {
+		document.querySelector('#crawler-page .top-content .error-msg').innerText = msg;
+	},
 	crawlerPageShow: function(status) {
 		if (status === '1') {
 			document.getElementById('crawler-show-btn').innerText = '收起';
-			document.getElementById('item-content').style.display = 'block';
-			document.querySelector('.crawler-button').style.display = 'block';
+			document.getElementById('crawler-page').setAttribute('class', 'open');
 		} else {
 			document.getElementById('crawler-show-btn').innerText = '展开';
-			document.getElementById('item-content').style.display = 'none';
-			document.querySelector('.crawler-button').style.display = 'none';
+			document.getElementById('crawler-page').setAttribute('class', 'close');
 		}
 	},
 	crawlerPageinit: function(info) {
 		const _this = this;
 		CRAWLER.data(function(code, data, message){
-			console.log(code, data, message)
 			if (code === 0) {
 				_this.crawlerPage(info, data);
 			} else {
-				document.getElementById('item-content').innerHTML = '<div class="error-msg">'+message+'</div>';
+				_this.error(message);
 			}
 			_this.clickInit();
 		});
@@ -71,7 +115,6 @@ const CRAWLERINIt = {
 	crawlerPage: function(info, data) {
 		const _this = this;
 		_this.category = info.site_category;
-		console.log(data)
 		_this.site = info.site;
 		let crawlerPage = document.getElementById('item-content');
 		let count = 0;
@@ -164,9 +207,6 @@ const CRAWLERINIt = {
 			html += `<div class="productAttLine">
 						<div class="picTitle" style="margin-bottom: 0;">产品属性名：</div>
 						<div class="attr-content">`;
-			for (var i in data.attr){
-				html += `<input type="text" name="bc_product_attr[`+i+`]" value="` + data.attr[i].attrName + `" />`
-			}
 			html += `</div>
 					<div class="reload-attr-content">
 						<input type="text" id="attr-break" value="" placeholder="属性分割">
@@ -327,8 +367,22 @@ const CRAWLERINIt = {
 			html += `</div></div>`;
 		}
 		html += '</form>';
-		html += `<div class="postProduct" id="postProduct-btn">上传产品</div>`;
+		html += `<div class="post-product" id="post-product-btn">上传产品</div>`;
 		document.getElementById('item-content').innerHTML = html;
+		_this.initAttr(data.attr);
+	},
+	initAttr: function(attr) {
+		var obj = document.querySelector('.attr-content');
+		if (obj) {
+			var html = '';
+			for (var i in attr){
+				html += `<input type="text" name="bc_product_attr[`+i+`]" value="` + attr[i].attrName + `" />`;
+				for (var j in attr[i].attrValue) {
+					html += `<input type="text" class="value" name="bc_product_attr[`+attr[i].attrName+`]" value="` + attr[i].attrValue[j].name + `" />`;
+				}
+			}
+			obj.innerHTML = html;
+		}
 	},
 	nameFormat: function(name) {
 		var arr = ['跨境', '亚马逊', '欧美'];
@@ -343,7 +397,7 @@ const CRAWLERINIt = {
 	clickInit: function() {
 		const _this = this;
 		//上传产品按钮
-		let obj1 = document.getElementById('postProduct-btn');
+		let obj1 = document.getElementById('post-product-btn');
 		if (obj1) {
 			obj1.onclick = function () {
 				if (this.className.indexOf('loading') !== -1) {
@@ -359,33 +413,6 @@ const CRAWLERINIt = {
 					document.querySelector('.crawler-button .error-msg').innerText = res.message;
 					if (res.code === '200') {
 						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
-					}
-				});
-			}
-		}
-		let obj2 = document.getElementById('clawler-after-btn');
-		if (obj2) {
-			obj2.onclick = function () {
-				if (this.className.indexOf('loading') !== -1) {
-					return false;
-				}
-				let _thisobj = this;
-				_thisobj.innerHTML = '数据发送中...';
-				_thisobj.classList.add('loading');
-				HELPERINIT.request({action: 'getCache', cache_key: 'reload_param_cache'}, function(res) {
-					if (res.code === '200') {
-						HELPERINIT.request({action: 'request', value: 'api/addAfter', param: res.data}, function(res) {
-							_thisobj.classList.remove('loading');
-							_thisobj.innerHTML = '跳过';
-							document.querySelector('.crawler-button .error-msg').innerText = res.message;
-							if (res.code === '200') {
-								HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
-							}
-						});
-					} else {
-						document.querySelector('.crawler-button .error-msg').innerText = '获取缓存数据失败';
-						_thisobj.classList.remove('loading');
-						_thisobj.innerHTML = '跳过';
 					}
 				});
 			}
@@ -430,16 +457,6 @@ const CRAWLERINIt = {
 				}
 			}
 		}
-		//展开/关闭详情
-		document.getElementById('crawler-show-btn').onclick = function() {
-			let status = '0';
-			if (this.innerText === '展开') {
-				status = '1';
-			}
-			HELPERINIT.request({action:'setCache', cache_key:'crawler_show_status', value:status, expire:-1}, function(){
-				_this.crawlerPageShow(status);
-			});
-		}
 		//站点改变切换分类
 		let obj7 = document.querySelector('#crawler_page .bc_product_site');
 		if (obj7) {
@@ -448,15 +465,6 @@ const CRAWLERINIt = {
 				_this.getCategoryHtml(obj7.options[index].value);
 			}
 		}
-	},
-	reload_crawlerPage: function() {
-		//删除缓存
-		HELPERINIT.request({action: 'delCache', cache_key: 'crawler_data_cache'}, function() {
-			document.getElementById('googleHelper_crawler_js').remove();
-			document.getElementById('googleHelper_crawler_css').remove();
-			window.postMessage({ type: 'reload_page_css', value: 'googleHelper/crawler.css'}, "*");
-			window.postMessage({ type: 'reload_page_js', value: 'googleHelper/crawler.js'}, "*");
-		});
 	},
 	getSiteHtml: function() {
 		let html = '';
