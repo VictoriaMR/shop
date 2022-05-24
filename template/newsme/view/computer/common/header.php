@@ -18,5 +18,5 @@
 <?php }?></head>
 <body>
 <script type="text/javascript">
-const URI = '<?php echo APP_DOMAIN;?>';
+var URI = '<?php echo APP_DOMAIN;?>';
 </script>

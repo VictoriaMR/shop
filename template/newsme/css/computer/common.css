@@ -74,7 +74,7 @@ body {
 	background: #f5f5f5
 }
 .cover .left {
-	width: calc(100% - 200px);
+	width: calc(100% - 300px);
 	height: 35px;
 }
 .cover .left .desc-title {
@@ -84,7 +84,7 @@ body {
 	text-overflow: ellipsis;
 }
 .cover .right {
-	width: 200px;
+	width: 300px;
 	text-align: right;
 }
 .layer {
@@ -108,8 +108,15 @@ body {
 }
 .desc-title .userinfo {
 	display: inline;
-	padding-right: 20px;
+	padding: 0 14px 0 8px;
 	border-right: 2px solid #222;
+	overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.desc-title .userinfo:last-child {
+	border-right: none;
+	padding-right: 0px;
 }
 .input {
     width: 100%;

@@ -12,6 +12,8 @@
 				<?php } else {?>
 				<a class="userinfo" href="<?php echo url('login');?>">Registry</a>
 				<?php }?>
+				<a class="userinfo" href="javascript">English</a>
+				<a class="userinfo" href="javascript">USD</a>
 			</div>
 		</div>
 	</div>

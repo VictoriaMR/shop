@@ -20,6 +20,7 @@ class App
 		$baseInfo = self::get('base_info');
 		if (empty($baseInfo)) throw new \Exception($_SERVER['HTTP_HOST'].' was not exist!', 1);
 		//路由解析
+		define('IS_ADMIN', $baseInfo['type'] == 'admin');
 		$router = self::make('frame/Router')->analyze();
 		$router['class'] = $baseInfo['type'];
 		$router['view_suffix'] = $baseInfo['view_suffix'];
