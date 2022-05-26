@@ -54,36 +54,37 @@ class File
 	{
 		if (!in_array($cate, self::FILE_TYPE)) return false;
 		if (!is_array($urlArr)) $urlArr = [$urlArr];
-		$urlArr = array_flip($urlArr);
-		foreach ($urlArr as $key=>$value) {
-			$urlArr[$key] = md5($this->filterUrl($key));
+		$tempArr = [];
+		foreach ($urlArr as $value) {
+			if (empty($value)) continue;
+			$tempArr[$value] = md5($this->filterUrl($value));
 		}
-		$attachmentUrlService = make('app/service/attachment/Url');
-		$list = $attachmentUrlService->getListData(['url_md5'=>['in', array_values($urlArr)]]);
+		$urlArr = $tempArr;
+
+		$attachUrl = make('app/service/attachment/Url');
+		$http = make('frame/Http');
+		$attachment = make('app/service/attachment/Attachment');
+		$image = make('app/service/Image');
+
+		$list = $attachUrl->getListData(['url_md5'=>['in', $urlArr]], 'attach_id,url_md5');
 		if (!empty($list)) {
 			$list = array_column($list, 'attach_id', 'url_md5');
 		}
-		$dir = ROOT_PATH.config('env.FILE_CENTER').DS;
-		if (!is_dir($dir)) {
-			mkdir($dir, 0755, true);
-		}
-		$path = $dir.$cate.DS;
+		$path = ROOT_PATH.config('env', 'FILE_CENTER').DS.$cate.DS;
 		//创建目录
 		if (!is_dir($path)) {
 			mkdir($path, 0755, true);
 		}
-		$http = make('frame/Http');
-		$attachmentService = make('app/service/attachment/Attachment');
-		$imageService = make('app/service/Image');
+
 		$insert = [];
 		foreach ($urlArr as $key => $value) {
 			if (isset($list[$value])) {
 				$urlArr[$key] = $list[$value];
 			} else {
-				$url = $this->filterUrl($key);
+				$url = $key;
 				//生成临时文件
 				$ext = pathinfo($url, PATHINFO_EXTENSION);
-				$tempName = $dir.randString(32).'.'.$ext;
+				$tempName = $path.'temp_'.$value.'.'.$ext;
 				//获取文件
 				if (strpos($url, 'http') === false) {
 					$url = 'https:'.$url;
@@ -95,24 +96,24 @@ class File
 				}
 				if (file_put_contents($tempName, $result)) {
 					$name = md5_file($tempName);
-					$data = $attachmentService->getAttachmentByName($name);
+					$data = $attachment->getAttachmentByName($name);
 					if (empty($data)) {
 						$file = $path.$name.'.'.$ext;
 						//存入压缩文件
-						$imageService->compressImg($tempName, $file);
+						$image->compressImg($tempName, $file);
 						$data = [
 							'name' => $name,
 							'type' => $ext,
 							'cate' => $cate,
 						];
-						$attachId = $attachmentService->insertGetId($data);
+						$attachId = $attachment->insertGetId($data);
 						$data['attach_id'] = $attachId;
 						//图片缩略
 						if ($thumb) {
 							$thumb = ['600', '400', '200'];
 							foreach ($thumb as $tv) {
 								$to = $path.$name.DS.$tv.'.'.$ext;
-								$imageService->thumbImage($file, $to, $tv, $tv);
+								$image->thumbImage($file, $to, $tv, $tv);
 							}
 						}
 					}
@@ -128,7 +129,7 @@ class File
 				}
 			}
 		}
-		$attachmentUrlService->insert($insert);
+		$attachUrl->insert($insert);
 		return $urlArr;
 	}
 

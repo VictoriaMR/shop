@@ -3,11 +3,11 @@
 namespace app\service\attr;
 use app\service\Base;
 
-class ButeLanguage extends Base
+class NameLanguage extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/attr/ButeLanguage');
+		$this->baseModel = make('app/model/attr/NameLanguage');
 	}
 
 	public function setNxLanguage($id, $lanId, $name)

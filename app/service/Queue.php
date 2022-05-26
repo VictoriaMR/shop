@@ -4,9 +4,9 @@ namespace app\service;
 
 class Queue
 {
-	protected $key = 'frame-queue:list-data';
-	protected $failedKey = 'frame-queue:failed-list-data';
-	protected $node = 'frame-queue:list-info';
+	protected $key = 'frame:queue:list-data';
+	protected $failedKey = 'frame:queue:failed-list-data';
+	protected $node = 'frame:queue:list-info';
 
 	public function push($data, $first=false)
 	{

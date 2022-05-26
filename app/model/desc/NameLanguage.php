@@ -1,10 +1,10 @@
 <?php
 
-namespace app\model\attr;
+namespace app\model\desc;
 use app\model\Base;
 
-class DescriptionLanguage extends Base
+class NameLanguage extends Base
 {
-	protected $_table = 'description_language';
-	protected $_intFields = ['item_id', 'desc_id'];
+	protected $_table = 'desc_name_language';
+	protected $_intFields = ['item_id', 'descn_id'];
 }

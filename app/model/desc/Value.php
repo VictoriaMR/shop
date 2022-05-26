@@ -1,11 +1,11 @@
 <?php
 
-namespace app\model\attr;
+namespace app\model\desc;
 use app\model\Base;
 
-class Description extends Base
+class Value extends Base
 {
-	protected $_table = 'description';
-	protected $_primaryKey = 'desc_id';
-	protected $_intFields = ['desc_id', 'status'];
+	protected $_table = 'desc_value';
+	protected $_primaryKey = 'descv_id';
+	protected $_intFields = ['descv_id', 'status'];
 }

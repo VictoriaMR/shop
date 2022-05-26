@@ -5,7 +5,7 @@ use app\model\Base;
 
 class Value extends Base
 {
-	protected $_table = 'attrvalue';
-	protected $_primaryKey = 'attv_id';
-	protected $_intFields = ['attv_id', 'status'];
+	protected $_table = 'attr_value';
+	protected $_primaryKey = 'attrv_id';
+	protected $_intFields = ['attrv_id', 'status'];
 }

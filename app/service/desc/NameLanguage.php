@@ -1,13 +1,13 @@
 <?php 
 
-namespace app\service\attr;
+namespace app\service\desc;
 use app\service\Base;
 
-class DescriptionValueLanguage extends Base
+class NameLanguage extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/attr/DescriptionValueLanguage');
+		$this->baseModel = make('app/model/desc/NameLanguage');
 	}
 
 	public function setNxLanguage($id, $lanId, $name)

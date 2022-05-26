@@ -229,51 +229,62 @@ class Spu extends Base
 			}
 		}
 		if (empty($spuImageArr)) return false;
-
 		$allImageArr = $spuImageArr;
 		//属性组
-		$attribute = make('app/service/attr/Bute');
-		$attrvalue = make('app/service/attr/Value');
-		$attrArr = [];
+		$attrName = make('app/service/attr/Name');
+		$attrValue = make('app/service/attr/Value');
+		$descName = make('app/service/desc/Name');
+		$descValue = make('app/service/desc/Value');
+		$spuData = make('app/service/product/SpuData');
+		$file = make('app/service/File');
+
+		$attrNameArr = [];
 		$attrValueArr = [];
-		//获取属性|属性图片
+		//汇总属性|属性图片
 		$tempImageArr = [];
 		foreach ($data['bc_sku'] as $key => $value) {
 			if (!empty($value['img'])) {
 				$tempImageArr[] = $value['img'];
 			}
-			$attrArr = array_merge($attrArr, array_keys($value['attr']));
+			$attrNameArr = array_merge($attrNameArr, array_keys($value['attr']));
 			$attrValueArr = array_merge($attrValueArr, array_column($value['attr'], 'text'));
 			$tempImageArr = array_merge($tempImageArr, array_column($value['attr'], 'img'));
 		}
 		$allImageArr = array_unique(array_merge($allImageArr, array_filter($tempImageArr)));
-		$fileService = make('app/service/File');
-		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'product');
+		$allImageArr = $file->uploadUrlImage($allImageArr, 'product');
 
 		//转换成键值对
-		foreach ($attrArr as $key => $value) {
-			$attrArr[$key] = strtoupper(strTrim($value));
+		foreach ($attrNameArr as $key => $value) {
+			$attrNameArr[$key] = strtoupper(strTrim($value));
 		}
 		foreach ($attrValueArr as $key => $value) {
 			$attrValueArr[$key] = strtoupper(strTrim($value));
 		}
-		$attrArr = $attribute->addNotExist($attrArr);
-		$attrValueArr = $attrvalue->addNotExist($attrValueArr);
+		$attrNameArr = $attrName->addNotExist(array_unique($attrNameArr));
+		$attrValueArr = $attrValue->addNotExist(array_unique($attrValueArr));
+
+		//描述值
+		$descNameArr = [];
+		$descValueArr = [];
+		foreach($data['bc_des_text'] as $value) {
+			$descNameArr[] = strtoupper(strTrim($value['key']));
+			$descValueArr[] = strtoupper(strTrim($value['value']));
+		}
+		$descNameArr = $descName->addNotExist(array_unique($descNameArr));
+		$descValueArr = $descValue->addNotExist(array_unique($descValueArr));
 
 		$where = [
 			'item_id' => $data['bc_product_id'],
 			'supplier' => $data['bc_site_id'],
 		];	
-		$spuData = make('app/service/product/SpuData');
+		
 		$info = $spuData->loadData($where, 'spu_id');
-		$data['bc_post_fee'] = empty($data['bc_post_fee']) ? 0 : $data['bc_post_fee'];
+		$data['bc_post_fee'] = $data['bc_post_fee'] ?? 0; //邮费
 		if (empty($info)) {
 			//价格合集
 			$priceArr = [];
 			foreach ($data['bc_sku'] as $key => $value) {
-				$price = $value['price']+$data['bc_post_fee'];
-				$data['bc_sku'][$key]['sale_price'] = $price;
-				$priceArr[] = $price;
+				$priceArr[] = $value['price']+$data['bc_post_fee'];
 			}
 			$insert = [
 				'status' => 0,
@@ -281,9 +292,8 @@ class Spu extends Base
 				'gender' => $data['bc_product_gender'] ?? 0,
 				'cate_id' => $data['bc_product_category'],
 				'attach_id' => $allImageArr[$firstImage] ?? 0,
-				'min_price' => min($priceArr),
-				'max_price' => max($priceArr),
-				'original_price' => max(array_column($data['bc_sku'], 'original_price')), //虚拟原价
+				'min_price' => $this->getPrice(min($priceArr)),
+				'max_price' => $this->getPrice(max($priceArr)),
 			];
 			$this->start();
 			$spuId = $this->insertGetId($insert);
@@ -300,7 +310,7 @@ class Spu extends Base
 			];
 			$spuData->insert($insert);
 			//中文语言
-			make('app/service/product/Language')->insert(['spu_id'=>$spuId, 'lan_id'=>'zh', 'name'=>$data['bc_product_name']]);
+			make('app/service/product/Language')->insert(['spu_id'=>$spuId, 'name'=>$data['bc_product_name']]);
 			//spu图片组
 			$insert = [];
 			$count = 1;
@@ -320,15 +330,15 @@ class Spu extends Base
 			$sku = make('app/service/product/Sku');
 			$skuData = make('app/service/product/SkuData');
 			foreach ($data['bc_sku'] as $key => $value) {
-				if (empty($value['stock'])) continue;
+				$price = $this->getPrice($value['price']+$data['bc_post_fee']);
 				$insert = [
 					'spu_id' => $spuId,
-					'status' => 1,
+					'status' => $value['stock'] > 0 ? 1 : 0,
 					'site_id' => $data['bc_product_site'],
 					'attach_id' => empty($value['img']) ? 0 : $allImageArr[$value['img']] ?? 0,
 					'stock' => $value['stock'],
-					'price' => $value['sale_price'],
-					'original_price' => $value['original_price'],
+					'price' => $price,
+					'original_price' => $this->getOriginalPrice($price),
 				];
 				$skuId = $sku->insertGetId($insert);
 				$insert = [
@@ -343,8 +353,8 @@ class Spu extends Base
 				foreach ($value['attr'] as $k => $v) {
 					$insert[] = [
 						'sku_id' => $skuId,
-						'attr_id' => $attrArr[strtoupper(strTrim($k))],
-						'attv_id' => $attrValueArr[strtoupper(strTrim($v['text']))],
+						'attrn_id' => $attrNameArr[strtoupper(strTrim($k))],
+						'attrv_id' => $attrValueArr[strtoupper(strTrim($v['text']))],
 						'attach_id' => empty($v['img']) ? 0 : $allImageArr[$v['img']] ?? 0,
 						'sort' => $count++,
 					];
@@ -364,7 +374,7 @@ class Spu extends Base
 		$insert = [];
 		$count = 1;
 		$allImageArr = array_unique(explode(',', $data['bc_product_des_picture']));
-		$allImageArr = $fileService->uploadUrlImage($allImageArr, 'introduce', false);
+		$allImageArr = $file->uploadUrlImage($allImageArr, 'introduce', false);
 		foreach ($allImageArr as $value) {
 			$insert[$spuId.'-'.$value] = [
 				'spu_id' => $spuId,
@@ -373,34 +383,25 @@ class Spu extends Base
 			];
 		}
 		if (!empty($insert)) {
-			make('app/service/product/IntroduceUsed')->addIntroduceUsed($spuId, $insert);
+			make('app/service/product/IntroUsed')->addIntroUsed($spuId, $insert);
 		}
 
 		//spu介绍文本
-		$descArr = [];
 		$insert = [];
-		$descService = make('app/service/attr/Description');
-		$descArr = array_merge(array_column($data['bc_des_text'], 'key'), array_column($data['bc_des_text'], 'value'));
-		foreach ($descArr as $key => $value) {
-			$descArr[$key] = strtoupper(strTrim($value));
-		}
-		$descArr = $descService->addNotExist($descArr);
+		$count = 1;
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$nameId = $descArr[strtoupper(strTrim($value['key']))];
-			$valueId = $descArr[strtoupper(strTrim($value['value']))];
-			$uniqueid = $nameId.'-'.$valueId;
-			$insert[$uniqueid] = [
+			$nameId = $descNameArr[strtoupper(strTrim($value['key']))];
+			$valueId = $descValueArr[strtoupper(strTrim($value['value']))];
+			$insert[$nameId.'-'.$valueId] = [
 				'spu_id' => $spuId,
-				'name_id' => $nameId,
-				'value_id' => $valueId,
-				'sort' => $key+1,
+				'descn_id' => $nameId,
+				'descv_id' => $valueId,
+				'sort' => $count++,
 			];
 		}
 		if (!empty($insert)) {
-			make('app/service/product/DescriptionUsed')->addDescUsed($spuId, $insert);
+			make('app/service/product/DescUsed')->addDescUsed($spuId, $insert);
 		}
-		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
-		redis(2)->hDel($cacheKey, $data['bc_product_id']);
 		return true;
 	}
 

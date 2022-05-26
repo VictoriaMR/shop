@@ -3,22 +3,23 @@
 namespace app\service\attr;
 use app\service\Base;
 
-class Bute extends Base
+class Name extends Base
 {
-	const CACHE_KEY = 'product-attr:bute_cache:';
+	const CACHE_KEY = 'product:attr:name_cache:';
 
 	protected function getModel()
 	{
-		return $this->baseModel = make('app/model/attr/Bute');
+		return $this->baseModel = make('app/model/attr/Name');
 	}
 
 	public function addNotExist($nameArr)
 	{
 		if (empty($nameArr)) return false;
+		if (!is_array($nameArr)) $nameArr = [$nameArr];
 		$nameArr = array_unique($nameArr);
 		//获取已存在属性
-		$list = $this->getListData(['name'=>['in', $nameArr]], 'attr_id,name');
-		$list = array_column($list, 'attr_id', 'name');
+		$list = $this->getListData(['name'=>['in', $nameArr]], 'attrn_id,name');
+		$list = array_column($list, 'attrn_id', 'name');
 		$diffArr = array_diff($nameArr, array_keys($list));
 		if (empty($diffArr)) {
 			return $list;
@@ -28,9 +29,8 @@ class Bute extends Base
 			$tempArr[] = ['name' => $value];
 		}
 		$this->insert($tempArr);
-		$list = $this->getListData(['name'=>['in', $nameArr]], 'attr_id,name');
-		$list = array_column($list, 'attr_id', 'name');
-		return $list;
+		$tempArr = $this->getListData(['name'=>['in', $diffArr]], 'attrn_id,name');
+		return array_merge($list, array_column($tempArr, 'attrn_id', 'name'));
 	}
 
 	public function getList($where, $page=1, $size=20)

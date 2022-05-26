@@ -7,7 +7,7 @@ class AttrUsed extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/product/AttributeUsed');
+		$this->baseModel = make('app/model/product/AttrUsed');
 	}
 
 	public function getListById($skuId, $lanId=1, $simple=false)
@@ -106,18 +106,16 @@ class AttrUsed extends Base
 	{
 		if (empty($insert)) return false;
 		//获取已有的列表
-		$list = $this->getListData(['sku_id'=>$skuId], 'attr_id,attv_id');
+		$list = $this->getListData(['sku_id'=>$skuId], 'attrn_id,attrv_id');
 		if (!empty($list)) {
 			$tempData = [];
 			foreach ($list as $value) {
-				$tempData[$value['attr_id'].'-'.$value['attv_id']] = true;
+				$tempData[$value['attrn_id'].'-'.$value['attrv_id']] = true;
 			}
-			if (!empty($tempData)) {
-				if (!is_array(current($insert))) $insert = [$insert];
-				foreach ($insert as $key => $value) {
-					if (isset($tempData[$value['attr_id'].'-'.$value['attv_id']])) {
-						unset($insert[$key]);
-					}
+			if (!is_array(current($insert))) $insert = [$insert];
+			foreach ($insert as $key => $value) {
+				if (isset($tempData[$value['attrn_id'].'-'.$value['attrv_id']])) {
+					unset($insert[$key]);
 				}
 			}
 		}

@@ -3,14 +3,14 @@
 namespace app\service\product;
 use app\service\Base;
 
-class IntroduceUsed extends Base
+class IntroUsed extends Base
 {
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/product/IntroduceUsed');
+		$this->baseModel = make('app/model/product/IntroUsed');
 	}
 
-	public function addIntroduceUsed($spuId, array $data)
+	public function addIntroUsed($spuId, array $data)
 	{
 		$allAttachId = array_column($data, 'attach_id');
 		$list = $this->getListData(['spu_id'=>$spuId, 'attach_id'=>['in', $allAttachId]], 'attach_id');
