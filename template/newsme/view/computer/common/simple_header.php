@@ -1,5 +1,5 @@
 <div class="cover">
-	<div class="layer f16 f600">
+	<div class="layer f16 f500">
 		<div class="left">
 			<div class="desc-title">
 				<span>Discover endless dressing styles just right for you</span>
@@ -7,14 +7,12 @@
 		</div>
 		<div class="right">
 			<div class="desc-title">
-				<?php if (userId()){?>
-				<a class="userinfo" href="<?php echo url('userInfo');?>">Hello, <?php echo session()->get('home_info', 'name');?></a>
-				<?php } else {?>
-				<a class="userinfo" href="<?php echo url('login');?>">Registry</a>
-				<?php }?>
-				<a class="userinfo" href="javascript">English</a>
-				<a class="userinfo" href="javascript">USD</a>
+				<a class="userinfo pl8" href="javascript">USD</a>
+				<a class="userinfo border-right pr8 pl8" href="javascript">English</a>
+				<a class="userinfo info-name border-right pr8" href="<?php echo url('userInfo');?>"><?php echo userId() ? 'Hello, '.session()->get('home_info', 'name'):'Register';?></a>
+				<div class="clear"></div>
 			</div>
 		</div>
+		<div class="clear"></div>
 	</div>
 </div>

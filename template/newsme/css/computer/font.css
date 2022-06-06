@@ -1,24 +1,69 @@
-@charset 'utf-8';
-@font-face {
-	font-family:'Open Sans';src:url('/font/OpenSans.ttf');src:url('/font/OpenSans.eot#iefix') format('embedded-opentype'),url('/font/OpenSans.woff') format('woff'),url('/font/OpenSans.ttf') format('truetype'),url('/font/OpenSans.svg#iconfont') format('svg')
+@charset "utf-8";
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-Thin.ttf'); /* IE9 */
+    src:url('/font/Lexend-Thin.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 100;
 }
-@font-face {
-	font-family:'Open Sans-semiBold';src:url('/font/OpenSans-SemiBold.ttf');src:url('/font/OpenSans-SemiBold.eot#iefix') format('embedded-opentype'),url('/font/OpenSans-SemiBold.woff') format('woff'),url('/font/OpenSans-SemiBold.ttf') format('truetype'),url('/font/OpenSans-SemiBold.svg#iconfont') format('svg')
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-Light.ttf'); /* IE9 */
+    src:url('/font/Lexend-Light.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 200;
 }
-@font-face {
-	font-family:'Open Sans-extraBold';src:url('/font/OpenSans-ExtraBold.ttf');src:url('/font/OpenSans-ExtraBold.eot#iefix') format('embedded-opentype'),url('/font/OpenSans-ExtraBold.woff') format('woff'),url('/font/OpenSans-ExtraBold.ttf') format('truetype'),url('/font/OpenSans-ExtraBold.svg#iconfont') format('svg')
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-Regular.ttf'); /* IE9 */
+    src:url('/font/Lexend-Regular.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 400;
 }
-@font-face {
-	font-family:'Open Sans-Bold';src:url('/font/OpenSans-Bold.ttf');src:url('/font/OpenSans-Bold.eot#iefix') format('embedded-opentype'),url('/font/OpenSans-Bold.woff') format('woff'),url('/font/OpenSans-Bold.ttf') format('truetype'),url('/font/OpenSans-Bold.svg#iconfont') format('svg')
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-Medium.ttf'); /* IE9 */
+    src:url('/font/Lexend-Medium.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 500;
+}
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-SemiBold.ttf'); /* IE9 */
+    src:url('/font/Lexend-SemiBold.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 600;
+}
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-Bold.ttf'); /* IE9 */
+    src:url('/font/Lexend-Bold.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 700;
+}
+@font-face { /* font-properties */
+    font-family: "Lexend";
+    src:url('/font/Lexend-ExtraBold.ttf'); /* IE9 */
+    src:url('/font/Lexend-ExtraBold.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
+    font-weight: 800;
+}
+.f100 {
+	font-weight: 100;
+}
+.f200 {
+	font-weight: 200;
+}
+.f300 {
+	font-weight: 300;
+}
+.f400 {
+	font-weight: 400;
+}
+.f500 {
+	font-weight: 500;
 }
 .f600 {
-	font-family: 'Open Sans-semiBold'
+	font-weight: 600;
 }
 .f700 {
-	font-family: 'Open Sans-Bold'
+	font-weight: 700;
 }
 .f800 {
-	font-family: 'Open Sans-extraBold'
+	font-weight: 800;
 }
 .f12 {
 	font-size: 12px

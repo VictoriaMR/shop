@@ -15,3 +15,22 @@
 		<div class="clear"></div>
 	</div>
 </div>
+<div class="nav-list">
+	<div class="layer">
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td>
+						<a href="">Ceiling Lights</a>
+					</td>
+					<td>
+						<a href="">Ceiling Lights</a>
+					</td>
+					<td>
+						<a href="">Ceiling Lights</a>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
