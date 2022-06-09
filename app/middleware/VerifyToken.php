@@ -15,6 +15,7 @@ class VerifyToken
 	{
 		$except = config('except', $route['class']);
 		if (!empty($except[$route['path']])) return true;
+		dd($except, $route);
 		if (!empty($except[$route['path'].'/'.$route['func']])) return true;
 		return false;
 	}

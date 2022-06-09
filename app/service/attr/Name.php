@@ -35,12 +35,12 @@ class Name extends Base
 
 	public function getList($where, $page=1, $size=20)
 	{
-		$list = $this->getListData($where, '*', $page, $size, ['attr_id'=>'desc']);
+		$list = $this->getListData($where, '*', $page, $size, ['attrn_id'=>'desc']);
 		if (!empty($list)) {
 			//翻译字段 统计
-			$tempArr = array_column($list, 'attr_id');
-			$tempArr = make('app/service/attr/ButeLanguage')->where(['attr_id'=>['in', $tempArr]])->field('count(*) as count, attr_id')->groupBy('attr_id')->get();
-			$tempArr = array_column($tempArr, 'count', 'attr_id');
+			$tempArr = array_column($list, 'attrn_id');
+			$tempArr = make('app/service/attr/ButeLanguage')->where(['attrn_id'=>['in', $tempArr]])->field('count(*) as count, attrn_id')->groupBy('attrn_id')->get();
+			$tempArr = array_column($tempArr, 'count', 'attrn_id');
 			//需要翻译的语言列表
 			$languageList = make('app/service/Language')->getTransList();
 			$len = count($languageList);
@@ -50,10 +50,10 @@ class Name extends Base
 				2 => [],
 			];
 			foreach ($list as $key => $value) {
-				$status = empty($tempArr[$value['attr_id']]) ? 0 : ($tempArr[$value['attr_id']] < $len ? 1 : 2);
+				$status = empty($tempArr[$value['attrn_id']]) ? 0 : ($tempArr[$value['attrn_id']] < $len ? 1 : 2);
 
 				if ($status != $value['status']) {
-					$transArr[$status][] = $value['attr_id'];
+					$transArr[$status][] = $value['attrn_id'];
 				}
 
 				$value['is_translate'] = $status;
@@ -61,7 +61,7 @@ class Name extends Base
 			}
 			foreach ($transArr as $key => $value) {
 				if (empty($value)) continue;
-				$this->updateData(['attr_id'=>['in', $value]], ['status'=>$key]);
+				$this->updateData(['attrn_id'=>['in', $value]], ['status'=>$key]);
 			}
 		}
 		return $list;
@@ -69,12 +69,12 @@ class Name extends Base
 
 	public function getListById($attrId, $lanId=1)
 	{
-		$list = $this->getListData(['attr_id'=>['in', $attrId]], 'attr_id,name');
-		$lanArr = make('app/service/attr/ButeLanguage')->getListData(['attr_id'=>['in', $attrId], 'lan_id'=>$lanId], 'attr_id,name');
-		$lanArr = array_column($lanArr, 'name', 'attr_id');
+		$list = $this->getListData(['attrn_id'=>['in', $attrId]], 'attrn_id,name');
+		$lanArr = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', $attrId], 'lan_id'=>$lanId], 'attrn_id,name');
+		$lanArr = array_column($lanArr, 'name', 'attrn_id');
 		foreach ($list as $key => $value) {
-			if (!empty($lanArr[$value['attr_id']])) {
-				$list[$key]['name'] = $lanArr[$value['attr_id']];
+			if (isset($lanArr[$value['attrn_id']])) {
+				$list[$key]['name'] = $lanArr[$value['attrn_id']];
 			}
 		}
 		return $list;

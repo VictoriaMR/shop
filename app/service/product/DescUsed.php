@@ -29,4 +29,24 @@ class DescUsed extends Base
 		}
 		return $this->insert($insert);
 	}
+
+	public function getListById($spuId)
+	{
+		$list = $this->getListData(['spu_id'=>$spuId], 'descn_id,descv_id', 0, 0, ['sort'=>'asc']);
+		if (empty($list)) {
+			return false;
+		}
+		$nameArr = array_unique(array_column($list, 'descn_id'));
+		$valueArr = array_unique(array_column($list, 'descv_id'));
+		$nameArr = make('app/service/desc/Name')->getListById($nameArr);
+		$valueArr = make('app/service/desc/Value')->getListById($valueArr);
+
+		$nameArr = array_column($nameArr, 'name', 'descn_id');
+		$valueArr = array_column($valueArr, 'name', 'descv_id');
+		foreach ($list as $key => $value) {
+			$list[$key]['name'] = $nameArr[$value['descn_id']] ?? '';
+			$list[$key]['value'] = $valueArr[$value['descv_id']] ?? '';
+		}
+		return $list;
+	}
 }

@@ -13,32 +13,32 @@ class AttrUsed extends Base
 	public function getListById($skuId, $lanId=1, $simple=false)
 	{
 		if (!is_array($skuId)) $skuId = [$skuId];
-		$list = $this->getListData(['sku_id'=>['in', $skuId]], 'sku_id,attr_id,attv_id,attach_id');
+		$list = $this->getListData(['sku_id'=>['in', $skuId]], 'sku_id,attrn_id,attrv_id,attach_id');
 		$data = [];
 		//$attr属性
-		$tempArr = array_unique(array_column($list, 'attr_id'));
-		$tempArr = make('app/service/attr/Bute')->getListById($tempArr, $lanId);
+		$tempArr = array_unique(array_column($list, 'attrn_id'));
+		$tempArr = make('app/service/attr/Name')->getListById($tempArr, $lanId);
 		$data['attr'] = $data['attrMap'] = [];
 		foreach ($tempArr as $value) {
-			$data['attr'][$value['attr_id']] = $value['name'];
-			$data['attrMap'][$value['attr_id']] = [];
+			$data['attr'][$value['attrn_id']] = $value['name'];
+			$data['attrMap'][$value['attrn_id']] = [];
 		}
 		$data['attrArr'] = array_keys($data['attr']);
 		//$attv属性
-		$tempArr = array_unique(array_column($list, 'attv_id'));
+		$tempArr = array_unique(array_column($list, 'attrv_id'));
 		$tempArr = make('app/service/attr/Value')->getListById($tempArr, $lanId);
 		$data['attv'] = $attvArr = [];
 		foreach ($tempArr as $key => $value) {
-			$data['attv'][$value['attv_id']] = $value['name'];
-			$attvArr[$value['attv_id']] = $key;
+			$data['attv'][$value['attrv_id']] = $value['name'];
+			$attvArr[$value['attrv_id']] = $key;
 		}
 		$data['skuAttv'] = [];
 		$data['skuMap'] = [];
 		$data['attvImage'] = [];
 		foreach ($list as $key => $value) {
-			$data['attrMap'][$value['attr_id']][$attvArr[$value['attv_id']]] = $value['attv_id'];
-			$data['skuMap'][$value['sku_id']][$value['attr_id']] = $value['attv_id'];
-			$data['attvImage'][$value['attv_id']] = $value['attach_id'];
+			$data['attrMap'][$value['attrn_id']][$attvArr[$value['attrv_id']]] = $value['attrv_id'];
+			$data['skuMap'][$value['sku_id']][$value['attrn_id']] = $value['attrv_id'];
+			$data['attvImage'][$value['attrv_id']] = $value['attach_id'];
 		}
 
 		$data['attrMap'] = array_map(function($value) {

@@ -13,14 +13,11 @@ class Product extends HomeBase
 
 		$spuId = iget('id', 0);
 		$skuId = iget('sid', 0);
-		if (empty($spuId) && empty($skuId)) {
-			redirect('pageNotFound');
-		}
 		$spu = make('app/service/product/Spu');
-		if (empty($spuId)) {
+		if (!$spuId) {
 			$spuId = make('app/service/product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
 		}
-		if (empty($spuId)) {
+		if (!$spuId) {
 			redirect('pageNotFound');
 		}
 		$info = $spu->getInfoCache($spuId, lanId());
@@ -29,6 +26,24 @@ class Product extends HomeBase
 		}
 		//浏览历史
 		make('app/service/member/History')->addHistory($spuId);
+
+		$crumbs = [];
+		$cateList = make('app/service/category/Category')->getParentCategoryById($info['cate_id']);
+		$cateList = array_reverse($cateList);
+		foreach ($cateList as $value) {
+			if ($value['status']) {
+				$crumbs[] = [
+					'name' => $value['name'],
+					'url' => router()->buildUrl($value['name'].'-c', ['cate_id'=>$value['cate_id']]),
+				];
+			}
+		}
+		if (!empty($crumbs)) {
+			$crumbs[] = [
+				'name' => 'Spu:'.$spuId,
+				'url' => $info['url'],
+			];
+		}
 
 		$this->assign('spuId', $spuId);
 		$this->assign('skuId', $skuId);
@@ -39,6 +54,7 @@ class Product extends HomeBase
 		$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
 		$this->assign('stock', $skuId ? $info['sku'][$skuId]['stock'] : max(array_column($info['sku'], 'stock')));
 		$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
+		$this->assign('crumbs', $crumbs);
 		$this->assign('_title', $info['name']);
 		$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
 

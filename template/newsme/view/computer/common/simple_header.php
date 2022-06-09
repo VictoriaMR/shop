@@ -7,9 +7,9 @@
 		</div>
 		<div class="right">
 			<div class="desc-title">
-				<a class="userinfo pl8" href="javascript">USD</a>
-				<a class="userinfo border-right pr8 pl8" href="javascript">English</a>
-				<a class="userinfo info-name border-right pr8" href="<?php echo url('userInfo');?>"><?php echo userId() ? 'Hello, '.session()->get('home_info', 'name'):'Register';?></a>
+				<a class="userinfo pl8" href="javascript:;">USD</a>
+				<a class="userinfo border-right pr8 pl8" href="javascript:;">English</a>
+				<a class="userinfo info-name border-right pr8" href="<?php echo url(userId()?'userInfo':'login');?>"><?php echo userId() ? 'Hello, '.session()->get('home_info', 'name'):'Register';?></a>
 				<div class="clear"></div>
 			</div>
 		</div>

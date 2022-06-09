@@ -23,28 +23,49 @@ final class Router
 					$pathInfo[0] = str_replace('.html', '', $pathInfo[0]);
 					$tempInfo = explode('-', $pathInfo[0]);
 					if (count($tempInfo) > 1) {
-						$router['path'] = isset($tempInfo[0]) ? ucfirst($tempInfo[0]) : 'Index';
-						$router['func'] = $tempInfo[1] ?? 'index';
-						if (isset($tempInfo[2])) {
-							if (in_array($tempInfo[2], ['ape', 'flac', 'wav', 'chinese', 'western'])) $_GET['key'] = $tempInfo[2];
-							else $_GET['id'] = $tempInfo[2];
+						$tempInfo = array_reverse($tempInfo);
+						$index = array_search('page', $tempInfo);
+						if ($index === false) {
+							$index = 0;
+							$_GET['id'] = $tempInfo[0];
+						} else {
+							$_GET['page'] = $tempInfo[$index-1] ?? 1;
 						}
-						$tempIndex = array_search('page', $tempInfo);
-						if ($tempIndex !== false) {
-							$_GET['page'] = $tempInfo[$tempIndex+1]??1;
+						$index++;
+						if (isset($tempInfo[$index])) {
+							if (is_numeric($tempInfo[$index])) {
+								$router['path'] = $tempInfo[$index+1] ?? 'Index';
+								if ($router['path'] == 's') {
+									$_GET['sid'] = $tempInfo[$index];
+								} else {
+									$_GET['id'] = $tempInfo[$index];
+								}
+							} else {
+								$router['path'] = $tempInfo[$index];
+							}
+						} else {
+							$router['path'] = 'Index';
 						}
-						$tempIndex = array_search('size', $tempInfo);
-						if ($tempIndex !== false) {
-							$_GET['size'] = $tempInfo[$tempIndex+1]??20;
-						}
-					} else {
-						$router['path'] = ucfirst($tempInfo[0]);
+						$router['path'] = $this->formatPath($router['path']);
 						$router['func'] = 'index';
+					} else {
+						$router['path'] = ucfirst($pathInfo[0]);
+						$router['func'] = $pathInfo[1] ?? 'index';
 					}
 				}
 			}
 		}
 		return $router;
+	}
+
+	protected function formatPath($type)
+	{
+		$arr = [
+			'c'=>'Category',
+			'p' => 'Product',
+			's' => 'Product',
+		];
+		return $arr[$type] ?? ucfirst($type);
 	}
 
 	public function buildUrl($url=null, $param=null, $name=null)
@@ -59,15 +80,14 @@ final class Router
 				$url .= '?'.$param;
 			}
 		} else {
+			$url = $this->nameFormat($url);
 			if (!empty($param)) {
 				if (is_array($param))
 					$url .= $this->setParam($param);
 				else
 					$url .= $this->nameFormat($param);
 			}
-			if (!empty($name)) {
-				$url .= $this->nameFormat($name);
-			}
+			$url = trim($url, '-');
 			$viewSuffix = \App::get('router', 'view_suffix');
 			if (!empty($url) && $viewSuffix) $url .= '.'.$viewSuffix;
 		}
@@ -89,9 +109,13 @@ final class Router
 
 	public function setParam($param=[])
 	{
-		$str = '-';
+		$str = '';
 		foreach ($param as $key=>$value) {
-			$str .= $key.'-'.$value;
+			if (in_array($key, ['page', 'size'])) {
+				$str .= '-'.$key.'-'.$value;
+			} else {
+				$str .= '-'.$value;
+			}
 		}
 		return $str;
 	}

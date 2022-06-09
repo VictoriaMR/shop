@@ -30,4 +30,17 @@ class Name extends Base
 		$tempArr = $this->getListData(['name'=>['in', $diffArr]], 'descn_id,name');
 		return array_merge($list, array_column($tempArr, 'descn_id', 'name'));
 	}
+
+	public function getListById($id, $lanId=1)
+	{
+		$list = $this->getListData(['descn_id'=>['in', $id]], 'descn_id,name');
+		$lanArr = make('app/service/desc/NameLanguage')->getListData(['descn_id'=>['in', $id], 'lan_id'=>$lanId], 'descn_id,name');
+		$lanArr = array_column($lanArr, 'name', 'descn_id');
+		foreach ($list as $key => $value) {
+			if (isset($lanArr[$value['descn_id']])) {
+				$list[$key]['name'] = $lanArr[$value['descn_id']];
+			}
+		}
+		return $list;
+	}
 }

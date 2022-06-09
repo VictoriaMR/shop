@@ -10,7 +10,7 @@ class Spu extends Base
 		$this->baseModel = make('app/model/product/Spu');
 	}
 
-	public function getInfoCache($spuId, $lanId='en')
+	public function getInfoCache($spuId, $lanId=1)
 	{
 		$cacheKey = $this->getCacheKey($spuId, $lanId);
 		$info = redis()->get($cacheKey);
@@ -21,9 +21,9 @@ class Spu extends Base
 		return $info;
 	}
 
-	public function getInfo($spuId, $lanId='en')
+	public function getInfo($spuId, $lanId=1)
 	{
-		$info = $this->loadData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'cate_id,attach_id,min_price,max_price,original_price');
+		$info = $this->loadData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')]);
 		if (empty($info)) {
 			return false;
 		}
@@ -41,14 +41,14 @@ class Spu extends Base
 		$currencyService = make('app/service/Currency');
 		$info['min_price_format'] = $currencyService->priceFormat($info['min_price'], 2);
 		$info['max_price_format'] = $currencyService->priceFormat($info['max_price'], 2);
-		$info['original_price_format'] = $currencyService->priceFormat($info['original_price'], 2);
+		$info['original_price_format'] = $currencyService->priceFormat(max(array_column($info['sku'], 'original_price')), 2);
 		//获取语言
 		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>$lanId], 'name', ['lan_id'=>'desc'])['name'] ?? '';
-		$info['url'] = router()->urlFormat($info['name'], 'p', ['id' => $spuId]);
+		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $spuId]);
 		//spu介绍图片
-		$info['introduce'] = make('app/service/product/IntroduceUsed')->getListById($spuId);
+		$info['introduce'] = make('app/service/product/IntroUsed')->getListById($spuId);
 		//spu描述
-		$info['description'] = make('app/service/attr/Description')->getListById($spuId, $lanId);
+		$info['description'] = make('app/service/product/DescUsed')->getListById($spuId, $lanId);
 
 		$info += make('app/service/product/AttrUsed')->getListById(array_keys($info['sku']), $lanId);
 		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
@@ -77,7 +77,7 @@ class Spu extends Base
 			}
 			$name = implode(' ', $name);
 			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
-			$value['url'] = router()->urlFormat($value['name'], 's', ['id'=>$key]);
+			$value['url'] = router()->buildUrl($value['name'].'-s', ['id'=>$key]);
 			$info['sku'][$key] = $value;
 		}
 		return $info;
@@ -85,7 +85,7 @@ class Spu extends Base
 
 	protected function getCacheKey($spuId, $lanId)
 	{
-		return $this->getConst('CACHE_INFO_KEY').$spuId.'_'.$lanId;
+		return $this->getConst('CACHE_INFO_KEY').$spuId.':'.$lanId;
 	}
 
 	public function getAdminList(array $where=[], $page=1, $size=20)
@@ -489,7 +489,7 @@ class Spu extends Base
 				//格式化数组
 				foreach($list as $key => $value) {
 					$value['name'] = $lanArr[$value['spu_id']] ?? '';
-					$value['url'] = router()->urlFormat($value['name'], 'p', ['id'=>$value['spu_id']]);
+					$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']]);
 					$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
 					$temp = $currencyService->priceFormat($value['min_price']);
 					$value['min_price'] = $temp[1];
@@ -523,7 +523,7 @@ class Spu extends Base
 		//格式化数组
 		foreach($list as $key => $value) {
 			$value['name'] = $lanArr[$value['spu_id']] ?? '';
-			$value['url'] = router()->urlFormat($value['name'], 'p', ['id'=>$value['spu_id']]);
+			$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']]);
 			$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
 			$temp = $currency->priceFormat($value['min_price']);
 			$value['min_price'] = $temp[1];

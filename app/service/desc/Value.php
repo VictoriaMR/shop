@@ -30,4 +30,17 @@ class Value extends Base
 		$tempArr = $this->getListData(['name'=>['in', $diffArr]], 'descv_id,name');
 		return array_merge($list, array_column($tempArr, 'descv_id', 'name'));
 	}
+
+	public function getListById($id, $lanId=1)
+	{
+		$list = $this->getListData(['descv_id'=>['in', $id]], 'descv_id,name');
+		$lanArr = make('app/service/desc/ValueLanguage')->getListData(['descv_id'=>['in', $id], 'lan_id'=>$lanId], 'descv_id,name');
+		$lanArr = array_column($lanArr, 'name', 'descv_id');
+		foreach ($list as $key => $value) {
+			if (isset($lanArr[$value['descv_id']])) {
+				$list[$key]['name'] = $lanArr[$value['descv_id']];
+			}
+		}
+		return $list;
+	}
 }

@@ -143,6 +143,9 @@ body {
 .cg {
 	color: #AB7C3F;
 }
+.bg-f {
+	background-color: #fff;
+}
 .tl {
 	text-align: left;
 }
@@ -239,4 +242,28 @@ body {
 	bottom: 0;
 	padding: 16px;
 	width: 100%;
+}
+.crumbs {
+	padding: 10px 0;
+	background-color: #fff;
+}
+.crumbs li {
+	display: inline-block;
+}
+.crumbs li:after {
+	font-size: 16px;
+	margin-left: 5px;
+	margin-right: 5px;
+	content: "/";
+	color: #666666;
+}
+.crumbs li:last-child:after {
+	content: "";
+}
+.crumbs li a {
+	font-size: 16px;
+    color: #666666;
+}
+.crumbs li a:last-child {
+	color: #333;
 }
