@@ -6,7 +6,7 @@
 	box-sizing: border-box;
 }
 body{
-	font: 400 0.12rem 'Open Sans';
+	font: 400 0.12rem "Lexend";
 	color: #333;
 	background-color: #f5f5f5;
 	width: 100%;
@@ -15,7 +15,7 @@ body{
 	background-attachment: fixed;
 }
 button,input{
-	font: 400 0.12rem 'Open Sans';
+	font: 400 0.12rem "Lexend";
 }
 ol,ul,li {
 	list-style: none

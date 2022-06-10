@@ -11,4 +11,5 @@ $(function(){
             obj.fadeOut(100);
         });
     });
+    $('img.lazyload').lazyload();
 });

@@ -41,7 +41,8 @@ class Spu extends Base
 		$currencyService = make('app/service/Currency');
 		$info['min_price_format'] = $currencyService->priceFormat($info['min_price'], 2);
 		$info['max_price_format'] = $currencyService->priceFormat($info['max_price'], 2);
-		$info['original_price_format'] = $currencyService->priceFormat(max(array_column($info['sku'], 'original_price')), 2);
+		$info['original_price'] = max(array_column($info['sku'], 'original_price'));
+		$info['original_price_format'] = $currencyService->priceFormat($info['original_price'], 2);
 		//获取语言
 		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>$lanId], 'name', ['lan_id'=>'desc'])['name'] ?? '';
 		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $spuId]);

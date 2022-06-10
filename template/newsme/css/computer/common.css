@@ -99,6 +99,21 @@ body {
 	margin: 0 auto;
 	padding: 0 10px;
 }
+.w30 {
+	width: 30%;
+}
+.w40 {
+	width: 40%;
+}
+.w50 {
+	width: 50%;
+}
+.w60 {
+	width: 60%;
+}
+.w70 {
+	width: 70%;
+}
 .w100 {
 	width: 100%;
 }
@@ -202,6 +217,7 @@ body {
     opacity: 0.5;
     filter: alpha(opacity=50);
     cursor: pointer;
+    z-index: 100;
 }
 .modal .popper {
 	position: fixed;
@@ -255,15 +271,10 @@ body {
 	margin-left: 5px;
 	margin-right: 5px;
 	content: "/";
-	color: #666666;
 }
 .crumbs li:last-child:after {
 	content: "";
 }
 .crumbs li a {
 	font-size: 16px;
-    color: #666666;
-}
-.crumbs li a:last-child {
-	color: #333;
 }

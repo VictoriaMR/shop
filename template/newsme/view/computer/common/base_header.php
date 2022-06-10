@@ -83,7 +83,7 @@
 			</table>
 		</div>
 		<div class="left middle">
-			<div class="tcell">
+			<div class="tcell" style="display:none;">
 				<img src="<?php echo siteUrl('image/common/logo.png');?>">
 			</div>
 		</div>
