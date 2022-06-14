@@ -131,20 +131,19 @@ class Category extends Base
 
 	public function getInCategory(array $cateIdArr=[])
 	{
-		$cateList = $this->getList();
 		if (empty($cateIdArr)) {
 			return $this->listFormat($cateList);
 		} else {
 			$returnData = [];
-			$cateList = array_column($cateList, null, 'cate_id');
 			foreach ($cateIdArr as $value) {
-				if (!isset($returnData[$cateList[$value]['parent_id']])) {
-					$returnData[$cateList[$value]['parent_id']] = $cateList[$cateList[$value]['parent_id']];
-					$returnData[$cateList[$value]['parent_id']]['son'] = [];
+				$data = $this->getParentCategoryById($value);
+				$data = array_reverse($data);
+				foreach ($data as $sKey=>$sValue) {
+					$data[$sKey]['level'] = $sKey;
 				}
-				$returnData[$cateList[$value]['parent_id']]['son'][$value] = $cateList[$value];
+				$returnData = array_merge($returnData, $data);
 			}
-			return $returnData;
+			return array_values(array_column($returnData, null, 'cate_id'));
 		}
 	}
 }

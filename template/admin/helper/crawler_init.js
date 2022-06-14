@@ -31,9 +31,10 @@ const CRAWLERINIt = {
 			body.appendChild(bodyPage);
 			const html = `<div class="top-content">
 							<div class="button-content">
-								<button class="hide" onclick="CRAWLERINIt.reloadPage()">刷新</button>
-								<button onclick="CRAWLERINIt.goNext()" class="hide">跳过</button>
+								<button class="hide" id="reload-btn" onclick="CRAWLERINIt.reloadPage()">刷新</button>
+								<button onclick="CRAWLERINIt.goNext()" class="hide" id="go-next-btn">跳过</button>
 								<button id="crawler-show-btn" onclick="CRAWLERINIt.openClose(this)" class="right">展开</button>
+								<div class="clear"></div>
 							</div>
 							<div class="error-msg"></div>
 						</div>
@@ -96,9 +97,13 @@ const CRAWLERINIt = {
 		if (status === '1') {
 			document.getElementById('crawler-show-btn').innerText = '收起';
 			document.getElementById('crawler-page').setAttribute('class', 'open');
+			document.getElementById('reload-btn').setAttribute('class', 'show');
+			document.getElementById('go-next-btn').setAttribute('class', 'show');
 		} else {
 			document.getElementById('crawler-show-btn').innerText = '展开';
 			document.getElementById('crawler-page').setAttribute('class', 'close');
+			document.getElementById('reload-btn').setAttribute('class', 'hide');
+			document.getElementById('go-next-btn').setAttribute('class', 'hide');
 		}
 	},
 	crawlerPageinit: function(info) {
@@ -321,10 +326,15 @@ const CRAWLERINIt = {
 								<div class="picTitle">产品图：</div>
 								<div class="pdtPicHere" id="pdt_picture">
 									<input type="hidden" name="bc_product_img" class="bc_product_picture" value="` + data.pdt_picture.join(',') + `"/>`;
+			html += `<div>`;
 			for (let i=0;i< data.pdt_picture.length;i++) {
 				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />`;
+				if (i>0 && i%3===0) {
+					html += '</div><div>';
+				}
+				html += '</div><div>';
 			}
-			html += `</div></div>`;
+			html += `</div>`;
 		}
 		if (data.des_picture) {
 			html += `<div class="clear"></div>
@@ -332,9 +342,12 @@ const CRAWLERINIt = {
 								<div class="picTitle">产品详情图：<span style="color:red;font-size:12px;"></span></div>
 								<div class="pdtPicHere" id="pdt_desc_picture">
 									<input type="hidden" name="bc_product_des_picture" class="bc_product_picture" value="` + data.des_picture.join(',') + `"/>`;
+			html += `<div>`;
 			for (let i=0;i<data.des_picture.length;i++) {
 				html += `<img class="imgList" src="` + data.des_picture[i] + `" />`;
+				html += '</div><div>';
 			}
+			html += `</div>`;
 			html += `</div></div>`;
 		}
 		var attributes = {};
@@ -367,8 +380,9 @@ const CRAWLERINIt = {
 			html += `</div></div>`;
 		}
 		html += '</form>';
-		html += `<div class="post-product" id="post-product-btn">上传产品</div>`;
-		document.getElementById('item-content').innerHTML = html;
+		html += `<button id="post-product-btn">上传产品</button>`;
+		crawlerPage.innerHTML = html;
+		crawlerPage.style.display = 'block';
 		_this.initAttr(data.attr);
 	},
 	initAttr: function(attr) {
@@ -458,7 +472,7 @@ const CRAWLERINIt = {
 			}
 		}
 		//站点改变切换分类
-		let obj7 = document.querySelector('#crawler_page .bc_product_site');
+		let obj7 = document.querySelector('#crawler-page .bc_product_site');
 		if (obj7) {
 			obj7.onchange = function(){
 				const index = obj7.selectedIndex;
@@ -479,20 +493,18 @@ const CRAWLERINIt = {
 	getCategoryHtml: function(siteId) {
 		let html = '';
 		const list = this.category[siteId];
+		console.log(siteId, list, this)
 		if (list) {
 			html = '<option value="">请选择分类</option>';
-			for (let i in list) {
-				html += '<option value="'+list[i].cate_id+'" disabled="disabled">'+list[i].name+'</option>';
-				const data = list[i].son;
-				for (let j in data) {
-					html += '<option value="'+data[j].cate_id+'">&nbsp;&nbsp;&nbsp;'+data[j].name+'</option>';
-				}
-			}
 			for (let i = 0; i < list.length; i++) {
-				html += '<option value="'+list[i].cate_id+'">'+list[i].name+'</option>';
+				var disable = false;
+				if (list[i+1] && list[i+1].parent_id == list[i].cate_id) {
+					disable = true;
+				}
+				html += '<option value="'+list[i].cate_id+'" '+(disable?'disable="disable"':'')+'>'+list[i].name+'</option>';
 			}
 		}
-		document.querySelector('#crawler_page .bc_product_category').innerHTML = html;
+		document.querySelector('#crawler-page .bc_product_category').innerHTML = html;
 	},
 	serializeForm: function(formobj) {
 		if (formobj) {

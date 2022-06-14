@@ -3,13 +3,14 @@
 	<table class="table table-hover mt20" id="data-list">
 		<tbody>
 			<tr>
-				<th class="col-md-1">ID</th>
-				<th class="col-md-3">名称</th>
-				<th class="col-md-1">语言配置</th>
-				<th class="col-md-1">状态</th>
-				<th class="col-md-1">是否展示</th>
-				<th class="col-md-1">头像</th>
-				<th class="col-md-2">操作</th>
+				<th width="120">ID</th>
+				<th width="300">名称</th>
+				<th width="300">英文名称</th>
+				<th width="120">语言配置</th>
+				<th width="150">状态</th>
+				<th width="150">是否展示</th>
+				<th width="200">头像</th>
+				<th>操作</th>
 			</tr>
 			<?php if (empty($list)){ ?>
 			<tr>
@@ -20,15 +21,16 @@
 			<?php } else {?>
 			<?php foreach ($list as $key => $value) { ?>
 			<tr class="item<?php echo $value['level']==0 ? ' info' : '';?>" data-lev="<?php echo $value['level'];?>" data-id="<?php echo $value['cate_id'];?>" data-pid="<?php echo $value['parent_id'];?>">
-				<td class="col-md-1"><?php echo $value['cate_id'];?></td>
-				<td class="col-md-3">
+				<td><?php echo $value['cate_id'];?></td>
+				<td>
 					<div class="left text-content" <?php echo $value['level'] ? 'style="padding-left:'.($value['level']*20).'px;"' : '';?>>
 						<span class="glyphicon glyphicon-globe"></span>
 						&nbsp;
 						<span class="cate_name"><?php echo $value['name'];?></span>
 					</div>
 				</td>
-				<td class="col-md-1">
+				<td><?php echo $value['name_en'];?></td>
+				<td>
 					<?php if ($value['is_translate'] == 2){?>
 					<span class="green">已配置</span>
 					<?php } elseif ($value['is_translate'] == 1){?>
@@ -47,12 +49,12 @@
                         <div class="switch_status <?php echo $value['show']?'on':'off';?>"></div>
                     </div>
 				</td>
-				<td class="col-md-1">
+				<td>
 					<div class="avatar-hover">
 						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['avatar'];?>" class="lazyload">
 					</div>
 				</td>
-				<td class="col-md-2">
+				<td>
 					<button class="btn btn-primary btn-xs ml4 modify"><span class="glyphicon glyphicon-edit"></span>&nbsp;修改</button>
 					<button class="btn btn-success btn-xs ml4 add"><span class="glyphicon glyphicon-plus"></span>&nbsp;增加</button>
 					<button class="btn btn-danger btn-xs ml4 delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
