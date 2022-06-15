@@ -7,7 +7,7 @@
 		<tr>
 			<td width="50%">
 				<div class="signin-content">
-					<p class="title f26 f600">LOG IN</p>
+					<p class="title f26 f600">SIGN IN</p>
 					<form>
 						<div class="password-content hide">
 							<div class="form-item mb20">
@@ -34,7 +34,7 @@
 							</div>
 							<p class="change-login-type">Sign in with Password</p>
 						</div>
-						<button type="button" class="btn btn-black bottom-btn">LOG IN</button>
+						<button type="button" class="btn btn-black bottom-btn">SIGN IN</button>
 						<div class="help relative">
 							<span class="pointer left">Help?</span>
 							<a href="<?php echo url('forgot');?>" class="right forgot-password">Forgot your password?</a>
