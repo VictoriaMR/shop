@@ -20,8 +20,10 @@ const VERIFY = {
 		}
 	},
 	check: function(input, reg) {
+		if (!input) {
+			return false;
+		}
 		input = input.trim();
-		if (input == '') return false;
 		return reg.test(input);
 	}
 };

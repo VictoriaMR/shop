@@ -100,3 +100,13 @@
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 }
+#login-page .error .input {
+	border-color: #EB2027;
+	background: rgb(235,32,39,0.1);
+}
+#login-page .message-tips {
+	font-weight: 600;
+	margin-top: 2px;
+	text-align: left;
+	color: #EB2027;
+}

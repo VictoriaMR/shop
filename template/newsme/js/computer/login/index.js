@@ -6,12 +6,12 @@ $(function(){
 var LOGIN = {
 	init: function() {
 		var _this = this;
-		$('.login-content .help .pointer').mouseover(function(){
-			$('.login-content .help .help-tips').show();
+		$('#login-page .help .pointer').mouseover(function(){
+			$(this).parent().find('.help-tips').show();
 		}).mouseleave(function(){
-			$('.login-content .help .help-tips').hide();
+			$(this).parent().find('.help-tips').hide();
 		});
-		$('.login-content .agreement span').click(function(){
+		$('#login-page .agreement span').click(function(){
 			var obj = $(this).parent().find('.iconfont');
 			if (obj.hasClass('icon-fangxingweixuanzhong')) {
 				obj.removeClass('icon-fangxingweixuanzhong').addClass('icon-fangxingxuanzhong').next().val(0);
@@ -19,10 +19,10 @@ var LOGIN = {
 				obj.removeClass('icon-fangxingxuanzhong').addClass('icon-fangxingweixuanzhong').next().val(1);
 			}
 		});
-		$('.login-content .change-login-type').click(function(){
-			var passwordObj = $('.login-content .password-content');
-			var verificationObj = $('.login-content .verification-content');
-			var forgotObj = $('.login-content .forgot-password');
+		$('#login-page .change-login-type').click(function(){
+			var passwordObj = $('.password-content');
+			var verificationObj = $('.verification-content');
+			var forgotObj = $('.forgot-password');
 			if (passwordObj.is(':visible')) {
 				passwordObj.hide();
 				verificationObj.show();
@@ -35,7 +35,7 @@ var LOGIN = {
 		});
 		//send email
 		$('#login-page .send-email').on('click', function(){
-			var obj = $('.login [name="email"]');
+			var obj = $('.signin-content [name="email"]');
 			var email = obj.val();
 			if (email === '') {
 				_this.loginError(obj.parent(), 'This Email is required.');

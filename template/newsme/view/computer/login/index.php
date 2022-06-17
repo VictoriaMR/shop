@@ -1,5 +1,5 @@
 <?php $this->load('common/simple_header');?>
-<div class="login-content">
+<div class="login-content" id="login-page">
 	<div class="title-content">
 		<a href="<?php echo url();?>">Welcome to <?php echo \App::get('base_info', 'name');?></a>
 	</div>
@@ -25,7 +25,7 @@
 								<div class="f16 f600 input-tips">Email</div>
 								<div class="relative">
 									<input class="input" type="text" name="email" value="" placeholder="Email Address">
-									<button type="button" class="btn btn-black">Send</button>
+									<button type="button" class="btn btn-black send-email">Send</button>
 								</div>
 							</div>
 							<div class="form-item mb8">
