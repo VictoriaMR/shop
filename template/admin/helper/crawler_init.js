@@ -99,11 +99,13 @@ const CRAWLERINIt = {
 			document.getElementById('crawler-page').setAttribute('class', 'open');
 			document.getElementById('reload-btn').setAttribute('class', 'show');
 			document.getElementById('go-next-btn').setAttribute('class', 'show');
+			document.getElementById('item-content').style.display = 'block';
 		} else {
 			document.getElementById('crawler-show-btn').innerText = '展开';
 			document.getElementById('crawler-page').setAttribute('class', 'close');
 			document.getElementById('reload-btn').setAttribute('class', 'hide');
 			document.getElementById('go-next-btn').setAttribute('class', 'hide');
+			document.getElementById('item-content').style.display = 'none';
 		}
 	},
 	crawlerPageinit: function(info) {
@@ -497,11 +499,15 @@ const CRAWLERINIt = {
 		if (list) {
 			html = '<option value="">请选择分类</option>';
 			for (let i = 0; i < list.length; i++) {
+				var paddingStr = '';
 				var disable = false;
 				if (list[i+1] && list[i+1].parent_id == list[i].cate_id) {
 					disable = true;
 				}
-				html += '<option value="'+list[i].cate_id+'" '+(disable?'disable="disable"':'')+'>'+list[i].name+'</option>';
+				for (var p=0; p<=list[i].level; p++) {
+					paddingStr += '&nbsp;&nbsp;&nbsp;&nbsp;';
+				}
+				html += '<option value="'+list[i].cate_id+'" '+(disable?'disabled="disabled"':'')+'>'+paddingStr+list[i].name+'</option>';
 			}
 		}
 		document.querySelector('#crawler-page .bc_product_category').innerHTML = html;
@@ -581,10 +587,14 @@ const CRAWLERINIt = {
 			'2XL': 'XXL',
 			'3XL': 'XXXL',
 			'4XL': 'XXXXL',
-			'(%)': '%'
+			'(%)': '%',
+			'(含)': '',
 		};
 		for (const i in arr) {
 			str = str.replace(i, arr[i]);
+			for (var j=0; j<5; j++) {
+				str = str.replace(i, arr[i]);
+			}
 		}
 		return str;
 	},

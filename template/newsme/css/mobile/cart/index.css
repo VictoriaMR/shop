@@ -1,7 +1,9 @@
 #cart-page .empty-bag-image {
-	height: 1rem;
-	width: 1rem;
-	margin: 0.8rem auto 0 auto;
+	padding-top: calc(50vh - 2rem);
+	text-align: center;
+}
+#cart-page .empty-bag-image img {
+	max-height: 1rem;
 }
 #cart-page .empty-title {
 	font-size: 0.16rem;
@@ -9,7 +11,6 @@
 	padding: 0.18rem 0;
 }
 #cart-page .continue-btn {
-	margin-bottom: 0.6rem;
 	text-align: center;
 }
 #cart-page .continue-btn .btn {

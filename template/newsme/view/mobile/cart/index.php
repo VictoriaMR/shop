@@ -1,5 +1,5 @@
 <?php $this->load('common/back_header', ['_simple_title' => distT('shopping_bag')]);?>
-<div id="cart-page">
+<div id="cart-page" class="min-page">
 	<?php if (empty($checkedList)) {?>
 	<div class="empty-bag-image">
 		<img src="<?php echo siteUrl('image/common/empty-bag.png');?>">

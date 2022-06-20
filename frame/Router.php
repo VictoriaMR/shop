@@ -7,7 +7,7 @@ final class Router
 	public function analyze()
 	{
 		array_shift($_GET);
-		$pathInfo = trim($_SERVER['REQUEST_URI'], '/');
+		$pathInfo = trim(str_replace('.html', '', $_SERVER['REQUEST_URI']), '/');
 		$router = [];
 		if (empty($pathInfo)) {
 			$router['path'] = 'Index';
@@ -20,7 +20,6 @@ final class Router
 					$router['path'] = isset($pathInfo[0]) ? ucfirst($pathInfo[0]) : 'Index';
 					$router['func'] = $pathInfo[1] ?? 'index';
 				} else {
-					$pathInfo[0] = str_replace('.html', '', $pathInfo[0]);
 					$tempInfo = explode('-', $pathInfo[0]);
 					if (count($tempInfo) > 1) {
 						$tempInfo = array_reverse($tempInfo);
@@ -80,7 +79,6 @@ final class Router
 				$url .= '?'.$param;
 			}
 		} else {
-			$url = $this->nameFormat($url);
 			if (!empty($param)) {
 				if (is_array($param))
 					$url .= $this->setParam($param);

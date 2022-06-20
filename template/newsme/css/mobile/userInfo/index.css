@@ -1,9 +1,11 @@
-#userinfo-page .image-avatar img {
+#userinfo-page .image-avatar {
 	width: 0.6rem;
 	height: 0.6rem;
 	border-radius: 50%;
-	font-size: 0;
 	overflow: hidden;
+}
+#userinfo-page .image-avatar img {
+	font-size: 0;
 }
 #userinfo-page .name-content {
 	padding: 0.12rem 0.24rem 0 0.12rem;

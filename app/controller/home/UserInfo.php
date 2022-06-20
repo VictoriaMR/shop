@@ -109,7 +109,7 @@ class UserInfo extends HomeBase
 		$avatar = $info['cate'].DS.$info['name'].'.'.$info['type'];
 		$rst = make('app/service/Member')->updateData(userId(), ['avatar'=>$avatar]);
 		if ($rst) {
-			session()->set(APP_TEMPLATE_TYPE.'_info.avatar', $info['url']);
+			session()->set(APP_TEMPLATE_TYPE.'_info', $info['url'], 'avatar');
 		}
 		$this->success('Update your avatar success.');
 	}

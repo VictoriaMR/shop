@@ -49,8 +49,6 @@
 }
 #crawler-page .button-content {
 	position: relative;
-	border-bottom: 1px solid #321679;
-	padding-bottom: 4px;
 }
 #crawler-page.open .button-content .hide {
 	display: inline-block;
@@ -71,12 +69,10 @@
 #crawler-page.open .error-msg {
 	display: block;
 }
-
-
-
-
 #item-content {
 	display: none;
+    border-top: 1px solid #321679;
+    margin-top: 4px;
 }
 #crawler-page .userinfo-content .name-content {
 	max-width: 120px;

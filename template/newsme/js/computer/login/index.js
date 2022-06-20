@@ -197,7 +197,6 @@ var LOGIN = {
 				}
 			});
 		});
-		TIPS.timeout();
 	},
 	initSendCode: function(time){
 		var _this = this;

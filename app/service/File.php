@@ -18,7 +18,7 @@ class File
 		$attachment = make('app/service/attachment/Attachment');
 		$data = $attachment->getAttachmentByName($name);
 		if (empty($data)) {
-			$path = ROOT_PATH.config('env.FILE_CENTER').DS.$cate.DS;
+			$path = ROOT_PATH.config('env', 'FILE_CENTER').DS.$cate.DS;
 			//创建目录
 			if (!is_dir($path)) {
 				mkdir($path, 0755, true);

@@ -17,8 +17,8 @@
 		<span class="iconfont icon-liuyan<?php echo $router['path']=='message'?'fill':'';?>"></span>
 		<p class="text"><?php echo appT('chat');?></p>
 	</a>
-	<a class="tab<?php echo $router['path']=='UserInfo'?' active':'';?>" href="<?php echo url('userInfo');?>">
-		<span class="iconfont icon-wode<?php echo $router['path']=='userInfo'?'fill':'';?>"></span>
+	<a class="tab<?php echo $router['path']=='Userinfo'?' active':'';?>" href="<?php echo url('userinfo');?>">
+		<span class="iconfont icon-wode<?php echo $router['path']=='userinfo'?'fill':'';?>"></span>
 		<p class="text"><?php echo appT('me');?></p>
 	</a>
 </div>

@@ -28,8 +28,8 @@
 	padding: 0 0.16rem;
 }
 #login-page .email .btn {
-	min-width: 0.62rem;
-	padding: 0 0.16rem;
+	min-width: 0.68rem;
+	padding: 0 0.08rem;
 }
 #login-page .content .input:focus {
 	border-color: #000000;
@@ -54,8 +54,10 @@
 	background: rgb(235,32,39,0.1);
 }
 #login-page .message-tips {
-	font-weight: 700;
+	font-weight: 500;
 	margin-top: 0.02rem;
+	position: absolute;
+	font-size: 0.1rem;
 }
 #login-page .message-tips.error {
 	color: #EB2027;

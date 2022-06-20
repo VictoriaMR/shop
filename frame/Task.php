@@ -66,4 +66,9 @@ class Task
 	{
 		return strtr($classname, ['\\'=>'-', DS=>'-']);
 	}
+
+	public function taskStart()
+	{
+		
+	}
 }

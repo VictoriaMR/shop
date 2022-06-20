@@ -1,5 +1,5 @@
 <?php $this->load('common/back_header', ['_simple_title'=>distT('my_coupon')]);?>
-<div id="coupon-page">
+<div id="coupon-page" class="min-page">
 	<div class="layer">
 		<div class="list-title flex">
 			<div class="tcell">

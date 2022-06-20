@@ -22,7 +22,6 @@ class Email extends Base
 		$data['type'] = $type;
 		$data['mem_id'] = $memId;
 		$data['content'] = $code;
-		$data['add_time'] = now();
 		$rst = $this->insert($data);
 		if ($rst) {
 			make('frame/Task')->taskStart('EmailTask');

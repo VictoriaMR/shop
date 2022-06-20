@@ -1,6 +1,6 @@
 <div id="userinfo-page">
 	<div class="top layer16 mt22">
-		<div class="tcell image-avatar f0">
+		<div class="tcell image-avatar">
 			<img data-src="<?php echo $info['avatar'] ?? '';?>" src="<?php echo siteUrl('image/common/female.jpg');?>" class="lazyload">
 		</div>
 		<div class="tcell name-content">

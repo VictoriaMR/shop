@@ -208,16 +208,10 @@ function appT(name) {
 			});
 		});
 	};
-	$.fn.imageUpload = function(name, cate, width, height, callback) {
+	$.fn.imageUpload = function(name, cate, callback) {
 		const obj = $(this);
 		obj.each(function(){
 			const thisobj = $(this);
-			if (typeof width !== 'undefined') {
-				thisobj.attr('width', width)
-			}
-			if (typeof height !== 'undefined') {
-				thisobj.attr('height', height)
-			}
 			thisobj.css({cursor: 'pointer'});
 			const guid_name = guid();
 			thisobj.data('file', guid_name);
@@ -287,4 +281,5 @@ $(function(){
 		CART.init();
 	}
 	$.post(URI+'api/stat', {url: window.location.pathname});
+	$('img.lazyload').lazyload();
 });

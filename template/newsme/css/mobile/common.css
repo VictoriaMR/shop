@@ -355,7 +355,7 @@ a {
 	right: 0.12rem;
 }
 .cover-top-padding {
-	padding: 0.22rem;
+	padding: 0.2rem;
 }
 .cover-footer-padding {
 	padding: 0.22rem;
@@ -696,4 +696,7 @@ a {
 	border-bottom: 0.07rem solid #EB2027;
 	position: absolute;
 	top: -0.07rem;
+}
+.min-page {
+	min-height: calc(100vh - 1.4rem);
 }

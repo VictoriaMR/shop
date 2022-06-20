@@ -1,5 +1,5 @@
 <?php $this->load('common/back_header', ['_simple_title'=>distT('my_visit')]);?>
-<div id="history-page">
+<div id="history-page" class="min-page">
 	<div class="layer">
 		<div class="list-title flex">
 			<div class="tcell">

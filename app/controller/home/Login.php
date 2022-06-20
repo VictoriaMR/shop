@@ -194,7 +194,6 @@ class Login extends HomeBase
 	public function logout()
 	{
 		make('app/service/Member')->logout();
-
 		redirect(url('login'));
 	}
 

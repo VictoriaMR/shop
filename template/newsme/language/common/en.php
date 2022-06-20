@@ -5,6 +5,8 @@ return [
 	'category' => 'Category',
 	'chat' => 'Chat',
 	'me' => 'Me',
+	'new_in' => 'New In',
+	'refer' => 'Refer',
 	'need_login' => 'Need Login',
 	'secure_checkout' => 'SECURE CHECKOUT',
 	'shipping_address' => 'Shipping Address',

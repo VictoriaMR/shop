@@ -14,7 +14,6 @@ class Member extends Base
 	{
 		$data['salt'] = randString(4);
 		$data['password'] = $this->getPassword($data['password'], $data['salt']);
-		$data['add_time'] = now();
 		return $this->insertGetId($data);
 	}
 

@@ -4,7 +4,7 @@ namespace frame;
 
 class Session
 {
-	public static function set($name, $data, $key=null)
+	public static function set($name, $data=null, $key=null)
 	{
 		if ($key) {
 			if (!isset($_SESSION[$name])) {

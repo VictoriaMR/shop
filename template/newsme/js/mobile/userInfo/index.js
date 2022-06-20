@@ -128,7 +128,7 @@ const USERINFO = {
 		});
 		//头像
 		if ($('#userinfo-page .name-content .name').length > 0) {
-			$('#userinfo-page .image-avatar img').imageUpload('avatar', 'avatar', 0, 0, function(res){
+			$('#userinfo-page .image-avatar img').imageUpload('avatar', 'avatar', function(res){
 				$.post(URI+'userInfo/updateAvatar', res);
 			});
 		}

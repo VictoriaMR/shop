@@ -12,7 +12,7 @@
 					<button class="btn btn-black send-email">Send</button>
 				</div>
 			</div>
-			<div class="verify mt18">
+			<div class="verify mt20">
 				<div class="verify-code">
 					<p class="name">Verification code</p>
 					<div class="input-group f0 flex">
@@ -30,7 +30,7 @@
 						<input type="password" name="password" class="input" autocomplete="off" />
 					</div>
 				</div>
-				<div class="mt18">
+				<div class="mt20">
 					<span class="change-verify-btn">Sign in with Password</span>
 				</div>
 				<div class="mt32">
@@ -48,7 +48,7 @@
 						<a class="password hide forget-btn" href="<?php echo url('login/forget');?>">Forgot your password?</a>
 					</div>
 				</div>
-				<div class="mt18">
+				<div class="mt20">
 					<span class="change-login-sign">Not have an Account?</span>
 				</div>
 			</div>
@@ -65,25 +65,25 @@
 					<input type="text" name="email" class="input" placeholder="name@example.com" autocomplete="off" />
 				</div>
 			</div>
-			<div class="password mt18">
+			<div class="password mt20">
 				<p class="name">Password</p>
 				<div class="group">
 					<input type="password" name="password" class="input" autocomplete="off" placeholder="Please input your password" />
 				</div>
 			</div>
-			<div class="repassword mt18">
+			<div class="repassword mt20">
 				<p class="name">Confirm Password</p>
 				<div class="group">
 					<input type="password" name="repassword" class="input" autocomplete="off" placeholder="Please input your password again"/>
 				</div>
 			</div>
-			<div class="mt18 agreement">
+			<div class="mt20 agreement">
 				<span class="iconfont icon-fangxingweixuanzhong f16"></span>
 				<span class="c6">Sign up for our email list</span>
 				<input type="hidden" name="agreement" value="0">
 			</div>
-			<button class="btn btn-black mt32 w100 register-btn">CREATE AN ACCOUNT</button>
-			<div class="mt18">
+			<button class="btn btn-black mt20 w100 register-btn">CREATE AN ACCOUNT</button>
+			<div class="mt20">
 				<span class="change-login-sign">Had an Account?</pspan>
 			</div>
 		</div>

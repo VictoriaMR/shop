@@ -21,17 +21,17 @@ class Api extends HomeBase
 	{
 		$file = $_FILES['file'] ?? [];
 		if (empty($file)) {
-			$this->error('上传数据为空');
+			$this->error(appT('param_error'));
 		}
 		$cate = $_POST['cate'] ?? '';
-		$file = make('app/service/File');
+		$fileService = make('app/service/File');
 
-		if (!in_array($cate, $file::FILE_TYPE)) {
-			$this->error('没有权限操作'.$cate.'文件夹');
+		if (!in_array($cate, $fileService::FILE_TYPE)) {
+			$this->error(appT('param_error'));
 		}
-		$result = $file->upload($file, $cate);
+		$result = $fileService->upload($file, $cate, false);
 		if (empty($result)) {
-			$this->error('上传失败');
+			$this->error('Failed to update Avatar');
 		}
 		$this->success($result);
 	}
