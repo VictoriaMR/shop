@@ -15,6 +15,7 @@ const CRAWLERINIt = {
 		HELPERINIT.request({action: 'request', value: 'api/getHelperData', cache_key: 'helper_all_data_cache'}, function(res) {
 			if (res.code === '200') {
 				_this.bodyPageInit();
+				_this.crawler_info = res.data;
 				_this.crawlerPageinit(res.data);
 			} else {
 				HELPERINIT.request({action:'alert', value: res.message});
@@ -23,9 +24,9 @@ const CRAWLERINIt = {
 	},
 	bodyPageInit: function() {
 		const _this = this;
-		let bodyPage = document.getElementById('crawler-page');
+		var bodyPage = document.getElementById('crawler-page');
 		if (!bodyPage) {
-			let body = document.querySelector('body');
+			var body = document.querySelector('body');
 			bodyPage = document.createElement('div');
 			bodyPage.id = 'crawler-page';
 			body.appendChild(bodyPage);
@@ -57,7 +58,7 @@ const CRAWLERINIt = {
 	},
 	goNext: function() {
 		var _this = this;
-		let _thisobj = document.getElementById('clawler-after-btn');
+		var _thisobj = document.getElementById('clawler-after-btn');
 		if (_thisobj.className.indexOf('loading') !== -1) {
 			return false;
 		}
@@ -82,7 +83,7 @@ const CRAWLERINIt = {
 		//展开/关闭详情
 		var _this = this;
 		var _thisobj = document.getElementById('crawler-show-btn');
-		let status = '0';
+		var status = '0';
 		if (_thisobj.innerText === '展开') {
 			status = '1';
 		}
@@ -112,6 +113,7 @@ const CRAWLERINIt = {
 		const _this = this;
 		CRAWLER.data(function(code, data, message){
 			if (code === 0) {
+				_this.crawler_data = data;
 				_this.crawlerPage(info, data);
 			} else {
 				_this.error(message);
@@ -123,9 +125,9 @@ const CRAWLERINIt = {
 		const _this = this;
 		_this.category = info.site_category;
 		_this.site = info.site;
-		let crawlerPage = document.getElementById('item-content');
-		let count = 0;
-		let html = `<form id="crawler_form">
+		var crawlerPage = document.getElementById('item-content');
+		var count = 0;
+		var html = `<form id="crawler_form">
 						<input type="hidden" name="bc_shop_name" value="` + data.shop_name + `" />
 						<input type="hidden" name="bc_shop_url" value="` + data.shop_url + `" />
 						<div class="productAttLine">
@@ -213,22 +215,20 @@ const CRAWLERINIt = {
 		if (data.attr) {
 			html += `<div class="productAttLine">
 						<div class="picTitle" style="margin-bottom: 0;">产品属性名：</div>
-						<div class="attr-content">`;
-			html += `</div>
-					<div class="reload-attr-content">
-						<input type="text" id="attr-break" value="" placeholder="属性分割">
-						<button type="button" id="reload-attr-btn">确定</button>
-					</div>
-					<div class="clear"></div>
-					</div>`;
+						<div class="attr-content"></div>`;
+			html += `</div>`;
+			html += `<div class="productAttLine">
+						<div class="picTitle" style="margin-bottom: 0;">产品属性值：</div>
+						<div class="attv-content"></div>`;
+			html += `</div>`;
 		}
 		if (data.multi_sku) {
 			//sku
 			html += `<div class="productAttLine">
 						<div class="picTitle" style="margin-bottom: 0;">SKU：</div>
 						<div class="pdtPicHere">`;
-			let count = 0;
-			for (let i in data.sku) {
+			var count = 0;
+			for (var i in data.sku) {
 				html += `<div class="sku-item">
 							<input type="hidden" name="bc_sku[` + count + `][sku_id]" value="`+i+`"/>
 							<div class="cancel-btn">x</div>
@@ -243,9 +243,9 @@ const CRAWLERINIt = {
 					html += `<div class="flex1">
 								<div class="sku-attr">`;
 					if (data.sku[i].pvs.length) {
-						for (let j=0;j<data.sku[i].pvs.length;j++) {
+						for (var j=0;j<data.sku[i].pvs.length;j++) {
 							html += `<div class="flex">
-										<div>`+j+`: </div>
+										<div class="sku-attr-name">`+j+`:</div>
 										<div class="flex1">
 											<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku[i].pvs[j].text) + `"/>
 											<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku[i].pvs[j].img + `"/>
@@ -253,9 +253,9 @@ const CRAWLERINIt = {
 									</div>`;
 						}
 					} else {
-						for (let j in data.sku[i].pvs) {
+						for (var j in data.sku[i].pvs) {
 							html += `<div class="flex">
-										<div>`+j+`: </div>
+										<div class="sku-attr-name">`+j+`:</div>
 										<div class="flex1">
 											<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku[i].pvs[j].text) + `"/>
 											<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku[i].pvs[j].img + `"/>
@@ -297,14 +297,14 @@ const CRAWLERINIt = {
 							</div>
 							<div class="flex1 sku-attr">`;
 					if (data.sku.pvs.length) {
-						for (let j=0;j<data.sku.pvs.length;j++) {
+						for (var j=0;j<data.sku.pvs.length;j++) {
 							html += `<div>
 										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku.pvs[j].text) + `"/>
 										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
 									</div>`;
 						}
 					} else {
-						for (let j in data.sku.pvs) {
+						for (var j in data.sku.pvs) {
 							html += `<div>
 										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku.pvs[j].text) + `"/>
 										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
@@ -329,7 +329,7 @@ const CRAWLERINIt = {
 								<div class="pdtPicHere" id="pdt_picture">
 									<input type="hidden" name="bc_product_img" class="bc_product_picture" value="` + data.pdt_picture.join(',') + `"/>`;
 			html += `<div>`;
-			for (let i=0;i< data.pdt_picture.length;i++) {
+			for (var i=0;i< data.pdt_picture.length;i++) {
 				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />`;
 				if (i>0 && i%3===0) {
 					html += '</div><div>';
@@ -345,7 +345,7 @@ const CRAWLERINIt = {
 								<div class="pdtPicHere" id="pdt_desc_picture">
 									<input type="hidden" name="bc_product_des_picture" class="bc_product_picture" value="` + data.des_picture.join(',') + `"/>`;
 			html += `<div>`;
-			for (let i=0;i<data.des_picture.length;i++) {
+			for (var i=0;i<data.des_picture.length;i++) {
 				html += `<img class="imgList" src="` + data.des_picture[i] + `" />`;
 				html += '</div><div>';
 			}
@@ -355,9 +355,9 @@ const CRAWLERINIt = {
 		var attributes = {};
 		if (data.attributes.length > 0) {
 			var ignoreArr = _this.attrIgnore();
-			for (let i=0; i<data.attributes.length; i++) {
+			for (var i=0; i<data.attributes.length; i++) {
 				var check = false;
-				for (let j=0; j<ignoreArr.length; j++) {
+				for (var j=0; j<ignoreArr.length; j++) {
 					if (data.attributes[i].name.indexOf(ignoreArr[j])>=0 && !check) {
 						check = true;
 					}
@@ -389,15 +389,29 @@ const CRAWLERINIt = {
 	},
 	initAttr: function(attr) {
 		var obj = document.querySelector('.attr-content');
+		var objv = document.querySelector('.attv-content');
 		if (obj) {
 			var html = '';
+			var attrValueHtml = '';
 			for (var i in attr){
-				html += `<input type="text" name="bc_product_attr[`+i+`]" value="` + attr[i].attrName + `" />`;
+				html += `<div>
+							<span class="old-value">`+attr[i].attrName+`</span>
+							<span>替换</span>
+							<input type="text" value="` + attr[i].attrName + `" />
+							<button type="button" class="btn1">确定</button>
+						</div>`;
 				for (var j in attr[i].attrValue) {
-					html += `<input type="text" class="value" name="bc_product_attr[`+attr[i].attrName+`]" value="` + attr[i].attrValue[j].name + `" />`;
+					attrValueHtml += `<div>
+							<span class="old-value">`+attr[i].attrValue[j].name+`</span>
+							<span>替换</span>
+							<input type="text" value="` + attr[i].attrValue[j].name + `" />
+							<button type="button" class="btn1">确定</button>
+							<span class="cancel-btn">x</span>
+						</div>`;
 				}
 			}
 			obj.innerHTML = html;
+			objv.innerHTML = attrValueHtml;
 		}
 	},
 	nameFormat: function(name) {
@@ -413,14 +427,14 @@ const CRAWLERINIt = {
 	clickInit: function() {
 		const _this = this;
 		//上传产品按钮
-		let obj1 = document.getElementById('post-product-btn');
+		var obj1 = document.getElementById('post-product-btn');
 		if (obj1) {
 			obj1.onclick = function () {
 				if (this.className.indexOf('loading') !== -1) {
 					return false;
 				}
 				const param = _this.serializeForm(document.getElementById('crawler_form'));
-				let _thisobj = this;
+				var _thisobj = this;
 				_thisobj.innerHTML = '数据发送中...';
 				_thisobj.classList.add('loading');
 				HELPERINIT.request({action: 'request', value: 'api/addProduct', param:param}, function(res) {
@@ -434,10 +448,10 @@ const CRAWLERINIt = {
 			}
 		}
 		//图片按钮点击删除
-		let obj3 = document.getElementById('pdt_picture');
+		var obj3 = document.getElementById('pdt_picture');
 		if (obj3) {
 			const tobj = obj3.querySelectorAll('img');
-			for (let i = 0; i < tobj.length; i++) {
+			for (var i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this)
 					_this.initPdtImgValue(obj3);
@@ -445,17 +459,17 @@ const CRAWLERINIt = {
 			}
 		}
 		//图片介绍图
-		let obj4 = document.getElementById('pdt_desc_picture');
+		var obj4 = document.getElementById('pdt_desc_picture');
 		if (obj4) {
 			const tobj = obj4.querySelectorAll('img');
-			for (let i = 0; i < tobj.length; i++) {
+			for (var i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
 					this.parentNode.removeChild(this)
 					_this.initPdtImgValue(obj4);
 				}
 			}
 		}
-		let obj5 = document.getElementById('pdt_des_text');
+		var obj5 = document.getElementById('pdt_des_text');
 		if (obj5) {
 			tobj = obj5.querySelectorAll('.sku-attr .close');
 			for (var i = 0; i < tobj.length; i++) {
@@ -465,40 +479,85 @@ const CRAWLERINIt = {
 			}
 		}
 		// sku 点击删除
-		let obj6 = document.querySelectorAll('.cancel-btn');
+		var obj6 = document.querySelectorAll('.sku-item .cancel-btn');
 		if (obj6) {
-			for (let i = 0; i < obj6.length; i++) {
+			for (var i = 0; i < obj6.length; i++) {
 				obj6[i].onclick = function(event) {
 					this.parentNode.remove();
 				}
 			}
 		}
 		//站点改变切换分类
-		let obj7 = document.querySelector('#crawler-page .bc_product_site');
+		var obj7 = document.querySelector('#crawler-page .bc_product_site');
 		if (obj7) {
 			obj7.onchange = function(){
 				const index = obj7.selectedIndex;
 				_this.getCategoryHtml(obj7.options[index].value);
 			}
 		}
+		//属性切换点击
+		var obj8 = document.querySelectorAll('#crawler-page .attr-content button');
+		if (obj8) {
+			for (var i = 0; i < obj8.length; i++) {
+				obj8[i].onclick = function(event) {
+					var oldValue = this.parentNode.querySelector('.old-value').innerText;
+					var value = this.parentNode.querySelector('input').value;
+					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr');
+					for (var j=0; j<skuObj.length; j++) {
+						if (skuObj[j].querySelector('.sku-attr-name').innerText == oldValue+':') {
+							skuObj[j].querySelector('.sku-attr-name').innerText = value+':';
+							var inputObj = skuObj[j].querySelectorAll('input');
+							for (var n=0; n<inputObj.length; n++) {
+								inputObj[n].setAttribute('name', inputObj[n].getAttribute('name').replace(oldValue, value));
+							}
+						}
+					}
+					this.parentNode.querySelector('.old-value').innerText = value;
+				}
+			}
+		}
+		//属性切换点击
+		var obj9 = document.querySelectorAll('#crawler-page .attv-content button');
+		if (obj9) {
+			for (var i = 0; i < obj9.length; i++) {
+				obj9[i].onclick = function(event) {
+					var oldValue = this.parentNode.querySelector('.old-value').innerText;
+					var value = this.parentNode.querySelector('input').value;
+					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr');
+					for (var j=0; j<skuObj.length; j++) {
+						if (skuObj[j].querySelector('input').value == oldValue) {
+							skuObj[j].querySelector('input').value = value;
+						}
+					}
+					this.parentNode.querySelector('.old-value').innerText = value;
+				}
+			}
+		}
+		var obj10 = document.querySelectorAll('#crawler-page .attv-content .cancel-btn');
+		if (obj10) {
+			for (var i = 0; i < obj10.length; i++) {
+				obj10[i].onclick = function(event) {
+				}
+			}
+		}
 	},
 	getSiteHtml: function() {
-		let html = '';
+		var html = '';
 		const list = this.site;
 		if (list) {
-			for (let i = 0; i < list.length; i++) {
+			for (var i = 0; i < list.length; i++) {
 				html += '<option value="'+list[i].site_id+'">'+list[i].name+'</option>';
 			}	
 		}
 		return html;
 	},
 	getCategoryHtml: function(siteId) {
-		let html = '';
+		var html = '';
 		const list = this.category[siteId];
 		console.log(siteId, list, this)
 		if (list) {
 			html = '<option value="">请选择分类</option>';
-			for (let i = 0; i < list.length; i++) {
+			for (var i = 0; i < list.length; i++) {
 				var paddingStr = '';
 				var disable = false;
 				if (list[i+1] && list[i+1].parent_id == list[i].cate_id) {
@@ -514,21 +573,21 @@ const CRAWLERINIt = {
 	},
 	serializeForm: function(formobj) {
 		if (formobj) {
-			let formData = new FormData(formobj);
+			var formData = new FormData(formobj);
 			return Object.fromEntries(formData.entries());
 		}
 		return {};
 	},
 	initPdtImgValue: function(pobj) {
-		let imgValueObj = pobj.querySelector('.bc_product_picture');
+		var imgValueObj = pobj.querySelector('.bc_product_picture');
 		if (imgValueObj === null) {
 			pobj.innerHTML += '<input type="hidden" name="bc_product_img" class="bc_product_picture" value=""/>';
 			imgValueObj = pobj.querySelector('.bc_product_picture');
 		}
 		const imgobj = pobj.getElementsByTagName('img');
-		let value = '';
-		let count = 0;
-		for (let i = 0; i < imgobj.length; i++) {
+		var value = '';
+		var count = 0;
+		for (var i = 0; i < imgobj.length; i++) {
 			if (imgobj[i].src) {
 				if (count > 0) {
 					value += ',';
