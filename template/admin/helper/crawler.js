@@ -387,7 +387,7 @@ var CRAWLER = {
         if(Hub.config.config.sku.valItemInfo.skuMap){
             //多sku产品
             let interval = setInterval(function() {
-                if (g_config.dynStock.sku) {
+                if (g_config.dynStock && g_config.dynStock.sku) {
                     clearInterval(interval);
                     multi_sku=1;
                     let sort = 0;

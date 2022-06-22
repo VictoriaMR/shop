@@ -168,6 +168,17 @@ function siteId(){
 function userId(){
 	return session()->get(APP_TEMPLATE_TYPE.'_info', 0, 'mem_id');
 }
+function userName(){
+	$info = session()->get(APP_TEMPLATE_TYPE.'_info');
+	$name = trim($info['first_name'].' '.$info['last_name']);
+	if (!$name) {
+		$name = $info['email'];
+	}
+	return $name;
+}
+function userEmail(){
+	return session()->get(APP_TEMPLATE_TYPE.'_info', '', 'email');
+}
 function currencyId(){
 	return session()->get('site_currency_id', 'USD');
 }

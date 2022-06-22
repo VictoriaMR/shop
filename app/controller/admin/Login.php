@@ -7,6 +7,7 @@ class Login extends AdminBase
 {
 	public function index()
 	{	
+		make('app/task/main/Queue')->run();
 		html()->addCss();
 		html()->addJs();
 		$this->assign('_title', '登录');

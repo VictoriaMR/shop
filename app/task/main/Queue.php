@@ -21,8 +21,6 @@ class Queue extends TaskDriver
 			if ($rst) {
 				// $service->pop();
 			}
-
-			
 		} else {
 			// $this->taskSleep(500);
 		}

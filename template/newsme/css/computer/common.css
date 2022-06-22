@@ -164,6 +164,9 @@ body {
 .tl {
 	text-align: left;
 }
+.tc {
+	text-align: center;
+}
 .hide {
 	display: none;
 }
@@ -172,16 +175,8 @@ body {
 	border-bottom: 1px solid #D1D1D6;
 	padding: 12px 0;
 }
-.meau-header .left {
-	width: 33%;
-	height: 36px;
-}
-.meau-header .left.middle {
-	width: 34%;
-}
-.meau-header .left.middle img {
+.meau-header .logo {
 	max-height: 36px;
-	display: block;
 }
 .nav-list {
 	background-color: #fff;

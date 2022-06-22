@@ -214,7 +214,8 @@
 	max-width: 100%;
 	max-height: 100%;
 }
-#crawler-page .sku-item .cancel-btn {
+#crawler-page .cancel-btn {
+    cursor: pointer;
 	background: #e5e5e5;
 	font-size: 12px;
 	width: 12px;
@@ -222,10 +223,12 @@
 	line-height: 10px;
 	border-radius: 50%;
 	text-align: center;
+    display: inline-block;
+}
+#crawler-page .sku-item .cancel-btn {
 	position: absolute;
 	top: 1px;
 	right: 1px;
-	cursor: pointer;
 }
 #pdt_des_text .sku-attr {
 	margin-bottom: 8px;

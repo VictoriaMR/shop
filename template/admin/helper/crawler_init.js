@@ -324,30 +324,32 @@ const CRAWLERINIt = {
 		}
 		if (data.pdt_picture) {
 			html += `<div class="clear"></div>
-							<div class="productMainPic">
-								<div class="picTitle">产品图：</div>
-								<div class="pdtPicHere" id="pdt_picture">
-									<input type="hidden" name="bc_product_img" class="bc_product_picture" value="` + data.pdt_picture.join(',') + `"/>`;
+					<div class="productMainPic">
+						<div class="picTitle">产品图：</div>
+						<div class="pdtPicHere" id="pdt_picture">
+							<input type="hidden" name="bc_product_img" class="bc_product_picture" value="` + data.pdt_picture.join(',') + `"/>`;
 			html += `<div>`;
 			for (var i=0;i< data.pdt_picture.length;i++) {
 				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />`;
-				if (i>0 && i%3===0) {
-					html += '</div><div>';
+				if ((i+1)%4===0) {
+					html += '</div><div style="clear:both;"></div><div>';
 				}
-				html += '</div><div>';
 			}
 			html += `</div>`;
+			html += `</div></div>`;
 		}
 		if (data.des_picture) {
 			html += `<div class="clear"></div>
-							<div class="productMainPic">
-								<div class="picTitle">产品详情图：<span style="color:red;font-size:12px;"></span></div>
-								<div class="pdtPicHere" id="pdt_desc_picture">
-									<input type="hidden" name="bc_product_des_picture" class="bc_product_picture" value="` + data.des_picture.join(',') + `"/>`;
+					<div class="productMainPic">
+						<div class="picTitle">产品详情图：<span style="color:red;font-size:12px;"></span></div>
+						<div class="pdtPicHere" id="pdt_desc_picture">
+							<input type="hidden" name="bc_product_des_picture" class="bc_product_picture" value="` + data.des_picture.join(',') + `"/>`;
 			html += `<div>`;
 			for (var i=0;i<data.des_picture.length;i++) {
 				html += `<img class="imgList" src="` + data.des_picture[i] + `" />`;
-				html += '</div><div>';
+				if ((i+1)%4===0) {
+					html += '</div><div style="clear:both;"></div><div>';
+				}
 			}
 			html += `</div>`;
 			html += `</div></div>`;
@@ -382,12 +384,13 @@ const CRAWLERINIt = {
 			html += `</div></div>`;
 		}
 		html += '</form>';
-		html += `<button id="post-product-btn">上传产品</button>`;
+		html += `<button id="post-product-btn" type="button">上传产品</button>`;
 		crawlerPage.innerHTML = html;
 		crawlerPage.style.display = 'block';
 		_this.initAttr(data.attr);
 	},
 	initAttr: function(attr) {
+		var _this = this;
 		var obj = document.querySelector('.attr-content');
 		var objv = document.querySelector('.attv-content');
 		if (obj) {
@@ -395,16 +398,16 @@ const CRAWLERINIt = {
 			var attrValueHtml = '';
 			for (var i in attr){
 				html += `<div>
-							<span class="old-value">`+attr[i].attrName+`</span>
+							<span class="old-value">`+_this.formatStr(attr[i].attrName)+`</span>
 							<span>替换</span>
-							<input type="text" value="` + attr[i].attrName + `" />
+							<input type="text" value="` + _this.formatStr(attr[i].attrName) + `" />
 							<button type="button" class="btn1">确定</button>
 						</div>`;
 				for (var j in attr[i].attrValue) {
 					attrValueHtml += `<div>
-							<span class="old-value">`+attr[i].attrValue[j].name+`</span>
+							<span class="old-value">`+_this.formatStr(attr[i].attrValue[j].name)+`</span>
 							<span>替换</span>
-							<input type="text" value="` + attr[i].attrValue[j].name + `" />
+							<input type="text" value="` + _this.formatStr(attr[i].attrValue[j].name) + `" />
 							<button type="button" class="btn1">确定</button>
 							<span class="cancel-btn">x</span>
 						</div>`;
@@ -469,12 +472,13 @@ const CRAWLERINIt = {
 				}
 			}
 		}
+		//描述文件删除
 		var obj5 = document.getElementById('pdt_des_text');
 		if (obj5) {
-			tobj = obj5.querySelectorAll('.sku-attr .close');
+			tobj = obj5.querySelectorAll('.sku-attr .cancel-btn');
 			for (var i = 0; i < tobj.length; i++) {
 				tobj[i].onclick = function(event) {
-					this.parentNode.removeChild(this);
+					this.parentNode.remove();
 				}
 			}
 		}
@@ -537,6 +541,14 @@ const CRAWLERINIt = {
 		if (obj10) {
 			for (var i = 0; i < obj10.length; i++) {
 				obj10[i].onclick = function(event) {
+					var oldValue = this.parentNode.querySelector('input').value;
+					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr');
+					for (var j=0; j<skuObj.length; j++) {
+						if (skuObj[j].querySelector('input').value == oldValue) {
+							skuObj[j].parentNode.parentNode.parentNode.remove();
+						}
+					}
+					this.parentNode.remove();
 				}
 			}
 		}

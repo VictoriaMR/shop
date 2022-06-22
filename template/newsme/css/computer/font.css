@@ -65,6 +65,9 @@
 .f800 {
 	font-weight: 800;
 }
+.f0 {
+    font-size: 0;
+}
 .f12 {
 	font-size: 12px
 }
