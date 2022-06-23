@@ -53,7 +53,7 @@ class Task
 			$rstSign = '';
 			exec($cmd.' > /dev/null 2>&1 &', $out, $rstSign);
 		}
-		config('env', 'APP_DEBUG') && make('frame/Debug')->runlog($cmd, 'task');
+		make('frame/Debug')->runlog($cmd, 'task');
 		return true;
 	}
 
