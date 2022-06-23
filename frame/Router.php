@@ -67,7 +67,7 @@ final class Router
 		return $arr[$type] ?? ucfirst($type);
 	}
 
-	public function buildUrl($url=null, $param=null, $name=null)
+	public function buildUrl($url=null, $param=null, $suffix=false)
 	{
 		if (empty($url)) return '/';
 		if (IS_ADMIN) {
@@ -86,8 +86,10 @@ final class Router
 					$url .= $this->nameFormat($param);
 			}
 			$url = trim($url, '-');
-			$viewSuffix = \App::get('router', 'view_suffix');
-			if (!empty($url) && $viewSuffix) $url .= '.'.$viewSuffix;
+			if ($suffix) {
+				$viewSuffix = \App::get('router', 'view_suffix');
+				if (!empty($url) && $viewSuffix) $url .= '.'.$viewSuffix;
+			}
 		}
 		return APP_DOMAIN.$url;
 	}

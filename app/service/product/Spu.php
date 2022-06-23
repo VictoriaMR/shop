@@ -45,7 +45,7 @@ class Spu extends Base
 		$info['original_price_format'] = $currencyService->priceFormat($info['original_price'], 2);
 		//获取语言
 		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>$lanId], 'name', ['lan_id'=>'desc'])['name'] ?? '';
-		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $spuId]);
+		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $spuId], true);
 		//spu介绍图片
 		$info['introduce'] = make('app/service/product/IntroUsed')->getListById($spuId);
 		//spu描述
@@ -78,7 +78,7 @@ class Spu extends Base
 			}
 			$name = implode(' ', $name);
 			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
-			$value['url'] = router()->buildUrl($value['name'].'-s', ['id'=>$key]);
+			$value['url'] = router()->buildUrl($value['name'].'-s', ['id'=>$key], true);
 			$info['sku'][$key] = $value;
 		}
 		return $info;
@@ -490,7 +490,7 @@ class Spu extends Base
 				//格式化数组
 				foreach($list as $key => $value) {
 					$value['name'] = $lanArr[$value['spu_id']] ?? '';
-					$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']]);
+					$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']], true);
 					$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
 					$temp = $currencyService->priceFormat($value['min_price']);
 					$value['min_price'] = $temp[1];
@@ -524,7 +524,7 @@ class Spu extends Base
 		//格式化数组
 		foreach($list as $key => $value) {
 			$value['name'] = $lanArr[$value['spu_id']] ?? '';
-			$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']]);
+			$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']], true);
 			$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
 			$temp = $currency->priceFormat($value['min_price']);
 			$value['min_price'] = $temp[1];
