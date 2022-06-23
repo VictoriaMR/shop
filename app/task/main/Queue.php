@@ -19,10 +19,10 @@ class Queue extends TaskDriver
 			$func = $data['method'];
 			$rst = make($data['class'])->$func($data['param']);
 			if ($rst) {
-				// $service->pop();
+				$service->pop();
 			}
 		} else {
-			// $this->taskSleep(500);
+			$this->taskSleep(500);
 		}
 		return true;
 	}

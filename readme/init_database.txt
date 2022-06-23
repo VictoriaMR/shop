@@ -1081,3 +1081,39 @@ CREATE TABLE `visitor_logger` (
   `add_time` timestamp NULL DEFAULT NULL COMMENT '创建时间',
   PRIMARY KEY (`log_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+TRUNCATE TABLE `product_spu`;
+TRUNCATE TABLE `product_spu_data`;
+TRUNCATE TABLE `product_spu_image`;
+TRUNCATE TABLE `product_sku`;
+TRUNCATE TABLE `product_sku_data`;
+TRUNCATE TABLE `product_language`;
+TRUNCATE TABLE `product_attr_used`;
+TRUNCATE TABLE `product_desc_used`;
+TRUNCATE TABLE `product_intro_used`;
+TRUNCATE TABLE `attachment`;
+TRUNCATE TABLE `attachment_url`;
+TRUNCATE TABLE `attr_name`;
+TRUNCATE TABLE `attr_name_language`;
+TRUNCATE TABLE `attr_value`;
+TRUNCATE TABLE `attr_value_language`;
+TRUNCATE TABLE `cart`;
+TRUNCATE TABLE `desc_name`;
+TRUNCATE TABLE `desc_name_language`;
+TRUNCATE TABLE `desc_value`;
+TRUNCATE TABLE `desc_value_language`;
+TRUNCATE TABLE `email`;
+TRUNCATE TABLE `member`;
+TRUNCATE TABLE `member_address`;
+TRUNCATE TABLE `member_collect`;
+TRUNCATE TABLE `member_history`;
+TRUNCATE TABLE `member_uuid`;
+TRUNCATE TABLE `message`;
+truncate table `message_member`;
+truncate table `order`;
+truncate table `order_address`;
+truncate table `order_product`;
+truncate table `order_product_attr`;
+truncate table `order_status_history`;
+truncate table `site_static_file`;
+truncate table `supplier_shop`;
