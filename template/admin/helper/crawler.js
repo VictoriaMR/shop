@@ -89,7 +89,7 @@ var CRAWLER = {
     isDescPic: function(src) {
         var ignore = ['img.taobao.com', 'ma.m.1688.com', 'amos.alicdn.com', 'alisoft.com', 'add_to_favorites.htm', 'img.alicdn.com/NewGualianyingxiao'];
         for(var i=0; i<ignore.length; i++){
-            if(src.indexOf(ignore[i])!=-1 && src.indexOf('_.webp')===-1){
+            if(src.indexOf(ignore[i])!=-1 || src.indexOf('_.webp')===-1){
                 return false;
             }
         }
