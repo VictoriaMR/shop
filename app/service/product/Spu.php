@@ -281,7 +281,7 @@ class Spu extends Base
 		];	
 		
 		$info = $spuData->loadData($where, 'spu_id');
-		$data['bc_post_fee'] = $data['bc_post_fee'] ? (float)$data['bc_post_fee']? 0; //邮费
+		$data['bc_post_fee'] = $data['bc_post_fee'] ? (float)$data['bc_post_fee'] : 0; //邮费
 		if (empty($info)) {
 			//价格合集
 			$priceArr = [];
