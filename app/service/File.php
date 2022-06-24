@@ -121,6 +121,7 @@ class File
 					$insert[$data['attach_id']] = [
 						'attach_id' => $data['attach_id'],
 						'url_md5' => $value,
+						'url' => $key,
 					];
 					unlink($tempName);
 				} else {
