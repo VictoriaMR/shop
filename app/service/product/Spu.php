@@ -399,7 +399,7 @@ class Spu extends Base
 			try{
 				$nameId = $descNameArr[strtoupper(strTrim($value['key']))];
 				$valueId = $descValueArr[strtoupper(strTrim($value['value']))];
-			} catch(Exception $e) {
+			} catch(\Throwable $e) {
 				\App::error(json_encode($descNameArr).'==>'.json_encode($descValueArr), 'test');
 				exit();
 			}
