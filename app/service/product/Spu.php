@@ -244,6 +244,7 @@ class Spu extends Base
 		//汇总属性|属性图片
 		$tempImageArr = [];
 		foreach ($data['bc_sku'] as $key => $value) {
+			if (empty($value['attr'])) continue;
 			if (!empty($value['img'])) {
 				$tempImageArr[] = $value['img'];
 			}
@@ -285,6 +286,7 @@ class Spu extends Base
 			//价格合集
 			$priceArr = [];
 			foreach ($data['bc_sku'] as $key => $value) {
+				if (empty($value['attr'])) continue;
 				$priceArr[] = $value['price']+$data['bc_post_fee'];
 			}
 			$insert = [
@@ -331,6 +333,7 @@ class Spu extends Base
 			$sku = make('app/service/product/Sku');
 			$skuData = make('app/service/product/SkuData');
 			foreach ($data['bc_sku'] as $key => $value) {
+				if (empty($value['attr'])) continue;
 				$price = $this->getPrice($value['price']+$data['bc_post_fee']);
 				$insert = [
 					'spu_id' => $spuId,
