@@ -70,6 +70,9 @@
 	color: red;
 	text-align: center;
 	display: none;
+    position: absolute;
+    top: 10px;
+    left: 100px;
 }
 #crawler-page.open .error-msg {
 	display: block;

@@ -46,7 +46,7 @@ class App
 	private static function getConfig()
 	{
 		$config = config('domain', str_replace('www.', '', $_SERVER['HTTP_HOST']));
-		if (empty($config)) {
+		if (empty($config['domain'])) {
 			$config = config('domain');
 			return array_shift($config);
 		}
