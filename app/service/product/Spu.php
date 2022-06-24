@@ -281,13 +281,15 @@ class Spu extends Base
 		];	
 		
 		$info = $spuData->loadData($where, 'spu_id');
-		$data['bc_post_fee'] = $data['bc_post_fee'] ?? 0; //邮费
+		$data['bc_post_fee'] = $data['bc_post_fee'] ? (float)$data['bc_post_fee']? 0; //邮费
 		if (empty($info)) {
 			//价格合集
 			$priceArr = [];
 			foreach ($data['bc_sku'] as $key => $value) {
 				if (empty($value['attr'])) continue;
-				$priceArr[] = $value['price']+$data['bc_post_fee'];
+				$value['price'] = (float)$value['price'];
+				$priceArr[] = (float)$value['price']+$data['bc_post_fee'];
+				$data['bc_sku'][$key]['price'] = $value['price'];
 			}
 			$insert = [
 				'status' => 0,
@@ -307,7 +309,7 @@ class Spu extends Base
 				'item_id' => $data['bc_product_id'],
 				'item_url' => $data['bc_product_url'],
 				'shop_id' => make('app/service/supplier/Shop')->addNotExist(['url'=>$data['bc_shop_url'], 'name'=>$data['bc_shop_name']]),
-				'post_fee' => $data['bc_post_fee'],
+				'post_fee' => (float)$data['bc_post_fee'],
 				'weight' => (int)($data['bc_product_weight'] ?? 0),
 				'volume' => $data['bc_product_volume'] ?? '',
 			];
