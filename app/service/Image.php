@@ -190,13 +190,13 @@ class Image
 		} else {
 			$ratio = $outputHeight / $srcImageHeight;
 		}
-		$real_h = $srcImageHeight * $ratio;
+		$real_h = (int)($srcImageHeight * $ratio);
 		//上下留白
-		$diff_y = ($outputHeight - $real_h) / 2;
+		$diff_y = (int)(($outputHeight - $real_h) / 2);
 
-		$real_w = $srcImageWidth * $ratio;
+		$real_w = (int)($srcImageWidth * $ratio);
 		//左右留白
-		$diff_x = ($outputWidth - $real_w) / 2;
+		$diff_x = (int)(($outputWidth - $real_w) / 2);
 
 		imagealphablending($returnPic, true);
 		imagesavealpha($returnPic, true);
