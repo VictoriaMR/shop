@@ -443,7 +443,7 @@ const CRAWLERINIt = {
 				HELPERINIT.request({action: 'request', value: 'api/addProduct', param:param}, function(res) {
 					_thisobj.classList.remove('loading');
 					_thisobj.innerHTML = '上传产品';
-					document.querySelector('.crawler-button .error-msg').innerText = res.message;
+					_this.error(res.message);
 					if (res.code === '200') {
 						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
 					}
