@@ -58,7 +58,7 @@ const CRAWLERINIt = {
 	},
 	goNext: function() {
 		var _this = this;
-		var _thisobj = document.getElementById('clawler-after-btn');
+		var _thisobj = document.getElementById('go-next-btn');
 		if (_thisobj.className.indexOf('loading') !== -1) {
 			return false;
 		}
