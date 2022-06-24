@@ -506,7 +506,7 @@ const CRAWLERINIt = {
 				obj8[i].onclick = function(event) {
 					var oldValue = this.parentNode.querySelector('.old-value').innerText;
 					var value = this.parentNode.querySelector('input').value;
-					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr');
+					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
 					for (var j=0; j<skuObj.length; j++) {
 						if (skuObj[j].querySelector('.sku-attr-name').innerText == oldValue+':') {
 							skuObj[j].querySelector('.sku-attr-name').innerText = value+':';
