@@ -396,8 +396,13 @@ class Spu extends Base
 		$insert = [];
 		$count = 1;
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$nameId = $descNameArr[strtoupper(strTrim($value['key']))];
-			$valueId = $descValueArr[strtoupper(strTrim($value['value']))];
+			try{
+				$nameId = $descNameArr[strtoupper(strTrim($value['key']))];
+				$valueId = $descValueArr[strtoupper(strTrim($value['value']))];
+			} catch(Exception $e) {
+				\App::error(json_encode($descNameArr).'==>'.json_encode($descValueArr), 'test');
+				exit();
+			}
 			$insert[$nameId.'-'.$valueId] = [
 				'spu_id' => $spuId,
 				'descn_id' => $nameId,
