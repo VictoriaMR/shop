@@ -20,6 +20,7 @@ foreach ($argv as $key=>$value) {
 	$param[array_shift($temp)] = implode('=', $temp);
 }
 define('IS_CLI', true);
+define('APP_DOMAIN', '');
 require ROOT_PATH.'frame'.DS.'App.php';
 require ROOT_PATH.'frame'.DS.'Container.php';
 require ROOT_PATH.'frame'.DS.'Helper.php';
