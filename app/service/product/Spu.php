@@ -402,6 +402,8 @@ class Spu extends Base
 				make('frame/Debug')->runlog($tempKey.'==>'.$tempValue.'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descValueArr, JSON_UNESCAPED_UNICODE), 'test');
 				exit();
 			}
+			$nameId = $descNameArr[$tempKey];
+			$valueId = $descValueArr[$tempValue];
 			$insert[$nameId.'-'.$valueId] = [
 				'spu_id' => $spuId,
 				'descn_id' => $nameId,
