@@ -425,7 +425,7 @@ const CRAWLERINIt = {
 		return name;
 	},
 	attrIgnore: function() {
-		return ['来源', '货源', '产地', '库存', '货号', '品牌', '下游', '销售', '跨境', '成分2', '上市年份', '认证', '证书', '安装服务', '配送上门', '专利', '纳税人', '年份季节', '型号'];
+		return ['来源', '货源', '产地', '库存', '货号', '品牌', '下游', '销售', '跨境', '成分2', '上市年份', '认证', '证书', '安装服务', '配送上门', '专利', '纳税人', '年份季节', '型号', '外贸'];
 	},
 	clickInit: function() {
 		const _this = this;
@@ -545,7 +545,7 @@ const CRAWLERINIt = {
 					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
 					for (var j=0; j<skuObj.length; j++) {
 						if (skuObj[j].querySelector('input').value == oldValue) {
-							skuObj[j].parentNode.parentNode.parentNode.parentNode.remove();
+							skuObj[j].parentNode.parentNode.remove();
 						}
 					}
 					this.parentNode.remove();
