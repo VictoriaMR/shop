@@ -425,7 +425,7 @@ const CRAWLERINIt = {
 		return name;
 	},
 	attrIgnore: function() {
-		return ['来源', '货源', '产地', '库存', '货号', '品牌', '下游', '销售', '跨境', '成分2'];
+		return ['来源', '货源', '产地', '库存', '货号', '品牌', '下游', '销售', '跨境', '成分2', '上市年份', '认证'];
 	},
 	clickInit: function() {
 		const _this = this;
