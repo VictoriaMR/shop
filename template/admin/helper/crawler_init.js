@@ -545,7 +545,11 @@ const CRAWLERINIt = {
 					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
 					for (var j=0; j<skuObj.length; j++) {
 						if (skuObj[j].querySelector('input').value == oldValue) {
-							skuObj[j].parentNode.parentNode.remove();
+							if (skuObj[j].parentNode.querySelectorAll('.flex').length === 1) {
+								skuObj[j].parentNode.parentNode.parentNode.parentNode.remove();
+							} else {
+								skuObj[j].remove();
+							}
 						}
 					}
 					this.parentNode.remove();
