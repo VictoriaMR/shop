@@ -1,1 +1,4 @@
-sitemap: https://newsme.cf/sitemap.xml
+User-agent: *
+Allow: /
+
+Sitemap: https://newsme.cf/sitemap.xml
