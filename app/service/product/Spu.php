@@ -399,7 +399,7 @@ class Spu extends Base
 			$tempKey = strtoupper(strTrim($value['key']));
 			$tempValue = strtoupper(strTrim($value['value']));
 			if (!isset($descNameArr[$tempKey]) || !isset($descValueArr[$tempValue])) {
-				make('frame/Debug')->runlog($tempKey.'==>'.$tempValue.'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descValueArr, JSON_UNESCAPED_UNICODE), 'test');
+				make('frame/Debug')->runlog($tempKey.'==>'.$tempValue.'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descValueArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($data['bc_des_text'], JSON_UNESCAPED_UNICODE), 'test');
 				exit();
 			}
 			$nameId = $descNameArr[$tempKey];
