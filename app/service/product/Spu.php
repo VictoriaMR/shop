@@ -399,7 +399,7 @@ class Spu extends Base
 			$tempKey = strtoupper(strTrim($value['key']));
 			$tempValue = strtoupper(strTrim($value['value']));
 			if (!isset($descNameArr[$tempKey]) || !isset($descNameArr[$tempValue])) {
-				make('frame/Debug')->runlog(json_encode($descNameArr).'==>'.json_encode($descValueArr), 'test');
+				make('frame/Debug')->runlog($tempKey.'==>'.$tempValue.'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descValueArr, JSON_UNESCAPED_UNICODE), 'test');
 				exit();
 			}
 			$insert[$nameId.'-'.$valueId] = [
