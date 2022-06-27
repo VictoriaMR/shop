@@ -398,7 +398,7 @@ class Spu extends Base
 		foreach ($data['bc_des_text'] as $key => $value) {
 			$tempKey = strtoupper(strTrim($value['key']));
 			$tempValue = strtoupper(strTrim($value['value']));
-			if (!isset($descNameArr[$tempKey]) || !isset($descNameArr[$tempValue])) {
+			if (!isset($descNameArr[$tempKey]) || !isset($descValueArr[$tempValue])) {
 				make('frame/Debug')->runlog($tempKey.'==>'.$tempValue.'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descNameArr, JSON_UNESCAPED_UNICODE).'==>'.json_encode($descValueArr, JSON_UNESCAPED_UNICODE), 'test');
 				exit();
 			}
