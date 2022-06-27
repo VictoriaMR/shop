@@ -12,7 +12,7 @@ class Base
 			'message' => '',
 		];
 		header('Content-Type:application/json; charset=utf-8');
-		echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
+		echo json_encode($data + $options, JSON_UNESCAPED_UNICODE);
 		\App::runOver();
 		exit();
 	}

@@ -19,7 +19,7 @@ class AdminBase extends Base
 				if (empty($this->_default)) {
 					$this->_nav = $this->_arr;
 				} else {
-					$this->_nav = array_merge(['default' => $this->_default], $this->_arr);
+					$this->_nav = ['default' => $this->_default]+$this->_arr;
 				}
 				$this->assign('_tag', $this->_tag);
 				$this->assign('_nav', $this->_nav);

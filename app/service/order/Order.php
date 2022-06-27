@@ -110,10 +110,10 @@ class Order extends Base
 			$orderProductId = $orderProduct->insertGetId($value);
 			//同步减少库存
 			$sku->where('sku_id', $value['sku_id'])->decrement('stock', $value['quantity']);
-			$insert = array_merge($insert, array_map(function($value) use ($orderProductId){
+			$insert = $insert + array_map(function($value) use ($orderProductId){
 				$value['order_product_id'] = $orderProductId;
 				return $value;
-			}, $orderProductAttr[$value['sku_id']]));
+			}, $orderProductAttr[$value['sku_id']]);
 		}
 		make('app/service/order/ProductAttribute')->insert($insert);
 

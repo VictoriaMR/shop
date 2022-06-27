@@ -28,7 +28,7 @@ class Name extends Base
 		}
 		$this->insert($tempArr);
 		$tempArr = $this->getListData(['name'=>['in', $diffArr]], 'descn_id,name');
-		return array_merge($list, array_column($tempArr, 'descn_id', 'name'));
+		return $list + array_column($tempArr, 'descn_id', 'name');
 	}
 
 	public function getListById($id, $lanId=1)

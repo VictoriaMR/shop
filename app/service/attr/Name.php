@@ -30,7 +30,7 @@ class Name extends Base
 		}
 		$this->insert($tempArr);
 		$tempArr = $this->getListData(['name'=>['in', $diffArr]], 'attrn_id,name');
-		return array_merge($list, array_column($tempArr, 'attrn_id', 'name'));
+		return $list+array_column($tempArr, 'attrn_id', 'name');
 	}
 
 	public function getList($where, $page=1, $size=20)

@@ -86,7 +86,7 @@ class UserInfo extends HomeBase
 		$rst = make('app/service/Member')->updateData(userId(), $data);
 		if ($rst) {
 			$info = session()->get(APP_TEMPLATE_TYPE.'_info');
-			session()->set(APP_TEMPLATE_TYPE.'_info', array_merge($info, $data));
+			session()->set(APP_TEMPLATE_TYPE.'_info', $info+$data);
 			$this->success('Update your info success.');
 		} else {
 			$this->error('Update your info failed.');

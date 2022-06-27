@@ -33,7 +33,7 @@ abstract class Stripe extends PaymentMethod
 			'description' => $payDes,
 			'statement_descriptor' => $payDes,
 		];
-		$request_body = array_merge($request_body, $this->request_body);
+		$request_body = $request_body + $this->request_body;
 
 	}
 
