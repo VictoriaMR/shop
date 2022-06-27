@@ -396,10 +396,9 @@ class Spu extends Base
 		$insert = [];
 		$count = 1;
 		foreach ($data['bc_des_text'] as $key => $value) {
-			try{
-				$nameId = $descNameArr[strtoupper(strTrim($value['key']))];
-				$valueId = $descValueArr[strtoupper(strTrim($value['value']))];
-			} catch(\Throwable $e) {
+			$tempKey = strtoupper(strTrim($value['key']));
+			$tempValue = strtoupper(strTrim($value['value']));
+			if (!isset($descNameArr[$tempKey]) || !isset($descNameArr[$tempValue])) {
 				\App::error(json_encode($descNameArr).'==>'.json_encode($descValueArr), 'test');
 				exit();
 			}
