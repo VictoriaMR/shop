@@ -5,6 +5,11 @@ use app\task\TaskDriver;
 
 class Queue extends TaskDriver
 {
+	public $config = [
+        'info' => '延时队列任务',
+        'cron' => ['* * * * *'],
+    ];
+
 	public function __construct($process=[])
 	{
 		parent::__construct($process);

@@ -5,21 +5,23 @@ namespace app\task;
 abstract class TaskDriver
 {
 	const TASKPREFIX ='frame-task:';
+	public $config = [];
+
 	protected $lock ='';
 	protected $cas ='';
 	protected $locker;
 	protected $tasker;
     protected $sleep = 1;
-	public $config = [
-		'info' => '任务说明',
-		'cron' => ['* * * * *'],
-	];
 	protected $lockTimeout = 600;
 
 	public function __construct($process=[])
 	{
         if ($process) {
-            set_time_limit(0);
+            //init 基础类
+            $this->locker = make('frame/Locker');
+            $this->tasker = make('frame/Task');
+
+            //解析参数
             $process['lock'] = json_decode(base64_decode($process['lock']), true);
             list($this->lock, $this->cas) = $process['lock'];
             // 设置任务当次启动时间
@@ -27,16 +29,17 @@ abstract class TaskDriver
                 'start_time' => now(),
                 'boot' => 'on',
                 'process_pid' => getmypid(),
-                'process_uid' => getmyuid(),
-                'process_gid' => getmygid(),
                 'process_user' => get_current_user(),
             ];
             $this->setInfoArray($data);
-            cache(2)->hIncrBy($this->getKey($this->lock), 'count', 1);
-            $this->locker = make('frame/Locker');
-            $this->tasker = make('frame/Task');
+            $this->cache()->hIncrBy($this->getKey($this->lock), 'count', 1);
         }
 	}
+
+    protected function cache()
+    {
+        return cache(2);
+    }
 
 	protected function getKey($key)
 	{
@@ -98,7 +101,7 @@ abstract class TaskDriver
 		}
 		// 关闭的不运行
 		$boot = $this->getInfo('boot');
-		if ($boot=='offing') {
+		if ($boot!='on') {
 			$this->beforeShutdown();
 			return false;
 		}
@@ -147,10 +150,10 @@ abstract class TaskDriver
         }
 	}
 
-	public function getNextTimeByCronArray()
+	public function getNextTime($cron)
     {
         $result=false;
-        foreach ($this->config['cron'] as $val){
+        foreach ($cron as $val){
 			$v=$this->getNextTimeByCron($val);
 			if ($result) {
 				if ($v<$result) {
@@ -320,7 +323,7 @@ abstract class TaskDriver
 
 	protected function nextRunAt()
 	{
-		return $this->setInfo('next_run_at', $this->getNextTimeByCronArray());
+		return $this->setInfo('next_run_at', $this->getNextTime());
 	}
 
 	abstract public function run();

@@ -153,6 +153,9 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	}
 	return $rStr;
 }
+function nameFormat($name){
+	return strtr($name, ['\\'=>'-', DS=>'-']);
+}
 function strTrim($str){
 	return ltrim($str, " \t\n\r\0\x0B ");
 }

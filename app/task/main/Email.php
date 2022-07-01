@@ -5,11 +5,10 @@ use app\task\TaskDriver;
 
 class Email extends TaskDriver
 {
-	public function __construct($process=[])
-	{
-		parent::__construct($process);
-		$this->config['info'] = '邮件发送任务';
-	}
+	public $config = [
+        'info' => '邮件发送任务',
+        'cron' => ['* * * * *'],
+    ];
 
 	public function run()
 	{

@@ -5,12 +5,10 @@ use app\task\TaskDriver;
 
 class CompressStatic extends TaskDriver
 {
-	public function __construct($process=[])
-	{
-		parent::__construct($process);
-		$this->config['info'] = '静态文件压缩任务';
-		$this->config['cron'] = ['0 3 * * *']; //每天3点整运行
-	}
+	public $config = [
+        'info' => '静态文件压缩任务',
+        'cron' => ['0 3 * * *'],
+    ];
 
 	public function run()
 	{

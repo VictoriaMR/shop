@@ -7,10 +7,20 @@ class Locker
 	const LOCKERPREFIX = 'frame-lock:';
 	protected $lock = [];
 
+	protected function cache()
+	{
+		return redis(2);
+	}
+
+	protected function getKey($name)
+	{
+		return self::LOCKERPREFIX.$name;
+	}
+
 	public function lock($name, $timeout=100)
 	{
 		$cas = randString(32);
-		$lock = redis(2)->set(self::LOCKERPREFIX.$name, $cas, ['nx', 'ex' => $timeout]);
+		$lock = $this->cache()->set($this->getKey($name), $cas, ['nx', 'ex' => $timeout]);
 		if ($lock) {
 			$this->lock[$name] = $cas;
 			return $cas;
@@ -29,7 +39,7 @@ class Locker
 
 	public function getLock($name, $cas)
 	{
-		$lock = redis(2)->get(self::LOCKERPREFIX.$name);
+		$lock = $this->cache()->get($this->getKey($name));
 		if ($lock == $cas) {
 			$this->lock[$name] = $cas;
 			return true;
@@ -39,32 +49,32 @@ class Locker
 
 	public function update($name, $timeout=10)
     {
-		if ($timeout < 1) {
-			$timeout = 10;
+    	if (!isset($this->lock[$name])) {
+    		return false;
+    	}
+		$key = $this->getKey($name);
+		$lock = $this->cache()->get($key);
+		if ($lock == $this->lock[$name]) {
+			return $this->cache()->expire($key, $timeout);
 		}
-		$cas = $this->lock[$name] ?? false;
-		if (empty($cas)) { //当前无锁
-			return false;
-		}
-		$key = self::LOCKERPREFIX.$name;
-		$lock = redis(2)->get($key);
-		if ($lock != $cas) {
-			return false;
-		}
-		return redis(2)->expire($key, $timeout);
+		return false;
     }
 
     public function unlock($name)
     {
-		$cas = $this->lock[$name] ?? '';
-		if (empty($cas)) {
-			return false;
-		}
-		$lock = redis(2)->get(self::LOCKERPREFIX.$name);
-		if ($lock == $cas) {
+    	if (!isset($this->lock[$name])) {
+    		return false;
+    	}
+		$lock = $this->cache()->get($this->getKey($name));
+		if ($lock == $this->lock[$name]) {
 			unset($this->lock[$name]);
-			return redis(2)->del(self::LOCKERPREFIX.$name);
+			return $this->cache()->del($this->getKey($name));
 		}
 		return false;
+    }
+
+    public function existLock($name)
+    {
+    	return $this->cache()->exists($name);
     }
 }

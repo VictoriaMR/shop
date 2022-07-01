@@ -16,11 +16,10 @@ class SiteMap extends TaskDriver
 	private $xmlCount = 0; //站点xml文件条数
 	const SITEMAP_CACHE_KEY = 'sitemap-last-change';
 
-	public function __construct($process=[])
-	{
-		$this->config['info'] = '站点地图任务';
-		$this->config['cron'] = ['1 14 * * 00']; //每周1次
-	}
+	public $config = [
+        'info' => '站点地图任务',
+        'cron' => ['1 14 * * 00'],
+    ];
 
 	public function run()
 	{

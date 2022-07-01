@@ -7,11 +7,10 @@ class Translate extends TaskDriver
 {
 	private $language = [];
 
-	public function __construct($process=[])
-	{
-		parent::__construct($process);
-		$this->config['info'] = '属性值自动翻译进程';
-	}
+	public $config = [
+        'info' => '自动翻译任务',
+        'cron' => ['* * * * *'],
+    ];
 
 	public function run()
 	{
