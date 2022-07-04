@@ -101,7 +101,7 @@ abstract class TaskDriver
 		}
 		// 关闭的不运行
 		$boot = $this->getInfo('boot');
-		if ($boot!='on') {
+		if ($boot != 'on') {
 			$this->beforeShutdown();
 			return false;
 		}
@@ -140,7 +140,6 @@ abstract class TaskDriver
 					$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
 				}
 				if($result) {
-					// 防止死循环减轻服务器压力
 					sleep($this->sleep);
 				}
 			}

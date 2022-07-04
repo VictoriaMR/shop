@@ -9,7 +9,7 @@ class Translate extends TaskDriver
 
 	public $config = [
         'info' => '自动翻译任务',
-        'cron' => ['* * * * *'],
+        'cron' => ['0 6 * * *'],
     ];
 
 	public function run()
@@ -165,7 +165,6 @@ class Translate extends TaskDriver
 				}
 			}
 		}
-		$this->taskSleep(600);
 		return false;
 	}
 

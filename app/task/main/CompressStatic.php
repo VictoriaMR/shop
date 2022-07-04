@@ -47,7 +47,6 @@ class CompressStatic extends TaskDriver
 				}
 			}
 		}
-		$this->nextRunAt();
-		return true;
+		return false;
 	}
 }

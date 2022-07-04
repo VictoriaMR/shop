@@ -37,7 +37,7 @@ class MainTask extends TaskDriver
             //循环检查进程状态
             if ($value['boot'] == 'on') {
                 //每个锁周期检查一次锁有效期,
-                if (time()%$this->lockTimeout==0 && $value['next_run'] <= now() && !$this->locker->existLock($key)) {
+                if (time()%$this->lockTimeout==0 && $value['next_run']<=now() && !$this->locker->existLock($key)) {
                     //重启进程
                     if (isset($value['process_pid'])) {
                         posix_kill($value['process_pid'], 9);
