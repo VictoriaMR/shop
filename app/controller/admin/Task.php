@@ -21,40 +21,31 @@ class Task extends AdminBase
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['taskList', 'modifyTask'])) {
+			if (in_array($opn, ['modifyTask'])) {
 				$this->$opn();
 			}
 			$this->error('Unknown request');
 		}
 		html()->addCss();
 		html()->addJs();
+		$this->assign('taskList', $this->taskList());
 		$this->assign('enabled', config('task', 'enabled'));
 		$this->view();
 	}
 
 	protected function taskList()
 	{
-		$path = ROOT_PATH.'app'.DS.'task'.DS.'main';
-		$taskList = getDirFile($path);
+		$taskList = $this->cache()->hGetAll($this->getKey('all'));
 		if (empty($taskList)) {
-			$this->error('任务列表为空');
+			return [];
 		}
+		$taskList = array_keys($taskList);
+		array_unshift($taskList, 'app-task-MainTask');
+		$taskList = array_flip($taskList);
 		foreach($taskList as $key=>$value) {
-			$name = strtr(str_replace([ROOT_PATH, '.php'], '', $value), DS, '/');
-			$cacheKey = strtr(self::TASKPREFIX.$name, '/', '-');
-			$data = cache(2)->hGetAll($cacheKey);
-			if ($data == false) {
-				$object = make($name);
-				$data = [
-					'name' => $name,
-					'boot' => 'off',
-					'info' => $object->config['info'],
-				];
-				cache(2)->hMset($cacheKey, $data);
-			}
-			$taskList[$key] = $data;
+			$taskList[$key] = $this->cache()->hGetAll($this->getKey($key));
 		}
-		$this->success(['time'=>now(), 'list'=>$taskList]);
+		return $taskList;
 	}
 
 	protected function modifyTask()
@@ -66,16 +57,37 @@ class Task extends AdminBase
 			$this->error('系统任务开关未开启');
 		}
 		$key = strtr($key, '/', '-');
-		if (empty($key)) {
-			$this->error('进程名称不能为空');
-		}
-		if ($type == 'startup' && cache(2)->exists(self::LOCKERPREFIX.$key)) {
-			$this->error('进程未停止, 请稍后再试');
-		}
-		cache(2)->hSet(self::TASKPREFIX.$key, 'boot', $type == 'startup' ? 'oning' : 'offing');
-		if ($type == 'startup') {
-			make('frame/Task')->start($key);
+		switch ($type)
+		{
+			case 'init':
+				$key = 'app-task-MainTask';
+				if ($this->cache()->exists($this->getKey($key), 'lock')) {
+					$this->error('进程未停止, 请稍后再试');
+				}
+				make('frame/Task')->start($key);
+				break;
+			case 'start':
+				if (empty($key)) {
+
+				}
+				break;
+			case 'stop':
+				break;
+			case 'start-all':
+				break;
+			case 'stop-all':
+				break;
 		}
 		$this->success('操作成功');
+	}
+
+	protected function cache()
+	{
+		return cache(2);
+	}
+
+	protected function getKey($key, $type='task')
+	{
+		return ($type=='task'?self::TASKPREFIX:self::LOCKERPREFIX).$key;
 	}
 }

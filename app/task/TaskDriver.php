@@ -7,10 +7,10 @@ abstract class TaskDriver
 	const TASKPREFIX ='frame-task:';
 	public $config = [];
 
-	protected $lock ='';
-	protected $cas ='';
 	protected $locker;
 	protected $tasker;
+	protected $lock ='';
+	protected $cas ='';
     protected $sleep = 1;
 	protected $lockTimeout = 600;
 
@@ -20,19 +20,9 @@ abstract class TaskDriver
             //init 基础类
             $this->locker = make('frame/Locker');
             $this->tasker = make('frame/Task');
-
             //解析参数
             $process['lock'] = json_decode(base64_decode($process['lock']), true);
             list($this->lock, $this->cas) = $process['lock'];
-            // 设置任务当次启动时间
-            $data = [
-                'start_time' => now(),
-                'boot' => 'on',
-                'process_pid' => getmypid(),
-                'process_user' => get_current_user(),
-            ];
-            $this->setInfoArray($data);
-            $this->cache()->hIncrBy($this->getKey($this->lock), 'count', 1);
         }
 	}
 
@@ -52,7 +42,7 @@ abstract class TaskDriver
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
-		return cache(2)->hSet($key, $field, $value);
+		return $this->cache()->hSet($key, $field, $value);
 	}
 
 	protected function delInfo($key='')
@@ -61,7 +51,7 @@ abstract class TaskDriver
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
-		return cache(2)->del($key);
+		return $this->cache()->del($key);
 	}
 
 	protected function setInfoArray(array $data, $key='')
@@ -70,7 +60,7 @@ abstract class TaskDriver
 			$key = $this->lock;
 		}
 		$key = $this->getKey($key);
-		return cache(2)->hMset($key, $data);
+		return $this->cache()->hMset($key, $data);
 	}
 
 	protected function getInfo($field='', $key='')
@@ -80,9 +70,9 @@ abstract class TaskDriver
 		}
 		$key = $this->getKey($key);
 		if(empty($field)){
-			return cache(2)->hGetAll($key);
+			return $this->cache()->hGetAll($key);
 		} else {
-			return cache(2)->hGet($key, $field);
+			return $this->cache()->hGet($key, $field);
 		}
 	}
 
@@ -100,18 +90,9 @@ abstract class TaskDriver
 			return false;
 		}
 		// 关闭的不运行
-		$boot = $this->getInfo('boot');
-		if ($boot != 'on') {
+		$info = $this->getInfo();
+		if ($info['boot'] != 'on' || $info['status'] != 'running') {
 			$this->beforeShutdown();
-			return false;
-		}
-		return true;
-	}
-
-	protected function timeToNextRunAt()
-	{
-		$nextRunAt = $this->getInfo('next_run_at');
-		if ($nextRunAt > 0 && $nextRunAt > now()) {
 			return false;
 		}
 		return true;
@@ -128,24 +109,55 @@ abstract class TaskDriver
 	public function start()
 	{
 		if ($this->locker->getLock($this->lock, $this->cas)) {
-			$this->echo('任务处理中 '.now());
 			$this->before();
-			$result = true;
-			while ($result && $this->continueRuning()) {
-				if ($this->timeToNextRunAt()) {
-					$this->sleep = 1;
-					cache(2)->hIncrBy($this->getKey($this->lock), 'loop_count', 1);
-					$result = $this->run();
-					$usgaMem = memory_get_usage();
-					$this->setInfo('memoryUsage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
-				}
-				if($result) {
-					sleep($this->sleep);
-				}
-			}
+            // 设置任务当次启动时间
+            $data = [
+                'start_time' => now(),
+                'status' => 'running',
+                'process_pid' => getmypid(),
+                'process_user' => get_current_user(),
+                'loop_count' => 0,
+            ];
+            $this->setInfoArray($data);
+            if ($this->lock != 'app-task-MainTask') {
+                $value = $this->getInfo($this->lock, 'all');
+                $value['status'] = $data['status'];
+                $value['process_pid'] = $data['process_pid'];
+                $this->setInfo($this->lock, $value, 'all');
+            }
+
+            //启动次数加1
+            $cacheKey = $this->getKey($this->lock);
+            $this->cache()->hIncrBy($cacheKey, 'count', 1);
+
+            $result = true;
+            while ($result) {
+                if ($this->continueRuning()) {
+                    $this->cache()->hIncrBy($cacheKey, 'loop_count', 1);
+                    $result = $this->run();
+                    $usgaMem = memory_get_usage();
+                    $this->setInfo('memory_usage', get1024Peck($usgaMem - APP_MEMORY_START).'/'.get1024Peck($usgaMem));
+                	if ($result) {
+                		sleep($this->sleep);
+                	}
+                } else {
+                    $result = false;
+                }
+            }
 			$this->locker->unlock($this->lock);
-			$this->setInfo('boot', 'off');
-			$this->echo('任务已退出 '.now());
+            $data = [
+                'status' => 'stop',
+                'info' => '任务已退出 '.now(),
+            ];
+            $this->setInfoArray($data);
+
+            //获取下一次运行时间
+            if ($this->lock != 'app-task-MainTask') {
+                $nextRunAt = $this->getNextTime($this->config['cron']);
+                $value['status'] = 'stop';
+                $value['next_run'] = $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt;
+                $this->setInfo($this->lock, $value, 'all');
+            }
         }
 	}
 

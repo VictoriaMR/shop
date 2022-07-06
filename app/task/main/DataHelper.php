@@ -6,7 +6,7 @@ use app\task\TaskDriver;
 class DataHelper extends TaskDriver
 {
 	public $config = [
-        'info' => '数据入库任务',
+        'name' => '数据入库任务',
         'cron' => ['* * * * *'],
     ];
 
@@ -19,6 +19,10 @@ class DataHelper extends TaskDriver
 		//获取空闲机器
 		$socketService = make('app/service/Socket');
 		$list = $socketService->getAutoOnlineList();
+		if (empty($list)) {
+			sleep(10);
+			return true;
+		}
 		foreach ($list as $value) {
 			$socketService->pushToAuto($value, $info);
 		}

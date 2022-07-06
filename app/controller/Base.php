@@ -9,29 +9,22 @@ class Base
 		$data = [
 			'code' => $code,
 			'data' => $data,
-			'message' => '',
+			'msg' => '',
 		];
 		header('Content-Type:application/json; charset=utf-8');
-		echo json_encode($data + $options, JSON_UNESCAPED_UNICODE);
+		echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
 		\App::runOver();
 		exit();
 	}
 
-	protected function success($data=[], $options=null)
+	protected function success($msg='', $data=[])
 	{
-		if (!is_array($data) && !$options) {
-			$options = $data;
-		}
-		$options = ['message' => $options];
-		$this->result('200', $data, $options);
+		$this->result('200', $data, ['msg' => $msg]);
 	}
 
-	protected function error($message='', $code='10000')
+	protected function error($msg='', $code='10000')
 	{
-		if (!$message) {
-			$message = 'error';
-		}
-		$this->result($code, [], ['message'=>$message]);
+		$this->result($code, [], ['msg'=>$msg]);
 	}
 
 	protected function assign($name, $value=null)
