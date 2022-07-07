@@ -116,8 +116,6 @@ class Api extends AdminBase
 
 	public function img()
 	{
-		make('app/task/main/Queue')->run();
-		dd();
 		$url = trim(ipost('url'));
 		if (empty($url)) {
 			$this->error('url 不能为空');

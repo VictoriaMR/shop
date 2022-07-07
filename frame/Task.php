@@ -67,8 +67,12 @@ class Task
 		return strtr($classname, ['\\'=>'-', DS=>'-']);
 	}
 
-	public function taskStart()
+	public function taskStart($key)
 	{
-		
+		$key = 'app-task-main-'.$key;
+		$value = cache(2)->hGet(self::TASKPREFIX.'all', $key);
+		$value['next_run'] = 'alwaysRun';
+		cache(2)->hSet(self::TASKPREFIX.'all', $key, $value);
+		return true;
 	}
 }
