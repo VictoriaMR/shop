@@ -24,7 +24,7 @@ class Api extends AdminBase
 			'site' => make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name'),
 			'site_category' => $tempArr,
 		];
-		$this->success($data);
+		$this->success('', $data);
 	}
 
 	public function getHelperFunction()
@@ -43,7 +43,7 @@ class Api extends AdminBase
 				'name' => 'auto_check',
 			],
 		];
-		$this->success($data);
+		$this->success('', $data);
 	}
 
 	public function upload()
@@ -59,7 +59,7 @@ class Api extends AdminBase
 		$fileService = make('app/service/File');
 		$result = $fileService->upload($file, $cate);
 		if ($result) {
-			$this->success($result);
+			$this->success('上传成功', $result);
 		}
 		$this->error('上传失败');
 	}
