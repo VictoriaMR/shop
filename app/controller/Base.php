@@ -19,6 +19,10 @@ class Base
 
 	protected function success($msg='', $data=[])
 	{
+		if (!is_string($msg)) {
+			$data = $msg;
+			$msg = '';
+		}
 		$this->result('200', $data, ['msg' => $msg]);
 	}
 

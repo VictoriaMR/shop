@@ -9,22 +9,32 @@ class Api extends AdminBase
 
 	public function getHelperData()
 	{
-		$categoryService = make('app/service/category/Category');
-		$siteCate = make('app/service/site/CategoryUsed')->getListData([], 'site_id,cate_id', 0, 0, ['sort'=>'asc']);
+		$site = make('app/service/site/Site');
+		$category = make('app/service/category/Category');
+
+		$siteArr = $site->getListData([], 'site_id,name,cate_id');
+		$cateArr = $category->getListFormat();
+
 		$tempArr = [];
-		foreach ($siteCate as $value) {
-			$tempArr[$value['site_id']][] = $value['cate_id'];
+		$cateId = 0;
+		foreach ($cateArr as $value) {
+			if ($value['parent_id'] == 0) {
+				$cateId = $value['cate_id'];
+				$tempArr[$cateId] = [];
+			}
+			$tempArr[$cateId][] = $value;
 		}
-		foreach ($tempArr as $key => $value) {
-			$tempArr[$key] = $categoryService->getInCategory($value);
+		$cateArr = [];
+		foreach ($siteArr as $value) {
+			$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
 		}
 		$data = [
 			'version' => config('env', 'APP_VERSION'),
 			'socket_domain' => APP_DOMAIN,
-			'site' => make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name'),
-			'site_category' => $tempArr,
+			'site' => $siteArr,
+			'site_category' => $cateArr,
 		];
-		$this->success('', $data);
+		$this->success($data);
 	}
 
 	public function getHelperFunction()

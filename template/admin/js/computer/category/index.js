@@ -86,7 +86,7 @@ const CATEGORYLIST = {
 						if (res.code === '200') {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.message);
+							errorTips(res.msg);
 						}
 						if (len === 0) {
 							thisobj.button('reset');
@@ -156,6 +156,7 @@ const CATEGORYLIST = {
 					obj.button('reset');
 					btnobj.parents('tr').remove();
 					CATEGORYLIST.sortInit();
+					$('#dealbox').hide();
 				}, function(){
 					obj.button('reset');
 				});
@@ -178,9 +179,9 @@ const CATEGORYLIST = {
 			const id = obj.parents('tr').data('id');
 			$.post(URI+'category', {opn: 'modifyCategory', id: id, attach_id: data.attach_id}, function(res){
 				if (res.code === '200') {
-					successTips(res.message);
+					successTips(res.msg);
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
 			});
 		});
@@ -194,10 +195,10 @@ const CATEGORYLIST = {
 			param.opn = 'modifyCategory';
 			$.post(URI+'category', param, function(res){
 				if (res.code === '200') {
-					successTips(res.message);
+					successTips(res.msg);
 					_thisobj.switchBtn(param.status);
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
 			});
 		});
@@ -217,12 +218,14 @@ const CATEGORYLIST = {
 			obj.find('input[name="cate_id"]').val(data.cate_id);
 			obj.find('input[name="parent_id"]').val(data.parent_id);
 			obj.find('input[name="name"]').val(data.name);
+			obj.find('input[name="name_en"]').val(data.name_en);
 			obj.find('input[name="image"]').val(data.avatar);
 			obj.find('.form-category-img img').attr('src', data.avatar_format);
 		} else {
 			obj.find('input[name="cate_id"]').val(0);
 			obj.find('input[name="parent_id"]').val(0);
 			obj.find('input[name="name"]').val('');
+			obj.find('input[name="name_en"]').val('');
 			obj.find('input[name="image"]').val('');
 		}
 		return true;

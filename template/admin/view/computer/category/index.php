@@ -3,14 +3,14 @@
 	<table class="table table-hover mt20" id="data-list">
 		<tbody>
 			<tr>
-				<th width="120">ID</th>
+				<th width="100">ID</th>
 				<th width="300">名称</th>
 				<th width="300">英文名称</th>
 				<th width="120">语言配置</th>
 				<th width="150">状态</th>
 				<th width="150">是否展示</th>
-				<th width="200">头像</th>
-				<th>操作</th>
+				<th width="150">头像</th>
+				<th width="250">操作</th>
 			</tr>
 			<?php if (empty($list)){ ?>
 			<tr>
@@ -78,6 +78,10 @@
 			<div class="input-group">
 				<div class="input-group-addon"><span>名称：</span></div>
 				<input type="text" class="form-control" name="name" autocomplete="off">
+			</div>
+			<div class="input-group">
+				<div class="input-group-addon"><span>英文：</span></div>
+				<input type="text" class="form-control" name="name_en" autocomplete="off">
 			</div>
 			<button type="button" class="btn btn-primary btn-lg w100 save-btn">确认</button>
 		</form>

@@ -59,7 +59,7 @@ class Category extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$info = make('app/service/category/Category')->loadData($cateId);
-		$this->success($info, '');
+		$this->success($info);
 	}
 
 	protected function getCateLanguage()
@@ -80,7 +80,7 @@ class Category extends AdminBase
 				'language_name' => $value['name2'],
 			];
 		}
-		$this->success($data, '');
+		$this->success($data);
 	}
 
 	protected function editLanguage()
@@ -105,12 +105,14 @@ class Category extends AdminBase
 		$cateId = (int) ipost('cate_id');
 		$parentId = (int) ipost('parent_id');
 		$name = trim(ipost('name'));
+		$name_en = trim(ipost('name_en', ''));
 		if (empty($name)) {
 			$this->error('名称不能为空');
 		}
 		$data = [
 			'parent_id' => $parentId,
 			'name' => $name,
+			'name_en' => $name_en,
 		];
 		if (empty($cateId)) {
 			$result = make('app/service/category/Category')->insert($data);
