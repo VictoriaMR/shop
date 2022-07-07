@@ -35,15 +35,17 @@ class Task extends AdminBase
 
 	protected function taskList()
 	{
-		$taskList = $this->cache()->hGetAll($this->getKey('all'));
-		if (empty($taskList)) {
-			return [];
-		}
-		$taskList = array_keys($taskList);
+		$taskList = getDirFile(ROOT_PATH.'app'.DS.'task'.DS.'main');
+        foreach ($taskList as $key => $value) {
+            //重新缓存配置
+            $taskList[$key] = nameFormat(str_replace([ROOT_PATH, '.php'], '', $value));
+        }
 		array_unshift($taskList, 'app-task-MainTask');
 		$taskList = array_flip($taskList);
 		foreach($taskList as $key=>$value) {
-			$taskList[$key] = $this->cache()->hGetAll($this->getKey($key));
+			$value = $this->cache()->hGetAll($this->getKey($key));
+			if (empty($value)) return [];
+			$taskList[$key] = $value;
 		}
 		return $taskList;
 	}
@@ -56,25 +58,41 @@ class Task extends AdminBase
 		if (!$enabled) {
 			$this->error('系统任务开关未开启');
 		}
-		$key = strtr($key, '/', '-');
-		switch ($type)
-		{
+		switch ($type) {
 			case 'init':
 				$key = 'app-task-MainTask';
-				if ($this->cache()->exists($this->getKey($key), 'lock')) {
+				if ($this->cache()->exists($this->getKey($key, 'lock'))) {
 					$this->error('进程未停止, 请稍后再试');
 				}
 				make('frame/Task')->start($key);
 				break;
 			case 'start':
+			case 'stop':
 				if (empty($key)) {
-
+					$this->error('未指定任务开启');
+				}
+				if ($key == 'app-task-MainTask') {
+					$this->cache()->hSet($this->getKey($key), 'boot', $type=='start'?'oning':'offing');
+				} else {
+					$value = $this->cache()->hGet($this->getKey('all'), $key);
+					if ($value['boot'] == 'on') {
+						if ($value['status'] == 'stop') {
+							$value['boot'] = 'off';
+						} else {
+							$value['boot'] = 'offing';
+						}
+					} else {
+						$value['boot'] = 'oning';
+						$value['next_run'] = 'alwaysRun';
+					}
+					$this->cache()->hSet($this->getKey('all'), $key, $value);
+					$this->cache()->hSet($this->getKey($key), 'boot', $value['boot']);
+				}
+				if ($type == 'start' && $key == 'app-task-MainTask') {
+					make('frame/Task')->start($key);
 				}
 				break;
-			case 'stop':
-				break;
 			case 'start-all':
-				break;
 			case 'stop-all':
 				break;
 		}
@@ -88,6 +106,6 @@ class Task extends AdminBase
 
 	protected function getKey($key, $type='task')
 	{
-		return ($type=='task'?self::TASKPREFIX:self::LOCKERPREFIX).$key;
+		return ($type=='lock'?self::LOCKERPREFIX:self::TASKPREFIX).$key;
 	}
 }

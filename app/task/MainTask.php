@@ -6,6 +6,7 @@ use app\task\TaskDriver;
 class MainTask extends TaskDriver
 {
     protected $sleep = 10;
+    protected $mainTask = true;
     public $config = [
         'name' => '系统核心队列任务',
         'cron' => ['* * * * *'],
@@ -51,7 +52,7 @@ class MainTask extends TaskDriver
         $allTask = $this->getInfo('', 'all');
         foreach ($allTask as $key=>$value) {
             //循环检查进程状态
-            if ($value['boot'] == 'on') {
+            if ($value['boot'] == 'on' || $value['boot'] == 'oning') {
                 if ($value['status'] == 'stop'){
                     if ($value['next_run'] == 'alwaysRun' || $value['next_run'] <= now()) {
                         $this->startTask($key, $value);

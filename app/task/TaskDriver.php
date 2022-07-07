@@ -13,6 +13,7 @@ abstract class TaskDriver
 	protected $cas ='';
     protected $sleep = 1;
 	protected $lockTimeout = 600;
+    protected $mainTask = false;
 
 	public function __construct($process=[])
 	{
@@ -112,15 +113,18 @@ abstract class TaskDriver
 			$this->before();
             // 设置任务当次启动时间
             $data = [
+                'boot' => 'on',
                 'start_time' => now(),
                 'status' => 'running',
                 'process_pid' => getmypid(),
                 'process_user' => get_current_user(),
                 'loop_count' => 0,
+                'info' => '',
             ];
             $this->setInfoArray($data);
-            if ($this->lock != 'app-task-MainTask') {
+            if (!$this->mainTask) {
                 $value = $this->getInfo($this->lock, 'all');
+                $value['boot'] = 'on';
                 $value['status'] = $data['status'];
                 $value['process_pid'] = $data['process_pid'];
                 $this->setInfo($this->lock, $value, 'all');
@@ -145,19 +149,26 @@ abstract class TaskDriver
                 }
             }
 			$this->locker->unlock($this->lock);
+            $value = $this->getInfo($this->lock, 'all');
             $data = [
                 'status' => 'stop',
-                'info' => '任务已退出 '.now(),
+                'info' => "任务已退出 \n".now(),
+                'boot' => ($value['boot'] ?? 'offing') == 'offing' ? 'off' : $value['boot'],
             ];
             $this->setInfoArray($data);
 
             //获取下一次运行时间
-            if ($this->lock != 'app-task-MainTask') {
-                $nextRunAt = $this->getNextTime($this->config['cron']);
-                $value['status'] = 'stop';
-                $value['next_run'] = $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt;
-                $this->setInfo($this->lock, $value, 'all');
+            $nextRunAt = $this->getNextTime($this->config['cron']);
+            $value['status'] = 'stop';
+            if (!$this->mainTask) {
+                if ($value['boot'] == 'offing') {
+                    $value['next_run'] = $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt;
+                } else {
+                    $value['next_run'] = $nextRunAt <= now() ? 'handing' : $nextRunAt;
+                }
             }
+            $value['boot'] = $value['boot'] == 'offing' ? 'off' : $value['boot'];
+            $this->setInfo($this->lock, $value, 'all');
         }
 	}
 

@@ -30,7 +30,7 @@
 					<th width="150">运行状态<br >开关状态 </th>
 					<th width="150">运行次数<br >循环次数</th>
 					<th width="300">任务信息</th>
-					<th>操作</th>
+					<th width="150">操作</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -64,12 +64,12 @@
 						<span title="循环次数"><?php echo $value['loop_count'] ?? '--';?></span>
 					</td>
 					<td>
-						<span><?php echo $value['info'] ?? '--';?></span><br >
+						<span style="white-space: pre-wrap;"><?php echo $value['info'] ?? '--';?></span>
 					</td>
 					<td>
 						<div class="btn-group" role="group" id="select-status">
-							<button class="btn btn-success btn-sm btn-task" data-type="start">启动</button>
-							<button class="btn btn-danger btn-sm btn-task" data-type="stop">停止</button>
+							<button class="btn btn-success btn-sm btn-task" data-type="start"<?php echo $value['boot']!='off'?'disabled':'';?>>启动</button>
+							<button class="btn btn-danger btn-sm btn-task" data-type="stop"<?php echo $value['boot']!='on'?'disabled':'';?>>停止</button>
 						</div>
 					</td>
 				</tr>

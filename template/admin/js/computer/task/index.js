@@ -14,10 +14,10 @@ const TASK = {
 				_thisobj.button('reset');
 				if (res.code === '200') {
 					successTips(res.msg);
+					window.location.reload();
 				} else {
 					errorTips(res.msg);
 				}
-				_this.init(_this.enable);
 			});
 		});
 	},
