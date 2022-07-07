@@ -18,7 +18,7 @@ const CRAWLERINIt = {
 				_this.crawler_info = res.data;
 				_this.crawlerPageinit(res.data);
 			} else {
-				HELPERINIT.request({action:'alert', value: res.message});
+				HELPERINIT.request({action:'alert', value: res.msg});
 			}
 		});
 	},
@@ -67,7 +67,7 @@ const CRAWLERINIt = {
 		HELPERINIT.request({action: 'getCache', cache_key: 'reload_param_cache'}, function(res) {
 			if (res.code === '200') {
 				HELPERINIT.request({action: 'request', value: 'api/addAfter', param: res.data}, function(res) {
-					_this.error(res.message);
+					_this.error(res.msg);
 					if (res.code === '200') {
 						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
 					}
@@ -443,7 +443,7 @@ const CRAWLERINIt = {
 				HELPERINIT.request({action: 'request', value: 'api/addProduct', param:param}, function(res) {
 					_thisobj.classList.remove('loading');
 					_thisobj.innerHTML = '上传产品';
-					_this.error(res.message);
+					_this.error(res.msg);
 					if (res.code === '200') {
 						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
 					}

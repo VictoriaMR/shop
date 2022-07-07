@@ -20,7 +20,7 @@ class DataHelper extends TaskDriver
 		$socketService = make('app/service/Socket');
 		$list = $socketService->getAutoOnlineList();
 		if (empty($list)) {
-			sleep(10);
+			sleep(5);
 			return true;
 		}
 		foreach ($list as $value) {
