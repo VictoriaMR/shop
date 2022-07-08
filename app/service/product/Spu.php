@@ -381,12 +381,14 @@ class Spu extends Base
 		$count = 1;
 		$allImageArr = array_unique(explode(',', $data['bc_product_des_picture']));
 		$allImageArr = $file->uploadUrlImage($allImageArr, 'introduce', false);
-		foreach ($allImageArr as $value) {
-			$insert[$spuId.'-'.$value] = [
-				'spu_id' => $spuId,
-				'attach_id' => $value,
-				'sort' => $count++,
-			];
+		if (!empty($allImageArr)) {
+			foreach ($allImageArr as $value) {
+				$insert[$spuId.'-'.$value] = [
+					'spu_id' => $spuId,
+					'attach_id' => $value,
+					'sort' => $count++,
+				];
+			}
 		}
 		if (!empty($insert)) {
 			make('app/service/product/IntroUsed')->addIntroUsed($spuId, $insert);
