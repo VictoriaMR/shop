@@ -352,6 +352,11 @@ var CRAWLER = {
     },
     get1688DescPic: function(ret_data, callback) {
         var des_picture = [];
+        if (typeof offer_details != 'undefined') {
+            ret_data['des_picture'] = des_picture;
+            callback(0, ret_data,'获取成功!');
+            return false;
+        }
         var des_pic_craw = offer_details.content.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
         for(let i=0; i<des_pic_craw.length; i++){
             var src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
