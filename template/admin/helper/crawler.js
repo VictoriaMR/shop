@@ -352,7 +352,7 @@ var CRAWLER = {
     },
     get1688DescPic: function(ret_data, callback) {
         var des_picture = [];
-        if (typeof offer_details != 'undefined') {
+        if (typeof offer_details === 'undefined') {
             ret_data['des_picture'] = des_picture;
             callback(0, ret_data,'获取成功!');
             return false;
