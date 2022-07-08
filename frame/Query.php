@@ -283,7 +283,8 @@ final class Query
 			$GLOBALS['exec_sql'][] = $sql;
 		}
 		$conn = db($this->_database);
-		if ($stmt = $conn->query($sql)) {
+		try {
+			$stmt = $conn->query($sql);
 			if (is_bool($stmt)) {
 				return $stmt;
 			}
@@ -291,7 +292,7 @@ final class Query
 			 	$returnData[] = $row;
 			}
 			$stmt->free();
-		} else {
+		} catch (\Exception $e) {
 			throw new \Exception($sql.' '.$conn->error, 1);
 		}
 		return $returnData ?? null;
