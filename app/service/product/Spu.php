@@ -257,10 +257,10 @@ class Spu extends Base
 
 		//转换成键值对
 		foreach ($attrNameArr as $key => $value) {
-			$attrNameArr[$key] = strtoupper(strTrim($value));
+			$attrNameArr[$key] = trim(strtoupper(strTrim($value)));
 		}
 		foreach ($attrValueArr as $key => $value) {
-			$attrValueArr[$key] = strtoupper(strTrim($value));
+			$attrValueArr[$key] = trim(strtoupper(strTrim($value)));
 		}
 		$attrNameArr = $attrName->addNotExist(array_unique($attrNameArr));
 		$attrValueArr = $attrValue->addNotExist(array_unique($attrValueArr));
@@ -359,8 +359,8 @@ class Spu extends Base
 				foreach ($value['attr'] as $k => $v) {
 					$insert[] = [
 						'sku_id' => $skuId,
-						'attrn_id' => $attrNameArr[strtoupper(strTrim($k))],
-						'attrv_id' => $attrValueArr[strtoupper(strTrim($v['text']))],
+						'attrn_id' => $attrNameArr[trim(strtoupper(strTrim($k)))],
+						'attrv_id' => $attrValueArr[trim(strtoupper(strTrim($v['text'])))],
 						'attach_id' => empty($v['img']) ? 0 : $allImageArr[$v['img']] ?? 0,
 						'sort' => $count++,
 					];
