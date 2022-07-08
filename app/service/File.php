@@ -59,6 +59,9 @@ class File
 			if (empty($value)) continue;
 			$tempArr[$value] = md5($this->filterUrl($value));
 		}
+		if (empty($tempArr)) {
+			return false;
+		}
 		$urlArr = $tempArr;
 
 		$attachUrl = make('app/service/attachment/Url');
@@ -66,7 +69,7 @@ class File
 		$attachment = make('app/service/attachment/Attachment');
 		$image = make('app/service/Image');
 
-		$list = $attachUrl->getListData(['url_md5'=>['in', $urlArr]], 'attach_id,url_md5');
+		$list = $attachUrl->getListData(['url_md5'=>['in', array_values($urlArr)]], 'attach_id,url_md5');
 		if (!empty($list)) {
 			$list = array_column($list, 'attach_id', 'url_md5');
 		}

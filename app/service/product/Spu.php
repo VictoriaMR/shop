@@ -221,7 +221,7 @@ class Spu extends Base
 		$spuImageArr = [];
 		$firstImage = '';
 		if (!is_array($data['bc_product_img'])) {
-			$data['bc_product_img'] = array_unique(explode(',', $data['bc_product_img']));
+			$data['bc_product_img'] = array_filter(array_unique(explode(',', $data['bc_product_img'])));
 		}
 		foreach ($data['bc_product_img'] as $key => $value) {
 			$spuImageArr[] = $value;
