@@ -287,4 +287,5 @@ $(function(){
 	});
 	$('#progressing').show();
 	progressing(20);
+	$('img.lazyload').lazyload();
 });
