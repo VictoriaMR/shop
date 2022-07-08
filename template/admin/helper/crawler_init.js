@@ -664,7 +664,7 @@ const CRAWLERINIt = {
 			'4XL': 'XXXXL',
 			'(%)': '%',
 			'(含)': '',
-			'其他休闲', '休闲',
+			'其他休闲': '休闲',
 		};
 		for (const i in arr) {
 			str = str.replace(i, arr[i]);
