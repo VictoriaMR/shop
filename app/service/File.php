@@ -86,7 +86,7 @@ class File
 			} else {
 				$url = $key;
 				//生成临时文件
-				$ext = pathinfo($url, PATHINFO_EXTENSION);
+				$ext = explode('?', pathinfo($url, PATHINFO_EXTENSION))[0];
 				$tempName = $path.'temp_'.$value.'.'.$ext;
 				//获取文件
 				if (strpos($url, 'http') === false) {
