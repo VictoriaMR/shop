@@ -269,8 +269,8 @@ class Spu extends Base
 		$descNameArr = [];
 		$descValueArr = [];
 		foreach($data['bc_des_text'] as $value) {
-			$descNameArr[] = strtoupper(strTrim($value['key']));
-			$descValueArr[] = strtoupper(strTrim($value['value']));
+			$descNameArr[] = trim(strtoupper(strTrim($value['key'])));
+			$descValueArr[] = trim(strtoupper(strTrim($value['value'])));
 		}
 		$descNameArr = $descName->addNotExist(array_unique($descNameArr));
 		$descValueArr = $descValue->addNotExist(array_unique($descValueArr));
@@ -398,8 +398,8 @@ class Spu extends Base
 		$insert = [];
 		$count = 1;
 		foreach ($data['bc_des_text'] as $key => $value) {
-			$tempKey = strtoupper(strTrim($value['key']));
-			$tempValue = strtoupper(strTrim($value['value']));
+			$tempKey = trim(strtoupper(strTrim($value['key'])));
+			$tempValue = trim(strtoupper(strTrim($value['value'])));
 			$nameId = $descNameArr[$tempKey];
 			$valueId = $descValueArr[$tempValue];
 			$insert[$nameId.'-'.$valueId] = [
