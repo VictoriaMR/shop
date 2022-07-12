@@ -433,7 +433,7 @@ class Spu extends Base
 
 	protected function getOriginalPrice($price)
 	{
-		$rate = 5;
+		$rate = 6.5;
 		if ($price > 800) {
 			$rate = 3.8;
 		}
