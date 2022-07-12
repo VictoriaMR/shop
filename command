@@ -5,6 +5,9 @@ define('APP_TIME_START', microtime(true));
 define('DS', '/');
 define('ROOT_PATH', strtr(__DIR__, '\\', '/').DS);
 ini_set('date.timezone', 'Asia/Shanghai');
+ini_set('memory_limit', '1024M');
+@ini_set('session.cookie_httponly', 1);
+
 if (empty($argv[1])) {
 	exit('class error');
 }
@@ -27,7 +30,6 @@ require ROOT_PATH.'frame'.DS.'Helper.php';
 if (is_file(ROOT_PATH.'vendor'.DS.'autoload.php')) {
 	require ROOT_PATH.'vendor'.DS.'autoload.php';
 }
-@ini_set('session.cookie_httponly', 1);
 @session_start();
 \App::init();
 \App::make($class, $param)->$func();
