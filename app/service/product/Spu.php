@@ -344,7 +344,7 @@ class Spu extends Base
 					'attach_id' => empty($value['img']) ? 0 : $allImageArr[$value['img']] ?? 0,
 					'stock' => $value['stock'],
 					'price' => $price,
-					'original_price' => $this->getOriginalPrice($price),
+					'original_price' => $this->getOriginalPrice($value['price']+$data['bc_post_fee']),
 				];
 				$skuId = $sku->insertGetId($insert);
 				$insert = [
@@ -435,20 +435,14 @@ class Spu extends Base
 	{
 		$rate = 5;
 		if ($price > 800) {
-			$rate = 3.2;
+			$rate = 3.8;
 		}
 		if ($price > 1350) {
-			$rate = 2.02;
+			$rate = 2.86;
 		}
 		$price = $price * $rate;
-		if ($price < 100) {
-			$price += 20;
-		} elseif ($price < 200) {
-			$price += 100;
-		} elseif ($price < 400) {
-			$price += 170;
-		} else {
-			$price += 250;
+		if ($price < 200) {
+			$price += 50;
 		}
 		return $price;
 	}
