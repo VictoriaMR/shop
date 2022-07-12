@@ -433,25 +433,22 @@ class Spu extends Base
 
 	protected function getOriginalPrice($price)
 	{
+		$rate = 5;
+		if ($price > 800) {
+			$rate = 3.2;
+		}
+		if ($price > 1350) {
+			$rate = 2.02;
+		}
+		$price = $price * $rate;
 		if ($price < 100) {
 			$price += 20;
 		} elseif ($price < 200) {
-			$price += 50;
+			$price += 100;
 		} elseif ($price < 400) {
-			$price += 70;
+			$price += 170;
 		} else {
-			$price += 100;
-		}
-		$rate = 5;
-		if ($price > 800) {
-			$rate = 2.8;
-		}
-		if ($price > 1350) {
-			$rate = 1.86;
-		}
-		$price = $price * $rate;
-		if ($price < 200) {
-			$price += 100;
+			$price += 250;
 		}
 		return $price;
 	}
