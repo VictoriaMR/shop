@@ -442,7 +442,7 @@ class Spu extends Base
 		}
 		$price = $price * $rate;
 		if ($price < 200) {
-			$price += 50;
+			$price += 150;
 		}
 		return $price;
 	}
