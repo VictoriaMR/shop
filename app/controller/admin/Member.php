@@ -27,10 +27,10 @@ class Member extends AdminBase
 		$status = (int) iget('status', -1);
 		$page = (int) iget('page', 1);
 		$size = (int) iget('size', 20);
-		$name = trim(iget('name'));
-		$phone = trim(iget('phone'));
-		$stime = trim(iget('stime'));
-		$etime = trim(iget('etime'));
+		$name = trim(iget('name', ''));
+		$phone = trim(iget('phone', ''));
+		$stime = trim(iget('stime', ''));
+		$etime = trim(iget('etime', ''));
 
 		$where = [];
 		if ($status >= 0) {
