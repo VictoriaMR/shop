@@ -126,7 +126,7 @@ class File
 						'url_md5' => $value,
 						'url' => $key,
 					];
-					unlink($tempName);
+					@unlink($tempName);
 				} else {
 					unset($urlArr[$key]);
 					continue;
