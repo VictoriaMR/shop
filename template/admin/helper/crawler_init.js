@@ -418,7 +418,7 @@ const CRAWLERINIt = {
 		}
 	},
 	nameFormat: function(name) {
-		var arr = ['跨境', '亚马逊', '欧美', '2021年', '2022年', '2021', '2022', '外贸'];
+		var arr = ['跨境', '亚马逊', '欧美', '2020年', '2021年', '2022年', '2020', '2021', '2022', '外贸'];
 		for (var i=0; i<arr.length; i++) {
 			name = name.replace(arr[i], '');
 		}
