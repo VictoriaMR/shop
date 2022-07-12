@@ -14,7 +14,8 @@ class DataHelper extends TaskDriver
 	{
 		$info = make('app/service/supplier/Url')->loadData(['status'=>0]);
 		if (empty($info)) {
-			return false;
+			sleep(5);
+			return true;
 		}
 		//获取空闲机器
 		$socketService = make('app/service/Socket');
