@@ -545,11 +545,7 @@ const CRAWLERINIt = {
 					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
 					for (var j=0; j<skuObj.length; j++) {
 						if (skuObj[j].querySelector('input').value == oldValue) {
-							if (skuObj[j].parentNode.querySelectorAll('.flex').length === 1) {
-								skuObj[j].parentNode.parentNode.parentNode.parentNode.remove();
-							} else {
-								skuObj[j].remove();
-							}
+							skuObj[j].parentNode.parentNode.parentNode.parentNode.remove();
 						}
 					}
 					this.parentNode.remove();
@@ -570,7 +566,6 @@ const CRAWLERINIt = {
 	getCategoryHtml: function(siteId) {
 		var html = '';
 		const list = this.category[siteId];
-		console.log(siteId, list, this)
 		if (list) {
 			html = '<option value="">请选择分类</option>';
 			for (var i = 0; i < list.length; i++) {
