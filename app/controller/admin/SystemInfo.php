@@ -36,7 +36,7 @@ class SystemInfo extends AdminBase
 			$stat[$key] = explode(': ',$val);
 		}
 		$info['stat'] = $stat;
-		$client = db()->mysqli_get_client_info();
+		$client = mysqli_get_client_info();
 		$info['client'] = $client;
 		$info['server'] = db()->server_info;
 		$arr = [];
