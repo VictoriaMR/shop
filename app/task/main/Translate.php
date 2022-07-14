@@ -14,7 +14,7 @@ class Translate extends TaskDriver
 
 	public function run()
 	{
-		$language = array_column($this->getLanguage(), 'tr_code', 'code');
+		$language = array_column($this->getLanguage(), 'tr_code', 'lan_id');
 		$transService = make('app/service/Translate');
 		//spu名称
 		$spuService = make('app/service/product/Language');
@@ -30,14 +30,12 @@ class Translate extends TaskDriver
 				if (!empty($noLanguage)) {
 					$insertData = [];
 					foreach ($noLanguage as $lv) {
-						if (hasZht($value['zh'])) {
-							$transTxt = $transService->getText($value['zh'], $language[$lv]);
+						if (hasZht($value[0])) {
+							$transTxt = $transService->getText($value[0], $language[$lv]);
 							if (!empty($transTxt)) {
 								$transTxt = $this->filterTxt($transTxt);
 								sleep(1);
 							}
-						} else {
-							$transTxt = $value['zh'];
 						}
 						if (!empty($transTxt)) {
 							$insertData[] = [
@@ -55,12 +53,12 @@ class Translate extends TaskDriver
 			}
 		}
 		//待翻译属性名
-		$buteService = make('app/service/attr/Bute');
-		$list = $buteService->getListData(['status'=>['<>', 2]]);
+		$nameService = make('app/service/attr/Name');
+		$list = $nameService->getListData(['status'=>['<>', 2]]);
 		if (!empty($list)) {
-			$languageService = make('app/service/attr/ButeLanguage');
+			$languageService = make('app/service/attr/NameLanguage');
 			foreach ($list as $key => $value) {
-				$hasLanguage = $languageService->getListData(['attr_id'=>$value['attr_id']], 'lan_id');
+				$hasLanguage = $languageService->getListData(['attrn_id'=>$value['attrn_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {
 					$insertData = [];
@@ -76,7 +74,7 @@ class Translate extends TaskDriver
 						}
 						if (!empty($transTxt)) {
 							$insertData[] = [
-								'attr_id' => $value['attr_id'],
+								'attrn_id' => $value['attrn_id'],
 								'lan_id' => $lv,
 								'name' => $transTxt,
 							];
@@ -84,10 +82,10 @@ class Translate extends TaskDriver
 					}
 					if (!empty($insertData)) {
 						$languageService->insert($insertData);
-						$buteService->updateData($value['attr_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
+						$nameService->updateData($value['attrn_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
 					}
 				} else {
-					$buteService->updateData($value['attr_id'], ['status'=>2]);
+					$nameService->updateData($value['attrn_id'], ['status'=>2]);
 				}
 			}
 		}
@@ -97,7 +95,7 @@ class Translate extends TaskDriver
 		if (!empty($list)) {
 			$languageService = make('app/service/attr/ValueLanguage');
 			foreach ($list as $key => $value) {
-				$hasLanguage = $languageService->getListData(['attv_id'=>$value['attv_id']], 'lan_id');
+				$hasLanguage = $languageService->getListData(['attrv_id'=>$value['attrv_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {
 					$insertData = [];
@@ -113,7 +111,7 @@ class Translate extends TaskDriver
 						}
 						if (!empty($transTxt)) {
 							$insertData[] = [
-								'attv_id' => $value['attv_id'],
+								'attrv_id' => $value['attrv_id'],
 								'lan_id' => $lv,
 								'name' => $transTxt,
 							];
@@ -121,20 +119,20 @@ class Translate extends TaskDriver
 					}
 					if (!empty($insertData)) {
 						$languageService->insert($insertData);
-						$valueService->updateData($value['attv_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
+						$valueService->updateData($value['attrv_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
 					}
 				} else {
-					$valueService->updateData($value['attv_id'], ['status'=>2]);
+					$valueService->updateData($value['attrv_id'], ['status'=>2]);
 				}
 			}
 		}
 		//待翻译描述值
-		$descriptionService = make('app/service/attr/Description');
-		$list = $descriptionService->getListData(['status'=>['<>', 2]]);
+		$nameService = make('app/service/desc/Name');
+		$list = $nameService->getListData(['status'=>['<>', 2]]);
 		if (!empty($list)) {
-			$languageService = make('app/service/attr/DescriptionLanguage');
+			$languageService = make('app/service/desc/NameLanguage');
 			foreach ($list as $key => $value) {
-				$hasLanguage = $languageService->getListData(['desc_id'=>$value['desc_id']], 'lan_id');
+				$hasLanguage = $languageService->getListData(['descn_id'=>$value['descn_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {
 					$insertData = [];
@@ -150,7 +148,7 @@ class Translate extends TaskDriver
 						}
 						if (!empty($transTxt)) {
 							$insertData[] = [
-								'desc_id' => $value['desc_id'],
+								'descn_id' => $value['descn_id'],
 								'lan_id' => $lv,
 								'name' => $transTxt,
 							];
@@ -158,10 +156,46 @@ class Translate extends TaskDriver
 					}
 					if (!empty($insertData)) {
 						$languageService->insert($insertData);
-						$descriptionService->updateData($value['desc_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
+						$nameService->updateData($value['descn_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
 					}
 				} else {
-					$descriptionService->updateData($value['desc_id'], ['status'=>2]);
+					$nameService->updateData($value['descn_id'], ['status'=>2]);
+				}
+			}
+		}
+		$valueService = make('app/service/desc/Value');
+		$list = $valueService->getListData(['status'=>['<>', 2]]);
+		if (!empty($list)) {
+			$languageService = make('app/service/desc/ValueLanguage');
+			foreach ($list as $key => $value) {
+				$hasLanguage = $languageService->getListData(['descv_id'=>$value['descv_id']], 'lan_id');
+				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
+				if (!empty($noLanguage)) {
+					$insertData = [];
+					foreach ($noLanguage as $lv) {
+						if (hasZht($value['name'])) {
+							$transTxt = $transService->getText($value['name'], $language[$lv]);
+							if (!empty($transTxt)) {
+								$transTxt = $this->filterTxt($transTxt);
+								sleep(1);
+							}
+						} else {
+							$transTxt = $value['name'];
+						}
+						if (!empty($transTxt)) {
+							$insertData[] = [
+								'descv_id' => $value['descv_id'],
+								'lan_id' => $lv,
+								'name' => $transTxt,
+							];
+						}
+					}
+					if (!empty($insertData)) {
+						$languageService->insert($insertData);
+						$valueService->updateData($value['descv_id'], ['status'=>count($insertData) == count($noLanguage) ? 2 : 1]);
+					}
+				} else {
+					$valueService->updateData($value['descv_id'], ['status'=>2]);
 				}
 			}
 		}

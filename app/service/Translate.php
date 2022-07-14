@@ -10,9 +10,9 @@ class Translate
 			'q' => $text,
 			'from' => $from,
 			'to' => $to,
-			'appid' => config('env.BAIDU_APPID'),
+			'appid' => config('env', 'BAIDU_APPID'),
 			'salt' => $salt,
-			'sign' => md5(config('env.BAIDU_APPID').$text.$salt.config('env.BAIDU_SECRET_KEY')),
+			'sign' => md5(config('env', 'BAIDU_APPID').$text.$salt.config('env', 'BAIDU_SECRET_KEY')),
 		];
 		$http_url = 'http://api.fanyi.baidu.com/api/trans/vip/translate';
 		$request = $http_url.'?'.http_build_query($data);

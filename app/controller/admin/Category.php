@@ -31,8 +31,8 @@ class Category extends AdminBase
 			$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
 			$cateArr = array_column($cateArr, 'count', 'cate_id');
 			$languageList = make('app/service/Language')->getListCache();
-			$languageList = array_column($languageList, null, 'code');
-			unset($languageList['zh']);
+			$languageList = array_column($languageList, null, 'lan_id');
+			unset($languageList[1]);
 			$len = count($languageList);
 			//图片
 			$attachArr = array_filter(array_column($list, 'attach_id'));
@@ -73,6 +73,7 @@ class Category extends AdminBase
 		$languageList = make('app/service/Language')->getListCache();
 		$data = [];
 		foreach ($languageList as $key => $value) {
+			if ($value['lan_id'] == 1) continue;
 			$data[] = [
 				'lan_id' => $value['lan_id'],
 				'tr_code' => $value['tr_code'],

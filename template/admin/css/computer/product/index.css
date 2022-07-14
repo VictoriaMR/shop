@@ -1,3 +1,6 @@
+.form-group select.form-control {
+	min-width: 180px;
+}
 #spu-list .spu-item {
 	width: calc((100% - 50px) / 5);
 	border: 1px solid #ccc;
@@ -7,6 +10,10 @@
 	float: left;
 	margin-right: 10px;
 	margin-bottom: 10px;
+}
+#spu-list .spu-name {
+	margin: 5px 0;
+	min-height: 34px;
 }
 #spu-list .spu-image {
 	width: 100%;

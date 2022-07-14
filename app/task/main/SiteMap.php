@@ -6,15 +6,13 @@ use app\task\TaskDriver;
 class SiteMap extends TaskDriver
 {
 	private $siteInfo = [];
-	private $msg = ""; //信息
 	private $maxXml = 4900; //xml文件记录url最大条数
 	private $xmlDom = null; //xml实例
 	private $xmlRoot = null;//根节点
 	private $xmlFile = []; //xml文件列表
-	private $siteId = null; //当前站点
 	private $lastSpuId = null; //最后一个完成文件中spuid
 	private $xmlCount = 0; //站点xml文件条数
-	const SITEMAP_CACHE_KEY = 'sitemap-last-change';
+	const SITEMAP_CACHE_KEY = 'sitemap:last-change';
 
 	public $config = [
         'name' => '站点地图任务',
@@ -23,15 +21,29 @@ class SiteMap extends TaskDriver
 
 	public function run()
 	{
-		$siteList = make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,path,domain');
-		$cateUsedService = make('app/service/site/CategoryUsed');
-		$cateLanguageService = make('app/service/category/Language');
+		$siteList = make('app/service/site/Site')->getListData([], 'site_id,path,domain,cate_id');
+		$category = make('app/service/category/Category');
 		$spuService = make('app/service/product/Spu');
 		$spuLanguageService = make('app/service/product/Language');
 		$skuService = make('app/service/product/Sku');
 		$attrUsedService = make('app/service/product/AttrUsed');
 		$attvLanguageService = make('app/service/attr/ValueLanguage');
 		$router = make('frame/Router');
+
+		$cateArr = $category->getListFormat();
+		$tempArr = [];
+		$cateId = 0;
+		foreach ($cateArr as $value) {
+			if ($value['parent_id'] == 0) {
+				$cateId = $value['cate_id'];
+				$tempArr[$cateId] = [];
+			}
+			$tempArr[$cateId][] = $value;
+		}
+		$cateArr = [];
+		foreach ($siteList as $value) {
+			$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
+		}
 		foreach ($siteList as $key => $value) {
 			$this->clear();
 			$this->lastSpuId = $this->getLastSpuId($value['site_id']);
@@ -46,18 +58,17 @@ class SiteMap extends TaskDriver
 				];
 				$this->createSingleXml('url', $tempData);
 				//获取分类信息
-				$cateIdArr = $cateUsedService->getListData(['site_id'=>$value['site_id']], 'cate_id');
-				if (empty($cateIdArr)) continue;
-				$cateIdArr = array_column($cateIdArr, 'cate_id');
-				$cateNameArr = $cateLanguageService->getListData(['cate_id'=>['in', $cateIdArr], 'lan_id'=>'en'], 'cate_id,name');
-				$cateNameArr = array_column($cateNameArr, 'name', 'site_id');
-				foreach ($cateIdArr as $cv) {
-					$tempData = [
-						'loc' => $router->urlFormat($cateNameArr[$cv]??'', 'c', ['id'=>$cv], $value['domain']),
-					];
-					$this->createSingleXml('url', $tempData);
-					//条数统计
-					$this->checkXml();
+				$tempCateList = $cateArr[$value['site_id']] ?? [];
+
+				foreach ($tempCateList as $cv) {
+					if ($cv['status'] && $cv['show']) {
+						$tempData = [
+							'loc' => $router->urlFormat($cv['name_en'], 'c', ['id'=>$cv['cate_id']], $value['domain']),
+						];
+						$this->createSingleXml('url', $tempData);
+						//条数统计
+						$this->checkXml();
+					}
 				}
 			}
 			//站点产品
@@ -69,20 +80,20 @@ class SiteMap extends TaskDriver
 					$spuIdArr = $spuService->getListData($where, 'spu_id', $i, $size);
 					$spuIdArr = array_column($spuIdArr, 'spu_id');
 					//获取名称
-					$spuNameArr = $spuLanguageService->getListData(['spu_id'=>['in', $spuIdArr], 'lan_id'=>'en'], 'spu_id,name');
+					$spuNameArr = $spuLanguageService->getListData(['spu_id'=>['in', $spuIdArr], 'lan_id'=>1], 'spu_id,name');
 					$spuNameArr = array_column($spuNameArr, 'name', 'spu_id');
 					$skuList = $skuService->getListData(['spu_id'=>['in', $spuIdArr], 'status'=>1], 'sku_id,spu_id');
 					$tempData = [];
 					$skuIdArr = array_column($skuList, 'sku_id');
-					$attvArr = $attrUsedService->getListData(['sku_id'=>['in', $skuIdArr]], 'sku_id,attv_id', 0, 0, ['sku_id'=>'asc', 'sort'=>'asc']);
-					$attvIdArr = array_unique(array_column($attvArr, 'attv_id'));
+					$attvArr = $attrUsedService->getListData(['sku_id'=>['in', $skuIdArr]], 'sku_id,attrv_id', 0, 0, ['sku_id'=>'asc', 'sort'=>'asc']);
+					$attvIdArr = array_unique(array_column($attvArr, 'attrv_id'));
 					foreach ($attvArr as $attrValue) {
-						$tempData[$attrValue['sku_id']][] = $attrValue['attv_id'];
+						$tempData[$attrValue['sku_id']][] = $attrValue['attrv_id'];
 					}
 					$attvArr = $tempData;
 					//获取名称
-					$attvNameArr = $attvLanguageService->getListData(['attv_id'=>['in', $attvIdArr], 'lan_id'=>'en'], 'attv_id,name');
-					$attvNameArr = array_column($attvNameArr, 'name', 'attv_id');
+					$attvNameArr = $attvLanguageService->getListData(['attrv_id'=>['in', $attvIdArr], 'lan_id'=>1], 'attrv_id,name');
+					$attvNameArr = array_column($attvNameArr, 'name', 'attrv_id');
 					$tempData = [];
 					foreach ($skuList as $skuValue) {
 						$tempData[$skuValue['spu_id']][] = $skuValue['sku_id'];
@@ -103,11 +114,12 @@ class SiteMap extends TaskDriver
 								}
 								$name = $spuNameArr[$spuValue].$str;
 								$tempData = [
-									'loc' => $router->urlFormat($spuNameArr[$spuValue], 's', ['id'=>$skuValue], $value['domain']),
+									'loc' => $router->urlFormat($name, 's', ['id'=>$skuValue], $value['domain']),
 								];
 								$this->createSingleXml('url', $tempData);
 							}
 						}
+						$this->setLastSpuId($value['site_id'], $spuValue);
 						//条数统计
 						$this->checkXml();
 					}
@@ -121,24 +133,28 @@ class SiteMap extends TaskDriver
 		return false;
 	}
 
-	protected function clear()
+	private function clear()
 	{
 		$this->xmlDom = null;
 		$this->xmlDom = null;
 		$this->xmlRoot = null;
 		$this->xmlFile = [];
-		$this->siteId = null;
 		$this->xmlCount = 0;
 		$this->lastSpuId = 0;
 		return true;
 	}
 
-	protected function getLastSpuId($siteId)
+	private function getLastSpuId($siteId): int
 	{
-		return (int)redis(3)->hGet(self::SITEMAP_CACHE_KEY, $siteId);
+		return redis(3)->hGet(self::SITEMAP_CACHE_KEY, $siteId);
 	}
 
-	protected function createXml($name)
+	private function setLastSpuId($siteId, $spuId)
+	{
+		return redis(3)->hSet(self::SITEMAP_CACHE_KEY, $siteId, $spuId);
+	}
+
+	private function createXml($name)
 	{
 		try {
 			//创建一个XML文档并设置XML版本和编码
@@ -155,7 +171,7 @@ class SiteMap extends TaskDriver
 		}
 	}
 
-	protected function createSingleXml($type, $data)
+	private function createSingleXml($type, $data)
 	{
 		if (is_null($this->xmlDom)) return false;
 		if (empty($data) || !is_array($data)) return false;
@@ -182,7 +198,7 @@ class SiteMap extends TaskDriver
 		return $res;
 	}
 
-	protected function checkXml()
+	private function checkXml()
 	{
 		if ($this->xmlCount < $this->maxXml) return true;
 		$this->xmlCount = 0;
@@ -191,7 +207,7 @@ class SiteMap extends TaskDriver
 		return $this->createXml('urlset');
 	}
 
-	protected function saveSingleXml($name = '')
+	private function saveSingleXml($name = '')
 	{
 		if (is_null($this->xmlDom)) return false;
 		$isIndexXml = empty($name);
@@ -214,12 +230,12 @@ class SiteMap extends TaskDriver
 		return $this->xmlDom->save($saveFile);
 	}
 
-	protected function getPath()
+	private function getPath()
 	{
 		return ROOT_PATH.'template'.DS.$this->siteInfo['path'].DS.'sitemap'.DS;
 	}
 
-	protected function saveSiteMapIndexXml($domain)
+	private function saveSiteMapIndexXml($domain)
 	{
 		if (!$this->createXml('sitemapindex')) {
 			return false;

@@ -91,7 +91,7 @@ class Spu extends Base
 
 	public function getAdminList(array $where=[], $page=1, $size=20)
 	{
-		$list = $this->getListData($where, '*', $page, $size);
+		$list = $this->getListData($where, '*', $page, $size, ['spu_id'=>'desc']);
 		if (!empty($list)) {
 			//图片
 			$attachArr = array_unique(array_column($list, 'attach_id'));
@@ -99,7 +99,7 @@ class Spu extends Base
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 			//名称
 			$spuIdArr = array_column($list, 'spu_id');
-			$nameArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuIdArr], 'lan_id'=>1]);
+			$nameArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuIdArr], 'lan_id'=>0]);
 			$nameArr = array_column($nameArr, 'name', 'spu_id');
 			foreach ($list as $key => $value) {
 				$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
@@ -134,14 +134,14 @@ class Spu extends Base
 		//sku属性
 		$attrArr = make('app/service/product/AttrUsed')->getListData(['sku_id'=>['in', $skuIdArr]], '*', 0, 0, ['sort'=>'asc']);
 		//属性值名称
-		$attrBute = make('app/service/attr/Bute')->getListData(['attr_id'=>['in', array_unique(array_column($attrArr, 'attr_id'))]]);
-		$attrBute = array_column($attrBute, null, 'attr_id');
-		$attrValue = make('app/service/attr/Value')->getListData(['attv_id'=>['in', array_unique(array_column($attrArr, 'attv_id'))]]);
-		$attrValue = array_column($attrValue, null, 'attv_id');
+		$attrBute = make('app/service/attr/Name')->getListData(['attrn_id'=>['in', array_unique(array_column($attrArr, 'attrn_id'))]]);
+		$attrBute = array_column($attrBute, null, 'attrn_id');
+		$attrValue = make('app/service/attr/Value')->getListData(['attrv_id'=>['in', array_unique(array_column($attrArr, 'attrv_id'))]]);
+		$attrValue = array_column($attrValue, null, 'attrv_id');
 		//描述
-		$info['description'] = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId]);
+		$info['description'] = make('app/service/product/DescUsed')->getListData(['spu_id'=>$spuId]);
 		//描述图片
-		$info['introduce'] = make('app/service/product/IntroduceUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		$info['introduce'] = make('app/service/product/IntroUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
 		//图片
 		$attachArr = array_unique(array_merge(array_column($info['image'], 'attach_id'), array_column($info['sku'], 'attach_id'), array_column($attrArr, 'attach_id'), array_column($info['introduce'], 'attach_id')));
 		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
@@ -151,18 +151,18 @@ class Spu extends Base
 		$attrMap = [];
 		foreach ($attrArr as $value) {
 			if (!isset($skuAttrArr[$value['sku_id']])) $skuAttrArr[$value['sku_id']] = [];
-			$value['attr_name'] = isset($attrBute[$value['attr_id']]['name']) ? $attrBute[$value['attr_id']]['name'] : '';
-			$value['attv_name'] = isset($attrValue[$value['attv_id']]['name']) ? $attrValue[$value['attv_id']]['name'] : '';
+			$value['attr_name'] = isset($attrBute[$value['attrn_id']]['name']) ? $attrBute[$value['attrn_id']]['name'] : '';
+			$value['attv_name'] = isset($attrValue[$value['attrv_id']]['name']) ? $attrValue[$value['attrv_id']]['name'] : '';
 			$value['image'] = $attachArr[$value['attach_id']] ?? '';
-			if (!isset($attrMap[$value['attr_id']])) {
-				$attrMap[$value['attr_id']] = [
-					'attr_id' => $value['attr_id'],
+			if (!isset($attrMap[$value['attrn_id']])) {
+				$attrMap[$value['attrn_id']] = [
+					'attrn_id' => $value['attrn_id'],
 					'attr_name' => $value['attr_name'],
 					'son' => [],
 				];
 			}
-			$attrMap[$value['attr_id']]['son'][$value['attv_id']] = [
-				'attv_id' => $value['attv_id'],
+			$attrMap[$value['attrn_id']]['son'][$value['attrv_id']] = [
+				'attrv_id' => $value['attrv_id'],
 				'attv_name' => $value['attv_name'],
 				'attach_id' => $value['attach_id'],
 				'image' => $value['image'],
@@ -183,12 +183,14 @@ class Spu extends Base
 			$info['introduce'][$key]['image'] = str_replace(['/400', '.220x220'], '', $attachArr[$value['attach_id']] ?? '');
 		}
 		//描述
-		$descArr = make('app/service/product/DescriptionUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
-		$descNameArr = make('app/service/attr/Description')->getListData(['desc_id'=>['in', array_unique(array_merge(array_column($descArr, 'name_id'), array_column($descArr, 'value_id')))]]);
-		$descNameArr = array_column($descNameArr, 'name', 'desc_id');
+		$descArr = make('app/service/product/DescUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		$descNameArr = make('app/service/desc/Name')->getListData(['descn_id'=>['in', array_column($descArr, 'descn_id')]]);
+		$descValueArr = make('app/service/desc/Value')->getListData(['descv_id'=>['in', array_column($descArr, 'descv_id')]]);
+		$descNameArr = array_column($descNameArr, 'name', 'descn_id');
+		$descValueArr = array_column($descValueArr, 'name', 'descv_id');
 		foreach($descArr as $key=>$value) {
-			$descArr[$key]['name'] = $descNameArr[$value['name_id']] ?? '';
-			$descArr[$key]['value'] = $descNameArr[$value['value_id']] ?? '';
+			$descArr[$key]['name'] = $descNameArr[$value['descn_id']] ?? '';
+			$descArr[$key]['value'] = $descValueArr[$value['descv_id']] ?? '';
 		}
 		$info['desc'] = $descArr;
 		$info['gender_text'] = $this->getGenderText($info['gender']);

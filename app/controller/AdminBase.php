@@ -48,6 +48,6 @@ class AdminBase extends Base
 			$this->error('参数错误');
 		}
 		$rst = make('app/service/Translate')->getText($name, $trCode);
-		$this->success($rst);
+		$this->success('', $rst);
 	}
 }

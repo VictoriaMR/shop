@@ -15,6 +15,7 @@ class Product extends AdminBase
 
 	public function index()
 	{	
+		html()->addJs();
 		html()->addCss();
 		
 		$status = iget('status', -1);
@@ -28,12 +29,25 @@ class Product extends AdminBase
 		//spu状态
 		$spu = make('app/service/product/Spu');
 		$statusList = $spu->getStatusList();
-		//站点
-		$siteList = make('app/service/site/Site')->getListData([], 'site_id,name');
-		$siteList = array_column($siteList, 'name', 'site_id');
 		//分类
 		$cateList = make('app/service/category/Category')->getListFormat();
-		$cateList = array_column($cateList, null, 'cate_id');
+		$cateArr = array_column($cateList, 'name', 'cate_id');
+		//站点
+		$siteList = make('app/service/site/Site')->getListData([], 'site_id,name,cate_id');
+		$siteList = array_column($siteList, null, 'site_id');
+		$tempArr = [];
+		$cateId = 0;
+		foreach ($cateList as $value) {
+			if ($value['parent_id'] == 0) {
+				$cateId = $value['cate_id'];
+				$tempArr[$cateId] = [];
+			}
+			$tempArr[$cateId][] = $value;
+		}
+		$cateList = [];
+		foreach ($siteList as $key=>$value) {
+			$cateList[$key] = $tempArr[$value['cate_id']] ?? [];
+		}
 		$where = [];
 		if ($status > -1) {
 			$where['status'] = $status;
@@ -42,14 +56,15 @@ class Product extends AdminBase
 			$where['site_id'] = $site;
 		}
 		if ($cate > 0) {
-			$spuIdArr = make('app/service/category/Category')->getSpuIdByCateId($cate);
-			if (empty($spuIdArr)) {
-				$where = ['spu_id' => 0];
-			} else {
-				$where['spu_id'] = ['in', $spuIdArr];
-			}
+			$where['cate_id'] = $cate;
 		}
-
+		if ($stime && $etime) {
+			$where['add_time'] = ['between', [date('Y-m-d', strtotime($stime)).' 00:00:00', date('Y-m-d', strtotime($etime)).' 23:59:59']];
+		} elseif ($stime) {
+			$where['add_time'] = ['>=', date('Y-m-d', strtotime($stime)).' 00:00:00'];
+		} elseif ($etime) {
+			$where['add_time'] = ['<=', date('Y-m-d', strtotime($etime)).' 23:59:59'];
+		}
 		$total = $spu->getCountData($where);
 		if ($total > 0) {
 			$list = $spu->getAdminList($where, $page, $size);
@@ -62,6 +77,7 @@ class Product extends AdminBase
 		$this->assign('siteList', $siteList);
 		$this->assign('cate', $cate);
 		$this->assign('cateList', $cateList);
+		$this->assign('cateArr', $cateArr);
 		$this->assign('stime', $stime);
 		$this->assign('etime', $etime);
 		$this->assign('total', $total);
@@ -108,12 +124,13 @@ class Product extends AdminBase
 		$id = ipost('id');
 		$info = make('app/service/product/Language')->getListData(['spu_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
+		$info[0]['language_name'] = '名称';
 		$languageList = make('app/service/Language')->getListCache();
 		foreach ($languageList as $key => $value) {
-			$info[$value['code']] = [
+			$info[$value['lan_id']] = [
 				'lan_id' => $value['code'],
 				'tr_code' => $value['tr_code'],
-				'name' => empty($info[$value['code']]) ? '' : $info[$value['code']]['name'],
+				'name' => empty($info[$value['lan_id']]) ? '' : $info[$value['lan_id']]['name'],
 				'language_name' => $value['name'],
 			];
 		}
@@ -280,19 +297,26 @@ class Product extends AdminBase
 	protected function modifySkuAttrImage()
 	{
 		$spuId = ipost('spu_id');
-		$attrId = ipost('attr_id');
-		$attvId = ipost('attv_id');
+		$attrId = ipost('attrn_id');
+		$attvId = ipost('attrv_id');
 		$attachId = ipost('attach_id');
 		if (empty($spuId) || empty($attrId) || empty($attvId)) {
 			$this->error('参数不正确');
 		}
-		$skuId = make('app/service/product/Sku')->getListData(['spu_id'=>$spuId], 'sku_id');
+		$skuService = make('app/service/product/Sku');
+		$skuId = $skuService->getListData(['spu_id'=>$spuId], 'sku_id');
 		if (empty($skuId)) {
 			$this->error('SKU ID不能为空');
 		}
 		$skuId = array_column($skuId, 'sku_id');
-		$rst = make('app/service/product/AttrUsed')->updateData(['sku_id'=>['in', $skuId], 'attr_id'=>$attrId, 'attv_id'=>$attvId], ['attach_id'=>$attachId]);
+		$attrUsed = make('app/service/product/AttrUsed');
+		$list = $attrUsed->getListData(['sku_id'=>['in', $skuId], 'attrn_id'=>$attrId, 'attrv_id'=>$attvId], 'item_id,sku_id');
+		if (empty($list)) {
+			$this->error('找不到sku属性');
+		}
+		$rst = $attrUsed->updateData(['item_id'=>['in', array_column($list, 'item_id')]], ['attach_id'=>$attachId]);
 		if ($rst) {
+			$skuService->update(['sku_id'=>['in', array_column($list, 'sku_id')]], ['attach_id'=>$attachId]);
 			$this->success('更新成功');
 		}
 		$this->error('更新失败');

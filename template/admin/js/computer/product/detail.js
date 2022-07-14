@@ -24,14 +24,21 @@ const PRODUCT = {
 		$('.centerShow .save-btn').on('click', function(){
 			const obj = $(this);
 			if (obj.hasClass('batch-save-btn')) {
-				_thisobj.parent().append('<input type="hidden" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
+				obj.parent().append('<input type="hidden" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
 			}
 			obj.button('loading');
-			post(URI+'product/detail', obj.parents('form').serializeArray(), function(){
-				window.location.reload();
-			}, function(res){
+			$.post(URI+'product/detail', obj.parents('form').serializeArray(), function(res){
 				obj.button('reset');
-				obj.parents('.centerShow').parent().dealboxHide();
+				if (res.code == '200') {
+					if (obj.parent().find('[name="opn"]').val() != 'editSpuLanguage') {
+						window.location.reload();
+					} else {
+						successTips(res.msg);
+						obj.parents('.centerShow').parent().dealboxHide();
+					}
+				} else {
+					errorTips(res.msg);
+				}
 			});
 			return false;
 		});
@@ -47,7 +54,6 @@ const PRODUCT = {
 		$('.name-trans-btn').on('click', function(){
 			const _thisobj = $(this);
 			post(URI+'product/detail', {opn: 'getSpuNameLanguage', id: $('.detail-page').data('id')}, function(data){
-				console.log(data, 'data')
 				const obj = $('#dealbox-language');
 				obj.find('input[name="name"]').val(_thisobj.next().text());
 				obj.find('table input').val('');
@@ -89,7 +95,7 @@ const PRODUCT = {
 						if (res.code === '200') {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.message);
+							errorTips(res.msg);
 						}
 						if (len === 0) {
 							thisobj.button('reset');
@@ -116,10 +122,10 @@ const PRODUCT = {
 				_thisobj.button('loading');
 				$.post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), item_id: item_id, opn: 'deleteSpuImage'}, function(res) {
 					if (res.code === '200') {
-						successTips(res.message);
+						successTips(res.msg);
 						window.location.reload();
 					} else {
-						errorTips(res.message);
+						errorTips(res.msg);
 						_thisobj.button('reset');
 					}
 				});
@@ -131,10 +137,10 @@ const PRODUCT = {
 			confirm('确定设置该图片为主图吗?', function(_thisobj){
 				$.post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: attach_id, opn: 'editInfo'}, function(res) {
 					if (res.code === '200') {
-						successTips(res.message);
+						successTips(res.msg);
 						window.location.reload();
 					} else {
-						errorTips(res.message);
+						errorTips(res.msg);
 						_thisobj.button('reset');
 					}
 				});
@@ -159,10 +165,10 @@ const PRODUCT = {
 			obj.button('loading');
 			$.post(URI+'product/detail', {opn: 'addSpuImage', spu_id: $('.detail-page').data('id'), attach_id: data.attach_id}, function(res){
 				if (res.code === '200') {
-					successTips(res.message);
+					successTips(res.msg);
 					window.location.reload();
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 					obj.button('reset');
 				}
 			});
@@ -202,10 +208,10 @@ const PRODUCT = {
 			param.attach_id = data.attach_id;
 			$.post(URI+'product/detail', param, function(res){
 				if (res.code === '200') {
-					successTips(res.message);
+					successTips(res.msg);
 					window.location.reload();
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
 			});
 		});
@@ -218,11 +224,11 @@ const PRODUCT = {
 				obj.button('loading');
 				$.post(URI+'product/detail', param, function(res){
 					if (res.code === '200') {
-						successTips(res.message);
+						successTips(res.msg);
 						window.location.reload();
 					} else {
 						obj.button('reset');
-						errorTips(res.message);
+						errorTips(res.msg);
 					}
 				});
 			});
@@ -233,10 +239,10 @@ const PRODUCT = {
 			const sort = $(this).val();
 			$.post(URI+'product/detail', {opn: 'modifySpuDesc', item_id: id, sort: sort}, function(res){
 				if (res.code === '200') {
-					successTips(res.message);
+					successTips(res.msg);
 					window.location.reload();
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
 			});
 		});
@@ -247,10 +253,10 @@ const PRODUCT = {
 				obj.button('loading');
 				$.post(URI+'product/detail', {opn: 'deleteSpuDesc', item_id: id}, function(res){
 					if (res.code === '200') {
-						successTips(res.message);
+						successTips(res.msg);
 						window.location.reload();
 					} else {
-						errorTips(res.message);
+						errorTips(res.msg);
 					}
 				});
 			});
@@ -269,7 +275,7 @@ const PRODUCT = {
 				if (res.code === '200') {
 					_this.initDescShow(res.data);
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
 			});
 		});
@@ -286,11 +292,11 @@ const PRODUCT = {
 				obj.button('loading');
 				$.post(URI+'product/detail', {item_id: id, opn: 'deleteSpuIntroduceImage'}, function(res) {
 					if (res.code === '200') {
-						successTips(res.message);
+						successTips(res.msg);
 						window.location.reload();
 					} else {
 						obj.button('reset');
-						errorTips(res.message);
+						errorTips(res.msg);
 					}
 				});
 			});
@@ -301,11 +307,11 @@ const PRODUCT = {
 			obj.button('loading');
 			$.post(URI+'product/detail', {opn: 'addSpuIntroduceImage', spu_id: spu_id, attach_id:data.attach_id}, function(res){
 				if (res.code === '200') {
-					successTips(res.message);
+					successTips(res.msg);
 					window.location.reload();
 				} else {
 					obj.button('reset');
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
 			});
 		});

@@ -180,7 +180,7 @@ final class Query
 
 	protected function formatValue($key, $value)
 	{
-		$value = trim($value);
+		$value = is_array($value) ? :trim($value);
 		if (in_array($key, $this->_intFields)) return (int)$value;
 		return "'".addslashes($value)."'";
 	}
@@ -266,6 +266,11 @@ final class Query
 						$valueStr .= $this->formatValue($fv, $v).',';
 					}
 					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, rtrim($valueStr, ','));
+				} elseif ($operator == 'BETWEEN') {
+					if (count($value) != 2) {
+						throw new \Exception('Sql where BETWEEN value error', 1);
+					}
+					$tempStr .= sprintf("%s %s %s '%s' AND '%s'", $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, trim($value[0]), trim($value[1]));
 				} else {
 					$tempStr .= sprintf('%s %s %s %s', $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, $this->formatValue($fv, $value));
 				}

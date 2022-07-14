@@ -39,9 +39,9 @@
 			</dl>
 			<dl class="field-row">
 				<dt>邮费：</dt>
-				<dd><?php echo $info['data']['postage'];?></dd>
+				<dd><?php echo $info['data']['post_fee'];?></dd>
 				<dd>
-					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="postage">修改</button>
+					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="post_fee">修改</button>
 				</dd>
 			</dl>
 			<dl class="field-row">
@@ -149,6 +149,8 @@
 					<th width="90">原价</th>
 					<th width="90">成本价</th>
 					<th width="70">库存</th>
+					<th width="70">重量(g)</th>
+					<th width="90">体积(mm)</th>
 					<th width="60">供应商SKU</th>
 					<th width="140">上架时间</th>
 				</tr>
@@ -174,6 +176,8 @@
 					<td class="can-edit" data-name="original_price"><?php echo $value['original_price'];?></td>
 					<td class="can-edit" data-name="cost_price"><?php echo $value['cost_price'];?></td>
 					<td class="can-edit" data-name="stock"><?php echo $value['stock'];?></td>
+					<td class="can-edit" data-name="weight"><?php echo $value['weight'];?></td>
+					<td class="can-edit" data-name="volume"><?php echo $value['volume'];?></td>
 					<td><?php echo $value['item_id'];?></td>
 					<td>
 						<?php echo $value['add_time'];?><br />
@@ -201,7 +205,7 @@
 							$count = 0;
 							foreach ($kv['son'] as $value){
 						?>
-						<tr data-attr_id="<?php echo $kv['attr_id'];?>" data-attv_id="<?php echo $value['attv_id'];?>" data-spu_id="<?php echo $info['spu_id'];?>">
+						<tr data-attrn_id="<?php echo $kv['attrn_id'];?>" data-attrv_id="<?php echo $value['attrv_id'];?>" data-spu_id="<?php echo $info['spu_id'];?>">
 							<?php if ($count == 0){?>
 							<td rowspan="<?php echo count($kv['son']);?>" class="tc">
 								<?php echo $kv['attr_name'];?>
@@ -407,7 +411,7 @@
 			<input type="hidden" name="sku_id" value="0">
 			<input type="text" name="" value="" class="form-control name">
 			<div class="mt20">
-				<button type="button" class="btn btn-success w30 batch-save-btn">批量修改</button>
+				<button type="button" class="btn btn-success w30 save-btn batch-save-btn">批量修改</button>
 				<button type="button" class="btn btn-primary w30 right save-btn ">确认</button>
 			</div>
 		</form>

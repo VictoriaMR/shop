@@ -26,8 +26,8 @@
 		<?php if (!empty($_nav[$_func])){?>
 		<span>&gt; <?php echo $_nav[$_func];?></span>
 		<?php } ?>
-		<a href="<?php echo url();?>" class="glyphicon glyphicon-repeat ml12" title="重新加载"></a>
-		<a href="<?php echo url();?>" target="_blank" class="glyphicon glyphicon-link ml12" title="新页面打开"></a>
+		<a href="<?php echo url($_path.'/'.$_func, iget());?>" class="glyphicon glyphicon-repeat ml12" title="重新加载"></a>
+		<a href="<?php echo url($_path.'/'.$_func, iget());?>" target="_blank" class="glyphicon glyphicon-link ml12" title="新页面打开"></a>
 	</div>
 </div>
 <?php } ?>
@@ -36,7 +36,7 @@
 	<ul class="nav nav-tabs">
 		<?php foreach ($_tag as $key => $value) {?>
 		<li<?php if($_func == $key) echo ' class="active"';?>>
-			<a href="<?php echo url($_path.'/'.$key, $_func == $key ? iget() : []);?>"><?php echo $value;?></a>
+			<a href="<?php echo url($_path.'/'.$key);?>"><?php echo $value;?></a>
 		</li>
 		<?php } ?>
 	</ul>

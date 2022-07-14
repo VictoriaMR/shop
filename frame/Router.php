@@ -69,8 +69,10 @@ final class Router
 
 	public function buildUrl($url=null, $param=null, $suffix=false)
 	{
-		if (empty($url)) return '/';
 		if (IS_ADMIN) {
+			if (empty($url)) {
+				$url = \App::get('router', 'path').'/'.\App::get('router', 'func');
+			}
 			$url = lcfirst($url);
 			if (!empty($param)) {
 				if (is_array($param)) {
@@ -79,6 +81,7 @@ final class Router
 				$url .= '?'.$param;
 			}
 		} else {
+			if (empty($url)) return '/';
 			if (!empty($param)) {
 				if (is_array($param))
 					$url .= $this->setParam($param);
@@ -104,7 +107,7 @@ final class Router
 		if (isset($param['id'])) $name .= '-'.$param['id'];
 		if (isset($param['page'])) $name .= '-page-'.$param['page'];
 		if (isset($param['size'])) $name .= '-size-'.$param['size'];
-		return '-'.$name;
+		return $name;
 	}
 
 	public function setParam($param=[])
@@ -118,5 +121,11 @@ final class Router
 			}
 		}
 		return $str;
+	}
+
+	public function urlFormat($name, $type='', $params=[], $domain='')
+	{
+		$name = $this->nameFormat($name.'-'.$type, $params);
+		return $domain.$name.'.html';
 	}
 }

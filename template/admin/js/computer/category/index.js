@@ -46,7 +46,9 @@ const CATEGORYLIST = {
 			post(URI+'category', {opn: 'getCateLanguage', cate_id: id}, function(data){
 				const obj = $('#dealbox-language');
 				obj.find('input[name="cate_id"]').val(id);
-				obj.find('input[name="cate_name"]').val(_thisobj.next().text());
+				var name = _thisobj.next().text();
+				obj.find('input[name="cate_name"]').val(name);
+				obj.find('.dealbox-title').text(name);
 				obj.find('table input').val('');
 				let html = '<tr>\
 								<th style="width:88px">语言名称</th>\
