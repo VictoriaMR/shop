@@ -16,7 +16,7 @@ class File
 		if (!in_array($ext, self::FILE_ACCEPT)) return false;
 		$name = md5_file($file['tmp_name']);
 		$attachment = make('app/service/attachment/Attachment');
-		$data = $attachment->getAttachmentByName($name);
+		$data = $attachment->getAttachmentByName($name, $cate);
 		if (empty($data)) {
 			$path = ROOT_PATH.config('env', 'FILE_CENTER').DS.$cate.DS;
 			//创建目录
@@ -73,7 +73,8 @@ class File
 		if (!empty($list)) {
 			$list = array_column($list, 'attach_id', 'url_md5');
 		}
-		$path = ROOT_PATH.config('env', 'FILE_CENTER').DS.$cate.DS;
+		$root_path = ROOT_PATH.config('env', 'FILE_CENTER').DS;
+		$path = $root_path.$cate.DS;
 		//创建目录
 		if (!is_dir($path)) {
 			mkdir($path, 0755, true);
@@ -83,6 +84,34 @@ class File
 		foreach ($urlArr as $key => $value) {
 			if (isset($list[$value])) {
 				$urlArr[$key] = $list[$value];
+				//查找类目下是否有对应的cate
+				$info = $attachment->loadData($list[$value]);
+				if ($info['cate'] != $cate) {
+					$name = $info['name'];
+					$ext = $info['type'];
+					$tempName = $root_path.$info['cate'].DS.$name.'.'.$ext;
+					$data = $attachment->getAttachmentByName($name, $cate);
+					if (empty($data)) {
+						$file = $path.$name.'.'.$ext;
+						//存入压缩文件
+						$image->compressImg($tempName, $file);
+						$data = [
+							'name' => $name,
+							'type' => $ext,
+							'cate' => $cate,
+						];
+						$attachId = $attachment->insertGetId($data);
+						$urlArr[$key] = $attachId;
+						//图片缩略
+						if ($thumb) {
+							$thumb = ['600', '400', '200'];
+							foreach ($thumb as $tv) {
+								$to = $path.$name.DS.$tv.'.'.$ext;
+								$image->thumbImage($file, $to, $tv, $tv);
+							}
+						}
+					}
+				}
 			} else {
 				$url = $key;
 				//生成临时文件
@@ -99,7 +128,7 @@ class File
 				}
 				if (file_put_contents($tempName, $result)) {
 					$name = md5_file($tempName);
-					$data = $attachment->getAttachmentByName($name);
+					$data = $attachment->getAttachmentByName($name, $cate);
 					if (empty($data)) {
 						$file = $path.$name.'.'.$ext;
 						//存入压缩文件

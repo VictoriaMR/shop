@@ -19,9 +19,13 @@ class Attachment extends Base
 		return $info['attach_id'];
 	}
 
-	public function getAttachmentByName($name, $width='')
+	public function getAttachmentByName($name, $cate='', $width='')
 	{
-		$info = $this->loadData(['name'=>$name]);
+		$where = ['name'=>$name];
+		if ($cate) {
+			$where['cate'] = $cate;
+		}
+		$info = $this->loadData($where);
 		if (empty($info)) {
 			return false;
 		}
