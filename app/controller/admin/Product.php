@@ -315,8 +315,8 @@ class Product extends AdminBase
 			$this->error('找不到sku属性');
 		}
 		$rst = $attrUsed->updateData(['item_id'=>['in', array_column($list, 'item_id')]], ['attach_id'=>$attachId]);
+		$skuService->update(['sku_id'=>['in', array_unique(array_column($list, 'sku_id'))]], ['attach_id'=>$attachId]);
 		if ($rst) {
-			$skuService->update(['sku_id'=>['in', array_column($list, 'sku_id')]], ['attach_id'=>$attachId]);
 			$this->success('更新成功');
 		}
 		$this->error('更新失败');
