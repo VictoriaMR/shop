@@ -44,8 +44,11 @@ class Task extends AdminBase
 		$taskList = array_flip($taskList);
 		foreach($taskList as $key=>$value) {
 			$value = $this->cache()->hGetAll($this->getKey($key));
-			if (empty($value)) return [];
-			$taskList[$key] = $value;
+			if (empty($value)) {
+				unset($taskList[$key]);
+			} else {
+				$taskList[$key] = $value;
+			}
 		}
 		return $taskList;
 	}
