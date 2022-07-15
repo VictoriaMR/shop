@@ -83,4 +83,19 @@ class App
 			if (!(IS_CLI || IS_AJAX)) make('frame/Debug')->init();
 		}
 	}
+
+	public static function setVersion($version)
+	{
+		return redis()->set('frame-app:version', substr($version, 0, 5));
+	}
+
+	public static function getVersion()
+	{
+		$version = self::get('version');
+		if (!$version) {
+			$version = redis()->get('frame-app:version');
+			self::set('version', $version);
+		}
+		return $version;
+	}
 }

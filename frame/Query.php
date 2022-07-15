@@ -13,7 +13,7 @@ final class Query
 	private $_having='';
 	private $_offset;
 	private $_limit=1;
-	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank', 'show'];
+	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank', 'show', 'commit'];
 
 	public function database($database=null)
 	{
@@ -288,19 +288,24 @@ final class Query
 			$GLOBALS['exec_sql'][] = $sql;
 		}
 		$conn = db($this->_database);
-		try {
-			$stmt = $conn->query($sql);
+		$stmt = $conn->query($sql);
+		if ($conn->affected_rows>0) {
 			if (is_bool($stmt)) {
 				return $stmt;
 			}
+			$returnData = [];
 			while ($row = $stmt->fetch_assoc()){
 			 	$returnData[] = $row;
 			}
 			$stmt->free();
-		} catch (\Exception $e) {
-			throw new \Exception($sql.' '.$conn->error, 1);
+			return $returnData;
+		} else {
+			$error = [];
+			foreach ($conn->error_list as $value) {
+				$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
+			}
+			throw new \Exception(implode(PHP_EOL, $error), 1);
 		}
-		return $returnData ?? null;
 	}
 
 	private function clear()

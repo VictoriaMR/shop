@@ -55,17 +55,20 @@ function url($url=null, $param=null, $suffix=false) {
     return router()->buildUrl($url, $param, $suffix);
 }
 function siteUrl($name){
-	return APP_DOMAIN.$name.'?v='.config('env', 'APP_VERSION');
+	return APP_DOMAIN.$name.'?v='.version();
 }
 function mediaUrl($url, $width=''){
 	if (!empty($width)) {
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
-	return APP_DOMAIN.$url.'?v='.config('env', 'APP_VERSION');
+	return APP_DOMAIN.$url.'?v='.version();
 }
 function isCli(){
 	return stripos(php_sapi_name(), 'cli')!==false;
+}
+function version(){
+	return \App::getVersion();
 }
 function isWin(){
 	return strtoupper(substr(PHP_OS, 0, 3))=='WIN';

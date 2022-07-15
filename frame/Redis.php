@@ -48,8 +48,6 @@ class Redis
 			$arg[1] = json_encode($arg[1], JSON_UNESCAPED_UNICODE);
 		} elseif ($func == 'hSet' && isset($arg[2]) && is_array($arg[2])) {
 			$arg[2] = json_encode($arg[2], JSON_UNESCAPED_UNICODE);
-		} elseif ($func == 'set'){
-			if (!isset($arg[2])) $arg[2] = self::DEFAULT_EXT_TIME;
 		}
 		$info = $this->_link->$func(...$arg);
 		if ($info) {

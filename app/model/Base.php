@@ -58,6 +58,11 @@ class Base
 		return $this->instance()->where($where)->delete();
 	}
 
+	public function insertData($data)
+	{
+		return $this->instance()->insert($data);
+	}
+
 	public function getCountData(array $where=[]) 
 	{
 		return $this->instance()->where($where)->count();
