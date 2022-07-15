@@ -34,8 +34,7 @@ class Git extends Base
 
     private function getGitHistoryLog($id, $lastTime)
     {
-        $cmd = isWin() ? 'git' : '/usr/local/git/bin/git';
-        $cmd .= ' log';
+        $cmd = 'git log';
         if ($lastTime) {
             $cmd .= ' --reverse '.$lastTime;
         }
@@ -89,6 +88,9 @@ class Git extends Base
 
     private function run($cmd, $work_path = null, $filterResult = true)
     {
+        if (!isWin()) {
+            $cmd = '/usr/local/git/bin/'.$cmd;
+        }
         $rst =[];
         $code =null;
         if(!empty($work_path)){
