@@ -34,7 +34,8 @@ class Git extends Base
 
     private function getGitHistoryLog($id, $lastTime)
     {
-        $cmd = 'git log';
+        $cmd = isWin() ? 'git' : '/usr/local/git/bin/git';
+        $cmd .= ' log';
         if ($lastTime) {
             $cmd .= ' --reverse '.$lastTime;
         }

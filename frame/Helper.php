@@ -64,9 +64,6 @@ function mediaUrl($url, $width=''){
 	}
 	return APP_DOMAIN.$url.'?v='.version();
 }
-function isCli(){
-	return stripos(php_sapi_name(), 'cli')!==false;
-}
 function version(){
 	return \App::getVersion();
 }
