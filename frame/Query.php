@@ -289,7 +289,7 @@ final class Query
 		}
 		$conn = db($this->_database);
 		$stmt = $conn->query($sql);
-		if ($conn->errno>0) {
+		if ($conn->errno==0) {
 			if (is_bool($stmt)) {
 				return $stmt;
 			}
