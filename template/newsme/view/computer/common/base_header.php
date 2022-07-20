@@ -4,7 +4,7 @@
 		<table width="100%">
 			<tbody>
 				<tr>
-					<td width="40%">
+					<td width="250">
 						<table width="100%">
 							<tbody>
 								<tr>
@@ -66,38 +66,57 @@
 											</div>
 										</div>
 									</td>
-									<td width="43">
+									<td width="68">
 										<span class="f500 f16 pointer" id="meau-modal-name">Menu</span>
 									</td>
 									<td>
-										
+										<img class="logo" src="<?php echo siteUrl('image/common/logo.png');?>">
 									</td>
 								</tr>
 							</tbody>
 						</table>
 					</td>
-					<td width="20%" class="f0 tc">
-						<img class="logo" src="<?php echo siteUrl('image/common/logo.png');?>">
+					<td>
+						<div class="search-cell relative">
+							<div class="relative">
+								<input class="input" type="text" name="search" placeholder="Find anything here..." autocomplete="off">
+								<span class="iconfont icon-sousuo f600 f22"></span>
+							</div>
+							<div class="hot-search mt8 c6 relative">
+								<span class="hot-icon">
+									<img src="<?php echo siteUrl('image/common/hot.png');?>">
+								</span>
+								<a href="">New dress</a>
+								<a href="">Sweater</a>
+								<a href="">T - Shit</a>
+							</div>
+						</div>
 					</td>
-					<td width="40%"></td>
+					<td width="80">
+						<div class="right">
+							<span class="iconfont icon-gouwuche f26"></span>
+							<span class="f16 ml4">Cart</span>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 </div>
-<div class="nav-list">
-	<div class="layer">
+<div class="nav-list mt20">
+	<div class="layer bg-f">
 		<table width="100%">
 			<tbody>
 				<tr>
 					<td>
-						<a href="">Ceiling Lights</a>
+						<div class="newservice f14">
+							<p class="f500 f18">Category</p>
+						</div>
 					</td>
-					<td>
-						<a href="">Ceiling Lights</a>
-					</td>
-					<td>
-						<a href="">Ceiling Lights</a>
+					<td width="800">
+						<div class="newnav">
+							
+						</div>
 					</td>
 				</tr>
 			</tbody>
