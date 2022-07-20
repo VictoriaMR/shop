@@ -178,7 +178,7 @@ body {
 .meau-header .search-cell {
 	max-width: 880px;
 	margin: 0 auto;
-	padding-left: 20px;
+	padding:0 20px;
 }
 .meau-header .search-cell .input {
 	padding-right: 68px;
@@ -193,17 +193,20 @@ body {
 	cursor: pointer;
 }
 .meau-header .search-cell .hot-search {
-	padding-left: 50px;
+	padding-left: 38px;
 }
 .meau-header .search-cell .hot-search a {
 	color: #666;
 	margin-right: 12px;
-	line-height: 20px;
+	line-height: 16px;
 }
 .meau-header .search-cell .hot-search .hot-icon {
 	position: absolute;
 	top: 0;
 	left: 0;
+}
+.meau-header .search-cell .hot-search .hot-icon img {
+	max-height: 16px;
 }
 .nav-list .layer {
 	padding: 12px 10px;

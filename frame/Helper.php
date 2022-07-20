@@ -51,7 +51,7 @@ function db($db=null){
 function page($size=null, $total=null, $current=null){
 	return \App::make('frame/Paginator')->make($size, $total, $current);
 }
-function url($url=null, $param=null, $suffix=false) {
+function url($url=null, $param=null, $suffix=true) {
     return router()->buildUrl($url, $param, $suffix);
 }
 function siteUrl($name){

@@ -86,17 +86,20 @@
 								<span class="hot-icon">
 									<img src="<?php echo siteUrl('image/common/hot.png');?>">
 								</span>
-								<a href="">New dress</a>
-								<a href="">Sweater</a>
-								<a href="">T - Shit</a>
+								<a href="<?php echo url('search', ['keyword'=>'dress'], false);?>">Dress</a>
+								<a href="<?php echo url('search', ['keyword'=>'sweater'], false);?>">Sweater</a>
+								<a href="<?php echo url('search', ['keyword'=>'shit'], false);?>">Shit</a>
+								<a href="<?php echo url('search', ['keyword'=>'jeans'], false);?>">Jeans</a>
+								<a href="<?php echo url('search', ['keyword'=>'skirt'], false);?>">Skirt</a>
+								<a href="<?php echo url('search', ['keyword'=>'summer'], false);?>">Summer</a>
 							</div>
 						</div>
 					</td>
 					<td width="80">
-						<div class="right">
+						<a class="block right pointer" href="<?php echo url('cart');?>">
 							<span class="iconfont icon-gouwuche f26"></span>
 							<span class="f16 ml4">Cart</span>
-						</div>
+						</a>
 					</td>
 				</tr>
 			</tbody>
@@ -108,12 +111,12 @@
 		<table width="100%">
 			<tbody>
 				<tr>
-					<td>
+					<td style="min-width: 320px;">
 						<div class="newservice f14">
 							<p class="f500 f18">Category</p>
 						</div>
 					</td>
-					<td width="800">
+					<td width="880">
 						<div class="newnav">
 							
 						</div>

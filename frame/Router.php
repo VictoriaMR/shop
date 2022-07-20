@@ -69,18 +69,7 @@ final class Router
 
 	public function buildUrl($url=null, $param=null, $suffix=false)
 	{
-		if (IS_ADMIN) {
-			if (empty($url)) {
-				$url = \App::get('router', 'path').'/'.\App::get('router', 'func');
-			}
-			$url = lcfirst($url);
-			if (!empty($param)) {
-				if (is_array($param)) {
-					$param = http_build_query($param);
-				}
-				$url .= '?'.$param;
-			}
-		} else {
+		if ($suffix) {
 			if (empty($url)) return '/';
 			if (!empty($param)) {
 				if (is_array($param))
@@ -88,10 +77,14 @@ final class Router
 				else
 					$url .= $this->nameFormat($param);
 			}
-			$url = trim($url, '-');
-			if ($suffix) {
-				$viewSuffix = \App::get('router', 'view_suffix');
-				if (!empty($url) && $viewSuffix) $url .= '.'.$viewSuffix;
+			$url .= trim($url, '-').'.'.\App::get('router', 'view_suffix');
+		} else {
+			$url = lcfirst($url);
+			if (!empty($param)) {
+				if (is_array($param)) {
+					$param = http_build_query($param);
+				}
+				$url .= '?'.$param;
 			}
 		}
 		return APP_DOMAIN.$url;
