@@ -1,0 +1,24 @@
+.nav-list .layer {
+	padding: 12px 10px;
+	border-top-left-radius: 18px;
+	border-top-right-radius: 18px;
+}
+.nav-list .newservice {
+    position: relative;
+    background-color: #F7F9FA;
+    border-radius: 12px;
+    padding: 16px;
+}
+.nav-list .newnav .top{
+	padding: 16px;
+	background-color: #F7F9FA;
+	border-radius: 12px;
+	text-align: center;
+	font-size: 14px;
+}
+.nav-list .newnav .top td {
+	border-right: 1px solid #e0e0e0;
+}
+.nav-list .newnav .top td:last-child{
+	border-right: none;
+}

@@ -67,7 +67,7 @@ final class Router
 		return $arr[$type] ?? ucfirst($type);
 	}
 
-	public function buildUrl($url=null, $param=null, $suffix=false)
+	public function buildUrl($url=null, $param=null, $suffix=true)
 	{
 		if ($suffix) {
 			if (empty($url)) return '/';
@@ -77,7 +77,7 @@ final class Router
 				else
 					$url .= $this->nameFormat($param);
 			}
-			$url .= trim($url, '-').'.'.\App::get('router', 'view_suffix');
+			$url = trim($url, '-').'.'.\App::get('router', 'view_suffix');
 		} else {
 			$url = lcfirst($url);
 			if (!empty($param)) {

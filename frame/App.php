@@ -96,6 +96,6 @@ class App
 			$version = redis()->get('frame-app:version');
 			self::set('version', $version);
 		}
-		return $version;
+		return $version ?: '1.0.0';
 	}
 }

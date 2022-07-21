@@ -129,6 +129,24 @@ body {
 .block {
 	display: block;
 }
+.e1 {
+	overflow: hidden;
+    white-space: normal;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+}
+.e2 {
+	overflow: hidden;
+    white-space: normal;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
 .desc-title {
 	padding: 8px 0;
 }
@@ -175,6 +193,9 @@ body {
 	padding: 12px 0;
 	border-bottom: 1px solid #D1D1D6;
 }
+.meau-header .logo {
+	max-height: 32px;
+}
 .meau-header .search-cell {
 	max-width: 880px;
 	margin: 0 auto;
@@ -208,20 +229,52 @@ body {
 .meau-header .search-cell .hot-search .hot-icon img {
 	max-height: 16px;
 }
-.nav-list .layer {
-	padding: 12px 10px;
-	border-top-left-radius: 18px;
-	border-top-right-radius: 18px;
-}
-.nav-list .newservice {
-    position: relative;
-    background-color: #F7F9FA;
+ .slider {
+ 	width: 100%;
+ 	position: relative;
     border-radius: 12px;
-    padding: 16px;
+    overflow: hidden;
+ }
+ .slider ul {
+    transition-duration: 0.3s;
+    white-space: nowrap;
+    position: relative;
+    display: table;
+    font-size: 0;
+ }
+.slider ul>li{
+	display:inline-block;
+	font-size: 0;
 }
-.nav-list .newnav {
-	width: 70%;
+.slider ol {
+	border-radius: 10px;
+	position: absolute;
+	bottom: 15px;
+	height: 13px;
+	padding: 0 3px;
+	text-align: center;
+	font-size: 0;
+	left: 50%;
+	margin-left: -31px;
+	background-color: rgba(255,255,255,.3);
 }
+.slider ol>li {
+	display: inline-block;
+	margin: 3px;
+}
+.slider ol>li a{
+	display: block;
+	padding-top: 8px;
+	width: 8px;
+	height: 0;
+	border-radius: 50%;
+	background: #fff;
+}
+.slider ol>li.active a{
+	background-color: #c00;
+}
+
+
 .modal {
 	display: none;
 }

@@ -106,23 +106,3 @@
 		</table>
 	</div>
 </div>
-<div class="nav-list mt20">
-	<div class="layer bg-f">
-		<table width="100%">
-			<tbody>
-				<tr>
-					<td style="min-width: 320px;">
-						<div class="newservice f14">
-							<p class="f500 f18">Category</p>
-						</div>
-					</td>
-					<td width="880">
-						<div class="newnav">
-							
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-</div>
