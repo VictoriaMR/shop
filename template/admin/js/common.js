@@ -242,8 +242,8 @@ function guid() {
 					processData: false,
 					contentType: false,
 					success: function(res) {
-						if (res.code == 200) {
-							if (thisobj.get(0).tagName == 'img') {
+						if (res.code == '200') {
+							if (thisobj.get(0).tagName == 'IMG') {
 								thisobj.removeClass('loading').attr('src', res.data.url);
 							} else {
 								thisobj.removeClass('loading').find('img').attr('src', res.data.url);

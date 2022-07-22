@@ -1,0 +1,74 @@
+.slider {
+    width: 100%;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+ }
+ .slider ul {
+    white-space: nowrap;
+    position: relative;
+    display: table;
+    font-size: 0;
+ }
+.slider ul>li{
+    display:inline-block;
+    font-size: 0;
+}
+.slider ol {
+    border-radius: 10px;
+    position: absolute;
+    bottom: 15px;
+    height: 13px;
+    padding: 0 3px;
+    text-align: center;
+    font-size: 0;
+    left: 50%;
+    background-color: rgba(255,255,255,.3);
+}
+.slider ol>li {
+    display: inline-block;
+    margin: 3px;
+}
+.slider ol>li a{
+    display: block;
+    padding-top: 8px;
+    width: 8px;
+    height: 0;
+    border-radius: 50%;
+    background: #fff;
+}
+.slider ol>li.active a{
+    background-color: #c00;
+}
+.slider .pop-opt {
+    display: none;
+}
+.slider .pop-opt a {
+    position: absolute;
+    top: 50%;
+    background-color: rgba(0,0,0,.3);
+    display: block;
+    width: 20px;
+    height: 30px;
+    margin-top: -15px;
+    font-size: 18px;
+    line-height: 28px;
+    color: #fff;
+}
+.slider .pop-opt a.t-left {
+    left: 0;
+    text-align: left;
+    padding-left: 3px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.slider .pop-opt a.t-right {
+    right: 0;
+    padding-right: 3px;
+    text-align: right;
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+.slider:hover .pop-opt {
+    display: block;
+}

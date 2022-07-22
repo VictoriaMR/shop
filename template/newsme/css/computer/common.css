@@ -229,52 +229,6 @@ body {
 .meau-header .search-cell .hot-search .hot-icon img {
 	max-height: 16px;
 }
- .slider {
- 	width: 100%;
- 	position: relative;
-    border-radius: 12px;
-    overflow: hidden;
- }
- .slider ul {
-    transition-duration: 0.3s;
-    white-space: nowrap;
-    position: relative;
-    display: table;
-    font-size: 0;
- }
-.slider ul>li{
-	display:inline-block;
-	font-size: 0;
-}
-.slider ol {
-	border-radius: 10px;
-	position: absolute;
-	bottom: 15px;
-	height: 13px;
-	padding: 0 3px;
-	text-align: center;
-	font-size: 0;
-	left: 50%;
-	margin-left: -31px;
-	background-color: rgba(255,255,255,.3);
-}
-.slider ol>li {
-	display: inline-block;
-	margin: 3px;
-}
-.slider ol>li a{
-	display: block;
-	padding-top: 8px;
-	width: 8px;
-	height: 0;
-	border-radius: 50%;
-	background: #fff;
-}
-.slider ol>li.active a{
-	background-color: #c00;
-}
-
-
 .modal {
 	display: none;
 }

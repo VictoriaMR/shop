@@ -69,7 +69,7 @@ final class Router
 
 	public function buildUrl($url=null, $param=null, $suffix=true)
 	{
-		if ($suffix) {
+		if ($suffix && !IS_ADMIN) {
 			if (empty($url)) return '/';
 			if (!empty($param)) {
 				if (is_array($param))

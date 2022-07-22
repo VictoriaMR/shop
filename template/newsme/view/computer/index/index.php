@@ -1,5 +1,5 @@
 <?php $this->load('common/base_header');?>
-<div class="nav-list mt20">
+<div class="nav-list mt12">
 	<div class="layer bg-f">
 		<table width="100%" >
 			<tbody>
@@ -41,41 +41,27 @@
 						<div class="mt10">
 							<div class="slider" id="nav-banner">
 								<ul>
-									<li>
+									<li data-index="1">
 										<a href="">
 											<img src="<?php echo siteUrl('image/computer/banner/1.png');?>">
 										</a>
 									</li>
-									<li>
+									<li data-index="2">
 										<a href="">
 											<img src="<?php echo siteUrl('image/computer/banner/2.jpg');?>">
 										</a>
 									</li>
-									<li>
+									<li data-index="3">
 										<a href="">
 											<img src="<?php echo siteUrl('image/computer/banner/3.jpg');?>">
 										</a>
 									</li>
-									<li>
+									<li data-index="4">
 										<a href="">
 											<img src="<?php echo siteUrl('image/computer/banner/4.jpg');?>">
 										</a>
 									</li>
 								</ul>
-								<ol>
-									<li class="active">
-										<a href="javascript:;"></a>
-									</li>
-									<li>
-										<a href="javascript:;"></a>
-									</li>
-									<li>
-										<a href="javascript:;"></a>
-									</li>
-									<li>
-										<a href="javascript:;"></a>
-									</li>
-								</ol>
 							</div>
 						</div>
 					</td>

@@ -95,7 +95,7 @@
 							</div>
 						</div>
 					</td>
-					<td width="80">
+					<td width="68">
 						<a class="block right pointer" href="<?php echo url('cart');?>">
 							<span class="iconfont icon-gouwuche f26"></span>
 							<span class="f16 ml4">Cart</span>
