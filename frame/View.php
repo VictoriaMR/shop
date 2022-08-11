@@ -15,7 +15,7 @@ class View
 	{	
 		if ($cache && \App::get('base_info', 'cache')) {
 			$content = $this->getContent($template, $data);
-			$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS.(IS_MOBILE?'mobile':'computer').DS.lanId('code').DS;
+			$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS.(IS_MOBILE?'mobile':'computer').DS.lanId('code').DS.strtolower(currencyId()).DS;
 			if (!is_dir($path)) mkdir($path, 0755, true);
 			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
 			if (empty($request_uri)) {

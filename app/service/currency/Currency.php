@@ -1,6 +1,6 @@
 <?php 
 
-namespace app\service;
+namespace app\service\currency;
 use app\service\Base;
 
 class Currency extends Base
@@ -9,7 +9,7 @@ class Currency extends Base
 
 	protected function getModel()
 	{
-		$this->baseModel = make('app/model/Currency');
+		$this->baseModel = make('app/model/currency/Currency');
 	}
 
 	public function getInfo($code)

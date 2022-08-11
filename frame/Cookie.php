@@ -16,8 +16,10 @@ class Cookie
 	{
 		$uuid = $this->get('uuid');
 		if (empty($uuid)) {
-			$this->set('uuid', randString(32), 3600*24*10);
-			$this->set('lan', 'en', 3600*24*10);
+			$exp = 3600*24*10;
+			$this->set('uuid', randString(32), $exp);
+			$this->set('language', 'en', $exp);
+			$this->set('currency', 'usd', $exp);
 		} else {
 			//自动登录
 			$info = make('app/service/member/Uuid')->getInfo($uuid);

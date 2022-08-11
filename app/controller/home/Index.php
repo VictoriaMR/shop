@@ -7,6 +7,7 @@ class Index extends HomeBase
 {
 	public function index()
 	{
+		make('app/task/main/CurrencyRate')->run();
 		html()->addCss();
 		html()->addJs();
 
