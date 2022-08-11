@@ -207,7 +207,7 @@ class Order extends Base
 		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $ids]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		$orderProductOriginPrice = 0;
-		$symbol = make('app/service/Currency')->getSymbolByCode($data['base']['currency']);
+		$symbol = make('app/service/currency/Currency')->getSymbolByCode($data['base']['currency']);
 		foreach ($data['product'] as $key => $value) {
 			$value['attr'] = [];
 			foreach ($temp as $ak => $av) {
@@ -296,7 +296,7 @@ class Order extends Base
 			}
 			$orderProductArr = $tempArr;
 			//订单产品归类
-			$currencyService = make('app/service/Currency');
+			$currencyService = make('app/service/currency/Currency');
 			$currencyArr = array_unique(array_column($list, 'currency'));
 			$tempArr = [];
 			foreach ($currencyArr as $value) {

@@ -28,7 +28,7 @@ class Sku extends Base
 			return false;
 		}
 		//价格格式化
-		$currency = make('app/service/Currency');
+		$currency = make('app/service/currency/Currency');
 		$temp = $currency->priceFormat($info['price']);
 		$info['price'] = $temp[1];
 		$info['price_format'] = $temp[2];

@@ -42,7 +42,7 @@ class Checkout extends HomeBase
 					$billAddress = $shipAddress;
 				}
 				$order = make('app/service/order/Order');
-				$symbol = make('app/service/Currency')->priceSymbol(2);
+				$symbol = make('app/service/currency/Currency')->priceSymbol(2);
 				$logisticsList = [[
 					'name' => appT('express_shipping'),
 					'fee' => $symbol.$order->getShippingFee($info['total']),
@@ -147,7 +147,7 @@ class Checkout extends HomeBase
 	public function calculateOrderFee()
 	{
 		$info = $this->getCheckoutData();
-		$currencyService = make('app/service/Currency');
+		$currencyService = make('app/service/currency/Currency');
 		$order = make('app/service/order/Order');
 		$list = [];
 		$orderTotal = $info['total'];

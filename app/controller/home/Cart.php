@@ -40,7 +40,7 @@ class Cart extends HomeBase
 			];
 			$list = make('app/service/member/Collect')->getListData($where, 'spu_id');
 			$list = array_column($list, 'spu_id');
-			$symbol = make('app/service/Currency')->priceSymbol(2);
+			$symbol = make('app/service/currency/Currency')->priceSymbol(2);
 			$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 			$priceTotal = sprintf('%.2f', $priceTotal);
 			$summary[] = [
@@ -79,7 +79,7 @@ class Cart extends HomeBase
 			}
 		}
 		$summary = [];
-		$symbol = make('app/service/Currency')->priceSymbol(2);
+		$symbol = make('app/service/currency/Currency')->priceSymbol(2);
 		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 		$priceTotal = sprintf('%.2f', $priceTotal);
 		$summary[] = [

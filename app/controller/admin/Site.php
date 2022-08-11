@@ -51,7 +51,7 @@ class Site extends AdminBase
 		$site = make('app/service/site/Site')->loadData($id);
 
 		if (!empty($site)) {
-			$currencyList = make('app/service/Currency')->getListData();
+			$currencyList = make('app/service/currency/Currency')->getListData();
 			$currencyList = array_column($currencyList, null, 'code');
 			$languageList = make('app/service/Language')->getListData();
 			$languageList = array_column($languageList, null, 'code');

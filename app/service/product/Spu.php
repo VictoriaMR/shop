@@ -38,7 +38,7 @@ class Spu extends Base
 		$imageArr = $info['image'] = make('app/service/product/SpuImage')->getListById($spuId);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		//价格格式化
-		$currencyService = make('app/service/Currency');
+		$currencyService = make('app/service/currency/Currency');
 		$info['min_price_format'] = $currencyService->priceFormat($info['min_price'], 2);
 		$info['max_price_format'] = $currencyService->priceFormat($info['max_price'], 2);
 		$info['original_price'] = max(array_column($info['sku'], 'original_price'));
@@ -493,7 +493,7 @@ class Spu extends Base
 		$orderBy['rank'] = 'desc';
 		$total = $this->getCountData($where);
 		if ($total > 0) {
-			$list = $this->getListData($where, 'spu_id,attach_id,min_price,max_price,original_price', $page, $size, $orderBy);
+			$list = $this->getListData($where, 'spu_id,attach_id,min_price,max_price', $page, $size, $orderBy);
 			if (!empty($list)) {
 				$spuList = array_column($list, 'spu_id');
 				//获取语言
@@ -503,7 +503,7 @@ class Spu extends Base
 				$attachArr = array_unique(array_column($list, 'attach_id'));
 				$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 				$attachArr = array_column($attachArr, 'url', 'attach_id');
-				$currencyService = make('app/service/Currency');
+				$currencyService = make('app/service/currency/Currency');
 				//格式化数组
 				foreach($list as $key => $value) {
 					$value['name'] = $lanArr[$value['spu_id']] ?? '';
@@ -515,9 +515,9 @@ class Spu extends Base
 					$temp = $currencyService->priceFormat($value['max_price']);
 					$value['max_price'] = $temp[1];
 					$value['max_price_format'] = $temp[2];
-					$temp = $currencyService->priceFormat($value['original_price']);
-					$value['original_price'] = $temp[1];
-					$value['original_price_format'] = $temp[2];
+					// $temp = $currencyService->priceFormat($value['original_price']);
+					// $value['original_price'] = $temp[1];
+					// $value['original_price_format'] = $temp[2];
 					$value['is_liked'] = empty($collSpuList) ? false : in_array($value['spu_id'], $collSpuList);
 					$list[$key] = $value;
 				}
@@ -537,7 +537,7 @@ class Spu extends Base
 		$attachArr = array_unique(array_column($list, 'attach_id'));
 		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 		$attachArr = array_column($attachArr, 'url', 'attach_id');
-		$currency = make('app/service/Currency');
+		$currency = make('app/service/currency/Currency');
 		//格式化数组
 		foreach($list as $key => $value) {
 			$value['name'] = $lanArr[$value['spu_id']] ?? '';

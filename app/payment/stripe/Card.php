@@ -31,7 +31,7 @@ class Card extends Stripe
 		if (empty($path)) {
 			return appT('payment_method_error');
 		}
-		$data['order_total_format'] = make('app/service/Currency')->priceSymbol(2).$data['order_total'];
+		$data['order_total_format'] = make('app/service/currency/Currency')->priceSymbol(2).$data['order_total'];
 		$data['config'] = $this->config;
 		$data['method'] = $this->type;
 		$data['order_total'] = $this->getAmount($data['order_total'], $data['currency']);
