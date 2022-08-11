@@ -5,14 +5,18 @@ class App
 
 	public static function init() 
 	{
-		if (!IS_CLI) self::set('base_info', self::getConfig());
 		spl_autoload_register([__CLASS__ , 'autoload']);
+		if (!IS_CLI) self::set('base_info', self::getDomain());
 		self::make('frame/Error')->register();
 	}
 
 	public static function make($abstract, $params=null)
 	{
 		return self::autoload($abstract, $params);
+		if (!self::get('autoload', $abstract)) {
+			self::set('autoload', self::autoload($abstract, $params), $abstract);
+		}
+		return self::get('autoload', $abstract);
 	}
 
 	public static function send()
@@ -20,17 +24,16 @@ class App
 		$baseInfo = self::get('base_info');
 		if (empty($baseInfo)) throw new \Exception($_SERVER['HTTP_HOST'].' was not exist!', 1);
 		//路由解析
-		define('IS_ADMIN', $baseInfo['type'] == 'admin');
+		define('IS_ADMIN', $baseInfo['site_id'] == 10);
 		$router = self::make('frame/Router')->analyze();
 		$router['class'] = $baseInfo['type'];
 		$router['view_suffix'] = $baseInfo['view_suffix'];
 		define('APP_TEMPLATE_TYPE', $baseInfo['type']);
 		define('APP_TEMPLATE_PATH', $baseInfo['path']);
-		define('APP_DOMAIN', $baseInfo['domain']);
+		define('APP_DOMAIN', 'https://'.$baseInfo['domain'].'/');
 		self::set('router', $router);
 		//执行方法
-		$controller = 'app/controller/'.$router['class'].'/'.$router['path'];
-		$callArr = [self::autoload($controller), $router['func']];
+		$callArr = [self::autoload('app/controller/'.$router['class'].'/'.$router['path']), $router['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('setcookie', false)) {
 				self::make('frame/Cookie')->init();
@@ -43,30 +46,30 @@ class App
 		self::runOver();
 	}
 
-	private static function getConfig()
+	private static function getDomain()
 	{
-		$config = config('domain', str_replace('www.', '', $_SERVER['HTTP_HOST']));
-		if (empty($config)) {
-			$config = config('domain');
-			return array_shift($config);
-		}
-		return $config;
+		return self::make('app/service/site/Site')->getInfoCache(str_replace('www.', '', $_SERVER['HTTP_HOST']), 'domain');
 	}
 
 	private static function autoload($abstract, $params=null) 
 	{
-		$file = ROOT_PATH.strtr($abstract, '\\', DS).'.php';
-		if (is_file($file)) {
-			return \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $file, $params);
+		$abstract = strtr($abstract, '\\', DS);
+		if (!self::get('autoload', $abstract)) {
+			$file = ROOT_PATH.$abstract.'.php';
+			if (is_file($file)) {
+				self::set('autoload', \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $file, $params), $abstract);
+			} else {
+				throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
+			}
 		}
-		throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
+		return self::get('autoload', $abstract);
+
 	}
 
-	public static function set($name, $value)
+	public static function set($name, $value, $key=null)
 	{
-		if (is_null($value)) unset(self::$appData[$name]);
-		else self::$appData[$name] = $value;
-		return true;
+		if (is_null($key)) self::$appData[$name] = $value;
+		else self::$appData[$name][$key] = $value;
 	}
 
 	public static function get($name, $key=null)

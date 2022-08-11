@@ -5,41 +5,34 @@ use app\service\Base;
 
 class Domain extends Base
 {
+	const CACHE_KEY = 'site-currency-used:';
+
 	protected function getModel()
 	{
 		$this->baseModel = make('app/model/site/Domain');
 	}
 
-	public function updateCache($id)
+	public function getInfo($siteId=null)
 	{
-		$info = $this->loadData($id);
-		if (empty($info)) return false;
-		$siteInfo = make('app/service/site/Site')->loadData($info['site_id'], 'site_id,path,name');
-		if (empty($siteInfo)) {
-			return false;
+		if (is_null($siteId)) {
+			$siteId = $this->siteId();
 		}
-		return $this->updateCacheByDomain($info['domain'], $info['status'], $siteInfo);
-		
+		$cacheKey = $this->getCacheKey($siteId);
+		$list = redis()->get($cacheKey);
+		if (false === $list) {
+			$list = $this->getList($siteId);
+			redis()->set($cacheKey, $list);
+		}
+		return $list;
 	}
 
-	public function updateCacheByDomain($domain, $status=0, $data=[])
+	public function delCache($siteId)
 	{
-		if ($status) {
-			redis()->hSet($this->getConst('CACHE_KEY_PATH'), $domain, $data['path']);
-			redis()->hSet($this->getConst('CACHE_KEY_INFO'), $domain, $data);
-		} else {
-			redis()->hDel($this->getConst('CACHE_KEY_PATH'), $domain);
-			redis()->hDel($this->getConst('CACHE_KEY_INFO'), $domain);
-		}
-		return true;
+		return redis()->del($this->getCacheKey($siteId));
 	}
 
-	public function delCacheBySiteId($siteId)
+	protected function getCacheKey($siteId)
 	{
-		$list = $this->getListData(['site_id'=>$siteId], 'domain');
-		foreach ($list as $value) {
-			$this->updateCacheByDomain($value['domain']);
-		}
-		return true;
+		return self::CACHE_KEY.(is_null($siteId) ? $this->siteId() : $siteId);
 	}
 }

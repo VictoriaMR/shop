@@ -5,7 +5,6 @@ namespace frame;
 final class Container
 {
 	static private $_instance;
-	private $_building = [];
 	private function __construct() {}
 	private function __clone() {}
 
@@ -19,9 +18,6 @@ final class Container
 
 	public function autoload($concrete, $file, $params=null)
 	{
-		if (isset($this->_building[$concrete])) {
-			return $this->_building[$concrete];
-		}
 		require $file;
 		return $this->build($concrete, $params);
 	}
@@ -36,11 +32,9 @@ final class Container
 			return $concrete;
 		}
 		if (is_null($reflector->getConstructor()) || is_null($params)) {
-			$object = $reflector->newInstance();
+			return $reflector->newInstance();
 		} else {
-			$object = $reflector->newInstance($params);
+			return $reflector->newInstance($params);
 		}
-		$this->_building[$concrete] = $object;
-		return $object;
 	}
 }

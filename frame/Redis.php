@@ -13,8 +13,8 @@ class Redis
 	private function connect() 
 	{
 		if (config('env', 'REDIS_HOST')) {
-			$this->_link = new \Redis();
 			try {
+				$this->_link = new \Redis();
 				$this->_link->connect(config('env', 'REDIS_HOST'), config('env', 'REDIS_PORT', '6379'), self::DEFAULT_CONNECT_TIME);
 				$this->_connect = true;
 			} catch (\Exception $e) {
