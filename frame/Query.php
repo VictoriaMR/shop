@@ -302,6 +302,7 @@ final class Query
 		} else {
 			$error = [];
 			foreach ($conn->error_list as $value) {
+				$error[] = 'SQL: '.$sql;
 				$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
 			}
 			throw new \Exception(implode(PHP_EOL, $error), 1);
