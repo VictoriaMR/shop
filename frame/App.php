@@ -26,7 +26,7 @@ class App
 		$router['view_suffix'] = $baseInfo['view_suffix'];
 		define('APP_TEMPLATE_TYPE', $baseInfo['type']);
 		define('APP_TEMPLATE_PATH', $baseInfo['path']);
-		define('APP_DOMAIN', $_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].'/');
+		define('APP_DOMAIN', $baseInfo['domain']);
 		self::set('router', $router);
 		//执行方法
 		$controller = 'app/controller/'.$router['class'].'/'.$router['path'];
