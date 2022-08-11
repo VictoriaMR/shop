@@ -287,19 +287,28 @@ final class Query
 		if (config('env', 'APP_DEBUG')) {
 			$GLOBALS['exec_sql'][] = $sql;
 		}
-		$conn = db($this->_database);
-		$stmt = $conn->query($sql);
-		if ($conn->errno==0) {
-			if (is_bool($stmt)) {
-				return $stmt;
+		try {
+			$conn = db($this->_database);
+			$stmt = $conn->query($sql);
+			if ($conn->errno==0) {
+				if (is_bool($stmt)) {
+					return $stmt;
+				}
+				$returnData = [];
+				while ($row = $stmt->fetch_assoc()){
+				 	$returnData[] = $row;
+				}
+				$stmt->free();
+				return $returnData;
+			} else {
+				$error = [];
+				foreach ($conn->error_list as $value) {
+					$error[] = 'SQL: '.$sql;
+					$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
+				}
+				throw new \Exception(implode(PHP_EOL, $error), 1);
 			}
-			$returnData = [];
-			while ($row = $stmt->fetch_assoc()){
-			 	$returnData[] = $row;
-			}
-			$stmt->free();
-			return $returnData;
-		} else {
+		} catch (\Exception $e){
 			$error = [];
 			foreach ($conn->error_list as $value) {
 				$error[] = 'SQL: '.$sql;
