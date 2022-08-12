@@ -7,7 +7,7 @@ class CurrencyRate extends TaskDriver
 {
     public $config = [
         'name' => '货币汇率更新任务',
-        'cron' => ['0 */24 * * *'],
+        'cron' => ['0 */6 * * *'],
     ];
 
     public function run()
