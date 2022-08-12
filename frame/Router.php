@@ -26,18 +26,13 @@ final class Router
 						$index = array_search('page', $tempInfo);
 						if ($index === false) {
 							$index = 0;
-							$_GET['id'] = $tempInfo[0];
 						} else {
 							$_GET['page'] = $tempInfo[$index-1] ?? 1;
 						}
 						$index++;
 						if (isset($tempInfo[$index])) {
 							$router['path'] = $tempInfo[$index] ?? 'Index';
-							if ($router['path'] == 's') {
-								$_GET['sid'] = $tempInfo[$index+1];
-							} else {
-								$_GET['id'] = $tempInfo[$index+1];
-							}
+							$_GET[$router['path'] == 's'?'sid':'id'] = $_GET[$index-1];
 						} else {
 							$router['path'] = 'Index';
 						}
