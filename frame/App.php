@@ -22,7 +22,9 @@ class App
 	public static function send()
 	{
 		$baseInfo = self::get('base_info');
-		if (empty($baseInfo)) throw new \Exception($_SERVER['HTTP_HOST'].' was not exist!', 1);
+		if (empty($baseInfo)) {
+			redirect('https://newsme.cf');
+		}
 		//路由解析
 		define('IS_ADMIN', $baseInfo['site_id'] == 10);
 		$router = self::make('frame/Router')->analyze();

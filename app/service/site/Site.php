@@ -18,6 +18,9 @@ class Site extends Base
 		$info = redis(2)->get($cacheKey);
 		if (!$info) {
 			$info = $this->getInfo($key, $type);
+			if (empty($info)) {
+				return $info;
+			}
 			redis(2)->set($cacheKey, $info);
 		}
 		return $info;
