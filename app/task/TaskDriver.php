@@ -150,25 +150,15 @@ abstract class TaskDriver
             }
 			$this->locker->unlock($this->lock);
             $value = $this->getInfo($this->lock, 'all');
+            //获取下一次运行时间
+            $nextRunAt = $this->getNextTime($this->config['cron']);
             $data = [
                 'status' => 'stop',
                 'info' => "任务已退出 \n".now(),
                 'boot' => ($value['boot'] ?? 'offing') == 'offing' ? 'off' : $value['boot'],
+                'next_run' => $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt,
             ];
             $this->setInfoArray($data);
-
-            //获取下一次运行时间
-            $nextRunAt = $this->getNextTime($this->config['cron']);
-            $value['status'] = 'stop';
-            if (!$this->mainTask) {
-                if ($value['boot'] == 'offing') {
-                    $value['next_run'] = $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt;
-                } else {
-                    $value['next_run'] = $nextRunAt <= now() ? 'handing' : $nextRunAt;
-                }
-            }
-            $value['boot'] = $value['boot'] == 'offing' ? 'off' : $value['boot'];
-            $this->setInfo($this->lock, $value, 'all');
         }
 	}
 
