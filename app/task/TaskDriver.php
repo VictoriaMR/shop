@@ -159,6 +159,16 @@ abstract class TaskDriver
                 'next_run' => $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt,
             ];
             $this->setInfoArray($data);
+            $value['status'] = 'stop';
+            if (!$this->mainTask) {
+                if ($value['boot'] == 'offing') {
+                    $value['next_run'] = $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt;
+                } else {
+                    $value['next_run'] = $nextRunAt <= now() ? 'handing' : $nextRunAt;
+                }
+            }
+            $value['boot'] = $value['boot'] == 'offing' ? 'off' : $value['boot'];
+            $this->setInfo($this->lock, $value, 'all');
         }
 	}
 
