@@ -5,7 +5,7 @@ namespace frame;
 class Redis
 {
 	private $_link;
-	private $_db;
+	private $_db = 0;
 	protected $_connect = false;
 	const DEFAULT_EXT_TIME = 3600;
 	const DEFAULT_CONNECT_TIME = 5;
