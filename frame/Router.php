@@ -32,7 +32,7 @@ final class Router
 						$index++;
 						if (isset($tempInfo[$index])) {
 							$router['path'] = $tempInfo[$index] ?? 'Index';
-							$_GET[$router['path'] == 's'?'sid':'id'] = $_GET[$index-1];
+							$_GET[$router['path'] == 's'?'sid':'id'] = $tempInfo[$index-1];
 						} else {
 							$router['path'] = 'Index';
 						}
