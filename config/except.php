@@ -14,6 +14,6 @@ return [
 		'Checkout' => true,
 		'Userinfo' => true,
 		'Category' => true,
-		'pageNotFound' => true,
+		'PageNotFound' => true,
 	],
 ];
