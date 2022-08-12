@@ -32,15 +32,11 @@ final class Router
 						}
 						$index++;
 						if (isset($tempInfo[$index])) {
-							if (is_numeric($tempInfo[$index])) {
-								$router['path'] = $tempInfo[$index+1] ?? 'Index';
-								if ($router['path'] == 's') {
-									$_GET['sid'] = $tempInfo[$index];
-								} else {
-									$_GET['id'] = $tempInfo[$index];
-								}
+							$router['path'] = $tempInfo[$index] ?? 'Index';
+							if ($router['path'] == 's') {
+								$_GET['sid'] = $tempInfo[$index+1];
 							} else {
-								$router['path'] = $tempInfo[$index];
+								$_GET['id'] = $tempInfo[$index+1];
 							}
 						} else {
 							$router['path'] = 'Index';
