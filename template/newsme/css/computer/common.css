@@ -303,3 +303,52 @@ body {
 .crumbs li a {
 	font-size: 16px;
 }
+/*faq-footer*/
+.faq-footer {
+	border: 1px solid #D1D1D6;
+	background-color: #fff;
+	padding: 40px 0;
+}
+.faq-footer table td {
+	padding-left: 8%;
+	vertical-align: top;
+}
+@media (max-width: 950px) {
+    .faq-footer table td {
+		padding-left: 0;
+	}
+}
+.faq-footer .title {
+	font-size: 22px;
+	font-weight: 600;
+}
+.faq-footer .item {
+	margin-bottom: 18px;
+}
+.faq-footer .contact button {
+    height: 48px;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 8px;
+    font-size: 16px;
+    padding: 0 18px;
+}
+.payment-footer {
+	text-align: center;
+	background-color: #fff;
+	padding: 14px 0;
+}
+.payment-footer img {
+	max-height: 32px;
+}
+.right-footer {
+	text-align: center;
+	background-color: #fff;
+	padding-bottom: 14px;
+    color: #999999;
+}
+.right-footer a {
+	display: inline-block;
+	text-decoration: underline;
+	color: #999999;
+}

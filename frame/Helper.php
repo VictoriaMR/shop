@@ -51,8 +51,8 @@ function db($db=null){
 function page($size=null, $total=null, $current=null){
 	return \App::make('frame/Paginator')->make($size, $total, $current);
 }
-function url($url=null, $param=null, $suffix=true) {
-    return router()->buildUrl($url, $param, $suffix);
+function url($name='', $param=[], $suffix=true) {
+    return router()->buildUrl($name, $param, $suffix);
 }
 function siteUrl($name){
 	return APP_DOMAIN.$name.'?v='.version();

@@ -13,6 +13,10 @@
 .slider ul>li{
     display:inline-block;
     font-size: 0;
+    width: 100%;
+}
+.slider ul>li img {
+    width: 100%;
 }
 .slider ol {
     border-radius: 10px;

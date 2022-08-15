@@ -5,8 +5,6 @@
 }
 .nav-list .newservice {
     position: relative;
-    background-color: #F7F9FA;
-    border-radius: 12px;
     padding: 16px;
 }
 .nav-list .newnav .top{
@@ -21,4 +19,21 @@
 }
 .nav-list .newnav .top td:last-child{
 	border-right: none;
+}
+.newservice ul>li {
+	margin-bottom: 18px;
+}
+.newservice ul>li:last-child {
+	margin-bottom: 0;
+}
+.newservice ul>li .clothes-iconfont {
+	font-size: 16px;
+	font-weight: 600;
+	margin-right: 8px;
+}
+.newservice ul>li .service-slash {
+	height: 20px;
+    overflow: hidden;
+    width: 7px;
+    padding: 0 8px;
 }

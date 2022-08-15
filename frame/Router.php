@@ -62,6 +62,7 @@ final class Router
 	{
 		if ($suffix && !IS_ADMIN) {
 			if (empty($url)) return '/';
+			$url = $this->nameFormat($url);
 			if (!empty($param)) {
 				if (is_array($param))
 					$url .= $this->setParam($param);
