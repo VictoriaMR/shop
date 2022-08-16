@@ -41,10 +41,21 @@ class Index extends Base
 				'image' => siteUrl(str_replace($bannerPath, '', $value)),
 			];
 		}
+		if (!empty($popularCate)) {
+			$attachArr = array_filter(array_column($popularCate, 'attach_id'));
+			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+			foreach ($popularCate as $key=>$value) {
+				$popularCate[$key]['image'] = $attachArr[$value['attach_id']] ?? '';
+			}
+		}
+
+		$bestSeller = make('app/service/product/Spu')->getRecommend();
 
 		$this->assign('banner', $banner);
 		$this->assign('cateArr', $cateArr);
 		$this->assign('hotArr', $hotArr);
 		$this->assign('popularCate', $popularCate);
+		$this->assign('bestSeller', $bestSeller);
 	}
 }

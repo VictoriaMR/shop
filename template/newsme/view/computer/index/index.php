@@ -61,10 +61,36 @@
 </div>
 <div class="category-wrap">
 	<div class="layer bg-f">
-		<p class="title f24 f600 mb20">Popular Categories</p>
-		<ul class="popular-catgory">
+		<p class="title f24 f600 mb12">Popular Categories</p>
+		<ul class="popular-catgory f0">
 			<?php foreach($popularCate as $value){?>
-			<li></li>
+			<li>
+				<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>">
+					<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+					<p class="f16 mt12 mb12 e1"><?php echo $value['name_en'];?></p>
+				</a>
+			</li>
+			<?php }?>
+		</ul>
+	</div>
+</div>
+<div class="best-seller mb24">
+	<div class="layer bg-f">
+		<p class="title f24 f600 mb12">Best Sellers</p>
+		<ul class="seller-list f0">
+			<?php foreach($bestSeller as $value){?>
+			<li>
+				<a href="<?php echo $value['url'];?>">
+					<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+					<p class="f16 mt12 mb12 e2"><?php echo $value['name'];?></p>
+					<div class="price-content">
+						<span class="price"><?php echo $value['min_price_format'];?></span>
+						<?php if ($value['min_price'] < $value['max_price']) {?>
+						<span class="price"> - <?php echo $value['max_price_format'];?></span>
+						<?php }?>
+					</div>
+				</a>
+			</li>
 			<?php }?>
 		</ul>
 	</div>
