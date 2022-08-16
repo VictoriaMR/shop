@@ -9,18 +9,16 @@
 							<p class="f500 f18 mb18">Category</p>
 							<ul class="f16">
 								<?php foreach ($cateArr ?? [] as $key=>$value){
-									if ($value['level'] == 1 && $value['icon'] && $value['is_show'] && !$value['is_hot']){ $index=$key;?>
+									if ($value['level'] == 1 && $value['icon']){ $index=$key;?>
 								<li class="e1">
 									<span class="clothes-iconfont icon-<?php echo $value['icon']??'';?>"></span>
 									<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>"><?php echo $value['name_en'];?></a>
-									<?php if (isset($cateArr[$index+1]) && $cateArr[$index+1]['level']>1){?>
+									<?php $count=0; for ($i=$index+1; $i<999; $i++) {?>
+									<?php if (isset($cateArr[$i]) && $cateArr[$i]['level']>1 && $cateArr[$i]['is_show'] && !$cateArr[$i]['is_hot'] ){?>
 									<span class="service-slash">/</span>
-									<a href="<?php echo url($cateArr[$index+1]['name_en'].'-c', ['id'=>$cateArr[$index+1]['cate_id']]);?>"><?php echo $cateArr[$index+1]['name_en'];?></a>
-									<?php }?>
-									<?php if (isset($cateArr[$index+2]) && $cateArr[$index+2]['level']>1){?>
-									<span class="service-slash">/</span>
-									<a href="<?php echo url($cateArr[$index+2]['name_en'].'-c', ['id'=>$cateArr[$index+2]['cate_id']]);?>"><?php echo $cateArr[$index+2]['name_en'];?></a>
-									<?php }?>
+									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>"><?php echo $cateArr[$i]['name_en'];?></a>
+									<?php $count++; if ($count==2) break; ?>
+									<?php }}?>
 								</li>	
 								<?php }}?>
 							</ul>
