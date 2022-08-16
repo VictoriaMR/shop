@@ -25,7 +25,7 @@ class Category extends AdminBase
 		}
 		html()->addJs();
 
-		$list = make('app/service/category/Category')->getListFormat();
+		$list = make('app/service/category/Category')->getListFormat(false);
 		if (!empty($list)) {
 			$cateArr = array_column($list, 'cate_id');
 			$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();

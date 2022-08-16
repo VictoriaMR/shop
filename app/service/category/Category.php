@@ -20,10 +20,10 @@ class Category extends Base
 		return $info;
 	}
 
-	public function getList()
+	public function getList($cache=true)
 	{
 		if (empty($this->_list)) {
-			$this->_list = $this->getListCache();
+			$this->_list = $cache ? $this->getListCache() : $this->getListData();
 		}
 		return $this->_list;
 	}
@@ -39,9 +39,9 @@ class Category extends Base
 		return $list;
 	}
 
-	public function getListFormat()
+	public function getListFormat($cache=true)
 	{
-		$list = $this->getList();
+		$list = $this->getList($cache);
 		$list = $this->listFormat($list, 0, 0);
 		$returnData = [];
 		$this->arrayFormat($list, $returnData);
