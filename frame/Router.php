@@ -84,7 +84,7 @@ final class Router
 
 	public function nameFormat($name, $param=[])
 	{
-		$name = preg_replace('/[^-A-Za-z0-9/\s]/', '', strtolower($name));
+		$name = preg_replace('/[^-A-Za-z0-9\/\s]/', '', strtolower($name));
 		$name = preg_replace('/( ){2,}/', ' ', $name);
 		$name = str_replace(' ', '-' , $name);
 		$name = preg_replace('/-{1,}/', '-', $name);
