@@ -23,9 +23,20 @@ class Category extends Base
 	public function getList()
 	{
 		if (empty($this->_list)) {
-			$this->_list = $this->getListData();
+			$this->_list = $this->getListCache();
 		}
 		return $this->_list;
+	}
+
+	protected function getListCache()
+	{
+		$cacheKey = $this->getCacheKey(\App::get('base_info', 'site_id'));
+		$list = redis()->get($cacheKey);
+		if (!$list) {
+			$list = $this->getListData();
+			redis()->set($cacheKey, $list);
+		}
+		return $list;
 	}
 
 	public function getListFormat()
@@ -126,7 +137,7 @@ class Category extends Base
 
 	protected function getCacheKey($suffix='')
 	{
-		return 'category:list-cache'.$suffix;
+		return 'category:list-cache:'.$suffix;
 	}
 
 	public function getInCategory(array $cateIdArr=[])

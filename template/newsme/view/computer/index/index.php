@@ -1,5 +1,5 @@
 <?php $this->load('common/base_header');?>
-<div class="nav-list mt12 mb20">
+<div class="nav-list mt12">
 	<div class="layer bg-f">
 		<table width="100%" >
 			<tbody>
@@ -57,6 +57,16 @@
 				</tr>
 			</tbody>
 		</table>
+	</div>
+</div>
+<div class="category-wrap">
+	<div class="layer bg-f">
+		<p class="title f24 f600 mb20">Popular Categories</p>
+		<ul class="popular-catgory">
+			<?php foreach($popularCate as $value){?>
+			<li></li>
+			<?php }?>
+		</ul>
 	</div>
 </div>
 <?php $this->load('common/base_footer');?>

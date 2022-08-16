@@ -15,6 +15,7 @@ class Index extends Base
 		$tempArr = [];
 		$cateId = 0;
 		$hotArr = [];
+		$popularCate = [];
 		foreach ($cateArr as $value) {
 			if ($value['parent_id'] == 0) {
 				$cateId = $value['cate_id'];
@@ -23,6 +24,9 @@ class Index extends Base
 			$tempArr[$cateId][] = $value;
 			if ($value['is_hot']) {
 				$hotArr[] = $value;
+			}
+			if ($value['attach_id']) {
+				$popularCate[] = $value;
 			}
 		}
 		$cateArr = $tempArr[\App::get('base_info', 'cate_id')] ?? [];
@@ -41,5 +45,6 @@ class Index extends Base
 		$this->assign('banner', $banner);
 		$this->assign('cateArr', $cateArr);
 		$this->assign('hotArr', $hotArr);
+		$this->assign('popularCate', $popularCate);
 	}
 }

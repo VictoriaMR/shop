@@ -9,6 +9,7 @@
 				<th width="120">语言配置</th>
 				<th width="150">状态</th>
 				<th width="150">是否展示</th>
+				<th width="150">是否热门</th>
 				<th width="150">头像</th>
 				<th width="250">操作</th>
 			</tr>
@@ -45,8 +46,13 @@
                     </div>
 				</td>
 				<td>
-					<div class="switch_botton" data-status="<?php echo $value['show'];?>" data-type="show">
-                        <div class="switch_status <?php echo $value['show']?'on':'off';?>"></div>
+					<div class="switch_botton" data-status="<?php echo $value['is_show'];?>" data-type="is_show">
+                        <div class="switch_status <?php echo $value['is_show']?'on':'off';?>"></div>
+                    </div>
+				</td>
+				<td>
+					<div class="switch_botton" data-status="<?php echo $value['is_hot'];?>" data-type="is_hot">
+                        <div class="switch_status <?php echo $value['is_hot']?'on':'off';?>"></div>
                     </div>
 				</td>
 				<td>

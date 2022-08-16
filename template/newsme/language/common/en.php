@@ -1,5 +1,10 @@
 <?php
 return [
+	'_title' => 'ClothesToME® - Fashion & Auality Clothes Official Store',
+	'_desc' => 'From top to pants, from underwear to coat. All fashion inspiration clothes can be found on ClothesToME®. High quality and low price!',
+	'_keyword' => 'More High quality and low price Women\'s and Men\'s Clothing, online fashion clothes site',
+
+	//切走
 	'home' => 'Home',
 	'bag' => 'Bag',
 	'category' => 'Category',
