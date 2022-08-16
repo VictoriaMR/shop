@@ -61,7 +61,7 @@
 </div>
 <div class="category-wrap">
 	<div class="layer bg-f">
-		<p class="title f24 f600 mb12">Popular Categories</p>
+		<p class="title f24 f600 mb12 ml8">Popular Categories</p>
 		<ul class="popular-catgory f0">
 			<?php foreach($popularCate as $value){?>
 			<li>
@@ -76,7 +76,7 @@
 </div>
 <div class="best-seller mb24">
 	<div class="layer bg-f">
-		<p class="title f24 f600 mb12">Best Sellers</p>
+		<p class="title f24 f600 mb12 ml8">Best Sellers</p>
 		<ul class="seller-list f0">
 			<?php foreach($bestSeller as $value){?>
 			<li>
