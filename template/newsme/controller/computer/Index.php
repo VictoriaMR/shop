@@ -11,20 +11,6 @@ class Index extends Base
 		html()->addCss('clothes-icon');
 		html()->addJs('slider');
 
-		$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
-		$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
-		$url = [
-			url('daily-pants-c', ['id'=>132]),
-			url('sportswear-c', ['id'=>101]),
-			url('daily-dress-c', ['id'=>104])
-		];
-		$banner = [];
-		foreach ($arr as $key=>$value) {
-			$banner[] = [
-				'url' => $url[$key],
-				'image' => siteUrl(str_replace($bannerPath, '', $value)),
-			];
-		}
 		$cateArr = make('app/service/category/Category')->getListFormat();
 		$tempArr = [];
 		$cateId = 0;
@@ -40,6 +26,18 @@ class Index extends Base
 			}
 		}
 		$cateArr = $tempArr[\App::get('base_info', 'cate_id')] ?? [];
+
+		$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
+		$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
+		$banner = [];
+		foreach ($arr as $key=>$value) {
+			if (!isset($hotArr[$key])) break;
+			$banner[] = [
+				'url' => url($hotArr[$key]['name_en'].'-c', ['id'=>$hotArr[$key]['cate_id']]),
+				'image' => siteUrl(str_replace($bannerPath, '', $value)),
+			];
+		}
+
 		$this->assign('banner', $banner);
 		$this->assign('cateArr', $cateArr);
 		$this->assign('hotArr', $hotArr);
