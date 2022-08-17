@@ -73,6 +73,11 @@ class Base
 		return $this->instance()->where($where)->field($fields)->page($page, $size)->orderBy($order)->get();
 	}
 
+	public function sql()
+	{
+		return $this->instance()->sql();
+	}
+
 	public function userId()
 	{
 		if (!$this->_memId) {

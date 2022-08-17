@@ -24,7 +24,7 @@
 														</div>
 														<div class="tcell f500">
 															<p class="f16">Account</p>
-															<?php if(userId()){?><p class="cg mt2"><?php echo userEmail();?></p><?php }?>
+															<p class="cg mt2">your@email.com</p>
 														</div>
 													</a>
 													<a href="<?php echo url('order/list');?>" class="table w100">

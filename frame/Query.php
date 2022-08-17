@@ -13,6 +13,7 @@ final class Query
 	private $_having='';
 	private $_offset;
 	private $_limit=1;
+	private $_sql='';
 	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank', 'show', 'commit'];
 
 	public function database($database=null)
@@ -281,12 +282,18 @@ final class Query
 		return ltrim(trim($whereString), 'AND ');
 	}
 
+	public function sql()
+	{
+		return $this->_sql;
+	}
+
 	public function getQuery($sql)
 	{
 		$this->clear();
 		if (config('env', 'APP_DEBUG')) {
 			$GLOBALS['exec_sql'][] = $sql;
 		}
+		$this->_sql = $sql;
 		try {
 			$conn = db($this->_database);
 			$stmt = $conn->query($sql);
