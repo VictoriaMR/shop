@@ -33,7 +33,7 @@ class Site extends Base
 		return $this->loadData([$type=>$key, 'status'=>1], 'site_id,type,path,name,domain,cate_id,view_suffix,email,cache');
 	}
 
-	public function deleteTemplateCache($siteId=0)
+	public function deleteTemplateCache($siteId=0, $template=true, $static=true, $currency='')
 	{
 		$where = [];
 		if ($siteId > 0) {
@@ -42,14 +42,19 @@ class Site extends Base
 			$where['site_id'] = ['>=', 80];
 		}
 		$list = $this->getListData($where, 'path');
+		$path = ROOT_PATH.'template'.DS;
 		foreach ($list as $value) {
-			$dir = ROOT_PATH.'template'.DS.$value['path'].DS.'cache';
-			if (is_dir($dir)) {
-				$this->deleteDir($dir);
+			if ($template) {
+				$dir = $path.$value['path'].DS.'cache';
+				if ($currency) {
+					$this->deleteDir($dir.DS.'computer'.DS.$currency);
+					$this->deleteDir($dir.DS.'mobile'.DS.$currency);
+				} else {
+					$this->deleteDir($dir);
+				}
 			}
-			$dir = ROOT_PATH.'template'.DS.$value['path'].DS.'static';
-			if (is_dir($dir)) {
-				$this->deleteDir($dir);
+			if ($static) {
+				$this->deleteDir($path.$value['path'].DS.'static');
 			}
 		}
 		return true;
@@ -57,6 +62,9 @@ class Site extends Base
 
 	private function deleteDir($dir)
 	{
+		if (!is_dir($dir)) {
+			return false;
+		}
 	    if (!$handle = @opendir($dir)) {
 	        return false;
 	    }
@@ -69,7 +77,6 @@ class Site extends Base
 	                @unlink($file);
 	            }
 	        }
-
 	    }
 	    @rmdir($dir);
 	}

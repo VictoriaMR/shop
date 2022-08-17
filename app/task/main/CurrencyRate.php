@@ -27,6 +27,7 @@ class CurrencyRate extends TaskDriver
         }
         $currency = make('app/service/currency/Currency');
         $logger = make('app/service/currency/Logger');
+        $site = make('app/service/site/Site');
         $currencyArr = $currency->getListData();
         foreach ($currencyArr as $value) {
             if (!isset($result[$value['code']]) || $value['rate'] == $result[$value['code']]) {
@@ -38,6 +39,7 @@ class CurrencyRate extends TaskDriver
                 'old_rate' => $value['rate'],
                 'new_rate' => $result[$value['code']],
             ]);
+            $site->deleteTemplateCache(0, true, false, $value['code']);
         }
         return false;
     }
