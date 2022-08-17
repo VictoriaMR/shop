@@ -73,6 +73,9 @@ class Git extends Base
             }
             $tempArr[] = $value;
         }
+        if (!empty($tempArr)) {
+            $tempData[] = $tempArr;
+        }
         $data = [];
         foreach ($tempData as $value) {
             $tempArr = [];
