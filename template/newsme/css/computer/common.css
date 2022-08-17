@@ -32,7 +32,6 @@ a:hover,a:active,a:focus {
 img {
 	border: 0;
 	max-width:100%;
-	max-height: 100%;
 	image-rendering: -moz-crisp-edges;
     image-rendering: -o-crisp-edges;
     image-rendering: -webkit-optimize-contrast;

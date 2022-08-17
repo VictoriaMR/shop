@@ -4,7 +4,7 @@
 		<table width="100%" >
 			<tbody>
 				<tr>
-					<td style="min-width: 268px;vertical-align: top;background-color: #F7F9FA;border-radius: 12px;">
+					<td class="nav-category">
 						<div class="newservice">
 							<p class="f500 f18 mb18">Category</p>
 							<ul class="f16">
@@ -14,12 +14,12 @@
 									<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>"><?php echo $value['name_en'];?></a>
 									<?php $count=0; for ($i=$index+1; $i<999; $i++) {
 										if (isset($cateArr[$i]) && $cateArr[$i]['level']>1 && $cateArr[$i]['is_show'] && !$cateArr[$i]['is_hot'] ){?><span class="service-slash">/</span>
-									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>"><?php echo $cateArr[$i]['name_en'];?></a><?php $count++; if ($count==2) break; }}?>
-								</li><?php }}?>
-							</ul>
+									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>"><?php echo $cateArr[$i]['name_en'];?></a>
+								<?php $count++; if ($count==2) break; }}?></li>
+								<?php }}?></ul>
 						</div>
 					</td>
-					<td width="860" class="pl30" style="vertical-align: top;">
+					<td class="nav-banner" width="860" class="pl30">
 						<div class="newnav">
 							<div class="top">
 								<table width="100%">
@@ -27,8 +27,8 @@
 										<tr>
 											<?php foreach ($hotArr as $value) {?><td>
 												<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" class="e1"><?php echo $value['name_en'];?></a>
-											</td><?php }?>
-										</tr>
+											</td>
+											<?php }?></tr>
 									</tbody>
 								</table>
 							</div>
@@ -40,8 +40,8 @@
 										<a href="<?php echo $value['url'];?>">
 											<img src="<?php echo $value['image'];?>">
 										</a>
-									</li><?php }?>
-								</ul>
+									</li>
+									<?php }?></ul>
 							</div>
 						</div>
 					</td>
@@ -56,11 +56,13 @@
 		<ul class="popular-catgory f0">
 			<?php foreach($popularCate as $value){?><li>
 				<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>">
-					<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+					<div class="image-content">
+						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+					</div>
 					<p class="f16 mt12 mb12 e1"><?php echo $value['name_en'];?></p>
 				</a>
-			</li><?php }?>
-		</ul>
+			</li>
+			<?php }?></ul>
 	</div>
 </div>
 <div class="best-seller mb24">
@@ -69,15 +71,17 @@
 		<ul class="seller-list f0">
 			<?php foreach($bestSeller as $value){?><li>
 				<a href="<?php echo $value['url'];?>">
-					<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+					<div class="image-content">
+						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+					</div>
 					<p class="f16 mt12 mb12 e2"><?php echo $value['name'];?></p>
 					<div class="price-content">
 						<span class="price"><?php echo $value['min_price_format'];?></span>
-						<?php if ($value['min_price'] < $value['max_price']) {?><span class="price"> - <?php echo $value['max_price_format'];?></span><?php }?>
-					</div>
+						<?php if ($value['min_price'] < $value['max_price']) {?><span class="price"> - <?php echo $value['max_price_format'];?></span>
+					<?php }?></div>
 				</a>
-			</li><?php }?>
-		</ul>
+			</li>
+			<?php }?></ul>
 	</div>
 </div>
 <?php $this->load('common/base_footer');?>
