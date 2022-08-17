@@ -32,4 +32,40 @@ class Site extends Base
 	{
 		return $this->loadData([$type=>$key]);
 	}
+
+	public function deleteTemplateCache($siteId=0)
+	{
+		$where = [];
+		if ($siteId > 0) {
+			$where['site_id'] = $siteId;
+		} else {
+			$where['site_id'] = ['>=', 80];
+		}
+		$list = $this->getListData($where, 'path');
+		foreach ($list as $value) {
+			$dir = ROOT_PATH.'template'.DS.$value['path'].DS.'cache';
+			if (is_dir($dir)) {
+				$this->deleteDir($dir);
+			}
+		}
+	}
+
+	private function deleteDir($dir)
+	{
+	    if (!$handle = @opendir($dir)) {
+	        return false;
+	    }
+	    while (false !== ($file = readdir($handle))) {
+	        if ($file !== "." && $file !== "..") {
+	            $file = $dir . '/' . $file;
+	            if (is_dir($file)) {
+	                deleteDir($file);
+	            } else {
+	                @unlink($file);
+	            }
+	        }
+
+	    }
+	    @rmdir($dir);
+	}
 }

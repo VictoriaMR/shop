@@ -97,6 +97,8 @@ class Git extends AdminBase
         $rst = $git->updateData(['library'=>$info['library'], 'git_id'=>['<=', $info['git_id']]], ['status'=>1, 'release_time'=>now()]);
         if ($rst) {
             \App::setVersion($info['commit']);
+            //删除缓存模板文件
+            make('app/service/site/Site')->deleteTemplateCache();
             $this->success('发布成功');
         }
         $this->error('发布失败');

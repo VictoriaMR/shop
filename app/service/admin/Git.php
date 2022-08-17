@@ -34,9 +34,9 @@ class Git extends Base
 
     private function getGitHistoryLog($id, $lastTime)
     {
-        $cmd = 'git log';
+        $cmd = 'git log --reverse';
         if ($lastTime) {
-            $cmd .= ' --reverse '.$lastTime;
+            $cmd .= ' '.$lastTime;
         }
         $rst = $this->run($cmd, ROOT_PATH);
         if ($rst['code'] != 0) {
@@ -89,7 +89,7 @@ class Git extends Base
     private function run($cmd, $work_path = null, $filterResult = true)
     {
         if (!isWin()) {
-            $cmd = '/usr/local/git/bin/'.$cmd;
+            $cmd = 'sudo /usr/local/git/bin/'.$cmd;
         }
         $rst =[];
         $code =null;
