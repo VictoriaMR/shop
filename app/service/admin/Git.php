@@ -36,7 +36,7 @@ class Git extends Base
     {
         $cmd = 'git log --reverse';
         if ($lastTime) {
-            $cmd .= ' '.$lastTime;
+            $cmd .= " --after '".$lastTime."'";
         }
         $rst = $this->run($cmd, ROOT_PATH);
         if ($rst['code'] != 0) {
