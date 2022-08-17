@@ -11,10 +11,10 @@
 								<?php foreach ($cateArr ?? [] as $key=>$value){
 									if ($value['level'] == 1 && $value['icon']){ $index=$key;?><li class="e1">
 									<span class="clothes-iconfont icon-<?php echo $value['icon']??'';?>"></span>
-									<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>"><?php echo $value['name_en'];?></a>
+									<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
 									<?php $count=0; for ($i=$index+1; $i<999; $i++) {
 										if (isset($cateArr[$i]) && $cateArr[$i]['level']>1 && $cateArr[$i]['is_show'] && !$cateArr[$i]['is_hot'] ){?><span class="service-slash">/</span>
-									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>"><?php echo $cateArr[$i]['name_en'];?></a>
+									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>" title="<?php echo $cateArr[$i]['name_en'];?>"><?php echo $cateArr[$i]['name_en'];?></a>
 								<?php $count++; if ($count==2) break; }}?></li>
 								<?php }}?></ul>
 						</div>
@@ -26,7 +26,7 @@
 									<tbody>
 										<tr>
 											<?php foreach ($hotArr as $value) {?><td>
-												<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" class="e1"><?php echo $value['name_en'];?></a>
+												<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" class="e1" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
 											</td>
 											<?php }?></tr>
 									</tbody>
@@ -37,7 +37,7 @@
 							<div class="slider" id="nav-banner">
 								<ul>
 									<?php foreach ($banner as $value){?><li data-index="1">
-										<a href="<?php echo $value['url'];?>">
+										<a href="<?php echo $value['url'];?>" title="<?php echo $value['name_en'];?>">
 											<img src="<?php echo $value['image'];?>">
 										</a>
 									</li>
@@ -55,7 +55,7 @@
 		<p class="title f24 f600 mb12 ml8">Popular Categories</p>
 		<ul class="popular-catgory f0">
 			<?php foreach($popularCate as $value){?><li>
-				<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>">
+				<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>">
 					<div class="image-content">
 						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
 					</div>
@@ -70,7 +70,7 @@
 		<p class="title f24 f600 mb12 ml8">Best Sellers</p>
 		<ul class="seller-list f0">
 			<?php foreach($bestSeller as $value){?><li>
-				<a href="<?php echo $value['url'];?>">
+				<a href="<?php echo $value['url'];?>" title="<?php echo $value['name'];?>">
 					<div class="image-content">
 						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
 					</div>

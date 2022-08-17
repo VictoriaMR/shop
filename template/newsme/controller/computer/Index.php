@@ -39,6 +39,7 @@ class Index extends Base
 			$banner[] = [
 				'url' => url($hotArr[$key]['name_en'].'-c', ['id'=>$hotArr[$key]['cate_id']]),
 				'image' => siteUrl(str_replace($bannerPath, '', $value)),
+				'name_en' => $hotArr[$key]['name_en'],
 			];
 		}
 		if (!empty($popularCate)) {
