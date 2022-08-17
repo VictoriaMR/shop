@@ -30,7 +30,7 @@ class Git extends Base
             return false;
         }
         $hasArr = $this->getListData(['commit'=>['in', array_column($rst, 'commit')]], 'git_id,commit');
-        $hasArr = array_column($hasArrm, 'git_id', 'commit');
+        $hasArr = array_column($hasArr, 'git_id', 'commit');
         foreach ($rst as $key=>$value) {
             if (isset($hasArr[$value['commit']])) {
                 unset($rst[$key]);
