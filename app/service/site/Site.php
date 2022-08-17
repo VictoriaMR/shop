@@ -48,6 +48,7 @@ class Site extends Base
 				$this->deleteDir($dir);
 			}
 		}
+		return true;
 	}
 
 	private function deleteDir($dir)
@@ -59,7 +60,7 @@ class Site extends Base
 	        if ($file !== "." && $file !== "..") {
 	            $file = $dir . '/' . $file;
 	            if (is_dir($file)) {
-	                deleteDir($file);
+	                $this->deleteDir($file);
 	            } else {
 	                @unlink($file);
 	            }
