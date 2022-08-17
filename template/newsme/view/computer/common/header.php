@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="<?php echo strtolower(lanId('code'));?>">
 <head>
 	<title><?php echo $_title??appT('_title');?></title>
 	<meta charset="utf-8">
