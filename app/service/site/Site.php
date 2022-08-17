@@ -47,6 +47,10 @@ class Site extends Base
 			if (is_dir($dir)) {
 				$this->deleteDir($dir);
 			}
+			$dir = ROOT_PATH.'template'.DS.$value['path'].DS.'static';
+			if (is_dir($dir)) {
+				$this->deleteDir($dir);
+			}
 		}
 		return true;
 	}
