@@ -12,11 +12,20 @@ class Category extends Base
 		$this->baseModel = make('app/model/category/Category');
 	}
 
+	public function getInfoCache($cateId)
+	{
+		$list = $this->getList();
+		$info = $list[$cateId] ?? [];
+		if (empty($info)) return false;
+		$info['image'] = empty($info['avatar']) ? '' : mediaUrl($info['avatar'], 200);
+		return $info;
+	}
+
 	public function getInfo($cateId)
 	{
 		$info = $this->loadData($cateId);
 		if (empty($info)) return false;
-		$info['avatar_format'] = empty($info['avatar']) ? siteUrl('image/common/noimg.png') : mediaUrl($info['avatar'], 200);
+		$info['image'] = empty($info['avatar']) ? '' : mediaUrl($info['avatar'], 200);
 		return $info;
 	}
 
@@ -24,6 +33,7 @@ class Category extends Base
 	{
 		if (empty($this->_list)) {
 			$this->_list = $cache ? $this->getListCache() : $this->getListData();
+			$this->_list = array_column($this->_list, null, 'cate_id');
 		}
 		return $this->_list;
 	}
@@ -82,7 +92,7 @@ class Category extends Base
 		$list = $this->getList();
 		$list = $this->listFormat($list, $id, 0);
 		if (empty($list)) {
-			return [$id];
+			return [];
 		}
 		return $this->getSubCategory($list);
 	}

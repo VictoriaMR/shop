@@ -1,0 +1,46 @@
+.category-page .layer.top {
+	border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    overflow: hidden;
+}
+.category-page .empty-info {
+	padding: 168px 0;
+    text-align: center;
+}
+.category-page .category-info {
+	padding-top: 12px;
+	padding-bottom: 12px;
+}
+.category-page .category-son li {
+	display: inline-block;
+	margin-right: 0.5%;
+    width: calc(98.5%/4);
+    padding: 8px;
+    transition: .2s ease-in-out;
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.category-page .category-son li.last {
+	margin-right: 0;
+}
+.category-page .category-son li:hover{
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.09);
+    border-radius: 4px;
+    transform: translateY(-4px);
+    box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.2);
+}
+.category-page .category-son li .image-content {
+    border-radius: 4px;
+    overflow: hidden;
+    width: 100%;
+    height: 0;
+    text-align: center;
+    padding-bottom: 100%;
+}
+.category-page .category-son .category-son-name {
+	padding-left: 8px;
+	vertical-align: middle;
+	font-size: 16px;
+	font-weight: 600;
+}

@@ -55,7 +55,6 @@
     vertical-align: top;
     width: calc(100%/6);
     padding: 8px;
-    text-align: center;
     transition: .2s ease-in-out;
 }
 .popular-catgory li:hover{
@@ -63,6 +62,9 @@
     border-radius: 4px;
     transform: translateY(-4px);
     box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.2);
+}
+.best-seller .layer {
+    padding-bottom: 12px;
 }
 .best-seller li {
     display: inline-block;
@@ -87,6 +89,7 @@ li .image-content {
     overflow: hidden;
     width: 100%;
     height: 0;
+    text-align: center;
     padding-bottom: 100%;
 }
 @media (max-width: 950px) {
