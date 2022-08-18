@@ -262,9 +262,8 @@ $(function(){
 			$('html,body').animate({scrollTop: 0}, 300);
 		});
 	}
-	if ($('.icon-gouwuche, .icon-gouwuchefill').length > 0) {
-		CART.init();
-	}
-	$.post(URI+'api/stat', {url: window.location.pathname});
+	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
+        
+    });
 	$('img.lazyload').lazyload();
 });
