@@ -24,7 +24,6 @@ class Category extends HomeBase
 			'url' => url(),
 		];
 		if ($cateInfo) {
-			$search = true;
 			$crumbs[] = [
 				'name' => $cateInfo['name_en'],
 				'url' => url($cateInfo['name_en'].'-c', ['id'=>$cateInfo['cate_id']]),
