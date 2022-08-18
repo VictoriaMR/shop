@@ -121,4 +121,62 @@ class AttrUsed extends Base
 		}
 		return $this->insert($insert);
 	}
+
+	public function getSiteAttr()
+	{
+		$cacheKey = 'spu:attr:'.siteId();
+		$rst = redis()->get($cacheKey);
+		if (!$rst) {
+			$sql = 'SELECT b.`attrn_id`,b.`attrv_id` FROM `product_sku` a LEFT JOIN `product_attr_used` b ON a.`sku_id`=b.`sku_id` WHERE a.`site_id`='.siteId().' GROUP BY b.`attrn_id`, b.`attrv_id` ORDER BY b.`attrn_id` ASC, b.`attrv_id` ASC';
+			$rst = $this->getQuery($sql);
+			$tempArr = [];
+			foreach ($rst as $value) {
+				if (!isset($tempArr[$value['attrn_id']])) {
+					$tempArr[$value['attrn_id']] = [];
+				}
+				$tempArr[$value['attrn_id']][] = $value['attrv_id'];
+			}
+			redis()->set($cacheKey, $tempArr, 24*3600);
+			$rst = $tempArr;
+		}
+		$lanArr = array_unique([1, lanId()]);
+		$attrLanguage = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', array_keys($rst)], 'lan_id'=>['in', $lanArr]], 'attrn_id,name', 0, 0, ['lan_id'=>'asc']);
+		$attrLanguage = array_column($attrLanguage, 'name', 'attrn_id');
+		$attvIdArr = [];
+		foreach ($rst as $value) {
+			$attvIdArr = array_merge($attvIdArr, $value);
+		}
+		$attvLanguage = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', array_unique($attvIdArr)], 'lan_id'=>['in', $lanArr]], 'attrv_id,name', 0, 0, ['lan_id'=>'asc']);
+		$attvLanguage = array_column($attvLanguage, 'name', 'attrv_id');
+		$result = [];
+		foreach ($rst as $key=>$value) {
+			if (isset($attrLanguage[$key])) {
+				$tempArr = [
+					'attrn_id' => $key,
+					'name' => $attrLanguage[$key],
+					'attv_list' => [],
+				];
+				foreach ($value as $attv) {
+					if (isset($attvLanguage[$attv])) {
+						$tempArr['attv_list'][] = [
+							'attrv_id' => $attv,
+							'name' => $attvLanguage[$attv],
+						];
+					}
+				}
+				$result[] = $tempArr;
+			}
+		}
+		return $result;
+	}
+
+	public function getSpuId($vidArr)
+	{
+		$skuId = $this->getListData(['attrv_id'=>['in', $vidArr]], 'sku_id');
+		if ($skuId) {
+			$spuId = make('app/service/product/Sku')->getListData(['sku_id'=>['in', array_column($skuId, 'sku_id')]], 'spu_id');
+			return array_column($spuId, 'spu_id');
+		}
+		return [];
+	}
 }

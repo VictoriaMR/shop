@@ -35,5 +35,12 @@
 		</div>
 		<?php }?>
 	</div>
+	<?php if (!empty($filter) || !empty($list)){?>
+	<div class="layer0 bg-f product-container">
+		<?php $this->load('common/left_filter', array_merge(['list'=>$filter], $param));?>
+		<?php $this->load('common/right_list', $list);?>
+		<div class="clear"></div>
+	</div>
+	<?php }?>
 </div>
 <?php $this->load('common/base_footer');?>

@@ -32,7 +32,6 @@ a:hover,a:active,a:focus {
 img {
 	border: 0;
 	max-width:100%;
-    image-rendering: -webkit-optimize-contrast;
 }
 table {
 	border-collapse: collapse;
@@ -41,6 +40,13 @@ table {
 body {
 	background: url(/image/computer/background.png);
 	background-size: cover;
+}
+*::-webkit-scrollbar{
+    width:6px;
+}
+*::-webkit-scrollbar-thumb{
+    border-radius:3px;
+    background-color:#E5E5E5;
 }
 .btn {
     width: 100%;
@@ -94,6 +100,10 @@ body {
 	max-width: 1400px;
 	margin: 0 auto;
 	padding: 0 10px;
+}
+.layer0 {
+	max-width: 1400px;
+	margin: 0 auto;
 }
 .w30 {
 	width: 30%;

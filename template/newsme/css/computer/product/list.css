@@ -1,0 +1,64 @@
+#left-filter {
+	width: 338px;
+    padding: 6px;
+    overflow: hidden;
+    float: left;
+}
+#left-filter .content {
+    box-shadow: 0 3px 6px 0 rgb(34 25 36 / 20%);
+    padding: 0 10px;
+}
+#left-filter .item {
+	border-bottom: 1px solid #E5E5E5;
+}
+#left-filter .item:last-child {
+	border-bottom: 0;
+}
+#left-filter .item .title {
+	height: 52px;
+    line-height: 52px;
+    position: relative;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    position: relative;
+}
+#left-filter .item .title-content .iconfont {
+	position: absolute;
+	top: 18px;
+	right: 9px;
+	font-size: 16px;
+}
+#left-filter .item ul {
+	max-height: 0;
+    overflow-y: auto;
+    padding-left: 4px;
+    transition: max-height 300ms;
+    transition-timing-function: cubic-bezier(0.09, 1.03, 0.57, 0.97);
+}
+#left-filter .item ul.open {
+	max-height: 400px;
+}
+#left-filter .item ul>li {
+	position: relative;
+}
+#left-filter .item ul>li .iconfont{
+	font-size: 16px;
+	position: absolute;
+	font-weight: 500;
+	top: 15px;
+	left: 12px;
+}
+#left-filter .item ul>li a {
+	display: block;
+    height: 48px;
+    line-height: 48px;
+    text-decoration: none;
+    padding-left: 40px;
+    position: relative;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 15px;
+    font-weight: 500;
+}

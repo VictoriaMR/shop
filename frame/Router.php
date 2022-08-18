@@ -58,10 +58,10 @@ final class Router
 		return $arr[$type] ?? ucfirst($type);
 	}
 
-	public function buildUrl($url=null, $param=null, $suffix=true)
-	{
+	public function buildUrl($url='', $param=null, $suffix=true)
+	{	
+		if (!$url) return APP_DOMAIN;
 		if ($suffix && !IS_ADMIN) {
-			if (empty($url)) return '/';
 			$url = $this->nameFormat($url);
 			if (!empty($param)) {
 				if (is_array($param))
