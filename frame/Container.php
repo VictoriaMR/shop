@@ -18,7 +18,6 @@ final class Container
 
 	public function autoload($concrete, $file, $params=null)
 	{
-		require $file;
 		return $this->build($concrete, $params);
 	}
 

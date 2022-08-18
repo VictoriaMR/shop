@@ -12,9 +12,9 @@ class App
 
 	public static function make($abstract, $params=null)
 	{
-		return self::autoload($abstract, $params);
 		if (!self::get('autoload', $abstract)) {
-			self::set('autoload', self::autoload($abstract, $params), $abstract);
+			self::autoload($abstract);
+			self::set('autoload', \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), '', $params), $abstract);
 		}
 		return self::get('autoload', $abstract);
 	}
@@ -33,7 +33,8 @@ class App
 		define('APP_DOMAIN', 'https://'.$baseInfo['domain'].'/');
 		self::set('router', $router);
 		//执行方法
-		$callArr = [self::autoload('app/controller/'.$router['class'].'/'.$router['path']), $router['func']];
+		$call = self::make('app/controller/'.$router['class'].'/'.$router['path']);
+		$callArr = [$call, $router['func']];
 		if (is_callable($callArr)) {
 			if (!session()->get('setcookie', false)) {
 				self::make('frame/Cookie')->init();
@@ -41,7 +42,7 @@ class App
 			self::make('app/middleware/VerifyToken')->handle($router);
 			call_user_func_array($callArr, []);
 		} else {
-			throw new \Exception($router['path'].' '.$router['func'].' was not exist!', 1);
+			throw new \Exception('class '.$router['class'].', function '.$router['path'].' was not exist!', 1);
 		}
 		self::runOver();
 	}
@@ -53,17 +54,12 @@ class App
 
 	private static function autoload($abstract, $params=null) 
 	{
-		$abstract = strtr($abstract, '\\', DS);
-		if (!self::get('autoload', $abstract)) {
-			$file = ROOT_PATH.$abstract.'.php';
-			if (is_file($file)) {
-				self::set('autoload', \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $file, $params), $abstract);
-			} else {
-				throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
-			}
+		$file = ROOT_PATH.strtr($abstract, '\\', DS).'.php';
+		if (is_file($file)) {
+			require $file;
+		} else {
+			throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
 		}
-		return self::get('autoload', $abstract);
-
 	}
 
 	public static function set($name, $value, $key=null)
