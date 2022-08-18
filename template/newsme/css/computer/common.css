@@ -207,7 +207,7 @@ body {
 	border-bottom: 1px solid #D1D1D6;
 }
 .meau-header .logo {
-	max-height: 32px;
+	max-height: 56px;
 }
 .meau-header .search-cell {
 	max-width: 880px;
@@ -274,11 +274,11 @@ body {
     font-size: 0;
 }
 .modal .header img {
-	max-height: 26px;
+	max-height: 32px;
 }
 .modal .header .iconfont {
 	position: absolute;
-	top: 22px;
+	top: 24px;
 	left: 17px;
 }
 .modal .body {

@@ -69,7 +69,7 @@
 									<td width="68">
 										<span class="f500 f16 pointer" id="meau-modal-name">Menu</span>
 									</td>
-									<td>
+									<td class="f0">
 										<img class="logo" src="<?php echo siteUrl('image/common/logo.png');?>">
 									</td>
 								</tr>
