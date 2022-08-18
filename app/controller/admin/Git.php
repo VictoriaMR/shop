@@ -52,7 +52,7 @@ class Git extends AdminBase
         html()->addJs();
         $id = iget('id', '');
         $page = iget('page', 1);
-        $size = iget('size', 50);
+        $size = iget('size', 20);
         $where = [];
         if ($id) {
             $where['library'] = $id;
