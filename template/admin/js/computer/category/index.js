@@ -191,14 +191,15 @@ const CATEGORYLIST = {
 		$('#data-list .switch_botton').on('click', function(event){
 			event.stopPropagation();
 			var _thisobj = $(this);
-			let param = {};
+			var param = {};
+			var type = _thisobj.data('type');
 			param.id = _thisobj.parents('tr').data('id');
-			param[_thisobj.data('type')] = _thisobj.data('status') == '1' ? '0' : '1';
+			param[type] = _thisobj.data('status') == '1' ? '0' : '1';
 			param.opn = 'modifyCategory';
 			$.post(URI+'category', param, function(res){
 				if (res.code === '200') {
 					successTips(res.msg);
-					_thisobj.switchBtn(param.status);
+					_thisobj.switchBtn(param[type]);
 				} else {
 					errorTips(res.msg);
 				}
