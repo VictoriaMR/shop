@@ -9,10 +9,10 @@
 							<p class="f500 f18 mb18">Category</p>
 							<ul class="f16">
 								<?php foreach ($cateArr ?? [] as $key=>$value){
-									if ($value['level'] == 1 && $value['icon']){ $index=$key;?><li class="e1">
+									if ($value['icon']){ $index=$key;?><li class="e1">
 									<span class="clothes-iconfont icon-<?php echo $value['icon']??'';?>"></span>
 									<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
-									<?php $count=0; for ($i=$index+1; $i<999; $i++) {
+									<?php $count=0; for ($i=$index+1; $i<99; $i++) {
 										if (isset($cateArr[$i]) && $cateArr[$i]['level']>1 && $cateArr[$i]['is_show'] && !$cateArr[$i]['is_hot'] ){?><span class="service-slash">/</span>
 									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>" title="<?php echo $cateArr[$i]['name_en'];?>"><?php echo $cateArr[$i]['name_en'];?></a>
 								<?php $count++; if ($count==2) break; }}?></li>

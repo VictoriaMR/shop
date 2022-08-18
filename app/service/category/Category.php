@@ -12,46 +12,51 @@ class Category extends Base
 		$this->baseModel = make('app/model/category/Category');
 	}
 
-	public function getInfoCache($cateId)
+	public function getSiteInfoCache($cateId)
 	{
-		$list = $this->getList();
+		$list = $this->getSiteList();
+		$list = array_column($list, null, 'cate_id');
 		$info = $list[$cateId] ?? [];
 		if (empty($info)) return false;
 		$info['image'] = empty($info['avatar']) ? '' : mediaUrl($info['avatar'], 200);
 		return $info;
 	}
 
-	public function getInfo($cateId)
-	{
-		$info = $this->loadData($cateId);
-		if (empty($info)) return false;
-		$info['image'] = empty($info['avatar']) ? '' : mediaUrl($info['avatar'], 200);
-		return $info;
-	}
-
-	public function getList($cache=true)
+	public function getSiteList()
 	{
 		if (empty($this->_list)) {
-			$this->_list = $cache ? $this->getListCache() : $this->getListData();
-			$this->_list = array_column($this->_list, null, 'cate_id');
+			$this->_list = $this->getSiteListCache();
 		}
 		return $this->_list;
 	}
 
-	protected function getListCache()
+	public function getSiteListCache()
 	{
-		$cacheKey = $this->getCacheKey(\App::get('base_info', 'site_id'));
+		$cacheKey = $this->getCacheKey(siteId());
 		$list = redis()->get($cacheKey);
 		if (!$list) {
-			$list = $this->getListData();
+			$tempArr = $this->getListData();
+			$tempArr = $this->listFormat($tempArr);
+			$list = [];
+			$this->arrayFormat($tempArr, $list);
+			$tempArr = [];
+			$cateId = 0;
+			foreach ($list as $value) {
+				if ($value['parent_id'] == 0) {
+					$cateId = $value['cate_id'];
+					$tempArr[$cateId] = [];
+				}
+				$tempArr[$cateId][] = $value;
+			}
+			$list = $tempArr[cateId()] ?? [];
 			redis()->set($cacheKey, $list);
 		}
 		return $list;
 	}
 
-	public function getListFormat($cache=true)
+	public function getListFormat()
 	{
-		$list = $this->getList($cache);
+		$list = $this->getListData();
 		$list = $this->listFormat($list, 0, 0);
 		$returnData = [];
 		$this->arrayFormat($list, $returnData);

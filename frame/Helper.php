@@ -168,6 +168,9 @@ function lanId($type='id'){
 function siteId(){
 	return \App::get('base_info', 'site_id');
 }
+function cateId(){
+	return \App::get('base_info', 'cate_id');
+}
 function userId(){
 	return session()->get(APP_TEMPLATE_TYPE.'_info', 0, 'mem_id');
 }

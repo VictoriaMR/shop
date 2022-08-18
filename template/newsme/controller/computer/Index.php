@@ -11,25 +11,15 @@ class Index extends Base
 		html()->addCss('clothes-icon');
 		html()->addJs('slider');
 
-		$cateArr = make('app/service/category/Category')->getListFormat();
+		$cateArr = make('app/service/category/Category')->getSiteList();
 		$tempArr = [];
-		$cateId = 0;
-		$hotArr = [];
-		$popularCate = [];
 		foreach ($cateArr as $value) {
-			if ($value['parent_id'] == 0) {
-				$cateId = $value['cate_id'];
-				$tempArr[$cateId] = [];
-			}
-			$tempArr[$cateId][] = $value;
 			if ($value['is_hot']) {
-				$hotArr[] = $value;
-			}
-			if ($value['attach_id']) {
-				$popularCate[] = $value;
+				$tempArr[] = $value;
 			}
 		}
-		$cateArr = $tempArr[\App::get('base_info', 'cate_id')] ?? [];
+		$hotArr = array_slice($tempArr, 0, 6);
+		$popularCate = array_slice($tempArr, 6);
 
 		$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
 		$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
@@ -44,8 +34,10 @@ class Index extends Base
 		}
 		if (!empty($popularCate)) {
 			$attachArr = array_filter(array_column($popularCate, 'attach_id'));
-			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-			$attachArr = array_column($attachArr, 'url', 'attach_id');
+			if (!empty($attachArr)) {
+				$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+				$attachArr = array_column($attachArr, 'url', 'attach_id');
+			}
 			foreach ($popularCate as $key=>$value) {
 				$popularCate[$key]['image'] = $attachArr[$value['attach_id']] ?? '';
 			}

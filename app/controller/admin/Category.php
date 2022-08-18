@@ -25,12 +25,12 @@ class Category extends AdminBase
 		}
 		html()->addJs();
 
-		$list = make('app/service/category/Category')->getListFormat(false);
+		$list = make('app/service/category/Category')->getListFormat();
 		if (!empty($list)) {
 			$cateArr = array_column($list, 'cate_id');
 			$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
 			$cateArr = array_column($cateArr, 'count', 'cate_id');
-			$languageList = make('app/service/Language')->getListCache();
+			$languageList = make('app/service/Language')->getListData();
 			$languageList = array_column($languageList, null, 'lan_id');
 			unset($languageList[1]);
 			$len = count($languageList);
