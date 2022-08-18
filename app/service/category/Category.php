@@ -92,9 +92,19 @@ class Category extends Base
 		return true;
 	}
 
+	public function getSiteSubCategoryById($id)
+	{
+		$list = $this->getSiteList();
+		$list = $this->listFormat($list, $id, 0);
+		if (empty($list)) {
+			return [];
+		}
+		return $this->getSubCategory($list);
+	}
+
 	public function getSubCategoryById($id)
 	{
-		$list = $this->getList();
+		$list = $this->getListData();
 		$list = $this->listFormat($list, $id, 0);
 		if (empty($list)) {
 			return [];
@@ -105,7 +115,7 @@ class Category extends Base
 	public function getParentCategoryById($id, $self=true)
 	{
 		$returnData = [];
-		$list = $this->getList();
+		$list = $this->getListData();
 		$list = array_column($list, null, 'cate_id');
 		if (!isset($list[$id])) {
 			return $returnData;
