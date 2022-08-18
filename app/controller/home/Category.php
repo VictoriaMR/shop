@@ -12,7 +12,7 @@ class Category extends HomeBase
 		$cateId = iget('id', 0);
 		
 		$category = make('app/service/category/Category');
-		$cateInfo = $category->getInfoCache($cateId);
+		$cateInfo = $category->getSiteInfoCache($cateId);
 		$crumbs[] = [
 			'name' => 'Home',
 			'url' => url(),
@@ -24,7 +24,7 @@ class Category extends HomeBase
 			];
 			$cateSon = $category->getSubCategoryById($cateId);
 			foreach ($cateSon as $key=>$value) {
-				$info = $category->getInfoCache($value);
+				$info = $category->getSiteInfoCache($value);
 				if ($info) {
 					$cateSon[$key] = $info;
 				} else {
