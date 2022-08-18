@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="<?php echo strtolower(lanId('code'));?>">
 <head>
-	<title><?php echo $_title??appT('_title');?></title>
 	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+	<title><?php echo $_title??appT('_title');?></title>
+	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-	<meta http-equiv="cache-control" content="no-cache"/>
+	<meta http-equiv="Cache-Control" content="no-cache"/>
 	<meta content="telephone=no,email=no" name="format-detection"/>
 	<meta name="description" content="<?php echo $_desc??appT('_desc');?>">
 	<meta name="keywords" content="<?php echo $_keyword??appT('_keyword');?>">
