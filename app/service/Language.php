@@ -42,17 +42,6 @@ class Language extends Base
 		return $rst;
 	}
 
-	public function getListCache()
-	{
-		$cacheKey = $this->getCacheKey('list');
-		$list = redis()->get($cacheKey);
-		if ($list === false) {
-			$list = $this->getListData();
-			redis()->set($cacheKey, $list);
-		}
-		return $list;
-	}
-
 	public function getTransList()
 	{
 		$list = $this->getListCache();

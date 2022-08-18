@@ -65,12 +65,13 @@ class Category extends AdminBase
 	protected function getCateLanguage()
 	{
 		$cateId = (int) ipost('cate_id');
+		$type = (int) ipost('type', 0);
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/category/Language')->getListData(['cate_id'=>$cateId]);
+		$info = make('app/service/category/Language')->getListData(['cate_id'=>$cateId, 'type'=>$type]);
 		$info = array_column($info, 'name', 'lan_id');
-		$languageList = make('app/service/Language')->getListCache();
+		$languageList = make('app/service/Language')->getListData();
 		$data = [];
 		foreach ($languageList as $key => $value) {
 			if ($value['lan_id'] == 1) continue;
@@ -78,7 +79,7 @@ class Category extends AdminBase
 				'lan_id' => $value['lan_id'],
 				'tr_code' => $value['tr_code'],
 				'name' => $info[$value['lan_id']] ?? '',
-				'language_name' => $value['name2'],
+				'language_name' => $value['name'],
 			];
 		}
 		$this->success($data);
