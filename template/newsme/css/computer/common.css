@@ -194,6 +194,10 @@ body {
 	right: 36px;
 	opacity: 0.65;
 	cursor: pointer;
+	display: none;
+}
+#scroll-top.popup {
+	display: block;
 }
 #scroll-top .iconfont {
 	font-size: 40px;

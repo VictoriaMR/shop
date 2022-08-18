@@ -2,7 +2,6 @@
 <html lang="<?php echo strtolower(lanId('code'));?>">
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
 	<meta http-equiv="cache-control" content="no-cache">
 	<title><?php echo $_title??appT('_title');?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
