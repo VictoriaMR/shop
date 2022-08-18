@@ -159,7 +159,8 @@ class Category extends AdminBase
 		}
 		$attachId = ipost('attach_id', -1);
 		$status = ipost('status', -1);
-		$show = ipost('show', -1);
+		$isShow = ipost('is_show', -1);
+		$isHot = ipost('is_hot', -1);
 		$data = [];
 		if ($attachId >= 0) {
 			$data['attach_id'] = $attachId;
@@ -167,8 +168,11 @@ class Category extends AdminBase
 		if ($status >= 0) {
 			$data ['status'] = $status;
 		}
-		if ($show >= 0) {
-			$data['show'] = $show;
+		if ($isShow >= 0) {
+			$data['is_show'] = $isShow;
+		}
+		if ($isHot >= 0) {
+			$data['is_hot'] = $isHot;
 		}
 		$categoryService = make('app/service/category/Category');
 		$rst = $categoryService->updateData($id, $data);
