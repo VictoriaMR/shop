@@ -33,8 +33,6 @@ img {
 	border: 0;
 	max-width:100%;
     image-rendering: -webkit-optimize-contrast;
-	image-rendering: -moz-crisp-edges;
-    image-rendering: -o-crisp-edges;
 }
 table {
 	border-collapse: collapse;
@@ -189,6 +187,16 @@ body {
 }
 .hide {
 	display: none;
+}
+#scroll-top {
+	position: fixed;
+	bottom: 36px;
+	right: 36px;
+	opacity: 0.65;
+	cursor: pointer;
+}
+#scroll-top .iconfont {
+	font-size: 40px;
 }
 .meau-header {
 	background-color: #fff;
