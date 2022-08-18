@@ -8,18 +8,19 @@
     text-align: center;
 }
 .category-page .category-info {
-	padding-top: 12px;
+	padding-top: 20px;
 	padding-bottom: 12px;
 }
 .category-page .category-son li {
 	display: inline-block;
-	margin-right: 0.5%;
-    width: calc(98.5%/4);
+	margin-right: 8px;
+    width: calc((100% - 24px)/4);
     padding: 8px;
     transition: .2s ease-in-out;
     background: #fff;
     border-radius: 8px;
     overflow: hidden;
+    vertical-align: top;
 }
 .category-page .category-son li.last {
 	margin-right: 0;

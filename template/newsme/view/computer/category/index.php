@@ -13,7 +13,7 @@
 			<p class="f24 f600"><?php echo $cateInfo['name_en'];?></p>
 			<?php if (!empty($cateSon)) {?><ul class="category-son f0 mt12">
 				<?php foreach ($cateSon as $key=>$value) {$cateSonTotal=count($cateSon);?>
-				<li class="<?php echo $key>0&($key+1)%4==0?'last':''?><?php echo $cateSonTotal>4&$key<4?' mb8':'';?>">
+				<li class="<?php echo $key>0&($key+1)%4==0?'last':''; echo ($cateSonTotal>4&$key<4)||($cateSonTotal>8&&($key>3&$key<8))?' mb8':'';?>">
 					<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>">
 						<table border="0" width="100%">
 							<tbody>
