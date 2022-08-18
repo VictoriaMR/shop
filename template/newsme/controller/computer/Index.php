@@ -19,7 +19,7 @@ class Index extends Base
 			}
 		}
 		$hotArr = array_slice($tempArr, 0, 6);
-		$popularCate = array_slice($tempArr, 6);
+		$popularCate = array_slice($tempArr, 5, 12);
 
 		$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
 		$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
