@@ -247,6 +247,16 @@ function appT(name) {
 	};
 }(jQuery));
 $(function(){
+    //同步数据
+    $.ajax({
+        type: 'POST',
+        url: URI+'api/stat',
+        async: true,
+        dataType: 'json',
+        data: {url: window.location.pathname},
+        success: function (res) {
+        }
+    });
 	//回顶按钮
 	if (document.body.scrollHeight - 300 > window.screen.height) {
 		$('body').append('<div id="scroll-top"><span class="iconfont icon-xiangshang3"></span></div>');
@@ -262,8 +272,5 @@ $(function(){
 			$('html,body').animate({scrollTop: 0}, 300);
 		});
 	}
-	$.post(URI+'api/stat', {url: window.location.pathname}, function(res){
-        
-    });
 	$('img.lazyload').lazyload();
 });
