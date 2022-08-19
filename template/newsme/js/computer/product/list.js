@@ -16,6 +16,5 @@ $(function(){
 		if (index > 5) {
 			$(this).parent().parent().scrollTop((index-3)*48);
 		}
-		console.log(index, 'index');
 	});
 });
