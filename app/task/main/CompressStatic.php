@@ -31,15 +31,21 @@ class CompressStatic extends TaskDriver
 				$source = trim(file_get_contents($file));
 				if (strpos($source, PHP_EOL) === false) continue;
 				$type = pathinfo($file)['extension'];
-				switch($type) {
-					case 'js':
-						$reponse = $http->post($urlArr[$type], ['input' => $source], ['Content-Type: application/x-www-form-urlencoded']);
-						if (isset($reponse['error'])) $reponse = '';
-						break;
-					case 'css':
-						$reponse = $http->post($urlArr[$type], $source, ['Content-Type: text/html;charset=utf-8']);
-						$reponse = isJson($reponse)['result'] ?? '';
-						break;
+				$reponse = '';
+				$count = 0;
+				while (!$reponse && $count < 5)
+				{
+					switch($type) {
+						case 'js':
+							$reponse = $http->post($urlArr[$type], ['input' => $source], ['Content-Type: application/x-www-form-urlencoded']);
+							if (isset($reponse['error'])) $reponse = '';
+							break;
+						case 'css':
+							$reponse = $http->post($urlArr[$type], $source, ['Content-Type: text/html;charset=utf-8']);
+							$reponse = isJson($reponse)['result'] ?? '';
+							break;
+					}
+					$count++;
 				}
 				if ($reponse) {
 					file_put_contents($file, str_replace(PHP_EOL, '', $reponse));
