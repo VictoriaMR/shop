@@ -31,13 +31,14 @@
 }
 #left-filter .item ul {
 	max-height: 0;
-    overflow-y: auto;
+    overflow-y: hidden;
     padding-left: 4px;
     transition: max-height 300ms;
     transition-timing-function: cubic-bezier(0.09, 1.03, 0.57, 0.97);
 }
 #left-filter .item ul.open {
 	max-height: 400px;
+    overflow-y: auto;
 }
 #left-filter .item ul>li {
 	position: relative;

@@ -82,7 +82,13 @@
 .best-seller li .price {
 	color: #E64545;
 	font-size: 16px;
-	font-weight: 700;
+	font-weight: 500;
+}
+.best-seller li .original-price {
+    margin-left: 6px;
+    color: #999999;
+    font-size: 14px;
+    text-decoration: line-through;
 }
 li .image-content {
     border-radius: 4px;

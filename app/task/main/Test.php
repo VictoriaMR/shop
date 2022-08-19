@@ -9,13 +9,15 @@ class Test extends TaskDriver
 
     public $config = [
         'name' => '测试任务',
-        'cron' => ['* * * * *'],
+        'cron' => ['1 1 1 1 1'],
     ];
 
     public function run()
     {
         //分类多语言翻译
-        $this->doCateLanguage();
+        // $this->doCateLanguage();
+        //spu价格更新
+        $this->updateSpuPrice();
         return false;
     }
 
@@ -111,5 +113,20 @@ class Test extends TaskDriver
             ' MM' => 'MM',
         ];
         return str_replace(array_keys($arr), array_values($arr), $str);
+    }
+
+    private function updateSpuPrice()
+    {
+        $this->echo('更新spu价格开始');
+        $spu = make('app/service/product/Spu');
+        $sku = make('app/service/product/Sku');
+        $list = $spu->getListData([], 'spu_id');
+        foreach ($list as $value) {
+            $info = $sku->loadData(['spu_id'=>$value['spu_id']], 'max(price) as max_price,min(price) as min_price');
+            if ($info) {
+                $spu->updateData($value['spu_id'], ['min_price'=>$info['min_price'], 'max_price'=>$info['max_price']]);
+            }
+        }
+        $this->echo('更新spu价格完成');
     }
 }

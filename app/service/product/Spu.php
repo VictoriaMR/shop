@@ -346,7 +346,6 @@ class Spu extends Base
 					'attach_id' => empty($value['img']) ? 0 : $allImageArr[$value['img']] ?? 0,
 					'stock' => $value['stock'],
 					'price' => $price,
-					'original_price' => $this->getOriginalPrice($value['price']+$data['bc_post_fee']),
 				];
 				$skuId = $sku->insertGetId($insert);
 				$insert = [
@@ -419,34 +418,46 @@ class Spu extends Base
 
 	protected function getPrice($price)
 	{
-		$rate = 5;
-		if ($price > 800) {
-			$rate = 2.8;
-		}
-		if ($price > 1350) {
-			$rate = 1.86;
-		}
-		$price = $price * $rate;
-		if ($price < 200) {
-			$price += 50;
+		if ($price <= 100) {
+			$price += 88;
+		} elseif ($price > 100 && $price <= 300) {
+			$price += 128;
+		} elseif ($price > 300 && $price <= 500) {
+			$price += 188;
+		} elseif ($price > 500 && $price <= 700) {
+			$price += 288;
+		} elseif ($price > 700 && $price <= 900) {
+			$price += 388;
+		} elseif ($price > 900 && $price <= 1100) {
+			$price += 488;
+		} elseif ($price > 1100 && $price <= 2000) {
+			$price += 688;
+		} elseif ($price > 2000) {
+			$price += 1288;
 		}
 		return $price;
 	}
 
-	protected function getOriginalPrice($price)
+	public function getOriginalPrice($price)
 	{
-		$rate = 6.5;
-		if ($price > 800) {
-			$rate = 3.8;
+		if ($price <= 100) {
+			$rate = 0.75;
+		} elseif ($price > 100 && $price <= 300) {
+			$rate = 0.85;
+		} elseif ($price > 300 && $price <= 500) {
+			$rate = 0.8;
+		} elseif ($price > 500 && $price <= 700) {
+			$rate = 0.75;
+		} elseif ($price > 700 && $price <= 900) {
+			$rate = 0.65;
+		} elseif ($price > 900 && $price <= 1100) {
+			$rate = 0.65;
+		} elseif ($price > 1100) {
+			$rate = 0.65;
+		} else {
+			$rate = 0.75;
 		}
-		if ($price > 1350) {
-			$rate = 2.86;
-		}
-		$price = $price * $rate;
-		if ($price < 200) {
-			$price += 150;
-		}
-		return $price;
+		return number_format($price / $rate, 2);
 	}
 
 	protected function getSupplierItemUrl($url)
@@ -471,6 +482,7 @@ class Spu extends Base
 	{
 		//获取收藏商品分类
 		$memId = $this->userId();
+		$collSpuList = [];
 		if (!empty($memId)) {
 			$where = [
 				'mem_id' => $memId,
@@ -497,7 +509,8 @@ class Spu extends Base
 			if (!empty($list)) {
 				$spuList = array_column($list, 'spu_id');
 				//获取语言
-				$lanArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuList], 'lan_id'=>$this->lanId()], 'spu_id,name');
+				$lanArr = array_unique([1, $this->lanId()]);
+				$lanArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuList], 'lan_id'=>['in', $lanArr]], 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
 				$lanArr = array_column($lanArr, 'name', 'spu_id');
 				//获取图片集
 				$attachArr = array_unique(array_column($list, 'attach_id'));
@@ -509,21 +522,35 @@ class Spu extends Base
 					$value['name'] = $lanArr[$value['spu_id']] ?? '';
 					$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']], true);
 					$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
+					$value['original_price'] = $this->getOriginalPrice($value['min_price']);
 					$temp = $currencyService->priceFormat($value['min_price']);
 					$value['min_price'] = $temp[1];
 					$value['min_price_format'] = $temp[2];
 					$temp = $currencyService->priceFormat($value['max_price']);
 					$value['max_price'] = $temp[1];
 					$value['max_price_format'] = $temp[2];
-					// $temp = $currencyService->priceFormat($value['original_price']);
-					// $value['original_price'] = $temp[1];
-					// $value['original_price_format'] = $temp[2];
-					$value['is_liked'] = empty($collSpuList) ? false : in_array($value['spu_id'], $collSpuList);
+					$value['show_price'] = $this->showPrice($value['spu_id']);
+					$temp = $currencyService->priceFormat($value['original_price']);
+					$value['original_price'] = $temp[1];
+					$value['original_price_format'] = $temp[2];
+					$value['is_liked'] = in_array($value['spu_id'], $collSpuList);
 					$list[$key] = $value;
 				}
 			}
 		}
 		return $list ?? [];
+	}
+
+	public function showPrice($spuId)
+	{
+		$sale_rate = 75;
+        $i = substr((string)$spuId, -2);
+        if(strlen($i) == 1){
+            $i = '0' . $i;
+        }
+        $i = strrev($i);
+        $i = (int)$i;
+        return $i<(int)$sale_rate?true:false;
 	}
 
 	public function getListById($id)

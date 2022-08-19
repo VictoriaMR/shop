@@ -400,5 +400,11 @@ body {
 #recommend-page .product-list li .price {
 	color: #E64545;
 	font-size: 16px;
-	font-weight: 700;
+	font-weight: 500;
+}
+#recommend-page .product-list li .original-price {
+    margin-left: 6px;
+    color: #999999;
+    font-size: 14px;
+    text-decoration: line-through;
 }

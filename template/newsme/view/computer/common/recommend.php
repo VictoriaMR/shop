@@ -11,7 +11,7 @@
 					<p class="f16 mt12 mb12 e2"><?php echo $value['name'];?></p>
 					<div class="price-content">
 						<span class="price"><?php echo $value['min_price_format'];?></span>
-						<?php if ($value['min_price'] < $value['max_price']) {?><span class="price">&nbsp;-&nbsp;<?php echo $value['max_price_format'];?></span>
+						<?php if ($value['show_price'] && $value['min_price'] < $value['original_price']) {?><span class="original-price"><?php echo $value['original_price_format'];?></span>
 					<?php }?></div>
 				</a>
 			</li>
