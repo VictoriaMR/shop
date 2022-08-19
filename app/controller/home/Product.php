@@ -21,6 +21,8 @@ class Product extends HomeBase
 			$lanId = lanId();
 			$info = $spu->getInfoCache($spuId, $lanId, siteId());
 			if ($info) {
+				//更新浏览人数
+				$spu->where(['spu_id'=>$spuId])->increment('visit_total');
 				//浏览历史
 				make('app/service/member/History')->addHistory($spuId);
 				$cateList = make('app/service/category/Category')->getParentCategoryById($info['cate_id']);
