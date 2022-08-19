@@ -7,13 +7,29 @@ class Api extends HomeBase
 {
 	public function stat()
 	{
-		$url = ipost('url');
-		$service = make('app/service/Logger');
+		$path = [];
+		$param = ipost();
+		if (!empty($param['class'])) {
+			$path[] = $param['class'];
+			unset($param['class']);
+		}
+		if (!empty($param['path'])) {
+			$path[] = $param['path'];
+			unset($param['path']);
+		}
+		if (!empty($param['func'])) {
+			$path[] = $param['func'];
+			unset($param['func']);
+		}
 		$data = [
-			'path' => explode('.', $url)[0],
-			'type' => $service->getConst('TYPE_BEHAVIOR'),
+			'path' => implode('/', $path),
+			'param' => json_encode($param),
 		];
-		$service->addLog($data);
+		$rst = make('app/service/Logger')->addLog($data);
+		if ($data['path'] == 'home/Product/index') {
+			//更新浏览人数
+			make('app/service/product/Spu')->where(['spu_id'=>$param['id']])->increment('visit_total');
+		}
 		$this->success();
 	}
 

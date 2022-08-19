@@ -25,9 +25,6 @@ class Logger extends Base
 		$data['browser'] = request()->getBrowser();
 		$data['system'] = request()->getSystem();
 		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
-		if (!isset($data['path'])) {
-			$data['path'] = implode('/', \App::get('router'));
-		}
 		$data['ip'] = request()->getIp();
 		return $this->insert($data);
 	}

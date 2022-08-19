@@ -19,4 +19,7 @@
 	<?php if (!empty($file = html()->getJs())){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script>
 <?php }?></head>
 <body>
-<script type="text/javascript">var URI='<?php echo APP_DOMAIN;?>';</script>
+<script type="text/javascript">
+	var URI='<?php echo APP_DOMAIN;?>';
+	var REQUEST_PARAM=<?php echo json_encode(\App::get('router')+iget());?>;
+</script>

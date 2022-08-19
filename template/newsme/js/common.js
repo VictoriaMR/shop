@@ -253,7 +253,7 @@ $(function(){
         url: URI+'api/stat',
         async: true,
         dataType: 'json',
-        data: {url: window.location.pathname},
+        data: REQUEST_PARAM,
         success: function (res) {
         }
     });
