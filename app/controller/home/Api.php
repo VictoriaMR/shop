@@ -28,7 +28,11 @@ class Api extends HomeBase
 		$rst = make('app/service/Logger')->addLog($data);
 		if ($data['path'] == 'home/Product/index') {
 			//更新浏览人数
-			make('app/service/product/Spu')->where(['spu_id'=>$param['id']])->increment('visit_total');
+			$rst = make('app/service/product/Spu')->where(['spu_id'=>$param['id']])->increment('visit_total');
+			//浏览历史
+			if ($rst && userId()) {
+				make('app/service/member/History')->addHistory($param['id']);
+			}
 		}
 		$this->success();
 	}
