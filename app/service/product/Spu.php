@@ -39,6 +39,9 @@ class Spu extends Base
 		$temp = $currencyService->priceFormat($info['original_price']);
 		$info['original_price'] = $temp[1];
 		$info['original_price_format'] = $temp[2];
+		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
+			return $info;
+		}
 		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $info['spu_id']], true);
 		foreach ($info['sku'] as $key => $value) {
 			$value['original_price'] = $this->getOriginalPrice($value['price']);
@@ -62,12 +65,18 @@ class Spu extends Base
 
 	public function getInfo($spuId, $lanId=1, $siteId=0)
 	{
-		$where = ['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')];
+		$where = ['spu_id'=>$spuId];
 		if ($siteId) {
 			$where['site_id'] = $siteId;
 		}
-		$info = $this->loadData($where, 'spu_id,cate_id,gender,attach_id,min_price,max_price,free_ship,is_hot');
+		$info = $this->loadData($where, 'spu_id,status,cate_id,gender,attach_id,min_price,max_price,free_ship,is_hot');
 		if (!$info) return [];
+		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
+			$info['image'] = make('app/service/attachment/Attachment')->getList(['attach_id'=>$info['attach_id']]);
+			$lanArr = array_unique([1, $lanId]);
+			$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>['in', $lanArr]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
+			return $info;
+		}
 		//获取sku列表
 		$sku = make('app/service/product/Sku');
 		$info['sku'] = $sku->getListData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'sku_id,attach_id,stock,price,sale_total');

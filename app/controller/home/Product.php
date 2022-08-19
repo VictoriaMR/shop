@@ -44,24 +44,26 @@ class Product extends HomeBase
 				if (!empty($crumbs)) {
 					$crumbs[] = [
 						'name' => 'Spu:'.$spuId,
-						'url' => $info['url'],
+						'url' => $info['url'] ?? 'javascript:;',
 					];
 				}
-				if ($skuId) {
-					$stock = $info['sku'][$skuId]['stock'];
-					$this->assign('skuInfo', $info['sku'][$skuId]);
-					$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
-				} else {
-					$stock = max(array_column($info['sku'], 'stock'));
+				if ($info['status'] == $spu->getConst('STATUS_OPEN')) {
+					if ($skuId) {
+						$stock = $info['sku'][$skuId]['stock'];
+						$this->assign('skuInfo', $info['sku'][$skuId]);
+						$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
+					} else {
+						$stock = max(array_column($info['sku'], 'stock'));
+					}
+					$this->assign('stock', $stock);
+					$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 				}
-				$this->assign('stock', $stock);
 				$this->assign('skuNo', 'S'.siteId().'-C'.$info['cate_id'].'-'.($skuId ? 'S'.$skuId : 'P'.$spuId));
 				$isLiked = userId() ? make('app/service/member/Collect')->isCollect($spuId) : false;
 				$this->assign('isLiked', $isLiked);
 				$this->assign('info', $info);
-				$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 				$this->assign('_title', $info['name']);
-				$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
+				$this->assign('_seo', $info['name'].implode(' ', $info['attv']??[]));
 				$this->assign('spuId', $spuId);
 				$this->assign('skuId', $skuId);
 			}
