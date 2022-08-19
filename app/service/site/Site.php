@@ -38,8 +38,6 @@ class Site extends Base
 		$where = [];
 		if ($siteId > 0) {
 			$where['site_id'] = $siteId;
-		} else {
-			$where['site_id'] = ['>=', 80];
 		}
 		$list = $this->getListData($where, 'path');
 		$path = ROOT_PATH.'template'.DS;
