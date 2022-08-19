@@ -9,7 +9,7 @@ class Test extends TaskDriver
 
     public $config = [
         'name' => '测试任务',
-        'cron' => ['1 1 1 1 1'],
+        'cron' => ['* * * * *'],
     ];
 
     public function run()
