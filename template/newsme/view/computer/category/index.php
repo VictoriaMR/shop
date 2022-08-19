@@ -3,7 +3,7 @@
 	<div class="layer bg-f">
 		<?php $this->load('common/crumbs', ['crumbs'=>$crumbs]);?>
 	</div>
-	<div class="layer bg-f category-info">
+	<div class="layer bg-f<?php echo empty($cateInfo)?'':'5';?> category-info">
 		<?php if (empty($cateInfo)){?><div class="empty-info">
 			<img src="<?php echo siteUrl('image/common/oooops.png');?>">
 			<p class="mt12 f16">No item matched. Please try with other options.</p>
@@ -38,7 +38,7 @@
 	<?php if (!empty($filter) || !empty($list)){?>
 	<div class="layer0 bg-f product-container">
 		<?php $this->load('common/left_filter', array_merge(['list'=>$filter], $param));?>
-		<?php $this->load('common/right_list', $list);?>
+		<?php $this->load('common/right_list', ['list'=>$list, 'total'=>$total, 'param'=>$param]);?>
 		<div class="clear"></div>
 	</div>
 	<?php }?>

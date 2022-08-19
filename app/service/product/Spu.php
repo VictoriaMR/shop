@@ -116,25 +116,54 @@ class Spu extends Base
 		return $this->getConst('CACHE_INFO_KEY').$spuId.':'.$lanId;
 	}
 
-	public function getAdminList(array $where=[], $page=1, $size=20)
+	public function getList(array $where=[], $fields='*', $page=0, $size=20, $order=[], $lanId=0, $priceFormat=false, $isLiked=false)
 	{
-		$list = $this->getListData($where, '*', $page, $size, ['spu_id'=>'desc']);
-		if (!empty($list)) {
-			//图片
-			$attachArr = array_unique(array_column($list, 'attach_id'));
-			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-			$attachArr = array_column($attachArr, 'url', 'attach_id');
-			//名称
-			$spuIdArr = array_column($list, 'spu_id');
-			$nameArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuIdArr], 'lan_id'=>0]);
-			$nameArr = array_column($nameArr, 'name', 'spu_id');
-			foreach ($list as $key => $value) {
-				$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
-				$value['name'] = $nameArr[$value['spu_id']] ?? '';
-				$value['status_text'] = $this->getStatusList($value['status']);
-				$value['url'] = url('product/detail', ['id'=>$value['spu_id']]);
-				$list[$key] = $value;
+		$list = $this->getListData($where, $fields, $page, $size, $order);
+		if (!$list) {
+			return [];
+		}
+		$spuList = array_column($list, 'spu_id');
+		//获取语言
+		$where = ['spu_id'=>['in', $spuList]];
+		if ($lanId == 1 || !$lanId) {
+			$where['lan_id'] = $lanId;
+		} else {
+			$where['lan_id'] = ['in', [1, $lanId]];
+		}
+		$lanArr = make('app/service/product/Language')->getListData($where, 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
+
+		$lanArr = array_column($lanArr, 'name', 'spu_id');
+		//获取图片集
+		$attachArr = array_unique(array_column($list, 'attach_id'));
+		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+		$attachArr = array_column($attachArr, 'url', 'attach_id');
+		$currency = make('app/service/currency/Currency');
+		$likeArr = [];
+		if ($isLiked && $this->userId()) {
+			$likeArr = make('app/service/member/Collect')->getListData(['mem_id'=>$this->userId(), 'spu_id'=>['in', $spuList]], 'spu_id');
+			$likeArr = array_column($likeArr, 'spu_id');
+		}
+		//格式化数组
+		foreach($list as $key => $value) {
+			$value['name'] = $lanArr[$value['spu_id']] ?? '';
+			$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
+			if ($priceFormat) {
+				$value['original_price'] = $this->getOriginalPrice($value['min_price']);
+				$temp = $currency->priceFormat($value['min_price']);
+				$value['min_price'] = $temp[1];
+				$value['min_price_format'] = $temp[2];
+				$temp = $currency->priceFormat($value['max_price']);
+				$value['max_price'] = $temp[1];
+				$value['max_price_format'] = $temp[2];
+				$temp = $currency->priceFormat($value['original_price']);
+				$value['original_price'] = $temp[1];
+				$value['original_price_format'] = $temp[2];
+				$value['show_price'] = $this->showPrice($value['spu_id']);
 			}
+			if ($isLiked) {
+				$value['is_liked'] = in_array($value['spu_id'], $likeArr);
+			}
+			$list[$key] = $value;
 		}
 		return $list;
 	}
@@ -505,7 +534,7 @@ class Spu extends Base
 		}
 	}
 
-	public function getRecommend($page=1, $size=20, &$total=0)
+	public function getRecommend($page=1, $size=20)
 	{
 		//获取收藏商品分类
 		$memId = $this->userId();
@@ -530,42 +559,11 @@ class Spu extends Base
 			}
 		}
 		$orderBy['rank'] = 'desc';
-		$total = $this->getCountData($where);
-		if ($total > 0) {
-			$list = $this->getListData($where, 'spu_id,attach_id,min_price,max_price', $page, $size, $orderBy);
-			if (!empty($list)) {
-				$spuList = array_column($list, 'spu_id');
-				//获取语言
-				$lanArr = array_unique([1, $this->lanId()]);
-				$lanArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuList], 'lan_id'=>['in', $lanArr]], 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
-				$lanArr = array_column($lanArr, 'name', 'spu_id');
-				//获取图片集
-				$attachArr = array_unique(array_column($list, 'attach_id'));
-				$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-				$attachArr = array_column($attachArr, 'url', 'attach_id');
-				$currencyService = make('app/service/currency/Currency');
-				//格式化数组
-				foreach($list as $key => $value) {
-					$value['name'] = $lanArr[$value['spu_id']] ?? '';
-					$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']], true);
-					$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
-					$value['original_price'] = $this->getOriginalPrice($value['min_price']);
-					$temp = $currencyService->priceFormat($value['min_price']);
-					$value['min_price'] = $temp[1];
-					$value['min_price_format'] = $temp[2];
-					$temp = $currencyService->priceFormat($value['max_price']);
-					$value['max_price'] = $temp[1];
-					$value['max_price_format'] = $temp[2];
-					$value['show_price'] = $this->showPrice($value['spu_id']);
-					$temp = $currencyService->priceFormat($value['original_price']);
-					$value['original_price'] = $temp[1];
-					$value['original_price_format'] = $temp[2];
-					$value['is_liked'] = in_array($value['spu_id'], $collSpuList);
-					$list[$key] = $value;
-				}
-			}
+		$list = $this->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, [], lanId(), true);
+		foreach ($list as $key=>$value) {
+			$list[$key]['url'] = url($value['name'].'-p', ['id'=>$value['spu_id']]);
 		}
-		return $list ?? [];
+		return $list;
 	}
 
 	public function showPrice($spuId)
@@ -578,36 +576,5 @@ class Spu extends Base
         $i = strrev($i);
         $i = (int)$i;
         return $i<(int)$sale_rate?true:false;
-	}
-
-	public function getListById($id)
-	{
-		$list = $this->getListData(['spu_id'=>['in'=>$id]], 'spu_id,attach_id,min_price,max_price,original_price');
-		$spuList = array_column($list, 'spu_id');
-		//获取语言
-		$lanArr = make('app/service/product/Language')->getListData(['spu_id'=>['in', $spuList], 'lan_id'=>['in', ['en', lanId()]]], 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
-		$lanArr = array_column($lanArr, 'name', 'spu_id');
-		//获取图片集
-		$attachArr = array_unique(array_column($list, 'attach_id'));
-		$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-		$attachArr = array_column($attachArr, 'url', 'attach_id');
-		$currency = make('app/service/currency/Currency');
-		//格式化数组
-		foreach($list as $key => $value) {
-			$value['name'] = $lanArr[$value['spu_id']] ?? '';
-			$value['url'] = router()->buildUrl($value['name'].'-p', ['id'=>$value['spu_id']], true);
-			$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
-			$temp = $currency->priceFormat($value['min_price']);
-			$value['min_price'] = $temp[1];
-			$value['min_price_format'] = $temp[2];
-			$temp = $currency->priceFormat($value['max_price']);
-			$value['max_price'] = $temp[1];
-			$value['max_price_format'] = $temp[2];
-			$temp = $currency->priceFormat($value['original_price']);
-			$value['original_price'] = $temp[1];
-			$value['original_price_format'] = $temp[2];
-			$list[$key] = $value;
-		}
-		return $list;
 	}
 }

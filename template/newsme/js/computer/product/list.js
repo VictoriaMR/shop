@@ -17,4 +17,15 @@ $(function(){
 			$(this).parent().parent().scrollTop((index-3)*48);
 		}
 	});
+	//排序框点击
+	$('#right-list .sortby').on('click', function(){
+		var obj = $(this).find('.show-sort .iconfont');
+		if (obj.hasClass('icon-xiangxia2')) {
+			obj.removeClass('icon-xiangxia2').addClass('icon-xiangshang2');
+			$(this).find('.sort-list').slideDown(200);
+		} else {
+			obj.removeClass('icon-xiangshang2').addClass('icon-xiangxia2');
+			$(this).find('.sort-list').slideUp(200);
+		}
+	});
 });
