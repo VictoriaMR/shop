@@ -13,4 +13,15 @@ $(function(){
             obj.fadeOut(100);
         });
     });
+    //滚动导航栏
+    var meauHeaderHeight = $('.meau-header').outerHeight();
+    $(document).scroll(function() {
+        if($(document).scrollTop() >= meauHeaderHeight){
+            if (!$('.meau-header').addClass('fixed')) {
+                $('.meau-header').addClass('fixed');
+            }
+        }else{
+            $('.meau-header').removeClass('fixed');
+        }
+    });
 });
