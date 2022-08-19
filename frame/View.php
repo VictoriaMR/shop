@@ -18,14 +18,16 @@ class View
 			$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS.(IS_MOBILE?'mobile':'computer').DS.strtolower(currencyId()).DS.lanId('code').DS;
 			if (!is_dir($path)) mkdir($path, 0755, true);
 			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
-			if (empty($request_uri)) {
-				$path .= 'index.html';
-			} else {
-				$path .= $request_uri;
+			if (empty(explode('.html', $request_uri)[1])) {
+				if (empty($request_uri)) {
+					$path .= 'index.html';
+				} else {
+					$path .= $request_uri;
+				}
+				file_put_contents($path, $content);
+				echo $content;
+				return true;
 			}
-			file_put_contents($path, $content);
-			echo $content;
-			return true;
 		}
 		return $this->loadFile($template, $data);
 	}

@@ -17,7 +17,7 @@ class Category extends HomeBase
 		$rid = iget('rid', 0);
 		$sort = iget('sort', 0);
 		$page = iget('page', 1);
-		$size = iget('size', 48);
+		$size = iget('size', 36);
 		$search = false;
 		
 		$category = make('app/service/category/Category');
