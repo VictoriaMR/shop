@@ -51,7 +51,7 @@ class Html
 			return [];
 		}
 		$_route = \App::get('router');
-		return $this->addStaticFile($this->_CSS, lcfirst($_route['path']).'_'.$_route['func'], 'css');
+		return $this->addStaticFile($this->_CSS, strtolower($_route['path'].'_'.$_route['func']), 'css');
 	}
 
 	public function getJs()
@@ -60,7 +60,7 @@ class Html
 			return [];
 		}
 		$_route = \App::get('router');
-		return $this->addStaticFile($this->_JS, lcfirst($_route['path']).'_'.$_route['func'], 'js');
+		return $this->addStaticFile($this->_JS, strtolower($_route['path'].'_'.$_route['func']), 'js');
 	}
 
 	public function getCommonCss()
