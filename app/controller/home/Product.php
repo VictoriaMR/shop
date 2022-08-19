@@ -9,55 +9,66 @@ class Product extends HomeBase
 	{
 		html()->addCss();
 		html()->addJs();
-		html()->addJs('slider');
 
 		$spuId = iget('id', 0);
 		$skuId = iget('sid', 0);
-		$spu = make('app/service/product/Spu');
-		if (!$spuId) {
-			$spuId = make('app/service/product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
-		}
-		if (!$spuId) {
-			redirect('pageNotFound');
-		}
-		$info = $spu->getInfoCache($spuId, lanId());
-		if (empty($info)) {
-			redirect('pageNotFound');
-		}
-		//浏览历史
-		make('app/service/member/History')->addHistory($spuId);
-
 		$crumbs = [];
-		$cateList = make('app/service/category/Category')->getParentCategoryById($info['cate_id']);
-		$cateList = array_reverse($cateList);
-		foreach ($cateList as $value) {
-			if ($value['status']) {
-				$crumbs[] = [
-					'name' => $value['name'],
-					'url' => router()->buildUrl($value['name'].'-c', ['cate_id'=>$value['cate_id']]),
-				];
+		if ($spuId || $skuId) {
+			$spu = make('app/service/product/Spu');
+			if (!$spuId) {
+				$spuId = make('app/service/product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
+			}
+			$lanId = lanId();
+			$info = $spu->getInfoCache($spuId, $lanId, siteId());
+			if ($info) {
+				//浏览历史
+				make('app/service/member/History')->addHistory($spuId);
+				$cateList = make('app/service/category/Category')->getParentCategoryById($info['cate_id']);
+				$cateList = array_reverse($cateList);
+				if ($lanId == 1) {
+					$lanArr = array_column($cateList, 'name_en', 'cate_id');
+				} else {
+					//分类语言
+					$where = ['cate_id'=>['in', array_column($cateList, 'cate_id')]];
+					$where['lan_id'] = $lanId;
+					$lanArr = make('app/service/category/Language')->getListData($where, 'cate_id,name');
+					$lanArr = array_column($lanArr, 'name', 'cate_id');
+				}
+				foreach ($cateList as $value) {
+					if ($value['status'] && $value['is_show']) {
+						$name = $lanArr[$value['cate_id']] ?? $value['en'];
+						$crumbs[] = [
+							'name' => $name,
+							'url' => router()->buildUrl($name.'-c', ['cate_id'=>$value['cate_id']]),
+						];
+					}
+				}
+				if (!empty($crumbs)) {
+					$crumbs[] = [
+						'name' => 'Spu:'.$spuId,
+						'url' => $info['url'],
+					];
+				}
+				if ($skuId) {
+					$stock = $info['sku'][$skuId]['stock'];
+					$this->assign('skuInfo', $info['sku'][$skuId]);
+					$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
+				} else {
+					$stock = max(array_column($info['sku'], 'stock'));
+				}
+				$this->assign('stock', $stock);
+				$this->assign('skuNo', 'S'.siteId().'-C'.$info['cate_id'].'-'.($skuId ? 'S'.$skuId : 'P'.$spuId));
+				$isLiked = userId() ? make('app/service/member/Collect')->isCollect($spuId) : false;
+				$this->assign('isLiked', $isLiked);
+				$this->assign('info', $info);
+				$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
+				$this->assign('_title', $info['name']);
+				$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
+				$this->assign('spuId', $spuId);
+				$this->assign('skuId', $skuId);
 			}
 		}
-		if (!empty($crumbs)) {
-			$crumbs[] = [
-				'name' => 'Spu:'.$spuId,
-				'url' => $info['url'],
-			];
-		}
-
-		$this->assign('spuId', $spuId);
-		$this->assign('skuId', $skuId);
-		$this->assign('isLiked', make('app/service/member/Collect')->isCollect($spuId));
-		$this->assign('info', $info);
-		$this->assign('skuInfo', $skuId ? $info['sku'][$skuId] : []);
-		$this->assign('skuNo', siteId().$info['cate_id'].($skuId ? 'S'.$skuId : $spuId));
-		$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
-		$this->assign('stock', $skuId ? $info['sku'][$skuId]['stock'] : max(array_column($info['sku'], 'stock')));
-		$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 		$this->assign('crumbs', $crumbs);
-		$this->assign('_title', $info['name']);
-		$this->assign('_seo', $info['name'].implode(' ', $info['attv']));
-
 		$this->view(true);
 	}
 

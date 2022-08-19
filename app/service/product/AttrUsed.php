@@ -10,14 +10,14 @@ class AttrUsed extends Base
 		$this->baseModel = make('app/model/product/AttrUsed');
 	}
 
-	public function getListById($skuId, $lanId=1, $simple=false)
+	public function getListBySkuIds($skuId, $lanId=1, $simple=false)
 	{
-		if (!is_array($skuId)) $skuId = [$skuId];
 		$list = $this->getListData(['sku_id'=>['in', $skuId]], 'sku_id,attrn_id,attrv_id,attach_id');
 		$data = [];
 		//$attr属性
 		$tempArr = array_unique(array_column($list, 'attrn_id'));
-		$tempArr = make('app/service/attr/Name')->getListById($tempArr, $lanId);
+		$lanArr = array_unique([1, $lanId]);
+		$tempArr = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrn_id,name');
 		$data['attr'] = $data['attrMap'] = [];
 		foreach ($tempArr as $value) {
 			$data['attr'][$value['attrn_id']] = $value['name'];
@@ -26,7 +26,7 @@ class AttrUsed extends Base
 		$data['attrArr'] = array_keys($data['attr']);
 		//$attv属性
 		$tempArr = array_unique(array_column($list, 'attrv_id'));
-		$tempArr = make('app/service/attr/Value')->getListById($tempArr, $lanId);
+		$tempArr = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
 		$data['attv'] = $attvArr = [];
 		foreach ($tempArr as $key => $value) {
 			$data['attv'][$value['attrv_id']] = $value['name'];

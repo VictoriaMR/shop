@@ -1,8 +1,10 @@
 <?php if (!empty($crumbs)){?>
 <ul class="crumbs">
-    <?php foreach($crumbs as $value){?>
     <li>
-        <a href="<?php echo empty($value['url'])?'javascript:;':$value['url'];?>"><?php echo $value['name'];?></a>
+        <a href="<?php echo url();?>" title="Home">Home</a>
+    </li>
+    <?php foreach($crumbs as $value){?><li>
+        <a href="<?php echo $value['url'];?>" title="<?php echo $value['name'];?>"><?php echo $value['name'];?></a>
     </li>
     <?php }?>
 </ul>

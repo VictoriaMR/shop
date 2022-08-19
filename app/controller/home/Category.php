@@ -19,10 +19,7 @@ class Category extends HomeBase
 		
 		$category = make('app/service/category/Category');
 		$cateInfo = $category->getSiteInfoCache($cateId);
-		$crumbs[] = [
-			'name' => 'Home',
-			'url' => url(),
-		];
+		$crumbs = [];
 		if ($cateInfo) {
 			$crumbs[] = [
 				'name' => $cateInfo['name_en'],

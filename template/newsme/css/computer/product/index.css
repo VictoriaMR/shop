@@ -1,25 +1,29 @@
-#spu-page .info-content .img-content {
+.spu-page .empty-info {
+    padding: 168px 0;
+    text-align: center;
+}
+.spu-page .info-content .img-content {
     padding-right: 10px;
 }
-#spu-page .info-content .img-content .img {
+.spu-page .info-content .img-content .img {
     border-radius: 8px;
     overflow: hidden;
 }
-#spu-page .info-content .attr-content {
+.spu-page .info-content .attr-content {
     padding-left: 10px;
 }
 @media screen and (max-width: 1160px){
-    #spu-page .info-content .attr-content .f24 {
+    .spu-page .info-content .attr-content .f24 {
         font-size: 22px;
     }
 }
 @media screen and (max-width: 920px){
-    #spu-page .info-content .attr-content .f24 {
+    .spu-page .info-content .attr-content .f24 {
         font-size: 20px;
     }
 }
 @media screen and (max-width: 680px){
-    #spu-page .info-content .attr-content .f24 {
+    .spu-page .info-content .attr-content .f24 {
         font-size: 18px;
     }
 }

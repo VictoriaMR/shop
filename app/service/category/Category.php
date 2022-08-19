@@ -115,7 +115,7 @@ class Category extends Base
 	public function getParentCategoryById($id, $self=true)
 	{
 		$returnData = [];
-		$list = $this->getListData();
+		$list = $this->getSiteList();
 		$list = array_column($list, null, 'cate_id');
 		if (!isset($list[$id])) {
 			return $returnData;

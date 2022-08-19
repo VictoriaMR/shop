@@ -12,12 +12,11 @@ class Collect extends Base
 
 	public function collectProduct($spuId)
 	{
-		$memId = userId();
-		if (empty($memId)) {
+		if (!$this->userId()) {
 			return false;
 		}
 		$where = [
-			'mem_id' => $memId,
+			'mem_id' => $this->userId(),
 			'spu_id' => $spuId,
 		];
 		if ($this->getCountData($where)) {
@@ -32,12 +31,11 @@ class Collect extends Base
 
 	public function isCollect($spuId)
 	{
-		$memId = userId();
-		if (empty($memId)) {
+		if (!$this->userId()) {
 			return false;
 		}
 		$where = [
-			'mem_id' => $memId,
+			'mem_id' => $this->userId(),
 			'spu_id' => $spuId,
 		];
 		return $this->getCountData($where) > 0;

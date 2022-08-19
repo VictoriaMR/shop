@@ -10,68 +10,44 @@ class Spu extends Base
 		$this->baseModel = make('app/model/product/Spu');
 	}
 
-	public function getInfoCache($spuId, $lanId=1)
+	public function getInfoCache($spuId, $lanId=1, $siteId=0)
 	{
 		$cacheKey = $this->getCacheKey($spuId, $lanId);
 		$info = redis()->get($cacheKey);
-		if (empty($info)) {
-			$info = $this->getInfo($spuId, $lanId);
+		if ($info === false) {
+			$info = $this->getInfo($spuId, $lanId, $siteId);
 			redis()->set($cacheKey, $info, $this->getConst('CACHE_EXPIRE_TIME'));
+		}
+		if ($info) {
+			$info = $this->infoFormat($info);
 		}
 		return $info;
 	}
 
-	public function getInfo($spuId, $lanId=1)
+	protected function infoFormat($info)
 	{
-		$info = $this->loadData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')]);
-		if (empty($info)) {
-			return false;
-		}
-		//获取sku列表
-		$sku = make('app/service/product/Sku');
-		$info['sku'] = $sku->getListData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'sku_id,attach_id,stock,price,original_price,sale_total');
-		if (empty($info['sku'])) {
-			return false;
-		}
-		$info['sku'] = array_column($info['sku'], null, 'sku_id');
-		//获取图片集
-		$imageArr = $info['image'] = make('app/service/product/SpuImage')->getListById($spuId);
-		$imageArr = array_column($imageArr, null, 'attach_id');
 		//价格格式化
 		$currencyService = make('app/service/currency/Currency');
-		$info['min_price_format'] = $currencyService->priceFormat($info['min_price'], 2);
-		$info['max_price_format'] = $currencyService->priceFormat($info['max_price'], 2);
-		$info['original_price'] = max(array_column($info['sku'], 'original_price'));
-		$info['original_price_format'] = $currencyService->priceFormat($info['original_price'], 2);
-		//获取语言
-		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>$lanId], 'name', ['lan_id'=>'desc'])['name'] ?? '';
-		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $spuId], true);
-		//spu介绍图片
-		$info['introduce'] = make('app/service/product/IntroUsed')->getListById($spuId);
-		//spu描述
-		$info['description'] = make('app/service/product/DescUsed')->getListById($spuId, $lanId);
-
-		$info += make('app/service/product/AttrUsed')->getListById(array_keys($info['sku']), $lanId);
-		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
-
-		if (!empty($tempArr = array_diff($skuImageList, array_keys($imageArr)))) {
-			$list = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($tempArr)]]);
-			$imageArr += array_column($list, null, 'attach_id');
-		}
-
-		foreach ($info['attvImage'] as $key => $value) {
-			if (empty($value)) continue;
-			$info['attvImage'][$key] = $imageArr[$value] ?? [];
-		}
-
+		$info['original_price'] = $this->getOriginalPrice($info['min_price']);
+		$info['show_price'] = $this->showPrice($info['spu_id']);
+		$temp = $currencyService->priceFormat($info['min_price']);
+		$info['min_price'] = $temp[1];
+		$info['min_price_format'] = $temp[2];
+		$temp = $currencyService->priceFormat($info['max_price']);
+		$info['max_price'] = $temp[1];
+		$info['max_price_format'] = $temp[2];
+		$temp = $currencyService->priceFormat($info['original_price']);
+		$info['original_price'] = $temp[1];
+		$info['original_price_format'] = $temp[2];
+		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $info['spu_id']], true);
 		foreach ($info['sku'] as $key => $value) {
+			$value['original_price'] = $this->getOriginalPrice($value['price']);
 			$temp = $currencyService->priceFormat($value['price']);
 			$value['price'] = $temp[1];
 			$value['price_format'] = $temp[2];
 			$temp = $currencyService->priceFormat($value['original_price']);
 			$value['original_price'] = $temp[1];
 			$value['original_price_format'] = $temp[2];
-			$value['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
 			$name = [];
 			foreach ($info['skuAttv'][$key] as $v) {
 				$name[] = $info['attv'][$v];
@@ -80,6 +56,48 @@ class Spu extends Base
 			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
 			$value['url'] = router()->buildUrl($value['name'].'-s', ['id'=>$key], true);
 			$info['sku'][$key] = $value;
+		}
+		return $info;
+	}
+
+	public function getInfo($spuId, $lanId=1, $siteId=0)
+	{
+		$where = ['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')];
+		if ($siteId) {
+			$where['site_id'] = $siteId;
+		}
+		$info = $this->loadData($where, 'spu_id,cate_id,gender,attach_id,min_price,max_price,free_ship,is_hot');
+		if (!$info) return [];
+		//获取sku列表
+		$sku = make('app/service/product/Sku');
+		$info['sku'] = $sku->getListData(['spu_id'=>$spuId, 'status'=>$this->getConst('STATUS_OPEN')], 'sku_id,attach_id,stock,price,sale_total');
+		if (!$info['sku']) {
+			return $info;
+		}
+		$info['sku'] = array_column($info['sku'], null, 'sku_id');
+		//获取图片集
+		$info['image'] = make('app/service/product/SpuImage')->getListById($spuId);
+		$imageArr = array_column($info['image'], null, 'attach_id');
+		//获取语言,默认拿英文
+		$lanArr = array_unique([1, $lanId]);
+		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>['in', $lanArr]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
+		//spu介绍图片
+		$info['introduce'] = make('app/service/product/IntroUsed')->getListById($spuId);
+		//spu描述
+		$info['description'] = make('app/service/product/DescUsed')->getListById($spuId, $lanId);
+		$info += make('app/service/product/AttrUsed')->getListBySkuIds(array_keys($info['sku']), $lanId);
+		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
+
+		if (!empty($tempArr = array_diff($skuImageList, array_keys($imageArr)))) {
+			$list = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($tempArr)]]);
+			$imageArr += array_column($list, null, 'attach_id');
+		}
+		foreach ($info['attvImage'] as $key => $value) {
+			if (empty($value)) continue;
+			$info['attvImage'][$key] = $imageArr[$value] ?? [];
+		}
+		foreach ($info['sku'] as $key => $value) {
+			$value['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
 		}
 		return $info;
 	}

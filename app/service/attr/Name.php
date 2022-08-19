@@ -69,8 +69,16 @@ class Name extends Base
 
 	public function getListById($attrId, $lanId=1)
 	{
-		$list = $this->getListData(['attrn_id'=>['in', $attrId]], 'attrn_id,name');
-		$lanArr = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', $attrId], 'lan_id'=>$lanId], 'attrn_id,name');
+		$where = ['attrn_id'=>['in', $attrId]];
+		$list = $this->getListData($where, 'attrn_id,name');
+		$sort = [];
+		if ($lanId == 1) {
+			$where['lan_id'] = $lanId;
+		} else {
+			$sort = ['lan_id'=>'asc'];
+			$where['lan_id'] = ['in', [1, $lanId]];
+		}
+		$lanArr = make('app/service/attr/NameLanguage')->getListData($where, 'attrn_id,name', 0, 0, $sort);
 		$lanArr = array_column($lanArr, 'name', 'attrn_id');
 		foreach ($list as $key => $value) {
 			if (isset($lanArr[$value['attrn_id']])) {

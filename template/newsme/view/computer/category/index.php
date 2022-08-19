@@ -1,10 +1,10 @@
 <?php $this->load('common/base_header');?>
 <div class="category-page mt12 mb20">
-	<div class="layer bg-f top">
+	<div class="layer bg-f">
 		<?php $this->load('common/crumbs', ['crumbs'=>$crumbs]);?>
 	</div>
-	<div class="layer bg-f5 category-info">
-	<?php if (empty($cateInfo)){?><div class="empty-info">
+	<div class="layer bg-f category-info">
+		<?php if (empty($cateInfo)){?><div class="empty-info">
 			<img src="<?php echo siteUrl('image/common/oooops.png');?>">
 			<p class="mt12 f16">No item matched. Please try with other options.</p>
 		</div>

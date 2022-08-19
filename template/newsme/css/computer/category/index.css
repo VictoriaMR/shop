@@ -1,8 +1,3 @@
-.category-page .layer.top {
-	border-top-left-radius: 18px;
-    border-top-right-radius: 18px;
-    overflow: hidden;
-}
 .category-page .empty-info {
 	padding: 168px 0;
     text-align: center;
