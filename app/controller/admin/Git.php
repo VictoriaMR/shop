@@ -22,7 +22,7 @@ class Git extends AdminBase
         $list = $this->git_library;
         $git = make('app/service/admin/Git');
         foreach ($list as $key => $value) {
-            $info = $git->where(['library'=>$value])->field('max(release_time) release_time, max(commit_time) commit_time, info, commit, status')->groupBy('library')->orderBy('git_id', 'desc')->find();
+            $info = $git->where(['library'=>$value])->field('release_time,commit_time,info,commit,status')->orderBy('git_id', 'desc')->find();
             $info['name'] = $value;
             $info['status_text'] = $this->getStatus($info['status'] ?? '--');
             $list[$key] = $info;
