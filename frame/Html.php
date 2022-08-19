@@ -79,6 +79,9 @@ class Html
 	{
 		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
 		$file = 'static'.DS.(IS_MOBILE?'m_':'c_').$name.'.'.$type;
+		if (\App::get('base_info', 'cache') && is_file($file)) {
+			return $file;
+		}
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
