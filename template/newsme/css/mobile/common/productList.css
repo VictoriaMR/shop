@@ -41,10 +41,15 @@
 	-webkit-box-orient: vertical;
 	margin-top: 0.08rem;
 	font-size: 0.13rem;
+	line-height: 0.18rem;
 	min-height: 0.36rem;
+}
+.product-list .price {
+	color: #E64545;
 }
 .product-list .original_price {
 	margin-left: 0.04rem;
+	font-size: 0.1rem;
 	color: #666666;
 	text-decoration: line-through;
 }

@@ -221,13 +221,15 @@ body {
 #scroll-top .iconfont {
 	font-size: 40px;
 }
+.meau-header-content {
+	min-height: 89px;
+}
 .meau-header {
 	background-color: #fff;
 	padding: 12px 0;
 	border-bottom: 1px solid #D1D1D6;
-	min-height: 89px;
 }
-.meau-header .layer.fixed{
+.meau-header.fixed{
 	position: fixed;
 	z-index: 99;
     width: 100%;
@@ -239,7 +241,7 @@ body {
 .meau-header .logo {
 	max-height: 56px;
 }
-.meau-header .layer.fixed .logo {
+.meau-header.fixed .logo {
 	max-height: 40px;
 }
 .meau-header .search-cell {
@@ -262,7 +264,7 @@ body {
 .meau-header .search-cell .hot-search {
 	padding-left: 38px;
 }
-.meau-header .layer.fixed .search-cell .hot-search {
+.meau-header.fixed .search-cell .hot-search {
 	display: none;
 }
 .meau-header .search-cell .hot-search a {
