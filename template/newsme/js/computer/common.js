@@ -17,11 +17,11 @@ $(function(){
     var meauHeaderHeight = $('.meau-header').outerHeight();
     $(document).scroll(function() {
         if($(document).scrollTop() >= meauHeaderHeight){
-            if (!$('.meau-header').addClass('fixed')) {
-                $('.meau-header').addClass('fixed');
+            if (!$('.meau-header .layer').addClass('fixed')) {
+                $('.meau-header .layer').addClass('fixed');
             }
         }else{
-            $('.meau-header').removeClass('fixed');
+            $('.meau-header .layer').removeClass('fixed');
         }
     });
 });

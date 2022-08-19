@@ -1,6 +1,6 @@
 <?php $this->load('common/simple_header');?>
 <div class="meau-header">
-	<div class="layer">
+	<div class="layer bg-f">
 		<table width="100%">
 			<tbody>
 				<tr>

@@ -216,20 +216,21 @@ body {
 	background-color: #fff;
 	padding: 12px 0;
 	border-bottom: 1px solid #D1D1D6;
-	z-index: 99;
+	min-height: 89px;
 }
-.meau-header.fixed{
+.meau-header .layer.fixed{
 	position: fixed;
+	z-index: 99;
     width: 100%;
     top: 0;
     left: 0;
-    padding: 6px 0;
+    padding: 6px 10px;
     box-shadow: 0 3px 14px #999;
 }
 .meau-header .logo {
 	max-height: 56px;
 }
-.meau-header.fixed .logo {
+.meau-header .layer.fixed .logo {
 	max-height: 40px;
 }
 .meau-header .search-cell {
@@ -252,7 +253,7 @@ body {
 .meau-header .search-cell .hot-search {
 	padding-left: 38px;
 }
-.meau-header.fixed .search-cell .hot-search {
+.meau-header .layer.fixed .search-cell .hot-search {
 	display: none;
 }
 .meau-header .search-cell .hot-search a {
