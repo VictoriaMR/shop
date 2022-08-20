@@ -16,9 +16,9 @@ class Category extends HomeBase
 		$rid = (int)iget('rid', 0);
 		$vid = (int)iget('vid', '');
 		$sort = (int)iget('sort', 0);
+		$keyword = trim(iget('keyword', ''));
 		$page = (int)iget('page', 1);
 		$size = (int)iget('size', 36);
-		$search = false;
 		
 		$category = make('app/service/category/Category');
 		$cateInfo = $category->getSiteInfoCache($cateId);
@@ -41,7 +41,6 @@ class Category extends HomeBase
 			$attrUsed = make('app/service/product/AttrUsed');
 			$filter = $attrUsed->getSiteAttr();
 			if ($vid) {
-				$search = true;
 				$spuIdArr = $attrUsed->getSpuId([$vid]);
 				if ($spuIdArr) {
 					$where['spu_id'] = ['in', $spuIdArr];
@@ -86,6 +85,6 @@ class Category extends HomeBase
 		$this->assign('param', $param);
 		$this->assign('cateInfo', $cateInfo);
 		$this->assign('crumbs', $crumbs);
-		$this->view(!$search);
+		$this->view(!$keyword);
 	}
 }
