@@ -14,8 +14,7 @@
     z-index: 99;
     width: 326px;
     top: 60px;
-    left: 6px;
-    max-height: calc(100% - 69px);
+    max-height: calc(100% - 68px);
     overflow-y: auto;
 }
 #left-filter .item {

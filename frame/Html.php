@@ -79,7 +79,7 @@ class Html
 	{
 		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
 		$file = 'static'.DS.(IS_MOBILE?'m_':'c_').$name.'.'.$type;
-		if (\App::get('base_info', 'cache') && is_file($file) && config('env', 'APP_STATIC_CACHE')) {
+		if (\App::get('base_info', 'static_cache') && is_file($file)) {
 			return $file;
 		}
 		$str = '';

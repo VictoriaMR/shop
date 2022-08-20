@@ -27,7 +27,6 @@ class App
 		define('IS_ADMIN', $baseInfo['site_id'] == 10);
 		$router = self::make('frame/Router')->analyze();
 		$router['class'] = $baseInfo['type'];
-		$router['view_suffix'] = $baseInfo['view_suffix'];
 		define('APP_TEMPLATE_TYPE', $baseInfo['type']);
 		define('APP_TEMPLATE_PATH', $baseInfo['path']);
 		define('APP_DOMAIN', 'https://'.$baseInfo['domain'].'/');
@@ -79,7 +78,7 @@ class App
 		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 		if (config('env', 'APP_DEBUG')) {
 			make('frame/Debug')->runlog();
-			if (!IS_CLI && !IS_AJAX && !self::get('base_info', 'cache')) make('frame/Debug')->init();
+			if (self::get('base_info', 'debug') && !IS_CLI && !IS_AJAX) make('frame/Debug')->init();
 		}
 	}
 

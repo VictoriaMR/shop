@@ -16,7 +16,9 @@ $(function(){
     //滚动导航栏
     var meauHeaderTop = $('.meau-header').offset().top;
     var leftFilterTop = $('#left-filter').offset().top;
+    var leftFilterLeft = $('#left-filter').offset().left;
     var rightListHeight = $('#right-list').height();
+    $('#left-filter .content').css({'left': leftFilterLeft+6});
     $(document).scroll(function() {
         var scroll = $(document).scrollTop();
         if (meauHeaderTop) {

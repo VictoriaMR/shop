@@ -13,7 +13,7 @@ class View
 
 	protected function fetch($template, array $data=[], $cache=false)
 	{	
-		if ($cache && \App::get('base_info', 'cache')) {
+		if ($cache && \App::get('base_info', 'view_cache')) {
 			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
 			if (empty(explode('.html', $request_uri)[1])) {
 				$content = $this->getContent($template, $data);

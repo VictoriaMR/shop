@@ -30,7 +30,7 @@ class Site extends Base
 
 	public function getInfo($key, $type='site_id')
 	{
-		return $this->loadData([$type=>$key, 'status'=>1], 'site_id,type,path,name,domain,cate_id,view_suffix,email,cache');
+		return $this->loadData([$type=>$key, 'status'=>1], 'site_id,type,path,name,domain,cate_id,email,view_cache,static_cache,debug');
 	}
 
 	public function deleteTemplateCache($siteId=0, $template=true, $static=true, $currency='')

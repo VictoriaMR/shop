@@ -4,7 +4,7 @@ namespace frame;
 
 final class Router
 {
-	private $include_param = ['rid', 'vid', 'sort', 'page'];
+	private $include_param = ['rid', 'vid', 'sort', 'page', 'size'];
 	private $include_path = ['c', 'p', 's', 'f'];
 	private $path_format = [
 		'c'=> 'Category',
