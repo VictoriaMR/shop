@@ -8,57 +8,74 @@ class Paginator
 	protected $total = 0;
 	protected $current = 1;
 	protected $adminConfig = [
-		'global' => '<nav><ul class="pagination"><li  class="disabled"><span>合计 {total} 条, 每页 {size} 条, 共 {totalPage} 页</span></li>{first}{prev}{paging}{next}{last}</ul></nav>',
+		'global' => '<nav>
+		<ul class="pagination">
+			<li class="disabled">
+				<span>合计 {total} 条, 每页 {size} 条, 共 {totalPage} 页</span>
+			</li>
+			{first}
+			{prev}
+			{paging}
+			{next}
+			{last}
+		</ul>
+	</nav>',
 		'first' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled"><span>{text}</span></li>',
 		],
 		'prev' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled"><span>{text}</span></li>',
 		],
 		'next' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled"><span>{text}</span></li>',
 		],
 		'last' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled"><span>{text}</span></li>',
 		],
 		'paging' => '<li><a href="{url}">{text}</a></li>',
 		'current' => '<li class="active"><span>{text}</span></li>',
 		'text' => [
 			'first' => '首页',
-			'last'  => '尾页',
-			'prev'  => '前一页',
-			'next'  => '下一页',
+			'last' => '尾页',
+			'prev' => '前一页',
+			'next' => '下一页',
 		],
 	];
 	protected $config = [
-		'global' => '<nav><ul class="pagination">{prev}{paging}{next}</ul></nav>',
+		'global' => '<nav>
+		<ul class="pagination">
+			{prev}
+			{paging}
+			{next}
+		</ul>
+	</nav>',
 		'first' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled">{text}</li>',
 		],
 		'prev' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled">{text}</li>',
 		],
 		'next' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled">{text}</li>',
 		],
 		'last' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
-			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+			'disabled' => '<li class="disabled">{text}</li>',
 		],
 		'paging' => '<li><a href="{url}">{text}</a></li>',
 		'current' => '<li class="active"><span>{text}</span></li>',
 		'text' => [
 			'first' => '',
-			'last'  => '',
-			'prev'  => '<span class="iconfont icon-xiangzuo1">',
-			'next'  => '<span class="iconfont icon-xiangyou1">',
+			'last' => '',
+			'prev' => '<span class="iconfont icon-xiangzuo1"></span>',
+			'next' => '<span class="iconfont icon-xiangyou1"></span>',
 		],
 	];
 

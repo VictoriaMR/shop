@@ -37,7 +37,7 @@ class Product extends HomeBase
 						$name = $lanArr[$value['cate_id']] ?? $value['en'];
 						$crumbs[] = [
 							'name' => $name,
-							'url' => router()->buildUrl($name.'-c', ['cate_id'=>$value['cate_id']]),
+							'url' => url($name, ['c'=>$value['cate_id']]),
 						];
 					}
 				}

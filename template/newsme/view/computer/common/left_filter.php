@@ -13,6 +13,6 @@
 				<?php }?>
 			</ul>
 		</div>
-		<?php }?>
+	<?php }?>
 	</div>
 </div>
