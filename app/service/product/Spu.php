@@ -42,7 +42,7 @@ class Spu extends Base
 		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
 			return $info;
 		}
-		$info['url'] = router()->buildUrl($info['name'].'-p', ['id' => $info['spu_id']], true);
+		$info['url'] = url($info['name'], ['p' => $info['spu_id']], true);
 		foreach ($info['sku'] as $key => $value) {
 			$value['original_price'] = $this->getOriginalPrice($value['price']);
 			$temp = $currencyService->priceFormat($value['price']);
@@ -57,7 +57,7 @@ class Spu extends Base
 			}
 			$name = implode(' ', $name);
 			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
-			$value['url'] = router()->buildUrl($value['name'].'-s', ['id'=>$key], true);
+			$value['url'] = url($value['name'], ['s'=>$key], true);
 			$info['sku'][$key] = $value;
 		}
 		return $info;
@@ -561,7 +561,7 @@ class Spu extends Base
 		$orderBy['rank'] = 'desc';
 		$list = $this->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, [], lanId(), true);
 		foreach ($list as $key=>$value) {
-			$list[$key]['url'] = url($value['name'].'-p', ['id'=>$value['spu_id']]);
+			$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);
 		}
 		return $list;
 	}

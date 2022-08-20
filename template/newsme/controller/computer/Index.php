@@ -27,7 +27,7 @@ class Index extends Base
 		foreach ($arr as $key=>$value) {
 			if (!isset($hotArr[$key])) break;
 			$banner[] = [
-				'url' => url($hotArr[$key]['name_en'].'-c', ['id'=>$hotArr[$key]['cate_id']]),
+				'url' => url($hotArr[$key]['name_en'], ['c'=>$hotArr[$key]['cate_id']]),
 				'image' => siteUrl(str_replace($bannerPath, '', $value)),
 				'name_en' => $hotArr[$key]['name_en'],
 			];

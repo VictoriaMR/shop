@@ -41,7 +41,7 @@
 					<?php echo $value['add_time'];?>
 				</td>
 				<td class="col-md-2">
-					<a href="<?php echo url('site/siteInfo', ['id'=>$value['site_id']]);?>" class="btn btn-primary btn-xs mt2" type="button"><i class="glyphicon glyphicon-wrench"></i> 配置</a>
+					<a href="<?php echo adminUrl('site/siteInfo', ['id'=>$value['site_id']]);?>" class="btn btn-primary btn-xs mt2" type="button"><i class="glyphicon glyphicon-wrench"></i> 配置</a>
 					<button class="btn btn-success btn-xs modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
 				</td>
 			</tr>

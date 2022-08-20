@@ -19,7 +19,7 @@
 														<img src="<?php echo siteUrl('image/common/logo.png');?>">
 													</div>
 													<div class="body">
-														<a href="<?php echo url('userInfo');?>" class="table w100">
+														<a href="<?php echo url('userInfo/');?>" class="table w100">
 															<div class="tcell icon">
 																<span class="iconfont icon-wode f20 f600"></span>
 															</div>
@@ -52,7 +52,7 @@
 																<p class="f16">Favorites</p>
 															</div>
 														</a>
-														<a href="<?php echo url('helper');?>" class="table w100">
+														<a href="<?php echo url('faq');?>" class="table w100">
 															<div class="tcell icon">
 																<span class="iconfont icon-gonglve f20 f600"></span>
 															</div>
@@ -62,7 +62,7 @@
 														</a>
 													</div>
 													<div class="footer">
-														<a href="<?php echo url(userId()?'login/logout':'login');?>" class="block btn btn-black w100"><?php echo userId()?'Sign Out':'Sign In';?></a>
+														<a href="<?php echo url('login');?>" class="block btn btn-black w100" title="Sign In"><?php echo userId()?'Sign Out':'Sign In';?></a>
 													</div>
 												</div>
 											</div>

@@ -48,11 +48,14 @@ function cache($db=0){
 function db($db=null){
 	return \App::make('frame/Connection')->setDb($db);
 }
-function page($size=null, $total=null, $current=null){
-	return \App::make('frame/Paginator')->make($size, $total, $current);
+function page($size=0, $total=0){
+	return \App::make('frame/Paginator')->make($size, $total);
 }
-function url($name='', $param=[], $suffix=true) {
-    return router()->buildUrl($name, $param, $suffix);
+function url($name='', $param=[]) {
+    return router()->url($name, $param);
+}
+function adminUrl($name='', $param=[]){
+	return router()->adminUrl($name, $param);
 }
 function siteUrl($name){
 	return APP_DOMAIN.$name.'?v='.version();

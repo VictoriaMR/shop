@@ -1,5 +1,5 @@
 <div class="container-fluid" id="attribute-list">
-	<form action="<?php echo url();?>" class="form-inline">
+	<form action="<?php echo adminUrl();?>" class="form-inline">
 		<div class="row-item">
 			<input type="hidden" name="status" value="<?php echo $status;?>">
 			<div class="left btn-group mr20" role="group">

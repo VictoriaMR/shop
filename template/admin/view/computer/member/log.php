@@ -1,5 +1,5 @@
 <div class="container-fluid">
-	<form action="<?php echo url();?>" class="form-inline">
+	<form action="<?php echo adminUrl();?>" class="form-inline">
 		<?php if (!empty($typeArr)) { ?>
 		<div class="row-item">
 			<input type="hidden" name="type_id" value="<?php echo $typeId;?>">

@@ -22,7 +22,7 @@
 		</div>
 		<div class="mt20">
 			<input type="text" class="pl12 form-control w50 left" name="code" placeholder="验证码" autocomplete="off">
-			<img id="refresh" class="left pointer ml10" height="34" width="80" src="<?php echo url('login/loginCode', ['is_ajax'=>1]);?>" onclick="document.getElementById('refresh').src='<?php echo url('login/loginCode', ['is_ajax'=>1]);?>'" title="看不清？换一张">
+			<img id="refresh" class="left pointer ml10" height="34" width="80" src="<?php echo adminUrl('login/loginCode', ['is_ajax'=>1]);?>" onclick="document.getElementById('refresh').src='<?php echo adminUrl('login/loginCode', ['is_ajax'=>1]);?>'" title="看不清？换一张">
 			<div class="clear"></div>
 		</div>
 		<button id="login-btn" type="button" class="btn btn-primary btn-lg w100 mt20">登录</button>

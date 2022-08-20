@@ -739,7 +739,7 @@ function getTmallTShopSetup(callback)
                 //获取属性图片图片
                 const style = attrValueObj[j].querySelector("a").getAttribute('style');
                 if (style) {
-                    attrValueImg[attrData[1]] = style.match(reg)[0].replace('background:url(', '').replace(')','');
+                    attrValueImg[attrData[1]] = style.match(reg)[0].replace('background:adminUrl(', '').replace(')','');
                 } else {
                     attrValueImg[attrData[1]] = '';
                 }

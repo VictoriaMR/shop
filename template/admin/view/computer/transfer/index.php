@@ -1,5 +1,5 @@
 <div class="container-fluid">
-    <form action="<?php echo url();?>" class="form-inline">
+    <form action="<?php echo adminUrl();?>" class="form-inline">
 		<div class="col-md-12 pt10">
 			<div class="form-group mt10 mr20">
 				<label for="short_name">关键字:</label>

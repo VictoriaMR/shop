@@ -7,6 +7,16 @@
 #left-filter .content {
     box-shadow: 0 3px 6px 0 rgb(34 25 36 / 20%);
     padding: 0 10px;
+    background-color: #fff;
+}
+#left-filter .content.fixed {
+    position: fixed;
+    z-index: 99;
+    width: 326px;
+    top: 60px;
+    left: 6px;
+    max-height: calc(100% - 69px);
+    overflow-y: auto;
 }
 #left-filter .item {
 	border-bottom: 1px solid #E5E5E5;
@@ -141,10 +151,27 @@
     position: relative;
     padding-bottom: 8px;
     transition: .2s ease-in-out;
+    vertical-align: top;
+}
+#right-list .product-list li .name {
+    margin-top: 12px;
+    font-size: 16px;
+    min-height: 60px;
+    line-height: 20px;
+    overflow: hidden;
+    white-space: normal;
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
 }
 #right-list .product-list li:hover {
     transform: translateY(-4px);
     box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.2);
+}
+#right-list .product-list li:hover .quickview {
+    display: block;
 }
 #right-list .product-list li a {
     display: block;
@@ -217,4 +244,23 @@
 #right-list .product-list li .label .pdt-discount {
     background-color: #333;
     color: #fff;
+}
+#right-list .product-list li .quickview {
+    display: none;
+    cursor: pointer;
+    font-size: 16px;
+    white-space: nowrap;
+    border-radius: 24px;
+    background-color: #fff;
+    box-shadow: 0 1px 2px 0 rgb(34 25 36 / 20%);
+    padding: 12px 16px;
+    border: 2px solid #fff;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 50%;
+}
+#right-list .product-list li .quickview:hover {
+    border-color: #333;
+    color: #333;
 }

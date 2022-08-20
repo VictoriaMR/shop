@@ -8,7 +8,7 @@
 			<ul<?php echo ($key==0&&!$rid)||$value['attrn_id']==$rid?' class="open"':'';?>>
 				<?php foreach ($value['attv_list'] as $attrValue){?><li>
 					<span class="iconfont icon-<?php echo $value['attrn_id']==$rid&&$attrValue['attrv_id']==$vid?'fangxingxuanzhongfill':'fangxingweixuanzhong';?>"></span>
-					<a href="?rid=<?php echo $value['attrn_id'];?>&vid=<?php echo $attrValue['attrv_id'];?>"><?php echo $attrValue['name'];?></a>
+					<a href="<?php echo url('', ['rid'=>$value['attrn_id'], 'vid'=>$attrValue['attrv_id'], 'page'=>0]);?>"><?php echo $attrValue['name'];?></a>
 				</li>
 				<?php }?>
 			</ul>

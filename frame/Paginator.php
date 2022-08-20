@@ -7,7 +7,7 @@ class Paginator
 	protected $size = 20;
 	protected $total = 0;
 	protected $current = 1;
-	protected $config = [
+	protected $adminConfig = [
 		'global' => '<nav><ul class="pagination"><li  class="disabled"><span>合计 {total} 条, 每页 {size} 条, 共 {totalPage} 页</span></li>{first}{prev}{paging}{next}{last}</ul></nav>',
 		'first' => [
 			'enabled' => '<li><a href="{url}">{text}</a></li>',
@@ -31,34 +31,62 @@ class Paginator
 			'first' => '首页',
 			'last'  => '尾页',
 			'prev'  => '前一页',
-			'next'  => '后一页',
+			'next'  => '下一页',
+		],
+	];
+	protected $config = [
+		'global' => '<nav><ul class="pagination">{prev}{paging}{next}</ul></nav>',
+		'first' => [
+			'enabled' => '<li><a href="{url}">{text}</a></li>',
+			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+		],
+		'prev' => [
+			'enabled' => '<li><a href="{url}">{text}</a></li>',
+			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+		],
+		'next' => [
+			'enabled' => '<li><a href="{url}">{text}</a></li>',
+			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+		],
+		'last' => [
+			'enabled' => '<li><a href="{url}">{text}</a></li>',
+			'disabled' => '<li  class="disabled"><span>{text}</span></li>',
+		],
+		'paging' => '<li><a href="{url}">{text}</a></li>',
+		'current' => '<li class="active"><span>{text}</span></li>',
+		'text' => [
+			'first' => '',
+			'last'  => '',
+			'prev'  => '<span class="iconfont icon-xiangzuo1">',
+			'next'  => '<span class="iconfont icon-xiangyou1">',
 		],
 	];
 
-	public function make($size=null, $total=null, $current=null)
+	public function make($size=0, $total=0)
 	{
 		$this->setSize($size);
 		$this->setTotal($total);
-		$this->setCurrent($current);
+		$this->setCurrent();
+		$config = IS_ADMIN ? $this->adminConfig : $this->config;
 		if ($this->current==1) {
-			$first = strtr($this->config['first']['disabled'],['{url}'=>$this->url(1),'{text}'=>$this->config['text']['first']]);
-			$prev = strtr($this->config['prev']['disabled'],['{url}'=>$this->url($this->current-1),'{text}'=>$this->config['text']['prev']]);
+			$first = strtr($config['first']['disabled'],['{url}'=>$this->url(1),'{text}'=>$config['text']['first']]);
+			$prev = strtr($config['prev']['disabled'],['{url}'=>$this->url($this->current-1),'{text}'=>$config['text']['prev']]);
 		} else {
-			$first = strtr($this->config['first']['enabled'],['{url}'=>$this->url(1),'{text}'=>$this->config['text']['first']]);
-			$prev = strtr($this->config['prev']['enabled'],['{url}'=>$this->url($this->current-1),'{text}'=>$this->config['text']['prev']]);
+			$first = strtr($config['first']['enabled'],['{url}'=>$this->url(1),'{text}'=>$config['text']['first']]);
+			$prev = strtr($config['prev']['enabled'],['{url}'=>$this->url($this->current-1),'{text}'=>$config['text']['prev']]);
 		}
 		//总页数
 		$totalPage = ceil($this->total / $this->size);
 		if ($totalPage==0) {
-			$next = $next = strtr($this->config['next']['disabled'],['{url}'=>'','{text}'=>$this->config['text']['next']]);
-			$last = strtr($this->config['last']['disabled'],['{url}'=>'','{text}'=>$this->config['text']['last']]);
+			$next = $next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config['text']['next']]);
+			$last = strtr($config['last']['disabled'],['{url}'=>'','{text}'=>$config['text']['last']]);
 		} else {
 			if ($this->current < $totalPage) {
-				$next = strtr($this->config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$this->config['text']['next']]);
-				$last = strtr($this->config['last']['enabled'],['{url}'=>$this->url($totalPage),'{text}'=>$this->config['text']['last']]);
+				$next = strtr($config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$config['text']['next']]);
+				$last = strtr($config['last']['enabled'],['{url}'=>$this->url($totalPage),'{text}'=>$config['text']['last']]);
 			} else {
-				$next = strtr($this->config['next']['disabled'],['{url}'=>'','{text}'=>$this->config['text']['next']]);
-				$last = strtr($this->config['last']['disabled'],['{url}'=>'','{text}'=>$this->config['text']['last']]);
+				$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config['text']['next']]);
+				$last = strtr($config['last']['disabled'],['{url}'=>'','{text}'=>$config['text']['last']]);
 			}
 		}
 
@@ -66,7 +94,7 @@ class Paginator
 		if ($this->total > 0) {
 			$totalPage = ceil($this->total / $this->size);
 			for ($i=1; $i<= $totalPage; $i++) {
-				$pageStr .= strtr($this->config[$i == $this->current ? 'current' : 'paging'], [
+				$pageStr .= strtr($config[$i == $this->current ? 'current' : 'paging'], [
 					'{url}' => $this->url($i),
 					'{text}' => $i
 				]);
@@ -83,15 +111,19 @@ class Paginator
 			'{next}' => $next,
 			'{last}' => $last,
 		];
-		return strtr($this->config['global'], $replace);
+		return strtr($config['global'], $replace);
 	}
 
 	protected function url($page)
 	{
-		$page = $page > 1 ? $page : 1;
-		$param = iget();
-		$param['page'] = $page;
-		return url().'?'.http_build_query($param);
+		if (IS_ADMIN) {
+			$page = $page > 1 ? $page : 1;
+			$param = iget();
+			$param['page'] = $page;
+			return adminUrl('', $param);
+		} else {
+			return url('', ['page'=>$page]);
+		}
 	}
 
 	protected function setSize($size)
@@ -104,12 +136,8 @@ class Paginator
 		$this->total = (int) $total;
 	}
 
-	protected function setCurrent($current)
+	protected function setCurrent()
 	{
-		if (is_null($current)) {
-			$current = iget('page');
-		}
-		$current = (int) $current;
-		$this->current = $current > 0 ? $current : 1;
+		$this->current = iget('page', 1);
 	}
 }

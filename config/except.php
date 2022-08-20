@@ -15,5 +15,7 @@ return [
 		'Userinfo' => true,
 		'Category' => true,
 		'PageNotFound' => true,
+		'Faq' => true,
+		'Search' => true,
 	],
 ];

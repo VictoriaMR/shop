@@ -1,5 +1,5 @@
 <div class="container-fluid">
-	<form action="<?php echo url();?>" class="form-inline">
+	<form action="<?php echo adminUrl();?>" class="form-inline">
 		<div class="form-group mr20">
 			<select class="form-control" name="site" style="min-width:180px;">
 				<option value="-1">请选择站点</option>

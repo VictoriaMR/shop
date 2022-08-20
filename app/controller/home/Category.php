@@ -12,12 +12,12 @@ class Category extends HomeBase
 		html()->addCss('product/list');
 		html()->addJs('product/list');
 
-		$cateId = iget('id', 0);
-		$vid = iget('vid', '');
-		$rid = iget('rid', 0);
-		$sort = iget('sort', 0);
-		$page = iget('page', 1);
-		$size = iget('size', 36);
+		$cateId = (int)iget('cid', 0);
+		$rid = (int)iget('rid', 0);
+		$vid = (int)iget('vid', '');
+		$sort = (int)iget('sort', 0);
+		$page = (int)iget('page', 1);
+		$size = (int)iget('size', 36);
 		$search = false;
 		
 		$category = make('app/service/category/Category');
@@ -26,7 +26,7 @@ class Category extends HomeBase
 		if ($cateInfo) {
 			$crumbs[] = [
 				'name' => $cateInfo['name_en'],
-				'url' => url($cateInfo['name_en'].'-c', ['id'=>$cateInfo['cate_id']]),
+				'url' => url($cateInfo['name_en'], ['c'=>$cateInfo['cate_id']]),
 			];
 			$cateSon = $category->getSubCategoryById($cateId);
 			foreach ($cateSon as $key=>$value) {
@@ -71,7 +71,7 @@ class Category extends HomeBase
 				$where['site_id'] = siteId();
 				$list = $spu->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, $orderBy, lanId(), true, true);
 				foreach ($list as $key=>$value) {
-					$list[$key]['url'] = url($value['name'].'-p', ['id'=>$value['spu_id']]);
+					$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);
 				}
 			}
 
@@ -79,6 +79,7 @@ class Category extends HomeBase
 			$this->assign('filter', $filter);
 			$this->assign('list', $list ?? []);
 			$this->assign('total', $total);
+			$this->assign('size', $size);
 		}
 		$param = ['vid'=>$vid, 'rid'=>$rid, 'sort'=>$sort];
 		$this->assign('cate_id', $cateId);

@@ -22,7 +22,7 @@ class App
 	public static function send()
 	{
 		$baseInfo = self::get('base_info');
-		if (empty($baseInfo)) throw new \Exception($_SERVER['HTTP_HOST'].' was not exist!', 1);
+		if (empty($baseInfo)) throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!', 1);
 		//路由解析
 		define('IS_ADMIN', $baseInfo['site_id'] == 10);
 		$router = self::make('frame/Router')->analyze();
@@ -42,7 +42,7 @@ class App
 			self::make('app/middleware/VerifyToken')->handle($router);
 			call_user_func_array($callArr, []);
 		} else {
-			throw new \Exception('class '.$router['class'].', function '.$router['path'].' was not exist!', 1);
+			throw new \Exception('type '.$router['class'].', class '.$router['path'].', function '.$router['func'].' was not exist!', 1);
 		}
 		self::runOver();
 	}

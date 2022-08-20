@@ -10,10 +10,10 @@ class Product extends HomeBase
 		html()->addCss();
 		html()->addJs();
 
-		$spuId = iget('id', 0);
-		$skuId = iget('sid', 0);
+		$spuId = (int)iget('pid', 0);
+		$skuId = (int)iget('sid', 0);
 		$crumbs = [];
-		if ($spuId || $skuId) {
+		if ($spuId>0 || $skuId>0) {
 			$spu = make('app/service/product/Spu');
 			if (!$spuId) {
 				$spuId = make('app/service/product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;

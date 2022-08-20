@@ -4,82 +4,98 @@ namespace frame;
 
 final class Router
 {
+	private $include_param = ['rid', 'vid', 'sort', 'page'];
+	private $include_path = ['c', 'p', 's', 'f'];
+	private $path_format = [
+		'c'=> 'Category',
+		'p' => 'Product',
+		's' => 'Product',
+		'f' => 'Faq',
+	];
+
 	public function analyze()
 	{
 		array_shift($_GET);
-		$pathInfo = trim(str_replace('.html', '', $_SERVER['REQUEST_URI']), '/');
-		$router = [];
-		if (empty($pathInfo)) {
-			$router['path'] = 'Index';
-			$router['func'] = 'index';
+		$pathInfo = pathinfo($_SERVER['REQUEST_URI']);
+		$name = array_reverse(explode('-', explode('?', pathinfo($_SERVER['REQUEST_URI'])['filename'])[0]));
+		$path = trim($pathInfo['dirname'], '\\');
+		$pathInfo['filename'] = explode('?', $pathInfo['filename'])[0];
+		if ($path) {
+			$path = ucfirst(explode('?', trim($path, '/'))[0]);
+			$func = $pathInfo['filename'];
 		} else {
-			$pathInfo = parse_url($pathInfo);
-			if (!empty($pathInfo['path'])) {
-				$pathInfo = explode('/', $pathInfo['path']);
-				if (IS_ADMIN) {
-					$router['path'] = isset($pathInfo[0]) ? ucfirst($pathInfo[0]) : 'Index';
-					$router['func'] = $pathInfo[1] ?? 'index';
-				} else {
-					$tempInfo = explode('-', $pathInfo[0]);
-					if (count($tempInfo) > 1) {
-						$tempInfo = array_reverse($tempInfo);
-						$index = array_search('page', $tempInfo);
-						if ($index === false) {
-							$index = 0;
-						} else {
-							$_GET['page'] = $tempInfo[$index-1] ?? 1;
-						}
-						$index++;
-						if (isset($tempInfo[$index])) {
-							$router['path'] = $tempInfo[$index] ?? 'Index';
-							$_GET[$router['path'] == 's'?'sid':'id'] = $tempInfo[$index-1];
-						} else {
-							$router['path'] = 'Index';
-						}
-						$router['path'] = $this->formatPath($router['path']);
-						$router['func'] = 'index';
-					} else {
-						$router['path'] = ucfirst($pathInfo[0]);
-						$router['func'] = $pathInfo[1] ?? 'index';
-					}
+			$path = $pathInfo['filename'] ? ucfirst($pathInfo['filename']) : 'Index';
+		}
+		if (strpos($pathInfo['filename'], '-') !== false) {
+			$pathInfo = array_reverse(explode('-', $pathInfo['filename']));
+			$tempPath = '';
+			foreach ($pathInfo as $key=>$value) {
+				if (!isset($_GET[$value]) && in_array($value, $this->include_param)) {
+					$_GET[$value] = $pathInfo[$key-1] ?? '';
+				}
+				if (!isset($_GET[$value.'id']) && in_array($value, $this->include_path)) {
+					$tempPath = $this->formatPath($value);
+					$_GET[$value.'id'] = $pathInfo[$key-1] ?? '';
 				}
 			}
+			if ($tempPath) {
+				$path = $tempPath;
+			} else {
+				throw new \Exception('analyze router failed!', 1);
+			}
 		}
-		return $router;
+		return ['path'=>$path, 'func'=>$func??'index'];
 	}
 
 	protected function formatPath($type)
 	{
-		$arr = [
-			'c'=>'Category',
-			'p' => 'Product',
-			's' => 'Product',
-		];
-		return $arr[$type] ?? ucfirst($type);
+		return $this->path_format[$type]??'';
 	}
 
-	public function buildUrl($url='', $param=null, $suffix=true)
-	{	
-		if (!$url) return APP_DOMAIN;
-		if ($suffix && !IS_ADMIN) {
-			$url = $this->nameFormat($url);
-			if (!empty($param)) {
-				if (is_array($param))
-					$url .= $this->setParam($param);
-				else
-					$url .= $this->nameFormat($param);
+	public function url($name='', $param=[])
+	{
+		if ($name) {
+			if (strpos($name, '/') === false) {
+				$name = $this->nameFormat($name);
+			} else {
+				$name = trim($name, '/');
 			}
-			$url = trim($url, '-').'.'.\App::get('router', 'view_suffix');
-		} else {
-			$url = lcfirst($url);
-			if (!empty($param)) {
-				if (is_array($param)) {
-					$param = http_build_query($param);
+		} elseif ($param) {
+			$name = array_reverse(explode('-', explode('?', pathinfo($_SERVER['REQUEST_URI'])['filename'])[0]));
+			foreach ($name as $key=>$value) {
+				if (isset($param[$value])) {
+					if ($param[$value]) {
+						$name[$key-1] = $param[$value];
+					} else {
+						unset($name[$key-1]);
+						unset($name[$key]);
+					}
+					unset($param[$value]);
 				}
-				$url .= '?'.$param;
+			}
+			$param = array_filter($param);
+			foreach ($param as $key=>$value) {
+				if (in_array($key, $this->include_path) || in_array($key, $this->include_param)) {
+					array_unshift($name, $key);
+					array_unshift($name, $value);
+					unset($param[$key]);
+				}
+			}
+			$name = implode('-', array_reverse($name));
+		}
+		if ($name) $name .= $this->paramFormat($param);
+		return APP_DOMAIN.$name;
+	}
+
+	public function adminUrl($name='', $param=[])
+	{
+		if (!$name) {
+			$name = \App::get('router', 'path');
+			if (\App::get('router', 'func') != 'index') {
+				$name .= DS.\App::get('router', 'path');
 			}
 		}
-		return APP_DOMAIN.$url;
+		return APP_DOMAIN.$name.($param?'?'.http_build_query($param):'');
 	}
 
 	public function nameFormat($name, $param=[])
@@ -95,22 +111,19 @@ final class Router
 		return $name;
 	}
 
-	public function setParam($param=[])
+	public function paramFormat($param)
 	{
 		$str = '';
 		foreach ($param as $key=>$value) {
-			if (in_array($key, ['page', 'size'])) {
+			if (in_array($key, $this->include_param) || in_array($key, $this->include_path)) {
 				$str .= '-'.$key.'-'.$value;
-			} else {
-				$str .= '-'.$value;
+				unset($param[$key]);
 			}
 		}
+		$str .= '.html';
+		if ($param) {
+			$str .= '?'.http_build_query($param);
+		}
 		return $str;
-	}
-
-	public function urlFormat($name, $type='', $params=[], $domain='')
-	{
-		$name = $this->nameFormat($name.'-'.$type, $params);
-		return $domain.$name.'.html';
 	}
 }

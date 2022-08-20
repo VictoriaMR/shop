@@ -14,14 +14,24 @@ $(function(){
         });
     });
     //滚动导航栏
-    var meauHeaderHeight = $('.meau-header').outerHeight();
+    var meauHeaderTop = $('.meau-header').offset().top;
+    var leftFilterTop = $('#left-filter').offset().top;
+    var rightListHeight = $('#right-list').height();
     $(document).scroll(function() {
-        if($(document).scrollTop() >= meauHeaderHeight){
-            if (!$('.meau-header').addClass('fixed')) {
+        var scroll = $(document).scrollTop();
+        if (meauHeaderTop) {
+            if(scroll >= meauHeaderTop){
                 $('.meau-header').addClass('fixed');
+            }else{
+                $('.meau-header').removeClass('fixed');
             }
-        }else{
-            $('.meau-header').removeClass('fixed');
+        }
+        if (leftFilterTop && rightListHeight > 700) {
+            if (scroll + 50 >= leftFilterTop) {
+                $('#left-filter .content').addClass('fixed');
+            } else {
+                $('#left-filter .content').removeClass('fixed');
+            }
         }
     });
 });

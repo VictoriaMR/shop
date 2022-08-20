@@ -65,7 +65,7 @@ body{SCROLLBAR-ARROW-COLOR:#2c5784;SCROLLBAR-FACE-COLOR:#D1E2EF;SCROLLBAR-DARKSH
 .e1,.e2{overflow:hidden;white-space:normal;word-break:break-all;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical}
 .e2{-webkit-line-clamp:2}
 .switch_botton{width:64px;height:22px;margin-top:3px;cursor:pointer;overflow:hidden;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;border:1px #ddd solid;overflow:hidden}
-.switch_status{background-image:url(/image/computer/switch.png);background-repeat:no-repeat;margin:0px 2px 0px 2px;position:relative;line-height:18px;top:-1px;width:100px;height:22px;transition:0.2s}
+.switch_status{background-image:adminUrl(/image/computer/switch.png);background-repeat:no-repeat;margin:0px 2px 0px 2px;position:relative;line-height:18px;top:-1px;width:100px;height:22px;transition:0.2s}
 .switch_status.on{left:-3px}
 .switch_status.off{left:-36px}
 .glyphicon:hover{color:#e7502b}

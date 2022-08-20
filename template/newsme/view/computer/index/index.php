@@ -11,10 +11,10 @@
 								<?php foreach ($cateArr ?? [] as $key=>$value){
 									if ($value['icon']){ $index=$key;?><li class="e1">
 									<span class="clothes-iconfont icon-<?php echo $value['icon']??'';?>"></span>
-									<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
+									<a href="<?php echo url($value['name_en'], ['c'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
 									<?php $count=0; for ($i=$index+1; $i<99; $i++) {
 										if (isset($cateArr[$i]) && $cateArr[$i]['level']>1 && $cateArr[$i]['is_show'] && !$cateArr[$i]['is_hot'] ){?><span class="service-slash">/</span>
-									<a href="<?php echo url($cateArr[$i]['name_en'].'-c', ['id'=>$cateArr[$i]['cate_id']]);?>" title="<?php echo $cateArr[$i]['name_en'];?>"><?php echo $cateArr[$i]['name_en'];?></a>
+									<a href="<?php echo url($cateArr[$i]['name_en'], ['c'=>$cateArr[$i]['cate_id']]);?>" title="<?php echo $cateArr[$i]['name_en'];?>"><?php echo $cateArr[$i]['name_en'];?></a>
 								<?php $count++; if ($count==2) break; }}?></li>
 								<?php }}?></ul>
 						</div>
@@ -26,7 +26,7 @@
 									<tbody>
 										<tr>
 											<?php foreach ($hotArr as $value) {?><td>
-												<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" class="e1" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
+												<a href="<?php echo url($value['name_en'], ['c'=>$value['cate_id']]);?>" class="e1" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
 											</td>
 											<?php }?></tr>
 									</tbody>
@@ -55,7 +55,7 @@
 		<p class="title f24 f600 mb12 ml8">Popular Categories</p>
 		<ul class="popular-catgory f0">
 			<?php foreach($popularCate as $value){?><li>
-				<a href="<?php echo url($value['name_en'].'-c', ['id'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>">
+				<a href="<?php echo url($value['name_en'], ['c'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>">
 					<div class="image-content">
 						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
 					</div>

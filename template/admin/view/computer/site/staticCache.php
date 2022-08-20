@@ -26,7 +26,7 @@
         		<td class="col-md-1"><?php echo sprintf('%.2f', $value['size'] / 1024).' Kbs';?></td>
         		<td class="col-md-2"><?php echo $value['c_time'];?></td>
         		<td class="col-md-2">
-        			<a href="<?php echo url('site/staticDetail', ['name'=>$value['name']]);?>" class="btn btn-primary btn-xs mt2"><i class="glyphicon glyphicon-eye-open"></i> 查看</a>
+        			<a href="<?php echo adminUrl('site/staticDetail', ['name'=>$value['name']]);?>" class="btn btn-primary btn-xs mt2"><i class="glyphicon glyphicon-eye-open"></i> 查看</a>
                     <button class="btn btn-danger btn-xs delete mt2" type="button" data-id="<?php echo $value['name'];?>"><i class="glyphicon glyphicon-trash"></i> 删除</button>
         		</td>
         	</tr>

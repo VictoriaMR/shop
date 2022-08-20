@@ -3,7 +3,7 @@
 .gray{color: gray;}
 </style>
 <div class="container-fluid">
-    <form action="<?php echo url('git/gitLog');?>" class="form-inline">
+    <form action="<?php echo adminUrl('git/gitLog');?>" class="form-inline">
         <div class="row-item">
             <input type="hidden" name="id" value="<?php echo $id;?>">
             <div class="btn-group" role="group">

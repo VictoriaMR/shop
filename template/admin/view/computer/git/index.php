@@ -28,7 +28,7 @@
                 <td><?php echo $value['commit'] ?? '--';?></td>
                 <td><?php echo $value['info'] ?? '--';?></td>
                 <td>
-                    <a href="<?php echo url('git/gitLog', ['id'=>$value['name']]);?>" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;&nbsp;日志</a>
+                    <a href="<?php echo adminUrl('git/gitLog', ['id'=>$value['name']]);?>" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-eye-open"></span>&nbsp;&nbsp;日志</a>
                 </td>
             </tr>
             <?php } ?>
