@@ -18,7 +18,7 @@ final class Router
 		array_shift($_GET);
 		$pathInfo = pathinfo($_SERVER['REQUEST_URI']);
 		$name = array_reverse(explode('-', explode('?', pathinfo($_SERVER['REQUEST_URI'])['filename'])[0]));
-		$path = trim($pathInfo['dirname'], '\\');
+		$path = trim($pathInfo['dirname'], DIRECTORY_SEPARATOR);
 		$pathInfo['filename'] = explode('?', $pathInfo['filename'])[0];
 		if ($path) {
 			$path = ucfirst(explode('?', trim($path, '/'))[0]);
