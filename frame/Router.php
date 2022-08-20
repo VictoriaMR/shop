@@ -25,6 +25,7 @@ final class Router
 			$func = $pathInfo['filename'];
 		} else {
 			$path = $pathInfo['filename'] ? ucfirst($pathInfo['filename']) : 'Index';
+			$func = 'index';
 		}
 		if (strpos($pathInfo['filename'], '-') !== false) {
 			$pathInfo = array_reverse(explode('-', $pathInfo['filename']));
@@ -44,7 +45,7 @@ final class Router
 				throw new \Exception('analyze router failed!', 1);
 			}
 		}
-		return ['path'=>$path, 'func'=>$func??'index'];
+		return ['path'=>$path?:'Index', 'func'=>$func?:'index'];
 	}
 
 	protected function formatPath($type)
