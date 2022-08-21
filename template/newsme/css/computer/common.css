@@ -282,6 +282,8 @@ body {
 }
 .modal {
 	display: none;
+	position: fixed;
+	z-index: 100;
 }
 .modal .mask {
 	position: fixed;
@@ -293,7 +295,6 @@ body {
     opacity: 0.5;
     filter: alpha(opacity=50);
     cursor: pointer;
-    z-index: 100;
 }
 .modal .popper {
 	position: fixed;
@@ -437,13 +438,13 @@ body {
     text-decoration: line-through;
 }
 .pagination {
-	padding: 10px 0;
+	padding: 10px;
 	text-align: right;
 	font-size: 0;
 }
 .pagination li {
 	display: inline-block;
-	margin: 0 8px;
+	margin-left: 8px;
 }
 .pagination li a,
 .pagination li span {

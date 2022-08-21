@@ -53,3 +53,9 @@
 	<?php echo $total > $size ? page($size, $total) : '';?>
 	<?php }?>
 </div>
+<div id="quickview-modal" style="display:none;position: fixed;top: 100px;left: 100px;">
+	<div class="mask"></div>
+	<div class="content">
+		
+	</div>
+</div>

@@ -263,3 +263,9 @@
     border-color: #333;
     color: #333;
 }
+#quickview-modal .content {
+    position: relative;
+    padding: 20px;
+    background-color: #fff;
+    z-index: 101;
+}
