@@ -14,25 +14,35 @@ $(function(){
         });
     });
     //滚动导航栏
-    var meauHeaderTop = $('.meau-header').offset().top;
-    var leftFilterTop = $('#left-filter').offset().top;
-    var leftFilterLeft = $('#left-filter').offset().left;
-    var rightListHeight = $('#right-list').height();
-    $('#left-filter .content').css({'left': leftFilterLeft+6});
+    var meauHeaderObj = $('.meau-header');
+    var leftFilterObj = $('#left-filter');
+    var rightListObj = $('#right-list');
+    var meauHeaderTop, leftFilterTop, leftFilterLeft, rightListHeight;
+    if (meauHeaderObj.length>0) {
+        meauHeaderTop = meauHeaderObj.offset().top
+    }
+    if (leftFilterObj.length>0) {
+        leftFilterTop = leftFilterObj.offset().top;
+        leftFilterLeft = leftFilterObj.offset().left;
+        leftFilterObj.find('.content').css({'left': leftFilterLeft+6});
+    }
+    if (rightListObj.length>0) {
+        rightListHeight = rightListObj.height();
+    }
     $(document).scroll(function() {
         var scroll = $(document).scrollTop();
         if (meauHeaderTop) {
             if(scroll >= meauHeaderTop){
-                $('.meau-header').addClass('fixed');
+                meauHeaderObj.addClass('fixed');
             }else{
-                $('.meau-header').removeClass('fixed');
+                meauHeaderObj.removeClass('fixed');
             }
         }
         if (leftFilterTop && rightListHeight > 700) {
             if (scroll + 50 >= leftFilterTop) {
-                $('#left-filter .content').addClass('fixed');
+                leftFilterObj.find('.content').addClass('fixed');
             } else {
-                $('#left-filter .content').removeClass('fixed');
+                leftFilterObj.find('.content').removeClass('fixed');
             }
         }
     });

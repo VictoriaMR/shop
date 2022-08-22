@@ -94,4 +94,19 @@ class Product extends HomeBase
 		}
 		$this->success();
 	}
+
+	public function getInfoAjax()
+	{
+		$spuId = (int)ipost('pid');
+		if ($spuId <= 0) {
+			$this->error(distT('id_error'));
+		}
+		$info = make('app/service/product/Spu')->getInfoCache($spuId, lanId(), siteId());
+		if ($info) {
+			unset($info['description']);
+			unset($info['introduce']);
+			$this->success('get_info_success', $info);
+		}
+		$this->error(distT('get_info_fail'));
+	}
 }

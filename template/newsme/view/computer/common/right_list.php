@@ -21,7 +21,7 @@
 		</div>
 	</div>
 	<?php if (!empty($list)){?><ul class="product-list f0">
-		<?php foreach ($list as $value){?><li>
+		<?php foreach ($list as $value){?><li data-pid="<?php echo $value['spu_id'];?>">
 			<a href="<?php echo $value['url'];?>" title="<?php echo $value['name'];?>">
 				<div class="image-content">
 					<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" alt="<?php echo $value['name'];?>">
@@ -53,9 +53,30 @@
 	<?php echo $total > $size ? page($size, $total) : '';?>
 	<?php }?>
 </div>
-<div id="quickview-modal" style="display:none;position: fixed;top: 100px;left: 100px;">
+<div id="quickview-modal">
 	<div class="mask"></div>
 	<div class="content">
-		
+		<div class="header">
+			<span class="iconfont icon-guanbi1 f20 f600 pointer"></span>
+		</div>
+		<div class="body">
+			<div class="left w50 pr20">
+				<div class="image-comtent">
+					<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="https://lmr.baycheer.cn/site/img/item/notFound/1200x1200.jpg">
+				</div>
+				<ul class="image-list">
+					<?php for ($i=0; $i<6; $i++){?>
+					<li>
+						<div class="image-comtent">
+							<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="https://lmr.baycheer.cn/site/img/item/notFound/1200x1200.jpg">
+						</div>
+					</li>
+					<?php }?>
+				</ul>
+			</div>
+			<div class="left w50 pr16">
+				<p class="name">Vintage Chandeliers for Dining Rooms, 4-Light Bird Cage Hanging Light with Candle and Crystal, 23.5" High x 14" in Diameter</p>
+			</div>
+		</div>
 	</div>
 </div>

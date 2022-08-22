@@ -28,4 +28,39 @@ $(function(){
 			$(this).find('.sort-list').slideUp(200);
 		}
 	});
+	//快速预览点击
+	$('#right-list .product-list li .quickview').on('click', function(){
+		var obj = $(this).parent();
+		var pid = obj.data('pid');
+		TIPS.loading(obj);
+		PRODUCT_MODAL.init(pid, function(){
+			TIPS.loadout(obj);
+		});
+	});
+	//收起弹窗
+	$('#quickview-modal .content .header').on('click', function(){
+		PRODUCT_MODAL.close();
+	});
 });
+var PRODUCT_MODAL = {
+	init: function(pid, callback) {
+		this.pid = pid;
+		if (this.initPage) {
+
+		}
+		this.getInfo(function(){
+
+		});
+	},
+	show: function() {
+
+	},
+	close: function() {
+
+	},
+	getInfo: function(callback) {
+		$.post(URI+'product/getInfoAjax', {pid: this.pid}, function(res){
+
+		})
+	}
+};

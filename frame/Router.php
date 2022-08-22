@@ -16,6 +16,7 @@ final class Router
 	public function analyze()
 	{
 		array_shift($_GET);
+		unset($_GET['/']);
 		$pathInfo = pathinfo($_SERVER['REQUEST_URI']);
 		$name = array_reverse(explode('-', explode('?', pathinfo($_SERVER['REQUEST_URI'])['filename'])[0]));
 		$path = trim($pathInfo['dirname'], DIRECTORY_SEPARATOR);

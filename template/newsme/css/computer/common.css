@@ -293,7 +293,6 @@ body {
     bottom: 0;
     background-color: #000000;
     opacity: 0.5;
-    filter: alpha(opacity=50);
     cursor: pointer;
 }
 .modal .popper {
@@ -336,6 +335,8 @@ body {
 	padding: 16px;
 	width: 100%;
 }
+
+
 .crumbs {
 	padding: 10px 0;
 	background-color: #fff;
