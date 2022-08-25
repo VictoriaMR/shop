@@ -6,7 +6,7 @@
 			<img src="<?php echo siteUrl('image/common/oooops.png');?>">
 			<p class="mt12 f16">No item matched. Please try with other options.</p>
 		</div>
-		<?php $this->load('common/recommend');?>
+		<?php $this->load('product/recommend');?>
 		<?php } else {?><p class="f24 f600"><?php echo $cateInfo['name_en'];?></p>
 		<?php if (!empty($cateSon)) {?><ul class="category-son f0 mt12">
 			<?php foreach ($cateSon as $key=>$value) {$cateSonTotal=count($cateSon);?><li class="<?php echo $key>0&($key+1)%4==0?'last':''; echo ($cateSonTotal>4&$key<4)||($cateSonTotal>8&&($key>3&$key<8))?' mb8':'';?>">
@@ -29,8 +29,8 @@
 		</ul>
 	<?php }}?></div>
 	<?php if (!empty($filter) || !empty($list)){?><div class="layer0 bg-f product-container">
-		<?php $this->load('common/left_filter', array_merge(['list'=>$filter], $param));?>
-		<?php $this->load('common/right_list', ['list'=>$list, 'total'=>$total, 'param'=>$param, 'size'=>$size]);?>
+		<?php $this->load('product/filter', array_merge(['list'=>$filter], $param));?>
+		<?php $this->load('product/list', ['list'=>$list, 'total'=>$total, 'param'=>$param, 'size'=>$size]);?>
 		<div class="clear"></div>
 	</div>
 	<?php }?>

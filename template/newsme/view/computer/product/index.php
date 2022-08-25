@@ -6,7 +6,7 @@
             <img src="<?php echo siteUrl('image/common/oooops.png');?>">
             <p class="mt12 f16">No item matched. Please try with other options.</p>
         </div>
-        <?php $this->load('common/recommend');?>
+        <?php $this->load('product/recommend');?>
         <?php } else {?><div class="info-content">
             <div class="left img-content w40">
                 <div class="relative img">

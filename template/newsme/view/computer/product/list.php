@@ -77,6 +77,7 @@
 			<div class="left w50 pr16">
 				<p class="name">Vintage Chandeliers for Dining Rooms, 4-Light Bird Cage Hanging Light with Candle and Crystal, 23.5" High x 14" in Diameter</p>
 			</div>
+			<div class="clear"></div>
 		</div>
 	</div>
 </div>
