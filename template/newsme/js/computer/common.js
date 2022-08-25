@@ -4,6 +4,7 @@ $(function(){
         var obj = $('#meau-modal');
         obj.fadeIn(50);
         obj.find('.popper').animate({'left':'0'}, 200, 'linear');
+        TIPS.stop();
     });
     //弹窗点击收起
     $('.modal .mask,.modal .close').on('click', function(){
@@ -11,6 +12,7 @@ $(function(){
         var width = obj.find('.popper').width();
         obj.find('.popper').animate({'left': -width}, 200, 'linear', function(){
             obj.fadeOut(100);
+            TIPS.start();
         });
     });
     //滚动导航栏
@@ -24,7 +26,7 @@ $(function(){
     if (leftFilterObj.length>0) {
         leftFilterTop = leftFilterObj.offset().top;
         leftFilterLeft = leftFilterObj.offset().left;
-        leftFilterObj.find('.content').css({'left': leftFilterLeft+6});
+        leftFilterObj.find('.content').css({left: leftFilterLeft+6});
     }
     if (rightListObj.length>0) {
         rightListHeight = rightListObj.height();

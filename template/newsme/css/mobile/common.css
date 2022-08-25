@@ -422,8 +422,7 @@ a {
 	border-radius: 50%;
 }
 /*loading modal start*/
-.modal,
-.m-modal {
+.modal {
 	overflow: hidden;
 	position: fixed;
 	top: 0;

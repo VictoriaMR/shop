@@ -68,13 +68,13 @@ var TIPS = {
     loading: function(obj) {
         var style = ''; 
         if (obj) {
-            style = 'style="position:absolute;"';
+            style = 'style="position:absolute;display:block;"';
         } else {
             obj = $('body');
         }
         obj.find('.loading').remove();
         clearTimeout(this.timeoutVal);
-        var html = '<div class="m-modal loading" '+style+'>\
+        var html = '<div class="modal loading" '+style+'>\
                         <div class="mask" '+style+'></div>\
                         <div class="loading-block">\
                             <div></div>\
@@ -104,10 +104,31 @@ var TIPS = {
         obj.text(obj.data('text')).attr('disabled', false);
     },
     start: function() {
-        $('body').css({'overflow': 'auto'});
+        var style = {overflow: 'auto'};
+        if (this.scrollbarWidth > 0) {
+            style['padding-right'] = 0;
+            $('.meau-header.fixed').css({width: '100%'});
+        }
+        $('body').css(style);
     },
     stop: function() {
-        $('body').css({'overflow': 'hidden'});
+        if (typeof this.scrollbarWidth === 'undefined') {
+            this.scrollbarWidth = this.getScrollbarWidth();
+        }
+        var style = {overflow: 'hidden'};
+        if (this.scrollbarWidth > 0) {
+            style['padding-right'] = this.scrollbarWidth;
+            $('.meau-header.fixed').css({width: 'calc(100% - '+this.scrollbarWidth+'px)'});
+        }
+        $('body').css(style);
+    },
+    getScrollbarWidth: function () {
+      var scrollDiv = document.createElement("div");
+      scrollDiv.style.cssText = 'width: 99px; height: 99px; overflow: scroll; position: absolute; top: -9999px;';
+      document.body.appendChild(scrollDiv);
+      var scrollbarWidth = scrollDiv.offsetWidth - scrollDiv.clientWidth;
+      document.body.removeChild(scrollDiv);
+      return scrollbarWidth;
     },
     confirm: function(message, callback) {
         $('#confirm-modal').remove();

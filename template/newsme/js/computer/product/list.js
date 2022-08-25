@@ -33,34 +33,55 @@ $(function(){
 		var obj = $(this).parent();
 		var pid = obj.data('pid');
 		TIPS.loading(obj);
-		PRODUCT_MODAL.init(pid, function(){
-			TIPS.loadout(obj);
-		});
+		PRODUCT_MODAL.init(pid);
 	});
 	//收起弹窗
-	$('#quickview-modal .content .header').on('click', function(){
+	$('#quickview-modal .content .header, #quickview-modal .mask').on('click', function(){
 		PRODUCT_MODAL.close();
 	});
 });
 var PRODUCT_MODAL = {
-	init: function(pid, callback) {
-		this.pid = pid;
-		if (this.initPage) {
-
+	init: function(pid) {
+		var _this = this;
+		_this.pid = pid;
+		if (!_this.init_status) {
+			_this.maxWidth = $(window).width();
+			_this.maxHeight = $(window).height();
+			_this.width = _this.maxWidth>1020 ? 1000 : _this.maxWidth-20;
+			_this.height = _this.maxHeight>620 ? 600 : _this.maxHeight-20;
+			_this.initNum = 10;
+			_this.obj = $('#quickview-modal');
+			_this.init_status = true;
 		}
-		this.getInfo(function(){
-
-		});
+		_this.getInfo();
 	},
 	show: function() {
-
+		var _this = this;
+		_this.obj.css({width:_this.initNum,height:_this.initNum,display:'block',left:(_this.maxWidth - _this.initNum)/2,top:(_this.maxHeight - _this.initNum)/2});
+		_this.obj.animate({width:_this.width, height:_this.height,left: (_this.maxWidth - _this.width)/2, top: (_this.maxHeight - _this.height)/2}, 200, 'swing', function(){
+			TIPS.loadout($('#right-list .product-list li[data-pid="'+_this.pid+'"]'), true);
+		});
 	},
 	close: function() {
+		var _this = this;
+		_this.obj.animate({width:_this.initNum,height:_this.initNum, left:(_this.maxWidth - _this.initNum)/2,top:(_this.maxHeight - _this.initNum)/2}, 300, 'swing', function(){
+			_this.obj.hide();
+			TIPS.start();
+		});
+	},
+	getInfo: function() {
+		var _this = this;
+		$.post(URI+'product/getInfoAjax', {pid: this.pid}, function(res){
+			if (res.code == '200') {
+				_this.info = res.data;
+				_this.initPage();
+			} else {
+				TIPS.error(res.msg);
+			}
+			_this.show();
+		});
+	},
+	initPage: function() {
 
 	},
-	getInfo: function(callback) {
-		$.post(URI+'product/getInfoAjax', {pid: this.pid}, function(res){
-
-		})
-	}
 };

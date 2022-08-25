@@ -11,7 +11,7 @@
 }
 #left-filter .content.fixed {
     position: fixed;
-    z-index: 99;
+    z-index: 97;
     width: 326px;
     top: 60px;
     max-height: calc(100% - 68px);
@@ -265,11 +265,10 @@
 }
 #quickview-modal {
     display: none;
-    max-width: 1000px;
-    width: 86%;
     position: fixed;
-    top: 0;
-    left: 0;
+    z-index: 102;
+    background-color: #fff;
+    box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.3);
 }
 #quickview-modal .mask {
     position: fixed;
@@ -278,7 +277,7 @@
     right: 0;
     bottom: 0;
     background-color: #000000;
-    opacity: 0.5;
+    opacity: 0.15;
     cursor: pointer;
 }
 #quickview-modal .content {
@@ -310,4 +309,8 @@
 #quickview-modal .content .image-list li {
     width: 20%;
     display: inline-block;
+}
+#quickview-modal .content .name {
+    font-size: 20px;
+    font-weight: 600;
 }

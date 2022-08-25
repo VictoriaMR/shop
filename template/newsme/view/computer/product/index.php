@@ -1,7 +1,7 @@
 <?php $this->load('common/base_header');?>
 <div class="spu-page mt12 mb20">
+    <?php $this->load('common/crumbs', ['crumbs'=>$crumbs]);?>
     <div class="layer bg-f">
-        <?php $this->load('common/crumbs', ['crumbs'=>$crumbs]);?>
         <?php if (empty($info)){?><div class="empty-info">
             <img src="<?php echo siteUrl('image/common/oooops.png');?>">
             <p class="mt12 f16">No item matched. Please try with other options.</p>
