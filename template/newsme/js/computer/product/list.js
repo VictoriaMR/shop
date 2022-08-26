@@ -39,6 +39,15 @@ $(function(){
 	$('#quickview-modal .content .header, #quickview-modal .mask').on('click', function(){
 		PRODUCT_MODAL.close();
 	});
+	//点击切换大图
+	$('#quickview-modal .content').on('click', '.image-list li', function(){
+		if ($(this).hasClass('selected')) {
+			return false;
+		}
+		var src = $(this).find('img').attr('src').replace('/400', '/600');
+		$(this).parent().prev().find('img').attr('src', src);
+		$(this).addClass('selected').siblings().removeClass('selected');
+	});
 });
 var PRODUCT_MODAL = {
 	init: function(pid) {
@@ -89,7 +98,7 @@ var PRODUCT_MODAL = {
 			if (i === 0) {
 				mainImage = this.info.image[i].url.replace('/400', '/600');
 			}
-			tempHtml += '<li>\
+			tempHtml += '<li'+(i===0?' class="selected"':'')+'>\
 						<div class="image-comtent">\
 							<img src="'+this.info.image[i].url+'">\
 						</div>\

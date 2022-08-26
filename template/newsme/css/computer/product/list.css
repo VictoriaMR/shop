@@ -293,6 +293,7 @@
 }
 #quickview-modal .content .w50 {
     padding: 0 10px;
+    overflow: hidden;
 }
 #quickview-modal .content .header {
     position: absolute;
@@ -316,10 +317,18 @@
     font-size: 0;
     overflow: hidden;
     white-space: nowrap;
+    position: relative;
+    margin-top: 10px;
 }
 #quickview-modal .content .image-list li {
-    width: 20%;
+    width: calc((100% - 40px) / 5);
+    margin-right: 10px;
+    border: 2px solid #fff;
     display: inline-block;
+    cursor: pointer;
+}
+#quickview-modal .content .image-list li.selected {
+    border-color: #000;
 }
 #quickview-modal .content .name {
     font-size: 18px;
