@@ -48,7 +48,7 @@ var PRODUCT_MODAL = {
 			_this.maxWidth = $(window).width();
 			_this.maxHeight = $(window).height();
 			_this.width = _this.maxWidth>1020 ? 1000 : _this.maxWidth-20;
-			_this.height = _this.maxHeight>620 ? 600 : _this.maxHeight-20;
+			_this.height = _this.maxHeight>640 ? 620 : _this.maxHeight-20;
 			_this.initNum = 10;
 			_this.obj = $('#quickview-modal');
 			_this.init_status = true;
@@ -57,14 +57,15 @@ var PRODUCT_MODAL = {
 	},
 	show: function() {
 		var _this = this;
-		_this.obj.css({width:_this.initNum,height:_this.initNum,display:'block',left:(_this.maxWidth - _this.initNum)/2,top:(_this.maxHeight - _this.initNum)/2});
-		_this.obj.animate({width:_this.width, height:_this.height,left: (_this.maxWidth - _this.width)/2, top: (_this.maxHeight - _this.height)/2}, 200, 'swing', function(){
+		_this.obj.css({width:_this.initNum,maxHeight:_this.initNum,display:'block',left:(_this.maxWidth - _this.initNum)/2,top:(_this.maxHeight - _this.initNum)/2});
+		_this.obj.animate({width:_this.width, maxHeight:_this.height,left: (_this.maxWidth - _this.width)/2, top: (_this.maxHeight - _this.height)/2}, 200, 'swing', function(){
+			_this.obj.addClass('show');
 			TIPS.loadout($('#right-list .product-list li[data-pid="'+_this.pid+'"]'), true);
 		});
 	},
 	close: function() {
 		var _this = this;
-		_this.obj.animate({width:_this.initNum,height:_this.initNum, left:(_this.maxWidth - _this.initNum)/2,top:(_this.maxHeight - _this.initNum)/2}, 300, 'swing', function(){
+		_this.obj.removeClass('show').animate({width:_this.initNum,maxHeight:_this.initNum, left:(_this.maxWidth - _this.initNum)/2,top:(_this.maxHeight - _this.initNum)/2}, 300, 'swing', function(){
 			_this.obj.hide();
 			TIPS.start();
 		});
@@ -82,6 +83,75 @@ var PRODUCT_MODAL = {
 		});
 	},
 	initPage: function() {
-
+		var mainImage = '';
+		var tempHtml = '';
+		for (var i=0; i<this.info.image.length; i++) {
+			if (i === 0) {
+				mainImage = this.info.image[i].url.replace('/400', '/600');
+			}
+			tempHtml += '<li>\
+						<div class="image-comtent">\
+							<img src="'+this.info.image[i].url+'">\
+						</div>\
+					</li>';
+		}
+		var html = '<div class="left w50">\
+				<div class="image-comtent">\
+					<img src="'+mainImage+'">\
+				</div>\
+				<ul class="image-list">\
+					'+tempHtml+'\
+				</ul>\
+			</div>\
+			<div class="left w50 info-content">\
+				<p class="name mb20">'+this.info.name+'</p>\
+				<div class="info mb10">\
+					<span class="stock">In Stock</span>\
+					<span class="num">SPU: '+this.info.spu_id+'</span>\
+				</div>\
+				<div class="price-content mb20">\
+					<span class="price">'+this.info.min_price_format+'</span>';
+		if (this.info.show_price && this.info.original_price > this.info.min_price){
+			html += '<span class="original-price">'+this.info.original_price_format+'</span>\
+					<span class="discount">'+(1-this.info.min_price/this.info.original_price).toFixed(2)*100+'% OFF</span>';
+		}
+		html += '</div>\
+				<div class="attr-content mb20">';
+		var imageAttr = false;
+		for (var i in this.info.attrMap){
+			tempHtml = '';
+			imageAttr = false;
+			for (var j=0; j<this.info.attrMap[i].length; j++){
+				if (this.info.attvImage[this.info.attrMap[i][j]] != '0') {
+					imageAttr = true;
+					tempHtml += '<li><img src="'+this.info.attvImage[this.info.attrMap[i][j]].url+'"></li>';
+				} else {
+					tempHtml += '<li><span>'+this.info.attv[this.info.attrMap[i][j]]+'</span></li>';
+				}
+			}
+			html += '<div class="attr-item">\
+						<div class="attr-name-content mb4">\
+							<span class="attr-name">'+this.info.attr[i]+'</span>\
+						</div>\
+						<ul class="attv-list'+(imageAttr?' attv-img':'')+'">\
+							'+tempHtml+'\
+						</ul>\
+					</div>';
+		}
+		html += '</div>\
+				<div class="qty-content mb20">\
+					<span class="f16 f600">Qty</span>\
+					<span class="ml20 iconfont icon-jianhao"></span>\
+					<input type="text" name="qty" value="1">\
+					<span class="iconfont icon-jiahao1"></span>\
+				</div>\
+				<div class="btn-content">\
+					<button class="btn btn-black mb10">ADD TO BAG</button>\
+					<button class="btn mb10"><span class="iconfont icon-xihuan"></span> Add to Wish List</button>\
+				</div>\
+				<a href="'+this.info.url+'" class="c9">View Full Details</a>\
+			</div>\
+			<div class="clear"></div>';
+		this.obj.find('.content .body').html(html);
 	},
 };

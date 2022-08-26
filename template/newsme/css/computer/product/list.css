@@ -241,7 +241,7 @@
     font-size: 12px;
 }
 #right-list .product-list li .label .pdt-discount {
-    background-color: #333;
+    background-color: #000;
     color: #fff;
 }
 #right-list .product-list li .quickview {
@@ -260,14 +260,13 @@
     bottom: 50%;
 }
 #right-list .product-list li .quickview:hover {
-    border-color: #333;
-    color: #333;
+    border-color: #000;
+    color: #000;
 }
 #quickview-modal {
     display: none;
     position: fixed;
     z-index: 102;
-    background-color: #fff;
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.3);
@@ -284,13 +283,26 @@
 }
 #quickview-modal .content {
     position: relative;
-    padding: 20px 16px 20px 20px;
+    background-color: #fff;
+    padding: 23px 10px;
     z-index: 101;
+}
+#quickview-modal.show .content .info-content {
+    max-height: 574px;
+    overflow: auto;
+}
+#quickview-modal .content .w50 {
+    padding: 0 10px;
 }
 #quickview-modal .content .header {
     position: absolute;
-    top: 6px;
-    right: 6px;
+    top: 0;
+    right: 0;
+    padding: 4px 8px;
+    background-color: #000;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
 }
 #quickview-modal .content .image-comtent {
     border-radius: 4px;
@@ -310,6 +322,100 @@
     display: inline-block;
 }
 #quickview-modal .content .name {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 600;
+}
+#quickview-modal .content .info .stock {
+    margin-right: 14px;
+}
+#quickview-modal .content .info .num {
+    color: #999;
+    font-weight: 500;
+}
+#quickview-modal .content .price-content .price{
+    font-size: 26px;
+    font-weight: 600;
+}
+#quickview-modal .content .price-content .original-price {
+    color: #999;
+    text-decoration: line-through;
+    font-size: 16px;
+    margin-left: 10px;
+}
+#quickview-modal .content .price-content .discount{
+    color: #c00;
+    font-size: 18px;
+    margin-left: 10px;
+}
+#quickview-modal .content .attr-content .attr-item {
+    margin-bottom: 10px;
+}
+#quickview-modal .content .attr-content .attr-name {
+    font-size: 16px;
+    font-weight: 600;
+}
+#quickview-modal .content .attr-content .attv-list li {
+    display: inline-block;
+    padding: 5px 8px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 2px solid #fff;
+    margin-right: 4px;
+}
+#quickview-modal .content .attr-content .attv-list.attv-img li {
+    padding: 3px;
+    font-size: 0;
+}
+#quickview-modal .content .attr-content .attv-list.attv-img li img {
+    max-width: 60px;
+    max-height: 60px;
+}
+#quickview-modal .content .attr-content .attv-list li:hover {
+    border-color: #999;
+}
+#quickview-modal .content .attr-content .attv-list li.selected {
+    border-color: #000;
+}
+#quickview-modal .content .attr-content .bounce {
+    animation: bounce 300ms 3;
+}
+@keyframes bounce {
+    0% {
+        transform: translateX(-5px);
+    }
+    25% {
+        transform: translateX(0px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    100% {
+        transform: translateX(0px);
+    }
+}
+#quickview-modal .content .qty-content .iconfont {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 28px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 50%;
+    border: 1px solid #fff;
+}
+#quickview-modal .content .qty-content .iconfont:hover {
+    border: 1px solid #000;
+}
+#quickview-modal .content .qty-content input {
+    border: none;
+    margin: 0 8px;
+    width: 30px;
+    height: 30px;
+    text-align: center;
+    display: inline-block;
+    outline-color: #999;
+}
+#quickview-modal .content a:hover {
+    text-decoration: underline;
 }

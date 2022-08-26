@@ -6,7 +6,7 @@
 html{
     font-family: "Lexend";
     font-weight: 400;
-    color: #333;
+    color: #000;
     font-size:12px;
 }
 button {
@@ -23,7 +23,7 @@ ul,ol,li {
 }
 a {
 	text-decoration: none;
-	color: #333
+	color: #000
 }
 a:hover,a:active,a:focus {
 	color: #c00;
@@ -191,6 +191,9 @@ body {
 }
 .cg {
 	color: #AB7C3F;
+}
+.c9 {
+	color: #999;
 }
 .bg-f {
 	background-color: #fff;
@@ -523,7 +526,7 @@ body {
 }
 .pagination li.active a,
 .pagination li.active span{
-	background-color: #333;
+	background-color: #000;
 	color: #fff;
 }
 .pagination li:hover a {

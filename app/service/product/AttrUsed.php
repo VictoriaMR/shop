@@ -23,7 +23,7 @@ class AttrUsed extends Base
 			$data['attr'][$value['attrn_id']] = $value['name'];
 			$data['attrMap'][$value['attrn_id']] = [];
 		}
-		$data['attrArr'] = array_keys($data['attr']);
+		$attrArr = array_keys($data['attr']);
 		//$attv属性
 		$tempArr = array_unique(array_column($list, 'attrv_id'));
 		$tempArr = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
@@ -45,7 +45,6 @@ class AttrUsed extends Base
 			ksort($value);
 			return array_values($value);
 		}, $data['attrMap']);
-		$attrArr = $data['attrArr'];
 		$data['skuAttv'] = array_map(function($value) use($attrArr){
 			array_multisort($attrArr, $value);
 			return array_values($value);
