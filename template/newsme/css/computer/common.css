@@ -136,6 +136,9 @@ body {
 .block {
 	display: block;
 }
+.iblock {
+	display: inline-block;
+}
 .e1 {
 	overflow: hidden;
     white-space: normal;

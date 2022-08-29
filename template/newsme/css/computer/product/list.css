@@ -288,7 +288,7 @@
     z-index: 101;
 }
 #quickview-modal.show .content .info-content {
-    max-height: 574px;
+    max-height: 581px;
     overflow: auto;
 }
 #quickview-modal .content .w50 {
@@ -313,12 +313,14 @@
     text-align: center;
     padding-bottom: 100%;
 }
+#quickview-modal .content .small-image {
+    margin-top: 10px;
+    overflow: hidden;
+}
 #quickview-modal .content .image-list {
     font-size: 0;
-    overflow: hidden;
     white-space: nowrap;
     position: relative;
-    margin-top: 10px;
 }
 #quickview-modal .content .image-list li {
     width: calc((100% - 40px) / 5);
@@ -385,6 +387,10 @@
 #quickview-modal .content .attr-content .attv-list li.selected {
     border-color: #000;
 }
+#quickview-modal .content .attr-content .attv-list li.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 #quickview-modal .content .attr-content .bounce {
     animation: bounce 300ms 3;
 }
@@ -412,9 +418,14 @@
     font-weight: 600;
     border-radius: 50%;
     border: 1px solid #fff;
+    cursor: pointer;
 }
 #quickview-modal .content .qty-content .iconfont:hover {
     border: 1px solid #000;
+}
+#quickview-modal .content .qty-content .iconfont.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
 }
 #quickview-modal .content .qty-content input {
     border: none;
@@ -427,4 +438,30 @@
 }
 #quickview-modal .content a:hover {
     text-decoration: underline;
+}
+#quickview-modal .content .small-image.padding {
+    padding: 0 24px;
+}
+#quickview-modal .content .small-image .movement {
+    position: absolute;
+    top: 0;
+    width: 24px;
+    height: 100%;
+    cursor: pointer;
+    background-color: #f5f5f5;
+}
+#quickview-modal .content .small-image .left-movement {
+    left: 0;
+}
+#quickview-modal .content .small-image .right-movement {
+    right: 0;
+}
+#quickview-modal .content .small-image .movement .iconfont {
+    position: absolute;
+    font-size: 20px;
+    top: calc(50% - 10px);
+    left: 2px;
+}
+#quickview-modal .content .small-image .movement.disabled {
+    cursor: not-allowed;
 }
