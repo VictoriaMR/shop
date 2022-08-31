@@ -103,10 +103,16 @@ class Spu extends Base
 		}
 		foreach ($info['attvImage'] as $key => $value) {
 			if (empty($value)) continue;
-			$info['attvImage'][$key] = $imageArr[$value] ?? [];
+			$info['attvImage'][$key] = [];
+			if (isset($imageArr[$value])) {
+				$info['attvImage'][$key] = [
+					'attach_id' => $imageArr[$value]['attach_id'],
+					'url' => $imageArr[$value]['url'],
+				];
+			}
 		}
 		foreach ($info['sku'] as $key => $value) {
-			$value['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
+			$info['sku'][$key]['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
 		}
 		return $info;
 	}

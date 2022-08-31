@@ -69,11 +69,11 @@ class AttrUsed extends Base
 				foreach ($this->getArraySubSet($value) as $vv) {
 					$key = implode(':', $vv);
 					if (isset($data['filterMap'][$key])) {
-						$data['filterMap'][$key] = array_merge(array_diff($value, $vv), $data['filterMap'][$key]);
+						$data['filterMap'][$key] = array_values(array_merge(array_diff($value, $vv), $data['filterMap'][$key]));
 					} else {
 						$diff = array_diff($value, $vv);
 						if ($diff) {
-							$data['filterMap'][$key]=$diff;
+							$data['filterMap'][$key] = array_values($diff);
 						}
 					}
 				}

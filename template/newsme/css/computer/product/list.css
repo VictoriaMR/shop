@@ -328,6 +328,8 @@
     border: 2px solid #fff;
     display: inline-block;
     cursor: pointer;
+    border-radius: 6px;
+    overflow: hidden;
 }
 #quickview-modal .content .image-list li.selected {
     border-color: #000;
@@ -372,6 +374,7 @@
     cursor: pointer;
     border: 2px solid #fff;
     margin-right: 4px;
+    margin-bottom: 4px;
 }
 #quickview-modal .content .attr-content .attv-list.attv-img li {
     padding: 3px;
@@ -390,6 +393,7 @@
 #quickview-modal .content .attr-content .attv-list li.disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    border: 2px dotted #ddd;
 }
 #quickview-modal .content .attr-content .bounce {
     animation: bounce 300ms 3;

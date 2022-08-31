@@ -73,7 +73,11 @@ $(function(){
 		if ($(this).hasClass('disabled')) {
 			return false;
 		}
-		$(this).addClass('selected').siblings().removeClass('selected');
+		if ($(this).hasClass('selected')) {
+			$(this).removeClass('selected');
+		} else {
+			$(this).addClass('selected').siblings().removeClass('selected');
+		}
 		PRODUCT_MODAL.skuInit();
 	});
 	//数量加减
@@ -85,24 +89,32 @@ $(function(){
 		var val = parseInt(obj.val());
 		if ($(this).hasClass('icon-jianhao')) {
 			val = val > 1 ? val - 1 : 1;
-			if (val <= 1) {
-				$(this).addClass('disabled');
-			} else {
-				$(this).removeClass('disabled');
-			}
 		} else {
 			var stock = $(this).parent().data('stock');
 			val = val < stock ? val + 1 : stock;
-			if (val >= stock) {
-				$(this).addClass('disabled');
-			} else {
-				$(this).removeClass('disabled');
-			}
 		}
 		obj.val(val);
+		PRODUCT_MODAL.qtyInit();
 	});
 	//输入数量直接触发
 	$('#quickview-modal .content').on('blur', '.qty-content input', function(){
+		var val = parseInt($(this).val());
+		var stock = $(this).parent().data('stock');
+		if (stock < val) {
+			$(this).val(stock);
+		}
+		if (val <= 0) {
+			$(this).val(1);
+		}
+		PRODUCT_MODAL.qtyInit();
+	});
+	//加入购物车
+	$('#quickview-modal .content').on('click', '.btn-add-cart', function(){
+		var pObj = $('#quickview-modal .content');
+		if (PRODUCT_MODAL.checkSku()) {
+
+		}
+		// TIPS.loading(pObj);
 	});
 });
 var PRODUCT_MODAL = {
@@ -232,7 +244,7 @@ var PRODUCT_MODAL = {
 					<span class="iconfont icon-jiahao1"></span>\
 				</div>\
 				<div class="btn-content">\
-					<button class="btn btn-black mb10">ADD TO BAG</button>\
+					<button class="btn btn-black mb10 btn-add-cart">ADD TO BAG</button>\
 					<button class="btn mb10"><span class="iconfont icon-xihuan"></span> Add to Wish List</button>\
 				</div>\
 				<a href="'+this.info.url+'" class="c9">View Full Details</a>\
@@ -244,7 +256,6 @@ var PRODUCT_MODAL = {
 		var skuMapKey = [];
 		var filterMapKey = [];
 		var obj = $('#quickview-modal .content .attr-item');
-
 		obj.each(function(){
 			var id = $(this).data('id');
 			$(this).find('li').each(function(){
@@ -260,23 +271,28 @@ var PRODUCT_MODAL = {
 		this.skuId = null;
 		if (this.info.skuMap[skuMapKey]) {
 			var skuInfo = this.info.sku[this.info.skuMap[skuMapKey]];
-			$('#quickview-modal .info-content .name').text(skuInfo.name);
-			$('#quickview-modal .info-content .stock').text(skuInfo.stock>0?'In Stock':'Out Of Stock');
-			$('#quickview-modal .info-content .num').text('SKU: '+skuInfo.sku_id);
-			$('#quickview-modal .info-content .price').text(skuInfo.price_format);
-			if ($('#quickview-modal .info-content .original-price').lenght > 0 && skuInfo.original_price > skuInfo.price) {
-				$('#quickview-modal .info-content .original-price').text(skuInfo.original_price_format);
-				$('#quickview-modal .info-content .discount').text((1-skuInfo.price/skuInfo.original_price).toFixed(2)*100+'% OFF');
+			var contentObj = this.obj.find('.info-content');
+			contentObj.find('.name').text(skuInfo.name);
+			contentObj.find('.stock').text(skuInfo.stock>0?'In Stock':'Out Of Stock');
+			contentObj.find('.num').text('SKU: '+skuInfo.sku_id);
+			contentObj.find('.price').text(skuInfo.price_format);
+			if (contentObj.find('.original-price').lenght > 0 && skuInfo.original_price > skuInfo.price) {
+				contentObj.find('.original-price').text(skuInfo.original_price_format);
+				contentObj.find('.discount').text((1-skuInfo.price/skuInfo.original_price).toFixed(2)*100+'% OFF');
 			} else {
-				$('#quickview-modal .info-content .original-price').remove();
-				$('#quickview-modal .info-content .discount').remove();
+				contentObj.find('.original-price').remove();
+				contentObj.find('.discount').remove();
 			}
-			$('#quickview-modal .info-content .qty-content').data('stock', skuInfo.stock);
+			contentObj.find('.qty-content').data('stock', skuInfo.stock);
+			if (skuInfo.image) {
+				this.obj.find('.big-image img').attr('src', skuInfo.image.replace('/400', '/600'));
+				this.obj.find('.small-image li').removeClass('selected');
+			}
 		}
 		//属性按钮初始化
 		var filterMap = this.info.filterMap[filterMapKey];
-		if (filterMap) {
 			console.log(filterMap, 'filterMap')
+		if (filterMap) {
 			obj.each(function(){
 				if ($(this).find('.attv-list li.selected').length === 0) {
 					$(this).find('.attv-list li').each(function(){
@@ -290,5 +306,32 @@ var PRODUCT_MODAL = {
 				}
 			});
 		}
+		if (this.obj.find('.attv-list li.selected').length === 0) {
+			this.obj.find('.attv-list li.disabled').removeClass('disabled');
+		}
 	},
+	qtyInit: function() {
+		var obj = this.obj.find('.qty-content');
+		var stock = obj.data('stock');
+		var val = parseInt(obj.find('input').val());
+		if (val <= 1 || stock <= 1) {
+			obj.find('.icon-jianhao').addClass('disabled');
+		} else {
+			obj.find('.icon-jianhao').removeClass('disabled');
+		}
+		if (val >= stock || stock <= 1) {
+			obj.find('.icon-jiahao1').addClass('disabled');
+		} else {
+			obj.find('.icon-jiahao1').removeClass('disabled');
+		}
+	},
+	checkSku: function() {
+		var check = true;
+		this.obj.find('.attr-content .attr-item').each(function(){
+			if ($(this).find('.attv-list li.selected').length === 0) {
+				check = false;
+			}
+		});
+		return check;
+	}
 };

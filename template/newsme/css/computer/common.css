@@ -166,6 +166,9 @@ body {
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
 }
+.noselect {
+	user-select:none;
+}
 .desc-title {
 	padding: 8px 0;
 }

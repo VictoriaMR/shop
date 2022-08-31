@@ -1,8 +1,8 @@
 <?php
 return [
-	'_title' => 'ClothesToME® - Fashion & Auality Clothes Official Store',
-	'_desc' => 'From top to pants, from underwear to coat. All fashion inspiration clothes can be found on ClothesToME®. High quality and low price!',
-	'_keyword' => 'More High quality and low price Women\'s and Men\'s Clothing, online fashion clothes site',
+	'_title' => 'ClothesToME® - Fashion | Auality Clothes Store',
+	'_desc' => 'A clothing shop that you can shopping online, all fashion inspiration clothes can be found on ClothesToME® clothing store, more high quality and low price clothes!',
+	'_keyword' => 'More high quality and low price women\'s and men\'s clothing, shopping online fashion clothes site',
 
 	//切走
 	'home' => 'Home',
