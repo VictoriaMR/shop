@@ -288,7 +288,7 @@
     z-index: 101;
 }
 #quickview-modal.show .content .info-content {
-    max-height: 581px;
+    max-height: 593px;
     overflow: auto;
 }
 #quickview-modal .content .w50 {
@@ -362,6 +362,10 @@
 }
 #quickview-modal .content .attr-content .attr-item {
     margin-bottom: 10px;
+}
+#quickview-modal .content .attr-content .attr-name-content {
+    position: relative;
+    margin-bottom: 4px;
 }
 #quickview-modal .content .attr-content .attr-name {
     font-size: 16px;
@@ -468,4 +472,22 @@
 }
 #quickview-modal .content .small-image .movement.disabled {
     cursor: not-allowed;
+}
+#quickview-modal .error-tips {
+    background: #EB2027;
+    color: #fff;
+    font-weight: 700;
+    padding: 2px 12px;
+    position: absolute;
+    top: 25px;
+}
+#quickview-modal .error-tips .triangle {
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #EB2027;
+    position: absolute;
+    top: -7px;
 }

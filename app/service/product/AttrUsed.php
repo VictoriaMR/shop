@@ -88,15 +88,14 @@ class AttrUsed extends Base
 		$subsets = pow(2, $len);
 		$result = [];
 		for ($i=0; $i<$subsets; $i++) {
-			$bits = sprintf("%0".$len."b", $i);
+			$bits = sprintf('%0'.$len.'b', $i);
 			$item = [];
 			for ($j=0;$j<$len;$j++) {
 				if ($bits[$j] == '1') {
 					$item[] = $arr[$j];
 				}
 			}
-			if (!empty($item))
-			$result[] = $item;
+			if (!empty($item)) $result[] = $item;
 		}
 		return $result;
 	}
