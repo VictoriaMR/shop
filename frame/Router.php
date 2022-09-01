@@ -86,7 +86,7 @@ final class Router
 			$name = implode('-', array_reverse($name));
 		}
 		if ($name) $name .= $this->paramFormat($param);
-		return ($domain?'https://'.$domain.'/':APP_DOMAIN).$name;
+		return ($domain?$domain:APP_DOMAIN).$name;
 	}
 
 	public function adminUrl($name='', $param=[])

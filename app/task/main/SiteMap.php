@@ -46,6 +46,7 @@ class SiteMap extends TaskDriver
 		}
 		foreach ($siteList as $key => $value) {
 			$this->clear();
+			$value['domain'] = 'https://'.$value['domain'].'/';
 			$this->lastSpuId = $this->getLastSpuId($value['site_id']);
 			//astid 不为空, 首页和分类已经遍历
 			if (!$this->createXml('urlset')) {
