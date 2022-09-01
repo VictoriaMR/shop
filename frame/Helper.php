@@ -51,8 +51,8 @@ function db($db=null){
 function page($size=0, $total=0){
 	return \App::make('frame/Paginator')->make($size, $total);
 }
-function url($name='', $param=[]) {
-    return router()->url($name, $param);
+function url($name='', $param=[], $domain='') {
+    return router()->url($name, $param, $domain);
 }
 function adminUrl($name='', $param=[]){
 	return router()->adminUrl($name, $param);

@@ -61,9 +61,9 @@ class SiteMap extends TaskDriver
 				$tempCateList = $cateArr[$value['site_id']] ?? [];
 
 				foreach ($tempCateList as $cv) {
-					if ($cv['status'] && $cv['show']) {
+					if ($cv['status'] && $cv['is_show']) {
 						$tempData = [
-							'loc' => $router->urlFormat($cv['name_en'], 'c', ['id'=>$cv['cate_id']], $value['domain']),
+							'loc' => url($cv['name_en'], ['c'=>$cv['cate_id']], $value['domain']),
 						];
 						$this->createSingleXml('url', $tempData);
 						//条数统计
@@ -102,7 +102,7 @@ class SiteMap extends TaskDriver
 					foreach ($spuIdArr as $spuValue) {
 						$spuNameArr[$spuValue] = empty($spuNameArr[$spuValue])?'':$spuNameArr[$spuValue];
 						$tempData = [
-							'loc' => $router->urlFormat($spuNameArr[$spuValue], 'p', ['id'=>$spuValue], $value['domain']),
+							'loc' => url($spuNameArr[$spuValue], ['p'=>$spuValue], $value['domain']),
 						];
 						$this->lastSpuId = $spuValue;
 						$this->createSingleXml('url', $tempData);
@@ -114,7 +114,7 @@ class SiteMap extends TaskDriver
 								}
 								$name = $spuNameArr[$spuValue].$str;
 								$tempData = [
-									'loc' => $router->urlFormat($name, 's', ['id'=>$skuValue], $value['domain']),
+									'loc' => url($name, ['s'=>$skuValue], $value['domain']),
 								];
 								$this->createSingleXml('url', $tempData);
 							}
@@ -129,6 +129,7 @@ class SiteMap extends TaskDriver
 				$this->saveSingleXml();
 			}
 			$this->saveSiteMapIndexXml($value['domain']);
+			$this->setLastSpuId($value['site_id'], 0);
 		}
 		return false;
 	}

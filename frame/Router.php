@@ -54,7 +54,7 @@ final class Router
 		return $this->path_format[$type]??'';
 	}
 
-	public function url($name='', $param=[])
+	public function url($name='', $param=[], $domain='')
 	{
 		if ($name) {
 			if (strpos($name, '/') === false) {
@@ -86,7 +86,7 @@ final class Router
 			$name = implode('-', array_reverse($name));
 		}
 		if ($name) $name .= $this->paramFormat($param);
-		return APP_DOMAIN.$name;
+		return ($domain?'https://'.$domain.'/':APP_DOMAIN).$name;
 	}
 
 	public function adminUrl($name='', $param=[])
