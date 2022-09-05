@@ -80,9 +80,9 @@
     box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.2);
 }
 .best-seller li .price {
-	color: #E64545;
+	color: red;
 	font-size: 16px;
-	font-weight: 500;
+	font-weight: 600;
 }
 .best-seller li .original-price {
     margin-left: 6px;
