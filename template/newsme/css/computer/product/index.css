@@ -36,8 +36,9 @@
 }
 
 .price-content .price{
-    font-size: 26px;
+    font-size: 32px;
     font-weight: 600;
+    color: #F24330;
 }
 .spu-page .price-content .original-price {
     color: #999;
@@ -58,7 +59,7 @@
     margin-bottom: 4px;
 }
 .spu-page .attr-content .attr-name {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 600;
 }
 .spu-page .attr-content .attv-list li {
@@ -69,7 +70,7 @@
     border: 2px solid #fff;
     margin-right: 4px;
     margin-bottom: 4px;
-    font-size: 14px;
+    font-size: 18px;
 }
 .spu-page .attr-content .attv-list.attv-img li {
     padding: 3px;
