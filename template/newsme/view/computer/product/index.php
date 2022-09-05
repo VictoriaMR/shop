@@ -12,7 +12,7 @@
                 <div class="relative big-image img">
                     <img data-src="<?php echo str_replace('/400', '/600', $info['image'][$info['attach_id']]);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
                 </div>
-                <?php if (!empty($info['image'])){?><div class="small-image relative">
+                <?php if (!empty($info['image'])){?><div class="small-image relative<?php echo count($info['image'])>5?' padding':'';?>">
                     <ul class="image-list">
                     <?php $count=0; foreach ($info['image'] as $key=>$value){$count++;?><li<?php echo $count==1?' class="selected"':'';?>>
                             <div class="image-comtent">

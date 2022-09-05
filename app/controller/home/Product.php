@@ -58,10 +58,12 @@ class Product extends HomeBase
 				}
 				$isLiked = userId() ? make('app/service/member/Collect')->isCollect($spuId) : false;
 				$info['image'] = array_column($info['image'], 'url', 'attach_id');
+				$seo = $info['name'].implode(' ', $info['attv']??[]);
 				$this->assign('isLiked', $isLiked);
 				$this->assign('info', $info);
 				$this->assign('_title', $info['name']);
-				$this->assign('_seo', $info['name'].implode(' ', $info['attv']??[]));
+				$this->assign('_desc', $seo);
+				$this->assign('_keyword', $seo);
 				$this->assign('spuId', $spuId);
 				$this->assign('skuId', $skuId);
 			}
