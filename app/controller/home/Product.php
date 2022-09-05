@@ -41,12 +41,10 @@ class Product extends HomeBase
 						];
 					}
 				}
-				if (!empty($crumbs)) {
-					$crumbs[] = [
-						'name' => 'Spu:'.$spuId,
-						'url' => $info['url'] ?? 'javascript:;',
-					];
-				}
+				$crumbs[] = [
+					'name' => 'Spu:'.$spuId,
+					'url' => $info['url'] ?? 'javascript:;',
+				];
 				if ($info['status'] == $spu->getConst('STATUS_OPEN')) {
 					if ($skuId) {
 						$stock = $info['sku'][$skuId]['stock'];
@@ -58,8 +56,8 @@ class Product extends HomeBase
 					$this->assign('stock', $stock);
 					$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 				}
-				$this->assign('skuNo', 'S'.siteId().'-C'.$info['cate_id'].'-'.($skuId ? 'S'.$skuId : 'P'.$spuId));
 				$isLiked = userId() ? make('app/service/member/Collect')->isCollect($spuId) : false;
+				$info['image'] = array_column($info['image'], 'url', 'attach_id');
 				$this->assign('isLiked', $isLiked);
 				$this->assign('info', $info);
 				$this->assign('_title', $info['name']);

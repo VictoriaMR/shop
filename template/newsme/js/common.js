@@ -66,7 +66,7 @@ var TIPS = {
         }, 5000);
     },
     loading: function(obj) {
-        var style = ''; 
+        var style = 'style="display:block;"'; 
         if (obj) {
             style = 'style="position:absolute;display:block;"';
         } else {
