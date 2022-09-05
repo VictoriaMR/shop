@@ -4,6 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="cache-control" content="no-cache">
 	<title><?php echo $_title??appT('_title');?></title>
+	<meta name="theme-color" content="#e8e2e0">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta content="telephone=no,email=no" name="format-detection">
 	<meta name="apple-mobile-web-app-title" content="<?php echo \App::get('base_info', 'name');?>">

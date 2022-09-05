@@ -16,7 +16,7 @@
 												<div class="popper">
 													<div class="header">
 														<span class="iconfont icon-guanbi1 f16 f600 pointer close"></span>
-														<img src="<?php echo siteUrl('image/common/logo.png');?>">
+														<img src="<?php echo siteUrl('image/common/logo.png');?>" alt="logo">
 													</div>
 													<div class="body">
 														<a href="<?php echo url('userInfo/');?>" class="table w100">
@@ -72,7 +72,7 @@
 										</td>
 										<td class="f0">
 											<a href="<?php echo url();?>">
-												<img class="logo" src="<?php echo siteUrl('image/common/logo.png');?>">
+												<img class="logo" src="<?php echo siteUrl('image/common/logo.png');?>" alt="logo">
 											</a>
 										</td>
 									</tr>
@@ -87,14 +87,14 @@
 								</div>
 								<div class="hot-search mt8 c6 relative">
 									<span class="hot-icon">
-										<img src="<?php echo siteUrl('image/common/hot.png');?>">
+										<img src="<?php echo siteUrl('image/common/hot.png');?>" alt="Hot Search">
 									</span>
-									<a href="<?php echo url('search', ['keyword'=>'dress'], false);?>">Dress</a>
-									<a href="<?php echo url('search', ['keyword'=>'sweater'], false);?>">Sweater</a>
-									<a href="<?php echo url('search', ['keyword'=>'shit'], false);?>">Shit</a>
-									<a href="<?php echo url('search', ['keyword'=>'jeans'], false);?>">Jeans</a>
-									<a href="<?php echo url('search', ['keyword'=>'skirt'], false);?>">Skirt</a>
-									<a href="<?php echo url('search', ['keyword'=>'summer'], false);?>">Summer</a>
+									<a href="<?php echo url('search', ['keyword'=>'dress'], false);?>" title="Search Dress">Dress</a>
+									<a href="<?php echo url('search', ['keyword'=>'sweater'], false);?>" title="Search Sweater">Sweater</a>
+									<a href="<?php echo url('search', ['keyword'=>'shit'], false);?>" title="Search Shit">Shit</a>
+									<a href="<?php echo url('search', ['keyword'=>'jeans'], false);?>" title="Search Jeans">Jeans</a>
+									<a href="<?php echo url('search', ['keyword'=>'skirt'], false);?>" title="Search Skirt">Skirt</a>
+									<a href="<?php echo url('search', ['keyword'=>'summer'], false);?>" title="Search Summer">Summer</a>
 								</div>
 							</div>
 						</td>

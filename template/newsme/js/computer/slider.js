@@ -24,7 +24,7 @@ $.fn.slider = function (options) {
 		slideContainer.on('mouseover', stop);
 		slideContainer.on('mouseleave', start);
 		//向右点击
-		slideContainer.find('.pop-opt a').on('click', function(){
+		slideContainer.find('.pop-opt span').on('click', function(){
 			if (!clickable) {
 				return false;
 			}
@@ -64,13 +64,13 @@ $.fn.slider = function (options) {
 		var html = '<ol style="margin-left:-'+(count*5.5+3)+'px;">';
 		for (var i=0; i<count; i++) {
 			html += '<li '+(i===0?'class="active"':'')+'>\
-						<a href="javascript:;"></a>\
+						<span></span>\
 					</li>';
 		}
 		html +='</ol>';
 		html += '<div class="pop-opt">\
-					<a href="javascript:;" class="t-left"><</a>\
-					<a href="javascript:;" class="t-right">></a>\
+					<span class="t-left"><</span>\
+					<span class="t-right">></span>\
 				</div>';
 		slideContainer.append(html);
 	}

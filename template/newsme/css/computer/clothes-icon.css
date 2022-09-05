@@ -1,4 +1,4 @@
-@font-face{font-family:"clothes-iconfont";src:url('/font/clothes-iconfont.eot');src:url('/font/clothes-iconfont.eot#iefix') format('embedded-opentype'),url('/font/clothes-iconfont.woff') format('woff'),url('/font/clothes-iconfont.ttf') format('truetype'),url('/font/clothes-iconfont.svg#iconfont') format('svg')}
+@font-face{font-family:"clothes-iconfont";src:url('/font/clothes-iconfont.eot');src:url('/font/clothes-iconfont.eot#iefix') format('embedded-opentype'),url('/font/clothes-iconfont.woff') format('woff'),url('/font/clothes-iconfont.ttf') format('truetype'),url('/font/clothes-iconfont.svg#iconfont') format('svg');font-display: fallback;}
 .clothes-iconfont {
 	font-family: "clothes-iconfont" !important;
 	font-style: normal;

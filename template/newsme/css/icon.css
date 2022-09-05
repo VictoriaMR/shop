@@ -1,4 +1,4 @@
-@font-face{font-family:"iconfont";src:url('/font/iconfont.eot');src:url('/font/iconfont.eot#iefix') format('embedded-opentype'),url('/font/iconfont.woff') format('woff'),url('/font/iconfont.ttf') format('truetype'),url('/font/iconfont.svg#iconfont') format('svg')}
+@font-face{font-family:"iconfont";src:url('/font/iconfont.eot');src:url('/font/iconfont.eot#iefix') format('embedded-opentype'),url('/font/iconfont.woff') format('woff'),url('/font/iconfont.ttf') format('truetype'),url('/font/iconfont.svg#iconfont') format('svg');font-display: fallback;}
 .iconfont {
 	font-family: "iconfont" !important;
 	font-style: normal;

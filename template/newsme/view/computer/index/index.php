@@ -38,7 +38,7 @@
 								<ul>
 									<?php foreach ($banner as $value){?><li data-index="1">
 										<a href="<?php echo $value['url'];?>" title="<?php echo $value['name_en'];?>">
-											<img src="<?php echo $value['image'];?>">
+											<img src="<?php echo $value['image'];?>" alt="<?php echo $value['name_en'];?>">
 										</a>
 									</li>
 									<?php }?></ul>
@@ -57,7 +57,7 @@
 			<?php foreach($popularCate as $value){?><li>
 				<a href="<?php echo url($value['name_en'], ['c'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>">
 					<div class="image-content">
-						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" alt="<?php echo $value['name_en'];?>">
 					</div>
 					<p class="f16 mt12 mb12 e1"><?php echo $value['name_en'];?></p>
 				</a>
@@ -72,7 +72,7 @@
 			<?php foreach($bestSeller as $value){?><li>
 				<a href="<?php echo $value['url'];?>" title="<?php echo $value['name'];?>">
 					<div class="image-content">
-						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" alt="<?php echo $value['name'];?>">
 					</div>
 					<p class="f16 mt12 mb12 e2"><?php echo $value['name'];?></p>
 					<div class="price-content">

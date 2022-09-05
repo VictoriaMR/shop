@@ -4,42 +4,49 @@
     src:url('/font/Lexend-Thin.ttf'); /* IE9 */
     src:url('/font/Lexend-Thin.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 100;
+    font-display: fallback;
 }
 @font-face { /* font-properties */
     font-family: "Lexend";
     src:url('/font/Lexend-Light.ttf'); /* IE9 */
     src:url('/font/Lexend-Light.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 200;
+    font-display: fallback;
 }
 @font-face { /* font-properties */
     font-family: "Lexend";
     src:url('/font/Lexend-Regular.ttf'); /* IE9 */
     src:url('/font/Lexend-Regular.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 400;
+    font-display: fallback;
 }
 @font-face { /* font-properties */
     font-family: "Lexend";
     src:url('/font/Lexend-Medium.ttf'); /* IE9 */
     src:url('/font/Lexend-Medium.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 500;
+    font-display: fallback;
 }
 @font-face { /* font-properties */
     font-family: "Lexend";
     src:url('/font/Lexend-SemiBold.ttf'); /* IE9 */
     src:url('/font/Lexend-SemiBold.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 600;
+    font-display: fallback;
 }
 @font-face { /* font-properties */
     font-family: "Lexend";
     src:url('/font/Lexend-Bold.ttf'); /* IE9 */
     src:url('/font/Lexend-Bold.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 700;
+    font-display: fallback;
 }
 @font-face { /* font-properties */
     font-family: "Lexend";
     src:url('/font/Lexend-ExtraBold.ttf'); /* IE9 */
     src:url('/font/Lexend-ExtraBold.ttf') format('truetype'); /* chrome, firefox, opera, Safari, Android, iOS 4.2+ */
     font-weight: 800;
+    font-display: fallback;
 }
 .f100 {
 	font-weight: 100;

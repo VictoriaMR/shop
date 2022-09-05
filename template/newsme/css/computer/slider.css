@@ -33,22 +33,24 @@
     display: inline-block;
     margin: 3px;
 }
-.slider ol>li a{
+.slider ol>li span{
     display: block;
     padding-top: 8px;
     width: 8px;
     height: 0;
     border-radius: 50%;
     background: #fff;
+    cursor: pointer;
 }
-.slider ol>li.active a{
+.slider ol>li.active span{
     background-color: #c00;
 }
 .slider .pop-opt {
     display: none;
 }
-.slider .pop-opt a {
+.slider .pop-opt span{
     position: absolute;
+    cursor: pointer;
     top: 50%;
     background-color: rgba(0,0,0,.3);
     display: block;
@@ -59,14 +61,14 @@
     line-height: 28px;
     color: #fff;
 }
-.slider .pop-opt a.t-left {
+.slider .pop-opt .t-left {
     left: 0;
     text-align: left;
     padding-left: 3px;
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
 }
-.slider .pop-opt a.t-right {
+.slider .pop-opt .t-right {
     right: 0;
     padding-right: 3px;
     text-align: right;

@@ -1,4 +1,3 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://newsme.cf/sitemap.xml
+Sitemap: https://clothestome.com/sitemap.xml
