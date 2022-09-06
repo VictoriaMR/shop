@@ -18,14 +18,14 @@ class Paginator
 	</nav>',
 		'extra' => '<li class="disabled"><span>合计 {total} 条, 每页 {size} 条, 共 {totalPage} 页</span></li>',
 		'prev' => [
-			'enabled' => '<li><a href="{url}">{text}</a></li>',
+			'enabled' => '<li><a href="{url}" title="page-{text}">{text}</a></li>',
 			'disabled' => '<li class="disabled">{text}</li>',
 		],
 		'next' => [
-			'enabled' => '<li><a href="{url}">{text}</a></li>',
+			'enabled' => '<li><a href="{url}" title="page-{text}">{text}</a></li>',
 			'disabled' => '<li class="disabled">{text}</li>',
 		],
-		'paging' => '<li><a href="{url}">{text}</a></li>',
+		'paging' => '<li><a href="{url}" title="page-{text}">{text}</a></li>',
 		'current' => '<li class="active"><span>{text}</span></li>',
 		'text_zh' => [
 			'prev' => '前一页',

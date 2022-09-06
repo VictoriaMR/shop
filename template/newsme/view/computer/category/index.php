@@ -16,7 +16,7 @@
 							<tr>
 								<td width="64">
 									<div class="image-content">
-										<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>">
+										<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" alt="<?php echo $value['name_en'];?>">
 									</div>
 								</td>
 								<td class="category-son-name"><?php echo $value['name_en'];?></td>
