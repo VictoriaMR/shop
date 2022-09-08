@@ -41,6 +41,7 @@ class Category extends Base
 			$this->arrayFormat($tempArr, $list);
 			$tempArr = [];
 			$cateId = 0;
+			dd($list);
 			foreach ($list as $value) {
 				if ($value['parent_id'] == 0) {
 					$cateId = $value['cate_id'];
@@ -112,10 +113,10 @@ class Category extends Base
 		return $this->getSubCategory($list);
 	}
 
-	public function getParentCategoryById($id, $self=true)
+	public function getParentCategoryById($id, $self=true, $siteId=0)
 	{
 		$returnData = [];
-		$list = $this->getSiteList();
+		$list = $this->getListData();
 		$list = array_column($list, null, 'cate_id');
 		if (!isset($list[$id])) {
 			return $returnData;

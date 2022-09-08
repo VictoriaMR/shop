@@ -109,7 +109,8 @@ class Product extends AdminBase
 			//spu状态
 			$statusList = $spuService->getStatusList();
 			//站点分类
-			$cateArr = make('app/service/category/Category')->getListFormat();
+			$category = make('app/service/category/Category');
+			$cateArr = $category->getListFormat();
 			$siteArr = make('app/service/site/Site')->getListData([], 'site_id,name,cate_id');
 			$tempArr = [];
 			$cateId = 0;
@@ -125,6 +126,8 @@ class Product extends AdminBase
 				$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
 			}
 			$siteCate = $cateArr[$info['site_id']];
+
+			$info['category'] = array_reverse($category->getParentCategoryById($info['cate_id']));
 
 			$this->assign('info', $info);
 			$this->assign('statusList', $statusList);
