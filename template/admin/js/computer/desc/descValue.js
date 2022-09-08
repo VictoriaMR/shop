@@ -37,7 +37,7 @@ const ATTRIBUTE = {
 									<span>'+data[i].language_name+'</span>\
 								</th>\
 								<td class="p0">\
-									<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off">\
+									<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off" maxlength="255">\
 								</td>\
 							</tr>';
 				}

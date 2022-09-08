@@ -33,7 +33,7 @@ class Product extends AdminBase
 		$cateList = make('app/service/category/Category')->getListFormat();
 		$cateArr = array_column($cateList, 'name', 'cate_id');
 		//站点
-		$siteList = make('app/service/site/Site')->getListData([], 'site_id,name,cate_id');
+		$siteList = make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name,cate_id');
 		$siteList = array_column($siteList, null, 'site_id');
 		$tempArr = [];
 		$cateId = 0;
@@ -109,9 +109,22 @@ class Product extends AdminBase
 			//spu状态
 			$statusList = $spuService->getStatusList();
 			//站点分类
-			$siteCate = make('app/service/site/CategoryUsed')->getListData(['site_id'=>$info['site_id']], 'cate_id', 0, 0, ['sort'=>'asc']);
-
-			$siteCate = make('app/service/category/Category')->getInCategory(array_column($siteCate, 'cate_id'));
+			$cateArr = make('app/service/category/Category')->getListFormat();
+			$siteArr = make('app/service/site/Site')->getListData([], 'site_id,name,cate_id');
+			$tempArr = [];
+			$cateId = 0;
+			foreach ($cateArr as $value) {
+				if ($value['parent_id'] == 0) {
+					$cateId = $value['cate_id'];
+					$tempArr[$cateId] = [];
+				}
+				$tempArr[$cateId][] = $value;
+			}
+			$cateArr = [];
+			foreach ($siteArr as $value) {
+				$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
+			}
+			$siteCate = $cateArr[$info['site_id']];
 
 			$this->assign('info', $info);
 			$this->assign('statusList', $statusList);

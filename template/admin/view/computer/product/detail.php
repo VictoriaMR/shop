@@ -313,11 +313,14 @@
 			<div class="input-group">
 				<div class="input-group-addon"><span>分类</span></div>
 				<select class="form-control" name="cate_id">
-					<?php foreach ($siteCate as $v){?>
-					<option value="<?php echo $v['cate_id'];?>" disabled="disabled"><?php echo $v['name'];?></option>
-					<?php foreach ($v['son'] as $key=>$value) {?>
-					<option value="<?php echo $value['cate_id'];?>" <?php echo $value['cate_id']==$info['cate_id']?'selected':''?>>&nbsp;&nbsp;&nbsp;<?php echo $value['name'];?></option>
-					<?php }} ?>
+					<?php foreach ($siteCate as $k=>$v){
+						$paddingStr = '';
+						for ($i=0; $i < $v['level']; $i++) { 
+							$paddingStr .= '&nbsp;&nbsp;&nbsp;&nbsp;';
+						}
+					?>
+					<option value="<?php echo $v['cate_id'];?>" <?php echo $info['cate_id']==$v['cate_id']?'selected':'';?> <?php if(($siteCate[$k+1]['level'] ?? 0) > $v['level']){ echo 'disabled="disabled"';}?>><?php echo $paddingStr.$v['name'];?></option>
+					<?php } ?>
 				</select>
 			</div>
 			<button type="button" class="btn btn-primary btn-lg btn-block save-btn">确认</button>
