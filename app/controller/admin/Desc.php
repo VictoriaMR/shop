@@ -28,7 +28,7 @@ class Desc extends AdminBase
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
-		$keyword = trim(iget('keyword'));
+		$keyword = trim(iget('keyword', ''));
 		$status = iget('status', -1);
 		$where = [];
 		if (!empty($keyword)) {
@@ -164,7 +164,7 @@ class Desc extends AdminBase
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
-		$keyword = trim(iget('keyword'));
+		$keyword = trim(iget('keyword', ''));
 		$status = iget('status', -1);
 		$where = [];
 		if (!empty($keyword)) {
