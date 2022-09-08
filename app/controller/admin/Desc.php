@@ -3,13 +3,13 @@
 namespace app\controller\admin;
 use app\controller\AdminBase;
 
-class Attribute extends AdminBase
+class Desc extends AdminBase
 {
 	public function __construct()
 	{
 		$this->_arr = [
-			'index' => '属性名管理',
-			'attrValue' => '属性值管理',
+			'index' => '描述名管理',
+			'descValue' => '描述值管理',
 		];
 		$this->_default = '属性管理';
 	}
@@ -18,7 +18,7 @@ class Attribute extends AdminBase
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getAttrInfo', 'getAttrLanguage', 'transfer', 'editAttrInfo', 'editAttrLanguage', 'deleteAttrInfo'])) {
+			if (in_array($opn, ['getDescInfo', 'getDescLanguage', 'transfer', 'editDescInfo', 'editDescLanguage', 'deleteDescInfo'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -37,8 +37,8 @@ class Attribute extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$nameService = make('app/service/attr/Name');
-		$total = $nameService->getCountData($where); 
+		$nameService = make('app/service/desc/Name');
+		$total = $nameService->getCountData($where);
 		if ($total > 0) {
 			$list = $nameService->getList($where, $page, $size);
 		}
@@ -52,23 +52,23 @@ class Attribute extends AdminBase
 		$this->view();
 	}
 
-	protected function getAttrInfo()
+	protected function getDescInfo()
 	{
 		$id = (int)ipost('id');
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/Name')->loadData($id);
+		$info = make('app/service/desc/Name')->loadData($id);
 		$this->success($info, '');
 	}
 
-	protected function getAttrLanguage()
+	protected function getDescLanguage()
 	{
 		$id = (int)ipost('id');
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>$id]);
+		$info = make('app/service/desc/NameLanguage')->getListData(['descn_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
 		$languageList = make('app/service/Language')->getTransList();
 		foreach ($languageList as $key => $value) {
@@ -82,7 +82,7 @@ class Attribute extends AdminBase
 		$this->success($info, '');
 	}
 
-	protected function editAttrInfo()
+	protected function editDescInfo()
 	{
 		$id = (int) ipost('id');
 		$name = trim(ipost('name'));
@@ -93,11 +93,11 @@ class Attribute extends AdminBase
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/attr/Name')->insert($data);
+			$result = make('app/service/desc/Name')->insert($data);
 			$this->addLog('新增属性-'.$result);
 		} else {
 			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/attr/Name')->updateData($id, $data);
+			$result = make('app/service/desc/Name')->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -106,7 +106,7 @@ class Attribute extends AdminBase
 		}
 	}
 
-	protected function editAttrLanguage()
+	protected function editDescLanguage()
 	{
 		$id = (int) ipost('id');
 		if (empty($id)) {
@@ -116,7 +116,7 @@ class Attribute extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/attr/NameLanguage');
+		$services = make('app/service/desc/NameLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
@@ -126,21 +126,21 @@ class Attribute extends AdminBase
 		} else {
 			$status = 1;
 		}
-		make('app/service/attr/Name')->updateData($id, ['status'=>$status]);
+		make('app/service/desc/Name')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
 
-	protected function deleteAttrInfo()
+	protected function deleteDescInfo()
 	{
 		$id = (int) ipost('id');
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/attr/Name')->deleteData($id);
+		$rst = make('app/service/desc/Name')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttrUsed')->deleteData(['attrn_id'=>$id]);
+			$rst = make('app/service/product/DescUsed')->deleteData(['descn_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -150,11 +150,11 @@ class Attribute extends AdminBase
 		}
 	}
 
-	public function attrValue()
+	public function descValue()
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getAttvInfo', 'getAttvLanguage', 'transfer', 'editAttvInfo', 'editAttvLanguage', 'deleteAttvInfo'])) {
+			if (in_array($opn, ['getDescvInfo', 'getDescvLanguage', 'transfer', 'editDescvInfo', 'editDescvLanguage', 'deleteDescvInfo'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -173,7 +173,7 @@ class Attribute extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$valueService = make('app/service/attr/Value');
+		$valueService = make('app/service/desc/Value');
 		$total = $valueService->getCountData($where); 
 		if ($total > 0) {
 			$list = $valueService->getList($where, $page, $size);
@@ -188,23 +188,23 @@ class Attribute extends AdminBase
 		$this->view();
 	}
 
-	protected function getAttvInfo()
+	protected function getDescvInfo()
 	{
 		$id = (int)ipost('id');
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/Value')->loadData($id);
+		$info = make('app/service/desc/Value')->loadData($id);
 		$this->success($info, '');
 	}
 
-	protected function getAttvLanguage()
+	protected function getDescvLanguage()
 	{
 		$id = (int)ipost('id');
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>$id]);
+		$info = make('app/service/desc/ValueLanguage')->getListData(['descv_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
 		$languageList = make('app/service/Language')->getTransList();
 		foreach ($languageList as $key => $value) {
@@ -218,7 +218,7 @@ class Attribute extends AdminBase
 		$this->success($info, '');
 	}
 
-	protected function editAttvInfo()
+	protected function editDescvInfo()
 	{
 		$id = (int) ipost('id');
 		$name = trim(ipost('name'));
@@ -229,11 +229,11 @@ class Attribute extends AdminBase
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/attr/Value')->insert($data);
+			$result = make('app/service/desc/Value')->insert($data);
 			$this->addLog('新增属性-'.$result);
 		} else {
 			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/attr/Value')->updateData($id, $data);
+			$result = make('app/service/desc/Value')->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -242,7 +242,7 @@ class Attribute extends AdminBase
 		}
 	}
 
-	protected function editAttvLanguage()
+	protected function editDescvLanguage()
 	{
 		$id = (int) ipost('id');
 		if (empty($id)) {
@@ -252,7 +252,7 @@ class Attribute extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/attr/ValueLanguage');
+		$services = make('app/service/desc/ValueLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
@@ -262,21 +262,21 @@ class Attribute extends AdminBase
 		} else {
 			$status = 1;
 		}
-		make('app/service/attr/Value')->updateData($id, ['status'=>$status]);
+		make('app/service/desc/Value')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
 
-	protected function deleteAttvInfo()
+	protected function deleteDescvInfo()
 	{
 		$id = (int) ipost('id');
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/attr/Value')->deleteData($id);
+		$rst = make('app/service/desc/Value')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttrUsed')->deleteData(['attrv_id'=>$id]);
+			$rst = make('app/service/product/AttrUsed')->deleteData(['attv_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);

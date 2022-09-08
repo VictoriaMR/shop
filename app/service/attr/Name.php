@@ -39,7 +39,7 @@ class Name extends Base
 		if (!empty($list)) {
 			//翻译字段 统计
 			$tempArr = array_column($list, 'attrn_id');
-			$tempArr = make('app/service/attr/ButeLanguage')->where(['attrn_id'=>['in', $tempArr]])->field('count(*) as count, attrn_id')->groupBy('attrn_id')->get();
+			$tempArr = make('app/service/attr/NameLanguage')->where(['attrn_id'=>['in', $tempArr]])->field('count(*) as count, attrn_id')->groupBy('attrn_id')->get();
 			$tempArr = array_column($tempArr, 'count', 'attrn_id');
 			//需要翻译的语言列表
 			$languageList = make('app/service/Language')->getTransList();

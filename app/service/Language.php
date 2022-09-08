@@ -44,7 +44,7 @@ class Language extends Base
 
 	public function getTransList()
 	{
-		$list = $this->getListCache();
+		$list = $this->getListData();
 		$list = array_column($list, null, 'code');
 		unset($list['zh']);
 		return $list;

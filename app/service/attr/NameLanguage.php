@@ -15,7 +15,7 @@ class NameLanguage extends Base
 		if (empty($id) || empty($lanId) || empty($name)) {
 			return false;
 		}
-		$where = ['attr_id'=>$id, 'lan_id'=>$lanId];
+		$where = ['attrn_id'=>$id, 'lan_id'=>$lanId];
 		if ($this->getCountData($where)) {
 			return $this->updateData($where, ['name' => $name]);
 		} else {

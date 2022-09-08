@@ -1,3 +1,10 @@
-User-agent: *
-Allow: /
 Sitemap: https://clothestome.com/sitemap.xml
+
+User-agent: *
+Disallow: /userInfo
+Disallow: /contact
+Disallow: /login
+Disallow: /checkout
+Disallow: /order
+Disallow: /api
+Allow: /

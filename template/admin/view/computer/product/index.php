@@ -36,14 +36,14 @@
 		<div class="clear"></div>
 	</form>
 </div>
-<?php if (!empty($list)) { ?>
 <div class="container-fluid">
+	<?php if (!empty($list)) { ?>
 	<div id="spu-list" class="w100 mt20">
 		<?php foreach ($list as $value) { ?>
 		<div class="spu-item">
-			<a href="<?php echo $value['url'];?>" class="block">
+			<a href="<?php echo adminUrl('product/detail', ['id'=>$value['spu_id']]);?>" class="block">
 				<div class="spu-image">
-					<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['avatar'];?>" class="lazyload">
+					<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
 				</div>
 				<div class="name-content f600">
 					<div class="spu-name e2 f400"><?php echo $value['name'];?></div>
@@ -64,8 +64,11 @@
 		<div class="clear"></div>
 	</div>
 	<?php echo page($size, $total);?>
+	<?php } else {?>
+	<p class="orange">没有找到产品数据</p>
+	<?php }?>
 </div>
-<?php } ?>
+
 <script type="text/javascript">
 var cate_list = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;
 var site = <?php echo $site;?>;

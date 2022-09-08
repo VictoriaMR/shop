@@ -94,7 +94,7 @@ final class Router
 		if (!$name) {
 			$name = \App::get('router', 'path');
 			if (\App::get('router', 'func') != 'index') {
-				$name .= DS.\App::get('router', 'path');
+				$name .= DS.\App::get('router', 'func');
 			}
 		}
 		return APP_DOMAIN.$name.($param?'?'.http_build_query($param):'');

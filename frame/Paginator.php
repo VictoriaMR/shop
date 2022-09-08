@@ -28,8 +28,8 @@ class Paginator
 		'paging' => '<li><a href="{url}" title="page-{text}">{text}</a></li>',
 		'current' => '<li class="active"><span>{text}</span></li>',
 		'text_zh' => [
-			'prev' => '前一页',
-			'next' => '下一页',
+			'prev' => '<span>前一页</span>',
+			'next' => '<span>下一页</span>',
 		],
 		'text' => [
 			'prev' => '<span class="iconfont icon-xiangzuo1"></span>',
@@ -46,16 +46,16 @@ class Paginator
 		$config = $this->config;
 		$prev = strtr($config['prev'][$this->current==1?'disabled':'enabled'], ['{url}'=>$this->url($this->current-1),'{text}'=>$config[IS_ADMIN?'text_zh':'text']['prev']]);
 		//总页数
+		$pageStr = '';
 		$totalPage = ceil($this->total / $this->size);
 		if ($totalPage==0) {
-			$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config['text']['next']]);
+			$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[IS_ADMIN?'text_zh':'text']['next']]);
 		} else {
 			if ($this->current < $totalPage) {
-				$next = strtr($config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$config['text']['next']]);
+				$next = strtr($config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$config[IS_ADMIN?'text_zh':'text']['next']]);
 			} else {
-				$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config['text']['next']]);
+				$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[IS_ADMIN?'text_zh':'text']['next']]);
 			}
-			$pageStr = '';
 			//默认拼接第一页
 			$pageStr .= strtr($config[1 == $this->current ? 'current' : 'paging'], [
 				'{url}' => $this->url(1),
@@ -130,11 +130,11 @@ class Paginator
 			'{total}' => $this->total,
 			'{size}' => $this->size,
 			'{current}' => $this->current,
-			'{totalPage}' => $totalPage ?? 0,
+			'{totalPage}' => $totalPage,
 			'{prev}' => $prev,
 			'{paging}' => $pageStr,
 			'{next}' => $next,
-			'{extra}' => IS_ADMIN ? $config['extra'] : '',
+			'{extra}' => IS_ADMIN ? strtr($config['extra'], ['{total}'=>$this->total, '{size}'=>$this->size, '{totalPage}'=>$totalPage]) : '',
 		];
 		return strtr($config['global'], $replace);
 	}

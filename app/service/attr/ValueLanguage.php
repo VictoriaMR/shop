@@ -15,7 +15,7 @@ class ValueLanguage extends Base
 		if (empty($id) || empty($lanId) || empty($name)) {
 			return false;
 		}
-		$where = ['attv_id'=>$id, 'lan_id'=>$lanId];
+		$where = ['attrv_id'=>$id, 'lan_id'=>$lanId];
 		if ($this->getCountData($where)) {
 			return $this->updateData($where, ['name' => $name]);
 		} else {

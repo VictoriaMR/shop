@@ -46,14 +46,14 @@ function confirm(msg, callbck) {
 function post(uri, param, success, error) {
 	$.post(uri, param, function(res) {
 		if (res.code === '200') {
-			if (res.message) {
-				successTips(res.message)
+			if (res.msg) {
+				successTips(res.msg)
 			}
 			if (success) {
 				success(res.data);
 			}
 		} else {
-			errorTips(res.message);
+			errorTips(res.msg);
 			if (error) {
 				error();
 			}

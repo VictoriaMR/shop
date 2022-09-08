@@ -1,7 +1,7 @@
 $(function(){
-	DESCRIPTION.init();
+	ATTRIBUTE.init();
 });
-const DESCRIPTION = {
+const ATTRIBUTE = {
 	init: function() {
 		const _this = this;
 		//新增修改
@@ -19,7 +19,7 @@ const DESCRIPTION = {
 		$('.glyphicon-globe').on('click', function(){
 			const _thisobj = $(this);
 			const id = _thisobj.parents('.item').data('id');
-			post(URI+'attribute/description', {opn: 'getDescLanguage', id: id}, function(data){
+			post(URI+'desc', {opn: 'getDescLanguage', id: id}, function(data){
 				const obj = $('#dealbox-language');
 				obj.find('input[name="id"]').val(id);
 				obj.find('input[name="name"]').val(_thisobj.next().text());
@@ -37,7 +37,7 @@ const DESCRIPTION = {
 									<span>'+data[i].language_name+'</span>\
 								</th>\
 								<td class="p0">\
-									<textarea type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="form-control" autocomplete="off" row="3" maxlength="255">'+data[i].name+'</textarea>\
+									<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off">\
 								</td>\
 							</tr>';
 				}
@@ -49,7 +49,7 @@ const DESCRIPTION = {
 		$('#dealbox-language').on('click', '.glyphicon-transfer', function(){
 			const name = $('#dealbox-language input[name="name"]').val();
 			const thisobj = $(this);
-			const obj = thisobj.parents('table').find('textarea');
+			const obj = thisobj.parents('table').find('.input');
 			let len = obj.length;
 			thisobj.button('loading');
 			obj.each(function(){
@@ -57,7 +57,7 @@ const DESCRIPTION = {
 				if (value === '') {
 					const _thisobj = $(this);
 					const tr_code = _thisobj.data('tr_code');
-					$.post(URI+'attribute/description', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
+					$.post(URI+'desc', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
 						if (res.code === '200') {
 							_thisobj.val(res.data);
@@ -78,14 +78,14 @@ const DESCRIPTION = {
 		});
 		//保存数据
 		$('#dealbox .save-btn').on('click', function(){
-			var name = $('#dealbox form [name="name"]').val();
+			var name = $('#dealbox form input[name="name"]').val();
 			if (name == '') {
 				errorTips('名称不能为空');
 				return false;
 			}
 			var obj = $(this);
 			obj.button('loading');
-			post(URI+'attribute/description', $('#dealbox form').serializeArray(), function(){
+			post(URI+'desc', $('#dealbox form').serializeArray(), function(){
 				window.location.reload();
 			});
 		});
@@ -93,7 +93,7 @@ const DESCRIPTION = {
 		$('#dealbox-language .save-btn').on('click', function(){
 			var obj = $(this);
 			obj.button('loading');
-			post(URI+'attribute/description', $('#dealbox-language form').serializeArray(), function(){
+			post(URI+'desc', $('#dealbox-language form').serializeArray(), function(){
 				obj.button('reset');
 				window.location.reload();
 			});
@@ -105,7 +105,7 @@ const DESCRIPTION = {
 			var id = btnobj.parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
 				obj.button('loading');
-				post(URI+'attribute/description', {opn: 'deleteDescInfo', id: id}, function(){
+				post(URI+'desc', {opn: 'deleteDescInfo', id: id}, function(){
 					window.location.reload();
 				}, function(){
 					obj.button('reset');
@@ -115,7 +115,7 @@ const DESCRIPTION = {
 	},
 	loadData: function(id, callback) {
 		if (id) {
-			post(URI+'attribute/description', {opn: 'getDescInfo', id: id}, function(data){
+			post(URI+'desc', {opn: 'getDescInfo', id: id}, function(data){
 				callback(data);
 			});
 		} else {
@@ -125,11 +125,11 @@ const DESCRIPTION = {
 	initData: function(data) {
 		var obj = $('#dealbox');
 		if (data) {
-			obj.find('input[name="id"]').val(data.desc_id);
-			obj.find('textarea[name="name"]').val(data.name);
+			obj.find('input[name="id"]').val(data.attr_id);
+			obj.find('input[name="name"]').val(data.name);
 		} else {
 			obj.find('input[name="id"]').val(0);
-			obj.find('textarea[name="name"]').val('');
+			obj.find('input[name="name"]').val('');
 		}
 		return true;
 	},

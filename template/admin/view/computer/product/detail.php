@@ -146,7 +146,6 @@
 					</th>
 					<th width="90">状态</th>
 					<th width="90">售价</th>
-					<th width="90">原价</th>
 					<th width="90">成本价</th>
 					<th width="70">库存</th>
 					<th width="70">重量(g)</th>
@@ -173,7 +172,6 @@
 						</div>
 					</td>
 					<td class="can-edit" data-name="price"><?php echo $value['price'];?></td>
-					<td class="can-edit" data-name="original_price"><?php echo $value['original_price'];?></td>
 					<td class="can-edit" data-name="cost_price"><?php echo $value['cost_price'];?></td>
 					<td class="can-edit" data-name="stock"><?php echo $value['stock'];?></td>
 					<td class="can-edit" data-name="weight"><?php echo $value['weight'];?></td>

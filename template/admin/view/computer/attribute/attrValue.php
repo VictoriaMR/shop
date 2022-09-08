@@ -36,8 +36,8 @@
 			</tr>
 			<?php } else {?>
 			<?php foreach ($list as $key => $value) { ?>
-			<tr class="item" data-id="<?php echo $value['attv_id'];?>">
-				<td class="col-md-1"><?php echo $value['attv_id'];?></td>
+			<tr class="item" data-id="<?php echo $value['attrv_id'];?>">
+				<td class="col-md-1"><?php echo $value['attrv_id'];?></td>
 				<td class="col-md-3">
 					<div class="left text-content">
 						<span class="glyphicon glyphicon-globe"></span>

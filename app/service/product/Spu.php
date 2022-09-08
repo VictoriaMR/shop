@@ -131,13 +131,16 @@ class Spu extends Base
 		$spuList = array_column($list, 'spu_id');
 		//获取语言
 		$where = ['spu_id'=>['in', $spuList]];
-		if ($lanId == 1 || !$lanId) {
-			$where['lan_id'] = $lanId;
+		if (IS_ADMIN) {
+			$where['lan_id'] = 0;
 		} else {
-			$where['lan_id'] = ['in', [1, $lanId]];
+			if ($lanId == 1 || !$lanId) {
+				$where['lan_id'] = $lanId;
+			} else {
+				$where['lan_id'] = ['in', [1, $lanId]];
+			}
 		}
 		$lanArr = make('app/service/product/Language')->getListData($where, 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
-
 		$lanArr = array_column($lanArr, 'name', 'spu_id');
 		//获取图片集
 		$attachArr = array_unique(array_column($list, 'attach_id'));

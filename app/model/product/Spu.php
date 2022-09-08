@@ -20,9 +20,9 @@ class Spu extends Base
 	public function getStatusList($status=null)
 	{
 		$arr = [
-			self::STATUS_CLOSE => '下架',
-			self::STATUS_OPEN => '上架',
-			self::STATUS_OUT_OF_STOCK => '无库存',
+			self::STATUS_CLOSE => '未上架',
+			self::STATUS_OPEN => '销售中',
+			self::STATUS_OUT_OF_STOCK => '已下架',
 		];
 		if (is_null($status))return $arr;
 		return $arr[$status] ?? '';

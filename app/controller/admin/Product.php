@@ -67,7 +67,10 @@ class Product extends AdminBase
 		}
 		$total = $spu->getCountData($where);
 		if ($total > 0) {
-			$list = $spu->getAdminList($where, $page, $size);
+			$list = $spu->getList($where, '*', $page, $size);
+			foreach ($list as $key=>$value) {
+				$list[$key]['status_text'] = $statusList[$value['status']];
+			}
 		}
 
 		$this->assign('spuId', $spuId);

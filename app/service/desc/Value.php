@@ -31,6 +31,40 @@ class Value extends Base
 		return $list + array_column($tempArr, 'descv_id', 'name');
 	}
 
+	public function getList($where, $page=1, $size=20)
+	{
+		$list = $this->getListData($where, '*', $page, $size, ['descv_id'=>'desc']);
+		if (!empty($list)) {
+			//翻译字段 统计
+			$tempArr = array_column($list, 'descv_id');
+			$tempArr = make('app/service/desc/ValueLanguage')->where(['descv_id'=>['in', $tempArr]])->field('count(*) as count, descv_id')->groupBy('descv_id')->get();
+			$tempArr = array_column($tempArr, 'count', 'descv_id');
+			//需要翻译的语言列表
+			$languageList = make('app/service/Language')->getTransList();
+			$len = count($languageList);
+			$transArr = [
+				0 => [],
+				1 => [],
+				2 => [],
+			];
+			foreach ($list as $key => $value) {
+				$status = empty($tempArr[$value['descv_id']]) ? 0 : ($tempArr[$value['descv_id']] < $len ? 1 : 2);
+
+				if ($status != $value['status']) {
+					$transArr[$status][] = $value['descv_id'];
+				}
+
+				$value['is_translate'] = $status;
+				$list[$key] = $value;
+			}
+			foreach ($transArr as $key => $value) {
+				if (empty($value)) continue;
+				$this->updateData(['descv_id'=>['in', $value]], ['status'=>$key]);
+			}
+		}
+		return $list;
+	}
+
 	public function getListById($id, $lanId=1)
 	{
 		$list = $this->getListData(['descv_id'=>['in', $id]], 'descv_id,name');
