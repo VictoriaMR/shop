@@ -11,6 +11,9 @@ class Index extends Base
 		html()->addCss('clothes-icon');
 		html()->addJs('slider');
 
+		$page = iget('page', 1);
+		$size = iget('size', 20);
+
 		$cateArr = make('app/service/category/Category')->getSiteList();
 		$tempArr = [];
 		foreach ($cateArr as $value) {
@@ -43,8 +46,11 @@ class Index extends Base
 			}
 		}
 
-		$bestSeller = make('app/service/product/Spu')->getRecommend();
+		$bestSeller = make('app/service/product/Spu')->getRecommend($page, $size, $total);
 
+		$this->assign('page', $page);
+		$this->assign('size', $size);
+		$this->assign('total', $total);
 		$this->assign('banner', $banner);
 		$this->assign('cateArr', $cateArr);
 		$this->assign('hotArr', $hotArr);

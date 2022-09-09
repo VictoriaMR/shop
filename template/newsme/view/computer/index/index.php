@@ -82,6 +82,7 @@
 				</a>
 			</li>
 		<?php }?></ul>
+		<?php if ($total > $size){ echo page($size, $total);}?>
 	</div>
 </div>
 <?php $this->load('common/base_footer');?>

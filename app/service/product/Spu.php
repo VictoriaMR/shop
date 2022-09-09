@@ -543,7 +543,7 @@ class Spu extends Base
 		}
 	}
 
-	public function getRecommend($page=1, $size=20)
+	public function getRecommend($page=1, $size=20, &$total=0)
 	{
 		//获取收藏商品分类
 		$memId = $this->userId();
@@ -568,6 +568,7 @@ class Spu extends Base
 			}
 		}
 		$orderBy['rank'] = 'desc';
+		$total = $this->getCountData($where);
 		$list = $this->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, [], lanId(), true);
 		foreach ($list as $key=>$value) {
 			$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);

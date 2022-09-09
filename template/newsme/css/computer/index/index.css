@@ -66,25 +66,25 @@
 .best-seller .layer {
     padding-bottom: 12px;
 }
-.best-seller li {
+.best-seller .seller-list li {
     display: inline-block;
     vertical-align: top;
     width: calc(100%/5);
     padding: 8px;
     transition: .2s ease-in-out;
 }
-.best-seller li:hover{
+.best-seller .seller-list li:hover{
     box-shadow: 0 4px 10px 0 rgba(0,0,0,0.09);
     border-radius: 4px;
     transform: translateY(-4px);
     box-shadow: 0 4px 10px 1px rgba(0, 0, 0, 0.2);
 }
-.best-seller li .price {
+.best-seller .seller-list li .price {
 	color: red;
 	font-size: 16px;
 	font-weight: 600;
 }
-.best-seller li .original-price {
+.best-seller .seller-list li .original-price {
     margin-left: 6px;
     color: #999999;
     font-size: 14px;
@@ -102,7 +102,7 @@ li .image-content {
     .popular-catgory li {
         width: calc(100%/4);
     }
-    .best-seller li {
+    .best-seller .seller-list li {
         width: calc(100%/4);
     }
 }

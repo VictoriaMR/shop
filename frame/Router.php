@@ -40,11 +40,7 @@ final class Router
 					$_GET[$value.'id'] = $pathInfo[$key-1] ?? '';
 				}
 			}
-			if ($tempPath) {
-				$path = $tempPath;
-			} else {
-				throw new \Exception('analyze router failed!', 1);
-			}
+			$path = $tempPath ? $tempPath : 'Index';
 		}
 		return ['path'=>$path?:'Index', 'func'=>$func?:'index'];
 	}
@@ -83,9 +79,9 @@ final class Router
 					unset($param[$key]);
 				}
 			}
-			$name = implode('-', array_reverse($name));
+			$name = implode('-', array_reverse(array_filter($name)));
 		}
-		if ($name) $name .= $this->paramFormat($param);
+		$name .= $this->paramFormat($param);
 		return ($domain?$domain:APP_DOMAIN).$name;
 	}
 
