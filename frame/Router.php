@@ -81,7 +81,7 @@ final class Router
 			}
 			$name = implode('-', array_reverse(array_filter($name)));
 		}
-		$name .= $this->paramFormat($param);
+		if ($name) $name .= $this->paramFormat($param);
 		return ($domain?$domain:APP_DOMAIN).$name;
 	}
 
