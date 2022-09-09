@@ -12,43 +12,50 @@ class Category extends Base
 		$this->baseModel = make('app/model/category/Category');
 	}
 
-	public function getSiteInfoCache($cateId)
+	public function getInfo($cateId)
 	{
-		$list = $this->getSiteList();
+		$list = $this->getListCache();
 		$list = array_column($list, null, 'cate_id');
-		$info = $list[$cateId] ?? [];
-		if (empty($info)) return false;
+		if (!isset($list[$cateId])) {
+			return false;
+		}
+		$info = $list[$cateId];
 		$info['image'] = empty($info['avatar']) ? '' : mediaUrl($info['avatar'], 200);
 		return $info;
 	}
 
-	public function getSiteList()
+	public function getSiteCateList($siteCateId)
+	{
+		$list = $this->getList();
+		$tempArr = [];
+		$cateId = 0;
+		foreach ($list as $value) {
+			if ($value['parent_id'] == 0) {
+				$cateId = $value['cate_id'];
+				$tempArr[$cateId] = [];
+			}
+			$tempArr[$cateId][] = $value;
+		}
+		return $tempArr[$siteCateId] ?? [];
+	}
+
+	protected function getList()
 	{
 		if (empty($this->_list)) {
-			$this->_list = $this->getSiteListCache();
+			$this->_list = $this->getListCache();
 		}
 		return $this->_list;
 	}
 
-	public function getSiteListCache()
+	public function getListCache()
 	{
-		$cacheKey = $this->getCacheKey(siteId());
+		$cacheKey = $this->getCacheKey();
 		$list = redis()->get($cacheKey);
 		if (!$list) {
 			$tempArr = $this->getListData();
 			$tempArr = $this->listFormat($tempArr);
 			$list = [];
 			$this->arrayFormat($tempArr, $list);
-			$tempArr = [];
-			$cateId = 0;
-			foreach ($list as $value) {
-				if ($value['parent_id'] == 0) {
-					$cateId = $value['cate_id'];
-					$tempArr[$cateId] = [];
-				}
-				$tempArr[$cateId][] = $value;
-			}
-			$list = $tempArr[cateId()] ?? [];
 			redis()->set($cacheKey, $list);
 		}
 		return $list;
@@ -56,7 +63,7 @@ class Category extends Base
 
 	public function getListFormat()
 	{
-		$list = $this->getListData();
+		$list = $this->getList();
 		$list = $this->listFormat($list, 0, 0);
 		$returnData = [];
 		$this->arrayFormat($list, $returnData);
@@ -92,19 +99,9 @@ class Category extends Base
 		return true;
 	}
 
-	public function getSiteSubCategoryById($id)
-	{
-		$list = $this->getSiteList();
-		$list = $this->listFormat($list, $id, 0);
-		if (empty($list)) {
-			return [];
-		}
-		return $this->getSubCategory($list);
-	}
-
 	public function getSubCategoryById($id)
 	{
-		$list = $this->getListData();
+		$list = $this->getList();
 		$list = $this->listFormat($list, $id, 0);
 		if (empty($list)) {
 			return [];
@@ -115,7 +112,7 @@ class Category extends Base
 	public function getParentCategoryById($id, $self=true, $siteId=0)
 	{
 		$returnData = [];
-		$list = $this->getListData();
+		$list = $this->getList();
 		$list = array_column($list, null, 'cate_id');
 		if (!isset($list[$id])) {
 			return $returnData;
@@ -160,26 +157,8 @@ class Category extends Base
 		return $result;
 	}
 
-	protected function getCacheKey($suffix='')
+	protected function getCacheKey()
 	{
-		return 'category:list-cache:'.$suffix;
-	}
-
-	public function getInCategory(array $cateIdArr=[])
-	{
-		if (empty($cateIdArr)) {
-			return $this->listFormat($cateList);
-		} else {
-			$returnData = [];
-			foreach ($cateIdArr as $value) {
-				$data = $this->getParentCategoryById($value);
-				$data = array_reverse($data);
-				foreach ($data as $sKey=>$sValue) {
-					$data[$sKey]['level'] = $sKey;
-				}
-				$returnData = array_merge($returnData, $data);
-			}
-			return array_values(array_column($returnData, null, 'cate_id'));
-		}
+		return 'category:list-cache';
 	}
 }

@@ -21,7 +21,7 @@ class Category extends HomeBase
 		$size = (int)iget('size', 36);
 		
 		$category = make('app/service/category/Category');
-		$cateInfo = $category->getSiteInfoCache($cateId);
+		$cateInfo = $category->getInfo($cateId);
 		$crumbs = [];
 		if ($cateInfo) {
 			$crumbs[] = [
@@ -30,12 +30,15 @@ class Category extends HomeBase
 			];
 			$cateSon = $category->getSubCategoryById($cateId);
 			foreach ($cateSon as $key=>$value) {
-				$info = $category->getSiteInfoCache($value);
-				if ($info) {
+				$info = $category->getInfo($value);
+				if ($info['is_show']) {
 					$cateSon[$key] = $info;
 				} else {
 					unset($cateSon[$key]);
 				}
+			}
+			if (!empty($cateSon)) {
+				$where['cate_id'] = ['in', array_unique(array_merge([$cateId], array_column($cateSon, 'cate_id')))];
 			}
 			//获取左侧过滤列表
 			$attrUsed = make('app/service/product/AttrUsed');

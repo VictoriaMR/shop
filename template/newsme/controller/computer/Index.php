@@ -14,7 +14,7 @@ class Index extends Base
 		$page = iget('page', 1);
 		$size = iget('size', 20);
 
-		$cateArr = make('app/service/category/Category')->getSiteList();
+		$cateArr = make('app/service/category/Category')->getSiteCateList(cateId());
 		$tempArr = [];
 		foreach ($cateArr as $value) {
 			if ($value['is_hot']) {
