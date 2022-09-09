@@ -10,12 +10,12 @@ class Language extends Base
 		$this->baseModel = make('app/model/category/Language');
 	}
 
-	public function setNxLanguage($cateId, $lanId, $name)
+	public function setNxLanguage($cateId, $lanId, $type, $name)
 	{
-		if (empty($cateId) || empty($lanId) || empty($name)) {
+		if (empty($cateId) || empty($name)) {
 			return false;
 		}
-		$where = ['cate_id'=>$cateId, 'lan_id'=>$lanId];
+		$where = ['cate_id'=>$cateId, 'lan_id'=>$lanId, 'type'=>$type];
 		if ($this->getCountData($where)) {
 			return $this->updateData($where, ['name' => $name]);
 		} else {

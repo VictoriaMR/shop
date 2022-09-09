@@ -43,9 +43,11 @@ const CATEGORYLIST = {
 			event.stopPropagation();
 			const _thisobj = $(this);
 			const id = _thisobj.parents('.item').data('id');
-			post(URI+'category', {opn: 'getCateLanguage', cate_id: id}, function(data){
+			const type = _thisobj.data('type');
+			post(URI+'category', {opn: 'getCateLanguage', cate_id: id, type: type}, function(data){
 				const obj = $('#dealbox-language');
 				obj.find('input[name="cate_id"]').val(id);
+				obj.find('input[name="type"]').val(type);
 				var name = _thisobj.next().text();
 				obj.find('input[name="cate_name"]').val(name);
 				obj.find('.dealbox-title').text(name);
@@ -62,9 +64,13 @@ const CATEGORYLIST = {
 								<th>\
 									<span>'+data[i].language_name+'</span>\
 								</th>\
-								<td class="p0">\
-									<input type="text" name="language['+data[i].lan_id+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off">\
-								</td>\
+								<td class="p0">';
+					if (type == 0) {
+						html += '<input type="text" name="language['+data[i].lan_id+']" data-tr_code="'+data[i].tr_code+'" class="input transfer" value="'+data[i].name+'" autocomplete="off">';
+					} else {
+						html += '<textarea rows="3" type="text" name="language['+data[i].lan_id+']" data-tr_code="'+data[i].tr_code+'" class="form-control transfer" autocomplete="off">'+data[i].name+'</textarea>';
+					}
+					html += '</td>\
 							</tr>';
 				}
 				obj.find('table tbody').html(html);
@@ -73,9 +79,17 @@ const CATEGORYLIST = {
 		});
 		//智能翻译
 		$('#dealbox-language').on('click', '.glyphicon-transfer', function(){
-			const name = $('#dealbox-language input[name="cate_name"]').val();
+			let name = $('#dealbox-language input[name="cate_name"]').val();
+			if (!name) {
+				var obj = $('#dealbox-language td').eq(0);
+				if (obj.find('input').length > 0) {
+					name = obj.find('input').val();
+				} else {
+					name = obj.find('textarea').val();
+				}
+			}
 			const thisobj = $(this);
-			const obj = thisobj.parents('table').find('.input');
+			var obj = thisobj.parents('table').find('.transfer');
 			let len = obj.length;
 			thisobj.button('loading');
 			obj.each(function(){

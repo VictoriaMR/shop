@@ -24,6 +24,21 @@ class Category extends HomeBase
 		$cateInfo = $category->getInfo($cateId);
 		$crumbs = [];
 		if ($cateInfo) {
+			//desc, keyword
+			$cateLanguage = make('app/service/category/Language');
+			$lanArr = array_unique([1, lanId()]);
+			$lanArr = $cateLanguage->getListData(['cate_id'=>$cateId, 'lan_id'=>['in', $lanArr]], 'type,name', 0, 0, ['lan_id'=>'asc']);
+			$lanArr = array_column($lanArr, 'name', 'type');
+
+			$cateInfo['name'] = $lanArr[0] ?? $cateInfo['name_en'];
+			$this->assign('_title', $cateInfo['name']);
+			if (isset($lanArr[1])) {
+				$this->assign('_keyword', $lanArr[1]);
+			}
+			if (isset($lanArr[2])) {
+				$this->assign('_desc', $lanArr[2]);
+			}
+
 			$crumbs[] = [
 				'name' => $cateInfo['name_en'],
 				'url' => url($cateInfo['name_en'], ['c'=>$cateInfo['cate_id']]),
@@ -38,7 +53,15 @@ class Category extends HomeBase
 				}
 			}
 			if (!empty($cateSon)) {
-				$where['cate_id'] = ['in', array_unique(array_merge([$cateId], array_column($cateSon, 'cate_id')))];
+				$cateSonIdArr = array_column($cateSon, 'cate_id');
+				$lanArr = $cateLanguage->getListData(['cate_id'=>['in', $cateSonIdArr], 'lan_id'=>['in', $lanArr], 'type'=>0], 'cate_id,name', 0, 0, ['lan_id'=>'asc']);
+				$lanArr = array_column($lanArr, 'name', 'cate_id');
+				foreach ($cateSon as $key=>$value) {
+					$cateSon[$key]['name'] = $lanArr[$value['cate_id']] ?? $value['name_en'];
+				}
+
+				$cateSonIdArr[] = $cateId;
+				$where['cate_id'] = ['in', array_unique($cateSonIdArr)];
 			}
 			//获取左侧过滤列表
 			$attrUsed = make('app/service/product/AttrUsed');

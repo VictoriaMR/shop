@@ -5,12 +5,13 @@
 			<tr>
 				<th width="100">ID</th>
 				<th width="300">名称</th>
-				<th width="300">英文名称</th>
+				<th width="200">英文名称</th>
+				<th width="120">SEO配置</th>
 				<th width="120">语言配置</th>
-				<th width="150">状态</th>
-				<th width="150">是否展示</th>
-				<th width="150">是否热门</th>
-				<th width="150">头像</th>
+				<th width="120">状态</th>
+				<th width="120">是否展示</th>
+				<th width="120">是否热门</th>
+				<th width="120">头像</th>
 				<th width="250">操作</th>
 			</tr>
 			<?php if (empty($list)){ ?>
@@ -25,12 +26,19 @@
 				<td><?php echo $value['cate_id'];?></td>
 				<td>
 					<div class="left text-content" <?php echo $value['level'] ? 'style="padding-left:'.($value['level']*20).'px;"' : '';?>>
-						<span class="glyphicon glyphicon-globe"></span>
+						<span data-type="0" class="glyphicon glyphicon-globe"></span>
 						&nbsp;
 						<span class="cate_name"><?php echo $value['name'];?></span>
 					</div>
 				</td>
 				<td><?php echo $value['name_en'];?></td>
+				<td>
+					<span class="green">keyw:&nbsp;</span>
+					<span title="keyword" data-type="1" class="glyphicon glyphicon-globe"></span>
+					<br />
+					<span class="orange">desc:&nbsp;</span>
+					<span title="desc" data-type="2" class="glyphicon glyphicon-globe"></span>
+				</td>
 				<td>
 					<?php if ($value['is_translate'] == 2){?>
 					<span class="green">已配置</span>
@@ -101,6 +109,7 @@
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">多语言配置</div>
 			<input type="hidden" name="cate_id" value="0">
+			<input type="hidden" name="type" value="0">
 			<input type="hidden" name="cate_name" value="">
 			<input type="hidden" name="opn" value="editLanguage">
 			<table class="table table-bordered table-hover">
