@@ -10,17 +10,17 @@
         <?php } else {?><div class="info-content">
             <div class="left img-content w40">
                 <div class="relative big-image img">
-                    <img data-src="<?php echo str_replace('/400', '/600', $info['image'][$info['attach_id']]);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['name'];?>">
+                    <img data-src="<?php echo str_replace('/400', '/600', $info['image']);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['name'];?>">
                 </div>
-                <?php if (!empty($info['image'])){?><div class="small-image relative<?php echo count($info['image'])>5?' padding':'';?>">
+                <?php if (!empty($info['image_list'])){?><div class="small-image relative<?php echo count($info['image_list'])>5?' padding':'';?>">
                     <ul class="image-list">
-                    <?php $count=0; foreach ($info['image'] as $key=>$value){$count++;?><li<?php echo $count==1?' class="selected"':'';?>>
+                    <?php $count=0; foreach ($info['image_list'] as $key=>$value){$count++;?><li<?php echo $count==1?' class="selected"':'';?>>
                             <div class="image-comtent">
                                 <img data-src="<?php echo str_replace('/400', '/200', $value);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['name'];?>">
                             </div>
                         </li><?php }?>
                     </ul>
-                    <?php if (count($info['image'])>5){?><div class="movement left-movement disabled">
+                    <?php if (count($info['image_list'])>5){?><div class="movement left-movement disabled">
                         <span class="iconfont icon-xiangzuo1"></span>
                     </div>
                     <div class="movement right-movement">
@@ -50,7 +50,7 @@
                         </div><?php $attrImage = !empty(array_intersect($value, $attvImageId));?>
                         <ul class="attv-list<?php echo $attrImage?' attv-img':'';?>">
                             <?php foreach ($value as $attv){?><li title="<?php echo $info['attv'][$attv];?>" data-id="<?php echo $attv;?>">
-                                <?php if (!empty($info['attvImage'][$attv])){?><img data-src="<?php echo str_replace('/400', '/200', $info['attvImage'][$attv]['url']);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['attv'][$attv];?>"><?php }else{?><span><?php echo $info['attv'][$attv];?></span><?php }?>
+                                <?php if (!empty($info['attvImage'][$attv])){?><img data-src="<?php echo str_replace('/400', '/200', $info['attvImage'][$attv]);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['attv'][$attv];?>"><?php }else{?><span><?php echo $info['attv'][$attv];?></span><?php }?>
                             </li><?php }?>
                         </ul>
                     </div><?php }?>

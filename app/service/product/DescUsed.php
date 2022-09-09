@@ -43,6 +43,7 @@ class DescUsed extends Base
 			$valueArr = make('app/service/desc/ValueLanguage')->getListData(['descv_id'=>['in', $valueArr], 'lan_id'=>['in', $lanArr]], 'descv_id,name', 0, 0, ['lan_id'=>'asc']);
 			$valueArr = array_column($valueArr, 'name', 'descv_id');
 			foreach ($list as $key => $value) {
+				$list[$key] = [];
 				$list[$key]['name'] = $nameArr[$value['descn_id']] ?? '';
 				$list[$key]['value'] = $valueArr[$value['descv_id']] ?? '';
 			}

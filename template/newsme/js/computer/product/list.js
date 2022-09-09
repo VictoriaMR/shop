@@ -177,27 +177,23 @@ var PRODUCT_MODAL = {
 		}
 	},
 	initPage: function() {
-		var mainImage = '';
 		var tempHtml = '';
-		for (var i=0; i<this.info.image.length; i++) {
-			if (i === 0) {
-				mainImage = this.info.image[i].url.replace('/400', '/600');
-			}
+		for (var i=0; i<this.info.image_list.length; i++) {
 			tempHtml += '<li'+(i===0?' class="selected"':'')+'>\
 						<div class="image-comtent">\
-							<img src="'+this.info.image[i].url+'">\
+							<img src="'+this.info.image_list[i]+'">\
 						</div>\
 					</li>';
 		}
 		var html = '<div class="left w50">\
 				<div class="image-comtent big-image">\
-					<img src="'+mainImage+'">\
+					<img src="'+this.info.image.replace('/400', '/600')+'">\
 				</div>\
-				<div class="small-image relative'+(this.info.image.length>5?' padding':'')+'">';
+				<div class="small-image relative'+(this.info.image_list.length>5?' padding':'')+'">';
 		html += '<ul class="image-list">\
 					'+tempHtml+'\
 				</ul>';
-		if (this.info.image.length > 5) {
+		if (this.info.image_list.length > 5) {
 			html += '<div class="movement left-movement disabled"><span class="iconfont icon-xiangzuo1"></span></div>';
 			html += '<div class="movement right-movement"><span class="iconfont icon-xiangyou1"></span></div>';
 		}
@@ -224,7 +220,7 @@ var PRODUCT_MODAL = {
 			for (var j=0; j<this.info.attrMap[i].length; j++){
 				if (this.info.attvImage[this.info.attrMap[i][j]] != '0') {
 					imageAttr = true;
-					tempHtml += '<li title="'+this.info.attv[this.info.attrMap[i][j]]+'" data-id="'+this.info.attrMap[i][j]+'"><img src="'+this.info.attvImage[this.info.attrMap[i][j]].url+'"></li>';
+					tempHtml += '<li title="'+this.info.attv[this.info.attrMap[i][j]]+'" data-id="'+this.info.attrMap[i][j]+'"><img src="'+this.info.attvImage[this.info.attrMap[i][j]]+'"></li>';
 				} else {
 					tempHtml += '<li title="'+this.info.attv[this.info.attrMap[i][j]]+'" data-id="'+this.info.attrMap[i][j]+'"><span>'+this.info.attv[this.info.attrMap[i][j]]+'</span></li>';
 				}

@@ -47,9 +47,12 @@ class Attachment extends Base
 		return $info;
 	}
 
-	public function getList($where, $type='400')
+	public function getList($where, $type='400', $format=true)
 	{
 		$list = $this->getListData($where);
+		if (!$format) {
+			return $list;
+		}
 		foreach ($list as $key => $value) {
 			$list[$key] = $this->urlInfo($value, $type);
 		}

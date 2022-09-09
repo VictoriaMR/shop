@@ -43,6 +43,19 @@ class Spu extends Base
 			return $info;
 		}
 		$info['url'] = url($info['name'], ['p' => $info['spu_id']], true);
+
+		$info['image'] = $this->completeImage($info['image']);
+		foreach ($info['image_list'] as $key=>$value) {
+			$info['image_list'][$key] = $this->completeImage($value);
+		}
+		foreach ($info['introduce'] as $key=>$value) {
+			$info['introduce'][$key] = $this->completeImage($value);
+		}
+		foreach ($info['attvImage'] as $key => $value) {
+			if (empty($value)) continue;
+			$info['attvImage'][$key] = $this->completeImage($value);
+		}
+
 		foreach ($info['sku'] as $key => $value) {
 			$value['original_price'] = $this->getOriginalPrice($value['price']);
 			$temp = $currencyService->priceFormat($value['price']);
@@ -58,9 +71,18 @@ class Spu extends Base
 			$name = implode(' ', $name);
 			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
 			$value['url'] = url($value['name'], ['s'=>$key], true);
+			$value['image'] = $this->completeImage($value['image']);
 			$info['sku'][$key] = $value;
 		}
 		return $info;
+	}
+
+	protected function completeImage($image)
+	{
+		if (empty($image)) {
+			return $image;
+		}
+		return mediaUrl($image);
 	}
 
 	public function getInfo($spuId, $lanId=1, $siteId=0)
@@ -72,7 +94,7 @@ class Spu extends Base
 		$info = $this->loadData($where, 'spu_id,status,cate_id,gender,attach_id,min_price,max_price,free_ship,is_hot');
 		if (!$info) return [];
 		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
-			$info['image'] = make('app/service/attachment/Attachment')->getList(['attach_id'=>$info['attach_id']]);
+			$info['image'] = $this->attachmentFormat(make('app/service/attachment/Attachment')->getList(['attach_id'=>$info['attach_id']]), 400, false);
 			$lanArr = array_unique([1, $lanId]);
 			$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>['in', $lanArr]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
 			return $info;
@@ -85,8 +107,8 @@ class Spu extends Base
 		}
 		$info['sku'] = array_column($info['sku'], null, 'sku_id');
 		//获取图片集
-		$info['image'] = make('app/service/product/SpuImage')->getListById($spuId);
-		$imageArr = array_column($info['image'], null, 'attach_id');
+		$info['image_list'] = make('app/service/product/SpuImage')->getListById($spuId);
+		$imageArr = array_column($info['image_list'], 'attach_id');
 		//获取语言,默认拿英文
 		$lanArr = array_unique([1, $lanId]);
 		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>['in', $lanArr]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
@@ -95,26 +117,39 @@ class Spu extends Base
 		//spu描述
 		$info['description'] = make('app/service/product/DescUsed')->getListById($spuId, $lanId);
 		$info += make('app/service/product/AttrUsed')->getListBySkuIds(array_keys($info['sku']), $lanId);
-		$skuImageList = array_merge(array_column($info['sku'], 'attach_id'), $info['attvImage']);
 
-		if (!empty($tempArr = array_diff($skuImageList, array_keys($imageArr)))) {
-			$list = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($tempArr)]]);
-			$imageArr += array_column($list, null, 'attach_id');
+		$imageArr = array_filter(array_merge($imageArr, array_column($info['sku'], 'attach_id'), $info['attvImage'], array_column($info['introduce'], 'attach_id')));
+		if (!empty($imageArr)) {
+			$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($imageArr)]], 400, false);
+			$imageArr = array_column($imageArr, null, 'attach_id');
+			foreach ($imageArr as $key=>$value) {
+				$imageArr[$key] = $this->attachmentFormat($value);
+			}
+		}
+		//图片
+		$info['image'] = $imageArr[$info['attach_id']] ?? '';
+		foreach ($info['image_list'] as $key=>$value) {
+			$info['image_list'][$key] = $imageArr[$value['attach_id']] ?? '';
+		}
+		foreach ($info['introduce'] as $key=>$value) {
+			$info['introduce'][$key] = $imageArr[$value['attach_id']] ?? '';
 		}
 		foreach ($info['attvImage'] as $key => $value) {
 			if (empty($value)) continue;
-			$info['attvImage'][$key] = [];
-			if (isset($imageArr[$value])) {
-				$info['attvImage'][$key] = [
-					'attach_id' => $imageArr[$value]['attach_id'],
-					'url' => $imageArr[$value]['url'],
-				];
-			}
+			$info['attvImage'][$key] = $imageArr[$value] ?? '';
 		}
 		foreach ($info['sku'] as $key => $value) {
-			$info['sku'][$key]['image'] = $imageArr[$value['attach_id']]['url'] ?? '';
+			$info['sku'][$key]['image'] = $imageArr[$value['attach_id']] ?? '';
 		}
 		return $info;
+	}
+
+	protected function attachmentFormat($data, $type=400)
+	{
+		if (empty($data)) {
+			return '';
+		}
+		return $data['cate'].DS.$data['name'].DS.$type.'.'.$data['type'];
 	}
 
 	protected function getCacheKey($spuId, $lanId)
