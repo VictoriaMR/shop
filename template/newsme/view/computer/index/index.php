@@ -8,13 +8,13 @@
 						<div class="newservice">
 							<p class="f500 f18 mb18">Category</p>
 							<ul class="f16">
-								<?php foreach ($cateArr ?? [] as $key=>$value){
-									if ($value['icon']){ $index=$key;?><li class="e1">
+								<?php foreach ($leftCate as $key=>$value){
+									if ($value['icon'] && $value['level']==1){ $index=$key;?><li class="e1">
 									<span class="clothes-iconfont icon-<?php echo $value['icon']??'';?>"></span>
 									<a href="<?php echo url($value['name_en'], ['c'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>"><?php echo $value['name_en'];?></a>
 									<?php $count=0; for ($i=$index+1; $i<99; $i++) {
-										if (isset($cateArr[$i]) && $cateArr[$i]['level']>1 && $cateArr[$i]['is_show'] && !$cateArr[$i]['is_hot'] ){?><span class="service-slash">/</span>
-									<a href="<?php echo url($cateArr[$i]['name_en'], ['c'=>$cateArr[$i]['cate_id']]);?>" title="<?php echo $cateArr[$i]['name_en'];?>"><?php echo $cateArr[$i]['name_en'];?></a>
+										if (isset($leftCate[$i]) && $leftCate[$i]['level']>1 && $leftCate[$i]['is_show'] && !$leftCate[$i]['is_hot'] ){?><span class="service-slash">/</span>
+									<a href="<?php echo url($leftCate[$i]['name_en'], ['c'=>$leftCate[$i]['cate_id']]);?>" title="<?php echo $leftCate[$i]['name_en'];?>"><?php echo $leftCate[$i]['name_en'];?></a>
 								<?php $count++; if ($count==2) break; }}?></li>
 								<?php }}?></ul>
 						</div>
@@ -57,9 +57,9 @@
 			<?php foreach($popularCate as $value){?><li>
 				<a href="<?php echo url($value['name_en'], ['c'=>$value['cate_id']]);?>" title="<?php echo $value['name_en'];?>">
 					<div class="image-content">
-						<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" alt="<?php echo $value['name_en'];?>">
+						<span class="clothes-iconfont icon-<?php echo $value['icon'];?>"></span>
 					</div>
-					<p class="f16 mt12 mb12 e1"><?php echo $value['name_en'];?></p>
+					<p class="e1"><?php echo $value['name_en'];?></p>
 				</a>
 			</li>
 			<?php }?></ul>

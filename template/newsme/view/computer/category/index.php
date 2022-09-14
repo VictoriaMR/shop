@@ -16,7 +16,11 @@
 							<tr>
 								<td width="64">
 									<div class="image-content">
-										<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" alt="<?php echo $value['name'];?>">
+										<?php if ($value['icon']){?>
+										<span class="clothes-iconfont icon-<?php echo $value['icon'];?>"></span>
+										<?php }else{?>
+										<img class="lazyload" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image']??'';?>" alt="<?php echo $value['name'];?>">
+										<?php }?>
 									</div>
 								</td>
 								<td class="category-son-name"><?php echo $value['name'];?></td>
@@ -30,7 +34,7 @@
 	<?php }}?></div>
 	<?php if (!empty($filter) || !empty($list)){?><div class="layer0 bg-f product-container">
 		<?php $this->load('product/filter', array_merge(['list'=>$filter], $param));?>
-		<?php $this->load('product/list', ['list'=>$list, 'total'=>$total, 'param'=>$param, 'size'=>$size]);?>
+		<?php $this->load('product/list', ['list'=>$list, 'total'=>$total, 'param'=>$param, 'size'=>$size, 'empty'=>true]);?>
 		<div class="clear"></div>
 	</div>
 	<?php }?>

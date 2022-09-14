@@ -33,6 +33,13 @@
     height: 0;
     text-align: center;
     padding-bottom: 100%;
+    position: relative;
+}
+.category-page .category-son li .image-content .clothes-iconfont {
+    font-size: 36px;
+    position: absolute;
+    left: calc(50% - 18px);
+    top: calc(50% - 18px);
 }
 .category-page .category-son .category-son-name {
 	padding-left: 8px;

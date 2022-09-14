@@ -15,14 +15,22 @@ class Index extends Base
 		$size = iget('size', 20);
 
 		$cateArr = make('app/service/category/Category')->getSiteCateList(cateId());
-		$tempArr = [];
+		$hotArr = [];
+		$popularCate = [];
+		$leftCate = [];
 		foreach ($cateArr as $value) {
 			if ($value['is_hot']) {
-				$tempArr[] = $value;
+				if ($value['icon']) {
+					$popularCate[] = $value;
+				} else {
+					$hotArr[] = $value;
+				}
+			} else {
+				$leftCate[] = $value;
 			}
 		}
-		$hotArr = array_slice($tempArr, 0, 6);
-		$popularCate = array_slice($tempArr, 5, 12);
+		$hotArr = array_slice($hotArr, 0, 6);
+		$popularCate = array_slice($popularCate, 0, 12);
 
 		$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
 		$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
@@ -35,16 +43,6 @@ class Index extends Base
 				'name_en' => $hotArr[$key]['name_en'],
 			];
 		}
-		if (!empty($popularCate)) {
-			$attachArr = array_filter(array_column($popularCate, 'attach_id'));
-			if (!empty($attachArr)) {
-				$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-				$attachArr = array_column($attachArr, 'url', 'attach_id');
-			}
-			foreach ($popularCate as $key=>$value) {
-				$popularCate[$key]['image'] = $attachArr[$value['attach_id']] ?? '';
-			}
-		}
 
 		$bestSeller = make('app/service/product/Spu')->getRecommend($page, $size, $total);
 
@@ -52,7 +50,7 @@ class Index extends Base
 		$this->assign('size', $size);
 		$this->assign('total', $total);
 		$this->assign('banner', $banner);
-		$this->assign('cateArr', $cateArr);
+		$this->assign('leftCate', $leftCate);
 		$this->assign('hotArr', $hotArr);
 		$this->assign('popularCate', $popularCate);
 		$this->assign('bestSeller', $bestSeller);

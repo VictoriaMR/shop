@@ -9,6 +9,7 @@ class Category extends HomeBase
 	{	
 		html()->addCss();
 		html()->addJs();
+		html()->addCss('clothes-icon');
 		html()->addCss('product/list');
 		html()->addJs('product/list');
 
@@ -24,9 +25,10 @@ class Category extends HomeBase
 		$cateInfo = $category->getInfo($cateId);
 		$crumbs = [];
 		if ($cateInfo) {
+			$lanId = lanId();
 			//desc, keyword
 			$cateLanguage = make('app/service/category/Language');
-			$lanArr = array_unique([1, lanId()]);
+			$lanArr = array_unique([1, $lanId]);
 			$lanArr = $cateLanguage->getListData(['cate_id'=>$cateId, 'lan_id'=>['in', $lanArr]], 'type,name', 0, 0, ['lan_id'=>'asc']);
 			$lanArr = array_column($lanArr, 'name', 'type');
 
@@ -38,30 +40,49 @@ class Category extends HomeBase
 			if (isset($lanArr[2])) {
 				$this->assign('_desc', $lanArr[2]);
 			}
+			//父级面包屑导航
+			$cateParent = $category->getParentCategoryById($cateId);
+			$cateParent = array_reverse($cateParent);
+			if ($lanId == 1) {
+				$lanArr = array_column($cateParent, 'name_en', 'cate_id');
+			} else {
+				//分类语言
+				$where = ['cate_id'=>['in', array_column($cateParent, 'cate_id')]];
+				$where['lan_id'] = $lanId;
+				$lanArr = $cateLanguage->getListData($where, 'cate_id,name');
+				$lanArr = array_column($lanArr, 'name', 'cate_id');
+			}
+			foreach ($cateParent as $value) {
+				if ($value['is_show']) {
+					$crumbs[] = [
+						'name' => $lanArr[$value['cate_id']] ?? $value['name_en'],
+						'url' => url($value['name_en'], ['c'=>$value['cate_id']]),
+					];
+				}
+			}
 
-			$crumbs[] = [
-				'name' => $cateInfo['name_en'],
-				'url' => url($cateInfo['name_en'], ['c'=>$cateInfo['cate_id']]),
-			];
+			//子集
 			$cateSon = $category->getSubCategoryById($cateId);
 			foreach ($cateSon as $key=>$value) {
-				$info = $category->getInfo($value);
-				if ($info['is_show']) {
-					$cateSon[$key] = $info;
-				} else {
+				if (!$value['is_show']) {
 					unset($cateSon[$key]);
 				}
 			}
-			if (!empty($cateSon)) {
+			if (empty($cateSon)) {
+				$where['cate_id'] = $cateId;
+			} else {
 				$cateSonIdArr = array_column($cateSon, 'cate_id');
-				$lanArr = $cateLanguage->getListData(['cate_id'=>['in', $cateSonIdArr], 'lan_id'=>['in', $lanArr], 'type'=>0], 'cate_id,name', 0, 0, ['lan_id'=>'asc']);
-				$lanArr = array_column($lanArr, 'name', 'cate_id');
+				if ($lanId == 1) {
+					$lanArr = array_column($cateSon, 'name_en', 'cate_id');
+				} else {
+					$lanArr = $cateLanguage->getListData(['cate_id'=>['in', $cateSonIdArr], 'lan_id'=>$lanId, 'type'=>0], 'cate_id,name');
+					$lanArr = array_column($lanArr, 'name', 'cate_id');
+				}
 				foreach ($cateSon as $key=>$value) {
 					$cateSon[$key]['name'] = $lanArr[$value['cate_id']] ?? $value['name_en'];
 				}
-
 				$cateSonIdArr[] = $cateId;
-				$where['cate_id'] = ['in', array_unique($cateSonIdArr)];
+				$where['cate_id'] = ['in', $cateSonIdArr];
 			}
 			//获取左侧过滤列表
 			$attrUsed = make('app/service/product/AttrUsed');

@@ -51,6 +51,10 @@
 		<?php }?>
 	</ul>
 	<?php echo $total > $size ? page($size, $total) : '';?>
+	<?php } elseif($empty){?><div class="empty-info">
+		<img src="<?php echo siteUrl('image/common/oooops.png');?>">
+		<p class="mt12 f16">No item matched. Please try with other options.</p>
+	</div>
 	<?php }?>
 </div>
 <div id="quickview-modal">

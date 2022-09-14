@@ -101,12 +101,7 @@ class Category extends Base
 
 	public function getSubCategoryById($id)
 	{
-		$list = $this->getList();
-		$list = $this->listFormat($list, $id, 0);
-		if (empty($list)) {
-			return [];
-		}
-		return $this->getSubCategory($list);
+		return $this->getSubCategory($this->getList(), $id);
 	}
 
 	public function getParentCategoryById($id, $self=true, $siteId=0)
@@ -125,14 +120,20 @@ class Category extends Base
 		return $returnData;
 	}
 
-	protected function getSubCategory($list) 
+	protected function getSubCategory($list, $pid) 
 	{
 		$returnData = [];
+		$lev = 0;
 		foreach ($list as $value) {
-			if (empty($value['son'])) {
-				$returnData[] = $value['cate_id'];
-			} else {
-				$returnData = array_merge($returnData, $this->getSubCategory($value['son']));
+			if ($lev > 0) {
+				if ($lev < $value['level']) {
+					if ($value['status']) $returnData[] = $value;
+				} else {
+					break;
+				}
+			}
+			if ($value['cate_id'] == $pid) {
+				$lev = $value['level'];
 			}
 		}
 		return $returnData;

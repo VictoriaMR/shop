@@ -97,6 +97,19 @@ li .image-content {
     height: 0;
     text-align: center;
     padding-bottom: 100%;
+    position: relative;
+}
+.popular-catgory li .image-content .clothes-iconfont {
+    font-size: 88px;
+    position: absolute;
+    margin-top: calc(50% - 44px);
+    left: calc(50% - 44px);
+}
+.popular-catgory li p {
+    font-size: 16px;
+    text-align: center;
+    margin-top: 12px;
+    margin-bottom: 12px;
 }
 @media (max-width: 950px) {
     .popular-catgory li {
