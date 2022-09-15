@@ -57,9 +57,13 @@
 							<div class="f16 f600 input-tips">Email</div>
 							<input class="input" type="text" name="email" value="" placeholder="Email Address">
 						</div>
-						<div class="form-item mb8">
+						<div class="form-item mb20">
 							<div class="f16 f600 input-tips">Password</div>
 							<input class="input" type="text" name="password" value="" placeholder="Your Password">
+						</div>
+						<div class="form-item mb8">
+							<div class="f16 f600 input-tips">Confirm Password</div>
+							<input class="input" type="text" name="repassword" value="" placeholder="Confirm Your Password">
 						</div>
 						<div class="agreement mb20 tl">
 							<span class="iconfont icon-fangxingweixuanzhong f16"></span>

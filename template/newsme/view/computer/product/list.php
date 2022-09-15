@@ -13,7 +13,7 @@
 			</div>
 			<ul class="sort-list">
 				<?php foreach($sortArr as $key=>$value) {?><li<?php echo $param['sort']==$key||(!$param['sort']&&$key==1)?' class="active"':'';?>>
-					<a href="<?php echo url('', ['sort'=>$key, 'page'=>0]);?>" title="<?php echo $value;?>"><?php echo $value;?></a>
+					<a href="<?php echo url('', ['sort'=>$key, 'page'=>0, 'keyword'=>iget('keyword', '')]);?>" title="<?php echo $value;?>"><?php echo $value;?></a>
 					<?php if ($param['sort']==$key||(!$param['sort']&&$key==1)){?><span class="iconfont icon-xuanze"></span>
 				<?php }?></li>
 				<?php }?>
@@ -55,6 +55,7 @@
 		<img src="<?php echo siteUrl('image/common/oooops.png');?>">
 		<p class="mt12 f16">No item matched. Please try with other options.</p>
 	</div>
+	<?php if (!empty($recommend)){$this->load('product/recommend');}?>
 	<?php }?>
 </div>
 <div id="quickview-modal">

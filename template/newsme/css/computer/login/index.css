@@ -1,6 +1,6 @@
 .login-content {
 	width: 960px;
-	height: 470px;
+	height: 543px;
 	position: absolute;
 	left: 0;
 	top: 0;
@@ -16,6 +16,9 @@
 		width: 100%;
 	}
 } 
+.login-content table td {
+	vertical-align: top;
+}
 .login-content .title-content {
 	height: 64px;
 	line-height: 64px;
@@ -26,7 +29,7 @@
 .login-content .signin-content,
 .login-content .register-content {
 	width: 100%;
-	height: 406px;
+	height: 480px;
 	padding: 25px 10px;
 	text-align: center;
 }

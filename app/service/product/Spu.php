@@ -622,4 +622,30 @@ class Spu extends Base
         $i = (int)$i;
         return $i<(int)$sale_rate?true:false;
 	}
+
+	public function getSpuIdByKeyword($keyword)
+	{
+		if (empty($keyword)) {
+			return false;
+		}
+		$spuIdArr = make('app/service/product/Language')->getListData(['lan_id'=>lanId(), 'name'=>['like', '%'.$keyword.'%']], 'spu_id');
+		$spuIdArr = array_column($spuIdArr, 'spu_id');
+		//attrname
+		$attrnIdarr = make('app/service/attr/NameLanguage')->getListData(['lan_id'=>lanId(), 'name'=>['like', '%'.$keyword.'%']], 'attrn_id');
+		$attrvIdarr = make('app/service/attr/ValueLanguage')->getListData(['lan_id'=>lanId(), 'name'=>['like', '%'.$keyword.'%']], 'attrv_id');
+		$skuIdArr = [];
+		if (!empty($attrnIdarr)) {
+			$tempIdArr = make('app/service/product/AttrUsed')->getListData(['attrn_id'=>['in', array_column($attrnIdarr, 'attrn_id')]]);
+			$skuIdArr = array_column($tempIdArr, 'sku_id');
+		}
+		if (!empty($attrvIdarr)) {
+			$tempIdArr = make('app/service/product/AttrUsed')->getListData(['attrv_id'=>['in', array_column($attrvIdarr, 'attrv_id')]]);
+			$skuIdArr = array_unique(array_merge($skuIdArr, array_column($tempIdArr, 'sku_id')));
+		}
+		if (!empty($skuIdArr)) {
+			$tempIdArr = make('app/service/product/Sku')->getListData(['sku_id'=>['in', $skuIdArr]], 'spu_id');
+			$spuIdArr = array_unique(array_merge($spuIdArr, array_column($tempIdArr, 'spu_id')));
+		}
+		return $spuIdArr;
+	}
 }

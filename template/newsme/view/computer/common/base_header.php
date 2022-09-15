@@ -25,7 +25,8 @@
 															</div>
 															<div class="tcell f500">
 																<p class="f16">Account</p>
-																<p class="cg mt2">your@email.com</p>
+																<p class="cg mt2 email-empty">your@email.com</p>
+																<p class="cg mt2 email hidden"></p>
 															</div>
 														</a>
 														<a href="<?php echo url('order/list');?>" class="table w100">
@@ -62,7 +63,8 @@
 														</a>
 													</div>
 													<div class="footer">
-														<a href="<?php echo url('login');?>" class="block btn btn-black w100" title="Sign In"><?php echo userId()?'Sign Out':'Sign In';?></a>
+														<a href="<?php echo url('login');?>" class="block btn btn-black w100 login" title="Sign In">Sign In</a>
+														<a href="<?php echo url('logout');?>" class="block btn btn-black w100 logout hidden" title="Sign Out">Sign Out</a>
 													</div>
 												</div>
 											</div>
@@ -81,10 +83,10 @@
 						</td>
 						<td>
 							<div class="search-cell relative">
-								<div class="relative">
-									<input class="input" type="text" name="search" placeholder="Find anything here..." autocomplete="off">
+								<form class="relative">
+									<input class="input" type="text" name="keyword" value="<?php echo iget('keyword', '');?>" placeholder="Find anything here..." autocomplete="off">
 									<span class="iconfont icon-sousuo f600 f22"></span>
-								</div>
+								</form>
 								<div class="hot-search mt8 c6 relative">
 									<span class="hot-icon">
 										<img src="<?php echo siteUrl('image/common/hot.png');?>" alt="Hot Search">
@@ -99,7 +101,7 @@
 							</div>
 						</td>
 						<td width="68">
-							<a class="block right pointer" href="<?php echo url('cart');?>">
+							<a id="cart" class="block right pointer relative" href="<?php echo url('cart');?>">
 								<span class="iconfont icon-gouwuche f26"></span>
 								<span class="f16 ml4">Cart</span>
 							</a>

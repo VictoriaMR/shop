@@ -9,7 +9,8 @@
 			<div class="desc-title">
 				<a class="userinfo pl8" href="javascript:;">USD</a>
 				<a class="userinfo border-right pr8 pl8" href="javascript:;">English</a>
-				<a class="userinfo info-name border-right pr8" href="javascript:;">Register</a>
+				<a class="userinfo info-name border-right pr8 register" href="<?php echo url('login');?>">Register</a>
+				<a class="userinfo info-name border-right pr8 member hidden" href="<?php echo url('userInfo');?>"></a>
 				<div class="clear"></div>
 			</div>
 		</div>

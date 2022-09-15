@@ -34,7 +34,14 @@ class Api extends HomeBase
 				make('app/service/member/History')->addHistory($param['id']);
 			}
 		}
-		$this->success();
+		$data = [];
+		if (!empty($param['cart'])) {
+			$data['cart_count'] = make('app/service/Cart')->getCartCount();
+		}
+		if (!empty($param['login'])) {
+			$data['member'] = session()->get(APP_TEMPLATE_TYPE.'_info', []);;
+		}
+		$this->success($data);
 	}
 
 	public function upload()

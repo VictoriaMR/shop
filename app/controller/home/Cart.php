@@ -149,7 +149,7 @@ class Cart extends HomeBase
 			}
 		}
 		if ($rst) {
-			$this->success(distT('add_success'));
+			$this->success(distT('add_success'), ['cart_count'=>$cart->getCartCount()]);
 		} else {
 			$this->error(distT('add_fail'));
 		}

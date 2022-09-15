@@ -173,7 +173,14 @@ var CART = {
 				$('.icon-gouwuchefill').not('.footer').addClass('icon-gouwuche').removeClass('icon-gouwuchefill');
 			}
 		});
-	}
+	},
+    count: function(count) {
+        var obj = $('#cart');
+        obj.find('.cart-count').remove();
+        if (count > 0) {
+            obj.append('<span class="cart-count">'+count+'</span>');
+        }
+    }
 };
 function S4() {
 	return (((1+Math.random())*0x10000)|0).toString(16).substring(1);
@@ -269,6 +276,8 @@ function appT(name) {
 }(jQuery));
 $(function(){
     //同步数据
+    REQUEST_PARAM.cart = $('.icon-gouwuche').length;
+    REQUEST_PARAM.login = $('.desc-title .info-name').length;
     $.ajax({
         type: 'POST',
         url: URI+'api/stat',
@@ -276,6 +285,12 @@ $(function(){
         dataType: 'json',
         data: REQUEST_PARAM,
         success: function (res) {
+            if (REQUEST_PARAM.cart > 0) {
+                CART.count(res.data.cart_count);
+            }
+            if (REQUEST_PARAM.login > 0) {
+                MEMBER.init(res.data.member);
+            }
         }
     });
 	//回顶按钮

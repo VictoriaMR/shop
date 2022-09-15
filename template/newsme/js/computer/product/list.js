@@ -349,6 +349,7 @@ var PRODUCT_MODAL = {
 		var num = _this.obj.find('.qty-content input').val();
 		$.post(URI+'cart/addToCart', {num:num, sku_id:_this.skuId}, function(res){
 			if (res.code == '200') {
+				CART.count(res.data.cart_count);
 				TIPS.success(res.msg);
 			} else {
 				TIPS.error(res.msg);

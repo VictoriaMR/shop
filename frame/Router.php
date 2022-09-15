@@ -5,12 +5,13 @@ namespace frame;
 final class Router
 {
 	private $include_param = ['rid', 'vid', 'sort', 'page', 'size'];
-	private $include_path = ['c', 'p', 's', 'f'];
+	private $include_path = ['c', 'p', 's', 'f', 'search'];
 	private $path_format = [
 		'c'=> 'Category',
 		'p' => 'Product',
 		's' => 'Product',
 		'f' => 'Faq',
+		'search' => 'Search',
 	];
 
 	public function analyze()

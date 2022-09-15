@@ -142,6 +142,9 @@
     right: 10px;
     font-weight: 600;
 }
+#right-list .product-list {
+    padding: 0 10px;
+}
 #right-list .product-list li {
     display: inline-block;
     border-radius: 8px;

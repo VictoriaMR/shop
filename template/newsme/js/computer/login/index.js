@@ -35,7 +35,7 @@ var LOGIN = {
 		});
 		//send email
 		$('#login-page .send-email').on('click', function(){
-			var obj = $('.signin-content [name="email"]');
+			var obj = $('.signin-content .verification-content [name="email"]');
 			var email = obj.val();
 			if (email === '') {
 				_this.loginError(obj.parent(), 'This Email is required.');
@@ -51,9 +51,9 @@ var LOGIN = {
 				TIPS.loadoutBtn(_thisObj);
 				if (res.code === '200') {
 					_this.initSendCode(res.data);
-					TIPS.success(res.message);
+					TIPS.success(res.msg);
 				} else {
-					TIPS.error(res.message);
+					TIPS.error(res.msg);
 				}
 			});
 		});
@@ -119,7 +119,7 @@ var LOGIN = {
 			});
 		});
 		//验证注册邮箱
-		$('#login-page .register [name="email"]').on('blur', function(){
+		$('#login-page .register-content [name="email"]').on('blur', function(){
 			var email = $(this).val();
 			var obj = $(this).parent();
 			if (email === '') {

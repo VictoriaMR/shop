@@ -80,6 +80,9 @@ body {
 .pointer {
 	cursor: pointer;
 }
+.hidden {
+	display: none !important;
+}
 .cover {
 	width: 100%;
 	background: #f5f5f5
@@ -259,14 +262,14 @@ body {
 	padding:0 20px;
 }
 .meau-header .search-cell .input {
-	padding-right: 68px;
+	padding-right: 40px;
 	border-radius: 8px;
     border: 2px solid #93939A;
 }
 .meau-header .search-cell .iconfont {
 	position: absolute;
 	top: 8px;
-	right: 23px;
+	right: 10px;
 	color: #93939A;
 	cursor: pointer;
 }
@@ -481,7 +484,7 @@ body {
 #recommend-page .product-list li {
 	display: inline-block;
     vertical-align: top;
-    width: calc(100%/6);
+    width: calc(100%/6) !important;
     padding: 8px;
     transition: .2s ease-in-out;
     border-radius: 4px;
@@ -575,4 +578,17 @@ body {
 	top: 12px;
 	right: 12px;
 	font-weight: 600;
+}
+#cart .cart-count {
+	display: inline-block;
+	text-align: center;
+	line-height: 18px;
+	background-color: #E64545;
+	border-radius: 50%;
+	color: #fff;
+	height: 18px;
+	min-width: 18px;
+	position: absolute;
+	top: -4px;
+	left: 14px;
 }

@@ -107,7 +107,11 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 	if (isset($GLOBALS[$key][$text])) {
 		$text = $GLOBALS[$key][$text];
 		if (!empty($replace)) {
-			$text = strtr($text, $replace);
+			$tempArr = [];
+			foreach ($replace as $key=>$value) {
+				$tempArr['{'.$key.'}'] = $value;
+			}
+			$text = strtr($text, $tempArr);
 		}
 	}
 	return $text;

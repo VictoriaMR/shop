@@ -1,3 +1,17 @@
+var MEMBER = {
+    init: function(data) {
+        if (data.mem_id) {
+            $('#meau-modal .email-empty').addClass('hidden');
+            if (data.email) {
+                $('#meau-modal .email').removeClass('hidden').text(data.email);
+            }
+            $('#meau-modal .login').addClass('hidden');
+            $('#meau-modal .logout').removeClass('hidden');
+            $('.userinfo .register').addClass('hidden');
+            $('.userinfo .member').removeClass('hidden').text(data.nickname ? data.nickname : data.email);
+        }
+    }
+};
 $(function(){
     // 菜单栏点击
     $('#meau-modal-icon,#meau-modal-name').on('click', function(){
@@ -31,6 +45,15 @@ $(function(){
     if (rightListObj.length>0) {
         rightListHeight = rightListObj.height();
     }
+    //搜索按钮点击
+    $('.meau-header .search-cell .icon-sousuo').on('click', function(){
+        var obj = $('.meau-header [name="keyword"]');
+        if(obj.val()) {
+            obj.parent().submit();
+        } else {
+            obj.focus();
+        }
+    });
     $(document).scroll(function() {
         var scroll = $(document).scrollTop();
         if (meauHeaderTop) {

@@ -87,15 +87,27 @@ class Category extends HomeBase
 			//获取左侧过滤列表
 			$attrUsed = make('app/service/product/AttrUsed');
 			$filter = $attrUsed->getSiteAttr();
+			$spuIdArr = [];
 			if ($vid) {
 				$spuIdArr = $attrUsed->getSpuId([$vid]);
-				if ($spuIdArr) {
-					$where['spu_id'] = ['in', $spuIdArr];
-				} else {
-					$where = ['spu_id'=>0];
-				}
 			}
 			$spu = make('app/service/product/Spu');
+			if ($keyword) {
+				$tempArr = $spu->getSpuIdByKeyword($keyword);
+				if ($tempArr !== false) {
+					if (empty($spuIdArr)) {
+						$spuIdArr = $tempArr;
+					} else {
+						$spuIdArr = array_intersect($spuIdArr, $tempArr);
+					}
+					if (empty($spuIdArr)) {
+						$spuIdArr = [0];
+					}
+				}
+			}
+			if (!empty($spuIdArr)) {
+				$where['spu_id'] = ['in', $spuIdArr];
+			}
 			$where['status'] = $spu->getConst('STATUS_OPEN');
 			$total = $spu->getCountData($where);
 			if ($total >0) {
