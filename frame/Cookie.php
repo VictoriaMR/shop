@@ -8,7 +8,7 @@ class Cookie
 		'expire' => 0,
 		'path' => '/',
 		'domain' => '',
-		'secure' => true,
+		'secure' => false,
 		'httponly' => false,
 	];
 
