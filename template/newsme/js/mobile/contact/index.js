@@ -6,7 +6,7 @@ const CONTACT = {
 		if (key) {
 			_this.initMessage(key);
 		} else {
-			$.post(URI+'contact/create', {}, function(res){
+			$.post('/contact/create', {}, function(res){
 				if (res.code === '200') {
 					localStorage.setItem('contact_key', res.data);
 					_this.initMessage(res.data);
@@ -18,7 +18,7 @@ const CONTACT = {
 	},
 	initMessage: function(key) {
 		const _this = this;
-		$.post(URI+'contact/message', {page: _this.page, key: key}, function(res){
+		$.post('/contact/message', {page: _this.page, key: key}, function(res){
 			TIPS.loadout();
 			if (res.code === '200') {
 				console.log(res)

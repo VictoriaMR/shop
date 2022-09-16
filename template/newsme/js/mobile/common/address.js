@@ -112,7 +112,7 @@ const ADDRESSBOOK = {
 				_this.saveCallback($('#address-book form').serializeArray());
 				return;
 			}
-			$.post(URI+'userInfo/editAddress', $('#address-book form').serializeArray(), function(res) {
+			$.post('/userInfo/editAddress', $('#address-book form').serializeArray(), function(res) {
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					if (_this.callback) {
@@ -225,7 +225,7 @@ const ADDRESSBOOK = {
 		const _this = this;
 		_this.show();
 		TIPS.loading($('#address-book .dialog'));
-		$.post(URI+'userInfo/getAddressInfo', {id: id}, function(res){
+		$.post('/userInfo/getAddressInfo', {id: id}, function(res){
 			if (res.code === '200') {
 				_this.pageInit(res.data);
 			} else {

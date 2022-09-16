@@ -9,7 +9,7 @@ const WISH = {
 			const obj = $(this).parent();
 			const id = obj.data('id');
 			TIPS.loading(obj);
-			$.post(URI+'userInfo/wish', {spu_id:id}, function(res){
+			$.post('/userInfo/wish', {spu_id:id}, function(res){
 				TIPS.loadout(obj);
 				if (res.code === '200') {
 					TIPS.success(res.message);

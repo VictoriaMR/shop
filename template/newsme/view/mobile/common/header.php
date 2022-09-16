@@ -24,6 +24,5 @@
 <?php }?></head>
 <body>
 <script type="text/javascript">
-const URI = '<?php echo APP_DOMAIN;?>';
 const REQUEST_PARAM=<?php echo json_encode(\App::get('router')+iget());?>;
 </script>

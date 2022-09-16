@@ -8,7 +8,7 @@ const USERINFO = {
 			_this.show();
 			if ($('#info-edit-modal .dialing-list ul li').length === 0) {
 				TIPS.loading($('#info-edit-modal .dialog'));
-				$.post(URI+'userInfo/getInfo', {}, function(res){
+				$.post('/userInfo/getInfo', {}, function(res){
 					TIPS.loadout($('#info-edit-modal .dialog'));
 					if (res.code === '200') {
 						const text = $('#info-edit-modal [name="dialing_code"]').val();
@@ -114,7 +114,7 @@ const USERINFO = {
 				return;
 			}
 			TIPS.loading($('#info-edit-modal .dialog'));
-			$.post(URI+'userInfo/editInfo', $('#info-edit-modal form').serializeArray(), function(res) {
+			$.post('/userInfo/editInfo', $('#info-edit-modal form').serializeArray(), function(res) {
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					setTimeout(function(){
@@ -129,7 +129,7 @@ const USERINFO = {
 		//头像
 		if ($('#userinfo-page .name-content .name').length > 0) {
 			$('#userinfo-page .image-avatar img').imageUpload('avatar', 'avatar', function(res){
-				$.post(URI+'userInfo/updateAvatar', res);
+				$.post('/userInfo/updateAvatar', res);
 			});
 		}
 	},

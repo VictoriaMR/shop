@@ -197,7 +197,7 @@ var PRODUCT_INFO = {
 			return false;
 		}
 		var num = _this.obj.find('.qty-content input').val();
-		$.post(URI+'cart/addToCart', {num:num, sku_id:_this.skuId}, function(res){
+		$.post('/cart/addToCart', {num:num, sku_id:_this.skuId}, function(res){
 			if (res.code == '200') {
 				TIPS.success(res.msg);
 			} else {

@@ -9,7 +9,7 @@ const HISTORY = {
 			const obj = $(this).parent();
 			const id = obj.data('key');
 			TIPS.loading(obj);
-			$.post(URI+'userInfo/deleteHistory', {id:id}, function(res){
+			$.post('/userInfo/deleteHistory', {id:id}, function(res){
 				TIPS.loadout(obj);
 				if (res.code === '200') {
 					TIPS.success(res.message);
@@ -36,7 +36,7 @@ const HISTORY = {
 			const _thisObj = $(this);
 			const id = obj.data('id');
 			TIPS.loading(obj);
-			$.post(URI+'userInfo/wish', {spu_id: id}, function(res){
+			$.post('/userInfo/wish', {spu_id: id}, function(res){
 				TIPS.loadout(obj);
 				if (res.code === '200') {
 					if (res.data === 1) {
@@ -45,7 +45,7 @@ const HISTORY = {
 						_thisObj.find('.icon-xihuanfill').removeClass('icon-xihuanfill').addClass('icon-xihuan');
 					}
 				} else if (res.code === '10001') {
-					window.location.href = URI+'login.html';
+					window.location.href = '/login.html';
 				}
 			});
 			return false;

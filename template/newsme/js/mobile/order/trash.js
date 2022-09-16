@@ -14,7 +14,7 @@ const ORDERTRASH = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('order_repurchase_confirm'), function(obj){
 				TIPS.loadingBtn(obj);
-				$.post(URI+'order/repurchase', {id: id}, function(res){
+				$.post('/order/repurchase', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.href = res.data.url;
 					} else {
@@ -46,7 +46,7 @@ const ORDERTRASH = {
 		const obj = $('.order-list');
 		const page = parseInt(obj.data('page')) + 1;
 		const size = parseInt(obj.data('size'));
-		$.post(URI+'order/getOrderListAjax', {page:page, size:size, is_delete: 1}, function(res){
+		$.post('/order/getOrderListAjax', {page:page, size:size, is_delete: 1}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
 				$('.order-list').find('.page-loading-block').remove();
@@ -72,7 +72,7 @@ const ORDERTRASH = {
 										<div class="table">
 											<div class="image tcell">
 												<div class="image-tcell tcell">
-													<img src="`+URI+`/image/common/noimg.svg" data-src="`+product.image+`" class="lazyload">
+													<img src="/image/common/noimg.svg" data-src="`+product.image+`" class="lazyload">
 												</div>
 											</div>
 											<div class="info tcell">
@@ -83,7 +83,7 @@ const ORDERTRASH = {
 												const attr = product.attr[k];
 												if (attr.image) {
 													html += `<div class="attr-item attr-image">
-															<img src="`+URI+`/image/common/noimg.svg" data-src="`+attr.image+`" class="lazyload">
+															<img src="/image/common/noimg.svg" data-src="`+attr.image+`" class="lazyload">
 															<span class="e1">`+attr.attv_name+`</span>
 															<div class="clear"></div>
 														</div>`;

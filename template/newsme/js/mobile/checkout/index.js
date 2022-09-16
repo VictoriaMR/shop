@@ -105,7 +105,7 @@ const CHECKOUTINDEX = {
 				}
 			}
 			TIPS.loading();
-			$.post(URI+'checkout/createOrder', $('#checkout-form').serializeArray(), function(res) {
+			$.post('/checkout/createOrder', $('#checkout-form').serializeArray(), function(res) {
 				TIPS.loadout();
 				if (res.code === '200') {
 					window.location.href = res.data;
@@ -167,7 +167,7 @@ const CHECKOUTINDEX = {
 		if (page == 1) {
 			TIPS.loading(obj);
 		}
-		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
+		$.post('/userInfo/getAddress', {page:page, size:size}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
 				obj.find('.page-loading-block').remove();
@@ -200,7 +200,7 @@ const CHECKOUTINDEX = {
 		}
 		const _this = this;
 		TIPS.loading(pObj);
-		$.post(URI+'userInfo/getAddressInfo', {id:id}, function(res){
+		$.post('/userInfo/getAddressInfo', {id:id}, function(res){
 			TIPS.loadout(pObj);
 			if (res.code === '200') {
 				let html = '<p>'+res.data.first_name+' '+res.data.last_name+'</p>\
@@ -232,7 +232,7 @@ const CHECKOUTINDEX = {
 	calculateOrderFee: function() {
 		const obj = $('.order-summary-content');
 		TIPS.loading();
-		$.post(URI+'checkout/calculateOrderFee', $('#checkout-form').serializeArray(), function(res) {
+		$.post('/checkout/calculateOrderFee', $('#checkout-form').serializeArray(), function(res) {
 			TIPS.loadout();
 			if (res.code === '200') {
 				let html = '';
@@ -260,7 +260,7 @@ const CHECKOUTINDEX = {
 		}
 		const obj = $('.shipping-method-content');
 		TIPS.loading(obj);
-		$.post(URI+'checkout/selectLogistics', $('#checkout-form').serializeArray(), function(res) {
+		$.post('/checkout/selectLogistics', $('#checkout-form').serializeArray(), function(res) {
 			TIPS.loadout(obj);
 			if (res.code === '200') {
 				let html = '';

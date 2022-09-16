@@ -164,7 +164,7 @@ var TIPS = {
 };
 var CART = {
 	init: function() {
-		$.post(URI+'cart/cartCount', {}, function(res){
+		$.post('/cart/cartCount', {}, function(res){
 			if (res.code === '200') {
 				$('.icon-gouwuche').addClass('icon-gouwuchefill').removeClass('icon-gouwuche');
 				$('.icon-gouwuchefill').parent().append('<span class="red-number">'+(res.data > 99 ? 99 : res.data)+'</>');
@@ -208,7 +208,7 @@ function appT(name) {
 				var html = '<div id="dealbox-bigimage">\
 								<div class="mask"></div>\
 								<div class="centerShow">\
-									<img src="'+URI+'image/common/noimg.png">\
+									<img src="/image/common/noimg.png">\
 								</div>\
 							</div>';
 				$('body').append(html);
@@ -236,13 +236,13 @@ function appT(name) {
 			$('[name="'+guid_name+'"]').on('change', function (e) {
 	            var thissrc = thisobj.attr('src');
 	            thisobj.data('src', thissrc);
-	            thisobj.attr('src', URI+'image/common/loading.png').addClass('loading');
+	            thisobj.attr('src', '/image/common/loading.png').addClass('loading');
 				var files = $(this).prop('files');
 				var data = new FormData();
             	data.append('file', files[0]);
             	data.append('cate', cate);
   				$.ajax({
-					url: URI+'api/upload',
+					url: '/api/upload',
 					type: 'POST',
 					data: data,
 					cache: false,
@@ -280,7 +280,7 @@ $(function(){
     REQUEST_PARAM.login = $('.desc-title .info-name').length;
     $.ajax({
         type: 'POST',
-        url: URI+'api/stat',
+        url: '/api/stat',
         async: true,
         dataType: 'json',
         data: REQUEST_PARAM,

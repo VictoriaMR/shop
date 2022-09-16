@@ -12,7 +12,7 @@ const ADDRESS = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('set_default_confirm'), function(){
 				TIPS.loading($('#confirm-modal .content'));
-				$.post(URI+'userInfo/setAddressDefault', {id: id}, function(res){
+				$.post('/userInfo/setAddressDefault', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -29,7 +29,7 @@ const ADDRESS = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('set_default_bill_confirm'), function(){
 				TIPS.loading($('#confirm-modal .content'));
-				$.post(URI+'userInfo/setAddressBillDefault', {id: id}, function(res){
+				$.post('/userInfo/setAddressBillDefault', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -53,7 +53,7 @@ const ADDRESS = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm('Sure delete this address?', function(){
 				TIPS.loading($('#confirm-modal .content'));
-				$.post(URI+'userInfo/deleteAddress', {id: id}, function(res){
+				$.post('/userInfo/deleteAddress', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -93,7 +93,7 @@ const ADDRESS = {
 		const obj = $('.address-list');
 		const page = parseInt(obj.data('page')) + 1;
 		const size = parseInt(obj.data('size'));
-		$.post(URI+'userInfo/getAddress', {page:page, size:size}, function(res){
+		$.post('/userInfo/getAddress', {page:page, size:size}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
 				$('.address-content').find('.page-loading-block').remove();

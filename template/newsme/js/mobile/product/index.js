@@ -13,7 +13,7 @@ const PRODUCT = {
 		_this.originalPrice = data.originalPrice;
 		$('.like-block').on('click', function(){
 			TIPS.loading();
-			$.post(URI+'userInfo/wish', {spu_id: _this.spuId}, function(res){
+			$.post('/userInfo/wish', {spu_id: _this.spuId}, function(res){
 				TIPS.loadout();
 				if (res.code === '200') {
 					if (res.data === 1) {
@@ -22,7 +22,7 @@ const PRODUCT = {
 						$('.icon-xihuanfill').removeClass('icon-xihuanfill').addClass('icon-xihuan');
 					}
 				} else if (res.code === '10001') {
-					window.location.href = URI+'login.html';
+					window.location.href = '/login.html';
 				}
 			});
 		});
@@ -144,13 +144,13 @@ const PRODUCT = {
 	},
 	addToCart: function(num){
 		TIPS.loading();
-		$.post(URI+'cart/addToCart', {sku_id: this.skuId, num: num}, function(res) {
+		$.post('/cart/addToCart', {sku_id: this.skuId, num: num}, function(res) {
 			TIPS.loadout();
 			if (res.code === '200') {
 				TIPS.success(res.message);
 				CART.init()
 			} else if (res.code === '10001') {
-				window.location.href = URI+'login.html';
+				window.location.href = '/login.html';
 			} else {
 				TIPS.error(res.message);
 			}

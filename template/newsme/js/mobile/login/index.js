@@ -80,7 +80,7 @@ const LOGIN = {
 			}
 			const _thisObj = $(this);
 			TIPS.loadingBtn(_thisObj, 'Send...');
-			$.post(URI+'login/sengCode', {email: email}, function(res) {
+			$.post('/login/sengCode', {email: email}, function(res) {
 				TIPS.loadoutBtn(_thisObj);
 				if (res.code === '200') {
 					_this.initSendCode(res.data);
@@ -139,10 +139,10 @@ const LOGIN = {
 			}
 			const _thisObj = $(this);
 			TIPS.loadingBtn(_thisObj, 'LOGGING IN...');
-			$.post(URI+'login/login', param, function(res) {
+			$.post('/login/login', param, function(res) {
 				if (res.code === '200') {
 					localStorage.setItem('login_token', res.data.token);
-					window.location.href = res.data.url ? res.data.url : URI;
+					window.location.href = res.data.url;
 				} else {
 					TIPS.loadoutBtn(_thisObj);
 					for (let i in res.message) {
@@ -164,7 +164,7 @@ const LOGIN = {
 				return false;
 			}
 			TIPS.loading();
-			$.post(URI+'login/checkRegister', {email: email}, function(res){
+			$.post('/login/checkRegister', {email: email}, function(res){
 				TIPS.loadout();
 				if (res.code === '200') {
 					_this.loginSuccess(obj, res.message);
@@ -215,12 +215,12 @@ const LOGIN = {
 			param.password = password;
 			const _thisObj = $(this);
 			TIPS.loadingBtn(_thisObj, 'CREATING AN ACCOUNT...');
-			$.post(URI+'login/register', param, function(res) {
+			$.post('/login/register', param, function(res) {
 				if (res.code === '200') {
 					localStorage.setItem('login_token', res.data.token);
 					TIPS.success(res.message);
 					setTimeout(function(){
-						window.location.href = res.data.url ? res.data.url : URI;
+						window.location.href = res.data.url;
 					});
 				} else {
 					TIPS.loadoutBtn(_thisObj);

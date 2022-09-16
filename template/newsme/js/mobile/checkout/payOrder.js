@@ -10,7 +10,7 @@ const CHECKOUTPAYORDER = {
 			const addressObj = $('#address-book .dialog');
 			ADDRESSBOOK.setSaveCallback(function(data) {
 				data.push({name: 'order_id', value: orderId});
-				$.post(URI+'order/editOrderAddress', data, function(res){
+				$.post('/order/editOrderAddress', data, function(res){
 					if (res.code === '200') {
 						TIPS.success(res.message);
 						setTimeout(function(){
@@ -23,7 +23,7 @@ const CHECKOUTPAYORDER = {
 				});
 			});
 			TIPS.loading(addressObj);
-			$.post(URI+'order/getOrderAddress', {order_id: orderId}, function(res){
+			$.post('/order/getOrderAddress', {order_id: orderId}, function(res){
 				TIPS.loadout(addressObj, true);
 				if (res.code === '200') {
 					ADDRESSBOOK.pageInit(res.data);

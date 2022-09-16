@@ -11,7 +11,7 @@ const CARTPAGE = {
 			const obj = $(this).parents('li.item');
 			const id = obj.data('id');
 			TIPS.loading(obj);
-			$.post(URI+'cart/remove', {id: id}, function(res){
+			$.post('/cart/remove', {id: id}, function(res){
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					if (obj.parent().find('li.item').length <= 1) {
@@ -35,7 +35,7 @@ const CARTPAGE = {
 			const id = obj.data('id');
 			const check = $(this).hasClass('save-for-later') ? 0 : 1;
 			TIPS.loading(obj);
-			$.post(URI+'cart/setChecked', {id: id, check: check}, function(res){
+			$.post('/cart/setChecked', {id: id, check: check}, function(res){
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					setTimeout(function(){
@@ -52,7 +52,7 @@ const CARTPAGE = {
 			const obj = $(this).parents('.item');
 			const id = $(this).data('id');
 			TIPS.loading(obj);
-			$.post(URI+'userInfo/wish',{spu_id:id}, function(res) {
+			$.post('/userInfo/wish',{spu_id:id}, function(res) {
 				TIPS.loadout(obj);
 				if (res.code === '200') {
 					if (res.data === 1) {
@@ -85,7 +85,7 @@ const CARTPAGE = {
 				}
 			}
 			TIPS.loading(pObj);
-			$.post(URI+'cart/updateQuantity', {id:id, quantity: num}, function(res){
+			$.post('/cart/updateQuantity', {id:id, quantity: num}, function(res){
 				TIPS.loadout(pObj);
 				if (res.code === '200') {
 					pObj.find('.table').removeClass('opac5').find('.btn-error').remove();
@@ -111,7 +111,7 @@ const CARTPAGE = {
 			}
 			obj.find('.num').val(num);
 			TIPS.loading(pObj);
-			$.post(URI+'cart/updateQuantity', {id:id, quantity: num}, function(res){
+			$.post('/cart/updateQuantity', {id:id, quantity: num}, function(res){
 				TIPS.loadout(pObj);
 				if (res.code === '200') {
 					pObj.find('.table').removeClass('opac5').find('.btn-error').remove();
@@ -131,7 +131,7 @@ const CARTPAGE = {
 			$('#sku-select-modal .dialog').addClass('popup');
 			const id = $(this).parents('.item').data('id');
 			_this.cart_id = id;
-			$.post(URI+'cart/editInfo', {id:id}, function(res){
+			$.post('/cart/editInfo', {id:id}, function(res){
 				TIPS.loadout(htmlObj, true);
 				if (res.code === '200') {
 					_this.initEditPage(res.data);
@@ -176,7 +176,7 @@ const CARTPAGE = {
 				return false;
 			}
 			TIPS.loading($('#sku-select-modal .dialog'));
-			$.post(URI+'cart/edit', {cart_id: _this.cart_id, sku_id:_this.skuId}, function(res){
+			$.post('/cart/edit', {cart_id: _this.cart_id, sku_id:_this.skuId}, function(res){
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					setTimeout(function(){
@@ -200,7 +200,7 @@ const CARTPAGE = {
 				return false;
 			}
 			TIPS.loading();
-			$.post(URI+'cart/check', {}, function(res){
+			$.post('/cart/check', {}, function(res){
 				TIPS.loadout();
 				if (res.code === '200') {
 					window.location.href = res.data;
@@ -227,7 +227,7 @@ const CARTPAGE = {
 		//头部图片
 		html += '<div class="sku-image-block mt10 f0">\
 				<div class="sku-image tcell">\
-					<img data-src="'+skuInfo.image+'" src="'+URI+'image/common/noimg.svg" class="lazyload">\
+					<img data-src="'+skuInfo.image+'" src="'+'/image/common/noimg.svg" class="lazyload">\
 				</div>\
 				<div class="sku-pro-info tcell">\
 					<p class="product-price">\
@@ -256,7 +256,7 @@ const CARTPAGE = {
 							} else {
 								html += '<li class="item-image'+(data.attrMap[i].length===1||skuAttrSelect.indexOf(data.attrMap[i][j])>=0?' active':'')+'" data-id="'+data.attrMap[i][j]+'" title="'+data.attv[data.attrMap[i][j]]+'">\
 											<div class="attv-image tcell">\
-												<img data-src="'+data.attvImage[data.attrMap[i][j]].url+'" src="'+URI+'image/common/noimg.svg" class="lazyload">\
+												<img data-src="'+data.attvImage[data.attrMap[i][j]].url+'" src="'+'/image/common/noimg.svg" class="lazyload">\
 											</div>\
 										</li>';
 							}
@@ -348,7 +348,7 @@ const CARTPAGE = {
 	},
 	initSummary: function(){
 		TIPS.loading($('#cart-summary'));
-		$.post(URI+'cart/cartSummary', {}, function(res){
+		$.post('/cart/cartSummary', {}, function(res){
 			let html = '';
 			if (res.code === '200') {
 				for (let i=0; i<res.data.length; i++) {

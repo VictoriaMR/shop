@@ -25,7 +25,7 @@ const RESETPASSWD = {
 				_this.error(obj.parent(), 'This Password is Invalid.');
 				return false;
 			}
-			$.post(URI+'login/resetPassword', $(this).parents('form').serializeArray(), function(res){
+			$.post('/login/resetPassword', $(this).parents('form').serializeArray(), function(res){
 				if (res.code === '200') {
 					TIPS.success(res.message);
 					setTimeout(function(){

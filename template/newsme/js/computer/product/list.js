@@ -151,7 +151,7 @@ var PRODUCT_MODAL = {
 	},
 	getInfo: function() {
 		var _this = this;
-		$.post(URI+'product/getInfoAjax', {pid: this.pid}, function(res){
+		$.post('/product/getInfoAjax', {pid: this.pid}, function(res){
 			if (res.code == '200') {
 				_this.info = res.data;
 				_this.initPage();
@@ -347,7 +347,7 @@ var PRODUCT_MODAL = {
 			return false;
 		}
 		var num = _this.obj.find('.qty-content input').val();
-		$.post(URI+'cart/addToCart', {num:num, sku_id:_this.skuId}, function(res){
+		$.post('/cart/addToCart', {num:num, sku_id:_this.skuId}, function(res){
 			if (res.code == '200') {
 				CART.count(res.data.cart_count);
 				TIPS.success(res.msg);

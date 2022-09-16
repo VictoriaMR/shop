@@ -14,7 +14,7 @@ const FORGET = {
 			}
 			const _thisObj = $(this);
 			_this.loading(_thisObj, 'Send...');
-			$.post(URI+'login/passwordVerify', {email: email}, function(res) {
+			$.post('/login/passwordVerify', {email: email}, function(res) {
 				_this.loaded(_thisObj);
 				if (res.code === 200 || res.code === '200') {
 					TIPS.success(res.message);

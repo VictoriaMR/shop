@@ -15,7 +15,7 @@ const ORDERINDEX = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('order_repurchase_confirm'), function(obj){
 				TIPS.loadingBtn(obj);
-				$.post(URI+'order/repurchase', {id: id}, function(res){
+				$.post('/order/repurchase', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.href = res.data.url;
 					} else {
@@ -30,7 +30,7 @@ const ORDERINDEX = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('order_delete_confirm'), function(obj){
 				TIPS.loadingBtn(obj);
-				$.post(URI+'order/delete', {id: id}, function(res){
+				$.post('/order/delete', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -45,7 +45,7 @@ const ORDERINDEX = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('order_refund_confirm'), function(obj){
 				TIPS.loadingBtn(obj);
-				$.post(URI+'order/refund', {id: id}, function(res){
+				$.post('/order/refund', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -60,7 +60,7 @@ const ORDERINDEX = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('order_complete_confirm'), function(obj){
 				TIPS.loadingBtn(obj);
-				$.post(URI+'order/complete', {id: id}, function(res){
+				$.post('/order/complete', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -75,7 +75,7 @@ const ORDERINDEX = {
 			const id = $(this).parents('.item').data('id');
 			TIPS.confirm(appT('order_cancel_confirm'), function(obj){
 				TIPS.loadingBtn(obj);
-				$.post(URI+'order/cancel', {id: id}, function(res){
+				$.post('/order/cancel', {id: id}, function(res){
 					if (res.code === '200') {
 						window.location.reload();
 					} else {
@@ -116,7 +116,7 @@ const ORDERINDEX = {
 		const page = parseInt(obj.data('page')) + 1;
 		const size = parseInt(obj.data('size'));
 		const status = $('.nav-list a.active').data('status');
-		$.post(URI+'order/getOrderListAjax', {page:page, size:size, status: status}, function(res){
+		$.post('/order/getOrderListAjax', {page:page, size:size, status: status}, function(res){
 			if (res.code === '200') {
 				obj.data('page', page);
 				$('.order-list').find('.page-loading-block').remove();
@@ -143,7 +143,7 @@ const ORDERINDEX = {
 										<div class="table">
 											<div class="image tcell">
 												<div class="image-tcell tcell">
-													<img src="`+URI+`/image/common/noimg.svg" data-src="`+product.image+`" class="lazyload">
+													<img src="/image/common/noimg.svg" data-src="`+product.image+`" class="lazyload">
 												</div>
 											</div>
 											<div class="info tcell">
@@ -154,7 +154,7 @@ const ORDERINDEX = {
 												const attr = product.attr[k];
 												if (attr.image) {
 													html += `<div class="attr-item attr-image">
-															<img src="`+URI+`/image/common/noimg.svg" data-src="`+attr.image+`" class="lazyload">
+															<img src="/image/common/noimg.svg" data-src="`+attr.image+`" class="lazyload">
 															<span class="e1">`+attr.attv_name+`</span>
 															<div class="clear"></div>
 														</div>`;
@@ -188,7 +188,7 @@ const ORDERINDEX = {
 							}
 							if (order.status == 1) {
 								html += `<button class="btn24 cancel-btn">`+appT('cancel')+`</button>
-										<a class="btn24 btn-black right ml6" href="`+URI+`/checkout/payOrder.html?id=`+order.order_id+`">`+appT('checkout')+`</a>`;
+										<a class="btn24 btn-black right ml6" href="/checkout/payOrder.html?id=`+order.order_id+`">`+appT('checkout')+`</a>`;
 							}
 							if (order.status == 2) {
 								html += `<button class="btn24 right ml6 refund-btn">`+appT('refund')+`</button>`;
@@ -197,10 +197,10 @@ const ORDERINDEX = {
 								html += `<button class="btn24 btn-black right ml6 complete-btn">`+appT('complete')+`</button>`;
 							}
 							if (order.status == 4 && !order.is_review) {
-								html += `<a class="btn24 btn-black right ml6" href="`+URI+`/order/review.html?id=`+order.order_id+`">`+appT('review')+`</a>`;
+								html += `<a class="btn24 btn-black right ml6" href="/order/review.html?id=`+order.order_id+`">`+appT('review')+`</a>`;
 							}
 							if (order.status == 3 || order.status == 4) {
-								html += `<a class="btn24 right ml6 bg-ef" href="`+URI+`/order/logistics.html?id=`+order.order_id+`">`+appT('logistics')+`</a>`;
+								html += `<a class="btn24 right ml6 bg-ef" href="/order/logistics.html?id=`+order.order_id+`">`+appT('logistics')+`</a>`;
 							}
 							html += `<div class="clear"></div>
 									</div>`;
