@@ -278,32 +278,21 @@ $(function(){
     //同步数据
     REQUEST_PARAM.cart = $('.icon-gouwuche').length;
     REQUEST_PARAM.login = $('.desc-title .info-name').length;
-    $.get(URI+'api/stat', REQUEST_PARAM, function(res){
-        if (REQUEST_PARAM.cart > 0) {
-            CART.count(res.data.cart_count);
-        }
-        if (REQUEST_PARAM.login > 0) {
-            MEMBER.init(res.data.member);
+    $.ajax({
+        type: 'POST',
+        url: URI+'api/stat',
+        async: true,
+        dataType: 'json',
+        data: REQUEST_PARAM,
+        success: function (res) {
+            if (REQUEST_PARAM.cart > 0) {
+                CART.count(res.data.cart_count);
+            }
+            if (REQUEST_PARAM.login > 0) {
+                MEMBER.init(res.data.member);
+            }
         }
     });
-    // $.ajax({
-    //     type: 'POST',
-    //     url: URI+'api/stat',
-    //     async: true,
-    //     dataType: 'json',
-    //     data: REQUEST_PARAM,
-    //     beforeSend: function(xhr) {
-    //         xhr.withCredentials = true;
-    //     },
-    //     success: function (res) {
-    //         if (REQUEST_PARAM.cart > 0) {
-    //             CART.count(res.data.cart_count);
-    //         }
-    //         if (REQUEST_PARAM.login > 0) {
-    //             MEMBER.init(res.data.member);
-    //         }
-    //     }
-    // });
 	//回顶按钮
 	if (document.body.scrollHeight - 300 > window.screen.height) {
 		$('body').append('<div id="scroll-top"><span class="iconfont icon-xiangshang3"></span></div>');
