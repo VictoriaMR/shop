@@ -8,8 +8,8 @@ class Cookie
 		'expire' => 0,
 		'path' => '/',
 		'domain' => '',
-		'secure' => false,
-		'httponly' => false,
+		'secure' => true,
+		'httponly' => true,
 	];
 
 	public function init()

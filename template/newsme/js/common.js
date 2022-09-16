@@ -284,6 +284,9 @@ $(function(){
         async: true,
         dataType: 'json',
         data: REQUEST_PARAM,
+        beforeSend: function(xhr) {
+            xhr.withCredentials = true;
+        },
         success: function (res) {
             if (REQUEST_PARAM.cart > 0) {
                 CART.count(res.data.cart_count);
