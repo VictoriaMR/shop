@@ -278,7 +278,7 @@ $(function(){
     //同步数据
     REQUEST_PARAM.cart = $('.icon-gouwuche').length;
     REQUEST_PARAM.login = $('.desc-title .info-name').length;
-    $.post(URI+'api/stat', REQUEST_PARAM, function(res){
+    $.get(URI+'api/stat', REQUEST_PARAM, function(res){
         if (REQUEST_PARAM.cart > 0) {
             CART.count(res.data.cart_count);
         }
