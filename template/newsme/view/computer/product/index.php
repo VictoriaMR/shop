@@ -10,11 +10,11 @@
         <?php } else {?><div class="info-content">
             <div class="left img-content w40">
                 <div class="relative big-image img">
-                    <img data-src="<?php echo str_replace('/400', '/600', $info['image']);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['name'];?>">
+                    <img data-src="<?php echo str_replace('/400', '/600', $image?$image:$info['image']);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['name'];?>">
                 </div>
                 <?php if (!empty($info['image_list'])){?><div class="small-image relative<?php echo count($info['image_list'])>5?' padding':'';?>">
                     <ul class="image-list">
-                    <?php $count=0; foreach ($info['image_list'] as $key=>$value){$count++;?><li<?php echo $count==1?' class="selected"':'';?>>
+                    <?php $count=0; foreach ($info['image_list'] as $key=>$value){$count++;?><li<?php echo $count==1&&!$image?' class="selected"':'';?>>
                             <div class="image-comtent">
                                 <img data-src="<?php echo str_replace('/400', '/200', $value);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['name'];?>">
                             </div>
@@ -31,7 +31,7 @@
                 <?php }?>
             </div>
             <div class="left attr-content w60">
-                <p class="f24 f600 name mb20"><?php echo $info['name'];?></p>
+                <p class="f24 f600 name mb20"><?php echo $name;?></p>
                 <div class="info mb10 f14">
                     <span class="stock">In Stock</span>
                     <span class="num"><?php echo $skuId?'SKU: '.$skuId:'SPU: '.$spuId;?></span>
@@ -49,7 +49,7 @@
                             <span class="attr-name"><?php echo $info['attr'][$key];?></span>
                         </div><?php $attrImage = !empty(array_intersect($value, $attvImageId));?>
                         <ul class="attv-list<?php echo $attrImage?' attv-img':'';?>">
-                            <?php foreach ($value as $attv){?><li title="<?php echo $info['attv'][$attv];?>" data-id="<?php echo $attv;?>">
+                            <?php foreach ($value as $attv){?><li title="<?php echo $info['attv'][$attv];?>" data-id="<?php echo $attv;?>"<?php echo in_array($attv, $skuAttv)?' class="selected"':'';?>>
                                 <?php if (!empty($info['attvImage'][$attv])){?><img data-src="<?php echo str_replace('/400', '/200', $info['attvImage'][$attv]);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="<?php echo $info['attv'][$attv];?>"><?php }else{?><span><?php echo $info['attv'][$attv];?></span><?php }?>
                             </li><?php }?>
                         </ul>

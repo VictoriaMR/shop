@@ -73,6 +73,7 @@ $(function(){
 		if (PRODUCT_INFO.checkSku()) {
 			TIPS.loading(false);
 			PRODUCT_INFO.addToCart(function(res){
+				CART.count(res.data.cart_count);
 				TIPS.loadout(false);
 			});
 		}
@@ -117,6 +118,7 @@ var PRODUCT_INFO = {
 		_this.skuId = null;
 		if (_this.info.skuMap[skuMapKey]) {
 			var skuInfo = _this.info.sku[_this.info.skuMap[skuMapKey]];
+			console.log(skuInfo, 'skuInfo')
 			_this.skuId = skuInfo.sku_id;
 			var contentObj = _this.obj.find('.info-content');
 			contentObj.find('.name').text(skuInfo.name);
@@ -135,6 +137,7 @@ var PRODUCT_INFO = {
 				_this.obj.find('.big-image img').attr('src', skuInfo.image.replace('/400', '/600'));
 				_this.obj.find('.small-image li').removeClass('selected');
 			}
+			url(skuInfo.url, skuInfo.name);
 		}
 		//属性按钮初始化
 		_this.obj.find('.attv-list li.disabled').removeClass('disabled');

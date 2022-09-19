@@ -546,10 +546,9 @@ body {
 	padding: 24px 30px 24px 16px;
 	position: fixed;
 	top: 16px;
-	left: 16px;
 	color: #fff;
 	border-radius: 8px;
-	width: calc(100% - 32px);
+	max-width: 1400px;
 	z-index: 999;
 }
 #message-tips.error {

@@ -42,7 +42,7 @@ class Spu extends Base
 		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
 			return $info;
 		}
-		$info['url'] = url($info['name'], ['p' => $info['spu_id']], true);
+		$info['url'] = url($info['name'], ['p' => $info['spu_id']]);
 
 		$info['image'] = $this->completeImage($info['image']);
 		foreach ($info['image_list'] as $key=>$value) {
@@ -70,7 +70,7 @@ class Spu extends Base
 			}
 			$name = implode(' ', $name);
 			$value['name'] = $name ? $info['name'].' - '.$name : $info['name'];
-			$value['url'] = url($value['name'], ['s'=>$key], true);
+			$value['url'] = url($value['name'], ['s'=>$key]);
 			$value['image'] = $this->completeImage($value['image']);
 			$info['sku'][$key] = $value;
 		}

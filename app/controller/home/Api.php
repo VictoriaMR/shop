@@ -27,11 +27,18 @@ class Api extends HomeBase
 		];
 		$rst = make('app/service/Logger')->addLog($data);
 		if ($data['path'] == 'home/Product/index') {
-			//更新浏览人数
-			$rst = make('app/service/product/Spu')->where(['spu_id'=>$param['pid']])->increment('visit_total');
-			//浏览历史
-			if ($rst && userId()) {
-				make('app/service/member/History')->addHistory($param['pid']);
+			if (isset($param['pid'])) {
+				$spuId = $param['pid'];
+			} elseif (isset($param['sid'])) {
+				$spuId = make('app/service/product/Sku')->loadData($param['sid'], 'spu_id')['spu_id'] ?? 0;
+			}
+			if ($spuId) {
+				//更新浏览人数
+				$rst = make('app/service/product/Spu')->where(['spu_id'=>$spuId])->increment('visit_total');
+				//浏览历史
+				if ($rst && userId()) {
+					make('app/service/member/History')->addHistory($spuId);
+				}
 			}
 		}
 		$data = [];

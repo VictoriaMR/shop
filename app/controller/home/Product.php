@@ -45,22 +45,38 @@ class Product extends HomeBase
 					'name' => 'Spu:'.$spuId,
 					'url' => $info['url'] ?? 'javascript:;',
 				];
+				$skuAttv = [];
+				$image = '';
 				if ($info['status'] == $spu->getConst('STATUS_OPEN')) {
 					if ($skuId) {
 						$stock = $info['sku'][$skuId]['stock'];
-						$this->assign('skuInfo', $info['sku'][$skuId]);
-						$this->assign('skuAttrSelect', $skuId ? $info['skuAttv'][$skuId] : []);
+						if (!empty($info['skuAttv'][$skuId])) {
+							$skuAttv = $info['skuAttv'][$skuId];
+						}
 					} else {
 						$stock = max(array_column($info['sku'], 'stock'));
 					}
 					$this->assign('stock', $stock);
 					$this->assign('saleTotal', array_sum(array_column($info['sku'], 'sale_total')));
 				}
+				if ($skuId) {
+					$name = $title = $seo = $info['sku'][$skuId]['name'];
+					$image = $info['sku'][$skuId]['image'];
+					$crumbs[] = [
+						'name' => 'Sku:'.$skuId,
+						'url' => $info['sku'][$skuId]['url'] ?? 'javascript:;',
+					];
+				} else {
+					$name = $title = $info['name'];
+					$seo = $title.implode(' ', $info['attv']??[]);
+				}
 				$isLiked = userId() ? make('app/service/member/Collect')->isCollect($spuId) : false;
-				$seo = $info['name'].implode(' ', $info['attv']??[]);
 				$this->assign('isLiked', $isLiked);
 				$this->assign('info', $info);
-				$this->assign('_title', $info['name']);
+				$this->assign('name', $name);
+				$this->assign('skuAttv', $skuAttv);
+				$this->assign('image', $image);
+				$this->assign('_title', $title);
 				$this->assign('_desc', $seo);
 				$this->assign('_keyword', $seo);
 				$this->assign('spuId', $spuId);

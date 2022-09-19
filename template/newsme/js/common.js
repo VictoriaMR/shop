@@ -35,9 +35,13 @@ var TIPS = {
             icon = 'yuanxingxuanzhongfill';
         }
         var _this = this;
+        var windowWidth = $(window).width();
+        var left = (windowWidth - 1400) / 2;
+        var width = windowWidth - 20;
+        left = left > 0 ? left : 10;
         $('#message-tips').remove();
         clearTimeout(_this.timeoutVal);
-        var html = '<div id="message-tips" class="'+type+'">\
+        var html = '<div id="message-tips" class="'+type+'" style="left:'+left+'px;width:'+width+'px">\
                         <div class="content">\
                             <div class="icon-content">\
                                 <span class="iconfont icon-'+icon+'"></span>\
@@ -196,6 +200,53 @@ function appT(name) {
 		return js_language_text_common[name];
 	}
 	return name;
+}
+function url(url, title, params) {
+    var vars = {}, hash;
+    var hashes = window.location.search.substr(1);
+    var path = '';
+    if (url) {
+        var questionPos = url.indexOf('?');
+        path = -1 === questionPos ? url : url.substring(0, questionPos);
+        hashes = -1 !== questionPos ? url.substr(1 + questionPos) : '';
+    } else {
+        path = window.location.pathname;
+    }
+    if (hashes) {
+        hashes = hashes.split('&');
+    } else {
+        hashes = [];
+    }
+    for (var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        vars[hash[0]] = hash[1];
+    }
+    var k;
+    for (k in params) {
+        if ('' === params[k]) {
+            delete vars[k];
+        } else {
+            vars[k] = params[k];
+        }
+    }
+    var k, q = '?';
+    if (path) {
+        q = path + q;
+    }
+    for (k in vars) {
+        q += k + '=' + vars[k] + '&';
+    }
+    q = q.substr(0, q.length - 1);
+    if (! 'pushState' in window.history) {
+        window.location.href=q;
+    }else{
+        if (navigator.appName == 'Microsoft Internet Explorer') {
+            History.pushState(null, title, q);
+        } else {
+            document.title = title;
+            window.history.pushState('', null, q);
+        }
+    }
 }
 (function($){
 	$.fn.bigImage = function(){
