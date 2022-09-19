@@ -237,16 +237,19 @@ function url(url, title, params) {
         q += k + '=' + vars[k] + '&';
     }
     q = q.substr(0, q.length - 1);
-    if (! 'pushState' in window.history) {
+    if (!'pushState' in window.history) {
         window.location.href=q;
     }else{
-        if (navigator.appName == 'Microsoft Internet Explorer') {
+        if (isIE()) {
             History.pushState(null, title, q);
         } else {
             document.title = title;
             window.history.pushState('', null, q);
         }
     }
+}
+function isIE() {
+    return navigator.appName == 'Microsoft Internet Explorer' || window.ActiveXObject || 'ActiveXObject' in window;
 }
 (function($){
 	$.fn.bigImage = function(){
