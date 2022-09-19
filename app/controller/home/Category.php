@@ -34,12 +34,8 @@ class Category extends HomeBase
 
 			$cateInfo['name'] = $lanArr[0] ?? $cateInfo['name_en'];
 			$this->assign('_title', $cateInfo['name']);
-			if (isset($lanArr[1])) {
-				$this->assign('_keyword', $lanArr[1]);
-			}
-			if (isset($lanArr[2])) {
-				$this->assign('_desc', $lanArr[2]);
-			}
+			$this->assign('_keyword', $lanArr[1]??distT('_keyword', ['name'=>$cateInfo['name']]));
+			$this->assign('_desc', $lanArr[2]??distT('_desc', ['name'=>$cateInfo['name']]));
 			//父级面包屑导航
 			$cateParent = $category->getParentCategoryById($cateId);
 			$cateParent = array_reverse($cateParent);
