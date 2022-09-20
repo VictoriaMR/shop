@@ -64,11 +64,11 @@
 }
 .spu-page .attr-content .attv-list li {
     display: inline-block;
-    padding: 5px 8px;
+    padding: 5px 16px;
     font-weight: 500;
     cursor: pointer;
-    border: 2px solid #fff;
-    margin-right: 4px;
+    border: 2px solid #e5e5e5;
+    margin-right: 10px;
     margin-bottom: 4px;
     font-size: 18px;
     min-width: 37px;
@@ -77,9 +77,11 @@
 .spu-page .attr-content .attv-list.attv-img li {
     padding: 0;
     font-size: 0;
+    border-radius: 4px;
+    padding: 1px;
 }
 .spu-page .attr-content .attv-list.attv-img li img {
-    width: 60px;
+    width: 80px;
 }
 .spu-page .attr-content .attv-list li:hover {
     border-color: #999;

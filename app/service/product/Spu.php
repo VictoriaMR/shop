@@ -144,7 +144,7 @@ class Spu extends Base
 		return $info;
 	}
 
-	protected function attachmentFormat($data, $type=400)
+	public function attachmentFormat($data, $type=400)
 	{
 		if (empty($data)) {
 			return '';

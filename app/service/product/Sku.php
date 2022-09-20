@@ -18,42 +18,60 @@ class Sku extends Base
 			$info = $this->getInfo($skuId, $lanId);
 			redis()->set($cacheKey, $info, $this->getConst('CACHE_EXPIRE_TIME'));
 		}
+		if (!empty($info)) {
+			$info['url'] = url($info['name'], ['s'=>$skuId]);
+			$info['image'] = siteUrl($info['image']);
+			foreach ($info['attr'] as $key=>$value) {
+				if (!empty($value['image'])) {
+					$info['attr'][$key]['image'] = siteUrl($value['image']);
+				}
+			}
+			$currencyService = make('app/service/currency/Currency');
+			$spu = make('app/service/product/Spu');
+			$info['original_price'] = $spu->getOriginalPrice($info['price']);
+			$info['show_price'] = $spu->showPrice($info['spu_id']);
+			$temp = $currencyService->priceFormat($info['price']);
+			$info['price'] = $temp[1];
+			$info['price_format'] = $temp[2];
+			$temp = $currencyService->priceFormat($info['original_price']);
+			$info['original_price'] = $temp[1];
+			$info['original_price_format'] = $temp[2];
+		}
 		return $info;
 	}
 
 	public function getInfo($skuId, $lanId=1)
 	{
-		$info = $this->loadData($skuId, 'spu_id,attach_id,stock,price,original_price');
+		$info = $this->loadData($skuId, 'spu_id,attach_id,stock,price');
 		if (!$info) {
 			return false;
 		}
-		//价格格式化
-		$currency = make('app/service/currency/Currency');
-		$temp = $currency->priceFormat($info['price']);
-		$info['price'] = $temp[1];
-		$info['price_format'] = $temp[2];
-		$temp = $currency->priceFormat($info['original_price']);
-		$info['original_price'] = $temp[1];
-		$info['original_price_format'] = $temp[2];
 		//属性列表
-		$info += make('app/service/product/AttrUsed')->getListById($skuId, $lanId, true);
-
-		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_merge([$info['attach_id']], $info['attvImage'])]]);
+		$info['attr'] = make('app/service/product/AttrUsed')->getListById($skuId, $lanId);
+		$imageArr = array_unique(array_filter(array_merge([$info['attach_id']], array_column($info['attr'], 'attach_id'))));
+		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $imageArr]], 200, false);
 		$imageArr = array_column($imageArr, null, 'attach_id');
-		$info['image'] =  $imageArr[$info['attach_id']]['url'] ?? '';
-		foreach ($info['attvImage'] as $key => $value) {
-			if (empty($value)) continue;
-			$info['attvImage'][$key] = $imageArr[$value] ?? [];
+		$spu = make('app/service/product/Spu');
+		foreach ($imageArr as $key => $value) {
+			$imageArr[$key] = $spu->attachmentFormat($value, 200);
+		}
+		$info['image'] = $imageArr[$info['attach_id']] ?? '';
+		foreach ($info['attr'] as $key=>$value) {
+			if (!empty($imageArr[$value['attach_id']])) {
+				$info['attr'][$key]['image'] = $imageArr[$value['attach_id']];
+			}
 		}
 		//获取语言
-		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$info['spu_id'], 'lan_id'=>['in', [1, $lanId]]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
-		$info['name'] .= empty($info['name']) ? implode(' ', $info['attv']) : ' - '.implode(' ', $info['attv']);
-		$info['url'] = router()->urlFormat($info['name'], 's', ['id' => $skuId]);
+		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$info['spu_id'], 'lan_id'=>['in', array_unique([1, $lanId])]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
+		if ($info['name']) {
+			$info['name'] .= ' - ';
+		}
+		$info['name'] .= implode(' ', array_column($info['attr'], 'attrv_name'));
 		return $info;
 	}
 
 	protected function getCacheKey($skuId, $lanId)
 	{
-		return $this->getConst('CACHE_INFO_KEY').$skuId.'_'.$lanId;
+		return $this->getConst('CACHE_INFO_KEY').$skuId.':'.$lanId;
 	}
 }

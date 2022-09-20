@@ -8,7 +8,6 @@ class Cart extends HomeBase
 	public function index()
 	{	
 		html()->addCss();
-		html()->addCss('common/productList');
 		html()->addJs();
 
 		$list = make('app/service/Cart')->getList();
@@ -120,7 +119,7 @@ class Cart extends HomeBase
 			'site_id' => siteId(),
 			'status' => $sku->getConst('STATUS_OPEN'),
 		];
-		$skuInfo = $sku->loadData($where, 'stock');
+		$skuInfo = $sku->loadData($where, 'stock,price');
 		if (!$skuInfo) {
 			$this->error(distT('add_invalid'));
 		}
@@ -135,6 +134,7 @@ class Cart extends HomeBase
 				$this->error(distT('add_out_stock'));
 			}
 			$where['quantity'] = $num;
+			$where['price'] = $skuInfo['price'];
 			$rst = $cart->insert($where);
 		} else {
 			$num += $cartSkuIno['quantity'];
@@ -143,6 +143,7 @@ class Cart extends HomeBase
 					$num = $skuInfo['stock'];
 				}
 				$where = ['quantity' => $num];
+				$where['price'] = $skuInfo['price'];
 				$rst = $cart->updateData($cartSkuIno['cart_id'], $where);
 			} else {
 				$rst = true;

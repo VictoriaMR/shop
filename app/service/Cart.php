@@ -67,14 +67,17 @@ class Cart extends Base
 
 	public function getList()
 	{
-		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,checked', 0, 0, ['cart_id'=>'desc']);
+		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,price as cart_price,checked', 0, 0, ['cart_id'=>'desc']);
 		if (!empty($list)) {
 			$sku = make('app/service/product/Sku');
-			$skuList = $sku->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,status,stock');
-			$skuList = array_column($skuList, null, 'sku_id');
+			$list = array_column($list, null, 'sku_id');
+			$currencyService = make('app/service/currency/Currency');
 			foreach ($list as $key => $value) {
 				$tempData = $sku->getInfoCache($value['sku_id'], $this->lanId());
-				$list[$key] = array_merge($value, $tempData ? $tempData : [], $skuList[$value['sku_id']]);
+				$list[$key] = array_merge($value, $tempData);
+				$temp = $currencyService->priceFormat($value['cart_price']);
+				$list[$key]['cart_price'] = $temp[1];
+				$list[$key]['cart_price_format'] = $temp[2];
 			}
 		}
 		return $list;

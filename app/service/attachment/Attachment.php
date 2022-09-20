@@ -49,7 +49,7 @@ class Attachment extends Base
 
 	public function getList($where, $type='400', $format=true)
 	{
-		$list = $this->getListData($where);
+		$list = $this->getListData($where, 'attach_id,name,cate,type');
 		if (!$format) {
 			return $list;
 		}

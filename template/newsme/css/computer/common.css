@@ -591,3 +591,29 @@ body {
 	top: -4px;
 	left: 14px;
 }
+.buyer-header {
+	background-color: #fff;
+	border-bottom: solid 1px #E5E5E5;
+	padding-top: 8px;
+	padding-bottom: 8px;
+	height: 48px;
+	line-height: 32px;
+}
+.buyer-header .icon-slash {
+	display: inline-block;
+	width: 1px;
+	height: 30px;
+	background-color: #ccc;
+	-webkit-transform: rotate(30deg);
+	-ms-transform: rotate(30deg);
+	transform: rotate(30deg);
+	vertical-align: middle;
+	float: left;
+	position: relative;
+	margin-left: 16px;
+	margin-right: 16px;
+}
+.buyer-header .check-out span {
+	color: #83B293;
+	font-size: 14px;
+}

@@ -82,6 +82,25 @@ class AttrUsed extends Base
 		return $data;
 	}
 
+	public function getListById($skuId, $lanId=1)
+	{
+		$list = $this->getListData(['sku_id'=>$skuId], 'attrn_id,attrv_id,attach_id');
+		//$attr属性
+		$lanArr = array_unique([1, $lanId]);
+		$tempArr = array_column($list, 'attrn_id');
+		$tempArr = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrn_id,name');
+		$attrn = array_column($tempArr, 'name', 'attrn_id');
+		$tempArr = array_column($list, 'attrv_id');
+		$tempArr = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
+		$attrv = array_column($tempArr, 'name', 'attrv_id');
+		foreach ($list as $key=>$value) {
+			$value['attrn_name'] = $attrn[$value['attrn_id']];
+			$value['attrv_name'] = $attrv[$value['attrv_id']];
+			$list[$key] = $value;
+		}
+		return $list;
+	}
+
 	protected function getArraySubSet($arr)
 	{
 		$len = count($arr);
