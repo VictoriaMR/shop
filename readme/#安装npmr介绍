@@ -125,7 +125,7 @@ yum install -y https://rpms.remirepo.net/enterprise/7/remi/x86_64/oniguruma5php-
 
 cd php-8.0.0
 #选择安装位置等配置
-./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-fpm --enable-mysqlnd --enable-opcache --enable-mbstring --enable-soap --enable-ftp --with-mysqli --with-openssl --with-curl --enable-pcntl --enable-gd --with-gettext --with-mhash --with-zlib --with-freetype --with-jpeg --enable-shared --enable-static
+./configure --prefix=/usr/local/php --with-config-file-path=/usr/local/php/etc --enable-fpm --enable-mysqlnd --enable-opcache --enable-mbstring --enable-soap --enable-ftp --with-mysqli --with-openssl --with-curl --enable-pcntl --enable-gd --with-gettext --with-mhash --with-zlib --with-freetype --with-jpeg --with-webp --with-xpm --enable-shared --enable-static
  
 make && make install
 

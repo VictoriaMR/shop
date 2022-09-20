@@ -151,7 +151,11 @@ class Test extends TaskDriver
 
     private function toWebp($file)
     {
-        $toFile = str_replace('.'.pathinfo($file)['extension'], '.webp', $file);
+        $extension = pathinfo($file)['extension'];
+        if ($extension == 'webp') {
+            return true;
+        }
+        $toFile = str_replace('.'.$extension, '.webp', $file);
         if (is_file($toFile)) {
             return true;
         }
@@ -160,6 +164,9 @@ class Test extends TaskDriver
             case 'image/png':
                 $im = imagecreatefrompng($file);
                 break;
+            // case 'image/gif':
+            //     $im = imagecreatefromgif($file);
+            //     break;
             case 'image/jpeg':
                 $im = imagecreatefromjpeg($file);
                 break;

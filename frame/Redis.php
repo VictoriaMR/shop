@@ -33,7 +33,7 @@ class Redis
 			if (is_null($this->_link)) {
 				$this->connect();
 			}
-			if ($db != $this->_db) {
+			if ($this->_connect && $db != $this->_db) {
 				$this->_link->select($db);
 				$this->_db = $db;
 			}

@@ -7,7 +7,7 @@ class Error
 	public function register()
 	{
 		if (config('env', 'APP_DEBUG')) {
-			error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_WARNING);
+			error_reporting(E_ALL);
 		} else {
 			error_reporting(0);
 		}
