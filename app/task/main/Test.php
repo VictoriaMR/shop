@@ -168,11 +168,9 @@ class Test extends TaskDriver
             //     $im = imagecreatefromgif($file);
             //     break;
             case 'image/jpeg':
-                $im = imagecreatefromjpeg($file);
-                break;
             case 'image/jpg':
                 $im = imagecreatefromjpeg($file);
-                break;  
+                break;
             default:
                 return false;
         }

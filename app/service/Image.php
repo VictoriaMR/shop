@@ -79,10 +79,13 @@ class Image
 		$srcImageHeight = $srcImageInfo[1];
 		$srcImageMime = $srcImageInfo['mime'];
 		$imagecreatefromfunc = $imagefunc = null;
+		$toWebp = false;
 		switch($srcImageMime) {
 			case 'image/jpeg':
+			case 'image/jpg':
 				$imagecreatefromfunc = function_exists('imagecreatefromjpeg') ? 'imagecreatefromjpeg' : '';
 				$imagefunc = function_exists('imagejpeg') ? 'imagejpeg' : '';
+				$toWebp = true;
 				break;
 			case 'image/gif':
 				$imagecreatefromfunc = function_exists('imagecreatefromgif') ? 'imagecreatefromgif' : '';
@@ -91,6 +94,7 @@ class Image
 			case 'image/png':
 				$imagecreatefromfunc = function_exists('imagecreatefrompng') ? 'imagecreatefrompng' : '';
 				$imagefunc = function_exists('imagepng') ? 'imagepng' : '';
+				$toWebp = true;
 				break;
 		}
 		if (empty($imagecreatefromfunc) || empty($imagefunc)) {
@@ -118,6 +122,9 @@ class Image
 		}
 
 		$imagefunc($returnPic, $moveto);
+		if ($toWebp) {
+			imagewebp($returnPic, str_replace('.'.pathinfo($moveto)['extension'], '.webp', $moveto));
+		}
 		imagedestroy($returnPic);
 		imagedestroy($srcImage);
 		clearstatcache();
@@ -148,10 +155,13 @@ class Image
 			return true;
 		}
 		$imagecreatefromfunc = $imagefunc = null;
+		$toWebp = false;
 		switch($srcImageMime) {
 			case 'image/jpeg':
+			case 'image/jpg':
 				$imagecreatefromfunc = function_exists('imagecreatefromjpeg') ? 'imagecreatefromjpeg' : '';
 				$imagefunc = function_exists('imagejpeg') ? 'imagejpeg' : '';
+				$toWebp = true;
 				break;
 			case 'image/gif':
 				$imagecreatefromfunc = function_exists('imagecreatefromgif') ? 'imagecreatefromgif' : '';
@@ -160,6 +170,7 @@ class Image
 			case 'image/png':
 				$imagecreatefromfunc = function_exists('imagecreatefrompng') ? 'imagecreatefrompng' : '';
 				$imagefunc = function_exists('imagepng') ? 'imagepng' : '';
+				$toWebp = true;
 				break;
 		}
 		if ($imagecreatefromfunc == '' || $imagefunc == '') {
@@ -209,6 +220,9 @@ class Image
 			mkdir($dirPath, 0755, true);
 		}
 		$imagefunc($returnPic, $moveto);
+		if ($toWebp) {
+			imagewebp($returnPic, str_replace('.'.pathinfo($moveto)['extension'], '.webp', $moveto));
+		}
 		imagedestroy($returnPic);
 		imagedestroy($srcImage);
 		clearstatcache();
