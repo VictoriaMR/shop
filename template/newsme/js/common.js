@@ -330,8 +330,12 @@ function isIE() {
 }(jQuery));
 $(function(){
     //同步数据
-    REQUEST_PARAM.cart = $('.icon-gouwuche').length;
-    REQUEST_PARAM.login = $('.desc-title .info-name').length;
+    if ($('.icon-gouwuche').length > 0) {
+        REQUEST_PARAM.cart = 1;
+    }
+    if ($('.desc-title .info-name').length > 0) {
+        REQUEST_PARAM.login = 1;
+    }
     $.ajax({
         type: 'POST',
         url: '/api/stat',

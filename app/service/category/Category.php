@@ -99,9 +99,9 @@ class Category extends Base
 		return true;
 	}
 
-	public function getSubCategoryById($id)
+	public function getSubCategoryById($id, $simple=false)
 	{
-		return $this->getSubCategory($this->getList(), $id);
+		return $this->getSubCategory($this->getList(), $id, $simple);
 	}
 
 	public function getParentCategoryById($id, $self=true, $siteId=0)
@@ -120,10 +120,17 @@ class Category extends Base
 		return $returnData;
 	}
 
-	protected function getSubCategory($list, $pid) 
+	protected function getSubCategory($list, $pid, $simple=false) 
 	{
 		$returnData = [];
 		$lev = 0;
+		if ($simple) {
+			foreach ($list as $value) {
+				if ($value['parent_id'] == $pid && $value['level'] == 1) {
+					if ($value['status']) $returnData[] = $value;
+				}
+			}
+		}
 		foreach ($list as $value) {
 			if ($lev > 0) {
 				if ($lev < $value['level']) {

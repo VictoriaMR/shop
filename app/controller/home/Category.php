@@ -24,8 +24,15 @@ class Category extends HomeBase
 		$category = make('app/service/category/Category');
 		$cateInfo = $category->getInfo($cateId);
 		$crumbs = [];
+		$where = [];
+		$cateSon = [];
+		//获取左侧过滤列表
+		$attrUsed = make('app/service/product/AttrUsed');
+		$filter = $attrUsed->getSiteAttr();
+		$spu = make('app/service/product/Spu');
+		$where['status'] = $spu->getConst('STATUS_OPEN');
+		$lanId = lanId();
 		if ($cateInfo) {
-			$lanId = lanId();
 			//desc, keyword
 			$cateLanguage = make('app/service/category/Language');
 			$lanArr = array_unique([1, $lanId]);
@@ -56,85 +63,80 @@ class Category extends HomeBase
 					];
 				}
 			}
-
-			//子集
-			$cateSon = $category->getSubCategoryById($cateId);
-			foreach ($cateSon as $key=>$value) {
-				if (!$value['is_show']) {
-					unset($cateSon[$key]);
-				}
+		}
+		//子集
+		$cateSon = $category->getSubCategoryById($cateId ? $cateId : 101, !$cateId);
+		foreach ($cateSon as $key=>$value) {
+			if (!$value['is_show']) {
+				unset($cateSon[$key]);
 			}
-			if (empty($cateSon)) {
-				$where['cate_id'] = $cateId;
+		}
+		if (!empty($cateSon)) {
+			$cateSonIdArr = array_column($cateSon, 'cate_id');
+			if ($lanId == 1) {
+				$lanArr = array_column($cateSon, 'name_en', 'cate_id');
 			} else {
-				$cateSonIdArr = array_column($cateSon, 'cate_id');
-				if ($lanId == 1) {
-					$lanArr = array_column($cateSon, 'name_en', 'cate_id');
-				} else {
-					$lanArr = $cateLanguage->getListData(['cate_id'=>['in', $cateSonIdArr], 'lan_id'=>$lanId, 'type'=>0], 'cate_id,name');
-					$lanArr = array_column($lanArr, 'name', 'cate_id');
-				}
-				foreach ($cateSon as $key=>$value) {
-					$cateSon[$key]['name'] = $lanArr[$value['cate_id']] ?? $value['name_en'];
-				}
-				$cateSonIdArr[] = $cateId;
+				$lanArr = $cateLanguage->getListData(['cate_id'=>['in', $cateSonIdArr], 'lan_id'=>$lanId, 'type'=>0], 'cate_id,name');
+				$lanArr = array_column($lanArr, 'name', 'cate_id');
+			}
+			foreach ($cateSon as $key=>$value) {
+				$cateSon[$key]['name'] = $lanArr[$value['cate_id']] ?? $value['name_en'];
+			}
+			$cateSonIdArr[] = $cateId;
+			if ($cateId) {
 				$where['cate_id'] = ['in', $cateSonIdArr];
 			}
-			//获取左侧过滤列表
-			$attrUsed = make('app/service/product/AttrUsed');
-			$filter = $attrUsed->getSiteAttr();
-			$spuIdArr = [];
-			if ($vid) {
-				$spuIdArr = $attrUsed->getSpuId([$vid]);
-			}
-			$spu = make('app/service/product/Spu');
-			if ($keyword) {
-				$tempArr = $spu->getSpuIdByKeyword($keyword);
-				if ($tempArr !== false) {
-					if (empty($spuIdArr)) {
-						$spuIdArr = $tempArr;
-					} else {
-						$spuIdArr = array_intersect($spuIdArr, $tempArr);
-					}
-					if (empty($spuIdArr)) {
-						$spuIdArr = [0];
-					}
-				}
-			}
-			if (!empty($spuIdArr)) {
-				$where['spu_id'] = ['in', $spuIdArr];
-			}
-			$where['status'] = $spu->getConst('STATUS_OPEN');
-			$total = $spu->getCountData($where);
-			if ($total >0) {
-				//排序
-				switch ($sort){
-					case '2':
-						$orderBy = ['visit_total'=>'desc'];
-						break;
-					case '3':
-						$orderBy = ['min_price'=>'asc'];
-						break;
-					case '4':
-						$orderBy = ['min_price'=>'desc'];
-						break;
-					default:
-						$orderBy = ['grade'=>'desc'];
-						break;
-				}
-				$where['site_id'] = siteId();
-				$list = $spu->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, $orderBy, lanId(), true, true);
-				foreach ($list as $key=>$value) {
-					$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);
-				}
-			}
-
-			$this->assign('cateSon', $cateSon);
-			$this->assign('filter', $filter);
-			$this->assign('list', $list ?? []);
-			$this->assign('total', $total);
-			$this->assign('size', $size);
+		} elseif ($cateId) {
+			$where['cate_id'] = $cateId;
 		}
+		$spuIdArr = [];
+		if ($vid) {
+			$spuIdArr = $attrUsed->getSpuId([$vid]);
+		}
+		if ($keyword) {
+			$tempArr = $spu->getSpuIdByKeyword($keyword);
+			if ($tempArr !== false) {
+				if (empty($spuIdArr)) {
+					$spuIdArr = $tempArr;
+				} else {
+					$spuIdArr = array_intersect($spuIdArr, $tempArr);
+				}
+				if (empty($spuIdArr)) {
+					$spuIdArr = [0];
+				}
+			}
+		}
+		if (!empty($spuIdArr)) {
+			$where['spu_id'] = ['in', $spuIdArr];
+		}
+		$total = $spu->getCountData($where);
+		if ($total >0) {
+			//排序
+			switch ($sort){
+				case '2':
+					$orderBy = ['visit_total'=>'desc'];
+					break;
+				case '3':
+					$orderBy = ['min_price'=>'asc'];
+					break;
+				case '4':
+					$orderBy = ['min_price'=>'desc'];
+					break;
+				default:
+					$orderBy = ['grade'=>'desc'];
+					break;
+			}
+			$where['site_id'] = siteId();
+			$list = $spu->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, $orderBy, lanId(), true, true);
+			foreach ($list as $key=>$value) {
+				$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);
+			}
+		}
+		$this->assign('cateSon', $cateSon);
+		$this->assign('filter', $filter);
+		$this->assign('list', $list ?? []);
+		$this->assign('total', $total);
+		$this->assign('size', $size);
 		$param = ['vid'=>$vid, 'rid'=>$rid, 'sort'=>$sort];
 		$this->assign('cate_id', $cateId);
 		$this->assign('param', $param);
