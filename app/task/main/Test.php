@@ -17,7 +17,9 @@ class Test extends TaskDriver
         //分类多语言翻译
         // $this->doCateLanguage();
         //spu价格更新
-        $this->updateSpuPrice();
+        // $this->updateSpuPrice();
+        //转换webp图片
+        $this->getDirFile(ROOT_PATH.'storage');
         return false;
     }
 
@@ -128,5 +130,47 @@ class Test extends TaskDriver
             }
         }
         $this->echo('更新spu价格完成');
+    }
+
+    private function getDirFile($path)
+    {
+        if (is_file($path)) {
+            return $this->toWebp($path);
+        }
+        $files = scandir($path);
+        foreach ($files as $v) {
+            $newPath = $path.DS.$v;
+            if (is_file($newPath)) {
+                $this->toWebp($newPath);
+            } elseif (is_dir($newPath)&&$v!='.'&&$v!='..') {
+                $this->getDirFile($newPath);
+            }
+        }
+        return true;
+    }
+
+    private function toWebp($file)
+    {
+        $toFile = str_replace('.'.pathinfo($file)['extension'], '.webp', $file);
+        if (is_file($toFile)) {
+            return true;
+        }
+        $suffix = getimagesize($file)['mime'];
+        switch ($suffix) {
+            case 'image/png':
+                $im = imagecreatefrompng($file);
+                break;
+            case 'image/jpeg':
+                $im = imagecreatefromjpeg($file);
+                break;
+            case 'image/jpg':
+                $im = imagecreatefromjpeg($file);
+                break;  
+            default:
+                return false;
+        }
+        imagewebp($im, $toFile);
+        imagedestroy($im);
+        return true;
     }
 }

@@ -58,6 +58,10 @@ function adminUrl($name='', $param=[]){
 	return router()->adminUrl($name, $param);
 }
 function siteUrl($name){
+	$extension = pathinfo($name)['extension'];
+	if (in_array($extension, ['png', 'jpeg', 'jpg']) && is_file(ROOT_PATH.'storage'.DS.str_replace('.'.$extension, '.webp', $name))) {
+		$name = str_replace('.'.$extension, '.webp', $name);
+	}
 	return APP_DOMAIN.$name.'?v='.version();
 }
 function mediaUrl($url, $width=''){
@@ -65,7 +69,7 @@ function mediaUrl($url, $width=''){
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
-	return APP_DOMAIN.$url.'?v='.version();
+	return siteUrl($url);
 }
 function version(){
 	return \App::getVersion();
