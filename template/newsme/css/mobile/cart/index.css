@@ -1,5 +1,5 @@
 #cart-page .empty-bag-image {
-	padding-top: calc(50vh - 2rem);
+	padding-top: calc(50vh - 2.6rem);
 	text-align: center;
 }
 #cart-page .empty-bag-image img {
@@ -228,5 +228,6 @@
 	border-bottom: none;
 }
 #cart-page .recommend-content {
+	margin-top: 0.7rem;
 	margin-bottom: 0.1rem;
 }

@@ -1,6 +1,14 @@
 <?php $list = $list??make('app/service/product/Spu')->getRecommend(1, 6);$isLogin=empty($show_like)?false:userId();?>
 <?php if (!empty($list)) {?><div id="recommend-page">
-	<?php if (!empty($title)){?><p class="title f18 f600 ml8">You May Also Like</p>
+	<?php if (!empty($title)){?><div class="list-title flex layer">
+		<div class="tcell">
+			<p class="line"></p>
+		</div>
+		<p class="title"><?php echo appT('you_may_also_like');?></p>
+		<div class="tcell">
+			<p class="line"></p>
+		</div>
+	</div>
 	<?php }?>
 	<div class="product-list">
 		<ul>

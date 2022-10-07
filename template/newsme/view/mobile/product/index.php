@@ -17,15 +17,16 @@
 			<?php } ?>
 		</ol>
 		<div class="navi-bar layer">
-			<a href="javascript:window.history.back();" class="btn-back">
+			<a href="javascript:window.history.back();" class="btn-back" title="back">
 				<span class="iconfont icon-xiangzuo1"></span>
 			</a>
-			<a class="btn-cart right" href="<?php echo url('cart');?>">
+			<a class="btn-cart right" href="<?php echo url('cart');?>" title="shopping bag">
 				<span class="iconfont icon-gouwuche"></span>
 			</a>
 		</div>
-		<button class="like-block">
+		<button class="like-block" type="button">
 			<span class="iconfont icon-xihuan<?php echo $isLiked ? 'fill' : '';?>"></span>
+			<p class="f0"><?php echo distT('collect');?></p>
 		</button>
 	</div>
 	<div class="name-and-price">
@@ -82,8 +83,8 @@
 			</div>
 		</div>
 		<div class="introduce-image tc mt10 layer bg-f">
-			<?php foreach($info['introduce'] as $value){?><p>
-				<img data-src="<?php echo str_replace('/400', '', $value);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+			<?php foreach($info['introduce'] as $key=>$value){?><p>
+				<img data-src="<?php echo str_replace('/400', '', $value);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload" alt="product introduce image <?php echo $key+1;?>">
 			</p>
 			<?php } ?>
 		</div>
@@ -92,11 +93,11 @@
 	<!-- add cart -->
 	<div class="cart-bottom">
 		<div class="left">
-			<a class="tab relative" href="<?php echo url('cart');?>">
+			<a class="tab relative" href="<?php echo url('cart');?>" title="shopping bag">
 				<span class="iconfont icon-gouwuche"></span>
 				<p class="text"><?php echo distT('cart');?></p>
 			</a>
-			<button class="tab like-block" href="javascript:;">
+			<button class="tab like-block" type="button">
 				<span class="iconfont icon-xihuan<?php echo $isLiked ? 'fill' : '';?>"></span>
 				<p class="text"><?php echo distT('collect');?></p>
 			</button>

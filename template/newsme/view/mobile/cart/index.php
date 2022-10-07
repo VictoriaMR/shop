@@ -178,7 +178,7 @@
 	</div>
 	<?php } ?>
 	<div class="recommend-content">
-		<?php $this->load('common/recommend');?>
+		<?php $this->load('product/recommend', ['title'=>true, 'show_like'=>true]);?>
 	</div>
 </div>
 <?php $this->load('common/simple_footer');?>
