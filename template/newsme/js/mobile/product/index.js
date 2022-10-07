@@ -94,13 +94,6 @@ const PRODUCT = {
 		});
 		//属性点击
 		$('.sku-attr-list .attr-item li').on('click', function(){
-			//只有一个属性 必选
-			if ($(this).parent().find('li').length === 1) {
-				return false;
-			}
-			if ($(this).hasClass('active')) {
-				return false;
-			}
 			$(this).addClass('active').siblings().removeClass('active');
 			_this.skuInit();
 		});
