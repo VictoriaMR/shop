@@ -1,6 +1,10 @@
 #product-page {
 	padding-bottom: 0.6rem;
 }
+#product-page .empty-info {
+	padding: 1.3rem 0;
+    text-align: center;
+}
 #product-page .product-image {
 	overflow: hidden;
 	position: relative;
@@ -78,12 +82,13 @@
 	background: #fff;
 }
 #product-page .product-name {
-	font-size: 0.15rem;
+	font-size: 0.16rem;
 	line-height: 0.2rem;
 	font-weight: 600;
 }
 .price {
-	font-size: 0.18rem;
+	color: #E64545;
+	font-size: 0.20rem;
 	font-weight: 600;
 }
 .original_price {
@@ -157,19 +162,16 @@
 	right: 0;
 	color: #cccccc;
 }
-.product-param-list .item {
+.product-param-list td {
 	padding: 0.08rem 0;
+	vertical-align: middle;
 }
 .product-param-list .param-name {
-	width: 33%;
-	float: left;
-	color: #999999;
+	text-align: right;
 	font-weight: 500;
 }
 .product-param-list .param-value {
 	padding-left: 0.12rem;
-	width: 67%;
-	float: left;
 }
 #sku-select-modal .sku-image {
 	width: 1rem;
@@ -204,7 +206,7 @@
 	border-color: #404040;
 }
 #sku-select-modal .sku-attr-list .item .item-text.active {
-	background: #404040;
+	background: #000;
 	color: #fff;
 }
 #sku-select-modal .sku-attr-list .item li.disabled {
@@ -275,6 +277,10 @@
 	height: 0.02rem;
 	background: #EEEEEE;
 	display: inline-block;
+}
+.product-introduce .introduce-image {
+	padding-top: 0.1rem;
+	padding-bottom: 0.1rem;
 }
 .product-introduce .introduce-image p {
 	font-size: 0;

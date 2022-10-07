@@ -81,6 +81,9 @@ class Product extends HomeBase
 				$this->assign('_keyword', $seo);
 				$this->assign('spuId', $spuId);
 				$this->assign('skuId', $skuId);
+				if ($skuId) {
+					$this->assign('skuInfo', $info['sku'][$skuId]??[]);	
+				}
 			}
 		}
 		$this->assign('crumbs', $crumbs);

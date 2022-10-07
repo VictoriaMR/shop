@@ -1,6 +1,7 @@
 <?php
 return [
 	'sku' => 'SKU',
+	'spu' => 'SPU',
 	'stock' => 'Stock',
 	'sold' => 'Sold',
 	'param' => 'PARAM',

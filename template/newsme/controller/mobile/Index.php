@@ -8,58 +8,50 @@ class Index extends Base
 	public function index()
 	{
 		html()->addCss('common/productList');
+		html()->addCss('clothes-icon');
 		html()->addJs('slider');
 		$page = iget('page', 1);
+		$size = iget('size', 20);
+
 		if ($page <= 1) {
+			$cateArr = make('app/service/category/Category')->getSiteCateList(cateId());
+			$hotArr = [];
+			$popularCate = [];
+			$cateList = [];
+			foreach ($cateArr as $value) {
+				if ($value['is_hot']) {
+					if ($value['icon']) {
+						$popularCate[] = $value;
+					} else {
+						$hotArr[] = $value;
+					}
+				} else {
+					$cateList[] = $value;
+				}
+			}
+			$hotArr = array_slice($hotArr, 0, 6);
+			$popularCate = array_chunk(array_slice($popularCate, 0, 12), 2);
+
+			$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
+			$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
 			$banner = [];
-			for ($i=1; $i<6; $i++) {
+			foreach ($arr as $key=>$value) {
+				if (!isset($hotArr[$key])) break;
 				$banner[] = [
-					'title' => '',
-					'image' => siteUrl('image/mobile/banner/banner'.$i.'.jpg'),
-					'url'=> 'https://www.baidu.com',
+					'url' => url($hotArr[$key]['name_en'], ['c'=>$hotArr[$key]['cate_id']]),
+					'image' => siteUrl(str_replace($bannerPath, '', $value)),
+					'name_en' => $hotArr[$key]['name_en'],
 				];
 			}
-			//获取热门分类
-			$cateList = make('app/service/site/CategoryUsed')->getListData(['site_id'=>siteId()], 'cate_id,attach_id', 1, 24, ['sort'=>'desc']);
-			if (!empty($cateList)) {
-				$allCate = array_column($cateList, 'cate_id');
-				//获取分类语言
-				$cateLanguage = [];
-				if (lanId() != 'en') {
-					$cateLanguage = make('app/service/category/Language')->getListData(['cate_id'=>['in', $allCate], 'lan_id'=>lanId()], 'cate_id,name');
-					$cateLanguage = array_column($cateLanguage, 'name', 'cate_id');
-				}
-				$allCate = make('app/service/category/Category')->getListData(['cate_id'=>['in', $allCate], 'status'=>1], 'cate_id,name,attach_id');
-				$allCate = array_column($allCate, null, 'cate_id');
-				$attachArr = array_filter(array_merge(array_column($cateList, 'attach_id', 'cate_id'), array_column($allCate, 'attach_id')));
-
-				if (!empty($attachArr)) {
-					$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($attachArr)]]);
-					$attachArr = array_column($attachArr, null, 'attach_id');
-				}
-				foreach ($cateList as $key=>$value) {
-					$nameEn = empty($allCate[$value['cate_id']]['name']) ? '' : $allCate[$value['cate_id']]['name'];
-					$value['name'] = $cateLanguage[$value['cate_id']] ?? $nameEn;
-					$value['image'] = $value['attach_id'] ? $attachArr[$value['attach_id']]['url'] : (empty($allCate[$value['cate_id']]['attach_id']) ? '' : $attachArr[$allCate[$value['cate_id']]['attach_id']]['url']);
-					$value['url'] = router()->urlFormat($nameEn, 'category', ['id'=>$value['cate_id']]);
-					$cateList[$key] = $value;
-				}
-				$cateLeftList = array_slice($cateList, 0, 4);
-				$cateRightList = array_slice($cateList, 4, 2);
-				$cateList = array_chunk(array_slice($cateList, 6), 2);
-				$this->assign('cateList', $cateList);
-				$this->assign('cateLeftList', $cateLeftList);
-				$this->assign('cateRightList', $cateRightList);
-			}
+			$this->assign('popularCate', $popularCate);
 		}
 		//获取SPU列表
-		$total = 0;
 		$size = 20;
-		$recommendList = make('app/service/product/Spu')->getRecommend($page, $size, $total);
+		$bestSeller = make('app/service/product/Spu')->getRecommend($page, $size, $total);
 		$this->assign('total', $total);
 		$this->assign('size', $size);
 		$this->assign('page', $page);
-		$this->assign('recommendList', $recommendList);
+		$this->assign('bestSeller', $bestSeller);
 		$this->assign('banner', $banner ?? []);
 	}
 }

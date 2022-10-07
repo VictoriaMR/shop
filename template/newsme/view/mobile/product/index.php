@@ -1,15 +1,19 @@
 <div id="product-page">
+	<?php if (empty($info)){?><div class="empty-info">
+        <img src="<?php echo siteUrl('image/common/oooops.png');?>">
+        <p class="mt12 f14">No item matched.<br/>Please try with other options.</p>
+    </div>
+    <?php $this->load('product/recommend', ['title'=>true]);?>
+    <?php } else {?>
 	<div class="product-image">
 		<ul>
-		<?php foreach ($info['image'] as $value){?>
-			<li class="slider">
-				<img data-src="<?php echo $value['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+			<?php foreach ($info['image_list'] as $value){?><li class="slider">
+				<img src="<?php echo str_replace('/400', '/600', $value);?>" alt="<?php echo $info['name'];?>">
 			</li>
 			<?php } ?>
 		</ul>
 		<ol class="pop-content">
-			<?php foreach ($info['image'] as $key => $value){?>
-			<li <?php echo $key==0?'class="active"':'';?>></li>
+			<?php $count=0; foreach ($info['image_list'] as $key => $value){$count++;?><li <?php echo $count==1?'class="active"':'';?>></li>
 			<?php } ?>
 		</ol>
 		<div class="navi-bar layer">
@@ -27,16 +31,17 @@
 	<div class="name-and-price">
 		<p class="product-name"><?php echo $skuId ? $skuInfo['name'] : $info['name'];?></p>
 		<div class="product-price mt8">
-			<?php if ($skuId) {?>
-			<span class="price"><?php echo $skuInfo['price_format'];?></span>
-			<span class="original_price"><?php echo $skuInfo['original_price_format'];?></span>
+			<?php if ($skuId) {?><span class="price"><?php echo $skuInfo['price_format'];?></span>
+			<?php if($info['show_price']){?><span class="original_price"><?php echo $skuInfo['original_price_format'];?></span>
+			<?php }?>
 			<?php } else { ?>
-			<span class="price"><?php echo $info['min_price_format'];?> - <?php echo $info['max_price_format'];?></span>
-			<span class="original_price"><?php echo $info['original_price_format'];?></span>
+			<span class="price"><?php echo $info['min_price_format'];?><?php if($info['max_price']>$info['min_price']){ echo ' - '.$info['max_price_format'];}?></span>
+			<?php if($info['show_price']){?><span class="original_price"><?php echo $info['original_price_format'];?></span>
+			<?php }?>
 			<?php } ?>
 		</div>
 		<p class="mt4 c9 tc">
-			<span class="left"><?php echo distT('sku');?>: <?php echo $skuNo;?></span>
+			<span class="left"><?php if ($skuId){ echo distT('sku').': '.$skuId;}else{echo distT('spu').': '.$spuId;}?></span>
 			<span><?php echo distT('stock');?>: <?php echo $stock;?></span>
 			<?php if ($saleTotal){?>
 			<span class="right"><?php echo distT('sold');?>: <?php echo $saleTotal;?></span>
@@ -49,11 +54,11 @@
 				<p class="title c40 f600"><?php echo distT('sku');?></p>
 				<p class="text e1 f600">
 					<span class="attr-text">
-					<?php if (empty($skuAttrSelect)) {?>
+					<?php if (empty($skuAttv)) {?>
 					<span>SELECT </span>
 					<span class="attr-text"><?php echo implode(' ', $info['attr']);?></span>
 					<?php } else {?>
-					<span class="attr-text"><?php foreach ($skuAttrSelect as $value){ echo $info['attv'][$value].' ';} ?></span>
+					<span class="attr-text"><?php foreach ($skuAttv as $value){ echo $info['attv'][$value].' ';} ?></span>
 					<?php } ?>
 				</p>
 				<span class="iconfont icon-xiangyou1"></span>
@@ -77,9 +82,8 @@
 			</div>
 		</div>
 		<div class="introduce-image tc mt10 layer bg-f">
-			<?php foreach($info['introduce'] as $value){?>
-			<p>
-				<img data-src="<?php echo $value['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+			<?php foreach($info['introduce'] as $value){?><p>
+				<img data-src="<?php echo $value;?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 			</p>
 			<?php } ?>
 		</div>
@@ -103,22 +107,23 @@
 		</div>
 		<div class="clear"></div>
 	</div>
+	<?php }?>
 </div>
-<div class="m-modal hide" id="description-modal">
+<?php if (!empty($info)){?><div class="m-modal hide" id="description-modal">
 	<div class="mask"></div>
 	<div class="dialog layer">
 		<span class="iconfont icon-guanbi2"></span>
 		<p class="dialog-title"><?php echo distT('product_parameters');?></p>
 		<div class="content">
-			<ul class="product-param-list f15">
-				<?php foreach ($info['description'] as $value){?>
-				<li class="item">
-					<p class="param-name"><?php echo $value['name'];?></p>
-					<p class="param-value"><?php echo $value['value'];?></p>
-					<div class="clear"></div>
-				</li>
-				<?php } ?>
-			</ul>
+			<table class="product-param-list f15">
+				<tbody>
+					<?php foreach ($info['description'] as $value){if(empty($value['name'])){continue;}?><tr class="item">
+						<td width="33%" class="param-name"><?php echo $value['name'];?>:</td>
+						<td width="67%" class="param-value"><?php echo $value['value'];?></td>
+					</tr>
+					<?php } ?>
+				</tbody>
+			</table>
 		</div>
 	</div>
 </div>
@@ -129,12 +134,13 @@
 		<div class="contentfill">
 			<div class="sku-image-block mt10 f0">
 				<div class="sku-image tcell">
-					<img data-src="<?php echo $info['image'][0]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+					<img src="<?php echo $info['image_list'][0];?>" alt="<?php echo $info['name'];?>">
 				</div>
 				<div class="sku-pro-info tcell">
 					<p class="product-price">
-						<span class="price"><?php echo $info['min_price'];?> - <?php echo $info['max_price'];?></span>
-						<span class="original_price"><?php echo $info['original_price'];?></span>
+						<span class="price"><?php echo $info['min_price_format'];?><?php if($info['max_price']>$info['min_price']){echo ' - '.$info['min_price_format'];}?></span>
+						<?php if ($info['show_price']){?><span class="original_price"><?php echo $info['original_price'];?></span>
+						<?php }?>
 					</p>
 					<p class="stock c6">
 						<span><?php echo distT('stock');?>: </span>
@@ -153,11 +159,11 @@
 					<ul class="mt10">
 						<?php foreach ($value as $vv){?>
 						<?php if (empty($info['attvImage'][$vv])){ ?>
-						<li class="item-text<?php echo count($value)==1||in_array($vv, $skuAttrSelect)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>"><?php echo $info['attv'][$vv];?></li>
+						<li class="item-text<?php echo count($value)==1||in_array($vv, $skuAttv)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>"><?php echo $info['attv'][$vv];?></li>
 						<?php } else { ?>
-						<li class="item-image<?php echo count($value)==1||in_array($vv, $skuAttrSelect)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>">
+						<li class="item-image<?php echo count($value)==1||in_array($vv, $skuAttv)?' active':'';?>" data-id="<?php echo $vv;?>" title="<?php echo $info['attv'][$vv];?>">
 							<div class="attv-image tcell">
-								<img data-src="<?php echo $info['attvImage'][$vv]['url'];?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+								<img src="<?php echo $info['attvImage'][$vv];?>" alt="<?php echo $info['attv'][$vv];?>">
 							</div>
 						</li>
 						<?php } ?>
@@ -199,10 +205,11 @@ $(function(){
 		filterMap: <?php echo json_encode($info['filterMap'], JSON_UNESCAPED_UNICODE);?>,
 		name: '<?php echo addslashes($info['name']);?>',
 		url: '<?php echo $info['url'];?>',
-		image: '<?php echo $info['image'][0]['url'];?>',
-		stock: <?php echo max(array_column($info['sku'], 'stock'));?>,
-		price: '<?php echo $info['min_price_format'];?> - <?php echo $info['max_price_format'];?>',
+		image: '<?php echo $info['image_list'][0];?>',
+		stock: <?php echo $stock;?>,
+		price: '<?php echo $info['min_price_format'].($info['max_price']>$info['min_price']?' - '.$info['max_price_format']:'');?>',
 		originalPrice: '<?php echo $info['original_price_format'];?>'
 	});
 });
 </script>
+<?php }?>
