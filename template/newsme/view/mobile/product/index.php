@@ -83,7 +83,7 @@
 		</div>
 		<div class="introduce-image tc mt10 layer bg-f">
 			<?php foreach($info['introduce'] as $value){?><p>
-				<img data-src="<?php echo $value;?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
+				<img data-src="<?php echo str_replace('/400', '', $value);?>" src="<?php echo siteUrl('image/common/noimg.svg');?>" class="lazyload">
 			</p>
 			<?php } ?>
 		</div>
