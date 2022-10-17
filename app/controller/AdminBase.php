@@ -43,11 +43,12 @@ class AdminBase extends Base
 	protected function transfer()
 	{
 		$trCode = ipost('tr_code');
+		$fromCode = ipost('from_code', 'zh');
 		$name = ipost('name');
 		if (empty($trCode) || empty($name)) {
 			$this->error('参数错误');
 		}
-		$rst = make('app/service/Translate')->getText($name, $trCode);
+		$rst = make('app/service/Translate')->getText($name, $trCode, $fromCode);
 		$this->success('', $rst);
 	}
 }

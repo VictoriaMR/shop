@@ -5,6 +5,7 @@ class Translate
 	public function getText($text, $to = 'en', $from = 'zh')
 	{
 		if ($to == $from) return $text;
+		if (empty($from)) $from = 'zh';
 		$salt = time();
 		$data = [
 			'q' => $text,
