@@ -61,7 +61,7 @@
                 <option value="1">开启</option>
             </select>
         </div>
-        <button type="botton" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
     </form>
     </div>
 </div>

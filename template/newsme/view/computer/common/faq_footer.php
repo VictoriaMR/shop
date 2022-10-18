@@ -5,19 +5,19 @@
 				<tr>
 					<td width="33.3%">
 						<p class="title item">About Us</p>
-						<a class="block f16 item" href="<?php echo url('about-us', ['f'=>'1'], true);?>" title="About <?php echo \App::get('base_info', 'name');?>">About <?php echo \App::get('base_info', 'name');?></a>
-						<a class="block f16 item" href="<?php echo url('contact-us', ['f'=>'2'], true);?>" title="Contact Us">Contact Us</a>
-						<a class="block f16 item" href="<?php echo url('our-guarantees', ['f'=>'3'], true);?>" title="Our Guarantees">Our Guarantees</a>
-						<a class="block f16 item" href="<?php echo url('return-policy', ['f'=>'4'], true);?>" title="Return Policy">Return Policy</a>
-						<a class="block f16" href="<?php echo url('ordering-guidance', ['f'=>'5'], true);?>" title="Ordering Guidance">Ordering Guidance</a>
+						<a class="block f16 item" href="<?php echo url('about-us', ['f'=>'18']);?>" title="About <?php echo \App::get('base_info', 'name');?>">About <?php echo \App::get('base_info', 'name');?></a>
+						<a class="block f16 item" href="<?php echo url('contact-us', ['f'=>'22']);?>" title="Contact Us">Contact Us</a>
+						<a class="block f16 item" href="<?php echo url('our-guarantees', ['f'=>'21']);?>" title="Our Guarantees">Our Guarantees</a>
+						<a class="block f16 item" href="<?php echo url('return-policy', ['f'=>'1']);?>" title="Return Policy">Return Policy</a>
+						<a class="block f16" href="<?php echo url('ordering-guidance', ['f'=>'7']);?>" title="Ordering Guidance">Ordering Guidance</a>
 					</td>
 					<td width="33.3%">
 						<p class="title item">HELP & SUPPORT</p>
-						<a class="block f16 item" href="<?php echo url('my-orders', ['f'=>'6'], true);?>" title="My Orders">My Orders</a>
-						<a class="block f16 item" href="<?php echo url('account-setting', ['f'=>'7'], true);?>" title="Account Setting">Account Setting</a>
-						<a class="block f16 item" href="<?php echo url('track-my-order', ['f'=>'8'], true);?>" title="Track My Order">Track My Order</a>
-						<a class="block f16 item" href="<?php echo url('shipping-info', ['f'=>'9'], true);?>" title="Shipping Info">Shipping Info</a>
-						<a class="block f16" href="<?php echo url('help-center', ['f'=>'10'], true);?>" title="Help Center">Help Center</a>
+						<a class="block f16 item" href="<?php echo url('order');?>" title="My Orders">My Orders</a>
+						<a class="block f16 item" href="<?php echo url('account-setting', ['f'=>'14']);?>" title="Account Setting">Account Setting</a>
+						<a class="block f16 item" href="<?php echo url('track-my-order', ['f'=>'11']);?>" title="Track My Order">Track My Order</a>
+						<a class="block f16 item" href="<?php echo url('shipping-info', ['f'=>'8']);?>" title="Shipping Info">Shipping Info</a>
+						<a class="block f16" href="<?php echo url('faq');?>" title="Help Center">Help Center</a>
 					</td>
 					<td width="33.3%" class="contact">
 						<p class="title item">Contact Us</p>

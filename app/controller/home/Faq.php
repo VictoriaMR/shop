@@ -9,10 +9,6 @@ class Faq extends HomeBase
 	{
 		html()->addCss();
 		html()->addJs();
-		$fid = (int)iget('fid', 0);
-		if ($fid > 0) {
-			
-		}
 		$this->view(true);
 	}
 }

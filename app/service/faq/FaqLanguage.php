@@ -12,14 +12,14 @@ class FaqLanguage extends Base
 
     public function setNxLanguage($id, $lanId, $title, $content)
     {
-        if (empty($id) || empty($name) || empty($content)) {
+        if (empty($id) || empty($title) || empty($content)) {
             return false;
         }
-        $where = ['faq'=>$id, 'lan_id'=>$lanId];
+        $where = ['faq_id'=>$id, 'lan_id'=>$lanId];
         if ($this->getCountData($where)) {
-            return $this->updateData($where, ['name'=>$name, 'content'=>$content]);
+            return $this->updateData($where, ['title'=>$title, 'content'=>$content]);
         } else {
-            $where['name'] = $name;
+            $where['title'] = $title;
             $where['content'] = $content;
             return $this->insert($where);
         }
