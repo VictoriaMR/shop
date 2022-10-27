@@ -29,7 +29,7 @@ class Faq extends Base
             } else {
                 $where['lan_id'] = 1;
             }
-            $groupList = make('app/service/faq/Group')->getListData(['status'=>1], 'group_id');
+            $groupList = make('app/service/faq/Group')->getListData(['status'=>1], 'group_id,icon');
             if (!empty($groupList)) {
                 $language = make('app/service/faq/GroupLanguage')->getListData($where+['group_id'=>['in', array_column($groupList, 'group_id')]], 'group_id,name', 0, 0, ['lan_id'=>'ASC']);
                 $language = array_column($language, null, 'group_id');

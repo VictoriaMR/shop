@@ -19,7 +19,6 @@ class Index extends AdminBase
 	{
 		html()->addCss();
 		html()->addJs();
-
 		$this->assign('funcList', make('app/service/controller/Controller')->getList());
 		$this->assign('info', session()->get('admin_info'));
 		$this->_init();

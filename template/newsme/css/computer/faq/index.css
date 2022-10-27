@@ -1,0 +1,139 @@
+.faq-page .empty-info {
+    padding: 168px 0;
+    text-align: center;
+}
+.faq-page .faq-search {
+    width: 100%;
+    height: 268px;
+    padding: 10px 0;
+    position: relative;
+    overflow: hidden;
+}
+.faq-search-title{
+    font-size:24px;
+    line-height:16px;
+    color:#FFFFFF;
+    opacity:1;
+    position:absolute;
+    left:50%;
+    top:80px;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+}
+.faq-search form {
+    width: 54.54%;
+    position: absolute;
+    left: 50%;
+    top: 120px;
+    -webkit-transform: translateX(-50%);
+    -moz-transform: translateX(-50%);
+    -ms-transform: translateX(-50%);
+    -o-transform: translateX(-50%);
+    transform: translateX(-50%);
+    display: flex;
+}
+.faq-search input{
+    padding:10px;
+    flex:1;
+    height:54px;
+    line-height: 26px;
+    color: #222222;
+    font-size: 14px;
+    outline:none;
+    border:1px solid #000;
+}
+.faq-search input::-webkit-input-placeholder {
+    font-size:14px;
+    color: #999999;
+}
+.faq-search button{
+    width:54px;
+    height:54px;
+    background: #222222;
+    border:0;
+    cursor:pointer;
+}
+.faq-search .icon{
+    width:32px;
+    height:32px;
+    background-size:32px 32px ;
+    margin:0 auto;
+    display: block;
+}
+.faq-search>img{
+    width: 100%;
+    height: 100%;
+}
+.icon-search-white{
+    background: url('/image/common/faq/search-white.svg') no-repeat;
+}
+.icon-faq{
+    display: block;
+    width:44px;
+    height:44px;
+    margin:54px auto 0;
+}
+.icon-order{
+    background: url('/image/common/faq/icon-order.png') no-repeat;
+}
+.icon-deliver{
+    background: url('/image/common/faq/icon-deliver.png') no-repeat;
+}
+.icon-return{
+    background: url('/image/common/faq/icon-return.png') no-repeat;
+}
+.icon-payment{
+    background: url('/image/common/faq/icon-payment.png') no-repeat;
+}
+.icon-product{
+    background: url('/image/common/faq/icon-product.png') no-repeat;
+}
+.icon-account{
+    background: url('/image/common/faq/icon-account.png') no-repeat;
+}
+.active .icon-order{
+    background: url('/image/common/faq/icon-order-white.png') no-repeat;
+}
+.active .icon-deliver{
+    background: url('/image/common/faq/icon-deliver-white.png') no-repeat;
+}
+.active .icon-return{
+    background: url('/image/common/faq/icon-return-white.png') no-repeat;
+}
+.active .icon-payment{
+    background: url('/image/common/faq/icon-payment-white.png') no-repeat;
+}
+.active .icon-product{
+    background: url('/image/common/faq/icon-product-white.png') no-repeat;
+}
+.active .icon-account{
+    background: url('/image/common/faq/icon-account-white.png') no-repeat;
+}
+.active .icon-down{
+    background: url('/image/common/faq/down-white.png') no-repeat;
+}
+.group-list li {
+    height: 170px;
+    display: inline-block;
+    border: solid 1px #E5E5E5;
+    cursor: pointer;
+    border-right: none;
+    text-align: center;
+}
+.group-list li:last-child {
+    border-right: solid 1px #E5E5E5;
+}
+.group-list li.active{
+    background: #000000;
+}
+.group-list li p {
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+.group-list li.active p {
+    color: #fff;
+}
