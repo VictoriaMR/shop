@@ -122,6 +122,7 @@
     cursor: pointer;
     border-right: none;
     text-align: center;
+    vertical-align: top;
 }
 .group-list li:last-child {
     border-right: solid 1px #E5E5E5;
@@ -136,4 +137,58 @@
 }
 .group-list li.active p {
     color: #fff;
+}
+.faq-list {
+    padding: 25px;
+    border: solid 1px #E5E5E5;
+    border-top: none;
+    background: #FAFAFA;
+}
+.faq-list .item {
+    display: none;
+}
+.faq-list .item.active {
+    display: block;
+}
+.faq-list .item li {
+    background: #FFFFFF;
+    margin-bottom: 2px;
+}
+.faq-list .item li a {
+    display: block;
+    padding: 17px 0;
+    font-size: 14px;
+    line-height: 16px;
+    color: #000000;
+    opacity: 1;
+}
+.faq-list .item li a>span{
+    margin-left: 10px;
+    padding-left: 14px;
+    border-left: 4px solid #222222;
+}
+.faq-info .info-left {
+    padding: 10px 30px;
+}
+.faq-info .list-right .list-content {
+    margin-left: 30px;
+    margin-top: 10px;
+    padding: 20px;
+    background: #FAFAFA;
+}
+.faq-info .info-left .title {
+    font-size: 26px;
+    color: #222222;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+.faq-info .list-right li a {
+    padding-top: 16px;
+    display: block;
+}
+.faq-info .list-right li.active a {
+    font-weight: bold;
+}
+.search-result .key-word {
+    color: #007AFF;
 }

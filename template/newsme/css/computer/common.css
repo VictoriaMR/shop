@@ -430,6 +430,10 @@ body {
 .crumbs li a {
 	font-size: 16px;
 }
+.crumbs li span {
+	font-size: 16px;
+	color: #999;
+}
 /*faq-footer*/
 .faq-footer {
 	border-top: 1px solid #D1D1D6;
