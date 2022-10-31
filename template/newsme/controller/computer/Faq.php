@@ -10,6 +10,9 @@ class Faq extends Base
         $fid = (int)iget('fid', 0);
         $gid = (int)iget('gid', 0);
         $keyword = trim(iget('search', ''));
+        $this->assign('_title', 'FAQ');
+        $this->assign('_keyword', 'FAQ');
+        $this->assign('_desc', 'FAQ');
         if ($fid > 0) {
             $info = make('app/service/faq/Faq')->loadData(['faq_id'=>$fid, 'status'=>1], 'faq_id,group_id');
             if (!empty($info)) {
@@ -47,6 +50,9 @@ class Faq extends Base
                     }
                     $this->assign('faqList', $faqList);
                 }
+                $this->assign('_title', $info['title']);
+                $this->assign('_keyword', $info['title']);
+                $this->assign('_desc', $info['title']);
             }
         } else if ($keyword){
             $where = [
