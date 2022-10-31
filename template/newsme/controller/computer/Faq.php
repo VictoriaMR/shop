@@ -19,6 +19,7 @@ class Faq extends Base
                 } else {
                     $where['lan_id'] = 1;
                 }
+                make('app/service/faq/Faq')->where(['faq_id'=>$fid])->increment('visit_total');
                 $info = array_merge($info, current(make('app/service/faq/FaqLanguage')->getListData($where+['faq_id'=>$fid], 'lan_id,title,content', 0, 0, ['lan_id'=>'DESC'])));
                 $info = array_merge($info, current(make('app/service/faq/GroupLanguage')->getListData($where+['group_id'=>$info['group_id']], 'lan_id,name', 0, 0, ['lan_id'=>'DESC'])));
                 $info['content'] = str_replace(['{{site_name}}'], [\App::get('base_info', 'name')], $info['content']);
@@ -53,7 +54,23 @@ class Faq extends Base
                 'lan_id' => lanId(),
             ];
             $faqList = make('app/service/faq/FaqLanguage')->getListData($where);
-            $this->assign('faqList', $faqList);
+            if (!empty($faqList)) {
+                $faq = make('app/service/faq/Faq')->getListData(['faq_id'=>['in', array_column($faqList, 'faq_id')]], 'faq_id,visit_total');
+                $faq = array_column($faq, 'visit_total', 'faq_id');
+                $siteName = \App::get('base_info', 'name');
+                foreach ($faqList as $key=>$value) {
+                    $temp = explode('.', str_replace(['&nbsp;', PHP_EOL, '   '], [' ', '', ' '], strip_tags($value['content'])));
+                    $temp = array_map('trim', $temp);
+                    $temp = preg_replace('/\s(?=\s)/', '\\1', implode('.', $temp));
+                    $temp = str_replace(['{{site_name}}', $keyword], [$siteName, '<span class="keyword">'.$keyword.'</span>'], $temp);
+                    $value['content'] = $temp;
+                    $value['title_format'] = str_replace([$keyword, ucfirst($keyword)], ['<span class="keyword">'.$keyword.'</span>', '<span class="keyword">'.ucfirst($keyword).'</span>'], $value['title']);
+                    $value['visit_total'] = $faq[$value['faq_id']] ?? 0;
+                    $faqList[$key] = $value;
+                }
+                $this->assign('faqList', $faqList);
+
+            }
             $crumbs = [];
             $crumbs[] = [
                 'name' => 'FAQ',

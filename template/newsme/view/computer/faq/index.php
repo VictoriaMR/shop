@@ -12,6 +12,10 @@
                 <?php echo $info['content'];?>
             </div>
             <div class="left list-right w30">
+                <form action="<?php echo url('faq');?>" class="search-form">
+                    <input class="input" name="search" placeholder="Popular Searches: Refund,Return,Shipping" autocomplete="off">
+                    <i class="icon-search"></i>
+                </form>
                 <div class="list-content">
                     <p class="f16 f500 mb4">Related Articles</p>
                     <ul class="f14">
@@ -54,14 +58,31 @@
         </div>
         <?php } elseif (!empty($keyword)){?><div class="search-result">
             <?php $this->load('common/crumbs', ['crumbs'=>$crumbs]);?>
-            <div class="search-result-content">
+            <div class="search-result-content relative">
+                <form action="<?php echo url('faq');?>" class="search-form">
+                    <input class="input" name="search" value="<?php echo $keyword;?>" placeholder="Popular Searches: Refund,Return,Shipping" autocomplete="off">
+                    <i class="icon-search"></i>
+                </form>
                 <div class="tc mb20">
                     <p class="f26 f400 tc">Search Result</p>
                     <p class="f14">
                         <span><?php echo count($faqList);?></span>
                         <span>results for</span>
-                        <span class="key-word">"<?php echo $keyword;?>"</span>
+                        <span class="keyword">"<?php echo $keyword;?>"</span>
                     </p>
+                </div>
+                <div class="search-list">
+                    <?php foreach($faqList as $value){?><a class="item" href="<?php echo url($value['title'], ['f'=>$value['faq_id']]);?>">
+                        <p class="title"><?php echo $value['title_format'];?></p>
+                        <div class="faq-ext">
+                            <span class="icon-agree">
+                                <img src="<?php echo siteUrl('image/common/faq/agree.png');?>">
+                            </span>
+                            <span class="visit"><?php echo $value['visit_total'];?></span>
+                        </div>
+                        <p class="content"><?php echo $value['content'];?></p>
+                    </a>
+                    <?php }?>
                 </div>
             </div>
         </div>
