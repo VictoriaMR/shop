@@ -11,34 +11,35 @@ class Cart extends HomeBase
 		html()->addJs();
 
 		$list = make('app/service/Cart')->getList();
+		$summary = [];
 		$checkedList = [];
 		$unCheckList = [];
-		$summary = [];
 		if (!empty($list)) {
 			$originalPriceTotal = 0;
 			$priceTotal = 0;
-			foreach ($list as $key => $value) {
-				if ($value['quantity'] == 0 || $value['quantity'] > $value['stock']) {
-					$value['out_of_stock'] = true;
-				} else {
-					$value['out_of_stock'] = false;
-				}
-				if ($value['checked']) {
-					$checkedList[] = $value;
-					$originalPriceTotal += $value['original_price']*$value['quantity'];
-					$priceTotal += $value['price']*$value['quantity'];
-				} else {
-					$unCheckList[] = $value;
-				}
-			}
 			//收藏检查
 			$spuIdArr = array_unique(array_column($list, 'spu_id'));
 			$where = [
 				'mem_id' => userId(),
 				'spu_id' => ['in', $spuIdArr],
 			];
-			$list = make('app/service/member/Collect')->getListData($where, 'spu_id');
-			$list = array_column($list, 'spu_id');
+			$collect = make('app/service/member/Collect')->getListData($where, 'spu_id');
+			$collect = array_column($collect, 'spu_id');
+			foreach ($list as $key => $value) {
+				if ($value['quantity'] == 0 || $value['quantity'] > $value['stock']) {
+					$value['out_of_stock'] = true;
+				} else {
+					$value['out_of_stock'] = false;
+				}
+				$value['is_liked'] = in_array($value['spu_id'], $collect);
+				if ($value['checked']) {
+					$originalPriceTotal += $value['original_price']*$value['quantity'];
+					$priceTotal += $value['price']*$value['quantity'];
+					$checkedList[] = $value;
+				} else {
+					$unCheckList[] = $value;
+				}
+			}
 			$symbol = make('app/service/currency/Currency')->priceSymbol(2);
 			$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 			$priceTotal = sprintf('%.2f', $priceTotal);
@@ -58,7 +59,6 @@ class Cart extends HomeBase
 		$this->assign('isLogin', userId());
 		$this->assign('checkedList', $checkedList);
 		$this->assign('unCheckList', $unCheckList);
-		$this->assign('collectList', $list);
 		$this->assign('summary', $summary);
 		$this->assign('_title', distT('shopping_bag'));
 		$this->view();

@@ -44,4 +44,13 @@ class Payment extends Base
 		}
 		return $list;
 	}
+
+	public function getSiteInfo($where)
+	{
+		$usedInfo = make('app/service/payment/Used')->loadData($where, 'payment_id');
+		if (empty($usedInfo)) {
+			return false;
+		}
+		return $this->loadData(['payment_id'=>$usedInfo['payment_id'], 'status'=>1, 'is_sandbox'=>config('env', 'APP_DEBUG')?1:0], 'payment_id,type,is_sandbox,name,app_key,secret_key,webhook_key');
+	}
 }

@@ -72,12 +72,16 @@ class Cart extends Base
 			$sku = make('app/service/product/Sku');
 			$list = array_column($list, null, 'sku_id');
 			$currencyService = make('app/service/currency/Currency');
+			$symbol = $currencyService->priceSymbol(2);
 			foreach ($list as $key => $value) {
 				$tempData = $sku->getInfoCache($value['sku_id'], $this->lanId());
-				$list[$key] = array_merge($value, $tempData);
+				$value = array_merge($value, $tempData);
 				$temp = $currencyService->priceFormat($value['cart_price']);
-				$list[$key]['cart_price'] = $temp[1];
-				$list[$key]['cart_price_format'] = $temp[2];
+				$value['cart_price'] = $temp[1];
+				$value['cart_price_format'] = $temp[2];
+				$value['price_total'] = $value['price'] * $value['quantity'];
+				$value['price_total_format'] = $symbol.$value['price_total'];
+				$list[$key] = $value;
 			}
 		}
 		return $list;
