@@ -31,7 +31,7 @@
 }
 .cart-page .list-left .bag-title {
     margin-bottom: 8px;
-    height: 24px;
+    height: 20px;
     overflow: hidden;
 }
 .cart-page .list-left .bag-title .c9 {
@@ -67,11 +67,11 @@
     color: #E64545;
 }
 .cart-page .list-left .checkbox {
-    width: 24px;
+    width: 28px;
     text-align: center;
 }
 .cart-page .list-left .product-info {
-    width: calc(100% - 24px);
+    width: calc(100% - 28px);
     padding: 10px 0;
 }
 .cart-page .list-left .product-info .img-content {

@@ -13,7 +13,7 @@
             </div>
             <div class="list-left">
                 <?php if (!empty($checkedList)){?><div class="bag-title e1">
-                    <span class="f18 f600">Shopping Bag</span>
+                    <span class="f16 f600">Shopping Bag</span>
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <span class="c9">Prices are subject to change based on the price in effect the day you checkout.</span>
                 </div>
