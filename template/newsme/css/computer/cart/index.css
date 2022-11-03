@@ -90,7 +90,8 @@
     -webkit-line-clamp: 2;
     overflow: hidden;
 }
-.cart-page .list-left .product-info .btn-content span {
+.cart-page .list-left .product-info .btn-content span,
+.cart-page .list-left .product-info .btn-content a {
     text-decoration: underline;
     margin-right: 13px;
     cursor: pointer;
@@ -127,7 +128,7 @@
     background: #F5F5F5;
     width: 100%;
     border-radius: 5px;
-    padding: 12px;
+    padding: 11px;
     text-align: center;
     position: relative;
     margin-top: 10px;

@@ -14,7 +14,7 @@ class App
 	{
 		if (!self::get('autoload', $abstract)) {
 			self::autoload($abstract);
-			self::set('autoload', \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), '', $params), $abstract);
+			self::set('autoload', \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $params), $abstract);
 		}
 		return self::get('autoload', $abstract);
 	}

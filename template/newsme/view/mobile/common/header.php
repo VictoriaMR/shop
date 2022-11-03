@@ -2,15 +2,15 @@
 <html lang="<?php echo strtolower(lanId('code'));?>" style="font-size:100px">
 <head>
 	<meta charset="utf-8">
-	<title><?php echo $_title??appT('_title');?></title>
+	<title><?php echo $_title??\App::get('router', 'path').' - '.\App::get('base_info', 'name');?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width,maximum-scale=5"/>
 	<meta name="theme-color" content="#e5edef">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<meta http-equiv="cache-control" content="no-cache"/>
 	<meta name="apple-mobile-web-app-title" content="<?php echo \App::get('base_info', 'name');?>"/>
-	<meta name="keywords" content="<?php echo $_keyword??appT('_keyword');?>"/>
-	<meta name="description" content="<?php echo $_desc??appT('_desc');?>"/>
+	<meta name="keywords" content="<?php echo $_keyword??\App::get('router', 'path').' - '.\App::get('base_info', 'name');?>"/>
+	<meta name="description" content="<?php echo $_desc??\App::get('router', 'path').' - '.\App::get('base_info', 'name');?>"/>
 	<meta name="App-Config" content="fullscreen=yes,useHistoryState=yes,transition=yes"/>
 	<meta content="yes" name="apple-mobile-web-app-capable"/>
 	<meta content="yes" name="apple-touch-fullscreen"/>

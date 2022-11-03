@@ -53,5 +53,9 @@ class Index extends Base
 		$this->assign('page', $page);
 		$this->assign('bestSeller', $bestSeller);
 		$this->assign('banner', $banner ?? []);
+
+		$this->assign('_title', appt('_title'));
+		$this->assign('_desc', appt('_desc'));
+		$this->assign('_keyword', appt('_keyword'));
 	}
 }

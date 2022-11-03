@@ -84,6 +84,9 @@ const CARTPAGE = {
 					num = stock;
 				}
 			}
+			if (num <= 0) {
+                num = 1;
+            }
 			TIPS.loading(pObj);
 			$.post('/cart/updateQuantity', {id:id, quantity: num}, function(res){
 				TIPS.loadout(pObj);
@@ -109,6 +112,9 @@ const CARTPAGE = {
 			} else if (num >= stock) { 
 				num = stock;
 			}
+			if (num <= 0) {
+                num = 1;
+            }
 			obj.find('.num').val(num);
 			TIPS.loading(pObj);
 			$.post('/cart/updateQuantity', {id:id, quantity: num}, function(res){

@@ -16,7 +16,7 @@ final class Container
 		return self::$_instance;
 	}
 
-	public function autoload($concrete, $file, $params=null)
+	public function autoload($concrete, $params=null)
 	{
 		return $this->build($concrete, $params);
 	}

@@ -9,11 +9,8 @@ class Cart extends HomeBase
 	{	
 		html()->addCss();
 		html()->addJs();
-
 		$list = make('app/service/Cart')->getList();
 		$summary = [];
-		$checkedList = [];
-		$unCheckList = [];
 		if (!empty($list)) {
 			$originalPriceTotal = 0;
 			$priceTotal = 0;
@@ -35,21 +32,19 @@ class Cart extends HomeBase
 				if ($value['checked']) {
 					$originalPriceTotal += $value['original_price']*$value['quantity'];
 					$priceTotal += $value['price']*$value['quantity'];
-					$checkedList[] = $value;
-				} else {
-					$unCheckList[] = $value;
 				}
+				$list[$key] = $value;
 			}
 			$symbol = make('app/service/currency/Currency')->priceSymbol(2);
 			$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 			$priceTotal = sprintf('%.2f', $priceTotal);
-			$summary[] = [
+			$summary[1] = [
 				'type'=> 1,
 				'name' => appT('original_price'),
 				'price' => $originalPriceTotal,
 				'price_format' => $symbol.$originalPriceTotal,
 			];
-			$summary[] = [
+			$summary[2] = [
 				'type'=> 2,
 				'name' => appT('total'),
 				'price' => $priceTotal,
@@ -57,8 +52,7 @@ class Cart extends HomeBase
 			];
 		}
 		$this->assign('isLogin', userId());
-		$this->assign('checkedList', $checkedList);
-		$this->assign('unCheckList', $unCheckList);
+		$this->assign('list', $list);
 		$this->assign('summary', $summary);
 		$this->assign('_title', distT('shopping_bag'));
 		$this->view();
@@ -162,6 +156,9 @@ class Cart extends HomeBase
 		$quantity = ipost('quantity', 1);
 		if (empty($id)) {
 			$this->error(appT('param_error'));
+		}
+		if ($quantity <= 0) {
+			$quantity = 1;
 		}
 		$where = ['mem_id' => userId(), 'cart_id' => $id];
 		$cart = make('app/service/Cart');

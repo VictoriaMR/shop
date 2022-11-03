@@ -35,6 +35,7 @@ class PayPal extends Payment
         if($express){
             $url .= '&disable-funding='.implode(',', ['card', 'credit', 'venmo', 'sepa', 'bancontact', 'eps', 'giropay', 'ideal', 'mybank', 'p24', 'sofort']);
         }
+        $url .= '&components=messages,buttons';
         return $url;
     }
 }

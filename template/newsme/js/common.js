@@ -69,7 +69,7 @@ var TIPS = {
             });
         }, 5000);
     },
-    loading: function(obj) {
+    loading: function(obj, noStop) {
         var style = 'style="display:block;"'; 
         if (obj) {
             style = 'style="position:absolute;display:block;"';
@@ -87,7 +87,9 @@ var TIPS = {
                         </div>\
                     </div>';
         obj.append(html);
-        this.stop();
+        if (!noStop) {
+            this.stop();
+        }
     },
     loadout: function(obj, nostop){
         if (!obj) {
@@ -250,6 +252,13 @@ function url(url, title, params) {
 }
 function isIE() {
     return navigator.appName == 'Microsoft Internet Explorer' || window.ActiveXObject || 'ActiveXObject' in window;
+}
+function priceChange(amount) {
+    //paypal分期显示组件更新金额
+    var obj = document.querySelector('[data-pp-message]');
+    if (obj) {
+        obj.setAttribute('data-pp-amount', amount);
+    }
 }
 (function($){
 	$.fn.bigImage = function(){

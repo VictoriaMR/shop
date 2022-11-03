@@ -46,6 +46,7 @@ class Index extends Base
 
 		$bestSeller = make('app/service/product/Spu')->getRecommend($page, $size, $total);
 
+
 		$this->assign('page', $page);
 		$this->assign('size', $size);
 		$this->assign('total', $total);
@@ -54,5 +55,9 @@ class Index extends Base
 		$this->assign('hotArr', $hotArr);
 		$this->assign('popularCate', $popularCate);
 		$this->assign('bestSeller', $bestSeller);
+
+		$this->assign('_title', appt('_title'));
+		$this->assign('_desc', appt('_desc'));
+		$this->assign('_keyword', appt('_keyword'));
 	}
 }
