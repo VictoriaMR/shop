@@ -14,7 +14,7 @@ class Git extends AdminBase
             'gitLog' => 'Git版本日志'
         ];
         $this->_default = 'Ban本管理';
-        $this->_init();
+        parent::_init();
     }
 
     public function index()

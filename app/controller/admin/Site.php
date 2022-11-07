@@ -9,10 +9,15 @@ class Site extends AdminBase
 	{
 		$this->_arr = [
 			'index' => '站点列表',
+			'siteInfo' => '站点设置',
 			'staticCache' => '静态文件管理',
+			'staticDetail' => '静态文件详情',
 			'siteLog' => '站点日志',
+			'logDetail' => '日志详情',
 		];
+		$this->_ignore = ['siteInfo', 'staticDetail', 'logDetail'];
 		$this->_default = '站点管理';
+		parent::_init();
 	}
 
 	public function index()
@@ -38,7 +43,6 @@ class Site extends AdminBase
 			}
 		}
 		$this->assign('list', $list);
-		$this->_init();
 		$this->view();
 	}
 
@@ -66,8 +70,6 @@ class Site extends AdminBase
 		}
 		$this->assign('id', $id);
 		$this->assign('site', $site);
-		$this->_arr['siteInfo'] = '站点配置';
-		$this->_init();
 		$this->view();
 	}
 
@@ -456,7 +458,6 @@ class Site extends AdminBase
 		}
 
 		$this->assign('list', $list);
-		$this->_init();
 		$this->view();
 	}
 
@@ -468,8 +469,6 @@ class Site extends AdminBase
 			$content = file_get_contents($file);
 			$this->assign('content', $content);
 		}
-		$this->_arr['staticDetail'] = '静态文件详情';
-		$this->_init();
 		$this->view();
 	}
 
@@ -547,7 +546,6 @@ class Site extends AdminBase
 			array_multisort($timeArr, SORT_DESC, $list);
 		}
 		$this->assign('list', $list ?? []);
-		$this->_init();
 		$this->view();
 	}
 
@@ -582,9 +580,7 @@ class Site extends AdminBase
 			$content = file_get_contents($file);
 			$list = explode('---------------------------------------------------------------', $content);
 		}
-		$this->_arr['logDetail'] = '日志详情';
 		$this->assign('list', $list ?? []);
-		$this->_init();
 		$this->view();
 	}
 }

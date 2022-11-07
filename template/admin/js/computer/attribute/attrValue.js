@@ -5,13 +5,15 @@ const ATTRIBUTE = {
 	init: function() {
 		const _this = this;
 		//新增修改
+		$('.btn.add').on('click', function(){
+			_this.initData();
+		});
 		$('.btn.modify').on('click', function(){
 			var btnobj = $(this);
 			var id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
 			_this.loadData(id, function(data){
 				_this.initData(data);
-				$('#dealbox').dealboxShow();
 				btnobj.button('reset');
 			});
 		});
@@ -87,6 +89,8 @@ const ATTRIBUTE = {
 			obj.button('loading');
 			post(URI+'attribute/attrValue', $('#dealbox form').serializeArray(), function(){
 				window.location.reload();
+			}, function(){
+				obj.button('reset');
 			});
 		});
 		//保存语言
@@ -123,14 +127,17 @@ const ATTRIBUTE = {
 		}
 	},
 	initData: function(data) {
-		var obj = $('#dealbox');
-		if (data) {
-			obj.find('input[name="id"]').val(data.attv_id);
-			obj.find('input[name="name"]').val(data.name);
-		} else {
-			obj.find('input[name="id"]').val(0);
-			obj.find('input[name="name"]').val('');
+		if (!data) {
+			data = {
+				attrv_id: 0,
+				name: '',
+			};
 		}
-		return true;
+		var obj = $('#dealbox');
+		for (var i in data) {
+			obj.find('input[name="'+i+'"]').val(data[i]);
+		}
+		obj.dealboxShow();
+		obj.find('input[name="name"]').focus();
 	},
 };

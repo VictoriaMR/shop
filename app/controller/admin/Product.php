@@ -9,8 +9,11 @@ class Product extends AdminBase
 	{
 		$this->_arr = [
 			'index' => 'SPU列表',
+			'detail' => 'SPU详情',
 		];
+		$this->_ignore = ['detail'];
 		$this->_default = '产品管理';
+		parent::_init();
 	}
 
 	public function index()
@@ -86,8 +89,6 @@ class Product extends AdminBase
 		$this->assign('total', $total);
 		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
-		$this->_init();
-		
 		$this->view();
 	}
 
@@ -133,8 +134,6 @@ class Product extends AdminBase
 			$this->assign('statusList', $statusList);
 			$this->assign('siteCate', $siteCate);
 		}
-		$this->_arr['detail'] = 'SPU详情';
-		$this->_init();
 		$this->view();
 	}
 

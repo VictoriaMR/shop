@@ -11,6 +11,7 @@ class Order extends AdminBase
 			'index' => '订单列表',
 		];
 		$this->_default = '订单管理';
+		parent::_init();
 	}
 
 	public function index()
@@ -82,7 +83,6 @@ class Order extends AdminBase
 		$this->assign('etime', $etime);
 		$this->assign('statusList', $statusList);
 		$this->assign('paymentAccount', $paymentAccount);
-		$this->_init();
 		$this->view();
 	}
 }

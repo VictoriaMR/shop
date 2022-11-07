@@ -40,7 +40,7 @@ const LOGIN = {
 				if (res.code === 200 || res.code === '200') {
 					window.location.href = res.data.url;
 				} else {
-					$('#login-error').removeClass('hidden').find('#login-error-msg').text(res.message);
+					$('#login-error').removeClass('hidden').find('#login-error-msg').text(res.msg);
 					thisobj.button('reset');
 				}
 			});

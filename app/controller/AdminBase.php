@@ -4,15 +4,13 @@ namespace app\controller;
 
 class AdminBase extends Base
 {
-	protected $_nav;
-	protected $_tag;
-	protected $_arr;
+	protected $_nav = [];
+	protected $_ignore = [];
+	protected $_arr = [];
 	protected $_default;
-	protected $_tagShow = true;
 
 	protected function _init()
 	{
-		$this->_tag = $this->_arr;
 		$router = \App::get('router');
 		if ($router['class'] == 'admin') {
 			if ($router['path'] !== 'Index') {
@@ -21,14 +19,14 @@ class AdminBase extends Base
 				} else {
 					$this->_nav = ['default' => $this->_default]+$this->_arr;
 				}
-				$this->assign('_tag', $this->_tag);
+				$this->assign('_ignore', $this->_ignore);
+				$this->assign('_tag', $this->_arr);
 				$this->assign('_nav', $this->_nav);
-				$this->assign('_tagShow', $this->_tagShow);
 			}
 		}
 		$this->assign('_path', $router['path']);
 		$this->assign('_func', $router['func']);
-		$this->assign('_title', $this->_tag[$router['func']] ?? '');
+		$this->assign('_title', $this->_arr[$router['func']] ?? '');
 	}
 
 	protected function addLog($msg)

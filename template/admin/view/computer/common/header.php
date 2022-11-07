@@ -31,10 +31,10 @@
 	</div>
 </div>
 <?php } ?>
-<?php if (!empty($_tagShow) && !empty($_tag)) {?>
+<?php if (!empty($_tag)) {?>
 <div class="container-fluid" style="margin-bottom: 15px;">
 	<ul class="nav nav-tabs">
-		<?php foreach ($_tag as $key => $value) {?>
+		<?php foreach ($_tag as $key => $value) { if ($_func != $key && in_array($key, $_ignore)){continue;}?>
 		<li<?php if($_func == $key) echo ' class="active"';?>>
 			<a href="<?php echo adminUrl($_path.'/'.$key);?>"><?php echo $value;?></a>
 		</li>

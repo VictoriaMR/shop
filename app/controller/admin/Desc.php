@@ -12,6 +12,7 @@ class Desc extends AdminBase
 			'descValue' => '描述值管理',
 		];
 		$this->_default = '属性管理';
+		parent::_init();
 	}
 
 	public function index()
@@ -43,7 +44,6 @@ class Desc extends AdminBase
 			$list = $nameService->getList($where, $page, $size);
 		}
 
-		$this->_init();
 		$this->assign('status', $status);
 		$this->assign('keyword', $keyword);
 		$this->assign('total', $total);
@@ -179,7 +179,6 @@ class Desc extends AdminBase
 			$list = $valueService->getList($where, $page, $size);
 		}
 
-		$this->_init();
 		$this->assign('status', $status);
 		$this->assign('keyword', $keyword);
 		$this->assign('total', $total);

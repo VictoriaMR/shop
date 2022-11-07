@@ -12,6 +12,7 @@ class Member extends AdminBase
 			'log' => '日志',
 		];
 		$this->_default = '管理人员';
+		parent::_init();
 	}
 
 	public function index()
@@ -62,7 +63,6 @@ class Member extends AdminBase
 		$this->assign('phone', $phone);
 		$this->assign('stime', $stime);
 		$this->assign('etime', $etime);
-		$this->_init();
 		$this->view();
 	}
 
@@ -198,8 +198,6 @@ class Member extends AdminBase
 		$this->assign('mobile', $mobile);
 		$this->assign('stime', $stime);
 		$this->assign('etime', $etime);
-		$this->_init();
-		
 		$this->view();
 	}
 }

@@ -11,8 +11,8 @@ class Index extends AdminBase
 			'index' => '首页',
 			'statInfo' => '统计信息',
 		];
-		$this->_tagShow = false;
 		$this->_default = '概览';
+		parent::_init();
 	}
 
 	public function index()
@@ -21,7 +21,6 @@ class Index extends AdminBase
 		html()->addJs();
 		$this->assign('funcList', make('app/service/controller/Controller')->getList());
 		$this->assign('info', session()->get('admin_info'));
-		$this->_init();
 		$this->view();
 	}
 
@@ -52,7 +51,6 @@ class Index extends AdminBase
 		$this->assign('viewerInfo', $viewerInfo);
 		$this->assign('cpuInfo', $cpuInfo);
 		$this->assign('mysqlVersion', $mysqlVersion['version'] ?? '');
-		$this->_init();
 		$this->view();
 	}
 

@@ -9,11 +9,40 @@ class Category extends AdminBase
 	{
 		$this->_arr = [
 			'index' => '品类管理',
+			'cateList' => '子类目管理',
+			'attrUsed' => '属性映射',
 		];
-		$this->_default = '品类管理';
+		$this->_ignore = ['attrUsed'];
+		$this->_default = '产品分类';
+		parent::_init();
 	}
 
 	public function index()
+	{	
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, [''])) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
+		html()->addJs();
+		$cid = iget('cid', 0);
+		$tempList = make('app/service/category/Category')->getListFormat();
+		if (!empty($tempList)) {
+			$list = [];
+			foreach ($tempList as $value) {
+				if ($value['level'] == 0) {
+					$list[] = $value;
+				}
+			}
+		}
+		
+		$this->assign('list', $list ?? []);
+		$this->view();
+	}
+
+	public function cateList()
 	{	
 		if (request()->isPost()) {
 			$opn = ipost('opn');
@@ -23,9 +52,38 @@ class Category extends AdminBase
 			$this->error('非法请求');
 		}
 		html()->addJs();
-
-		$list = make('app/service/category/Category')->getListFormat();
-		if (!empty($list)) {
+		$cid = iget('cid', 0);
+		$tempList = make('app/service/category/Category')->getListFormat();
+		if (!empty($tempList)) {
+			$count = 0;
+			$pList = [];
+			$list = [];
+			$status = false;
+			foreach ($tempList as $value) {
+				if ($value['level'] == 0) {
+					if (!$cid) {
+						$cid = $value['cate_id'];
+					}
+					if (isset($pList[count($pList)-1])) {
+						$pList[count($pList)-1]['count'] = $count;
+					}
+					$count = 0;
+					$pList[] = $value;
+					if ($cid == $value['cate_id']) {
+						$status = true;
+					} else {
+						$status = false;
+					}
+				} else {
+					$count++;
+					if ($status) {
+						$list[] = $value;
+					}
+				}
+			}
+			if (!empty($pList)) {
+				$pList[count($pList)-1]['count'] = $count;
+			}
 			$cateArr = array_column($list, 'cate_id');
 			$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
 			$cateArr = array_column($cateArr, 'count', 'cate_id');
@@ -46,8 +104,9 @@ class Category extends AdminBase
 			}
 		}
 		
-		$this->_init();
-		$this->assign('list', $list);
+		$this->assign('cid', $cid);
+		$this->assign('pList', $pList ?? []);
+		$this->assign('list', $list ?? []);
 		$this->view();
 	}
 
@@ -184,5 +243,10 @@ class Category extends AdminBase
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
+	}
+
+	public function attrUsed()
+	{
+		$this->view();
 	}
 }

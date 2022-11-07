@@ -12,6 +12,7 @@ class Controller extends AdminBase
 			'icon' => '功能图标管理'
 		];
 		$this->_default = '系统设置';
+		parent::_init();
 	}
 
 	public function index()
@@ -30,7 +31,6 @@ class Controller extends AdminBase
 		$iconList = make('app/service/controller/Icon')->getListData([], 'icon_id,name,remark', 0, 0, ['sort'=>'asc']);
 		$this->assign('iconList', $iconList);
 		$this->assign('list', $list);
-		$this->_init();
 		$this->view();
 	}
 
@@ -122,7 +122,6 @@ class Controller extends AdminBase
 		$list = make('app/service/controller/Icon')->getListData([], 'icon_id,name,sort,remark', 0, 0, ['sort'=>'asc']);
 
 		$this->assign('list', $list);
-		$this->_init();
 		$this->view();
 	}
 

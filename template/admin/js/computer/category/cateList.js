@@ -34,7 +34,7 @@ const CATEGORYLIST = {
 		$('.btn.update-btn').on('click', function(){
 			const obj = $(this);
 			obj.button('loading');
-			post(URI+'category', {opn:'updateStat'}, function(){
+			post(URI+'category/cateList', {opn:'updateStat'}, function(){
 				obj.button('reset');
 			});
 		});
@@ -44,7 +44,7 @@ const CATEGORYLIST = {
 			const _thisobj = $(this);
 			const id = _thisobj.parents('.item').data('id');
 			const type = _thisobj.data('type');
-			post(URI+'category', {opn: 'getCateLanguage', cate_id: id, type: type}, function(data){
+			post(URI+'category/cateList', {opn: 'getCateLanguage', cate_id: id, type: type}, function(data){
 				const obj = $('#dealbox-language');
 				obj.find('input[name="cate_id"]').val(id);
 				obj.find('input[name="type"]').val(type);
@@ -97,7 +97,7 @@ const CATEGORYLIST = {
 				if (value === '') {
 					const _thisobj = $(this);
 					const tr_code = _thisobj.data('tr_code');
-					$.post(URI+'category', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
+					$.post(URI+'category/cateList', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
 						if (res.code === '200') {
 							_thisobj.val(res.data);
@@ -125,7 +125,7 @@ const CATEGORYLIST = {
 			}
 			const obj = $(this);
 			obj.button('loading');
-			post(URI+'category', $('#dealbox form').serializeArray(), function(){
+			post(URI+'category/cateList', $('#dealbox form').serializeArray(), function(){
 				window.location.reload();
 			});
 		});
@@ -133,7 +133,7 @@ const CATEGORYLIST = {
 		$('#dealbox-language .save-btn').on('click', function(){
 			const obj = $(this);
 			obj.button('loading');
-			post(URI+'category', $('#dealbox-language form').serializeArray(), function(){
+			post(URI+'category/cateList', $('#dealbox-language form').serializeArray(), function(){
 				obj.button('reset');
 				window.location.reload();
 			});
@@ -157,7 +157,7 @@ const CATEGORYLIST = {
 					data[pid].push(id);
 				}
 			});
-			post(URI+'category', {opn: 'sortCategory', data: data}, function(){
+			post(URI+'category/cateList', {opn: 'sortCategory', data: data}, function(){
 				obj.button('reset').addClass('disabled');
 			});
 		});
@@ -168,7 +168,7 @@ const CATEGORYLIST = {
 			const id = btnobj.parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
 				obj.button('loading');
-				post(URI+'category', {opn: 'deleteCategory', cate_id: id}, function(){
+				post(URI+'category/cateList', {opn: 'deleteCategory', cate_id: id}, function(){
 					obj.button('reset');
 					btnobj.parents('tr').remove();
 					CATEGORYLIST.sortInit();
@@ -193,7 +193,7 @@ const CATEGORYLIST = {
 		});
 		$('#data-list .avatar-hover img').imageUpload('category', function(data, obj){
 			const id = obj.parents('tr').data('id');
-			$.post(URI+'category', {opn: 'modifyCategory', id: id, attach_id: data.attach_id}, function(res){
+			$.post(URI+'category/cateList', {opn: 'modifyCategory', id: id, attach_id: data.attach_id}, function(res){
 				if (res.code === '200') {
 					successTips(res.msg);
 				} else {
@@ -210,7 +210,7 @@ const CATEGORYLIST = {
 			param.id = _thisobj.parents('tr').data('id');
 			param[type] = _thisobj.data('status') == '1' ? '0' : '1';
 			param.opn = 'modifyCategory';
-			$.post(URI+'category', param, function(res){
+			$.post(URI+'category/cateList', param, function(res){
 				if (res.code === '200') {
 					successTips(res.msg);
 					_thisobj.switchBtn(param[type]);
@@ -222,7 +222,7 @@ const CATEGORYLIST = {
 	},
 	loadData: function(id, callback) {
 		if (id) {
-			post(URI+'category', {opn: 'getCateInfo', cate_id: id}, function(data){
+			post(URI+'category/cateList', {opn: 'getCateInfo', cate_id: id}, function(data){
 				callback(data);
 			});
 		} else {

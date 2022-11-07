@@ -12,6 +12,7 @@ class Attribute extends AdminBase
 			'attrValue' => '属性值管理',
 		];
 		$this->_default = '属性管理';
+		parent::_init();
 	}
 
 	public function index()
@@ -43,7 +44,6 @@ class Attribute extends AdminBase
 			$list = $nameService->getList($where, $page, $size);
 		}
 
-		$this->_init();
 		$this->assign('status', $status);
 		$this->assign('keyword', $keyword);
 		$this->assign('total', $total);
@@ -84,20 +84,24 @@ class Attribute extends AdminBase
 
 	protected function editAttrInfo()
 	{
-		$id = (int) ipost('id');
+		$id = (int) ipost('attrn_id');
 		$name = trim(ipost('name'));
 		if (empty($name)) {
-			$this->error('名称不能为空');
+			$this->error('属性名不能为空');
+		}
+		$service = make('app/service/attr/Name');
+		if ($service->getCountData(['attrn_id'=>['<>',$id],'name' => $name])) {
+			$this->error($name.' 属性名已存在, 请勿重复添加');
 		}
 		$data = [
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/attr/Name')->insert($data);
-			$this->addLog('新增属性-'.$result);
+			$result = $service->insert($data);
+			$this->addLog('新增属性名-'.$result);
 		} else {
-			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/attr/Name')->updateData($id, $data);
+			$this->addLog('修改属性名-'.$id);
+			$result = $service->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -179,7 +183,6 @@ class Attribute extends AdminBase
 			$list = $valueService->getList($where, $page, $size);
 		}
 
-		$this->_init();
 		$this->assign('status', $status);
 		$this->assign('keyword', $keyword);
 		$this->assign('total', $total);
@@ -220,20 +223,24 @@ class Attribute extends AdminBase
 
 	protected function editAttvInfo()
 	{
-		$id = (int) ipost('id');
+		$id = (int) ipost('attrv_id');
 		$name = trim(ipost('name'));
 		if (empty($name)) {
-			$this->error('名称不能为空');
+			$this->error('属性值不能为空');
+		}
+		$service = make('app/service/attr/Value');
+		if ($service->getCountData(['attrv_id'=>['<>',$id],'name' => $name])) {
+			$this->error($name.' 属性值已存在, 请勿重复添加');
 		}
 		$data = [
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/attr/Value')->insert($data);
-			$this->addLog('新增属性-'.$result);
+			$result = $service->insert($data);
+			$this->addLog('新增属性值-'.$result);
 		} else {
-			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/attr/Value')->updateData($id, $data);
+			$this->addLog('修改属性值-'.$id);
+			$result = $service->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');

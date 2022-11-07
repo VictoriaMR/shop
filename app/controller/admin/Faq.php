@@ -12,6 +12,7 @@ class Faq extends AdminBase
             'faqList' => '文档管理',
         ];
         $this->_default = '帮助文档';
+        parent::_init();
     }
 
     public function index()
@@ -39,8 +40,6 @@ class Faq extends AdminBase
         $this->assign('size', $size);
         $this->assign('total', $total);
         $this->assign('list', $list ?? []);
-
-        $this->_init();
         $this->view();
     }
 
@@ -169,8 +168,6 @@ class Faq extends AdminBase
         $this->assign('total', $total);
         $this->assign('list', $list ?? []);
         $this->assign('group', $group);
-
-        $this->_init();
         $this->view();
     }
 

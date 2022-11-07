@@ -17,6 +17,9 @@
 					<button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
 				</div>
 			</div>
+			<div class="form-group right">
+				<button class="btn btn-success add" type="button"><i class="glyphicon glyphicon-plus"></i> 新增属性名</button>
+			</div>
 			<div class="clear"></div>
 		</div>
 	</form>
@@ -89,7 +92,7 @@
 		<form class="form-horizontal">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">多语言配置</div>
-			<input type="hidden" name="id" value="0">
+			<input type="hidden" name="attrn_id" value="0">
 			<input type="hidden" name="name" value="">
 			<input type="hidden" name="opn" value="editAttrLanguage">
 			<table class="table table-bordered table-hover">

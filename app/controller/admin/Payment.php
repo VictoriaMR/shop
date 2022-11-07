@@ -12,6 +12,7 @@ class Payment extends AdminBase
 			'paymentUsed' => '支付账号使用',
 		];
 		$this->_default = '支付管理';
+		parent::_init();
 	}
 
 	public function index()
@@ -60,7 +61,6 @@ class Payment extends AdminBase
 		$this->assign('name', $name);
 		$this->assign('typeList', $typeList);
 		$this->assign('sandBoxList', $sandBoxList);
-		$this->_init();
 		$this->view();
 	}
 
