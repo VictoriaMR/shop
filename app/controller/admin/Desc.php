@@ -155,7 +155,7 @@ class Desc extends AdminBase
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getDescvInfo', 'getDescvLanguage', 'transfer', 'editDescvInfo', 'editDescvLanguage', 'deleteDescvInfo'])) {
+			if (in_array($opn, ['getDescValueInfo', 'getDescValueLanguage', 'transfer', 'editDescValueInfo', 'editDescValueLanguage', 'deleteDescValueInfo'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -188,7 +188,7 @@ class Desc extends AdminBase
 		$this->view();
 	}
 
-	protected function getDescvInfo()
+	protected function getDescValueInfo()
 	{
 		$id = (int)ipost('id');
 		if (empty($id)) {
@@ -198,7 +198,7 @@ class Desc extends AdminBase
 		$this->success($info, '');
 	}
 
-	protected function getDescvLanguage()
+	protected function getDescValueLanguage()
 	{
 		$id = (int)ipost('id');
 		if (empty($id)) {
@@ -218,7 +218,7 @@ class Desc extends AdminBase
 		$this->success($info, '');
 	}
 
-	protected function editDescvInfo()
+	protected function editDescValueInfo()
 	{
 		$id = (int) ipost('id');
 		$name = trim(ipost('name'));
@@ -242,7 +242,7 @@ class Desc extends AdminBase
 		}
 	}
 
-	protected function editDescvLanguage()
+	protected function editDescValueLanguage()
 	{
 		$id = (int) ipost('id');
 		if (empty($id)) {
@@ -267,7 +267,7 @@ class Desc extends AdminBase
 		$this->success('操作成功');
 	}
 
-	protected function deleteDescvInfo()
+	protected function deleteDescValueInfo()
 	{
 		$id = (int) ipost('id');
 		if (empty($id)) {

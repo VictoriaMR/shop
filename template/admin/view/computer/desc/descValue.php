@@ -73,7 +73,7 @@
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">属性管理</div>
 			<input type="hidden" name="id" value="0">
-			<input type="hidden" name="opn" value="editDescInfo">
+			<input type="hidden" name="opn" value="editDescValueInfo">
 			<div class="input-group">
 				<div class="input-group-addon"><span>名称：</span></div>
 				<textarea type="text" class="form-control" name="name" autocomplete="off" maxlength="255"></textarea>
@@ -91,7 +91,7 @@
 			<div class="f24 dealbox-title">多语言配置</div>
 			<input type="hidden" name="id" value="0">
 			<input type="hidden" name="name" value="" maxlength="255">
-			<input type="hidden" name="opn" value="editDescvLanguage">
+			<input type="hidden" name="opn" value="editDescValueLanguage">
 			<table class="table table-bordered table-hover">
 				<tbody></tbody>
 			</table>

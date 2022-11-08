@@ -87,6 +87,8 @@ const ATTRIBUTE = {
 			obj.button('loading');
 			post(URI+'desc', $('#dealbox form').serializeArray(), function(){
 				window.location.reload();
+			}, function(){
+				obj.button('reset');
 			});
 		});
 		//保存语言
@@ -125,7 +127,7 @@ const ATTRIBUTE = {
 	initData: function(data) {
 		var obj = $('#dealbox');
 		if (data) {
-			obj.find('input[name="id"]').val(data.attr_id);
+			obj.find('input[name="id"]').val(data.descn_id);
 			obj.find('input[name="name"]').val(data.name);
 		} else {
 			obj.find('input[name="id"]').val(0);

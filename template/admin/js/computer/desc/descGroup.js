@@ -5,13 +5,16 @@ const ATTRIBUTE = {
 	init: function() {
 		const _this = this;
 		//新增修改
+		$('.btn.add').on('click', function(){
+			_this.initData();
+		});
+		//新增修改
 		$('.btn.modify').on('click', function(){
 			var btnobj = $(this);
 			var id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
 			_this.loadData(id, function(data){
 				_this.initData(data);
-				$('#dealbox').dealboxShow();
 				btnobj.button('reset');
 			});
 		});
@@ -19,7 +22,7 @@ const ATTRIBUTE = {
 		$('.glyphicon-globe').on('click', function(){
 			const _thisobj = $(this);
 			const id = _thisobj.parents('.item').data('id');
-			post(URI+'desc/descValue', {opn: 'getDescValueLanguage', id: id}, function(data){
+			post(URI+'desc/descGroup', {opn: 'getDescGroupLanguage', id: id}, function(data){
 				const obj = $('#dealbox-language');
 				obj.find('input[name="id"]').val(id);
 				obj.find('input[name="name"]').val(_thisobj.next().text());
@@ -57,7 +60,7 @@ const ATTRIBUTE = {
 				if (value === '') {
 					const _thisobj = $(this);
 					const tr_code = _thisobj.data('tr_code');
-					$.post(URI+'desc/descValue', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
+					$.post(URI+'desc/descGroup', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
 						if (res.code === '200') {
 							_thisobj.val(res.data);
@@ -85,7 +88,7 @@ const ATTRIBUTE = {
 			}
 			var obj = $(this);
 			obj.button('loading');
-			post(URI+'desc/descValue', $('#dealbox form').serializeArray(), function(){
+			post(URI+'desc/descGroup', $('#dealbox form').serializeArray(), function(){
 				window.location.reload();
 			}, function(){
 				obj.button('reset');
@@ -95,7 +98,7 @@ const ATTRIBUTE = {
 		$('#dealbox-language .save-btn').on('click', function(){
 			var obj = $(this);
 			obj.button('loading');
-			post(URI+'desc/descValue', $('#dealbox-language form').serializeArray(), function(){
+			post(URI+'desc/descGroup', $('#dealbox-language form').serializeArray(), function(){
 				obj.button('reset');
 				window.location.reload();
 			});
@@ -107,7 +110,7 @@ const ATTRIBUTE = {
 			var id = btnobj.parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
 				obj.button('loading');
-				post(URI+'desc/descValue', {opn: 'deleteDescValueInfo', id: id}, function(){
+				post(URI+'desc/descGroup', {opn: 'deleteDescGroupInfo', id: id}, function(){
 					window.location.reload();
 				}, function(){
 					obj.button('reset');
@@ -117,7 +120,7 @@ const ATTRIBUTE = {
 	},
 	loadData: function(id, callback) {
 		if (id) {
-			post(URI+'desc/descValue', {opn: 'getDescValueInfo', id: id}, function(data){
+			post(URI+'desc/descGroup', {opn: 'getDescGroupInfo', id: id}, function(data){
 				callback(data);
 			});
 		} else {
@@ -127,12 +130,13 @@ const ATTRIBUTE = {
 	initData: function(data) {
 		var obj = $('#dealbox');
 		if (data) {
-			obj.find('input[name="id"]').val(data.descv_id);
+			obj.find('input[name="id"]').val(data.descg_id);
 			obj.find('input[name="name"]').val(data.name);
 		} else {
 			obj.find('input[name="id"]').val(0);
 			obj.find('input[name="name"]').val('');
 		}
+		obj.dealboxShow();
 		return true;
 	},
 };
