@@ -6,11 +6,7 @@ use app\service\Base;
 class Value extends Base
 {
 	const CACHE_KEY = 'product-attr:value_cache:';
-
-	protected function getModel()
-	{
-		return $this->baseModel = make('app/model/attr/Value');
-	}
+	protected $_model = 'app/model/attr/Value';
 
 	public function addNotExist($nameArr)
 	{

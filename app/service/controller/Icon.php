@@ -5,8 +5,5 @@ use app\service\Base;
 
 class Icon extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/controller/Icon');
-	}
+	protected $_model = 'app/model/controller/Icon';
 }

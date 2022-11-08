@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Controller extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/controller/Controller');
-	}
+	protected $_model = 'app/model/controller/Controller';
 
 	public function getList()
 	{

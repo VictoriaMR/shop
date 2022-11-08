@@ -6,11 +6,7 @@ use app\service\Base;
 class Category extends Base
 {
 	protected $_list = [];
-
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/category/Category');
-	}
+	protected $_model = 'app/model/category/Category';
 
 	public function getInfo($cateId)
 	{

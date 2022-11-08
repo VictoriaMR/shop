@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Git extends Base
 {   
-    protected function getModel()
-    {
-        $this->baseModel = make('app/model/admin/Git');
-    }
+    protected $_model = 'app/model/admin/Git';
 
     public function upateLibrary($id, &$msg)
     {

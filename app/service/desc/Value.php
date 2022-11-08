@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Value extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/desc/Value');
-	}
+	protected $_model = 'app/model/desc/Value';
 
 	public function addNotExist($nameArr)
 	{

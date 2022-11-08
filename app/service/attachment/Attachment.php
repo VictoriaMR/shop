@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Attachment extends Base
 {	
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/attachment/Attachment');
-	}
+	protected $_model = 'app/model/attachment/Attachment';
 
 	public function addIfNot(array $data)
 	{

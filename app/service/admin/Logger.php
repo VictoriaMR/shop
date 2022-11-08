@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Logger extends Base
 {	
-    protected function getModel()
-    {
-        $this->baseModel = make('app/model/admin/Logger');
-    }
+    protected $_model = 'app/model/admin/Logger';
 
     public function getTypeList()
     {

@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Country extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/address/Country');
-	}
+	protected $_model = 'app/model/address/Country';
 
 	public function getName($code2, $lanId=2)
 	{

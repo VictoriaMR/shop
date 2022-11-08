@@ -6,10 +6,26 @@ abstract class Base
 {
     protected $baseModel;
     protected $_error = [];
+    protected $_model = [];
 
     private function __clone() {}
     
-    abstract protected function getModel();
+    protected function getModel()
+    {
+        if (!empty($this->_model)) {
+            if (is_array($this->_model)) {
+                if (count($this->_model) == 1) {
+                    $this->baseModel = make(current($this->_model));
+                } else {
+                    foreach ($this->_model as $key=>$value) {
+                        $this->$$key = make($value);
+                    }
+                }
+            } else {
+                $this->baseModel = make($this->_model);
+            }
+        }
+    }
 
     public function __call($func, $arg)
     {

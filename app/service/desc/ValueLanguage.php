@@ -5,10 +5,7 @@ use app\service\Base;
 
 class ValueLanguage extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/desc/ValueLanguage');
-	}
+	protected $_model = 'app/model/desc/ValueLanguage';
 
 	public function setNxLanguage($id, $lanId, $name)
 	{

@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Logger extends Base
 {
-	public function getModel()
-	{
-		$this->baseModel = make('app/model/Logger');
-	}
+	protected $_model = 'app/model/Logger';
 
 	public function getStats($field)
 	{

@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Cart extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/Cart');
-	}
+	protected $_model = 'app/model/Cart';
 
 	public function addToCart($skuId, $quantity=1)
 	{

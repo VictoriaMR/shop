@@ -5,8 +5,5 @@ use app\service\Base;
 
 class Url extends Base
 {	
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/attachment/Url');
-	}
+	protected $_model = 'app/model/attachment/Url';
 }

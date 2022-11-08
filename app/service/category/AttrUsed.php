@@ -5,8 +5,5 @@ use app\service\Base;
 
 class AttrUsed extends Base
 {
-    protected function getModel()
-    {
-        $this->baseModel = make('app/model/category/AttrUsed');
-    }
+    protected $_model = 'app/model/category/AttrUsed';
 }

@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Name extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/desc/Name');
-	}
+	protected $_model = 'app/model/desc/Name';
 
 	public function addNotExist($nameArr)
 	{

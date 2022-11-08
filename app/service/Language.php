@@ -6,11 +6,7 @@ use app\service\Base;
 class Language extends Base
 {	
 	const CACHE_KEY = 'language:';
-
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/Language');
-	}
+	protected $_model = 'app/model/Language';
 
 	public function getInfo($code)
 	{

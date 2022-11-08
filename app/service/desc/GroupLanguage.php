@@ -1,18 +1,18 @@
 <?php 
 
-namespace app\service\attr;
+namespace app\service\desc;
 use app\service\Base;
 
-class ValueLanguage extends Base
+class GroupLanguage extends Base
 {
-	protected $_model = 'app/model/attr/ValueLanguage';
+	protected $_model = 'app/model/desc/GroupLanguage';
 
 	public function setNxLanguage($id, $lanId, $name)
 	{
 		if (empty($id) || empty($lanId) || empty($name)) {
 			return false;
 		}
-		$where = ['attrv_id'=>$id, 'lan_id'=>$lanId];
+		$where = ['descv_id'=>$id, 'lan_id'=>$lanId];
 		if ($this->getCountData($where)) {
 			return $this->updateData($where, ['name' => $name]);
 		} else {

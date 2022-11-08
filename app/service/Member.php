@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Member extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/Member');
-	}
+	protected $_model = 'app/model/Member';
 
 	public function create($data)
 	{

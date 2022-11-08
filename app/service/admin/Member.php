@@ -5,10 +5,7 @@ use app\service\Member as Base;
 
 class Member extends Base
 {	
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/admin/Member');
-	}
+	protected $_model = 'app/model/admin/Member';
 
 	public function getMemIdsByName($name)
 	{
