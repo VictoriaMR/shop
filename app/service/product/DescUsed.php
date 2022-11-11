@@ -5,10 +5,7 @@ use app\service\Base;
 
 class DescUsed extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/product/DescUsed');
-	}
+	protected $_model = 'app/model/product/DescUsed';
 
 	public function addDescUsed(int $spuId, array $insert)
 	{

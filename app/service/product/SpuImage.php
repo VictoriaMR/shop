@@ -5,10 +5,7 @@ use app\service\Base;
 
 class SpuImage extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel= make('app/model/product/SpuImage');
-	}
+	protected $_model = 'app/model/product/SpuImage';
 
 	public function addSpuImage(array $data)
 	{

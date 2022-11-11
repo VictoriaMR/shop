@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Order extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/order/Order');
-	}
+	protected $_model = 'app/model/order/Order';
 
 	public function createOrder($skuIdArr, $shippingAddressId, $billingAddressId, $couponId=0, $insurance=false)
 	{

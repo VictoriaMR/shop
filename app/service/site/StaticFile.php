@@ -5,10 +5,7 @@ use app\service\Base;
 
 class StaticFile extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/site/StaticFile');
-	}
+	protected $_model = 'app/model/site/StaticFile';
 
 	public function addNotExist($name, $type)
 	{

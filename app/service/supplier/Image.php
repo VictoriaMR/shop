@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Image extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/supplier/Image');
-	}
+	protected $_model = 'app/model/supplier/Image';
 
 	public function addUrl($url)
 	{

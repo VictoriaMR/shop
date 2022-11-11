@@ -5,10 +5,7 @@ use app\service\Base;
 
 class IntroUsed extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/product/IntroUsed');
-	}
+	protected $_model = 'app/model/product/IntroUsed';
 
 	public function addIntroUsed($spuId, array $data)
 	{

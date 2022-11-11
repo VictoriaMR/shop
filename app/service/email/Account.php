@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Account extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/email/Account');
-	}
+	protected $_model = 'app/model/email/Account';
 
 	public function getInfoCache($id)
 	{

@@ -6,11 +6,7 @@ use app\service\Base;
 class LanguageUsed extends Base
 {
 	const CACHE_KEY = 'site-language-used:';
-
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/site/LanguageUsed');
-	}
+	protected $_model = 'app/model/site/LanguageUsed';
 
 	public function getList($siteId=null)
 	{

@@ -5,8 +5,5 @@ use app\service\Base;
 
 class Address extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/order/Address');
-	}
+	protected $_model = 'app/model/order/Address';
 }

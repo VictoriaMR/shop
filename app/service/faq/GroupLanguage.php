@@ -5,10 +5,7 @@ use app\service\Base;
 
 class GroupLanguage extends Base
 {
-    protected function getModel()
-    {
-        $this->baseModel = make('app/model/faq/GroupLanguage');
-    }
+    protected $_model = 'app/model/faq/GroupLanguage';
 
     public function setNxLanguage($id, $lanId, $name)
     {

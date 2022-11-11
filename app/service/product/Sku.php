@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Sku extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/product/Sku');
-	}
+	protected $_model = 'app/model/product/Sku';
 
 	public function getInfoCache($skuId, $lanId=1)
 	{

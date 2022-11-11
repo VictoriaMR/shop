@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Collect extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/member/Collect');
-	}
+	protected $_model = 'app/model/member/Collect';
 
 	public function collectProduct($spuId)
 	{

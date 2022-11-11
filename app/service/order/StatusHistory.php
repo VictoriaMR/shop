@@ -5,10 +5,7 @@ use app\service\Base;
 
 class StatusHistory extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/order/StatusHistory');
-	}
+	protected $_model = 'app/model/order/StatusHistory';
 
 	public function addLog($orderId, $status, $lanId='', $replace=[])
 	{

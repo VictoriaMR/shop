@@ -8,10 +8,7 @@ class Payment extends Base
 	const PAYMENT_TYPE_PAYPAL = 1;
 	const PAYMENT_TYPE_STRIPE = 2;
 
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/payment/Payment');
-	}
+	protected $_model = 'app/model/payment/Payment';
 
 	public function getTypeList($type=null)
 	{

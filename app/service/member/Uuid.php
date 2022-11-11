@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Uuid extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/member/Uuid');
-	}
+	protected $_model = 'app/model/member/Uuid';
 
 	public function getInfo($uuid)
 	{

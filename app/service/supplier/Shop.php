@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Shop extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/supplier/Shop');
-	}
+	protected $_model = 'app/model/supplier/Shop';
 
 	public function addNotExist(array $data)
 	{

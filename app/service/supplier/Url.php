@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Url extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/supplier/Url');
-	}
+	protected $_model = 'app/model/supplier/Url';
 
 	public function addUrl($url, $priority=0)
 	{

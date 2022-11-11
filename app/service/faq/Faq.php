@@ -5,8 +5,5 @@ use app\service\Base;
 
 class Faq extends Base
 {
-    protected function getModel()
-    {
-        $this->baseModel = make('app/model/faq/Faq');
-    }
+    protected $_model = 'app/model/faq/Faq';
 }

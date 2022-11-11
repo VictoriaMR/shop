@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Used extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/email/Used');
-	}
+	protected $_model = 'app/model/email/Used';
 
 	public function getSiteAccountId()
 	{

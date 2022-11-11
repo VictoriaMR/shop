@@ -5,10 +5,7 @@ use app\service\Base;
 
 class History extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/member/History');
-	}
+	protected $_model = 'app/model/member/History';
 
 	public function addHistory($spuId)
 	{

@@ -96,7 +96,7 @@ class Product extends AdminBase
 	{
 		if (request()->isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage', 'modifySpuData'])) {
+			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage', 'modifySpuData', 'editDescGroupInfo'])) {
 				$this->$opn();
 			}
 			$this->error('未知请求');
@@ -130,8 +130,25 @@ class Product extends AdminBase
 
 			$info['category'] = array_reverse($category->getParentCategoryById($info['cate_id']));
 
+			$tempArr = [];
+			foreach ($info['desc'] as $value) {
+				if (!isset($tempArr[$value['descg_id']])) {
+					$tempArr[$value['descg_id']] = [
+						'descg_id' => $value['descg_id'],
+						'group' => $value['group'],
+						'list' => [],
+					];
+				}
+				$tempArr[$value['descg_id']]['list'][] = $value;
+			}
+			$info['desc'] = $tempArr;
+
+			//分组列表
+			$groupList = make('app/service/desc/Group')->getListData();
+
 			$this->assign('info', $info);
 			$this->assign('statusList', $statusList);
+			$this->assign('groupList', $groupList);
 			$this->assign('siteCate', $siteCate);
 		}
 		$this->view();
@@ -358,15 +375,16 @@ class Product extends AdminBase
 			if(empty($param['value'])) {
 				$this->error('描述值不能为空');
 			}
-			$descArr = make('app/service/attr/Description')->addNotExist([$param['name'], $param['value']]);
-			$data['name_id'] = $descArr[$param['name']];
-			$data['value_id'] = $descArr[$param['value']];
+			$tempArr = make('app/service/desc/Name')->addNotExist($param['name']);
+			$data['descn_id'] = $tempArr[$param['name']];
+			$tempArr = make('app/service/desc/Value')->addNotExist($param['value']);
+			$data['descv_id'] = $tempArr[$param['value']];
 			$data['spu_id'] = $param['spu_id'];
 		}
 		if (empty($id)) {
-			$rst = make('app/service/product/DescriptionUsed')->addDescUsed($param['spu_id'], $data);
+			$rst = make('app/service/product/DescUsed')->addDescUsed($param['spu_id'], $data);
 		} else {
-			$rst = make('app/service/product/DescriptionUsed')->updateData($id, $data);
+			$rst = make('app/service/product/DescUsed')->updateData($id, $data);
 		}
 		if ($rst) {
 			$this->success('操作成功');
@@ -380,7 +398,7 @@ class Product extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/product/DescriptionUsed')->deleteData($id);
+		$rst = make('app/service/product/DescUsed')->deleteData($id);
 		if ($rst) {
 			$this->success('删除成功');
 		}
@@ -393,12 +411,12 @@ class Product extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/product/DescriptionUsed')->loadData($id);
+		$info = make('app/service/product/DescUsed')->loadData($id);
 		if ($info) {
-			$descArr = make('app/service/attr/Description')->getListData(['desc_id'=>['in', [$info['name_id'], $info['value_id']]]]);
-			$descArr = array_column($descArr, 'name', 'desc_id');
-			$info['name'] = $descArr[$info['name_id']];
-			$info['value'] = $descArr[$info['value_id']];
+			$tempArr = make('app/service/desc/Name')->loadData($info['descn_id'], 'name');
+			$info['name'] = $tempArr['name'];
+			$tempArr = make('app/service/desc/Value')->loadData($info['descv_id'], 'name');
+			$info['value'] = $tempArr['name'];
 			$this->success($info, '获取成功');
 		}
 		$this->error('获取失败');
@@ -461,6 +479,23 @@ class Product extends AdminBase
 			$this->error('参数不正确');
 		}
 		$rst = make('app/service/product/SpuData')->updateData($spuId, [$name=>$value]);
+		if ($rst) {
+			$this->success('更新成功');
+		}
+		$this->error('更新失败');
+	}
+
+	protected function editDescGroupInfo()
+	{
+		$idArr = ipost('id');
+		$groupId = ipost('group_id');
+		if (empty($idArr)) {
+			$this->error('ID值不正确');
+		}
+		if (empty($groupId)) {
+			$this->error('分组ID值不正确');
+		}
+		$rst = make('app/service/product/DescUsed')->updateData(['item_id'=>['in', $idArr]], ['descg_id'=>$groupId]);
 		if ($rst) {
 			$this->success('更新成功');
 		}

@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Spu extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/product/Spu');
-	}
+	protected $_model = 'app/model/product/Spu';
 
 	public function getInfoCache($spuId, $lanId=1, $siteId=0)
 	{
@@ -286,9 +283,12 @@ class Spu extends Base
 		$descArr = make('app/service/product/DescUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
 		$descNameArr = make('app/service/desc/Name')->getListData(['descn_id'=>['in', array_column($descArr, 'descn_id')]]);
 		$descValueArr = make('app/service/desc/Value')->getListData(['descv_id'=>['in', array_column($descArr, 'descv_id')]]);
+		$descGroupArr = make('app/service/desc/Group')->getListData(['descg_id'=>['in', array_column($descArr, 'descg_id')]]);
+		$descGroupArr = array_column($descGroupArr, 'name', 'descg_id');
 		$descNameArr = array_column($descNameArr, 'name', 'descn_id');
 		$descValueArr = array_column($descValueArr, 'name', 'descv_id');
 		foreach($descArr as $key=>$value) {
+			$descArr[$key]['group'] = $descGroupArr[$value['descg_id']] ?? '';
 			$descArr[$key]['name'] = $descNameArr[$value['descn_id']] ?? '';
 			$descArr[$key]['value'] = $descValueArr[$value['descv_id']] ?? '';
 		}

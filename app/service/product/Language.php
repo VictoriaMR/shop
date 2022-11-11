@@ -5,10 +5,7 @@ use app\service\Base;
 
 class Language extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/product/Language');
-	}
+	protected $_model = 'app/model/product/Language';
 
 	public function setNxLanguage($spuId, $lanId, $name)
 	{

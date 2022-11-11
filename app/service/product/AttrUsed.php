@@ -5,10 +5,7 @@ use app\service\Base;
 
 class AttrUsed extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/product/AttrUsed');
-	}
+	protected $_model = 'app/model/product/AttrUsed';
 
 	public function getListBySkuIds($skuId, $lanId=1, $simple=false)
 	{

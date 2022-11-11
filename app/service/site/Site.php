@@ -6,11 +6,7 @@ use app\service\Base;
 class Site extends Base
 {
 	const CACHE_KEY = 'site:';
-
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/site/Site');
-	}
+	protected $_model = 'app/model/site/Site';
 
 	public function getInfoCache($key, $type='site_id')
 	{

@@ -5,10 +5,7 @@ use app\service\Base;
 
 class FaqLanguage extends Base
 {
-    protected function getModel()
-    {
-        $this->baseModel = make('app/model/faq/FaqLanguage');
-    }
+    protected $_model = 'app/model/faq/FaqLanguage';
 
     public function setNxLanguage($id, $lanId, $title, $content)
     {

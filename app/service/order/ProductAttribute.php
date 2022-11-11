@@ -5,8 +5,5 @@ use app\service\Base;
 
 class ProductAttribute extends Base
 {
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/order/ProductAttribute');
-	}
+	protected $_model = 'app/model/order/ProductAttribute';
 }

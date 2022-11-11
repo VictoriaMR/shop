@@ -6,11 +6,7 @@ use app\service\Base;
 class Domain extends Base
 {
 	const CACHE_KEY = 'site-currency-used:';
-
-	protected function getModel()
-	{
-		$this->baseModel = make('app/model/site/Domain');
-	}
+	protected $_model = 'app/model/site/Domain';
 
 	public function getInfo($siteId=null)
 	{

@@ -315,13 +315,30 @@ const PRODUCT = {
 				}
 			});
 		});
+		//描述选中
+		$('#sku-desc-content .glyphicon').on('click', function(){
+			if ($(this).hasClass('glyphicon-ok-circle')) {
+				$(this).removeClass('glyphicon-ok-circle').addClass('glyphicon-ok-sign red');
+			} else {
+				$(this).removeClass('glyphicon-ok-sign red').addClass('glyphicon-ok-circle');
+			}
+			_this.initDescSelect();
+		});
+		//分组点击
+		$('#sku-desc-content .desc-group-btn').on('click', function(){
+			if ($('#sku-desc-content .glyphicon-ok-sign').length === 0) {
+				errorTips('请先选择需要分组的描述');
+				return false;
+			}
+			$('#desc-group-dealbox').dealboxShow();
+		});
 	},
 	initDescShow: function(data) {
 		const obj = $('#dealbox-desc');
 		if (data) {
 			obj.find('.dealbox-title').text('编辑描述文本');
 		} else {
-			data= {
+			data = {
 				item_id: 0,
 				name: '',
 				value: '',
@@ -329,9 +346,17 @@ const PRODUCT = {
 			};
 			obj.find('.dealbox-title').text('增加描述文本');
 		}
-		for (const i in data) {
-			obj.find('[name="'+i+'"').val(data[i]);
+		for (var i in data) {
+			obj.find('[name="'+i+'"]').val(data[i]);
 		}
 		obj.dealboxShow();
+	},
+	initDescSelect: function() {
+		var obj = $('#desc-group-dealbox');
+		obj.find('[name="id[]"]').remove();
+		$('#sku-desc-content .glyphicon-ok-sign').each(function(){
+			var id = $(this).parents('tr').data('id');
+			obj.find('form').append('<input type="hidden" name="id[]" value="'+id+'">');
+		});
 	}
 };

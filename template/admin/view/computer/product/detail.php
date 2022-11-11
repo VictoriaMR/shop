@@ -227,18 +227,28 @@
 		<div class="w50">
 			<div class="pr10" id="sku-desc-content">
 				<dl class="field-row mt10" style="margin-bottom: 4px">
-					<dt>描述列表	<span class="co f12">(修改)</span>：<button class="btn btn-success btn-xs add-desc-btn">增加</button></dt>
+					<dt>描述列表	<span class="co f12">(修改)</span>：<button class="btn btn-success btn-xs add-desc-btn">增加</button> <button class="btn btn-info btn-xs desc-group-btn">分组</button></dt>
 				</dl>
 				<table class="table table-bordered" width="50%">
-					<tbody>
+					<thead>
 						<tr>
+							<th width="10">选择</th>
 							<th width="40">描述名</th>
 							<th width="50">描述值</th>
 							<th width="10">排序</th>
 							<th width="20">操作</th>
 						</tr>
-						<?php foreach($info['desc'] as $value){?>
+					</thead>
+					<tbody>
+						<?php foreach($info['desc'] as $item){?>
+						<tr>
+							<td colspan="5"><?php echo $item['group']?:'默认分组';?></td>
+						</tr>
+						<?php foreach($item['list'] as $value){?>
 						<tr data-id="<?php echo $value['item_id'];?>">
+							<td class="tc f20">
+								<span class="glyphicon glyphicon-ok-circle"></span>
+							</td>
 							<td><?php echo $value['name'];?></td>
 							<td><?php echo $value['value'];?></td>
 							<td>
@@ -249,6 +259,7 @@
 								<button class="btn btn-danger btn-xs delete-desc-btn"><span class="glyphicon glyphicon-trash"></span> 删除</button>
 							</td>
 						</tr>
+						<?php }?>
 						<?php }?>
 					</tbody>
 				</table>
@@ -459,6 +470,28 @@
 				<input type="input" name="value" class="form-control" />
 			</div>
 			<button type="button" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
+		</form>
+	</div>
+</div>
+<!-- 性别弹窗 -->
+<div id="desc-group-dealbox" class="hidden">
+	<div class="mask"></div>
+	<div class="centerShow">
+		<form class="form-horizontal">
+			<input type="hidden" name="opn" value="editDescGroupInfo">
+			<input type="hidden" name="is_ajax" value="1">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="f24 dealbox-title">描述分组</div>
+			<div class="input-group">
+				<div class="input-group-addon"><span>描述分组</span></div>
+				<select class="form-control" name="group_id">
+					<option value="0">默认</option>
+					<?php foreach ($groupList as $value){?>
+					<option value="<?php echo $value['descg_id'];?>"><?php echo $value['name'];?></option>
+					<?php }?>
+				</select>
+			</div>
+			<button type="button" class="btn btn-primary btn-lg btn-block save-btn">确认</button>
 		</form>
 	</div>
 </div>
