@@ -145,7 +145,6 @@ class Product extends AdminBase
 
 			//分组列表
 			$groupList = make('app/service/desc/Group')->getListData();
-
 			$this->assign('info', $info);
 			$this->assign('statusList', $statusList);
 			$this->assign('groupList', $groupList);

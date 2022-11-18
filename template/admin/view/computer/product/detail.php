@@ -66,11 +66,11 @@
 				</dd>
 			</dl>
 			<dl class="field-row">
-				<dt>添加时间：</dt>
+				<dt>操作时间：</dt>
 				<dd>
-					<span><?php echo $info['add_time'];?></span>
+					<span title="添加时间"><?php echo $info['add_time'];?></span>
 					<span>&nbsp;-&nbsp;</span>
-					<span><?php echo $info['update_time'] ? $info['update_time'] : '-';?></span>
+					<span title="修改时间"><?php echo $info['update_time'] ?: '--';?></span>
 				</dd>
 			</dl>
 		</div>
@@ -190,14 +190,15 @@
 		<div class="w50">
 			<div class="pr10">
 				<dl class="field-row mt10" style="margin-bottom: 4px">
-					<dt>属性列表	<span class="co f12">(修改图片)</span>：</dt>
+					<dt>属性列表	<span class="co f12">(修改图片, 快捷属性映射)</span>：</dt>
 				</dl>
 				<table class="table table-bordered" width="50%">
 					<tbody>
 						<tr>
 							<th width="50">属性名</th>
-							<th width="60">属性值</th>
+							<th width="50">属性值</th>
 							<th width="20">图片</th>
+							<th width="50">操作</th>
 						</tr>
 						<?php foreach($info['attr_map'] as $kv){
 							$count = 0;
@@ -218,6 +219,7 @@
 								<button class="btn btn-danger btn-xs delete-attr-image-btn">删除</button>
 								<?php }?>
 							</td>
+							<td><button type="button" class="btn btn-primary btn-xs">映射</button></td>
 						</tr>
 						<?php $count++;}}?>
 					</tbody>
@@ -495,3 +497,4 @@
 		</form>
 	</div>
 </div>
+<!-- 映射弹窗 -->
