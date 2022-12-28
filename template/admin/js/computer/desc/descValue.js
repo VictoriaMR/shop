@@ -9,40 +9,47 @@ const ATTRIBUTE = {
 			var btnobj = $(this);
 			var id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
-			_this.loadData(id, function(data){
-				_this.initData(data);
-				$('#dealbox').dealboxShow();
-				btnobj.button('reset');
+			post(URI+'desc/descValue', {opn: 'getDescValueInfo', id: id}, function(res){
+				if (res.code == 200) {
+					_this.initData(res.data);
+				} else {
+					showTips(res);
+				}
 			});
 		});
 		//多语言配置
 		$('.glyphicon-globe').on('click', function(){
 			const _thisobj = $(this);
 			const id = _thisobj.parents('.item').data('id');
-			post(URI+'desc/descValue', {opn: 'getDescValueLanguage', id: id}, function(data){
-				const obj = $('#dealbox-language');
-				obj.find('input[name="id"]').val(id);
-				obj.find('input[name="name"]').val(_thisobj.next().text());
-				obj.find('table input').val('');
-				let html = '<tr>\
-								<th style="width:88px">语言名称</th>\
-								<th>\
-									<span>文本</span>\
-									<span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
-								</th>\
-							</tr>';
-				for (const i in data) {
-					html += '<tr>\
-								<th>\
-									<span>'+data[i].language_name+'</span>\
-								</th>\
-								<td class="p0">\
-									<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off" maxlength="255">\
-								</td>\
-							</tr>';
+			post(URI+'desc/descValue', {opn: 'getDescValueLanguage', id: id}, function(res){
+				if (res.code == 200) {
+					var data = res.data;
+					const obj = $('#dealbox-language');
+					obj.find('input[name="id"]').val(id);
+					obj.find('input[name="name"]').val(_thisobj.next().text());
+					obj.find('table input').val('');
+					let html = '<tr>\
+									<th style="width:88px">语言名称</th>\
+									<th>\
+										<span>文本</span>\
+										<span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
+									</th>\
+								</tr>';
+					for (const i in data) {
+						html += '<tr>\
+									<th>\
+										<span>'+data[i].language_name+'</span>\
+									</th>\
+									<td class="p0">\
+										<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off" maxlength="255">\
+									</td>\
+								</tr>';
+					}
+					obj.find('table tbody').html(html);
+					obj.dealboxShow();
+				} else {
+					showTips(res);
 				}
-				obj.find('table tbody').html(html);
-				obj.dealboxShow();
 			});
 		});
 		//智能翻译
@@ -57,12 +64,12 @@ const ATTRIBUTE = {
 				if (value === '') {
 					const _thisobj = $(this);
 					const tr_code = _thisobj.data('tr_code');
-					$.post(URI+'desc/descValue', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
+					post(URI+'desc/descValue', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
-						if (res.code === '200') {
+						if (res.code === 200) {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.message);
+							showTips(res);
 						}
 						if (len === 0) {
 							thisobj.button('reset');
@@ -85,19 +92,26 @@ const ATTRIBUTE = {
 			}
 			var obj = $(this);
 			obj.button('loading');
-			post(URI+'desc/descValue', $('#dealbox form').serializeArray(), function(){
-				window.location.reload();
-			}, function(){
-				obj.button('reset');
+			post(URI+'desc/descValue', $('#dealbox form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code == 200) {
+					window.location.reload();
+				} else {
+					obj.button('reset');
+				}
 			});
 		});
 		//保存语言
 		$('#dealbox-language .save-btn').on('click', function(){
 			var obj = $(this);
 			obj.button('loading');
-			post(URI+'desc/descValue', $('#dealbox-language form').serializeArray(), function(){
-				obj.button('reset');
-				window.location.reload();
+			post(URI+'desc/descValue', $('#dealbox-language form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code == 200) {
+					window.location.reload();
+				} else {
+					obj.button('reset');
+				}
 			});
 			return false;
 		});
@@ -107,22 +121,16 @@ const ATTRIBUTE = {
 			var id = btnobj.parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
 				obj.button('loading');
-				post(URI+'desc/descValue', {opn: 'deleteDescValueInfo', id: id}, function(){
-					window.location.reload();
-				}, function(){
-					obj.button('reset');
+				post(URI+'desc/descValue', {opn: 'deleteDescValueInfo', id: id}, function(res){
+					showTips(res);
+					if (res.code == 200) {
+						window.location.reload();
+					} else {
+						obj.button('reset');
+					}
 				});
 			});
 		});
-	},
-	loadData: function(id, callback) {
-		if (id) {
-			post(URI+'desc/descValue', {opn: 'getDescValueInfo', id: id}, function(data){
-				callback(data);
-			});
-		} else {
-			callback({});
-		}
 	},
 	initData: function(data) {
 		var obj = $('#dealbox');
@@ -133,6 +141,7 @@ const ATTRIBUTE = {
 			obj.find('input[name="id"]').val(0);
 			obj.find('input[name="name"]').val('');
 		}
+		obj.dealboxShow();
 		return true;
 	},
 };

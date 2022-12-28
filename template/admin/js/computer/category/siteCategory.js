@@ -24,13 +24,12 @@ const SITECATEGORY = {
 				return false;
 			}
 			_thisobj.button('loading');
-			$.post(URI+'category/siteCategory', _thisobj.parent().serializeArray(), function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'category/siteCategory', _thisobj.parent().serializeArray(), function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -40,13 +39,12 @@ const SITECATEGORY = {
 			const id = _thisobj.parents('tr').data('id');
 			confirm('确定要删除该站点分类吗?', function(_thisobj){
 				_thisobj.button('loading');
-				$.post(URI+'category/siteCategory', {opn: 'deleteSiteCategory', id: id}, function(res){
-					if (res.code === '200') {
-						successTips(res.message);
+				post(URI+'category/siteCategory', {opn: 'deleteSiteCategory', id: id}, function(res){
+					showTips(res);
+					if (res.code === 200) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
-						errorTips(res.message);
 					}
 				});
 			});
@@ -54,12 +52,8 @@ const SITECATEGORY = {
 		//上传图片
 		$('#data-list .avatar-hover img').imageUpload('category', function(data, obj){
 			const id = obj.parents('tr').data('id');
-			$.post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, attach_id: data.attach_id}, function(res){
-				if (res.code === '200') {
-					successTips(res.message);
-				} else {
-					errorTips(res.message);
-				}
+			post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, attach_id: data.attach_id}, function(res){
+				showTips(res);
 			});
 		});
 		//更新input框数据
@@ -67,14 +61,10 @@ const SITECATEGORY = {
 			const id = $(this).parents('tr').data('id');
 			const name = this.name;
 			const value = $(this).val();
-			$.post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, [name]: value}, function(res){
-				if (res.code === '200') {
-					successTips(res.message);
-					if (name === 'sort') {
-						window.location.reload();
-					}
-				} else {
-					errorTips(res.message);
+			post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, [name]: value}, function(res){
+				showTips(res);
+				if (res.code === 200 && name === 'sort') {
+					window.location.reload();
 				}
 			});
 		});

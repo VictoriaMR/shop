@@ -43,21 +43,23 @@ function confirm(msg, callbck) {
 		callbck($(this), obj);
 	});
 }
-function post(uri, param, success, error) {
-	$.post(uri, param, function(res) {
-		if (res.code === '200') {
-			if (res.msg) {
-				successTips(res.msg)
-			}
-			if (success) {
-				success(res.data);
-			}
-		} else {
-			errorTips(res.msg);
-			if (error) {
-				error();
-			}
-		}
+function post(url, data, callbck) {
+	data.is_ajax = 1;
+	$.ajax({
+		url: url,
+		data: data,
+		type: 'POST',
+		dataType: 'json',
+		success: function(res){
+	        if (typeof callbck == 'function') {
+	        	callbck(res.data);
+	        }
+	    },
+	    error: function(xhr,status,error) {
+	    	if (typeof callbck == 'function') {
+	        	callbck({code:0, msg:'请求出错, 网络错误'});
+	        }
+	    }
 	});
 }
 function addRightTips(info, type, delay) {
@@ -85,6 +87,13 @@ function successTips(msg) {
 }
 function errorTips(msg) {
 	addRightTips(msg, 'error');
+}
+function showTips(res) {
+	if (res.code == 200) {
+		successTips(res.msg);
+	} else {
+		errorTips(res.msg);
+	}
 }
 function isScroll() {
     return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
@@ -234,33 +243,21 @@ function guid() {
 				const data = new FormData();
             	data.append('file', files[0]);
             	data.append('cate', cate);
-  				$.ajax({
-					url: URI+'api/upload',
-					type: 'POST',
-					data: data,
-					cache: false,
-					processData: false,
-					contentType: false,
-					success: function(res) {
-						if (res.code == '200') {
-							if (thisobj.get(0).tagName == 'IMG') {
-								thisobj.removeClass('loading').attr('src', res.data.url);
-							} else {
-								thisobj.removeClass('loading').find('img').attr('src', res.data.url);
-							}
-							if (callback) {
-								callback(res.data, thisobj);
-							}
+            	post(URI+'api/upload', data, function(res){
+            		if (res.code == 200) {
+						if (thisobj.get(0).tagName == 'IMG') {
+							thisobj.removeClass('loading').attr('src', res.data.url);
 						} else {
-							errorTips(res.message);
-							thisobj.removeClass('loading').attr('src', thisobj.data('src'));
+							thisobj.removeClass('loading').find('img').attr('src', res.data.url);
 						}
-					},
-					error: function(res) {
-						errorTips('网络错误, 上传失败');
+						if (callback) {
+							callback(res.data, thisobj);
+						}
+					} else {
+						errorTips(res.msg);
 						thisobj.removeClass('loading').attr('src', thisobj.data('src'));
 					}
-				});
+            	});
 			});
 		});
 	};

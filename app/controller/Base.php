@@ -23,10 +23,10 @@ class Base
 			$data = $msg;
 			$msg = '';
 		}
-		$this->result('200', $data, ['msg' => $msg]);
+		$this->result(200, $data, ['msg' => $msg]);
 	}
 
-	protected function error($msg='', $code='10000')
+	protected function error($msg='', $code=400)
 	{
 		$this->result($code, [], ['msg'=>$msg]);
 	}

@@ -15,13 +15,13 @@ const CONTROLLERLIST = {
 			const _thisobj = $(this);
 			const id = _thisobj.parents('tr').data('id');
 			_thisobj.button('loading');
-			$.post(URI+'controller', {opn: 'getInfo', id: id}, function(res){
-				_thisobj.button('reset');
-				if (res.code === '200') {
+			post(URI+'controller', {opn: 'getInfo', id: id}, function(res){
+				if (res.code === 200) {
 					_this.dealboxData(res.data);
 				} else {
-					errorTips(res.message);
+					errorTips(res.msg);
 				}
+				_thisobj.button('reset');
 			});
 		});
 		//添加子控制器
@@ -34,13 +34,12 @@ const CONTROLLERLIST = {
 			const id = $(this).parents('tr').data('id');
 			confirm('确认删除功能吗?', function(_thisobj){
 				_thisobj.button('loading');
-				$.post(URI+'controller', {opn: 'deleteInfo', id: id}, function(res){
-					if (res.code === '200') {
-						successTips(res.message);
+				post(URI+'controller', {opn: 'deleteInfo', id: id}, function(res){
+					showTips(res);
+					if (res.code === 200) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
-						errorTips(res.message);
 					}
 				});
 			});
@@ -49,13 +48,12 @@ const CONTROLLERLIST = {
 		$('#dealbox .save-btn').on('click', function(){
 			const _thisobj = $(this);
 			_thisobj.button('loading');
-			$.post(URI+'controller', _thisobj.parent().serializeArray(), function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'controller', _thisobj.parent().serializeArray(), function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -63,8 +61,11 @@ const CONTROLLERLIST = {
 		$('#data-list [name="sort"]').on('blur', function(){
 			const id = $(this).parents('tr').data('id');
 			const sort = $(this).val();
-			post(URI+'controller', {opn: 'sortInfo', id: id, sort: sort}, function(){
-				window.location.reload();
+			post(URI+'controller', {opn: 'sortInfo', id: id, sort: sort}, function(res){
+				showTips(res);
+				if (res.code === 200) {
+					window.location.reload();
+				} 
 			});
 		});
 	},

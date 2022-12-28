@@ -7,7 +7,6 @@ const CONTROLLERLIST = {
 		//新增图标
 		$('.add-btn').on('click', function(){
 			const obj = $(this);
-			obj.button('loading');
 			_this.dealboxData({});
 		});
 		//编辑
@@ -15,13 +14,13 @@ const CONTROLLERLIST = {
 			const _thisobj = $(this);
 			const id = _thisobj.parents('tr').data('id');
 			_thisobj.button('loading');
-			$.post(URI+'controller/icon', {opn: 'getIconInfo', id: id}, function(res){
-				_thisobj.button('reset');
-				if (res.code === '200') {
+			post(URI+'controller/icon', {opn: 'getIconInfo', id: id}, function(res){
+				if (res.code === 200) {
 					_this.dealboxData(res.data);
 				} else {
 					errorTips(res.message);
 				}
+				_thisobj.button('reset');
 			});
 		});
 		//删除
@@ -29,13 +28,12 @@ const CONTROLLERLIST = {
 			const id = $(this).parents('tr').data('id');
 			confirm('确认删除图标吗?', function(_thisobj){
 				_thisobj.button('loading');
-				$.post(URI+'controller/icon', {opn: 'deleteIconInfo', id: id}, function(res){
-					if (res.code === '200') {
-						successTips(res.message);
+				post(URI+'controller/icon', {opn: 'deleteIconInfo', id: id}, function(res){
+					showTips(res);
+					if (res.code === 200) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
-						errorTips(res.message);
 					}
 				});
 			});
@@ -44,13 +42,12 @@ const CONTROLLERLIST = {
 		$('#dealbox .save-btn').on('click', function(){
 			const _thisobj = $(this);
 			_thisobj.button('loading');
-			$.post(URI+'controller/icon', _thisobj.parent().serializeArray(), function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'controller/icon', _thisobj.parent().serializeArray(), function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -58,8 +55,11 @@ const CONTROLLERLIST = {
 		$('#data-list [name="sort"]').on('blur', function(){
 			const id = $(this).parents('tr').data('id');
 			const sort = $(this).val();
-			post(URI+'controller/icon', {opn: 'sortIconInfo', id: id, sort: sort}, function(){
-				window.location.reload();
+			post(URI+'controller/icon', {opn: 'sortIconInfo', id: id, sort: sort}, function(res){
+				showTips(res);
+				if (res.code == 200) {
+					window.location.reload();
+				}
 			});
 		});
 	},

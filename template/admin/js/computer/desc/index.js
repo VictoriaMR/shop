@@ -10,8 +10,13 @@ const ATTRIBUTE = {
 			var id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
 			_this.loadData(id, function(data){
-				_this.initData(data);
-				$('#dealbox').dealboxShow();
+				if (data.code == 200) {
+					console.log(data, 'data')
+					_this.initData(data.data);
+					$('#dealbox').dealboxShow();
+				} else {
+					errorTips(data.msg);
+				}
 				btnobj.button('reset');
 			});
 		});

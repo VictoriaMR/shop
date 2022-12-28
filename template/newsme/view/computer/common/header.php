@@ -5,7 +5,7 @@
 	<meta http-equiv="cache-control" content="no-cache">
 	<title><?php echo $_title??\App::get('router', 'path').' - '.\App::get('base_info', 'name');?></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="theme-color" content="#e5edef">
+	<meta name="theme-color" content="#E5EDEF">
 	<meta name="format-detection" content="telephone=no,email=no">
 	<meta name="apple-mobile-web-app-title" content="<?php echo \App::get('base_info', 'name');?>">
 	<meta name="keywords" content="<?php echo $_keyword??\App::get('router', 'path').' - '.\App::get('base_info', 'name');?>">
