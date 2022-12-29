@@ -4,16 +4,31 @@ $(function(){
 const CURRENCY = {
     init: function() {
         const _this = this;
+        $('.btn.add').on('click', function(){
+            _this.initData();
+        });
+        $('.btn.update').on('click', function(){
+            var obj = $(this);
+            obj.button('loading');
+            post(URI+'currency', {opn: 'updateCurrencyRate'}, function(res){
+                showTips(res);
+                if (res.code == 200) {
+                    window.location.reload();
+                } else {
+                    btnobj.button('reset');
+                }
+            });
+        });
         //新增修改
         $('.btn.modify').on('click', function(){
             var btnobj = $(this);
             var id = btnobj.parents('.item').data('id');
             btnobj.button('loading');
-            post(URI+'desc', {opn: 'getDescInfo', id: id}, function(data){
+            post(URI+'currency', {opn: 'getCurrencyInfo', id: id}, function(res){
                 if (res.code == 200) {
                     _this.initData(res.data);
                 } else {
-                    errorTips(res.msg);
+                    showTips(res);
                 }
                 btnobj.button('reset');
             });
@@ -55,13 +70,22 @@ const CURRENCY = {
     },
     initData: function(data) {
         var obj = $('#dealbox');
-        if (data) {
-            obj.find('input[name="id"]').val(data.descn_id);
-            obj.find('input[name="name"]').val(data.name);
-        } else {
-            obj.find('input[name="id"]').val(0);
-            obj.find('input[name="name"]').val('');
+        if (!data) {
+            data = {
+                id: '',
+                code: '',
+                name: '',
+                rate: '',
+                symbol: '',
+            };
         }
+        if (data.code) {
+            data.id = data.code;
+        }
+        for (var i in data) {
+            obj.find('input[name="'+i+'"]').val(data[i]);
+        }
+        obj.find('input[name="code"]').prop('readonly', data.code ? true : false);
         obj.dealboxShow();
         return true;
     },

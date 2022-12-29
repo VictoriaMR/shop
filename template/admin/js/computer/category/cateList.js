@@ -20,7 +20,7 @@ const CATEGORYLIST = {
 				if (res.code == 200) {
 					_this.initData(res.data);
 				} else {
-					errorTips(res.msg);
+					showTips(res);
 				}
 				btnobj.button('reset');
 			});
@@ -83,7 +83,7 @@ const CATEGORYLIST = {
 					obj.dealboxShow();
 
 				} else {
-					errorTips(res.msg);
+					showTips(res);
 				}
 			});
 		});
@@ -112,7 +112,7 @@ const CATEGORYLIST = {
 						if (res.code === 200) {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.msg);
+							showTips(res);
 						}
 						if (len === 0) {
 							thisobj.button('reset');

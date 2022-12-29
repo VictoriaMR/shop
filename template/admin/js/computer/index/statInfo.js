@@ -12,8 +12,12 @@ const STATINFO = {
 	},
 	getInfo: function() {
 		const _this = this;
-		post(URI + 'index/statInfo', {opn: 'getSystemInfo'}, function(data){
-			_this.initdata(data);
+		post(URI + 'index/statInfo', {opn: 'getSystemInfo'}, function(res){
+			if (res.code == 200) {
+				_this.initdata(res.data);
+			} else {
+				showTips(res);
+			}
 		});
 	},
 	initdata: function(data) {

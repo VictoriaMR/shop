@@ -10,8 +10,14 @@ var FAQGROUP = {
         //保存按钮
         $('#dealbox-info .btn.save-btn').on('click', function(){
             var obj = $(this);
-            post(URI+'faq', obj.parents('form').serializeArray(), function(){
-                window.location.reload();
+            obj.button('loading');
+            post(URI+'faq', obj.parents('form').serializeArray(), function(res){
+                showTips(res);
+                if (res.code == 200) {
+                    window.location.reload();
+                } else {
+                    obj.button('reset');
+                }
             });
         });
         //编辑按钮
@@ -19,13 +25,13 @@ var FAQGROUP = {
             const obj = $(this);
             obj.button('loading');
             const id = obj.parents('tr').data('id');
-            $.post(URI+'faq', {opn: 'getGroupInfo', group_id: id}, function(res){
-                obj.button('reset');
-                if (res.code === '200') {
+            post(URI+'faq', {opn: 'getGroupInfo', group_id: id}, function(res){
+                if (res.code === 200) {
                     _this.initInfo('编辑分组', res.data);
                 } else {
-                    errorTips(res.message);
+                    showTips(res);
                 }
+                obj.button('reset');
             });
         });
         //状态开关
@@ -33,8 +39,11 @@ var FAQGROUP = {
             const _thisobj = $(this);
             const id = _thisobj.parents('tr').data('id');
             const status = _thisobj.data('status') == '0' ? 1 : 0;
-            post(URI+'faq', {opn: 'modifyGroupStatus', group_id: id, status: status}, function(){
-                _thisobj.switchBtn(status);
+            post(URI+'faq', {opn: 'modifyGroupStatus', group_id: id, status: status}, function(res){
+                showTips(res);
+                if (res.code == 200) {
+                    _thisobj.switchBtn(status);
+                }
             });
         });
         //多语言配置
@@ -42,32 +51,37 @@ var FAQGROUP = {
             event.stopPropagation();
             const _thisobj = $(this);
             const id = _thisobj.parents('tr').data('id');
-            post(URI+'faq', {opn: 'getGroupLanguage', group_id: id}, function(data){
-                const obj = $('#dealbox-language');
-                obj.find('input[name="group_id"]').val(id);
-                var name = _thisobj.next().text();
-                obj.find('input[name="name"]').val(name);
-                obj.find('.dealbox-title').text(name);
-                obj.find('table input').val('');
-                let html = '<tr>\
-                                <th style="width:88px">语言名称</th>\
-                                <th>\
-                                    <span>文本</span>\
-                                    <span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
-                                </th>\
-                            </tr>';
-                for (const i in data) {
-                    html += '<tr>\
-                                <th>\
-                                    <span>'+data[i].language_name+'</span>\
-                                </th>\
-                                <td class="p0">';
-                    html += '<textarea rows="3" type="text" name="language['+data[i].lan_id+']" data-tr_code="'+data[i].tr_code+'" class="form-control transfer" autocomplete="off">'+data[i].name+'</textarea>';
-                    html += '</td>\
-                            </tr>';
+            post(URI+'faq', {opn: 'getGroupLanguage', group_id: id}, function(res){
+                if (res.code == 200) {
+                    var data = res.data;
+                    const obj = $('#dealbox-language');
+                    obj.find('input[name="group_id"]').val(id);
+                    var name = _thisobj.next().text();
+                    obj.find('input[name="name"]').val(name);
+                    obj.find('.dealbox-title').text(name);
+                    obj.find('table input').val('');
+                    let html = '<tr>\
+                                    <th style="width:88px">语言名称</th>\
+                                    <th>\
+                                        <span>文本</span>\
+                                        <span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
+                                    </th>\
+                                </tr>';
+                    for (const i in data) {
+                        html += '<tr>\
+                                    <th>\
+                                        <span>'+data[i].language_name+'</span>\
+                                    </th>\
+                                    <td class="p0">';
+                        html += '<textarea rows="3" type="text" name="language['+data[i].lan_id+']" data-tr_code="'+data[i].tr_code+'" class="form-control transfer" autocomplete="off">'+data[i].name+'</textarea>';
+                        html += '</td>\
+                                </tr>';
+                    }
+                    obj.find('table tbody').html(html);
+                    obj.dealboxShow();
+                } else {
+                    showTips(res);
                 }
-                obj.find('table tbody').html(html);
-                obj.dealboxShow();
             });
         });
         //智能翻译
@@ -90,12 +104,12 @@ var FAQGROUP = {
                 if (value === '') {
                     const _thisobj = $(this);
                     const tr_code = _thisobj.data('tr_code');
-                    $.post(URI+'faq', {opn:'transfer', tr_code:tr_code, name:name, from_code: 'en'}, function(res){
+                    post(URI+'faq', {opn:'transfer', tr_code:tr_code, name:name, from_code: 'en'}, function(res){
                         len = len - 1;
-                        if (res.code === '200') {
+                        if (res.code === 200) {
                             _thisobj.val(res.data);
                         } else {
-                            errorTips(res.msg);
+                            showTips(res);
                         }
                         if (len === 0) {
                             thisobj.button('reset');
@@ -113,9 +127,13 @@ var FAQGROUP = {
         $('#dealbox-language .save-btn').on('click', function(){
             const obj = $(this);
             obj.button('loading');
-            post(URI+'faq', $('#dealbox-language form').serializeArray(), function(){
-                obj.button('reset');
-                window.location.reload();
+            post(URI+'faq', $('#dealbox-language form').serializeArray(), function(res){
+                showTips(res);
+                if (res.code == 200) {
+                    window.location.reload();
+                } else {
+                    obj.button('reset');
+                }
             });
             return false;
         });

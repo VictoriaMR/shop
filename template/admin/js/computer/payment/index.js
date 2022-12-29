@@ -9,13 +9,13 @@ const PAYMENT = {
 			const _thisobj = $(this);
 			_thisobj.button('loading');
 			const id = _thisobj.parents('tr').data('id');
-			$.post(URI+'payment', {opn: 'getInfo', id: id}, function(res){
-				_thisobj.button('reset');
-				if (res.code === '200') {
+			post(URI+'payment', {opn: 'getInfo', id: id}, function(res){
+				if (res.code === 200) {
 					_this.showViewModal(res.data);
 				} else {
-					errorTips(res.message);
+					showTips(res);
 				}
+				_thisobj.button('reset');
 			});
 		});
 		//新增配置账号
@@ -27,13 +27,13 @@ const PAYMENT = {
 			const _thisobj = $(this);
 			_thisobj.button('loading');
 			const id = _thisobj.parents('tr').data('id');
-			$.post(URI+'payment', {opn: 'getInfo', id: id}, function(res){
-				_thisobj.button('reset');
-				if (res.code === '200') {
+			post(URI+'payment', {opn: 'getInfo', id: id}, function(res){
+				if (res.code === 200) {
 					_this.showEditModal(res.data);
 				} else {
-					errorTips(res.message);
+					showTips(res);
 				}
+				_thisobj.button('reset');
 			});
 		});
 		//保存账号配置
@@ -52,12 +52,11 @@ const PAYMENT = {
 				return false;
 			}
 			_thisobj.button('loading');
-			$.post(URI+'payment', $('#partEdit form').serializeArray(), function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'payment', $('#partEdit form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
-					errorTips(res.message);
 					_thisobj.button('reset');
 				}
 			});
@@ -67,13 +66,12 @@ const PAYMENT = {
 			const _thisobj = $(this);
 			_thisobj.button('loading');
 			const id = _thisobj.parents('tr').data('id');
-			$.post(URI+'payment', {opn: 'deleteInfo', id: id}, function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'payment', {opn: 'deleteInfo', id: id}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -82,12 +80,10 @@ const PAYMENT = {
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
 			const type = _thisobj.data('type');
 			const id = _thisobj.parents('tr').data('id');
-			$.post(URI+'payment', {opn: 'modifyInfo', id: id, [type]:status}, function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'payment', {opn: 'modifyInfo', id: id, [type]:status}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					_thisobj.switchBtn(status);
-				} else {
-					errorTips(res.message);
 				}
 			});
 		});
@@ -113,15 +109,15 @@ const PAYMENT = {
 				remark: '',
 			};
 		}
+		var obj = $('#partEdit');
 		for (const i in data) {
 			if (i === 'is_sandbox' || i === 'status') {
-				console.log(i, 'i')
-				$('#partEdit [name="'+i+'"][value="'+data[i]+'"]').prop('checked', true);
+				obj.find('[name="'+i+'"][value="'+data[i]+'"]').prop('checked', true);
 			} else {
-				$('#partEdit [name="'+i+'"]').val(data[i]);	
+				obj.find('[name="'+i+'"]').val(data[i]);	
 			}
 		}
-		$('#partEdit .modal-title').text(data.payment_id ? '编辑账号' : '添加账号');
-		$('#partEdit').modal('show');
+		obj.find('.modal-title').text(data.payment_id ? '编辑账号' : '添加账号');
+		obj.modal('show');
 	}
 };

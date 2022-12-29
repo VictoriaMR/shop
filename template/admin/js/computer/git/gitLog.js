@@ -3,12 +3,11 @@ $(function(){
         var _thisobj = $(this);
         var id = _thisobj.data('id');
         _thisobj.button('loading');
-        $.post(URI+'git/gitLog', {opn:'updateGit', id:id}, function(res){
-            if (res.code == '200') {
-                successTips(res.msg);
+        post(URI+'git/gitLog', {opn:'updateGit', id:id}, function(res){
+            showTips(res);
+            if (res.code == 200) {
                 window.location.reload();
             } else {
-                errorTips(res.msg);
                 _thisobj.button('reset');
             }
         });
@@ -17,12 +16,11 @@ $(function(){
         var _thisobj = $(this);
         var id = _thisobj.parents('tr').data('id');
         _thisobj.button('loading');
-        $.post(URI+'git/gitLog', {opn:'releaseGit', id:id}, function(res){
-            if (res.code == '200') {
-                successTips(res.msg);
+        post(URI+'git/gitLog', {opn:'releaseGit', id:id}, function(res){
+            showTips(res);
+            if (res.code == 200) {
                 window.location.reload();
             } else {
-                errorTips(res.msg);
                 _thisobj.button('reset');
             }
         });

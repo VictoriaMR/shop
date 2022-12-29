@@ -80,10 +80,13 @@ class Index extends AdminBase
 		$out = [];
 		$cmd = 'wmic OS get FreePhysicalMemory';
 		exec($cmd, $out);
-		$data['memory_used'] = sprintf('%.2f', ($out[1] ?? 0) / 1024);
-		$data['memory_free'] = sprintf('%.2f', ($data['memory_total'] - $data['memory_used'])).'M';
-		$data['memory_total'] .= 'M';
-		$data['memory_used'] .= 'M';
+		$data['memory_free'] = sprintf('%.2f', ($out[1] ?? 0) / 1024);
+		$data['memory_used'] = sprintf('%.2f', $data['memory_total'] - $data['memory_free']);
+		$data['memory_used_rate'] = sprintf('%.2f', $data['memory_used'] / $data['memory_total']*100).'%';
+		$data['memory_total'] .= ' M';
+		$data['memory_used'] .= ' M';
+		$data['memory_free'] .= ' M';
+		//内存使用
 
 		exec('wmic logicaldisk get FreeSpace,size /format:list', $out);
 		$size = $freespace = 0;
@@ -116,6 +119,10 @@ class Index extends AdminBase
 		$data['memory_total'] = sprintf('%.2f', ($memData[0] + ($swapData[0] ?? 0)) / 1024);
 		$data['memory_used'] = sprintf('%.2f', ($memData[1] + ($swapData[1] ?? 0)) / 1024);
 		$data['memory_free'] = sprintf('%.2f', ($data['memory_total'] - $data['memory_used']));
+		$data['memory_used_rate'] = sprintf('%.2f', $data['memory_used'] / $data['memory_total']*100).'%';
+		$data['memory_total'] .= ' M';
+		$data['memory_used'] .= ' M';
+		$data['memory_free'] .= ' M';
 		$data['loadpercentage'] = ((sys_getloadavg()[0] ?? 0)*100).'%';
 		$total = disk_total_space('/');
 		$free = disk_free_space('/');

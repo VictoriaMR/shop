@@ -93,9 +93,15 @@
 				</tr>
 				<?php } ?>
 				<tr>
-					<td width="130">CPU使用</td>
+					<td width="130">CPU使用率</td>
 					<td>
 						<strong id="loadpercentage">0%</strong>
+					</td>
+				</tr>
+				<tr>
+					<td width="130">内存使用率</td>
+					<td>
+						<strong id="memory_used_rate">0%</strong>
 					</td>
 				</tr>
 				<tr>

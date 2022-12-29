@@ -52,7 +52,7 @@ function post(url, data, callbck) {
 		dataType: 'json',
 		success: function(res){
 	        if (typeof callbck == 'function') {
-	        	callbck(res.data);
+	        	callbck(res);
 	        }
 	    },
 	    error: function(xhr,status,error) {
@@ -254,7 +254,7 @@ function guid() {
 							callback(res.data, thisobj);
 						}
 					} else {
-						errorTips(res.msg);
+						showTips(res);
 						thisobj.removeClass('loading').attr('src', thisobj.data('src'));
 					}
             	});

@@ -19,7 +19,7 @@ const CONTROLLERLIST = {
 				if (res.code === 200) {
 					_this.dealboxData(res.data);
 				} else {
-					errorTips(res.msg);
+					showTips(res);
 				}
 				_thisobj.button('reset');
 			});

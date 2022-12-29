@@ -9,8 +9,11 @@ const SITEINFO = {
 		$('#site-status .switch_botton').on('click', function(){
 			const _thisobj = $(this);
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
-			post(URI+'site', {opn: 'modifySite', id: _this.id, status: status}, function(){
-				_thisobj.switchBtn(status);
+			post(URI+'site', {opn: 'modifySite', id: _this.id, status: status}, function(res){
+				showTips(res);
+				if (res.code == 200) {
+					_thisobj.switchBtn(status);
+				}
 			});
 		});
 		//站点名称
@@ -37,14 +40,13 @@ const SITEINFO = {
 			const _thisobj = $(this);
 			const id = _thisobj.parents('tr').data('id');
 			_thisobj.button('loading');
-			$.post(URI+'site', {opn: 'domainInfo', id: id}, function(res){
-				_thisobj.button('reset');
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'site', {opn: 'domainInfo', id: id}, function(res){
+				if (res.code === 200) {
 					_this.initDomainInfo('编辑域名', res.data);
 				} else {
-					errorTips(res.message);
+					showTips(res);
 				}
+				_thisobj.button('reset');
 			});
 		});
 		//删除域名
@@ -52,12 +54,12 @@ const SITEINFO = {
 			const id = $(this).parents('tr').data('id');
 			confirm('确定要删除这个域名吗?', function(obj){
 				obj.button('loading');
-				$.post(URI+'site', {opn: 'deleteDomain', id: id}, function(res){
-					obj.button('reset');
-					if (res.code === '200') {
+				post(URI+'site', {opn: 'deleteDomain', id: id}, function(res){
+					showTips(res);
+					if (res.code === 200) {
 						window.location.reload();
 					} else {
-						errorTips(res.message);
+						obj.button('reset');
 					}
 				});
 			});
@@ -67,20 +69,24 @@ const SITEINFO = {
 			const _thisobj = $(this);
 			const id = _thisobj.parents('tr').data('id');
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
-			$.post(URI+'site', {opn: 'modifyDomain', id: id, status: status}, function(res){
-				if (res.code === '200') {
-					successTips(res.message);
+			post(URI+'site', {opn: 'modifyDomain', id: id, status: status}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					_thisobj.switchBtn(status);
-				} else {
-					errorTips(res.message);
 				}
 			});
 		});
 		//域名保存按钮
 		$('#domain-info .btn.save-btn').on('click', function(){
 			const obj = $(this);
-			post(URI+'site', obj.parents('form').serializeArray(), function(){
-				window.location.reload();
+			obj.button('loading');
+			post(URI+'site', obj.parents('form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code == 200) {
+					window.location.reload();
+				} else {
+					obj.button('reset');
+				}
 			});
 		});
 		//名称 模板确认
@@ -98,13 +104,12 @@ const SITEINFO = {
 				return false;
 			}
 			_thisobj.button('loading');
-			$.post(URI+'site', _thisobj.parent('form').serializeArray(), function(res){
-				if (res.code === '200') {
-					successTips(res.message)
+			post(URI+'site', _thisobj.parent('form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -113,13 +118,12 @@ const SITEINFO = {
 			const code = $(this).parents('tr').data('code');
 			confirm('确认要删除该语言吗?', function(_thisobj){
 				_thisobj.button('loading');
-				$.post(URI+'site', {opn: 'deleteLanguage', code: code, site_id: _this.id}, function(res){
-					if (res.code === '200') {
-						successTips(res.message)
+				post(URI+'site', {opn: 'deleteLanguage', code: code, site_id: _this.id}, function(res){
+					showTips(res);
+					if (res.code === 200) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
-						errorTips(res.message);
 					}
 				});
 			});
@@ -129,13 +133,12 @@ const SITEINFO = {
 			const _thisobj = $(this);
 			const code = _thisobj.parents('tr').data('code');
 			_thisobj.button('loading');
-			$.post(URI+'site', {opn: 'addLanguage', code: code, site_id: _this.id}, function(res){
-				if (res.code === '200') {
-					successTips(res.message)
+			post(URI+'site', {opn: 'addLanguage', code: code, site_id: _this.id}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -143,12 +146,10 @@ const SITEINFO = {
 		$('#language-table [name="sort"]').on('blur', function(){
 			const id = $(this).parents('tr').data('id');
 			const sort = $(this).val();
-			$.post(URI+'site', {opn: 'sortLanguage', id: id, sort: sort}, function(res){
-				if (res.code === '200') {
-					successTips(res.message)
+			post(URI+'site', {opn: 'sortLanguage', id: id, sort: sort}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
-				} else {
-					errorTips(res.message);
 				}
 			});
 		});
@@ -157,13 +158,12 @@ const SITEINFO = {
 			const code = $(this).parents('tr').data('code');
 			confirm('确认要删除该货币吗?', function(_thisobj){
 				_thisobj.button('loading');
-				$.post(URI+'site', {opn: 'deleteCurrency', code: code, site_id: _this.id}, function(res){
-					if (res.code === '200') {
-						successTips(res.message)
+				post(URI+'site', {opn: 'deleteCurrency', code: code, site_id: _this.id}, function(res){
+					showTips(res);
+					if (res.code === 200) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
-						errorTips(res.message);
 					}
 				});
 			});
@@ -173,13 +173,12 @@ const SITEINFO = {
 			const _thisobj = $(this);
 			const code = _thisobj.parents('tr').data('code');
 			_thisobj.button('loading');
-			$.post(URI+'site', {opn: 'addCurrency', code: code, site_id: _this.id}, function(res){
-				if (res.code === '200') {
-					successTips(res.message)
+			post(URI+'site', {opn: 'addCurrency', code: code, site_id: _this.id}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
-					errorTips(res.message);
 				}
 			});
 		});
@@ -187,12 +186,10 @@ const SITEINFO = {
 		$('#site-currency [name="sort"]').on('blur', function(){
 			const id = $(this).parents('tr').data('id');
 			const sort = $(this).val();
-			$.post(URI+'site', {opn: 'sortCurrency', id: id, sort: sort}, function(res){
-				if (res.code === '200') {
-					successTips(res.message)
+			post(URI+'site', {opn: 'sortCurrency', id: id, sort: sort}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
-				} else {
-					errorTips(res.message);
 				}
 			});
 		});
@@ -200,12 +197,10 @@ const SITEINFO = {
 		$('.text-content textarea').on('blur', function(){
 			const value = $(this).val();
 			const name = this.name;
-			$.post(URI+'site', {opn: 'updateKeyword', value: value, site_id: _this.id, name: name}, function(res){
-				if (res.code === '200') {
-					successTips(res.message)
+			post(URI+'site', {opn: 'updateKeyword', value: value, site_id: _this.id, name: name}, function(res){
+				showTips(res);
+				if (res.code === 200) {
 					window.location.reload();
-				} else {
-					errorTips(res.message);
 				}
 			});
 		});
@@ -213,29 +208,34 @@ const SITEINFO = {
 			const _thisobj = $(this);
 			const type = _thisobj.parents('.item').data('id');
 			$('#dealbox-language input[name="source_text"]').val(_thisobj.parents('.item').next().find('textarea').val());
-			post(URI+'site', {opn: 'getLanguage', site_id: _this.id, type: type}, function(data){
-				const obj = $('#dealbox-language');
-				obj.find('input[name="type"]').val(type);
-				obj.find('table textarea').val('');
-				let html = '<tr>\
-								<th style="width:88px">语言名称</th>\
-								<th>\
-									<span>文本</span>\
-									<span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
-								</th>\
-							</tr>';
-				for (const i in data) {
-					html += '<tr>\
-								<th>\
-									<span>'+data[i].name2+'</span>\
-								</th>\
-								<td class="p0">\
-									<textarea name="language['+data[i].code+']" data-tr_code="'+data[i].tr_code+'" class="form-control" autocomplete="off" rows="3">'+data[i].tr_text+'</textarea>\
-								</td>\
-							</tr>';
+			post(URI+'site', {opn: 'getLanguage', site_id: _this.id, type: type}, function(res){
+				if (res.code == 200) {
+					var data = res.data;
+					const obj = $('#dealbox-language');
+					obj.find('input[name="type"]').val(type);
+					obj.find('table textarea').val('');
+					let html = '<tr>\
+									<th style="width:88px">语言名称</th>\
+									<th>\
+										<span>文本</span>\
+										<span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
+									</th>\
+								</tr>';
+					for (const i in data) {
+						html += '<tr>\
+									<th>\
+										<span>'+data[i].name2+'</span>\
+									</th>\
+									<td class="p0">\
+										<textarea name="language['+data[i].code+']" data-tr_code="'+data[i].tr_code+'" class="form-control" autocomplete="off" rows="3">'+data[i].tr_text+'</textarea>\
+									</td>\
+								</tr>';
+					}
+					obj.find('table tbody').html(html);
+					obj.dealboxShow();
+				} else {
+					showTips(res);
 				}
-				obj.find('table tbody').html(html);
-				obj.dealboxShow();
 			});
 		});
 		//智能翻译
@@ -251,12 +251,12 @@ const SITEINFO = {
 				if (value === '') {
 					const _thisobj = $(this);
 					const tr_code = _thisobj.data('tr_code');
-					$.post(URI+'site', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
+					post(URI+'site', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
-						if (res.code === '200') {
+						if (res.code === 200) {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.message);
+							showTips(res);
 						}
 						if (len === 0) {
 							thisobj.button('reset');
@@ -274,9 +274,13 @@ const SITEINFO = {
 		$('#dealbox-language .save-btn').on('click', function(){
 			const obj = $(this);
 			obj.button('loading');
-			post(URI+'site', $('#dealbox-language form').serializeArray(), function(){
-				obj.button('reset');
-				window.location.reload();
+			post(URI+'site', $('#dealbox-language form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code == 200) {
+					window.location.reload();
+				} else {
+					obj.button('reset');
+				}
 			});
 			return false;
 		});

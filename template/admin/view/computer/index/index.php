@@ -15,7 +15,6 @@
 				<div class="info">
 					<p class="e1 cf"><?php echo $info['name'];?>&nbsp;&nbsp;&nbsp;<?php echo $info['mem_id'];?></p>
 					<p class="e1 cr"><?php echo $info['mobile'];?></p>
-					<a href="<?php echo adminUrl('login/logout');?>" class="glyphicon glyphicon-off cr" title="退出登录"></a>
 				</div>
 			</div>
 			<div class="left-content">

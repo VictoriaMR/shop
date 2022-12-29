@@ -16,7 +16,7 @@ const ATTRIBUTE = {
 				if (res.code == 200) {
 					_this.initData(res.data);
 				} else {
-					errorTips(res.msg);
+					showTips(res);
 				}
 				btnobj.button('reset');
 			});
@@ -52,7 +52,7 @@ const ATTRIBUTE = {
 					obj.find('table tbody').html(html);
 					obj.dealboxShow();
 				} else {
-					errorTips(res.msg);
+					showTips(res);
 				}
 			});
 		});
@@ -73,7 +73,7 @@ const ATTRIBUTE = {
 						if (res.code === 200) {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.message);
+							showTips(res);
 						}
 						if (len === 0) {
 							thisobj.button('reset');

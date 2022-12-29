@@ -6,6 +6,7 @@ const LOGIN = {
 		var phoneObj = $('input[name="phone"]');
 		var codeObj = $('input[name="code"]');
 		var passwordObj = $('input[name="password"]');
+		var errorObj = $('#login-error');
 		$('#login-btn').on('click', function() {
 			let msg = '';
 			$('#login-error').addClass('hidden');
@@ -32,15 +33,15 @@ const LOGIN = {
 				}
 			});
 			if (msg != '') {
-				$('#login-error').removeClass('hidden').find('#login-error-msg').text(msg);
+				errorObj.removeClass('hidden').find('#login-error-msg').text(msg);
 				return false;
 			}
 			thisobj.button('loading');
-			$.post(URI+'login/login', $(this).parent('form').serializeArray(), function(res) {
-				if (res.code === 200 || res.code === '200') {
+			post(URI+'login/login', $(this).parent('form').serializeArray(), function(res) {
+				if (res.code === 200) {
 					window.location.href = res.data.url;
 				} else {
-					$('#login-error').removeClass('hidden').find('#login-error-msg').text(res.msg);
+					errorObj.removeClass('hidden').find('#login-error-msg').text(res.msg);
 					thisobj.button('reset');
 				}
 			});
@@ -50,18 +51,20 @@ const LOGIN = {
 			const code = $(this).val();
 			const thisobj = $(this);
 			if (!VERIFY.code(code)) {
-				$('#login-error').removeClass('hidden').find('#login-error-msg').text('验证码格式不正确');
+				errorObj.removeClass('hidden').find('#login-error-msg').text('验证码格式不正确');
 				thisobj.parent().find('iconfont').remove();
 				return false;
 			}
-			$.post(URI+'login/checkCode', {code: code}, function(res) {
+			post(URI+'login/checkCode', {code: code}, function(res) {
 				if (res.code === 200) {
-					$('#login-error').addClass('hidden');
+					errorObj.addClass('hidden');
+				} else {
+					errorObj.removeClass('hidden').find('#login-error-msg').text(res.msg);
 				}
 			});
 		});
 		$('input').on('focus', function(){
-			$('#login-error').addClass('hidden');
+			errorObj.addClass('hidden');
 		});
 		phoneObj.on('blur', function(){
 			var value = $(this).val();

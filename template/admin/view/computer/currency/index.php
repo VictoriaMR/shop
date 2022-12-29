@@ -1,4 +1,8 @@
 <div class="container-fluid">
+    <div style="text-align: right;">
+        <button class="btn btn-success add"><span class="glyphicon glyphicon-plus"></span>&nbsp;新增货币</button>
+        <button class="btn btn-primary update"><span class="glyphicon glyphicon-refresh"></span>&nbsp;更新汇率</button>
+    </div>
     <table class="table table-hover mt10">
         <tbody>
             <tr>
@@ -40,12 +44,24 @@
     <div class="centerShow">
         <form class="form-horizontal">
             <button type="button" class="close" aria-hidden="true">&times;</button>
-            <div class="f24 dealbox-title">属性管理</div>
-            <input type="hidden" name="id" value="0">
-            <input type="hidden" name="opn" value="editDescInfo">
+            <div class="f24 dealbox-title">货币管理</div>
+            <input type="hidden" name="id" value="">
+            <input type="hidden" name="opn" value="editCurrencyInfo">
+            <div class="input-group">
+                <div class="input-group-addon"><span>货币：</span></div>
+                <input type="text" class="form-control" name="code" autocomplete="off">
+            </div>
             <div class="input-group">
                 <div class="input-group-addon"><span>名称：</span></div>
                 <input type="text" class="form-control" name="name" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon"><span>符号：</span></div>
+                <input type="text" class="form-control" name="symbol" autocomplete="off">
+            </div>
+            <div class="input-group">
+                <div class="input-group-addon"><span>汇率：</span></div>
+                <input type="text" class="form-control" name="rate" autocomplete="off">
             </div>
             <button type="button" class="btn btn-primary btn-lg w100 save-btn">确认</button>
         </form>

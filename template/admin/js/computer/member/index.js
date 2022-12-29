@@ -3,20 +3,24 @@ $(function(){
 });
 const MEMBERLIST = {
 	init: function() {
+		var _this = this;
 		$('#add-data-btn').on('click', function(){
-			const obj = $(this);
-			obj.button('loading');
-			MEMBERLIST.initDealbox(0, function(){
-				obj.button('reset');
-			});
+			_this.dealboxData({});
 		});
 		//保存按钮
 		$('#dealbox .btn.save').on('click', function(){
-			if (!$(this).parents('form').formFilter()) {
+			const obj = $(this);
+			if (!obj.parents('form').formFilter()) {
 				return false;
 			}
-			post(URI+'member', $(this).parents('form').serializeArray(), function(data){
-				window.location.reload();
+			obj.button('loading');
+			post(URI+'member', $(this).parents('form').serializeArray(), function(res){
+				showTips(res);
+				if (res.code == 200) {
+					window.location.reload();
+				} else {
+					obj.button('reset');
+				}
 			});
 		});
 		$('#dealbox .switch_botton').on('click', function(){
@@ -29,29 +33,28 @@ const MEMBERLIST = {
 		$('#data-list .switch_botton').on('click', function(){
 			const obj = $(this);
 			const status = obj.data('status') == 0 ? 1 : 0;
-			post(URI+'member', {opn:'modify', mem_id: $(this).parents('tr').data('id'), status: status}, function(data) {
-				obj.switchBtn(status);
+			post(URI+'member', {opn:'modify', mem_id: $(this).parents('tr').data('id'), status: status}, function(res) {
+				showTips(res);
+				if (res.code == 200) {
+					obj.switchBtn(status);
+				}
 			});
 		});
 		//修改
 		$('#data-list .btn.modify').on('click', function(){
 			const obj = $(this);
 			obj.button('loading');
-			MEMBERLIST.initDealbox(obj.parents('tr').data('id'), function(){
+			post(URI+'member', {opn:'getInfo', mem_id: obj.parents('tr').data('id')}, function(res) {
+				if (res.code == 200) {
+					_this.dealboxData(res.data);
+				} else {
+					showTips(res);
+				}
 				obj.button('reset');
 			});
 		});
 	},
-	initDealbox: function(mem_id, callback) {
-		if (mem_id) {
-			post(URI+'member', {opn:'getInfo', mem_id: mem_id}, function(data) {
-				MEMBERLIST.dealboxData(data, callback);
-			});
-		} else {
-			MEMBERLIST.dealboxData({}, callback);
-		}
-	},
-	dealboxData: function(data, callback) {
+	dealboxData: function(data) {
 		const obj = $('#dealbox');
 		obj.find('input:not(.no_replace)').val('');
 		if (data) {
@@ -70,8 +73,5 @@ const MEMBERLIST = {
 		}
 		obj.find('.switch_botton').switchBtn(status);
 		obj.dealboxShow();
-		if (callback) {
-			callback();
-		}
 	}
 };
