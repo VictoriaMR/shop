@@ -261,6 +261,11 @@ function guid() {
 			});
 		});
 	};
+	$.fn.autoHeight = function(){
+		$(this).each(function(){
+			$(this).height(this.scrollHeight - 12);
+		});
+	};
 }(jQuery));
 $(function(){
 	$('form .btn-group .btn').on('click', function(){

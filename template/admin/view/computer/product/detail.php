@@ -31,13 +31,6 @@
 				</dd>
 			</dl>
 			<dl class="field-row">
-				<dt>性别：</dt>
-				<dd><?php echo $info['gender_text'];?></dd>
-				<dd>
-					<button type="button" class="btn btn-primary btn-xs gender-btn">修改</button>
-				</dd>
-			</dl>
-			<dl class="field-row">
 				<dt>邮费：</dt>
 				<dd><?php echo $info['data']['post_fee'];?></dd>
 				<dd>

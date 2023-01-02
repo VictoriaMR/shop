@@ -11,9 +11,9 @@ class Error
 		} else {
 			error_reporting(0);
 		}
-		set_error_handler([$this, 'errorDebug']);
-		set_exception_handler([$this, 'exceptionDebug']);
-		register_shutdown_function([$this, 'shutdownDebug']);
+		set_exception_handler(array($this, 'exceptionDebug'));
+		set_error_handler(array($this, 'errorDebug'));
+		register_shutdown_function(array($this, 'shutdownDebug'));
 	}
 
 	public function errorDebug($errno, $errStr, $errfile='', $errline='')
@@ -24,6 +24,9 @@ class Error
 	public function exceptionDebug($exception)
 	{
 		$this->errorEcho($exception->getFile(), $exception->getLine(), $exception->getMessage());
+		foreach ($exception->getTrace() as $value) {
+			$this->errorEcho($value['file'], $value['line'], $value['class'].$value['type'].$value['function']);
+		}
 	}
 
 	public function shutdownDebug()
@@ -32,6 +35,8 @@ class Error
 		if ($_error) {
 			$this->errorEcho($_error['file'], $_error['line'], $_error['message']);
 		}
+		$this->echoParmas();
+		exit();
 	}
 
 	protected function echoParmas()
@@ -62,14 +67,9 @@ class Error
 				echo 'File: '.$file.'<br />';
 				echo 'Line: '.$line.'<br />';
 				echo 'Error Message: '.$message.'<br />';
-				$this->echoParmas();
 			} else {
 				\App::set('app_error', $message);
-				if (\App::get('router', 'path') != 'PageNotFound') {
-					// redirect(url('pageNotFound'));
-				}
 			}
 		}
-		exit();
 	}
 }

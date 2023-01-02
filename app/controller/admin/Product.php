@@ -156,19 +156,19 @@ class Product extends AdminBase
 	protected function getSpuNameLanguage()
 	{
 		$id = ipost('id');
-		$info = make('app/service/product/Language')->getListData(['spu_id'=>$id]);
-		$info = array_column($info, null, 'lan_id');
-		$info[0]['language_name'] = '名称';
-		$languageList = make('app/service/Language')->getListCache();
+		$list = make('app/service/product/Language')->getListData(['spu_id'=>$id]);
+		$list = array_column($list, null, 'lan_id');
+		$list[0]['language_name'] = '名称';
+		$languageList = make('app/service/Language')->getListData();
 		foreach ($languageList as $key => $value) {
-			$info[$value['lan_id']] = [
-				'lan_id' => $value['code'],
+			$list[$value['lan_id']] = [
+				'lan_id' => $value['lan_id'],
 				'tr_code' => $value['tr_code'],
-				'name' => empty($info[$value['lan_id']]) ? '' : $info[$value['lan_id']]['name'],
-				'language_name' => $value['name'],
+				'name' => empty($list[$value['lan_id']]) ? '' : $list[$value['lan_id']]['name'],
+				'language_name' => $value['name2'],
 			];
 		}
-		$this->success($info, '');
+		$this->success($list, '');
 	}
 
 	protected function editSpuLanguage()

@@ -34,23 +34,16 @@ final class Query
 		return $this;
 	}
 
-	public function where($columns, $operator=null, $value=null)
+	public function where($columns, $operator=null, $val1=null, $val2=null)
 	{
-		if (empty($columns)) return $this;
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
-				if (is_array($value)) {
-					$this->_where[] = [$key, $value[0], $value[1]];
-				} else {
-					$this->_where[] = [$key, '=', $value];
-				}
+				if (is_array($value)) $this->_where[] = isset($value[2]) ? [$key, strtoupper($value[0]), $value[1], $value[2]] : [$key, strtoupper($value[0]), $value[1]];
+				else $this->_where[] = [$key, '=', $value];
 			}
 		} else {
-			if (is_null($value)) {
-				$value = $operator;
-				$operator = '=';
-			}
-			$this->_where[] = [$columns, $operator, $value];
+			if (is_null($value)) $this->_where[] = [$columns, '=', $operator];
+			else $this->_where[] = [$columns, $operator, $value];
 		}
 		return $this;
 	}
@@ -63,35 +56,29 @@ final class Query
 
 	public function orderBy($columns, $operator=null)
 	{
-		if (empty($columns)) return $this;
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
-				$this->_orderBy .= $this->formatKey($key).' '.$value.',';
+				$this->_orderBy .= $this->formatKey($key).' '.strtoupper($value).',';
 			}
-		} else {
-			$this->_orderBy .= $this->formatKey($columns).' '.$operator.',';
-		}
+		} else $this->_orderBy .= $this->formatKey($columns).' '.strtoupper($operator).',';
 		return $this;
 	}
 
 	public function groupBy($columns)
 	{
-		if (empty($columns)) return $this;
-		$this->_groupBy .= $this->formatKey(trim($columns)).',';
+		$this->_groupBy .= $this->formatKey($columns);
 		return $this;
 	}
 
 	public function having($columns, $operator, $value)
 	{
-		if (empty($columns)) return $this;
 		$this->_having = $this->formatKey($columns).' '.$operator.' '.$value;
 		return $this;
 	}
 
 	public function field($columns)
 	{
-		if (empty($columns)) return $this;
-		$this->_columns .= trim($columns).',';
+		$this->_columns .= is_array($columns) ? implode(',', $columns) : $columns;
 		return $this;
 	}
 
@@ -119,14 +106,27 @@ final class Query
 	public function value($name)
 	{
 		$this->_columns = $name;
-		$info = $this->find();
-		return $info[$name] ?? '';
+		return $this->find();
 	}
 
 	public function count()
 	{
-		$this->_columns = 'COUNT(*) AS count';
-		return $this->find()['count'] ?? 0;
+		return $this->value('COUNT(*) AS core_count')['core_count'] + 0;
+	}
+
+	public function max($field)
+	{
+		return $this->value('MAX('.$this->formatKey($field).') AS core_max')['core_max']+0;
+	}
+
+	public function min($field)
+	{
+		return $this->value('MIN('.$this->formatKey($field).') AS core_min')['core_min']+0;
+	}
+
+	public function sum($field)
+	{
+		return $this->value('SUM('.$this->formatKey($field).') AS core_sum')['core_sum']+0;
 	}
 
 	public function insert(array $data)
@@ -204,9 +204,7 @@ final class Query
 
 	public function insertGetId($data)
 	{
-		if (empty($data)) return false;
-		$result = $this->insert($data);
-		if (!$result) return false;
+		if (!$this->insert($data)) return false;
 		$result = $this->getQuery('SELECT LAST_INSERT_ID() AS last_insert_id');
 		if (empty($result)) return false;
 		return $result[0]['last_insert_id'] ?? false;
@@ -221,65 +219,35 @@ final class Query
 	private function getSql()
 	{
 		$whereString = $this->analyzeWhere();
-		$sql = sprintf('SELECT %s FROM %s', empty($this->_columns) ? '*' : rtrim($this->_columns, ','), $this->_table);
-		if (!empty($whereString)) {
-			$sql .= ' WHERE ' . $whereString;
-		}
-		if (!empty($this->_groupBy)) {
-			$sql .= ' GROUP BY ' . rtrim($this->_groupBy, ',');
-		}
-		if (!empty($this->_orderBy)) {
-			$sql .= ' ORDER BY ' . rtrim($this->_orderBy, ',');
-		}
-		if (!is_null($this->_offset)) {
-			$sql .= ' LIMIT ' . $this->_offset;
-			$sql .= ',' . $this->_limit;
-		}
-		if (!empty($this->_having)) {
-			$sql .= ' HAVING ' . rtrim($this->_having, ',');
-		}
+		$sql = sprintf('SELECT %s FROM %s', $this->_columns ? $this->_columns : '*', $this->_table);
+		if ($whereString) $sql .= ' WHERE ' . $whereString;
+		if ($this->_groupBy) $sql .= ' GROUP BY ' . $this->_groupBy;
+		if ($this->_orderBy) $sql .= ' ORDER BY ' . trim($this->_orderBy, ',');
+		if ($this->_offset) $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		if ($this->_having) $sql .= ' HAVING ' . $this->_having;
 		return $sql;
 	}
 
 	private function analyzeWhere()
 	{
-		if (empty($this->_where)) return false;
-		$whereString = '';
+		if (empty($this->_where)) return '';
+		$where  = '1=1';
 		foreach ($this->_where as $item) {
-			$fields = explode(',', $item[0]);
-			$operator = strtoupper($item[1]);
-			$value = $item[2];
-			$start = '';
-			$end = '';
-			if (count($fields) > 1) {
-				$start = ' AND (';
-				$type = ' OR';
-				$end = ')';
+			$where .= ' AND '.$this->formatKey($item[0]).' '.$item[1].' ';
+			if ($item[1] == 'BETWEEN') {
+				if (!isset($item[3])) throw new \Exception('sql error: Sql where BETWEEN value error, must have the param 2', 1);
+				$where .= sprintf('%s AND %s', $this->formatValue($item[0], $item[2]), $this->formatValue($item[0], $item[3]));
 			} else {
-				$start = ' AND ';
-				$type = ' AND';
-			}
-			$tempStr = '';
-			foreach ($fields as $fk => $fv) {
-				if ($operator == 'IN' || $operator == 'NOT IN') {
-					$valueStr = '';
-					foreach ($value as $v) {
-						$valueStr .= $this->formatValue($fv, $v).',';
+				if (is_array($item[2])) {
+					$value = [];
+					foreach ($item[2] as $v) {
+						$value[] = $this->formatValue($item[0], $v);
 					}
-					$tempStr .= sprintf('%s %s %s (%s)', $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, rtrim($valueStr, ','));
-				} elseif ($operator == 'BETWEEN') {
-					if (count($value) != 2) {
-						throw new \Exception('Sql where BETWEEN value error', 1);
-					}
-					$tempStr .= sprintf("%s %s %s '%s' AND '%s'", $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, trim($value[0]), trim($value[1]));
-				} else {
-					$tempStr .= sprintf('%s %s %s %s', $fk == 0 ? '' : $type, $this->formatKey($fv), $operator, $this->formatValue($fv, $value));
-				}
+					$where .= '('.implode(',', $value).')';
+				} else $where .= $this->formatValue($item[0], $item[2]);
 			}
-			$whereString .= $start.$tempStr.$end;
 		}
-		if (empty($whereString)) return '';
-		return ltrim(trim($whereString), 'AND ');
+		return $where;
 	}
 
 	public function sql()
@@ -295,21 +263,21 @@ final class Query
 		}
 		$this->_sql = $sql;
 		try {
-			$conn = db($this->_database);
-			$stmt = $conn->query($sql);
-			if ($conn->errno==0) {
-				if (is_bool($stmt)) {
-					return $stmt;
+			$mysqli = db($this->_database);
+			$result = $mysqli->query($sql);
+			if ($mysqli->errno==0) {
+				if (is_bool($result)) {
+					return $result;
 				}
 				$returnData = [];
-				while ($row = $stmt->fetch_assoc()){
+				while ($row = $result->fetch_assoc()){
 				 	$returnData[] = $row;
 				}
-				$stmt->free();
+				$result->free();
 				return $returnData;
 			} else {
 				$error = [];
-				foreach ($conn->error_list as $value) {
+				foreach ($mysqli->error_list as $value) {
 					$error[] = 'SQL: '.$sql;
 					$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
 				}
@@ -317,7 +285,7 @@ final class Query
 			}
 		} catch (\Exception $e){
 			$error = [];
-			foreach ($conn->error_list as $value) {
+			foreach ($mysqli->error_list as $value) {
 				$error[] = 'SQL: '.$sql;
 				$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
 			}

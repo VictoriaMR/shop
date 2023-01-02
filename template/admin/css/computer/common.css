@@ -74,7 +74,7 @@ body{SCROLLBAR-ARROW-COLOR:#2c5784;SCROLLBAR-FACE-COLOR:#D1E2EF;SCROLLBAR-DARKSH
 .avatar-hover{position:relative;height:36px;cursor:pointer}
 .avatar-hover img{margin:0px;padding:0px;vertical-align:top;height:36px;width:36px;border-radius:50%;box-sizing:border-box;position:absolute;left:0px;bottom:0px;transition:700ms;max-width:unset;max-height:unset}
 .avatar-hover:hover img{width:120px;height:120px;transition:700ms}
-.centerShow{box-sizing:border-box;box-shadow:0 5px 7px rgb(0 0 0 / 30%);border-radius:5px;width:580px;height:auto;padding:20px;background-color:#f1f1F1;margin-right:auto;margin-left:auto;text-align:left;position:fixed;z-index:99;max-height:100vh;overflow-y: auto}
+.centerShow{box-sizing:border-box;box-shadow:0 5px 7px rgb(0 0 0 / 30%);border-radius:5px;width:380px;height:auto;padding:20px;background-color:#f1f1F1;margin-right:auto;margin-left:auto;text-align:left;position:fixed;z-index:99;max-height:100vh;overflow-y: auto}
 #dealbox-bigimage .centerShow{width:auto;max-width:980px;max-height:980px}
 .centerShow .dealbox-title,.centerShow .input-group{margin-bottom:20px}
 .centerShow .input-group-addon{min-width:90px;text-align:right}

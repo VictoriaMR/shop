@@ -75,12 +75,13 @@ const PRODUCT = {
 										<span>'+data[i].language_name+'</span>\
 									</th>\
 									<td class="p0">\
-										<textarea class="form-control" rows="2" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" autocomplete="off">'+data[i].name+'</textarea>\
+										<textarea class="form-control" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" autocomplete="off">'+data[i].name+'</textarea>\
 									</td>\
 								</tr>';
 					}
 					obj.find('table tbody').html(html);
 					obj.dealboxShow();
+					obj.find('textarea').autoHeight();
 				} else {
 					showTips(res);
 				}
@@ -103,7 +104,7 @@ const PRODUCT = {
 						if (res.code === 200) {
 							_thisobj.val(res.data);
 						} else {
-							errorTips(res.msg);
+							showTips(res);
 						}
 						if (len === 0) {
 							thisobj.button('reset');

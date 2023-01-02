@@ -88,7 +88,7 @@ class Spu extends Base
 		if ($siteId) {
 			$where['site_id'] = $siteId;
 		}
-		$info = $this->loadData($where, 'spu_id,status,cate_id,gender,attach_id,min_price,max_price,free_ship,is_hot');
+		$info = $this->loadData($where, 'spu_id,status,cate_id,attach_id,min_price,max_price,free_ship,is_hot');
 		if (!$info) return [];
 		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
 			$info['image'] = $this->attachmentFormat(make('app/service/attachment/Attachment')->getList(['attach_id'=>$info['attach_id']]), 400, false);
@@ -219,7 +219,7 @@ class Spu extends Base
 		$info['data'] = make('app/service/product/SpuData')->loadData($spuId);
 		$info['shop'] = make('app/service/supplier/Shop')->loadData($info['data']['shop_id']);
 		//名称
-		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId,'lan_id'=>'zh'])['name'];
+		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$spuId,'lan_id'=>'zh'], 'name')['name'];
 		//图片
 		$info['image'] = make('app/service/product/SpuImage')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
 		//获取sku列表
@@ -293,18 +293,7 @@ class Spu extends Base
 			$descArr[$key]['value'] = $descValueArr[$value['descv_id']] ?? '';
 		}
 		$info['desc'] = $descArr;
-		$info['gender_text'] = $this->getGenderText($info['gender']);
 		return $info;
-	}
-
-	protected function getGenderText($gender)
-	{
-		$arr = [
-			'0' => '默认',
-			'1' => '男',
-			'2' => '女',
-		];
-		return $arr[$gender] ?? '';
 	}
 
 	public function addProduct($data)
@@ -396,7 +385,6 @@ class Spu extends Base
 			$insert = [
 				'status' => 0,
 				'site_id' => $data['bc_product_site'],
-				'gender' => $data['bc_product_gender'] ?? 0,
 				'cate_id' => $data['bc_product_category'],
 				'attach_id' => $allImageArr[$firstImage] ?? 0,
 				'min_price' => $this->getPrice(min($priceArr)),
@@ -604,7 +592,7 @@ class Spu extends Base
 		}
 		$orderBy['rank'] = 'desc';
 		$total = $this->getCountData($where);
-		$list = $this->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, [], lanId(), true);
+		$list = $this->getList($where, 'spu_id,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, [], lanId(), true);
 		foreach ($list as $key=>$value) {
 			$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);
 		}
