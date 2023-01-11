@@ -6,7 +6,7 @@ class App
 	public static function init() 
 	{
 		spl_autoload_register([__CLASS__ , 'autoload']);
-		if (!IS_CLI) self::set('base_info', self::getDomain());
+		if (!isCli()) self::set('base_info', self::getDomain());
 		self::make('frame/Error')->register();
 	}
 
@@ -78,7 +78,7 @@ class App
 		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 		if (config('env', 'APP_DEBUG')) {
 			make('frame/Debug')->runlog();
-			if (self::get('base_info', 'debug') && !IS_CLI && !IS_AJAX) make('frame/Debug')->init();
+			if (self::get('base_info', 'debug') && !isCli() && !IS_AJAX) make('frame/Debug')->init();
 		}
 	}
 

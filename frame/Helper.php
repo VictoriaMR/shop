@@ -2,7 +2,7 @@
 function dd(...$arg){
 	foreach ($arg as $value) {
 		print_r($value);
-		echo IS_CLI ? PHP_EOL : '<br />';
+		echo isCli() ? PHP_EOL : '<br />';
 	}
 	exit();
 }
@@ -88,13 +88,16 @@ function isAjax(){
 function isMobile(){
 	return \App::make('frame/Request')->isMobile();
 }
+function isCli(){
+	return defined('IS_CLI');
+}
 function ipost($name='', $default=null){
 	return \App::make('frame/Request')->ipost($name, $default);
 }
 function iget($name='', $default=null){
 	return \App::make('frame/Request')->iget($name, $default);
 }
-function input($name='', $default=null) {
+function input($name='', $default=null){
 	return \App::make('frame/Request')->input($name, $default);
 }
 function now($time=null){

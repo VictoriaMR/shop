@@ -58,7 +58,7 @@ class Error
 	protected function errorEcho($file, $line, $message)
 	{
 		make('frame/Debug')->runlog($file.PHP_EOL.$line.PHP_EOL.$message);
-		if (IS_CLI) {
+		if (isCli()) {
 			echo 'File: '.$file.PHP_EOL;
 			echo 'Line: '.$line.PHP_EOL;
 			echo 'Error Message: '.$message.PHP_EOL;
