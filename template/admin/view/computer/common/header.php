@@ -17,7 +17,7 @@
 	<?php } ?>
 </head>
 <body>
-<script> const URI='<?php echo APP_DOMAIN;?>';</script>
+<script> const URI='<?php echo domain();?>';</script>
 <div id="progressing"></div>
 <?php if (!empty($_nav)) {?>
 <div id="header-nav" class="container-fluid">

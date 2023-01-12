@@ -291,7 +291,6 @@
 	    <form class="form-horizontal">
 	    	<input type="hidden" name="spu_id" value="<?php echo $info['spu_id'];?>">
 	    	<input type="hidden" name="opn" value="editInfo">
-	    	<input type="hidden" name="is_ajax" value="1">
 	        <button type="button" class="close" aria-hidden="true">&times;</button>
 	        <div class="f24 dealbox-title">产品状态</div>
 	        <div class="input-group">
@@ -313,7 +312,6 @@
 		<form class="form-horizontal">
 			<input type="hidden" name="spu_id" value="<?php echo $info['spu_id'];?>">
 			<input type="hidden" name="opn" value="editInfo">
-			<input type="hidden" name="is_ajax" value="1">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">产品分类</div>
 			<div class="input-group">
@@ -340,7 +338,6 @@
 		<form class="form-horizontal">
 			<input type="hidden" name="spu_id" value="<?php echo $info['spu_id'];?>">
 			<input type="hidden" name="opn" value="editInfo">
-			<input type="hidden" name="is_ajax" value="1">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">产品性别属性</div>
 			<div class="input-group">
@@ -474,7 +471,6 @@
 	<div class="centerShow">
 		<form class="form-horizontal">
 			<input type="hidden" name="opn" value="editDescGroupInfo">
-			<input type="hidden" name="is_ajax" value="1">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">描述分组</div>
 			<div class="input-group">

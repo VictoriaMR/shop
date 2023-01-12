@@ -11,7 +11,7 @@ class Html
 	{
 		$matchPath = '';
 		if ($match) {
-			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
+			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
 			if (empty($name)) {
 				$_route = \App::get('router');
 				$name = lcfirst($_route['path']).DS.$_route['func'];
@@ -30,7 +30,7 @@ class Html
 	{
 		$matchPath = '';
 		if ($match) {
-			$matchPath = (IS_MOBILE ? 'mobile' : 'computer').DS;
+			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
 			if (empty($name)) {
 				$_route = \App::get('router');
 				$name = lcfirst($_route['path']).DS.$_route['func'];
@@ -65,20 +65,20 @@ class Html
 
 	public function getCommonCss()
 	{
-		$arr = config('css', APP_TEMPLATE_TYPE)[IS_MOBILE?'mobile':'computer'];
+		$arr = config('css', type())[isMobile()?'mobile':'computer'];
 		return $this->addStaticFile($arr, 'common', 'css');
 	}
 
 	public function getCommonJs()
 	{
-		$arr = config('js', APP_TEMPLATE_TYPE)[IS_MOBILE?'mobile':'computer'];
+		$arr = config('js', type())[isMobile()?'mobile':'computer'];
 		return $this->addStaticFile($arr, 'common', 'js');
 	}
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
-		$file = 'static'.DS.(IS_MOBILE?'m_':'c_').$name.'.'.$type;
+		$path = ROOT_PATH.'template'.DS.path().DS;
+		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
 		if (\App::get('base_info', 'static_cache') && is_file($file)) {
 			return $file;
 		}

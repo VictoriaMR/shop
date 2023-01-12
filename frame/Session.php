@@ -4,7 +4,7 @@ namespace frame;
 
 class Session
 {
-	public static function set($name, $data=null, $key=null)
+	public function set($name, $data=null, $key=null)
 	{
 		if ($key) {
 			if (!isset($_SESSION[$name])) {
@@ -17,16 +17,21 @@ class Session
 		return true;
 	}
 
-	public static function get($name, $default=null, $key=null)
+	public function get($name, $default=null, $key=null)
 	{
 		if ($key) return isset($_SESSION[$name][$key]) ? $_SESSION[$name][$key] : $default;
 		return $_SESSION[$name] ?? $default;
 	}
 
-	public static function del($name, $key=null)
+	public function del($name, $key=null)
 	{
 		if ($key) unset($_SESSION[$name][$key]);
 		else unset($_SESSION[$name]);
 		return true;
+	}
+
+	public function close()
+	{
+
 	}
 }

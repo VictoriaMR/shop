@@ -8,7 +8,7 @@ class View
 
 	public function display($template, $match=true, $cache=false)
 	{
-		return $this->fetch(ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)], $cache);
+		return $this->fetch(ROOT_PATH.'template'.DS.path().DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)], $cache);
 	}
 
 	protected function fetch($template, array $data=[], $cache=false)
@@ -17,7 +17,7 @@ class View
 			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
 			if (empty(explode('.html', $request_uri)[1])) {
 				$content = $this->getContent($template, $data);
-				$path = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'cache'.DS.(IS_MOBILE?'mobile':'computer').DS.strtolower(currencyId()).DS.lanId('code').DS;
+				$path = ROOT_PATH.'template'.DS.path().DS.'cache'.DS.(isMobile()?'mobile':'computer').DS.strtolower(currencyId()).DS.lanId('code').DS;
 				if (!is_dir($path)) mkdir($path, 0755, true);
 				if (empty($request_uri)) {
 					$path .= 'index.html';
@@ -51,12 +51,12 @@ class View
 	private function getTemplate($template, $match=true)
 	{
 		if ($match) {
-			$matchPath = (IS_MOBILE?'mobile':'computer').DS;
+			$matchPath = (isMobile()?'mobile':'computer').DS;
 			if (empty($template)) {
 				$_route = \App::get('router');
 				$template = lcfirst($_route['path']).DS.$_route['func'];
 			}
-			$template = 'template'.DS.APP_TEMPLATE_PATH.DS.'view'.DS.$matchPath.$template;
+			$template = 'template'.DS.path().DS.'view'.DS.$matchPath.$template;
 		}
 		return ROOT_PATH.$template.'.php';
 	}

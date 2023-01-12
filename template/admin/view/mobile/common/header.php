@@ -23,5 +23,5 @@
 </head>
 <body>
 <script type="text/javascript">
-const URI = "<?php echo APP_DOMAIN;?>";
+const URI = "<?php echo domain();?>";
 </script>

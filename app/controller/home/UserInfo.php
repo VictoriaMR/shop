@@ -11,7 +11,7 @@ class UserInfo extends HomeBase
 		html()->addJs();
 
 		if ($this->isLogin()) {
-			$info = session()->get(APP_TEMPLATE_TYPE.'_info');
+			$info = session()->get(type().'_info');
 			$info['name'] = trim($info['first_name'].' '.$info['last_name']);
 			$temp = explode(' ', $info['mobile']);
 			$info['dialing_code'] = $temp[0];
@@ -85,8 +85,8 @@ class UserInfo extends HomeBase
 		];
 		$rst = make('app/service/Member')->updateData(userId(), $data);
 		if ($rst) {
-			$info = session()->get(APP_TEMPLATE_TYPE.'_info');
-			session()->set(APP_TEMPLATE_TYPE.'_info', $info+$data);
+			$info = session()->get(type().'_info');
+			session()->set(type().'_info', $info+$data);
 			$this->success('Update your info success.');
 		} else {
 			$this->error('Update your info failed.');
@@ -109,7 +109,7 @@ class UserInfo extends HomeBase
 		$avatar = $info['cate'].DS.$info['name'].'.'.$info['type'];
 		$rst = make('app/service/Member')->updateData(userId(), ['avatar'=>$avatar]);
 		if ($rst) {
-			session()->set(APP_TEMPLATE_TYPE.'_info', $info['url'], 'avatar');
+			session()->set(type().'_info', $info['url'], 'avatar');
 		}
 		$this->success('Update your avatar success.');
 	}
@@ -233,7 +233,7 @@ class UserInfo extends HomeBase
 			$size = ipost('size', 10);
 			$list = $this->getAddressList($page, $size);
 		} else {
-			$list = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
+			$list = session()->get(type().'_info.address') ?? [];
 		}
 		$this->success($list);
 	}
@@ -244,7 +244,7 @@ class UserInfo extends HomeBase
 			$id = ipost('id');
 			$info = make('app/service/member/Address')->getInfo($id);
 		} else {
-			$list = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
+			$list = session()->get(type().'_info.address') ?? [];
 			foreach ($list as $value) {
 				if ($value['address_id'] ?? 0 == $id) {
 					$info = $value;
@@ -315,10 +315,10 @@ class UserInfo extends HomeBase
 		$countryInfo = make('app/service/address/Country')->loadData($country_code2, 'dialing_code');
 		$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$phone;
 		if (empty(userId())) {
-			$addressData = session()->get(APP_TEMPLATE_TYPE.'_info.address') ?? [];
+			$addressData = session()->get(type().'_info.address') ?? [];
 			$data['address_id'] = randString(10, false, false, true);
 			$addressData[] = $data;
-			$rst = session()->set(APP_TEMPLATE_TYPE.'_info.address', $addressData);
+			$rst = session()->set(type().'_info.address', $addressData);
 		} else {
 			if (empty($address_id)) {
 				$data['mem_id'] = userId();

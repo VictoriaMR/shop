@@ -163,7 +163,7 @@ class Spu extends Base
 		$spuList = array_column($list, 'spu_id');
 		//获取语言
 		$where = ['spu_id'=>['in', $spuList]];
-		if (IS_ADMIN) {
+		if (isAdmin()) {
 			$where['lan_id'] = 0;
 		} else {
 			if ($lanId == 1 || !$lanId) {

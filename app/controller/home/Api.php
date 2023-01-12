@@ -46,7 +46,7 @@ class Api extends HomeBase
 			$data['cart_count'] = make('app/service/Cart')->getCartCount();
 		}
 		if (!empty($param['login'])) {
-			$data['member'] = userId() ? session()->get(APP_TEMPLATE_TYPE.'_info', []) : [];
+			$data['member'] = userId() ? session()->get(type().'_info', []) : [];
 		}
 		$this->success($data);
 	}

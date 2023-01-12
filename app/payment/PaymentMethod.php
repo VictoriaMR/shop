@@ -110,11 +110,11 @@ abstract class PaymentMethod
 
 	protected function getTemplatePath($driver=true)
 	{
-		$path = ROOT_PATH.APP_TEMPLATE_TYPE.DS.'view'.DS.($driver ? (IS_MOBILE ? 'mobile' : 'computer') : 'common').DS.'common'.DS.'payment'.DS.$this->id.'.php';
+		$path = ROOT_PATH.type().DS.'view'.DS.($driver ? (isMobile() ? 'mobile' : 'computer') : 'common').DS.'common'.DS.'payment'.DS.$this->id.'.php';
 		if (is_file($path)) {
 			return $path;
 		}
-		$path = ROOT_PATH.'template'.DS.'payment'.DS.($driver ? (IS_MOBILE ? 'mobile' : 'computer') : 'common').DS.$this->id.'.php';
+		$path = ROOT_PATH.'template'.DS.'payment'.DS.($driver ? (isMobile() ? 'mobile' : 'computer') : 'common').DS.$this->id.'.php';
 		if (is_file($path)) {
 			return $path;
 		}

@@ -36,7 +36,7 @@ class Contact extends HomeBase
 		$list = make('app/service/message/Message')->getListData(['group_key'=>$key], '*', $page, $size, ['add_time'=>'desc']);
 		if (!empty($list)) {
 			$memId = userId();
-			$userInfo = $value['avatar'] = session()->get(APP_TEMPLATE_TYPE.'_info');
+			$userInfo = $value['avatar'] = session()->get(type().'_info');
 			foreach ($list as $key => $value) {
 				if ($memId == $value['mem_id']) {
 					$value['is_self'] = true;

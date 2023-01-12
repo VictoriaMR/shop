@@ -722,7 +722,7 @@ CREATE TABLE `order` (
   `coupon_id` int(11) NOT NULL DEFAULT '0' COMMENT '优惠券使用ID',
   `payment_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '支付方式ID',
   `lan_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '下单语言',
-  `is_mobile` tinyint(1) NOT NULL DEFAULT '0' COMMENT '下单设备',
+  `isMobile()` tinyint(1) NOT NULL DEFAULT '0' COMMENT '下单设备',
   `currency` varchar(3) NOT NULL DEFAULT '' COMMENT '下单货币',
   `insurance_free` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '保险费用',
   `coupon_free` decimal(6,2) NOT NULL DEFAULT '0.00' COMMENT '优惠券使用折扣',

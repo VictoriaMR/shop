@@ -6,70 +6,90 @@ class Error
 {
 	public function register()
 	{
-		if (config('env', 'APP_DEBUG')) {
-			error_reporting(E_ALL);
-		} else {
-			error_reporting(0);
+		error_reporting(E_ALL);
+		set_error_handler(array($this, 'appError'));
+		set_exception_handler(array($this, 'appException'));
+		register_shutdown_function(array($this, 'appShutdown'));
+	}
+
+	public function appError($errno, $errStr, $errfile='', $errline='')
+	{
+		$this->errorEcho(['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr]);
+	}
+
+	public function appException($exception)
+	{
+		$this->errorEcho(['code'=>$exception->getCode(), 'file'=>$exception->getFile(), 'line'=>$exception->getLine(), 'message'=>$exception->getMessage(), 'trace'=>$exception->getTrace()]);
+	}
+
+	public function appShutdown()
+	{
+		if (error_get_last()) {
+			$_error = error_get_last();
+			$this->errorEcho(['code'=>$_error['code'], 'file'=>$_error['file'], 'line'=>$_error['line'], 'message'=>$_error['message']]);
 		}
-		set_exception_handler(array($this, 'exceptionDebug'));
-		set_error_handler(array($this, 'errorDebug'));
-		register_shutdown_function(array($this, 'shutdownDebug'));
+		//关闭session
+		session()->close();
+		//关闭数据库
+		// db()->close();
+		// redis()->close();
 	}
 
-	public function errorDebug($errno, $errStr, $errfile='', $errline='')
+	protected function errorEcho($data)
 	{
-		$this->errorEcho($errfile, $errline, $errStr);
-	}
-
-	public function exceptionDebug($exception)
-	{
-		$this->errorEcho($exception->getFile(), $exception->getLine(), $exception->getMessage());
-		foreach ($exception->getTrace() as $value) {
-			$this->errorEcho($value['file'], $value['line'], $value['class'].$value['type'].$value['function']);
-		}
-	}
-
-	public function shutdownDebug()
-	{
-		$_error = error_get_last();
-		if ($_error) {
-			$this->errorEcho($_error['file'], $_error['line'], $_error['message']);
-		}
-		$this->echoParmas();
-		exit();
-	}
-
-	protected function echoParmas()
-	{
-		$param = request()->input();
-		if (!empty($param)) {
-			$count = 0;
-			foreach ($param as $key => $value) {
-				if ($count == 0) {
-					echo 'Parmas: '.$key.' => '.$value.'<br />';
-				} else {
-					echo '---------'.$key.' => '.$value.'<br />';
+		$log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
+		make('frame/Debug')->runlog($log);
+		if (isCli() || isDebug()) {
+			$br = isCli() ? PHP_EOL : '<br />';
+			echo 'Error:'.$data['code'].' - '.$this->errorType($data['code']).$br;
+			echo 'File: '.$data['file'].$br;
+			echo 'Line: '.$data['line'].$br;
+			echo 'Error Message: '.$data['message'].$br;
+			if (!empty($data['trace'])) {
+				echo 'Stack trace:'.$br;
+				foreach ($data['trace'] as $key=>$value) {
+					echo "{$key}# {$value['file']}({$value['line']}): {$value['class']}{$value['type']}{$value['function']}()".$br;
 				}
-				$count ++;
 			}
+		} else {
+			\App::set('app_error', $message);
 		}
 	}
 
-	protected function errorEcho($file, $line, $message)
+	private function errorType($code)
 	{
-		make('frame/Debug')->runlog($file.PHP_EOL.$line.PHP_EOL.$message);
-		if (isCli()) {
-			echo 'File: '.$file.PHP_EOL;
-			echo 'Line: '.$line.PHP_EOL;
-			echo 'Error Message: '.$message.PHP_EOL;
-		} else {
-			if (config('env', 'APP_DEBUG')) {
-				echo 'File: '.$file.'<br />';
-				echo 'Line: '.$line.'<br />';
-				echo 'Error Message: '.$message.'<br />';
-			} else {
-				\App::set('app_error', $message);
-			}
+		switch($code) {
+			case E_ERROR: // 1 //
+				return 'E_ERROR';
+			case E_WARNING: // 2 //
+				return 'E_WARNING';
+			case E_PARSE: // 4 //
+				return 'E_PARSE';
+			case E_NOTICE: // 8 //
+				return 'E_NOTICE';
+			case E_CORE_ERROR: // 16 //
+				return 'E_CORE_ERROR';
+			case E_CORE_WARNING: // 32 //
+				return 'E_CORE_WARNING';
+			case E_COMPILE_ERROR: // 64 //
+				return 'E_COMPILE_ERROR';
+			case E_COMPILE_WARNING: // 128 //
+				return 'E_COMPILE_WARNING';
+			case E_USER_ERROR: // 256 //
+				return 'E_USER_ERROR';
+			case E_USER_WARNING: // 512 //
+				return 'E_USER_WARNING';
+			case E_USER_NOTICE: // 1024 //
+				return 'E_USER_NOTICE';
+			case E_STRICT: // 2048 //
+				return 'E_STRICT';
+			case E_RECOVERABLE_ERROR: // 4096 //
+				return 'E_RECOVERABLE_ERROR';
+			case E_DEPRECATED: // 8192 //
+				return 'E_DEPRECATED';
+			case E_USER_DEPRECATED: // 16384 //
+				return 'E_USER_DEPRECATED';
 		}
+		return $code;
 	}
 }

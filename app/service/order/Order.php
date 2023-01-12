@@ -89,7 +89,7 @@ class Order extends Base
 			'mem_id' => $this->userId(),
 			'coupon_id' => $couponId,
 			'lan_id' => $this->lanId(),
-			'is_moblie' => IS_MOBILE ? 1 : 0,
+			'is_moblie' => isMobile() ? 1 : 0,
 			'currency' => $currency,
 			'insurance_free' => $insuranceFree,
 			'coupon_free' => $couponFree,

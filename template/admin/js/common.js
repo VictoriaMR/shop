@@ -44,7 +44,12 @@ function confirm(msg, callbck) {
 	});
 }
 function post(url, data, callbck) {
-	data.is_ajax = 1;
+	if (data.constructor == Array) {
+		data.push({name:'is_ajax',value:1});
+	} else {
+		data.is_ajax = 1;
+	}
+	console.log(data, 'data')
 	$.ajax({
 		url: url,
 		data: data,

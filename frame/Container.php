@@ -16,24 +16,17 @@ final class Container
 		return self::$_instance;
 	}
 
-	public function autoload($concrete, $params=null)
+	public function autoload($concrete, $params=[])
 	{
-		return $this->build($concrete, $params);
-	}
-
-	private function build($concrete, $params)
-	{
-		if ($concrete instanceof Closure) {
-			return $concrete($this);
-		}
+		if ($concrete instanceof Closure) return $concrete($this);
 		$reflector = new \ReflectionClass($concrete);
-		if (!$reflector->isInstantiable()) {
-			return $concrete;
+		if ($reflector->isInstantiable()) {
+			if (is_null($reflector->getConstructor())) {
+				return $reflector->newInstance();
+			} else {
+				return $reflector->newInstance($params);
+			}
 		}
-		if (is_null($reflector->getConstructor()) || is_null($params)) {
-			return $reflector->newInstance();
-		} else {
-			return $reflector->newInstance($params);
-		}
+		throw new \Exception($concrete.' is not instantiable!', 1);
 	}
 }

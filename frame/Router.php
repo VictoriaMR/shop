@@ -84,7 +84,7 @@ final class Router
 			$name = implode('-', array_reverse(array_filter($name)));
 		}
 		if ($name) $name .= $this->paramFormat($param);
-		return ($domain?$domain:APP_DOMAIN).$name;
+		return ($domain?$domain:domain()).$name;
 	}
 
 	public function adminUrl($name='', $param=[])
@@ -95,7 +95,7 @@ final class Router
 				$name .= DS.\App::get('router', 'func');
 			}
 		}
-		return APP_DOMAIN.$name.($param?'?'.http_build_query($param):'');
+		return domain().$name.($param?'?'.http_build_query($param):'');
 	}
 
 	public function nameFormat($name, $param=[])

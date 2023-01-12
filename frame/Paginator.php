@@ -44,17 +44,17 @@ class Paginator
 		$this->setCurrent();
 		
 		$config = $this->config;
-		$prev = strtr($config['prev'][$this->current==1?'disabled':'enabled'], ['{url}'=>$this->url($this->current-1),'{text}'=>$config[IS_ADMIN?'text_zh':'text']['prev']]);
+		$prev = strtr($config['prev'][$this->current==1?'disabled':'enabled'], ['{url}'=>$this->url($this->current-1),'{text}'=>$config[isAdmin()?'text_zh':'text']['prev']]);
 		//总页数
 		$pageStr = '';
 		$totalPage = ceil($this->total / $this->size);
 		if ($totalPage==0) {
-			$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[IS_ADMIN?'text_zh':'text']['next']]);
+			$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[isAdmin()?'text_zh':'text']['next']]);
 		} else {
 			if ($this->current < $totalPage) {
-				$next = strtr($config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$config[IS_ADMIN?'text_zh':'text']['next']]);
+				$next = strtr($config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$config[isAdmin()?'text_zh':'text']['next']]);
 			} else {
-				$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[IS_ADMIN?'text_zh':'text']['next']]);
+				$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[isAdmin()?'text_zh':'text']['next']]);
 			}
 			//默认拼接第一页
 			$pageStr .= strtr($config[1 == $this->current ? 'current' : 'paging'], [
@@ -134,14 +134,14 @@ class Paginator
 			'{prev}' => $prev,
 			'{paging}' => $pageStr,
 			'{next}' => $next,
-			'{extra}' => IS_ADMIN ? strtr($config['extra'], ['{total}'=>$this->total, '{size}'=>$this->size, '{totalPage}'=>$totalPage]) : '',
+			'{extra}' => isAdmin() ? strtr($config['extra'], ['{total}'=>$this->total, '{size}'=>$this->size, '{totalPage}'=>$totalPage]) : '',
 		];
 		return strtr($config['global'], $replace);
 	}
 
 	protected function url($page)
 	{
-		return IS_ADMIN?adminUrl('', array_merge(iget(), ['page'=>$page])):url('', ['page'=>$page]);
+		return isAdmin()?adminUrl('', array_merge(iget(), ['page'=>$page])):url('', ['page'=>$page]);
 	}
 
 	protected function setSize($size)

@@ -62,7 +62,7 @@ function siteUrl($name){
 	if (in_array($extension, ['png', 'jpeg', 'jpg']) && is_file(ROOT_PATH.'storage'.DS.str_replace('.'.$extension, '.webp', $name))) {
 		$name = str_replace('.'.$extension, '.webp', $name);
 	}
-	return APP_DOMAIN.$name.'?v='.version();
+	return domain().$name.'?v='.version();
 }
 function mediaUrl($url, $width=''){
 	if (!empty($width)) {
@@ -72,10 +72,12 @@ function mediaUrl($url, $width=''){
 	return siteUrl($url);
 }
 function version(){
-	return \App::getVersion();
+	if (!defined('APP_VERSION')) define('APP_VERSION', redis()->get('frame-app:version'));
+	return APP_VERSION;
 }
 function isWin(){
-	return strtoupper(substr(PHP_OS, 0, 3))=='WIN';
+	if (!defined('IS_WIN')) define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
+	return IS_WIN;
 }
 function isJson($string){
 	if (is_array($string)) return $string;
@@ -83,13 +85,35 @@ function isJson($string){
 	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
 }
 function isAjax(){
-	return \App::make('frame/Request')->isAjax();
+	if (!defined('IS_AJAX')) define('IS_AJAX', \App::make('frame/Request')->isAjax());
+	return IS_AJAX;
 }
 function isMobile(){
-	return \App::make('frame/Request')->isMobile();
+	if (!defined('IS_MOBILE')) define('IS_MOBILE', \App::make('frame/Request')->isMobile());
+	return IS_MOBILE;
 }
 function isCli(){
 	return defined('IS_CLI');
+}
+function isDebug(){
+	if (!defined('IS_DEBUG')) define('IS_DEBUG', config('env', 'APP_DEBUG'));
+	return IS_DEBUG;
+}
+function isAdmin(){
+	if (!defined('IS_ADMIN')) define('IS_ADMIN', \App::get('base_info', 'site_id')==10);
+	return IS_ADMIN;
+}
+function type(){
+	if (!defined('APP_TYPE')) define('APP_TYPE', \App::get('base_info', 'type'));
+	return APP_TYPE;
+}
+function path(){
+	if (!defined('APP_PATH')) define('APP_PATH', \App::get('base_info', 'path'));
+	return APP_PATH;
+}
+function domain(){
+	if (!defined('APP_DOMAIN')) define('APP_DOMAIN', 'https://'.\App::get('base_info', 'domain').'/');
+	return APP_DOMAIN;
 }
 function ipost($name='', $default=null){
 	return \App::make('frame/Request')->ipost($name, $default);
@@ -107,7 +131,7 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 	if (empty($lanId)) $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
 	if (!isset($GLOBALS[$key])) {
-		$file = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS.'language'.DS.$type.DS.$lanId.'.php';
+		$file = ROOT_PATH.'template'.DS.path().DS.'language'.DS.$type.DS.$lanId.'.php';
 		if (is_file($file)) $GLOBALS[$key] = include $file;
 		else $GLOBALS[$key] = null;
 	}
@@ -186,10 +210,10 @@ function cateId(){
 	return \App::get('base_info', 'cate_id');
 }
 function userId(){
-	return session()->get(APP_TEMPLATE_TYPE.'_info', 0, 'mem_id');
+	return session()->get(type().'_info', 0, 'mem_id');
 }
 function userName(){
-	$info = session()->get(APP_TEMPLATE_TYPE.'_info');
+	$info = session()->get(type().'_info');
 	$name = trim($info['first_name'].' '.$info['last_name']);
 	if (!$name) {
 		$name = $info['email'];
@@ -197,7 +221,7 @@ function userName(){
 	return $name;
 }
 function userEmail(){
-	return session()->get(APP_TEMPLATE_TYPE.'_info', '', 'email');
+	return session()->get(type().'_info', '', 'email');
 }
 function currencyId(){
 	return session()->get('site_currency_id', 'USD');

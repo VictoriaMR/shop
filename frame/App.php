@@ -1,4 +1,7 @@
 <?php
+
+use frame\Container;
+
 class App 
 {
 	private static $appData = [];
@@ -6,7 +9,7 @@ class App
 	public static function init() 
 	{
 		spl_autoload_register([__CLASS__ , 'autoload']);
-		if (!isCli()) self::set('base_info', self::getDomain());
+		if (!isCli()) self::set('base_info', self::getSiteInfo());
 		self::make('frame/Error')->register();
 	}
 
@@ -14,7 +17,7 @@ class App
 	{
 		if (!self::get('autoload', $abstract)) {
 			self::autoload($abstract);
-			self::set('autoload', \frame\Container::instance()->autoload(strtr($abstract, DS, '\\'), $params), $abstract);
+			self::set('autoload', Container::instance()->autoload(strtr($abstract, DS, '\\'), $params), $abstract);
 		}
 		return self::get('autoload', $abstract);
 	}
@@ -24,12 +27,8 @@ class App
 		$baseInfo = self::get('base_info');
 		if (empty($baseInfo)) throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!', 1);
 		//路由解析
-		define('IS_ADMIN', $baseInfo['site_id'] == 10);
 		$router = self::make('frame/Router')->analyze();
 		$router['class'] = $baseInfo['type'];
-		define('APP_TEMPLATE_TYPE', $baseInfo['type']);
-		define('APP_TEMPLATE_PATH', $baseInfo['path']);
-		define('APP_DOMAIN', 'https://'.$baseInfo['domain'].'/');
 		self::set('router', $router);
 		//执行方法
 		$call = self::make('app/controller/'.$router['class'].'/'.$router['path']);
@@ -46,7 +45,7 @@ class App
 		self::runOver();
 	}
 
-	private static function getDomain()
+	private static function getSiteInfo()
 	{
 		return self::make('app/service/site/Site')->getInfoCache(str_replace('www.', '', $_SERVER['HTTP_HOST']), 'domain');
 	}
@@ -76,24 +75,14 @@ class App
 	public static function runOver()
 	{
 		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
-		if (config('env', 'APP_DEBUG')) {
+		if (isDebug()) {
 			make('frame/Debug')->runlog();
-			if (self::get('base_info', 'debug') && !isCli() && !IS_AJAX) make('frame/Debug')->init();
+			if (self::get('base_info', 'debug') && !isCli() && !isAjax()) make('frame/Debug')->init();
 		}
 	}
 
 	public static function setVersion($version)
 	{
 		return redis()->set('frame-app:version', substr($version, 0, 5));
-	}
-
-	public static function getVersion()
-	{
-		$version = self::get('version');
-		if (!$version) {
-			$version = redis()->get('frame-app:version');
-			self::set('version', $version);
-		}
-		return $version ?: '1.0.0';
 	}
 }

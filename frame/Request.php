@@ -56,7 +56,7 @@ class Request
 		$str = strtolower($str);
 		$str .= '-'.$c.'-'.$id;
 		if (!empty($page)) $str .= '-p'.$page;
-		return config('env.APP_DOMAIN').$str.(empty(config('env.TEMPLATE_SUFFIX')) ? '' : '.'.config('env.TEMPLATE_SUFFIX'));
+		return config('env.domain()').$str.(empty(config('env.TEMPLATE_SUFFIX')) ? '' : '.'.config('env.TEMPLATE_SUFFIX'));
 	}
 
 	public function getBrowser($agent='')

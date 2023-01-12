@@ -44,7 +44,7 @@ class Member extends Base
 
 	public function logout()
 	{
-		session()->set(APP_TEMPLATE_TYPE.'_info');
+		session()->set(type().'_info');
 		make('frame/Cookie')->clear();
 		$this->addLog(['type'=>1]);
 		return true;
@@ -63,7 +63,7 @@ class Member extends Base
 			'email' => $info['email'],
 			'sex' => $info['sex'] ?? 0,
 		];
-		session()->set(APP_TEMPLATE_TYPE.'_info', $data);
+		session()->set(type().'_info', $data);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
 		$this->addLog(['type'=>0]);
 		make('frame/Cookie')->login($info['mem_id']);

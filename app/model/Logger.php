@@ -21,7 +21,7 @@ class Logger extends Base
 		$data['site_id'] = siteId();
 		$data['mem_id'] = userId();
 		$data['lan_id'] = lanId();
-		$data['is_moblie'] = IS_MOBILE ? 1 : 0;
+		$data['is_moblie'] = isMobile() ? 1 : 0;
 		$data['browser'] = request()->getBrowser();
 		$data['system'] = request()->getSystem();
 		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);

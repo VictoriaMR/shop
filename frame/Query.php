@@ -258,17 +258,13 @@ final class Query
 	public function getQuery($sql)
 	{
 		$this->clear();
-		if (config('env', 'APP_DEBUG')) {
-			$GLOBALS['exec_sql'][] = $sql;
-		}
+		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
 		try {
 			$mysqli = db($this->_database);
 			$result = $mysqli->query($sql);
 			if ($mysqli->errno==0) {
-				if (is_bool($result)) {
-					return $result;
-				}
+				if (is_bool($result)) return $result;
 				$returnData = [];
 				while ($row = $result->fetch_assoc()){
 				 	$returnData[] = $row;
@@ -284,12 +280,11 @@ final class Query
 				throw new \Exception(implode(PHP_EOL, $error), 1);
 			}
 		} catch (\Exception $e){
-			$error = [];
+			$error = '';
 			foreach ($mysqli->error_list as $value) {
-				$error[] = 'SQL: '.$sql;
-				$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
+				$error.= 'SQL: '.$sql.sprintf(', errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']).PHP_EOL;
 			}
-			throw new \Exception(implode(PHP_EOL, $error), 1);
+			throw new \Exception($error, 1);
 		}
 	}
 

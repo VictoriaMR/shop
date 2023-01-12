@@ -73,7 +73,7 @@ class Cookie
 		}
 		$expire = empty($config['expire']) ? 0 : $_SERVER['REQUEST_TIME'] + intval($config['expire']);
 		$_COOKIE[$name] = $value;
-		session()->set(APP_TEMPLATE_TYPE.'_info', $value, $name);
+		session()->set(type().'_info', $value, $name);
 		return setcookie($name, $value, $expire, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
 	}
 

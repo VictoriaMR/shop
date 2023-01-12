@@ -32,7 +32,7 @@ class Index extends Base
 			$hotArr = array_slice($hotArr, 0, 6);
 			$popularCate = array_chunk(array_slice($popularCate, 0, 12), 2);
 
-			$bannerPath = ROOT_PATH.'template'.DS.APP_TEMPLATE_PATH.DS;
+			$bannerPath = ROOT_PATH.'template'.DS.path().DS;
 			$arr = getDirFile($bannerPath.'image'.DS.'computer'.DS.'banner');
 			$banner = [];
 			foreach ($arr as $key=>$value) {

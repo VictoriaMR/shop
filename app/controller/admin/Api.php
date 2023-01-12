@@ -30,7 +30,7 @@ class Api extends AdminBase
 		}
 		$data = [
 			'version' => config('env', 'APP_VERSION'),
-			'socket_domain' => APP_DOMAIN,
+			'socket_domain' => domain(),
 			'site' => $siteArr,
 			'site_category' => $cateArr,
 		];
