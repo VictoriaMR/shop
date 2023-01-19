@@ -1,23 +1,3 @@
-const VERIFY = {
-	phone: function (phone) {
-		const reg = /^1[3456789]\d{9}$/;
-		return VERIFY.check(phone, reg);
-	},
-	email: function (email) {
-		return VERIFY.check(email, /^([\.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/);
-	},
-	password: function (password) {
-		return VERIFY.check(password, /^[0-9A-Za-z]{6,}/);
-	},
-	code: function(code) {
-		return VERIFY.check(code, /^[a-zA-Z0-9]{4,}/);
-	},
-	check: function(input, reg) {
-		input = input.trim();
-		if (input == '') return false;
-		return reg.test(input);
-	}
-};
 function confirm(msg, callbck) {
 	if ($('#confirm-pop').length == 0) {
 		const html = '<div id="confirm-pop">\
@@ -41,30 +21,6 @@ function confirm(msg, callbck) {
 	});
 	obj.on('click', '.btn.confirm', function(){
 		callbck($(this), obj);
-	});
-}
-function post(url, data, callbck) {
-	if (data.constructor == Array) {
-		data.push({name:'is_ajax',value:1});
-	} else {
-		data.is_ajax = 1;
-	}
-	console.log(data, 'data')
-	$.ajax({
-		url: url,
-		data: data,
-		type: 'POST',
-		dataType: 'json',
-		success: function(res){
-	        if (typeof callbck == 'function') {
-	        	callbck(res);
-	        }
-	    },
-	    error: function(xhr,status,error) {
-	    	if (typeof callbck == 'function') {
-	        	callbck({code:0, msg:'请求出错, 网络错误'});
-	        }
-	    }
 	});
 }
 function addRightTips(info, type, delay) {

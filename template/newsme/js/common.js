@@ -1,26 +1,3 @@
-//认证类
-var VERIFY = {
-    phone: function (phone) {
-        var reg = /^1[3456789]\d{9}$/;
-        return this.check(phone, reg);
-    },
-    email: function (email) {
-        return this.check(email, /^([\.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/);
-    },
-    password: function (password) {
-        return this.check(password, /^[0-9A-Za-z]{6,}/);
-    },
-    code: function(code, len) {
-        if (len === 6) {
-            return this.check(code, /^[a-zA-Z0-9]{6}/);
-        } else {
-            return this.check(code, /^[a-zA-Z0-9]{4}/);
-        }
-    },
-    check: function(input, reg) {
-        return reg.test(input.trim());
-    }
-};
 //提示类
 var TIPS = {
     error: function(msg) {
@@ -345,19 +322,12 @@ $(function(){
     if ($('.desc-title .info-name').length > 0) {
         REQUEST_PARAM.login = 1;
     }
-    $.ajax({
-        type: 'POST',
-        url: '/api/stat',
-        async: true,
-        dataType: 'json',
-        data: REQUEST_PARAM,
-        success: function (res) {
-            if (REQUEST_PARAM.cart > 0) {
-                CART.count(res.data.cart_count);
-            }
-            if (REQUEST_PARAM.login > 0) {
-                MEMBER.init(res.data.member);
-            }
+    post('/api/stat', REQUEST_PARAM, function(res) {
+        if (REQUEST_PARAM.cart > 0) {
+            CART.count(res.data.cart_count);
+        }
+        if (REQUEST_PARAM.login > 0) {
+            MEMBER.init(res.data.member);
         }
     });
 	//回顶按钮
