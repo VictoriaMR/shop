@@ -2,21 +2,21 @@ const HELPERINIT = {
 	init: function() {
 		//获取域名
 		this.domain = this.getDomain();
-		//爬取数据控制
-		this.crawlerItem();
-		//自动入库
-		this.autoCrawlerItem();
-		//产品维护
-		this.autoCheckItem();
+		if (this.isItemPage()) {
+			//爬取数据控制
+			this.crawlerItem();
+			//自动入库
+			this.autoCrawlerItem();
+			//产品维护
+			this.autoCheckItem();
+		}
 	},
 	getUrl: function(callback) {
 		this.request({action: 'getUrl'}, callback);
 	},
 	request: function(param, callback) {
 		chrome.runtime.sendMessage(this.getExtId(), param, function(response) {
-			if (callback) {
-				callback(response);
-			}
+			if (callback) callback(response);
 		});
 	},
 	getExtId: function() {
@@ -27,9 +27,9 @@ const HELPERINIT = {
 		const len = host.length;
 		return host[len-2]+'.'+host[len-1];
 	},
-	isItemPage: function(domain) {
+	isItemPage: function() {
 		let reg = '';
-		switch (domain) {
+		switch (this.domain) {
 			case '1688.com':
 				reg = /^https\:\/\/detail\.1688\.com\/offer\/(\d+)\.html(?:.)*/i;
 				break;
@@ -96,7 +96,7 @@ const HELPERINIT = {
 	crawlerItem: function() {
 		const _this = this;
 		_this.request({action: 'getCache', cache_key: 'crawler_switch_status'}, function(res){
-			if (res.data === '1') {
+			if (res.data) {
 				_this.loadStatic('js', 'helper/crawler_init.js');
 			}
 		});

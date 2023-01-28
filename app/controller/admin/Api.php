@@ -29,8 +29,8 @@ class Api extends AdminBase
 			$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
 		}
 		$data = [
-			'version' => config('env', 'APP_VERSION'),
-			'socket_domain' => domain(),
+			'version' => version(),
+			'socket_domain' => rtrim(str_replace('http', 'ws', domain()), '/').':'.config('socket', 'socket_port'),
 			'site' => $siteArr,
 			'site_category' => $cateArr,
 		];
