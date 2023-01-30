@@ -13,7 +13,7 @@ const CRAWLERINIt = {
 		const _this = this;
 		//获取基本数据
 		HELPERINIT.request({action: 'request', value: 'api/getHelperData', cache_key: 'helper_all_data_cache'}, function(res) {
-			if (res.code === '200') {
+			if (res.code === 200) {
 				_this.bodyPageInit();
 				_this.crawler_info = res.data;
 				_this.crawlerPageinit(res.data);
@@ -164,17 +164,6 @@ const CRAWLERINIt = {
 								</div>
 								<div class="clear"></div>
 							</div>
-						</div>
-						<div class="productAttLine">
-							<div class="label">性别:</div>
-							<div class="fill_in">
-								<select name="bc_product_gender" class="bc_product_gender">
-									<option value="0">默认</option>
-									<option value="1">男</option>
-									<option value="2">女</option>
-								</select>
-							</div>
-							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">邮费:</div>

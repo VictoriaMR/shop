@@ -22,15 +22,21 @@ class Api extends AdminBase
 				$cateId = $value['cate_id'];
 				$tempArr[$cateId] = [];
 			}
-			$tempArr[$cateId][] = $value;
+			$tempArr[$cateId][] = [
+				'cate_id' => $value['cate_id'],
+				'parent_id' => $value['parent_id'],
+				'name' => $value['name'],
+				'level' => $value['level'],
+			];
 		}
 		$cateArr = [];
 		foreach ($siteArr as $value) {
-			$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
+			if (empty($tempArr[$value['cate_id']])) continue;
+			$cateArr[$value['site_id']] = $tempArr[$value['cate_id']];
 		}
 		$data = [
 			'version' => version(),
-			'socket_domain' => rtrim(str_replace('http', 'ws', domain()), '/').':'.config('socket', 'socket_port'),
+			'socket_domain' => domain().'socket.io/',
 			'site' => $siteArr,
 			'site_category' => $cateArr,
 		];

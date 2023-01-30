@@ -296,8 +296,8 @@ class Spu extends Base
 		return $info;
 	}
 
-	public function addProduct($data)
-	{
+	public function addProduct($data): bool
+    {
 		if (empty($data['bc_product_category'])) return false;
 		if (empty($data['bc_site_id'])) return false;
 		if (empty($data['bc_product_site'])) return false;
@@ -323,8 +323,6 @@ class Spu extends Base
 		if (empty($spuImageArr)) return false;
 		$allImageArr = $spuImageArr;
 		//属性组
-		$attrName = make('app/service/attr/Name');
-		$attrValue = make('app/service/attr/Value');
 		$descName = make('app/service/desc/Name');
 		$descValue = make('app/service/desc/Value');
 		$spuData = make('app/service/product/SpuData');
