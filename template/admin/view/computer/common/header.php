@@ -18,7 +18,7 @@
 </head>
 <body>
 <script> const URI='<?php echo domain();?>';</script>
-<div id="progressing"></div>
+<?php if (!($_path == 'Index' && $_func == 'index') && $_path != 'Login'){?><div id="progressing"></div><?php }?>
 <?php if (!empty($_nav)) {?>
 <div id="header-nav" class="container-fluid">
 	<div class="nav">

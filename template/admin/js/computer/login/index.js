@@ -3,7 +3,7 @@ $(function(){
 });
 const LOGIN = {
 	init: function () {
-		var phoneObj = $('input[name="phone"]');
+		var mobileObj = $('input[name="mobile"]');
 		var codeObj = $('input[name="code"]');
 		var passwordObj = $('input[name="password"]');
 		var errorObj = $('#login-error');
@@ -16,7 +16,7 @@ const LOGIN = {
 				if (!VERIFY[name]($(this).val())) {
 					$(this).focus();
 					switch (name) {
-						case 'phone':
+						case 'mobile':
 							msg = '手机号码格式不正确';
 							break;
 						case 'password':
@@ -66,7 +66,7 @@ const LOGIN = {
 		$('input').on('focus', function(){
 			errorObj.addClass('hidden');
 		});
-		phoneObj.on('blur', function(){
+		mobileObj.on('blur', function(){
 			var value = $(this).val();
 			if (value) {
 				localStorage.setItem('login_name', value);
@@ -80,7 +80,7 @@ const LOGIN = {
 	    }
 	    var name = localStorage.getItem('login_name');
 	    if (name) {
-	    	phoneObj.val(name);
+	    	mobileObj.val(name);
 	    	passwordObj.focus();
 	    }
 	}

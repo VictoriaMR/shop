@@ -5,8 +5,14 @@ use app\controller\AdminBase;
 
 class Login extends AdminBase
 {
+	public function __construct()
+	{
+		parent::_init();
+	}
+
 	public function index()
 	{	
+		html()->addJs('verify', false);
 		html()->addCss();
 		html()->addJs();
 		$this->assign('_title', '登录');
@@ -23,18 +29,18 @@ class Login extends AdminBase
 
 	public function login() 
 	{
-		$phone = trim(ipost('phone', ''));
+		$mobile = trim(ipost('mobile', ''));
 		$code = trim(ipost('code', ''));
 		$password = trim(ipost('password', ''));
 
-		if (empty($phone) || empty($code) || empty($password)) {
+		if (empty($mobile) || empty($code) || empty($password)) {
 			$this->error('参数错误');
 		}
 		if (strtolower($code) != session()->get('admin_login_code')) {
 			$this->error('验证码错误');
 		}
 		$member = make('app/service/admin/Member');
-		$result = $member->login($phone, $password);
+		$result = $member->login($mobile, $password);
 		if ($result) {
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {

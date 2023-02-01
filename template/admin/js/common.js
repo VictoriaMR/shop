@@ -60,9 +60,6 @@ function isScroll() {
     return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
 }
 function progressing(val) {
-	if (window.location.pathname === '/login') {
-		return false;
-	}
     if (document.readyState == 'complete') {
         val = val + 50;
         val = val > 100 ? 100 : val;

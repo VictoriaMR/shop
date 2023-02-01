@@ -47,18 +47,14 @@ class Html
 
 	public function getCss()
 	{
-		if (empty($this->_CSS)) {
-			return [];
-		}
+		if (empty($this->_CSS)) return [];
 		$_route = \App::get('router');
 		return $this->addStaticFile($this->_CSS, strtolower($_route['path'].'_'.$_route['func']), 'css');
 	}
 
 	public function getJs()
 	{
-		if (empty($this->_JS)) {
-			return [];
-		}
+		if (empty($this->_JS)) return [];
 		$_route = \App::get('router');
 		return $this->addStaticFile($this->_JS, strtolower($_route['path'].'_'.$_route['func']), 'js');
 	}
@@ -79,19 +75,18 @@ class Html
 	{
 		$path = ROOT_PATH.'template'.DS.path().DS;
 		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
-		if (\App::get('base_info', 'static_cache') && is_file($file)) {
-			return $file;
-		}
+		if (\App::get('base_info', 'static_cache') && is_file($file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
 			$source = $path.$type.DS.$value.'.'.$type;
 			if (is_file($source)) {
-				$str .= trim(file_get_contents($source));
+				$str .= '/* '.$name.' */'.PHP_EOL;
+				$str .= trim(file_get_contents($source)).PHP_EOL;
 			}
 		}
 		if (!is_dir($path.'static')) mkdir($path.'static', 0755, true);
-		file_put_contents($path.$file, $str);
+		file_put_contents($path.$file, trim($str, PHP_EOL));
 		return $file;
 	}
 }

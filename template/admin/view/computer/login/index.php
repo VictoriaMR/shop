@@ -14,7 +14,7 @@
 			<div id="login-error-msg" class="left ml4">请输入帐户名</div>
 		</div>
 		<div class="">
-			<input type="text" class="form-control w100" name="phone" placeholder="请输入手机号码" autocomplete="off">
+			<input type="text" class="form-control w100" name="mobile" placeholder="请输入手机号码" autocomplete="off">
 		</div>
 		<div class="mt20 ">
 			<input type="password" class="form-control w100" name="password" placeholder="请输入密码" autocomplete="off">
