@@ -12,23 +12,27 @@ class MainTask extends TaskDriver
         'cron' => ['* * * * *'],
     ];
 
-    protected function before()
+    public function before()
     {
         $className = 'app/task/MainTask';
         $keyName = nameFormat($className);
+        $this->delInfo('all');
+        $this->setConfigInfo($className, $this->config);
         $data = [];
         $data['boot'] = 'on';
         $data['status'] = 'stop';
-        $data['name'] = $this->config['name'] ?? '';
+        $data['name'] = $this->config['name'];
         $data['sleep'] = $this->sleep;
         $data['class_name'] = $className;
         $data['next_run'] = 'alwaysRun';
-        $this->delInfo('all');
         $this->setInfoArray($data, $keyName);
 
-        $files = getDirFile(__DIR__.DS.'main');
-        foreach ($files as $key => $value) {
-            $className = str_replace('\\', DS, __NAMESPACE__).str_replace([__DIR__, '.php'], '', $value);
+        $files = scandir(__DIR__.DS.'main');
+        dd($files);
+        foreach ($files as $value) {
+            if ($value == '.' || $value == '..') continue;
+
+            $className = strtr(__NAMESPACE__, '\\', DS).str_replace([__DIR__, '.php'], '', $value);
             //重新缓存配置
             $class = make($className);
             $keyName = nameFormat($className);
@@ -50,6 +54,7 @@ class MainTask extends TaskDriver
     public function run()
     {
         $allTask = $this->getInfo('', 'all');
+        dd($allTask);
         foreach ($allTask as $key=>$value) {
             //循环检查进程状态
             if ($value['boot'] == 'on' || $value['boot'] == 'oning') {
@@ -74,5 +79,10 @@ class MainTask extends TaskDriver
         $value['status'] = 'starting';
         $this->setInfo($key, $value, 'all');
         $this->tasker->start($key);
+    }
+
+    private function setConfigInfo($className, $config)
+    {
+        
     }
 }
