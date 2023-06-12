@@ -29,7 +29,7 @@ abstract class TaskDriver
 
     protected function cache()
     {
-        return cache(2);
+        return cache(0);
     }
 
 	protected function getKey($key)
@@ -113,7 +113,6 @@ abstract class TaskDriver
 			$this->before();
             // 设置任务当次启动时间
             $data = [
-                'boot' => 'on',
                 'start_time' => now(),
                 'status' => 'running',
                 'process_pid' => getmypid(),
@@ -124,9 +123,7 @@ abstract class TaskDriver
             $this->setInfoArray($data);
             if (!$this->mainTask) {
                 $value = $this->getInfo($this->lock, 'all');
-                $value['boot'] = 'on';
                 $value['status'] = $data['status'];
-                $value['process_pid'] = $data['process_pid'];
                 $this->setInfo($this->lock, $value, 'all');
             }
 
@@ -148,27 +145,18 @@ abstract class TaskDriver
                     $result = false;
                 }
             }
-			$this->locker->unlock($this->lock);
             $value = $this->getInfo($this->lock, 'all');
-            //获取下一次运行时间
-            $nextRunAt = $this->getNextTime($this->config['cron']);
+            //更新时间
             $data = [
                 'status' => 'stop',
                 'info' => "任务已退出 \n".now(),
-                'boot' => ($value['boot'] ?? 'offing') == 'offing' ? 'off' : $value['boot'],
-                'next_run' => $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt,
+                'next_run' => $this->getNextTime($this->config['cron']),
             ];
             $this->setInfoArray($data);
             $value['status'] = 'stop';
-            if (!$this->mainTask) {
-                if ($value['boot'] == 'offing') {
-                    $value['next_run'] = $nextRunAt <= now() ? 'alwaysRun' : $nextRunAt;
-                } else {
-                    $value['next_run'] = $nextRunAt <= now() ? 'handing' : $nextRunAt;
-                }
-            }
-            $value['boot'] = $value['boot'] == 'offing' ? 'off' : $value['boot'];
+            $value['next_run'] = $data['next_run'];
             $this->setInfo($this->lock, $value, 'all');
+			$this->locker->unlock($this->lock);
         }
 	}
 

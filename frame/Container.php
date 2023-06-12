@@ -5,10 +5,8 @@ namespace frame;
 final class Container
 {
 	static private $_instance;
-	private function __construct() {}
-	private function __clone() {}
 
-	public static function instance() 
+	public static function instance()
 	{
 		if (is_null(self::$_instance)) {
 			self::$_instance = new self();

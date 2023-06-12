@@ -24,8 +24,8 @@ function config($type, $name='', $default=''){
 function redirect($url=''){
 	header('Location:'.$url);exit();	
 }
-function make($name, $params=null){
-	return \App::make($name, $params);
+function make($name, $params=null, $static=true){
+	return \App::make($name, $params, $static);
 }
 function html(){
 	return \App::make('frame/Html');

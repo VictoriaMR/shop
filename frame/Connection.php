@@ -6,7 +6,6 @@ final class Connection
 {
 	private $_connect;
 	private $_selectdb;
-	private function __clone() {}
 
 	private function connect($host, $username, $password, $port='3306', $database='', $charset='utf8')
 	{
@@ -17,7 +16,7 @@ final class Connection
 		$this->_connect->set_charset($charset);
 	}
 
-	public function setDb($db)
+	public function setDb($db=null)
 	{
 		if (is_null($db)) $db = 'default';
 		$config = config('database', $db);
@@ -26,11 +25,11 @@ final class Connection
 		}
 		if (is_null($this->_connect)) {
 			$this->connect(
-				$config['db_host'], 
-				$config['db_username'], 
-				$config['db_password'], 
-				$config['db_port'], 
-				$config['db_database'], 
+				$config['db_host'],
+				$config['db_username'],
+				$config['db_password'],
+				$config['db_port'],
+				$config['db_database'],
 				$config['db_charset']
 			);
 			$this->_selectdb = $config['db_database'];

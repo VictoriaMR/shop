@@ -20,15 +20,15 @@ class Debug
 		foreach ($info as $key => $file) {
 			$temp = number_format(filesize($file) / 1024, 2);
 			$fileMem += $temp;
-			$info[$key] .= ' ( ' . $temp . ' KB )';
+			$info[$key] .= '(' . $temp . 'KB)';
 		}
 		$base = [
 			'请求信息' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . ' ' . $uri,
-			'运行时间' => number_format((float) $runtime, 6) . 's [ 吞吐率：' . $reqs . ' req/s ]',
-			'查询信息' => empty($GLOBALS['exec_sql']) ? 0 : count($GLOBALS['exec_sql']) . ' 条',
-			'内存消耗' => $mem . ' KB',
-			'文件加载' => count($info) . ' 个',
-			'文件总值' => $fileMem . ' KB',
+			'运行时间' => number_format((float) $runtime, 6) . 's[吞吐率：' . $reqs . ' req/s]',
+			'查询信息' => empty($GLOBALS['exec_sql']) ? 0 : count($GLOBALS['exec_sql']) . '条',
+			'内存消耗' => $mem . 'KB',
+			'文件加载' => count($info) . '个',
+			'文件总值' => $fileMem . 'KB',
 		];
 		$config = [
 			'file' => '',

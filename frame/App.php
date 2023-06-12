@@ -2,24 +2,29 @@
 
 use frame\Container;
 
-class App 
+class App
 {
 	private static $appData = [];
 
-	public static function init() 
+	public static function init()
 	{
 		spl_autoload_register([__CLASS__ , 'autoload']);
 		if (!isCli()) self::set('base_info', self::getSiteInfo());
 		self::make('frame/Error')->register();
 	}
 
-	public static function make($abstract, $params=null)
+	public static function make($abstract, $params=null, $static=true)
 	{
-		if (!self::get('autoload', $abstract)) {
+		if ($static) {
+			if (!self::get('autoload', $abstract)) {
+				self::autoload($abstract);
+				self::set('autoload', Container::instance()->autoload(strtr($abstract, DS, '\\'), $params), $abstract);
+			}
+			return self::get('autoload', $abstract);
+		} else {
 			self::autoload($abstract);
-			self::set('autoload', Container::instance()->autoload(strtr($abstract, DS, '\\'), $params), $abstract);
+			return Container::instance()->autoload(strtr($abstract, DS, '\\'), $params);
 		}
-		return self::get('autoload', $abstract);
 	}
 
 	public static function send()
@@ -50,7 +55,7 @@ class App
 		return self::make('app/service/site/Site')->getInfoCache(str_replace('www.', '', $_SERVER['HTTP_HOST']), 'domain');
 	}
 
-	private static function autoload($abstract, $params=null) 
+	private static function autoload($abstract, $params=null)
 	{
 		$file = ROOT_PATH.strtr($abstract, '\\', DS).'.php';
 		if (is_file($file)) {

@@ -30,9 +30,6 @@ class Error
 		}
 		//关闭session
 		session()->close();
-		//关闭数据库
-		// db()->close();
-		// redis()->close();
 	}
 
 	protected function errorEcho($data)
