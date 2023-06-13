@@ -5,12 +5,6 @@ namespace frame;
 class Task
 {
 	const TASKPREFIX ='frame-task:';
-	private $locker;
-
-	public function __construct()
-	{
-		$this->locker = make('frame/Locker');
-	}
 	
 	public function start($taskClass, $lockTimeout=0, $cas='')
 	{
@@ -19,9 +13,8 @@ class Task
 		if ($lockTimeout < 1) {
 			$lockTimeout = config('task', 'timeout');
 		}
-
 		if ($cas == '') {
-			$cas = $this->locker->lock($lockKey, $lockTimeout);
+			$cas = make('frame/Locker')->lock($lockKey, $lockTimeout);
 			if (!$cas) {
 				return false;
 			}
@@ -59,23 +52,86 @@ class Task
 
 	protected function getStandClassName($classname)
 	{
-		return strtr($classname, '-', '/');
+		return strtr($classname, '-', DS);
 	}
 
-	public function getKeyByClassName($classname)
+	protected function getKeyByClassName($classname)
 	{
-		return strtr($classname, ['\\'=>'-', DS=>'-']);
+		return str_replace(['\\', DS], '-', $classname);
 	}
 
 	public function taskStart($key)
 	{
 		$key = 'app-task-main-'.$key;
-		$value = cache(2)->hGet(self::TASKPREFIX.'all', $key);
+		$value = $this->cache()->hGet(self::TASKPREFIX.'all', $key);
 		if (isset($value['next_run']) && $value['next_run'] == 'alwaysRun') {
 			return true;
 		}
 		$value['next_run'] = 'alwaysRun';
-		cache(2)->hSet(self::TASKPREFIX.'all', $key, $value);
+		$this->cache()->hSet(self::TASKPREFIX.'all', $key, $value);
 		return true;
+	}
+
+	public function getTaskList($main = false)
+	{
+		$files = scandir(APP_PATH.'task/main');
+		$list = [];
+		if ($main) {
+			$list[] = 'app/task/MainTask';
+		}
+        foreach ($files as $value) {
+            if ($value == '.' || $value == '..') continue;
+            $list[] = 'app/task/main/'.str_replace('.php', '', $value);
+        }
+        $list = array_flip($list);
+        foreach ($list as $key=>$value) {
+        	$class = make($key, null, false);
+        	$list[$key] = array_merge($class->config, $this->getInfo($key) ?: []);
+        }
+        return $list;
+	}
+
+	protected function getKey($key)
+	{
+		return self::TASKPREFIX.$this->getKeyByClassName($key);
+	}
+
+	protected function cache()
+	{
+		return cache(2);
+	}
+
+	public function setInfo($key, $field, $value)
+	{
+		return $this->cache()->hSet($this->getKey($key), $this->getKeyByClassName($field), $value);
+	}
+
+	public function delInfo($key)
+	{
+		return $this->cache()->del($this->getKey($key));
+	}
+
+	public function setInfoArray($key, array $data)
+	{
+		return $this->cache()->hMset($this->getKey($key), $data);
+	}
+
+	public function getInfo($key, $field='')
+	{
+		if ($field) {
+			return $this->cache()->hGet($this->getKey($key), $this->getKeyByClassName($field));
+		} else {
+			return $this->cache()->hGetAll($this->getKey($key));
+		}
+	}
+
+	public function countIncr($key)
+	{
+		return $this->cache()->hIncrBy($this->getKey($key), 'count', 1);
+	}
+
+	public function loopCountIncr($key)
+	{
+		return $this->cache()->hIncrBy($this->getKey($key), 'loop_count', 1);
 	}
 }

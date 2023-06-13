@@ -35,17 +35,22 @@ class Task extends AdminBase
 
 	protected function taskList()
 	{
-		$taskList = getDirFile(ROOT_PATH.'app'.DS.'task'.DS.'main');
-        foreach ($taskList as $key => $value) {
-            //重新缓存配置
-            $taskList[$key] = nameFormat(str_replace([ROOT_PATH, '.php'], '', $value));
-        }
+		$list = make('frame/Task')->getTaskList(true);
+		//压入主任务
+		
+		dd($list);
 		array_unshift($taskList, 'app-task-MainTask');
 		$taskList = array_flip($taskList);
 		foreach($taskList as $key=>$value) {
 			$value = $this->cache()->hGetAll($this->getKey($key));
 			if (empty($value)) {
-				unset($taskList[$key]);
+				$class = make(strtr($key, '-', DS), null, false);
+				$taskList[$key] = [
+					'boot' => 'off',
+					'status' => 'stop',
+					'name' => $class->config['name'],
+					'class_name' => $key,
+				];
 			} else {
 				$taskList[$key] = $value;
 			}
@@ -57,42 +62,23 @@ class Task extends AdminBase
 	{
 		$type = ipost('type');
 		$key = trim(ipost('key', ''));
-		$enabled = config('task', 'enabled');
-		if (!$enabled) {
-			$this->error('系统任务开关未开启');
-		}
+		$tasker = make('frame/Task');
 		switch ($type) {
-			case 'init':
-				$key = 'app-task-MainTask';
-				if ($this->cache()->exists($this->getKey($key, 'lock'))) {
-					$this->error('进程未停止, 请稍后再试');
-				}
-				make('frame/Task')->start($key);
-				break;
 			case 'start':
 			case 'stop':
 				if (empty($key)) {
-					$this->error('未指定任务开启');
+					$this->error('未指定任务');
 				}
-				if ($key == 'app-task-MainTask') {
-					$this->cache()->hSet($this->getKey($key), 'boot', $type=='start'?'oning':'offing');
-				} else {
-					$value = $this->cache()->hGet($this->getKey('all'), $key);
-					if ($value['boot'] == 'on') {
-						if ($value['status'] == 'stop') {
-							$value['boot'] = 'off';
-						} else {
-							$value['boot'] = 'offing';
-						}
-					} else {
-						$value['boot'] = 'oning';
-						$value['next_run'] = 'alwaysRun';
-					}
-					$this->cache()->hSet($this->getKey('all'), $key, $value);
-					$this->cache()->hSet($this->getKey($key), 'boot', $value['boot']);
-				}
-				if ($type == 'start' && $key == 'app-task-MainTask') {
-					make('frame/Task')->start($key);
+				$status = $type=='start'?'on':'off';
+				$tasker->setInfo($key, 'boot', $status);
+				//更新总任务数据
+				$allInfo = $tasker->getInfo('all', $key);
+				$allInfo['boot'] = $status;
+				$allInfo['status'] = $status.'ing';
+				$tasker->setInfo('all', $key, $allInfo);
+				$tasker->setInfoArray($key, $allInfo);
+				if ($status == 'on') {
+					$tasker->start($key);
 				}
 				break;
 			case 'start-all':
@@ -104,7 +90,7 @@ class Task extends AdminBase
 
 	protected function cache()
 	{
-		return cache(2);
+		return cache(0);
 	}
 
 	protected function getKey($key, $type='task')

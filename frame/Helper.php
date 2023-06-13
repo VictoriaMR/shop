@@ -108,8 +108,8 @@ function type(){
 	return APP_TYPE;
 }
 function path(){
-	if (!defined('APP_PATH')) define('APP_PATH', \App::get('base_info', 'path'));
-	return APP_PATH;
+	if (!defined('APP_ROUTE')) define('APP_ROUTE', \App::get('base_info', 'path'));
+	return APP_ROUTE;
 }
 function domain(){
 	if (!defined('APP_DOMAIN')) define('APP_DOMAIN', 'https://'.\App::get('base_info', 'domain').'/');

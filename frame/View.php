@@ -6,30 +6,18 @@ class View
 {
 	protected $_data = [];
 
-	public function display($template, $match=true, $cache=false)
+	public function display($template, $match=true)
 	{
-		return $this->fetch(ROOT_PATH.'template'.DS.path().DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)], $cache);
+		return $this->fetch(ROOT_PATH.'template'.DS.path().DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)]);
 	}
 
-	protected function fetch($template, array $data=[], $cache=false)
+	protected function fetch($template, array $data=[])
 	{	
-		if ($cache && \App::get('base_info', 'view_cache')) {
-			$request_uri = trim($_SERVER['REQUEST_URI'], '/');
-			if (empty(explode('.html', $request_uri)[1])) {
-				$content = $this->getContent($template, $data);
-				$path = ROOT_PATH.'template'.DS.path().DS.'cache'.DS.(isMobile()?'mobile':'computer').DS.strtolower(currencyId()).DS.lanId('code').DS;
-				if (!is_dir($path)) mkdir($path, 0755, true);
-				if (empty($request_uri)) {
-					$path .= 'index.html';
-				} else {
-					$path .= $request_uri;
-				}
-				file_put_contents($path, $content);
-				echo $content;
-				return true;
-			}
-		}
-		return $this->loadFile($template, $data);
+		ob_start();
+		ob_implicit_flush(0);
+		$this->loadFile($template, $data);
+		echo ob_get_clean();
+		return true;
 	}
 	private function loadFile($template, array $data)
 	{
