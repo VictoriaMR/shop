@@ -4,7 +4,7 @@ namespace frame;
 
 class Locker
 {
-	const LOCKERPREFIX = 'frame-lock:';
+	const LOCKERPREFIX = 'frame:lock:';
 	protected $lock = [];
 
 	protected function cache()

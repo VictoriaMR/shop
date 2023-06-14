@@ -1,25 +1,17 @@
-<div id="task-page" class="container-fluid" data-status="<?php echo $enabled;?>">
+<div id="task-page" class="container-fluid">
 	<div class="row-item">
 		<div class="left" style="padding-top: 10px;">
-		系统状态：<?php if($enabled){echo '<span style="color:#5cb85c;">开启</span>';}else{echo '<span style="color:#e7502b;">关闭</span>';}?>
 		当前系统时间： <span id="time"><?php echo now();?></span>
 		</div>
-		<?php if ($enabled){?>
 		<div class="task-group right">
 			<div style="display:inline-block;">操作所有任务: </div>
 			<div class="btn-group" role="group" id="select-status" style="display:inline-block;">
-				<?php if (empty($taskList)){?>
-				<button title="初始化任务" class="btn btn-success btn-sm btn-task" <?php echo $enabled ? '' : 'disabled="disabled"';?> data-type="init">初始化</button>
-				<?php } else {?>
-				<button title="启动所有任务" class="btn btn-success btn-sm btn-task" <?php echo $enabled ? '' : 'disabled="disabled"';?> data-type="start-all">启动</button>
+				<button title="启动所有任务" class="btn btn-success btn-sm btn-task" data-type="start-all">启动</button>
 				<button title="停止所有任务" class="btn btn-danger btn-sm btn-task" data-type="stop-all">停止</button>
-				<?php }?>
 			</div>
 		</div>
-		<?php }?>
 		<div class="clear"></div>
 	</div>
-	<?php if ($enabled){?>
 	<div class="row-item mt8">
 		<table class="table table-hover table-middle">
 			<thead>
@@ -40,17 +32,19 @@
 						<li class="cycle-<?php echo $value['boot'];?>"></li>
 						<div class="in-1" title="<?php echo $value['name'];?>">
 							<?php echo $value['name'];?><br>
-							<?php echo $value['class_name'];?>
+							<?php echo $key;?>
 						</div>
 					</td>
 					<td>
-						<?php echo $value['process_pid'] ?? '--';?><br>
-						<?php echo $value['process_user'] ?? '--';?>
+						<span title="进程ID"><?php echo $value['process_pid'] ?? '--';?></span><br>
+						<span title="执行进程角色"><?php echo $value['process_user'] ?? '--';?></span><br>
+						<span title="进程启动时间"><?php echo implode(PHP_EOL, $value['cron']);?></span>
 					</td>
 					<td>
-						<span title="开始时间"><?php echo $value['start_time'] ?? '--';?></span><br >
-						<span title="运行时间"><?php echo $value['next_run'] ?? '--';?></span><br >
-						<span title="使用内存"><?php echo $value['memory_usage'] ?? '--';?></span>
+						<span title="开始时间"><?php echo empty($value['start_time']) ? '--': now($value['start_time']);?></span><br >
+						<span title="运行时间"><?php echo empty($value['run_at']) ? '--': now($value['run_at']);?></span><br >
+						<span title="下次运行时间"><?php echo empty($value['next_run']) ? '--': ($value['next_run'] < time() ? 'alwaysRun' : now($value['next_run']));?></span><br >
+						<span title="使用内存"><?php echo empty($value['memory_usage']) ? '--' : get1024Peck($value['memory_usage']);?></span>
 					</td>
 					<td>
 						<li class="cycle-<?php echo $value['boot'];?>"></li>
@@ -68,14 +62,14 @@
 					</td>
 					<td>
 						<div class="btn-group" role="group" id="select-status">
-							<button class="btn btn-success btn-sm btn-task" data-type="start"<?php echo $value['boot']!='off'?'disabled':'';?>>启动</button>
-							<button class="btn btn-danger btn-sm btn-task" data-type="stop"<?php echo $value['boot']!='on'?'disabled':'';?>>停止</button>
+							<button class="btn btn-success btn-sm btn-task" data-type="start"<?php echo $value['boot']=='off'?'':'disabled';?>>启动</button>
+							<button class="btn btn-danger btn-sm btn-task" data-type="stop"<?php echo $value['boot']=='on'?'':'disabled';?>>停止</button>
 						</div>
 					</td>
 				</tr>
 				<?php }?>
 			</tbody>
 		</table>
+		<p>共 <?php echo count($taskList);?> 个任务, 当前运行中的任务合计使用内存：<?php echo get1024Peck(array_sum(array_column($taskList, 'memory_usage')));?></p>
 	</div>
-	<?php }?>
 </div>

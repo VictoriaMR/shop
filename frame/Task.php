@@ -4,7 +4,7 @@ namespace frame;
 
 class Task
 {
-	const TASKPREFIX ='frame-task:';
+	const TASKPREFIX ='frame:task:';
 	
 	public function start($taskClass, $lockTimeout=0, $cas='')
 	{
@@ -125,13 +125,21 @@ class Task
 		}
 	}
 
-	public function countIncr($key)
+	public function countIncr($key, $field='count', $num=1)
 	{
-		return $this->cache()->hIncrBy($this->getKey($key), 'count', 1);
+		return $this->cache()->hIncrBy($this->getKey($key), $field, $num);
 	}
 
 	public function loopCountIncr($key)
 	{
-		return $this->cache()->hIncrBy($this->getKey($key), 'loop_count', 1);
+		return $this->countIncr($key, 'loop_count');
+	}
+
+	public function noticeTask($key)
+	{
+		$value = $this->getInfo('all', $key);
+		$value['next_run'] = time();
+		$this->setInfo('all', $key, $value);
+		$this->setInfo($key, 'next_run', $value['next_run']);
 	}
 }

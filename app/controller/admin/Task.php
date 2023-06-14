@@ -28,34 +28,17 @@ class Task extends AdminBase
 		}
 		html()->addCss();
 		html()->addJs();
-		$this->assign('taskList', $this->taskList());
-		$this->assign('enabled', config('task', 'enabled'));
-		$this->view();
-	}
-
-	protected function taskList()
-	{
 		$list = make('frame/Task')->getTaskList(true);
-		//压入主任务
-		
-		dd($list);
-		array_unshift($taskList, 'app-task-MainTask');
-		$taskList = array_flip($taskList);
-		foreach($taskList as $key=>$value) {
-			$value = $this->cache()->hGetAll($this->getKey($key));
-			if (empty($value)) {
-				$class = make(strtr($key, '-', DS), null, false);
-				$taskList[$key] = [
-					'boot' => 'off',
-					'status' => 'stop',
-					'name' => $class->config['name'],
-					'class_name' => $key,
-				];
-			} else {
-				$taskList[$key] = $value;
+		foreach ($list as $key=>$value) {
+			if (!isset($value['boot'])) {
+				$list[$key]['boot'] = 'off';
+			}
+			if (!isset($value['status'])) {
+				$list[$key]['status'] = 'stop';
 			}
 		}
-		return $taskList;
+		$this->assign('taskList', $list);
+		$this->view();
 	}
 
 	protected function modifyTask()
@@ -74,7 +57,6 @@ class Task extends AdminBase
 				//更新总任务数据
 				$allInfo = $tasker->getInfo('all', $key);
 				$allInfo['boot'] = $status;
-				$allInfo['status'] = $status.'ing';
 				$tasker->setInfo('all', $key, $allInfo);
 				$tasker->setInfoArray($key, $allInfo);
 				if ($status == 'on') {

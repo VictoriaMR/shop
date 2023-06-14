@@ -4,7 +4,6 @@ namespace app\task;
 
 abstract class TaskDriver
 {
-	const TASKPREFIX ='frame-task:';
 	public $config = [];
 
 	protected $locker;
@@ -58,13 +57,13 @@ abstract class TaskDriver
             // 设置任务当次启动时间
             $data = [
                 'start_time' => time(),
-                'status' => 'running',
+                'status' => 'starting',
                 'process_pid' => getmypid(),
                 'process_user' => get_current_user(),
                 'loop_count' => 0,
                 'info' => '',
             ];
-            $this->tasker->setInfoArray(get_called_class(), $data);
+            $this->tasker->setInfoArray($this->lock, $data);
             if (!$this->mainTask) {
                 $value = $this->tasker->getInfo('all', $this->lock);
                 $value['status'] = $data['status'];
@@ -78,8 +77,12 @@ abstract class TaskDriver
                 if ($this->continueRuning()) {
                     $this->tasker->loopCountIncr($this->lock);
                     $result = $this->run();
-                    $usgaMem = memory_get_usage();
-                    $this->tasker->setInfo($this->lock, 'memory_usage', memory_get_usage()- APP_MEMORY_START);
+                    $data = [
+                        'status' => 'running',
+                        'memory_usage' => memory_get_usage()- APP_MEMORY_START,
+                        'run_at' => time(),
+                    ];
+                    $this->tasker->setInfoArray($this->lock, $data);
                 	if ($result) {
                 		sleep(empty($this->config['sleep']) ? $this->sleep : $this->config['sleep']);
                 	}
@@ -89,14 +92,15 @@ abstract class TaskDriver
                 }
             }
             //更新时间
+            $value = $this->tasker->getInfo('all', $this->lock);
             $data = [
                 'status' => 'stop',
+                'memory_usage' => 0,
                 'info' => "任务已退出 \n".now(),
-                'next_run' => $this->getNextTime($this->config['cron']),
+                'next_run' => $value['next_run'] < time() ? $this->getNextTime($this->config['cron']) : $value['next_run'],
             ];
             $this->tasker->setInfoArray($this->lock, $data);
             if (!$this->mainTask) {
-                $value = $this->tasker->getInfo('all', $this->lock);
                 $value['status'] = 'stop';
                 $value['next_run'] = $data['next_run'];
                 $this->tasker->setInfo('all', $this->lock, $value);
@@ -106,7 +110,7 @@ abstract class TaskDriver
         }
 	}
 
-	public function getNextTime($cron)
+	protected function getNextTime($cron)
     {
         $result=false;
         foreach ($cron as $val){
@@ -131,7 +135,7 @@ abstract class TaskDriver
     //   0-30/10 3 * * *	斜杠表示间隔 (每天3点0分到30分之间, 每10分钟一次)
     //   */10 5-8 * * *	斜杠表示间隔 (每天5-8点, 每10分钟一次)
     // 获取类似linux crontab格式单条配置的下一次运行时间
-    public function getNextTimeByCron($cornStr)
+    protected function getNextTimeByCron($cornStr)
     {
         $cornStr=preg_replace('/\s+/', ' ', trim($cornStr));
         if ($cornStr=='* * * * *') {
@@ -221,7 +225,7 @@ abstract class TaskDriver
         return mktime($hour,$minute,0,$month,$day,$year);
     }
 
-    private function cronUnitParse($unit, $allowRange)
+    protected function cronUnitParse($unit, $allowRange)
     {
         if ($unit=='*') {
             $range = $allowRange;
@@ -261,7 +265,7 @@ abstract class TaskDriver
         return $result;
     }
 
-    private function cronNextVal($range, $val)
+    protected function cronNextVal($range, $val)
     {
         reset($range);
         foreach ($range as $v){
@@ -272,15 +276,13 @@ abstract class TaskDriver
         return -1;
     }
 
-	protected function taskSleep($time)
-	{
-		return $this->setInfo('next_run_at', now(time() + $time));
-	}
-
-	protected function nextRunAt()
-	{
-		return $this->setInfo('next_run_at', $this->getNextTime());
-	}
-
 	abstract public function run();
+
+    protected function taskMonitor($time=86400)
+    {
+        $value = $this->tasker->getInfo('all', $this->lock);
+        $value['next_run'] += $time;
+        $this->tasker->setInfo('all', $this->lock, $value);
+        $this->tasker->setInfo($this->lock, 'next_run', $value['next_run']);
+    }
 }

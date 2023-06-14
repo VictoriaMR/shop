@@ -33,8 +33,7 @@ class CompressStatic extends TaskDriver
 				$type = pathinfo($file)['extension'];
 				$reponse = '';
 				$count = 0;
-				while (!$reponse && $count < 5)
-				{
+				while (!$reponse && $count < 5) {
 					switch($type) {
 						case 'js':
 							$reponse = $http->post($urlArr[$type], ['input' => $source], ['Content-Type: application/x-www-form-urlencoded']);

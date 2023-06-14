@@ -26,7 +26,7 @@ class MainTask extends TaskDriver
         foreach ($list as $key => $data) {
             $data['next_run'] = $this->getNextTime($data['cron']);
             unset($data['cron']);
-            $this->tasker->setInfo('all', $key, ['boot'=>$data['boot'], 'next_run'=>$data['next_run'], 'status'=>$data['status']]);
+            $this->tasker->setInfo('all', $key, ['boot'=>$data['boot']??'off', 'next_run'=>$data['next_run'], 'status'=>$data['status']??'stop']);
             $this->tasker->setInfoArray($key, $data);
         }
     }

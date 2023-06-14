@@ -20,6 +20,8 @@ class Queue extends TaskDriver
 	{
 		$service = make('app/service/Queue');
 		if (!$service->count()) {
+			//任务挂起
+			$this->taskMonitor();
 			return false;
 		}
 		$data = $service->getInfo();
