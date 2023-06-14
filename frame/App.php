@@ -88,6 +88,12 @@ class App
 
 	public static function setVersion($version)
 	{
-		return redis()->set('frame-app:version', substr($version, 0, 5));
+		return redis(2)->set('frame:app:version', substr($version, 0, 5));
+	}
+
+	public static function getVersion()
+	{
+		if (!defined('APP_VERSION')) define('APP_VERSION', redis(2)->get('frame:app:version'));
+		return APP_VERSION;
 	}
 }

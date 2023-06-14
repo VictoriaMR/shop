@@ -70,11 +70,6 @@ class Task extends AdminBase
 		$this->success('操作成功');
 	}
 
-	protected function cache()
-	{
-		return cache(0);
-	}
-
 	protected function getKey($key, $type='task')
 	{
 		return ($type=='lock'?self::LOCKERPREFIX:self::TASKPREFIX).$key;

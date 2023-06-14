@@ -10,33 +10,29 @@ class Redis
 	const DEFAULT_EXT_TIME = 3600;
 	const DEFAULT_CONNECT_TIME = 5;
 
-	private function connect() 
+	private function connect()
 	{
-		if (config('env', 'REDIS_HOST')) {
-			try {
-				$this->_link = new \Redis();
-				$this->_link->connect(config('env', 'REDIS_HOST'), config('env', 'REDIS_PORT', '6379'), self::DEFAULT_CONNECT_TIME);
-				$this->_connect = true;
-			} catch (\Exception $e) {
-				make('frame/Debug')->runlog($e->getMessage(), 'redis');
-			}
-			if ($this->_connect && !empty(config('env', 'REDIS_PASSWORD'))) {
-				$this->_link->auth(config('env', 'REDIS_PASSWORD'));
-			}
+		try {
+			$this->_link = new \Redis();
+			$this->_link->connect(config('redis', 'host', '127.0.0.1'), config('redis', 'port', '6379'), self::DEFAULT_CONNECT_TIME);
+			$this->_connect = true;
+		} catch (\Exception $e) {
+			make('frame/Debug')->runlog($e->getMessage(), 'redis');
+		}
+		if ($this->_connect && !empty(config('redis', 'password'))) {
+			$this->_link->auth(config('redis', 'password'));
 		}
 		return $this->_connect;
 	}
 
 	public function setDb($db=0, $force=false)
 	{
-		if (config('env', 'APP_CACHE') || $force) {
-			if (is_null($this->_link)) {
-				$this->connect();
-			}
-			if ($this->_connect && $db != $this->_db) {
-				$this->_link->select($db);
-				$this->_db = $db;
-			}
+		if (is_null($this->_link)) {
+			$this->connect();
+		}
+		if ($this->_connect && $db != $this->_db) {
+			$this->_link->select($db);
+			$this->_db = $db;
 		}
 		return $this;
 	}

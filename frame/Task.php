@@ -98,7 +98,7 @@ class Task
 
 	protected function cache()
 	{
-		return cache(2);
+		return redis(2);
 	}
 
 	public function setInfo($key, $field, $value)

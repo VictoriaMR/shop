@@ -8,6 +8,7 @@ class File
 	const FILE_ACCEPT = ['jpg', 'jpeg', 'png'];
 	const FILE_COMPERSS = ['jpg', 'jpeg', 'png'];
 	const MAX_OFFSET = 1200;
+	protected $savePath = 'storage';
 
 	public function upload($file, $cate, $thumb = true)
 	{
@@ -18,7 +19,7 @@ class File
 		$attachment = make('app/service/attachment/Attachment');
 		$data = $attachment->getAttachmentByName($name, $cate);
 		if (empty($data)) {
-			$path = ROOT_PATH.config('env', 'FILE_CENTER').DS.$cate.DS;
+			$path = ROOT_PATH.$this->savePath.DS.$cate.DS;
 			//创建目录
 			if (!is_dir($path)) {
 				mkdir($path, 0755, true);
@@ -73,7 +74,7 @@ class File
 		if (!empty($list)) {
 			$list = array_column($list, 'attach_id', 'url_md5');
 		}
-		$root_path = ROOT_PATH.config('env', 'FILE_CENTER').DS;
+		$root_path = ROOT_PATH.$this->savePath.DS;
 		$path = $root_path.$cate.DS;
 		//创建目录
 		if (!is_dir($path)) {

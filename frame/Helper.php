@@ -42,9 +42,6 @@ function request(){
 function redis($db=0){
 	return \App::make('frame/Redis')->setDb($db);
 }
-function cache($db=0){
-	return \App::make('frame/Redis')->setDb($db, true);
-}
 function db($db=null){
 	return \App::make('frame/Connection')->setDb($db);
 }
@@ -72,8 +69,7 @@ function mediaUrl($url, $width=''){
 	return siteUrl($url);
 }
 function version(){
-	if (!defined('APP_VERSION')) define('APP_VERSION', redis()->get('frame-app:version'));
-	return APP_VERSION;
+	return \App::getVersion();
 }
 function isWin(){
 	if (!defined('IS_WIN')) define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
