@@ -9,7 +9,7 @@ class MainTask extends TaskDriver
     public $config = [
         'name' => '系统核心队列任务',
         'cron' => ['* * * * *'],
-        'sleep' => 10,
+        'sleep' => 60,
     ];
 
     protected function before()
