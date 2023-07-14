@@ -51,10 +51,6 @@ class Api extends AdminBase
 				'name' => 'crawler',
 			],
 			[
-				'title' => '产品自动入库',
-				'name' => 'auto_crawler',
-			],
-			[
 				'title' => '产品维护',
 				'name' => 'auto_check',
 			],
