@@ -30,6 +30,12 @@ class App
 	public static function send()
 	{
 		$baseInfo = self::get('base_info');
+		if (empty($baseInfo)) {
+			$baseInfo = [
+				'type' => 'admin',
+				'path' => 'admin'
+			];
+		}
 		if (empty($baseInfo)) throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!', 1);
 		//路由解析
 		$router = self::make('frame/Router')->analyze();
@@ -42,7 +48,7 @@ class App
 			if (!session()->get('setcookie', false)) {
 				self::make('frame/Cookie')->init();
 			}
-			self::make('app/middleware/VerifyToken')->handle($router);
+			// self::make('app/middleware/VerifyToken')->handle($router);
 			call_user_func_array($callArr, []);
 		} else {
 			throw new \Exception('type '.$router['class'].', class '.$router['path'].', function '.$router['func'].' was not exist!', 1);
