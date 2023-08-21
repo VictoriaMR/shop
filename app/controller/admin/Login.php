@@ -15,7 +15,7 @@ class Login extends AdminBase
 		html()->addJs('verify', false);
 		html()->addCss();
 		html()->addJs();
-		$this->assign('_title', '登录');
+		$this->assign('_title', '后台登录');
 		$this->view();
 	}
 

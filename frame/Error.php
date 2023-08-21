@@ -42,10 +42,10 @@ class Error
 			echo 'File: '.$data['file'].$br;
 			echo 'Line: '.$data['line'].$br;
 			echo 'Error Message: '.$data['message'].$br;
-			if (!empty($data['trace'])) {
+			if (isset($data['trace'])) {
 				echo 'Stack trace:'.$br;
 				foreach ($data['trace'] as $key=>$value) {
-					echo "{$key}# {$value['file']}({$value['line']}): {$value['class']}{$value['type']}{$value['function']}()".$br;
+					// echo "{$key}# {$value['file']}({$value['line']}): {$value['class']}{$value['type']}{$value['function']}()".$br;
 				}
 			}
 		} else {

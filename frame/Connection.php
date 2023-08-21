@@ -18,26 +18,24 @@ final class Connection
 
 	public function setDb($db=null)
 	{
-		if (is_null($db)) $db = 'default';
+		is_null($db) && $db = 'default';
 		$config = config('database', $db);
-		if (empty($config)) {
-			throw new \Exception('Connect Error No Database Config', 1);
-		}
-		if (is_null($this->_connect)) {
+		$config || throw new \Exception('Connect Error No Database Config', 1);
+		if (!$this->_connect) {
 			$this->connect(
-				$config['db_host'],
-				$config['db_username'],
-				$config['db_password'],
-				$config['db_port'],
-				$config['db_database'],
-				$config['db_charset']
+				$config['host'] ?? '127.0.0.1',
+				$config['username'],
+				$config['password'],
+				$config['port'] ?? '3306',
+				$config['database'],
+				$config['charset'] ?? 'utf8'
 			);
-			$this->_selectdb = $config['db_database'];
+			$this->_selectdb = $config['database'];
 		}
-		if ($this->_selectdb != $config['db_database']) {
-			$this->_connect->select_db($config['db_database']);
-			$this->_selectdb = $config['db_database'];
-			$this->_connect->set_charset($config['db_charset']);
+		if ($this->_selectdb != $config['database']) {
+			$this->_connect->select_db($config['database']);
+			$this->_selectdb = $config['database'];
+			$config['charset'] && $this->_connect->set_charset($config['charset']);
 		}
 		return $this->_connect;
 	}

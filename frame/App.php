@@ -9,7 +9,6 @@ class App
 	public static function init()
 	{
 		spl_autoload_register([__CLASS__ , 'autoload']);
-		if (!isCli()) self::set('base_info', self::getSiteInfo());
 		self::make('frame/Error')->register();
 	}
 
@@ -29,36 +28,25 @@ class App
 
 	public static function send()
 	{
-		$baseInfo = self::get('base_info');
-		if (empty($baseInfo)) {
-			$baseInfo = [
-				'type' => 'admin',
-				'path' => 'admin'
-			];
-		}
-		if (empty($baseInfo)) throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!', 1);
+		$domain = $_SERVER['HTTP_HOST'] ?? '';
+		$baseInfo = config('domain', $domain);
+		if (empty($baseInfo)) throw new \Exception('domain: '.$domain.' was not exist!', 1);
+		$baseInfo['domain'] = $domain;
+		self::set('base_info', $baseInfo);
 		//路由解析
 		$router = self::make('frame/Router')->analyze();
-		$router['class'] = $baseInfo['type'];
+		$router['class'] = isAdmin()?'admin':'home';
 		self::set('router', $router);
 		//执行方法
 		$call = self::make('app/controller/'.$router['class'].'/'.$router['path']);
 		$callArr = [$call, $router['func']];
 		if (is_callable($callArr)) {
-			if (!session()->get('setcookie', false)) {
-				self::make('frame/Cookie')->init();
-			}
-			// self::make('app/middleware/VerifyToken')->handle($router);
+			self::make('app/middleware/VerifyToken')->handle($router);
 			call_user_func_array($callArr, []);
 		} else {
 			throw new \Exception('type '.$router['class'].', class '.$router['path'].', function '.$router['func'].' was not exist!', 1);
 		}
 		self::runOver();
-	}
-
-	private static function getSiteInfo()
-	{
-		return self::make('app/service/site/Site')->getInfoCache(str_replace('www.', '', $_SERVER['HTTP_HOST']), 'domain');
 	}
 
 	private static function autoload($abstract, $params=null)
@@ -99,7 +87,7 @@ class App
 
 	public static function getVersion()
 	{
-		if (!defined('APP_VERSION')) define('APP_VERSION', redis(2)->get('frame:app:version'));
+		defined('APP_VERSION') || define('APP_VERSION', redis(2)->get('frame:app:version')?:'1.0.0');
 		return APP_VERSION;
 	}
 }

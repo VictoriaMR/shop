@@ -12,10 +12,7 @@ class Html
 		$matchPath = '';
 		if ($match) {
 			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
-			if (empty($name)) {
-				$_route = \App::get('router');
-				$name = lcfirst($_route['path']).DS.$_route['func'];
-			}
+			$name || $name = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
 		}
 		if (is_array($name)) {
 			foreach ($name as $value) {
@@ -31,10 +28,7 @@ class Html
 		$matchPath = '';
 		if ($match) {
 			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
-			if (empty($name)) {
-				$_route = \App::get('router');
-				$name = lcfirst($_route['path']).DS.$_route['func'];
-			}
+			$name || $name = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
 		}
 		if (is_array($name)) {
 			foreach ($name as $value) {
@@ -48,15 +42,13 @@ class Html
 	public function getCss()
 	{
 		if (empty($this->_CSS)) return [];
-		$_route = \App::get('router');
-		return $this->addStaticFile($this->_CSS, strtolower($_route['path'].'_'.$_route['func']), 'css');
+		return $this->addStaticFile($this->_CSS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'css');
 	}
 
 	public function getJs()
 	{
 		if (empty($this->_JS)) return [];
-		$_route = \App::get('router');
-		return $this->addStaticFile($this->_JS, strtolower($_route['path'].'_'.$_route['func']), 'js');
+		return $this->addStaticFile($this->_JS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'js');
 	}
 
 	public function getCommonCss()
@@ -73,7 +65,7 @@ class Html
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template'.DS.path().DS;
+		$path = ROOT_PATH.'template'.DS.template().DS;
 		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
 		if (\App::get('base_info', 'static_cache') && is_file($file)) return $file;
 		$str = '';

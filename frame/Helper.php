@@ -16,10 +16,8 @@ function config($type, $name='', $default=''){
 			return $default;
 		}
 	}
-	if (empty($name)) {
-		return empty($GLOBALS[$type])?$default:$GLOBALS[$type];
-	}
-	return empty($GLOBALS[$type][$name])?$default:$GLOBALS[$type][$name];
+	if ($name) return isset($GLOBALS[$type][$name])?$GLOBALS[$type][$name]:$default;
+	return isset($GLOBALS[$type])?$GLOBALS[$type]:$default;
 }
 function redirect($url=''){
 	header('Location:'.$url);exit();	
@@ -92,24 +90,19 @@ function isCli(){
 	return defined('IS_CLI');
 }
 function isDebug(){
-	if (!defined('IS_DEBUG')) define('IS_DEBUG', config('env', 'APP_DEBUG'));
-	return IS_DEBUG;
+	return config('env', 'APP_DEBUG');
 }
 function isAdmin(){
-	if (!defined('IS_ADMIN')) define('IS_ADMIN', \App::get('base_info', 'site_id')==10);
-	return IS_ADMIN;
-}
-function type(){
-	if (!defined('APP_TYPE')) define('APP_TYPE', \App::get('base_info', 'type'));
-	return APP_TYPE;
-}
-function path(){
-	if (!defined('APP_ROUTE')) define('APP_ROUTE', \App::get('base_info', 'path'));
-	return APP_ROUTE;
+	return siteId() == 80;
 }
 function domain(){
-	if (!defined('APP_DOMAIN')) define('APP_DOMAIN', 'https://'.\App::get('base_info', 'domain').'/');
-	return APP_DOMAIN;
+	return 'https://'.\App::get('base_info', 'domain').'/';
+}
+function template() {
+	return \App::get('base_info', 'template');
+}
+function type() {
+	return isAdmin()?'admin':'home';
 }
 function ipost($name='', $default=null){
 	return \App::make('frame/Request')->ipost($name, $default);
@@ -127,7 +120,7 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 	if (empty($lanId)) $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
 	if (!isset($GLOBALS[$key])) {
-		$file = ROOT_PATH.'template'.DS.path().DS.'language'.DS.$type.DS.$lanId.'.php';
+		$file = ROOT_PATH.'template'.DS.template().DS.'language'.DS.$type.DS.$lanId.'.php';
 		if (is_file($file)) $GLOBALS[$key] = include $file;
 		else $GLOBALS[$key] = null;
 	}
@@ -176,9 +169,9 @@ function getDirFile($path){
 }
 function randString($len=16, $lower=true, $upper=true, $number=true){
 	$str = '';
-	if ($lower) $str .= 'abcdefghijklnmopqrstuvwxyz';
-	if ($upper) $str .= 'ABCDEFGHIJKLNMOPQRSTUVWXYZ';
-	if ($number) $str .= '0123456789';
+	$lower && $str .= 'abcdefghijklnmopqrstuvwxyz';
+	$upper && $str .= 'ABCDEFGHIJKLNMOPQRSTUVWXYZ';
+	$number && $str .= '0123456789';
 	$rStr = '';
 	$seedLen = strlen($str);
 	while ($len > 0) {

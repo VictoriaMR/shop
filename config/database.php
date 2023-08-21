@@ -1,19 +1,15 @@
 <?php
 return [
 	'default' => [
-		'db_host'	  => '127.0.0.1',
-		'db_port'	  => '3309',
-		'db_database' => 'shop',
-		'db_username' => 'root',
-		'db_password' => 'root',
-		'db_charset'  => 'utf8mb4',
+		'port' => '3309',
+		'database' => 'shop',
+		'username' => 'root',
+		'password' => 'root',
 	],
 	'static' => [
-		'db_host'	  => '127.0.0.1',
-		'db_port'	  => '3309',
-		'db_database' => 'shop_static',
-		'db_username' => 'root',
-		'db_password' => 'root',
-		'db_charset'  => 'utf8mb4',
+		'port' => '3309',
+		'database' => 'shop_static',
+		'username' => 'root',
+		'password' => 'root',
 	],
 ];
