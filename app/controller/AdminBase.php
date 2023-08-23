@@ -8,6 +8,8 @@ class AdminBase extends Base
 	protected $_ignore = [];
 	protected $_arr = [];
 	protected $_default;
+	protected $_base_js = ['jquery', 'common', 'bootstrap', 'bootstrap-plugin'];
+	protected $_base_css = ['computer/common', 'computer/bootstrap', 'computer/space', 'icon'];
 
 	protected function _init()
 	{
@@ -27,6 +29,8 @@ class AdminBase extends Base
 		$this->assign('_path', $router['path']);
 		$this->assign('_func', $router['func']);
 		$this->assign('_title', $this->_arr[$router['func']] ?? '');
+		html()->setCommonCss($this->_base_css);
+		html()->setCommonJs($this->_base_js);
 	}
 
 	protected function addLog($msg)

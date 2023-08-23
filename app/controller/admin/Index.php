@@ -17,15 +17,9 @@ class Index extends AdminBase
 
 	public function index()
 	{
-		$arr = ipost();
-		if ($arr) {
-			foreach ($arr as $value) {
-				make('app/service/product/Url')->add($value);
-			}
-		}
-		dd('exit');
 		html()->addCss();
 		html()->addJs();
+		dd(session()->get('admin_info'));
 		$this->assign('funcList', make('app/service/controller/Controller')->getList());
 		$this->assign('info', session()->get('admin_info'));
 		$this->view();

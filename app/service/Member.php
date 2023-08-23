@@ -52,18 +52,16 @@ class Member extends Base
 
 	protected function loginSuccess($info)
 	{
-		$data = [
-			'mem_id' => $info['mem_id'],
-			'name' => $info['name'] ?? '',
-			'nickname' => $info['nickname'] ?? '',
-			'first_name' => $info['first_name'] ?? '',
-			'last_name' => $info['last_name'] ?? '',
-			'avatar' => $this->getAvatar($info['avatar'], $info['sex']),
-			'mobile' => $info['mobile'],
-			'email' => $info['email'],
-			'sex' => $info['sex'] ?? 0,
-		];
-		session()->set(type().'_info', $data);
+		$except = ['status', 'password', 'salt', 'add_time', 'update_time', 'login_time'];
+		foreach ($info as $key=>$value) {
+			if (in_array($key, $except)) {
+				unset($info[$key]);
+			}
+		}
+		if (!empty($info['avatar'])) {
+			$info['avatar'] = $this->getAvatar($info['avatar'], $info['sex']);
+		}
+		session()->set(type().'_info', $info);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
 		$this->addLog(['type'=>0]);
 		make('frame/Cookie')->login($info['mem_id']);
@@ -106,11 +104,7 @@ class Member extends Base
 
 	public function getAvatar($avatar='', $sex=0)
 	{
-		if (empty($avatar)) {
-			return siteUrl('image/common/'.(empty($sex) ? 'female' : 'male').'.jpg');
-		} else {
-			return mediaUrl($avatar);
-		}
+		return $avatar ? mediaUrl($avatar, '', false) : siteUrl('image/common/'.(empty($sex) ? 'female' : 'male').'.jpg');
 	}
 
 	public function resetPassword($mobile, $password, $type='email')

@@ -1,11 +1,36 @@
-*{margin:0;padding:0;box-sizing:border-box}
-body,button,input,select,textarea,th{font-family: 'Segoe UI', Helvetica, Arial, '宋体', sans-serif; font-size: 13px; color: #5f5f5f; font-weight: normal; -webkit-font-smoothing: subpixel-antialiased; text-rendering: optimizelegibility}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box
+}
+body{
+    font-family: 'Segoe UI', Helvetica, Arial, '宋体', sans-serif;
+    font-size: 13px;
+    color: #5f5f5f;
+    font-weight: normal;
+    SCROLLBAR-ARROW-COLOR:#2c5784;
+    SCROLLBAR-FACE-COLOR:#D1E2EF;
+    SCROLLBAR-DARKSHADOW-COLOR:#A8C7DD;
+    SCROLLBAR-BASE-COLOR:#000000;
+    SCROLLBAR-HIGHLIGHT-COLOR:#ffffff;
+    SCROLLBAR-SHADOW-COLOR:#ffffff;
+    SCROLLBAR-TRACK-COLOR:#e9f1f7;
+    SCROLLBAR-3DLIGHT-COLOR:#bcd4e5
+}
 ul,ol{list-style:none}
-a{text-decoration:none;color:#3c3c3c;cursor:pointer}
-a:hover{text-decoration:none}
-img{max-width:100%;max-height:100%}
-table{border-collapse:collapse;border-spacing:0;border-bottom:solid 1px #dedede}
-body{SCROLLBAR-ARROW-COLOR:#2c5784;SCROLLBAR-FACE-COLOR:#D1E2EF;SCROLLBAR-DARKSHADOW-COLOR:#A8C7DD;SCROLLBAR-BASE-COLOR:#000000;SCROLLBAR-HIGHLIGHT-COLOR:#ffffff;SCROLLBAR-SHADOW-COLOR:#ffffff;SCROLLBAR-TRACK-COLOR:#e9f1f7;SCROLLBAR-3DLIGHT-COLOR:#bcd4e5}
+a{
+    text-decoration:none;
+    color:#3c3c3c;cursor:pointer
+}
+img{
+    max-width:100%;
+    max-height:100%
+}
+table{
+    border-collapse:collapse;
+    border-spacing:0;
+    border-bottom:solid 1px #dedede
+}
 ::-webkit-scrollbar{width:7px;height:10px}
 ::-webkit-scrollbar-button:vertical{display:none}
 ::-webkit-scrollbar-track:vertical{background-color:black}
@@ -85,13 +110,14 @@ body{SCROLLBAR-ARROW-COLOR:#2c5784;SCROLLBAR-FACE-COLOR:#D1E2EF;SCROLLBAR-DARKSH
 #rightTips .error{color:#a94442;background-color:#f2dede;border:1px solid #ebccd1}
 #rightTips .info .glyphicon-remove{cursor:pointer;position:absolute;top:4px;right:4px;transition:1s}
 #rightTips .info .glyphicon-remove:hover{transform:rotate(180deg)}
-#progressing{width:1px;height:3px;display:block;background-color:#e7502b;position:absolute;left:0px;top:0px}
+#progressing{width:1px;height:3px;display:block;background-color:#e7502b;position:absolute;left:-1px;top:0px}
 #header-nav{margin-top:10px;margin-bottom:15px}
 #header-nav .nav{border-left-width:2px;border-left-style:solid;border-left-color:#e7502b;line-height:20px;padding-left:10px}
 #header-nav .nav a{display:none}
 #header-nav .nav:hover a{display:inline-block}
 #confirm-pop .content{background:#fff;padding:20px;width:350px;position:fixed;top:calc(50% - 70px);left:calc(50% - 175px);z-index:99}
 .loading{animation:loading 1s steps(8) infinite;height:50%;width:50%;margin-top:25%}
+button{cursor: pointer;}
 @keyframes loading {
     from {transform: rotate(0deg)}
     to {transform: rotate(360deg)}

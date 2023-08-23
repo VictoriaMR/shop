@@ -52,14 +52,16 @@ function url($name='', $param=[], $domain='') {
 function adminUrl($name='', $param=[]){
 	return router()->adminUrl($name, $param);
 }
-function siteUrl($name){
+function siteUrl($name, $version=true){
 	$extension = pathinfo($name)['extension'];
 	if (in_array($extension, ['png', 'jpeg', 'jpg']) && is_file(ROOT_PATH.'storage'.DS.str_replace('.'.$extension, '.webp', $name))) {
 		$name = str_replace('.'.$extension, '.webp', $name);
 	}
-	return domain().$name.'?v='.version();
+	$name = domain().$name;
+	if ($version) $name .= '?v='.version();
+	return $name;
 }
-function mediaUrl($url, $width=''){
+function mediaUrl($url, $width='', $version=true){
 	if (!empty($width)) {
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);

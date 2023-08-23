@@ -4,6 +4,8 @@ namespace frame;
 
 class Html
 {
+	protected $_COMMON_CSS = [];
+	protected $_COMMON_JS = [];
 	protected $_CSS = [];
 	protected $_JS = [];
 
@@ -51,23 +53,33 @@ class Html
 		return $this->addStaticFile($this->_JS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'js');
 	}
 
+	public function setCommonCss($arr)
+	{
+		$this->_COMMON_CSS = $arr;
+	}
+
 	public function getCommonCss()
 	{
-		$arr = config('css', type())[isMobile()?'mobile':'computer'];
-		return $this->addStaticFile($arr, 'common', 'css');
+		if (empty($this->_COMMON_CSS)) return false;
+		return $this->addStaticFile($this->_COMMON_CSS, 'common', 'css');
+	}
+
+	public function setCommonJs($arr)
+	{
+		$this->_COMMON_JS = $arr;
 	}
 
 	public function getCommonJs()
 	{
-		$arr = config('js', type())[isMobile()?'mobile':'computer'];
-		return $this->addStaticFile($arr, 'common', 'js');
+		if (empty($this->_COMMON_JS)) return false;
+		return $this->addStaticFile($this->_COMMON_JS, 'common', 'js');
 	}
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
 		$path = ROOT_PATH.'template'.DS.template().DS;
 		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
-		if (\App::get('base_info', 'static_cache') && is_file($file)) return $file;
+		if (\App::get('base_info', 'static_cache') && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {

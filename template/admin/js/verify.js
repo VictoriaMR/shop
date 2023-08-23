@@ -12,6 +12,6 @@ const VERIFY = {
         return this.check(code, /^[a-zA-Z0-9]{4,}/);
     },
     check: function(input, reg) {
-        return reg.test(input.trim());
+        return reg.test(input?input.trim():'');
     }
 };

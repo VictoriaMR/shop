@@ -5,7 +5,7 @@
     background-color: #2b363e;
 }
 #index-page .header .right .glyphicon{
-	font-size: 18px;
+	font-size: 16px;
 	line-height: 35px;
 	color: #ffffff;
 	margin-right: 16px;
@@ -107,7 +107,7 @@
     height: 40px;
     line-height: 40px;
     padding: 0 10px;
-    font-weight: bold;
+    font-weight: 500;
     font-size: 15px;
     padding-left: 10px;
     position: relative;
@@ -125,7 +125,6 @@
     text-align: left;
     padding-left: 12px;
     height: 40px;
-    font-size: 15px;
     line-height: 40px;
     position: relative;
     overflow: hidden;
@@ -133,6 +132,9 @@
     color: #999ea2;
     opacity: 0.7;
     border-bottom: 1px solid #3a444c;
+}
+#index-page .nav-content ul>li .glyphicon {
+    font-size: 16px;
 }
 #index-page .left-content .left-one ul>li:hover {
 	opacity: 1;

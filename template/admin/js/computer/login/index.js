@@ -1,12 +1,20 @@
-$(function(){
+windowLoad(function(){
 	LOGIN.init();
-});
+})
 const LOGIN = {
 	init: function () {
-		var mobileObj = $('input[name="mobile"]');
-		var codeObj = $('input[name="code"]');
-		var passwordObj = $('input[name="password"]');
-		var errorObj = $('#login-error');
+		var mobileObj = document.querySelector('input[name="mobile"]');
+		var codeObj = document.querySelector('input[name="code"]');
+		var passwordObj = document.querySelector('input[name="password"]');
+		var loginBtnObj = document.querySelector('#login-btn');
+		loginBtnObj.onclick = function() {
+			var mobile = mobileObj.val;
+			console.log(mobile, 'mobile')
+			if (!VERIFY['mobile'](mobile)) {
+				errorTips('手机号码格式不正确');
+				return false;
+			}
+		}
 		$('#login-btn').on('click', function() {
 			let msg = '';
 			$('#login-error').addClass('hidden');
