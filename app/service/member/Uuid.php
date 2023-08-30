@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Uuid extends Base
 {
-	protected $_model = 'app/model/member/Uuid';
-
 	public function getInfo($uuid)
 	{
 		$where = [

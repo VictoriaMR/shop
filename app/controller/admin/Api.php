@@ -118,21 +118,9 @@ class Api extends AdminBase
 
 	public function notice()
 	{
-		$url = trim(ipost('url'));
-		if (empty($url)) {
-			$this->error('url 不能为空');
+		foreach(ipost() as $value) {
+			purchase()->product()->addUrl($value);
 		}
-		make('app/service/supplier/Url')->addUrl($url);
-		$this->success();
-	}
-
-	public function img()
-	{
-		$url = trim(ipost('url'));
-		if (empty($url)) {
-			$this->error('url 不能为空');
-		}
-		make('app/service/supplier/Image')->addUrl($url);
 		$this->success();
 	}
 }

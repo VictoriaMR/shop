@@ -5,8 +5,6 @@ use app\service\Base;
 
 class DescUsed extends Base
 {
-	protected $_model = 'app/model/product/DescUsed';
-
 	public function addDescUsed(int $spuId, array $insert)
 	{
 		if (empty($insert)) return false;

@@ -4,9 +4,7 @@ namespace app\service\admin;
 use app\service\Base;
 
 class Logger extends Base
-{	
-    protected $_model = 'app/model/admin/Logger';
-
+{
     public function getTypeList()
     {
         return [

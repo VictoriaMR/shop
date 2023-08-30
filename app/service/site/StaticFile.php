@@ -5,8 +5,6 @@ use app\service\Base;
 
 class StaticFile extends Base
 {
-	protected $_model = 'app/model/site/StaticFile';
-
 	public function addNotExist($name, $type)
 	{
 		$name = explode('.', $name)[0];

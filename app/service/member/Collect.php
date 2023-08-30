@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Collect extends Base
 {
-	protected $_model = 'app/model/member/Collect';
-
 	public function collectProduct($spuId)
 	{
 		if (!$this->userId()) {

@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Attachment extends Base
 {	
-	protected $_model = 'app/model/attachment/Attachment';
-
 	public function addIfNot(array $data)
 	{
 		$info = $this->loadData(['name'=>$data['name']], 'attach_id');

@@ -6,7 +6,6 @@ use app\service\Base;
 class Category extends Base
 {
 	protected $_list = [];
-	protected $_model = 'app/model/category/Category';
 
 	public function getInfo($cateId)
 	{

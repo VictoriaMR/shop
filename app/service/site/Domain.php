@@ -6,7 +6,6 @@ use app\service\Base;
 class Domain extends Base
 {
 	const CACHE_KEY = 'site-currency-used:';
-	protected $_model = 'app/model/site/Domain';
 
 	public function getInfo($siteId=null)
 	{

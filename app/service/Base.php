@@ -6,25 +6,16 @@ abstract class Base
 {
     protected $baseModel;
     protected $_error = [];
-    protected $_model = [];
+    protected $_model;
 
     private function __clone() {}
     
     protected function getModel()
     {
-        if (!empty($this->_model)) {
-            if (is_array($this->_model)) {
-                if (count($this->_model) == 1) {
-                    $this->baseModel = make(current($this->_model));
-                } else {
-                    foreach ($this->_model as $key=>$value) {
-                        $this->$$key = make($value);
-                    }
-                }
-            } else {
-                $this->baseModel = make($this->_model);
-            }
+        if (!$this->_model) {
+            $this->_model = str_replace('\\service\\', '\\model\\', get_called_class());
         }
+        $this->baseModel = make($this->_model);
     }
 
     public function __call($func, $arg)

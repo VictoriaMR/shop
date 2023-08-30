@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Language extends Base
 {
-	protected $_model = 'app/model/site/Language';
-
 	public function updateCache($siteId, $lanId, $data=[])
 	{
 		if (empty($data)) {

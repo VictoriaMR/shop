@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Controller extends Base
 {
-	protected $_model = 'app/model/controller/Controller';
-
 	public function getList()
 	{
 		$list = $this->getListData([], '*', 0, 0, ['sort'=>'asc']);

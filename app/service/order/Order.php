@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Order extends Base
 {
-	protected $_model = 'app/model/order/Order';
-
 	public function createOrder($skuIdArr, $shippingAddressId, $billingAddressId, $couponId=0, $insurance=false)
 	{
 		//递送地址 账单地址

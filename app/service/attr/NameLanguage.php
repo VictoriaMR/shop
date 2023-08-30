@@ -5,8 +5,6 @@ use app\service\Base;
 
 class NameLanguage extends Base
 {
-	protected $_model = 'app/model/attr/NameLanguage';
-
 	public function setNxLanguage($id, $lanId, $name)
 	{
 		if (empty($id) || empty($lanId) || empty($name)) {

@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Address extends Base
 {
-	protected $_model = 'app/model/member/Address';
-
 	public function getInfo($id)
 	{
 		$where = [

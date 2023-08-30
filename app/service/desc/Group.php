@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Group extends Base
 {
-	protected $_model = 'app/model/desc/Group';
-
 	public function addNotExist($nameArr)
 	{
 		if (empty($nameArr)) return false;

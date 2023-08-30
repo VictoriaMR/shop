@@ -5,8 +5,6 @@ use app\service\Base;
 
 class IntroUsed extends Base
 {
-	protected $_model = 'app/model/product/IntroUsed';
-
 	public function addIntroUsed($spuId, array $data)
 	{
 		$allAttachId = array_column($data, 'attach_id');

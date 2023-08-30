@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Language extends Base
 {
-	protected $_model = 'app/model/category/Language';
-
 	public function setNxLanguage($cateId, $lanId, $type, $name)
 	{
 		if (empty($cateId) || empty($name)) {

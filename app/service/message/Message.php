@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Message extends Base
 {
-	protected $_model = 'app/model/message/Message';
-	
 	public function createGroup($from, $to=0, $type=0)
 	{
 		$key = $this->getGroupKey($from, $to, $type);

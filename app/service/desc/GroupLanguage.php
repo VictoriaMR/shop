@@ -5,8 +5,6 @@ use app\service\Base;
 
 class GroupLanguage extends Base
 {
-	protected $_model = 'app/model/desc/GroupLanguage';
-
 	public function setNxLanguage($id, $lanId, $name)
 	{
 		if (empty($id) || empty($lanId) || empty($name)) {

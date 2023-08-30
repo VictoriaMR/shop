@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Url extends Base
 {
-    protected $_model = 'app/model/product/Url';
-
     public function add($url)
     {
         $channelId = make('app/service/product/Channel')->getChannelId($url);

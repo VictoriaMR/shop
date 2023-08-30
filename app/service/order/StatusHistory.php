@@ -5,8 +5,6 @@ use app\service\Base;
 
 class StatusHistory extends Base
 {
-	protected $_model = 'app/model/order/StatusHistory';
-
 	public function addLog($orderId, $status, $lanId='', $replace=[])
 	{
 		if (empty($orderId)) {

@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Name extends Base
 {
-	protected $_model = 'app/model/desc/Name';
-
 	public function addNotExist($nameArr)
 	{
 		if (empty($nameArr)) return false;

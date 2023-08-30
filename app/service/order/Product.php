@@ -5,5 +5,4 @@ use app\service\Base;
 
 class Product extends Base
 {
-	protected $_model = 'app/model/order/Product';
 }

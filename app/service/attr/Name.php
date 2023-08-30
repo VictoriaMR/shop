@@ -6,8 +6,7 @@ use app\service\Base;
 class Name extends Base
 {
 	const CACHE_KEY = 'product:attr:name_cache:';
-	protected $_model = 'app/model/attr/Name';
-
+	
 	public function addNotExist($nameArr)
 	{
 		if (empty($nameArr)) return false;

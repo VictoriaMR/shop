@@ -6,7 +6,6 @@ use app\service\Base;
 class CurrencyUsed extends Base
 {
 	const CACHE_KEY = 'site-currency-used:';
-	protected $_model = 'app/model/site/CurrencyUsed';
 
 	public function getList($siteId=null)
 	{

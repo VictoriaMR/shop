@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Sku extends Base
 {
-	protected $_model = 'app/model/product/Sku';
-
 	public function getInfoCache($skuId, $lanId=1)
 	{
 		$cacheKey = $this->getCacheKey($skuId, $lanId);

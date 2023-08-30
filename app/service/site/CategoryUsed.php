@@ -6,7 +6,6 @@ use app\service\Base;
 class CategoryUsed extends Base
 {
 	const CACHE_KEY = 'site-category-used:';
-	protected $_model = 'app/model/site/CategoryUsed';
 
 	public function getList($where=[], $page=1, $size=30)
 	{

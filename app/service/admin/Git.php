@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Git extends Base
 {   
-    protected $_model = 'app/model/admin/Git';
-
     public function upateLibrary($id, &$msg)
     {
         $rst = $this->run('git pull', ROOT_PATH);

@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Url extends Base
 {
-	protected $_model = 'app/model/supplier/Url';
-
 	public function addUrl($url, $priority=0)
 	{
 		$domain = $this->getDomain($url);

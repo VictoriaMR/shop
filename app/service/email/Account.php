@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Account extends Base
 {
-	protected $_model = 'app/model/email/Account';
-
 	public function getInfoCache($id)
 	{
 		$cacheKey = $this->getCacheKey($id);

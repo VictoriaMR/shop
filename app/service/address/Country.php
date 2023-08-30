@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Country extends Base
 {
-	protected $_model = 'app/model/address/Country';
-
 	public function getName($code2, $lanId=2)
 	{
 		return $this->loadData($code2, 'name_en')['name_en'] ?? '';

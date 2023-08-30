@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Member extends Base
 {
-	protected $_model = 'app/model/Member';
-
 	public function create($data)
 	{
 		$data['salt'] = randString(4);

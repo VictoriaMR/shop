@@ -20,7 +20,9 @@ final class Connection
 	{
 		is_null($db) && $db = 'default';
 		$config = config('database', $db);
-		$config || throw new \Exception('Connect Error No Database Config', 1);
+		if (empty($config)) {
+			throw new \Exception('Connect Error No Database Config', 1);
+		}
 		if (!$this->_connect) {
 			$this->connect(
 				$config['host'] ?? '127.0.0.1',

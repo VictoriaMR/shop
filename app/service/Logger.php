@@ -5,8 +5,6 @@ use app\service\Base;
 
 class Logger extends Base
 {
-	protected $_model = 'app/model/Logger';
-
 	public function getStats($field)
 	{
 		return $this->field('count(*) AS count, '.$field)->groupBy($field)->get();

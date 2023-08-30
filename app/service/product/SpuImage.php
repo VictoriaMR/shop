@@ -5,8 +5,6 @@ use app\service\Base;
 
 class SpuImage extends Base
 {
-	protected $_model = 'app/model/product/SpuImage';
-
 	public function addSpuImage(array $data)
 	{
 		if (!empty($data[0]) && is_array($data[0])) {

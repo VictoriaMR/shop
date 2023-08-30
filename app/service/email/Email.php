@@ -7,7 +7,6 @@ class Email extends Base
 {
 	protected $emailAccountId = 0;
 	protected $siteInfo = [];
-	protected $_model = 'app/model/email/Email';
 
 	public function sendEmail($memId, $code, $type)
 	{

@@ -5,8 +5,6 @@ use app\service\Base;
 
 class AttrUsed extends Base
 {
-	protected $_model = 'app/model/product/AttrUsed';
-
 	public function getListBySkuIds($skuId, $lanId=1, $simple=false)
 	{
 		$list = $this->getListData(['sku_id'=>['in', $skuId]], 'sku_id,attrn_id,attrv_id,attach_id');

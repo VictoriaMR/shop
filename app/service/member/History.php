@@ -5,8 +5,6 @@ use app\service\Base;
 
 class History extends Base
 {
-	protected $_model = 'app/model/member/History';
-
 	public function addHistory($spuId)
 	{
 		if (!$this->userId()) {
