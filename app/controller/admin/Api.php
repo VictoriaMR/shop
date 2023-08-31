@@ -6,56 +6,26 @@ use app\controller\AdminBase;
 class Api extends AdminBase
 {
 	protected $_cateArr = ['category', 'product', 'introduce'];
+	protected $_helperAction = [
+		[
+			'title' => '产品入库',
+			'name' => 'crawler',
+		],
+		[
+			'title' => '产品维护',
+			'name' => 'auto_check',
+		],
+	];
 
-	public function getHelperData()
+	public function helperData()
 	{
-		$site = make('app/service/site/Site');
-		$category = make('app/service/category/Category');
-
-		$siteArr = $site->getListData([], 'site_id,name,cate_id');
-		$cateArr = $category->getListFormat();
-
-		$tempArr = [];
-		$cateId = 0;
-		foreach ($cateArr as $value) {
-			if ($value['parent_id'] == 0) {
-				$cateId = $value['cate_id'];
-				$tempArr[$cateId] = [];
-			}
-			$tempArr[$cateId][] = [
-				'cate_id' => $value['cate_id'],
-				'parent_id' => $value['parent_id'],
-				'name' => $value['name'],
-				'level' => $value['level'],
-			];
-		}
-		$cateArr = [];
-		foreach ($siteArr as $value) {
-			if (empty($tempArr[$value['cate_id']])) continue;
-			$cateArr[$value['site_id']] = $tempArr[$value['cate_id']];
-		}
 		$data = [
+			'domain' => domain(),
 			'version' => version(),
 			'socket_domain' => domain().'socket.io/',
-			'site' => $siteArr,
-			'site_category' => $cateArr,
+			'action' => $this->_helperAction,
 		];
 		$this->success($data);
-	}
-
-	public function getHelperFunction()
-	{
-		$data = [
-			[
-				'title' => '产品入库',
-				'name' => 'crawler',
-			],
-			[
-				'title' => '产品维护',
-				'name' => 'auto_check',
-			],
-		];
-		$this->success('', $data);
 	}
 
 	public function upload()

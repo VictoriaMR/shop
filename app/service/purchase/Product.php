@@ -12,6 +12,9 @@ class Product extends Base
             return false;
         }
         $itemId = purchase()->channel()->getItemId($url);
+        if (!$itemId) {
+            return false;
+        }
         $data = [
             'purchase_channel_id' => $channelId,
             'item_id' => $itemId,

@@ -1,90 +1,30 @@
 var CRAWLER = {
-    init: function(){
-        this.domain = false;
-        this.item_id = false;
-        if (location.host.indexOf('1688.com') >= 0) {
-            this.domain = '1688.com';
-        } else if (location.host.indexOf('taobao.com') >= 0) {
-            this.domain = 'taobao.com';
-        } else if (location.host.indexOf('tmall.com') >= 0) {
-            this.domain = 'tmall.com';
+    init: function(callback){
+        if (!HELPERINIT.isItemPage()) {
+            callback(-2, {}, '非产品详情页面!');
+        } else if (HELPERINIT.isLoginPage()) {
+            callback(-1, {}, '页面需要登录!');
+        } else if (HELPERINIT.isVerifyPage()) {
+            callback(-1, {}, '页面需要验证!');
+        } else if (HELPERINIT.isDenyPage()) {
+            callback(-1, {}, '页面被阻止访问!');
+        } else if (HELPERINIT.isErrorPage()) {
+            callback(-2, {}, HELPERINIT.isErrorPage());
+        } else if (this.isOffShelf()) {
+            callback(-2, {}, '产品已下架!');
+        } else {
+            this.data(callback);
         }
-        if (this.domain) {
-            this.item_id = this.itemId();
-        }
-    },
-    itemId: function() {
-        var ret = false;
-        var url = location.origin + location.pathname;
-        switch (this.domain) {
-            case '1688.com':
-                let reg = /^https\:\/\/detail\.1688\.com\/offer\/(\d+)\.html(?:.)*/i;
-                ret = url.match(reg);
-                if (ret) {
-                    ret = ret[1];
-                }
-                break;
-            case 'taobao.com':
-                if(url == 'https://item.taobao.com/item.htm'){
-                    ret = this.itemIdStr(location.search);
-                }
-                break;
-            case 'tmall.com':
-                if(url == 'https://detail.tmall.com/item.htm'){
-                    ret = this.itemIdStr(location.search);
-                }
-                break;
-        }
-        return ret;
-    },
-    itemIdStr: function(str) {
-        str = str.substring(1);
-        var param = str.split('&');
-        for(var k in param){
-            if(param[k].substring(0,3)=='id='){
-                return param[k].substring(3);
-            }
-        }
-        return false;
-    },
-    isVerify: function() {
-        var ret = false;
-        switch (this.domain) {
-            case '1688.com':
-                ret = document.querySelector('#nocaptcha');
-                break;
-            case 'taobao.com':
-                ret = document.querySelector('#nocaptcha');
-                break;
-            case 'tmall.com':
-                ret = document.querySelector('#nocaptcha');
-                break;
-        }
-        return ret;
     },
     isOffShelf: function() {
-        var ret = false;
-        switch (this.domain) {
-            case '1688.com':
-                ret = document.querySelector('.mod-detail-offline-title');
-                break;
-            case 'taobao.com':
-                ret = document.querySelector('.tb-off-sale');
-                if (!ret) {
-                    ret = document.querySelector('.tb-btn-buy .tb-disabled');
-                }
-                break;
-            case 'tmall.com':
-                ret = document.querySelector('.sold-out-recommend');
-                if (!ret) {
-                    ret = document.querySelector('.tb-btn-wait');
-                }
-                if (!ret) {
-                    ret = document.querySelector('.errorDetail');
-                }
-                break;
+        let obj = document.querySelector('.mod-detail-offline .mod-detail-offline-title');
+        if (!obj) {
+            obj = document.querySelector('.tb-off-sale .tb-hint strong');
         }
-        return ret;
+        if (!obj) {
+            obj = document.querySelector('.sold-out-recommend');
+        }
+        return obj;
     },
     isDescPic: function(src) {
         var ignore = ['img.taobao.com', 'ma.m.1688.com', 'amos.alicdn.com', 'alisoft.com', 'add_to_favorites.htm', 'img.alicdn.com/NewGualianyingxiao', '_.webp'];
@@ -96,29 +36,19 @@ var CRAWLER = {
         return true;
     },
     data: function(callback) {
-        this.init();
-        if (this.domain && this.item_id) {
-            if (this.isVerify()) {
-               callback(-1, {}, '页面需要验证!');
-               return false;
-            }
-            if (this.isOffShelf()) {
-                callback(-2, {}, '产品已下架');
-               return false;
-            }
-            switch (this.domain) {
-                case '1688.com':
-                    this.get1688(callback);
-                    break;
-                case 'taobao.com':
-                    this.getTaobao(callback);
-                    break;
-                case 'tmall.com':
-                    this.getTmall(callback);
-                    break;
-            }
-        } else {
-            callback(-4, {}, '非产品详情页');
+        switch (HELPERINIT.domain) {
+            case '1688.com':
+                this.get1688(callback);
+                break;
+            case 'taobao.com':
+                this.getTaobao(callback);
+                break;
+            case 'tmall.com':
+                this.getTmall(callback);
+                break;
+            default:
+                callback(-1, {}, '未知渠道商品详情页面');
+                break;
         }
     },
     get1688: function(callback) {

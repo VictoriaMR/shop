@@ -2,34 +2,21 @@ const CRAWLERINIt = {
 	init: function() {
 		const _this = this;
 		//载入分析数据js
+		HELPERINIT.loadStatic('css', 'helper/crawler_page.css');
 		HELPERINIT.loadStatic('js', 'helper/crawler.js', function(){
-			//注入页面相关css
-			HELPERINIT.loadStatic('css', 'helper/crawler_page.css', function(){
-				_this.crawlerInit();
-			});
+			_this.crawlerInit();
 		});
 	},
 	crawlerInit: function() {
-		const _this = this;
-		//获取基本数据
-		HELPERINIT.request({action: 'request', value: 'api/getHelperData', cache_key: 'helper_all_data_cache'}, function(res) {
-			if (res.code === 200) {
-				_this.bodyPageInit();
-				_this.crawler_info = res.data;
-				_this.crawlerPageinit(res.data);
-			} else {
-				HELPERINIT.request({action:'alert', value: res.msg});
-			}
-		});
+		this.bodyPageInit();
+		this.crawlerPageinit();
 	},
 	bodyPageInit: function() {
 		const _this = this;
-		var bodyPage = document.getElementById('crawler-page');
+		let bodyPage = document.getElementById('crawler-page');
 		if (!bodyPage) {
-			var body = document.querySelector('body');
 			bodyPage = document.createElement('div');
 			bodyPage.id = 'crawler-page';
-			body.appendChild(bodyPage);
 			const html = `<div class="top-content">
 							<div class="button-content">
 								<button class="hide" id="reload-btn" onclick="CRAWLERINIt.reloadPage()">刷新</button>
@@ -40,6 +27,7 @@ const CRAWLERINIt = {
 							<div class="error-msg"></div>
 						</div>
 						<div id="item-content"></div>`;
+			document.querySelector('body').appendChild(bodyPage);
 			bodyPage.innerHTML = html;
 			HELPERINIT.request({action: 'getCache', cache_key: 'crawler_show_status'}, function(res) {
 				_this.crawlerPageShow(res.data === '1' ? '1' : 0);
@@ -109,19 +97,18 @@ const CRAWLERINIt = {
 			document.getElementById('item-content').style.display = 'none';
 		}
 	},
-	crawlerPageinit: function(info) {
+	crawlerPageinit: function() {
 		const _this = this;
-		CRAWLER.data(function(code, data, message){
+		CRAWLER.init(function(code, data, message){
 			if (code === 0) {
-				_this.crawler_data = data;
-				_this.crawlerPage(info, data);
+				_this.crawlerPage(data);
 			} else {
 				_this.error(message);
 			}
 			_this.clickInit();
 		});
 	},
-	crawlerPage: function(info, data) {
+	crawlerPage: function(data) {
 		const _this = this;
 		_this.category = info.site_category;
 		_this.site = info.site;
