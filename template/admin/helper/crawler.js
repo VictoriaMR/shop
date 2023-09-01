@@ -1,5 +1,6 @@
 var CRAWLER = {
     init: function(callback){
+        const _this = this;
         if (!HELPERINIT.isItemPage()) {
             callback(-2, {}, '非产品详情页面!');
         } else if (HELPERINIT.isLoginPage()) {
@@ -13,7 +14,9 @@ var CRAWLER = {
         } else if (this.isOffShelf()) {
             callback(-2, {}, '产品已下架!');
         } else {
-            this.data(callback);
+            setTimeout(function(){
+                _this.data(callback);
+            }, Math.random()*3000 + 1000);
         }
     },
     isOffShelf: function() {
@@ -26,6 +29,10 @@ var CRAWLER = {
         }
         return obj;
     },
+    getClassName: function(className, str){
+        const match = str.match(new RegExp('(?!class=")'+className+'[0-9A-Za-z_-]+(\\s?|"?)'));
+        return match ? match[0].replace(/(^\s*)|(\s*$)/g, '') : match;
+    },
     isDescPic: function(src) {
         var ignore = ['img.taobao.com', 'ma.m.1688.com', 'amos.alicdn.com', 'alisoft.com', 'add_to_favorites.htm', 'img.alicdn.com/NewGualianyingxiao', '_.webp'];
         for(var i=0; i<ignore.length; i++){
@@ -36,7 +43,7 @@ var CRAWLER = {
         return true;
     },
     data: function(callback) {
-        switch (HELPERINIT.domain) {
+        switch (HELPERINIT.getDomain()) {
             case '1688.com':
                 this.get1688(callback);
                 break;
@@ -53,14 +60,22 @@ var CRAWLER = {
     },
     get1688: function(callback) {
         if (typeof iDetailData === 'undefined' && typeof window.__INIT_DATA == 'undefined') {
-            callback(-1, {}, '获取数据失败!请记录当前链接联系开发人员.');
+            callback(-1, {}, '获取数据失败.');
             return false;
+        }
+        if (typeof iDetailData !== 'undefined') {
+            this.get1688Data1(callback);
+        } else if (typeof window.__INIT_DATA !== 'undefined' || typeof window.__GLOBAL_DATA !== 'undefined') {
+            this.get1688Data2(callback);
+        } else {
+            callback(-1, {}, '获取数据失败.');
         }
         var _this = this;
         var type = 1;
         if (typeof iDetailData === 'undefined') {
             type = 2;
         }
+        return false;
 
         let multi_sku=0;
         let pdt_picture = [];
@@ -271,6 +286,63 @@ var CRAWLER = {
             }
         }
     },
+    get1688Data1:function(callback) {
+
+    },
+    get1688Data2:function(callback) {
+        let ret_data = {};
+        let data = window.__INIT_DATA.globalData;
+        if (!data) {
+            data = window.__GLOBAL_DATA.globalData;
+        }
+        ret_data.name = data.tempModel.offerTitle;
+        ret_data.url = location.href;
+        ret_data.item_id = HELPERINIT.isItemPage();
+        ret_data.picture = [];
+        //图片
+        for (var i in data.images) {
+            if (data.images[i].fullPathImageURI) {
+                ret_data.picture.push(data.images[i].fullPathImageURI);
+            }
+        }
+        //sku属性
+        let skuProp = data.skuModel.skuProps;
+        ret_data.attr = {};
+        for(let i=0; i<skuProp.length; i++){
+            let attrName = skuProp[i].prop;
+            let attrId = skuProp[i].fid;
+            let attrValue = {};
+            for(let j=0;j<skuProp[i].value.length;j++){
+                let data = skuProp[i].value[j];
+                attrValue[j] = {name:data.name,img:data.imageUrl};
+            }
+            ret_data.attr[attrId]={attrName:attrName,attrValue:attrValue};
+        }
+        //sku列表
+        ret_data.sku = {};
+        for(let k in data.skuModel.skuInfoMap){
+            let item=data.skuModel.skuInfoMap[k];
+            let stock=item.canBookCount;
+            let price = item.discountPrice;
+            if (!price && data.orderParamModel.orderParam.skuParam.skuRangePrices) {
+                price = data.orderParamModel.orderParam.skuParam.skuRangePrices[0].price;
+            }
+            ret_data.sku[item.skuId]={
+                price:parseFloat(price),
+                stock:stock,
+                attr:k.split('&gt;')
+            };
+        }
+        //商户信息
+        ret_data.seller = {
+            unique_id: data.offerBaseInfo.sellerUserId,
+            url: data.offerBaseInfo.sellerWinportUrl,
+            name: data.tempModel.companyName,
+        };
+        console.log(ret_data, 'ret_data')
+        localStorage.setItem('ret_data', JSON.stringify(ret_data));
+        callback(0, ret_data, '获取成功!');
+    },
     get1688Attr: function(attrValue,attr) {
         for(let k in attr){
             for(let j in attr[k]['attrValue']){
@@ -468,14 +540,17 @@ var CRAWLER = {
         callback(0, ret_data, '获取成功!');
     },
     getTmall: function(callback) {
-        if(typeof KISSY =='undefined'){
+        if(typeof KISSY == 'undefined'){
             callback(-1, {}, '获取数据失败!');
             return false;
         }
-        var _this = this;
+        const _this = this;
         let multi_sku=0;
         let name = '';
         var obj = document.querySelector('#J_DetailMeta .tb-detail-hd h1');
+        if (!obj) {
+            name = obj.innerText;
+        }
         if (obj) {
             name = obj.innerText;
         }
@@ -487,10 +562,12 @@ var CRAWLER = {
                 pdt_picture.push(imgdata);
             }
         }
+        console.log(name, pdt_picture)
         let sku={};
         let attr={};
         KISSY.use('detail-model/product',function(e,t){
             let skuMap = t.instance()['__attrVals']['skuMap'];
+            console.log(skuMap, 'skuMap')
             if(!skuMap){
                 callback(-1, {}, '获取列表失败！');
                 return false;

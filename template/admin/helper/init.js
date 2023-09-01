@@ -25,7 +25,7 @@ const HELPERINIT = {
 		const _this = this;
 		_this.wait(function(){
 			let obj = document.querySelector('title');
-			if (obj) {
+			if (obj && obj.innerText) {
 				_this.clearInter();
 				callback();
 			}
@@ -51,8 +51,6 @@ const HELPERINIT = {
 		let ret = location.href.match(reg);
 		if (ret) {
 			this.item_id = ret[5] ? ret[5] : ret[7];
-		} else {
-			this.item_id = '0';
 		}
 		return this.item_id;
 	},
