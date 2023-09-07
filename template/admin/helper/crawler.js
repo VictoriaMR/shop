@@ -339,6 +339,13 @@ var CRAWLER = {
             url: data.offerBaseInfo.sellerWinportUrl,
             name: data.tempModel.companyName,
         };
+        if (window.__STORE_DATA.components && window.__STORE_DATA.components['38229149'] && window.__STORE_DATA.components['38229149'].moduleData.appData.serviceList) {
+            let tempData = window.__STORE_DATA.components['38229149'].moduleData.appData.serviceList;
+            ret_data.seller.service = {};
+            for (let i=0; i<tempData.length; i++) {
+                ret_data.seller.service[tempData[i].serviceKey.replace('_group_value_new', '').replace('_group_value', '')] = tempData[i].score;
+            }
+        }
         console.log(ret_data, 'ret_data')
         localStorage.setItem('ret_data', JSON.stringify(ret_data));
         callback(0, ret_data, '获取成功!');
