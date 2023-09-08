@@ -75,3 +75,15 @@ table {
 .right {
     float: right;
 }
+.mask {
+    position: fixed;
+    transition: 0.3s;
+    background: #000;
+    opacity: 0.68;
+    width: 100%;
+    height: 100%;
+    z-index: 101;
+    display: none;
+    top: 0;
+    left: 0;
+}
