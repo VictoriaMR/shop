@@ -4,8 +4,6 @@ namespace frame;
 
 class Html
 {
-	protected $_COMMON_CSS = [];
-	protected $_COMMON_JS = [];
 	protected $_CSS = [];
 	protected $_JS = [];
 
@@ -53,20 +51,9 @@ class Html
 		return $this->addStaticFile($this->_JS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'js');
 	}
 
-	public function setCommonCss($arr)
+	public function getCommon($type)
 	{
-		$this->_COMMON_CSS = $arr;
-	}
-
-	public function getCommonCss()
-	{
-		if (empty($this->_COMMON_CSS)) return false;
-		return $this->addStaticFile($this->_COMMON_CSS, 'common', 'css');
-	}
-
-	public function setCommonJs($arr)
-	{
-		$this->_COMMON_JS = $arr;
+		return $this->addStaticFile(config($type, \App::get('router', 'class'))[isMobile() ? 'mobile' : 'computer'], 'common', $type);
 	}
 
 	public function getCommonJs()

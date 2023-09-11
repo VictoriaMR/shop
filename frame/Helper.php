@@ -1,8 +1,9 @@
 <?php
 function dd(...$arg){
+	$enter = isCli() ? PHP_EOL : '<br />';
 	foreach ($arg as $value) {
 		print_r($value);
-		echo isCli() ? PHP_EOL : '<br />';
+		echo $enter;
 	}
 	exit();
 }
@@ -53,7 +54,10 @@ function adminUrl($name='', $param=[]){
 	return router()->adminUrl($name, $param);
 }
 function siteUrl($name, $version=true){
-	$extension = pathinfo($name)['extension'];
+	$extension = pathinfo($name)['extension']??false;
+	if (!$extension) {
+		return $name;
+	}
 	if (in_array($extension, ['png', 'jpeg', 'jpg']) && is_file(ROOT_PATH.'storage'.DS.str_replace('.'.$extension, '.webp', $name))) {
 		$name = str_replace('.'.$extension, '.webp', $name);
 	}

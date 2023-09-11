@@ -1,0 +1,1 @@
+<?php $this->load('common/header_all');?>
