@@ -1,17 +1,17 @@
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+}
 html {
-    font-family: ,Segoe UI,Open Sans,Microsoft YaHei,Helvetica Neue,Helvetica,STHeiTi,Arial;
+    font-family: sans-serif;
     -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
     background: #f4f4f4;
 }
-html,body,header,div,form,a,i,img,p,table,td,ul,li,input,textarea{
+body{
     font-size: 0.12rem;
-    line-height: 1.5;
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
+    color: #111;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -webkit-tap-highlight-color: transparent;
@@ -32,62 +32,17 @@ a:hover {
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
 }
-button,input,optgroup,select,textarea {
-    color: inherit;
-    font: inherit;
-}
-
-button {
-    overflow: visible
-}
-
-button,select {
-    text-transform: none
-}
-
 button,input[type=button],input[type=reset],input[type=submit] {
     -webkit-appearance: button;
     cursor: pointer
 }
-
 button[disabled],input[disabled] {
     cursor: default
 }
-
 button::-moz-focus-inner,input::-moz-focus-inner {
     border: 0;
     padding: 0
 }
-
-input {
-    line-height: normal
-}
-
-input[type=checkbox],input[type=radio] {
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-    padding: 0
-}
-
-input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button {
-    height: auto
-}
-
-input[type=search] {
-    -webkit-appearance: textfield;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box
-}
-
-input[type=search]::-webkit-search-cancel-button,input[type=search]::-webkit-search-decoration {
-    -webkit-appearance: none
-}
-
-textarea {
-    overflow: auto;
-    resize: vertical
-}
-
 input::-moz-placeholder,textarea::-moz-placeholder {
     color: #ccc
 }
@@ -98,6 +53,11 @@ input:-ms-input-placeholder,textarea:-ms-input-placeholder {
 
 input::-webkit-input-placeholder,textarea::-webkit-input-placeholder {
     color: #ccc
+}
+input, textarea{
+    font-family: sans-serif;
+    transition: border .1s ease-in-out;
+    outline: none;
 }
 table {
     width: 100%;
@@ -133,12 +93,13 @@ table {
 header .top-header {
     height: 0.44rem;
     padding: 0.06rem 0;
+    text-align: center;
 }
 header .search-header input {
     width: 100%;
     height: 0.36rem;
     font-size: 0.14rem;
-    padding: 0.05rem 0.16rem;
+    padding: 0 0.16rem;
     border: 0.01rem solid #878787;
     border-radius: 0.18rem;
 }
