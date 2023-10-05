@@ -90,10 +90,19 @@ table {
     left: 0;
 }
 /*头部公共样式start*/
+header {
+    background: #fff;
+    position: fixed;
+    width: 100%;
+    transition: 0.3s;
+}
 header .top-header {
     height: 0.44rem;
     padding: 0.06rem 0;
     text-align: center;
+}
+header .search-header {
+    padding-bottom: 0.06rem;
 }
 header .search-header input {
     width: 100%;
@@ -103,8 +112,12 @@ header .search-header input {
     border: 0.01rem solid #878787;
     border-radius: 0.18rem;
 }
-header .search-header input::placeholder {
+header .search-header input::placeholder,
+header .search-header input::-webkit-input-placeholder {
     font-size: 0.14rem;
     color: #ccc;
+}
+.header-empty {
+    height: 0.86rem;
 }
 /*头部公共样式end*/
