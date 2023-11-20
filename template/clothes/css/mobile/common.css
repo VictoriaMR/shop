@@ -6,6 +6,7 @@ html {
 }
 html,body,header,div,form,a,i,img,p,table,td,ul,li,input,textarea{
     font-size: 0.12rem;
+    color: #222;
     line-height: 1.5;
     margin: 0;
     padding: 0;
@@ -27,7 +28,7 @@ a,
 a:link,
 a:visited,
 a:hover {
-    color: #000;
+    color: #222;
     outline: none;
     text-decoration: none;
     -webkit-tap-highlight-color: transparent;
@@ -118,10 +119,10 @@ table {
     float: right;
 }
 .mask {
-    position: fixed;
+    position: absolute;
     transition: 0.3s;
     background: #000;
-    opacity: 0.7;
+    opacity: 0.6;
     width: 100%;
     height: 100%;
     z-index: 101;
@@ -129,6 +130,30 @@ table {
     top: 0;
     left: 0;
 }
+/*loading 样式start*/
+.loading .mask {
+    display: block;
+    background: #fff;
+}
+.loading .circle {
+    position: absolute;
+    left: calc(50% - 0.2rem);
+    top: calc(50% - 0.2rem);
+    background: #fcfcfc;
+    border: 0.02rem solid #ddd;
+    border-top-color: #222;
+    border-radius: 50%;
+    width: 0.4rem;
+    height: 0.4rem;
+    animation: circle 1s linear infinite; 
+    z-index: 101;
+}
+@keyframes circle {
+    to {
+        transform: rotate(360deg);
+    }
+}
+/*loading 样式end*/
 /*头部公共样式start*/
 header {
     background: #fff;

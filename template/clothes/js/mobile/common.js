@@ -18,16 +18,21 @@ function start(obj) {
     }
     obj.style.cssText += 'overflow-y:auto';
 }
+function ready(callback) {
+    window.addEventListener('load',callback);
+}
+function scroll(callback) {
+    window.addEventListener('scroll', callback);
+}
 // 头部部件滚动监听
-window.onload = function(){
+ready(function(){
     var headerObj = document.getElementById('header');
     var headerH = headerObj.offsetHeight;
     var nowH = 0;
     var up = false;
     var down = false;
-    window.addEventListener('scroll', function() {
+    scroll(function(){
         var scroH = document.documentElement.scrollTop;
-        console.log(scroH, nowH)
         if (scroH > nowH) {
             if (scroH > 50 && !up) {
                 headerObj.style.top = '-'+headerH+'px';
@@ -41,4 +46,4 @@ window.onload = function(){
         }
         nowH = scroH;
     });
-};
+});
