@@ -47,8 +47,8 @@ function db($db=null){
 function page($size=0, $total=0){
 	return \App::make('frame/Paginator')->make($size, $total);
 }
-function url($name='', $param=[], $domain='') {
-    return router()->url($name, $param, $domain);
+function url($name='', $param=[], $joint=true) {
+    return router()->url($name, $param, $joint);
 }
 function adminUrl($name='', $param=[]){
 	return router()->adminUrl($name, $param);
@@ -61,7 +61,7 @@ function siteUrl($name, $version=true){
 	if (in_array($extension, ['png', 'jpeg', 'jpg']) && is_file(ROOT_PATH.'storage'.DS.str_replace('.'.$extension, '.webp', $name))) {
 		$name = str_replace('.'.$extension, '.webp', $name);
 	}
-	$name = domain().$name;
+	$name = domain().trim($name, DS);
 	if ($version) $name .= '?v='.version();
 	return $name;
 }

@@ -14,8 +14,6 @@ class Login extends AdminBase
 
 	public function index()
 	{	
-		dd(purchase()->product()->addUrl('https://detail.1688.com/offer/663595394231.html?spm=a262cb.19918180.ljxo5qvc.2.1e187c9cZRcK0r&sk=processing&scm=1007.45324.348050.0&pvid=fd05b9f1-d019-4586-a0f8-9cdee5cdf4bc'));
-
 		html()->addJs('common', false);
 		html()->addJs('verify', false);
 		html()->addCss('common');

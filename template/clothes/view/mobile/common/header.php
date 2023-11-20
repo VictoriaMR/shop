@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title><?php echo $_title??\App::get('router', 'path').' - '.\App::get('base_info', 'name');?></title>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<meta name="viewport" content="width=device-width,maximum-scale=5"/>
+	<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no"/>
 	<meta name="theme-color" content="#e5edef">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<meta http-equiv="cache-control" content="no-cache"/>
@@ -21,7 +21,6 @@
 	<link rel="icon" type="image/png" sizes="48x48" href="<?php echo siteUrl('favicon-48x48.png');?>"/>
 	<?php if ($file = html()->getCommon('css')){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>"/>
 	<?php }?><?php if ($file = html()->getCss()){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>">
-	<?php }?><?php if ($file = html()->getCommon('js')){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script><?php }?>
-	<?php if ($file = html()->getJs()){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script>
-<?php }?></head>
+	<?php }?><?php if ($file = html()->getCommon('js')){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script><?php }?><?php if ($file = html()->getJs()){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script>
+	<?php }?><?php if ($file = html()->getLanguageJs()){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script><?php }?></head>
 <body>

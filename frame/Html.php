@@ -56,10 +56,14 @@ class Html
 		return $this->addStaticFile(config($type, \App::get('router', 'class'))[isMobile() ? 'mobile' : 'computer'], 'common', $type);
 	}
 
-	public function getCommonJs()
+	public function getLanguageJs()
 	{
-		if (empty($this->_COMMON_JS)) return false;
-		return $this->addStaticFile($this->_COMMON_JS, 'common', 'js');
+		$path = ROOT_PATH.'template'.DS.template().DS;
+		$file = 'js'.DS.(isMobile() ? 'mobile' : 'computer').DS.strtolower(\App::get('router', 'path')).DS.\App::get('router', 'func').'_'.lanId('code').'.js';
+		if (is_file($path.$file)) {
+			return $file;
+		}
+		return false;
 	}
 
 	protected function addStaticFile(array $arr, $name, $type)

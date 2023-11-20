@@ -281,8 +281,12 @@ final class Query
 			}
 		} catch (\Exception $e){
 			$error = '';
-			foreach ($mysqli->error_list as $value) {
-				$error.= 'SQL: '.$sql.sprintf(', errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']).PHP_EOL;
+			if ($mysqli) {
+				foreach ($mysqli->error_list as $value) {
+					$error.= 'SQL: '.$sql.sprintf(', errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']).PHP_EOL;
+				}
+			} else {
+				$error.= 'SQL: '.$sql.sprintf(', errno: %s, error: %s', $e->getCode(), $e->getMessage()).PHP_EOL;
 			}
 			throw new \Exception($error, 1);
 		}

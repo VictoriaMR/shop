@@ -6,6 +6,6 @@ return [
 	],
 	'home' => [
 		'computer' => ['common', 'computer/common'],
-		'mobile' => ['common', 'mobile/common'],
+		'mobile' => ['function', 'common', 'mobile/common', 'mobile/icon'],
 	],
 ];

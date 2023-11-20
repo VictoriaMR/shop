@@ -4,9 +4,10 @@ namespace frame;
 
 final class Router
 {
-	private $include_param = ['rid', 'vid', 'sort', 'page', 'size'];
+	private $include_param = ['rid', 'vid', 'aid', 'sort', 'page', 'size'];
 	private $include_path = ['c', 'p', 's', 'f', 'g', 'search'];
 	private $path_format = [
+		'a' => 'Article',
 		'c'=> 'Category',
 		'p' => 'Product',
 		's' => 'Product',
@@ -17,34 +18,22 @@ final class Router
 
 	public function analyze()
 	{
-		array_shift($_GET);
-		unset($_GET['/']);
-		$pathInfo = pathinfo($_SERVER['REQUEST_URI']);
-		$name = array_reverse(explode('-', explode('?', pathinfo($_SERVER['REQUEST_URI'])['filename'])[0]));
-		$path = trim($pathInfo['dirname'], DIRECTORY_SEPARATOR);
-		$pathInfo['filename'] = explode('?', $pathInfo['filename'])[0];
-		if ($path) {
-			$path = ucfirst(explode('?', trim($path, '/'))[0]);
-			$func = $pathInfo['filename'];
-		} else {
-			$path = $pathInfo['filename'] ? ucfirst($pathInfo['filename']) : 'Index';
-			$func = 'index';
-		}
-		if (strpos($pathInfo['filename'], '-') !== false) {
-			$pathInfo = array_reverse(explode('-', $pathInfo['filename']));
-			$tempPath = '';
-			foreach ($pathInfo as $key=>$value) {
-				if (!isset($_GET[$value]) && in_array($value, $this->include_param)) {
-					$_GET[$value] = $pathInfo[$key-1] ?? '';
-				}
-				if (!isset($_GET[$value.'id']) && in_array($value, $this->include_path)) {
-					$tempPath = $this->formatPath($value);
-					$_GET[$value.'id'] = $pathInfo[$key-1] ?? '';
+		if (!empty($_SERVER['REQUEST_URI'])) {
+			$tempArr = array_reverse(array_filter(explode('-', str_replace('.html', '', ltrim(parse_url($_SERVER['REQUEST_URI'])['path'], '/')))));
+			foreach ($tempArr as $key=>$value) {
+				if ($key%2 == 0) {
+					if (is_numeric($value)) {
+						$_GET[$tempArr[$key+1]??'id'] = $value;
+					} else {
+						$tempArr = explode('/', $value);
+						$path = ucfirst($tempArr[0]);
+						isset($tempArr[1]) && $func = $tempArr[1];
+						break;
+					}
 				}
 			}
-			$path = $tempPath ? $tempPath : 'Index';
 		}
-		return ['path'=>$path?:'Index', 'func'=>$func?:'index'];
+		return ['path'=>$path??'Index', 'func'=>$func??'index'];
 	}
 
 	protected function formatPath($type)
@@ -52,39 +41,16 @@ final class Router
 		return $this->path_format[$type]??'';
 	}
 
-	public function url($name='', $param=[], $domain='')
+	public function url($name='', $param=[], $joint=true)
 	{
-		if ($name) {
-			if (strpos($name, '/') === false) {
-				$name = $this->nameFormat($name);
-			} else {
-				$name = trim($name, '/');
+		if ($param) {
+			if (is_array($param)) {
+				$param = $this->nameFormat(http_build_query($param));
 			}
-		} elseif ($param) {
-			$name = array_reverse(explode('-', explode('?', pathinfo($_SERVER['REQUEST_URI'])['filename'])[0]));
-			foreach ($name as $key=>$value) {
-				if (isset($param[$value])) {
-					if ($param[$value]) {
-						$name[$key-1] = $param[$value];
-					} else {
-						unset($name[$key-1]);
-						unset($name[$key]);
-					}
-					unset($param[$value]);
-				}
-			}
-			$param = array_filter($param);
-			foreach ($param as $key=>$value) {
-				if (in_array($key, $this->include_path) || in_array($key, $this->include_param)) {
-					array_unshift($name, $key);
-					array_unshift($name, $value);
-					unset($param[$key]);
-				}
-			}
-			$name = implode('-', array_reverse(array_filter($name)));
+			$name .= ($joint?'-':'/'). $param;
 		}
-		if ($name) $name .= $this->paramFormat($param);
-		return ($domain?$domain:domain()).$name;
+		if ($name) $name .= '.html';
+		return domain().$name;
 	}
 
 	public function adminUrl($name='', $param=[])
@@ -100,30 +66,10 @@ final class Router
 
 	public function nameFormat($name, $param=[])
 	{
-		$name = preg_replace('/[^-A-Za-z0-9\/\s]/', '', strtolower($name));
-		$name = preg_replace('/( ){2,}/', ' ', $name);
-		$name = str_replace(' ', '-' , $name);
+		if (!$name) return '';
+		$name = preg_replace('/[^-A-Za-z0-9\/\s\&\=]/', '', strtolower($name));
+		$name = str_replace([' ', '&', '='], '-' , $name);
 		$name = preg_replace('/-{1,}/', '-', $name);
-		$name = ltrim($name, '-');
-		if (isset($param['id'])) $name .= '-'.$param['id'];
-		if (isset($param['page'])) $name .= '-page-'.$param['page'];
-		if (isset($param['size'])) $name .= '-size-'.$param['size'];
-		return $name;
-	}
-
-	public function paramFormat($param)
-	{
-		$str = '';
-		foreach ($param as $key=>$value) {
-			if (in_array($key, $this->include_param) || in_array($key, $this->include_path)) {
-				$str .= '-'.$key.'-'.$value;
-				unset($param[$key]);
-			}
-		}
-		$str .= '.html';
-		if ($param) {
-			$str .= '?'.http_build_query($param);
-		}
-		return $str;
+		return trim($name, '-');
 	}
 }

@@ -551,13 +551,33 @@ var CRAWLER = {
             callback(-1, {}, '获取数据失败!');
             return false;
         }
+        let ret_data = {};
+        if(KISSY.version == '1.42') {
+            KISSY.use('detail-model/product', function (e, t) {
+            });
+        } else {
+            console.log(window.g_config.baseInfo);
+            ret_data.pdt_picture = window.g_config.baseInfo.item.images;
+        }
+        console.log(ret_data, 'ret_data')
+        return false;
+        KISSY.jsonp = function (d,a,c){
+            console.log(d,a,c)
+            if(typeof a==="function"){c=a;a=void 0}
+            return i(d,a,c,"jsonp")
+        }
+        KISSY.Env.mods.event.runtime.use('detail-model/product', function (e, t) {
+            console.log(e, t)
+        })
+        console.log('here')
+        KISSY.use('detail-model/product',function(e,t){
+            console.log(e, t)
+        });
+        return false;
         const _this = this;
         let multi_sku=0;
         let name = '';
         var obj = document.querySelector('#J_DetailMeta .tb-detail-hd h1');
-        if (!obj) {
-            name = obj.innerText;
-        }
         if (obj) {
             name = obj.innerText;
         }
@@ -657,6 +677,14 @@ var CRAWLER = {
             ret_data.attributes = attributes;
             _this.getTmallDescPicData(ret_data, callback, t.instance()['__attrVals'].config.api.httpsDescUrl);
         });
+    },
+    getTmallProductName: function () {
+        var obj = document.getElementById('J_DetailMeta');
+        if (obj === null) {
+            return '';
+        }
+        obj = obj.getElementsByClassName('tb-detail-hd')[0];
+        return obj.getElementsByTagName('h1')[0].innerText;
     },
     getTmallDescPicData: function(ret_data, callback, url) {
         var _this = this;

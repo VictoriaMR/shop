@@ -7,23 +7,30 @@ class Login extends HomeBase
 {
 	public function index()
 	{	
-		$email = iget('email');
-		$verifyCode = iget('verify_code');
-		if (!empty($email) && !empty($verifyCode)) {
+		if (isAjax()) {
+			$email = ipost('email');
+			$verifyCode = ipost('verify_code');
+			if (!verify($email, 'email')) {
+				$this->error(distT('email_error'));
+			}
+			if (!verify($verifyCode, 'code')) {
+				$this->error(distT('code_error'));
+			}
 			$code = redis(2)->get($this->getCacheKey($email, 'except'));
 			if ($code == $verifyCode) {
 				$rst = make('app/service/Member')->login($email, '', 'email');
 				if ($rst) {
-					redis(2)->del($this->getCacheKey($email));
-					redis(2)->del($this->getCacheKey($email, 'except'));
-					redirect();
+					session()->del('login_email');
+					session()->del('login_exp_time');
+					$this->success(distT('login_success'));
 				}
-			} else {
-				$this->assign('error', 'This Verification code was not match.');
 			}
+			$this->error('verify_error');
 		}
 		html()->addCss();
 		html()->addJs();
+		$this->assign('login_email', session()->get('login_email'));
+		$this->assign('login_exp_time', session()->get('login_exp_time'));
 		$this->assign('_title', appT('login'));
 		$this->view(true);
 	}
