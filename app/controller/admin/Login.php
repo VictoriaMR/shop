@@ -34,7 +34,6 @@ class Login extends AdminBase
 
 	public function login() 
 	{
-		dd($_SERVER);
 		$mobile = trim(ipost('mobile', ''));
 		$code = trim(ipost('code', ''));
 		$password = trim(ipost('password', ''));
@@ -45,7 +44,7 @@ class Login extends AdminBase
 		if (strtolower($code) != session()->get('admin_login_code')) {
 			$this->error('验证码错误');
 		}
-		$result = make('app/service/admin/Member')->login($mobile, $password);
+		$result = make('app/service/Member')->login($mobile, $password);
 		if ($result) {
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {
