@@ -6,7 +6,7 @@ class VerifyToken
 {
 	public function handle($request)
 	{
-		if (\App::get('router', 'path') != 'Login' && !session()->get('setcookie', false)) {
+		if (!in_array(\App::get('router', 'path'), ['Api','Login']) && !session()->get('setcookie', false)) {
 			make('frame/Cookie')->init();
 		}
 		if ($this->inExceptArray($request)) return true;
