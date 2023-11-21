@@ -29,22 +29,22 @@ class App
 	public static function send()
 	{
 		$domain = $_SERVER['HTTP_HOST'] ?? '';
-		$baseInfo = config('domain', $domain);
-		if (empty($baseInfo)) throw new \Exception('domain: '.$domain.' was not exist!', 1);
-		$baseInfo['domain'] = $domain;
-		self::set('base_info', $baseInfo);
+		$info = config('domain', $domain);
+		if (empty($info)) throw new \Exception('domain: '.$domain.' was not exist!', 1);
+		$info['domain'] = $domain;
+		self::set('base_info', $info);
 		//路由解析
-		$router = self::make('frame/Router')->analyze();
-		$router['class'] = isAdmin()?'admin':'home';
-		self::set('router', $router);
+		$info = self::make('frame/Router')->analyze();
+		$info['class'] = isAdmin()?'admin':'home';
+		self::set('router', $info);
 		//执行方法
-		$call = self::make('app/controller/'.$router['class'].'/'.$router['path']);
-		$callArr = [$call, $router['func']];
+		$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
+		$callArr = [$call, $info['func']];
 		if (is_callable($callArr)) {
-			self::make('app/middleware/VerifyToken')->handle($router);
+			self::make('app/middleware/VerifyToken')->handle($info);
 			call_user_func_array($callArr, []);
 		} else {
-			throw new \Exception('type '.$router['class'].', class '.$router['path'].', function '.$router['func'].' was not exist!', 1);
+			throw new \Exception('type '.$info['class'].', class '.$info['path'].', function '.$info['func'].' was not exist!', 1);
 		}
 		self::runOver();
 	}
@@ -78,6 +78,7 @@ class App
 			make('frame/Debug')->runlog();
 			if (self::get('base_info', 'debug') && !isCli() && !isAjax()) make('frame/Debug')->init();
 		}
+		exit();
 	}
 
 	public static function setVersion($version)

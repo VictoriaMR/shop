@@ -42,7 +42,7 @@ function redis($db=0){
 	return \App::make('frame/Redis')->setDb($db);
 }
 function db($db=null){
-	return \App::make('frame/Connection')->setDb($db);
+	return \App::make('frame/Query')->setDb($db);
 }
 function page($size=0, $total=0){
 	return \App::make('frame/Paginator')->make($size, $total);
@@ -175,9 +175,9 @@ function getDirFile($path){
 }
 function randString($len=16, $lower=true, $upper=true, $number=true){
 	$str = '';
-	$lower && $str .= 'abcdefghijklnmopqrstuvwxyz';
-	$upper && $str .= 'ABCDEFGHIJKLNMOPQRSTUVWXYZ';
-	$number && $str .= '0123456789';
+	$lower && $str .= 'abcdefghijnmqrt';
+	$upper && $str .= 'ABCDEFGHIJLNMQRT';
+	$number && $str .= '23456789';
 	$rStr = '';
 	$seedLen = strlen($str);
 	while ($len > 0) {

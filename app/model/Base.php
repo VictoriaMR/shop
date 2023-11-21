@@ -9,23 +9,24 @@ class Base
 	protected $_table;
 	protected $_primaryKey;
 	protected $_memId;
-	protected $_siteId;
 	protected $_lanId;
 	protected $_currencyId;
 	protected $_addTime;
 	protected $_updateTime;
 	protected $_intFields = [];
+	protected $_withSiteId = true;
 
 	private function instance()
 	{
 		if (is_null($this->_instance)) {
 			$this->_instance = make('frame/Query');
 		}
-		$this->_instance->database($this->_connect);
+		$this->_instance->setDb($this->_connect);
 		$this->_instance->table($this->_table);
 		$this->_instance->setParam('_addTime', $this->_addTime);
 		$this->_instance->setParam('_updateTime', $this->_updateTime);
 		$this->_instance->setParam('_intFields', $this->_intFields);
+		$this->_instance->setParam('_withSiteId', $this->_withSiteId);
 		return $this->_instance;
 	}
 

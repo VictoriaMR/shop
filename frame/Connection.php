@@ -11,9 +11,10 @@ final class Connection
 	{
 		$this->_connect = new \mysqli($host, $username, $password, $database, $port);
 		if ($this->_connect->connect_error) {
-			throw new \Exception('Connect Error ('.$this->_connect->connect_errno.') '.$this->_connect->connect_error, 1);
+			$this->_connect = false;
+		} else {
+			$this->_connect->set_charset($charset);
 		}
-		$this->_connect->set_charset($charset);
 	}
 
 	public function setDb($db=null)
@@ -34,7 +35,7 @@ final class Connection
 			);
 			$this->_selectdb = $config['database'];
 		}
-		if ($this->_selectdb != $config['database']) {
+		if ($this->_connect && $this->_selectdb != $config['database']) {
 			$this->_connect->select_db($config['database']);
 			$this->_selectdb = $config['database'];
 			$config['charset'] && $this->_connect->set_charset($config['charset']);

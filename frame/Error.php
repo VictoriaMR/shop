@@ -37,20 +37,28 @@ class Error
 		$log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
 		make('frame/Debug')->runlog($log);
 		if (isCli() || isDebug()) {
-			$br = isCli() ? PHP_EOL : '<br />';
-			echo 'Error:'.$data['code'].' - '.$this->errorType($data['code']).$br;
-			echo 'File: '.$data['file'].$br;
-			echo 'Line: '.$data['line'].$br;
-			echo 'Error Message: '.$data['message'].$br;
+			$br = isAjax() ? "\n" : (isCli() ? PHP_EOL : '<br />');
+			$str = '';
+			$str .= 'Error:'.$data['code'].' - '.$this->errorType($data['code']).$br;
+			$str .= 'File: '.$data['file'].$br;
+			$str .= 'Line: '.$data['line'].$br;
+			$str .= 'Error Message: '.$data['message'].$br;
 			if (isset($data['trace'])) {
-				echo 'Stack trace:'.$br;
+				$str .= 'Stack trace:'.$br;
 				foreach ($data['trace'] as $key=>$value) {
-					// echo "{$key}# {$value['file']}({$value['line']}): {$value['class']}{$value['type']}{$value['function']}()".$br;
+					$str .= "{$key}# {$value['file']}({$value['line']}): {$value['class']}{$value['type']}{$value['function']}()".$br;
 				}
 			}
 		} else {
-			\App::set('app_error', $message);
+			$str = 'Error:'.$data['code'];
 		}
+		if (isAjax()) {
+			header('Content-Type:application/json; charset=utf-8');
+			echo json_encode(['code'=>500, 'msg'=>$str], JSON_UNESCAPED_UNICODE);
+		} else {
+			echo $str;
+		}
+		exit();
 	}
 
 	private function errorType($code)

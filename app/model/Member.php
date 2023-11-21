@@ -16,6 +16,6 @@ class Member extends Base
 
 	public function addLog(array $data=[])
 	{
-		return make('app/model/Logger')->addLog($data);
+		return make('app/model/login/Logger')->addLog($data);
 	}
 }

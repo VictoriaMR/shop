@@ -7,8 +7,6 @@ class Login extends AdminBase
 {
 	public function __construct()
 	{
-		$this->_base_js = [];
-		$this->_base_css = [];
 		parent::_init();
 	}
 
@@ -68,14 +66,12 @@ class Login extends AdminBase
 
 	public function logout()
 	{
-		$log = make('app\service\admin\Member')->logout();
+		$log = make('app\service\Member')->logout();
 		redirect(url('login'));
 	}
 
 	public function signature()
 	{
-		$info = session()->get('admin_info');
-		if (empty($info)) return '';
 		make('app/service/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', $info['name'], 12, 30, 10, 80, [235, 235, 235]);
 	}
 }

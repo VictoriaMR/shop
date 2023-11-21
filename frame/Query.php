@@ -16,7 +16,7 @@ final class Query
 	private $_sql='';
 	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank', 'show', 'commit'];
 
-	public function database($database=null)
+	public function setDb($database=null)
 	{
 		$this->_database = $database;
 		return $this;
@@ -36,6 +36,9 @@ final class Query
 
 	public function where($columns, $operator=null, $val1=null, $val2=null)
 	{
+		if ($this->_withSiteId) {
+			$this->_where[] = ['site_id', '=', siteId()];
+		}
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) $this->_where[] = isset($value[2]) ? [$key, strtoupper($value[0]), $value[1], $value[2]] : [$key, strtoupper($value[0]), $value[1]];
@@ -260,8 +263,11 @@ final class Query
 		$this->clear();
 		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
+		$mysqli = make('frame/Connection')->setDb($this->_database);
+		if (!$mysqli) {
+			return false;
+		}
 		try {
-			$mysqli = db($this->_database);
 			$result = $mysqli->query($sql);
 			if ($mysqli->errno==0) {
 				if (is_bool($result)) return $result;
