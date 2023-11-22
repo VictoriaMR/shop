@@ -4,7 +4,6 @@
             <tr>
                 <th width="50">ID</th>
                 <th width="200">名称</th>
-                <th width="200">英文名称</th>
                 <th width="100">状态</th>
                 <th width="250">操作</th>
             </tr>
@@ -21,7 +20,6 @@
                 <td>
                     <span class="cate_name"><?php echo $value['name'];?></span>
                 </td>
-                <td><?php echo $value['name_en'];?></td>
                 <td>
                     <div class="switch_botton" data-status="<?php echo $value['status'];?>" data-type="status">
                         <div class="switch_status <?php echo $value['status']?'on':'off';?>"></div>

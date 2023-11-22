@@ -46,7 +46,7 @@ class Error
 			if (isset($data['trace'])) {
 				$str .= 'Stack trace:'.$br;
 				foreach ($data['trace'] as $key=>$value) {
-					$str .= "{$key}# {$value['file']}({$value['line']}): {$value['class']}{$value['type']}{$value['function']}()".$br;
+					$str .= sprintf('%s# %s(%s): %s %s %s()', $key, $value['file'], $value['line'], $value['class']??'', $value['type']??'', $value['function']??'').$br;
 				}
 			}
 		} else {

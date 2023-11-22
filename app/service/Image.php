@@ -53,7 +53,7 @@ class Image
 	public function text($src, $text, $font_size, $angle, $x, $y, $colorRGB= [255,255,255], $alpha = 0, $fontfile = '')
 	{
 		if (!is_file($src)) return false;
-		$imgHandler = imagecreatefrompng($src);
+ 		$imgHandler = imagecreatefrompng($src);
 		if(empty($fontfile)){
 			$fontfile = self::FONTFILE;
 		}

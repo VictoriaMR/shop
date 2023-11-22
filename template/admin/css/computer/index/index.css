@@ -43,6 +43,9 @@
 	padding-left: 8px;
 	width: calc(100% - 38px);
 }
+#index-page .body .nav-left.left-close .person .info {
+    display: none;
+}
 #index-page .body .nav-left .person .info .glyphicon-off {
 	position: absolute;
 	top: 5px;
@@ -61,6 +64,15 @@
 	background: #3a444c;
 	float: left;
 }
+#index-page .body .nav-left.left-close {
+    width: 40px;
+}
+#index-page .body .nav-left.left-close .left-content .left-one {
+    width: 100%;
+}
+#index-page .body .nav-left.left-close .left-content .left-two{
+    display: none;
+}
 #index-page .body .nav-left .left-content .left-one .toggle {
     width: 100%;
     text-align: center;
@@ -69,6 +81,9 @@
     color: #999ea2;
     background: #424d56;
     cursor: pointer;
+}
+#index-page .body .nav-left .left-content .left-one .toggle .glyphicon {
+    top: 6px;
 }
 #index-page .body .nav-left .left-content .left-one .toggle:hover .glyphicon {
 	color: #ffffff;
@@ -119,6 +134,9 @@
 	position: absolute;
 	top: 5px;
 	right: 5px;
+}
+#index-page .body .nav-left.left-close ~ .content-right {
+    width: calc(100% - 40px);
 }
 #index-page .nav-content ul>li {
 	width: 100%;

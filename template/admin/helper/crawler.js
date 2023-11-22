@@ -56,6 +56,27 @@ var CRAWLER = {
                 break;
         }
     },
+    getTaobao: function(callback) {
+        if (typeof Hub === 'undefined') {
+            callback(-1, {}, '获取数据失败!');
+            return false;
+        }
+        let ret_data = {};
+        ret_data.seller = {
+            shop_id: g_config.shopId,
+            shop_name: g_config.shopName,
+            shop_url: g_config.idata.shop.url,
+            service: {},
+        };
+        let obj = document.querySelectorAll('.tb-shop-rate dl');
+        var descMap = {'描述':'desc', '物流':'post', '服务':'serv'};
+        for (var i=0; i<obj.length; i++) {
+            var name = obj[i].querySelector('dt').innerText;
+            var value = obj[i].querySelector('dd').innerText;
+            ret_data.seller.service[descMap[name]] = value;
+        }
+        console.log(ret_data, 'ret_data')
+    },
     getTmall: function(callback) {
         const _this = this;
         if(typeof KISSY == 'undefined'){

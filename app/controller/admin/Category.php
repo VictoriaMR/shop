@@ -28,7 +28,7 @@ class Category extends AdminBase
 		}
 		html()->addJs();
 		$cid = iget('cid', 0);
-		$tempList = make('app/service/category/Category')->getListFormat();
+		$tempList = make('app/service/category/Category')->getListFormat(false);
 		if (!empty($tempList)) {
 			$list = [];
 			foreach ($tempList as $value) {
@@ -53,7 +53,7 @@ class Category extends AdminBase
 		}
 		html()->addJs();
 		$cid = iget('cid', 0);
-		$tempList = make('app/service/category/Category')->getListFormat();
+		$tempList = make('app/service/category/Category')->getListFormat(false);
 		if (!empty($tempList)) {
 			$count = 0;
 			$pList = [];
@@ -84,23 +84,25 @@ class Category extends AdminBase
 			if (!empty($pList)) {
 				$pList[count($pList)-1]['count'] = $count;
 			}
-			$cateArr = array_column($list, 'cate_id');
-			$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
-			$cateArr = array_column($cateArr, 'count', 'cate_id');
-			$languageList = make('app/service/Language')->getListData();
-			$languageList = array_column($languageList, null, 'lan_id');
-			unset($languageList[1]);
-			$len = count($languageList);
-			//图片
-			$attachArr = array_filter(array_column($list, 'attach_id'));
-			if (!empty($attachArr)) {
-				$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-				$attachArr = array_column($attachArr, 'url', 'attach_id');
-			}
-			foreach ($list as $key => $value) {
-				$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
-				$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
-				$list[$key] = $value;
+			if (!empty($list)) {
+				$cateArr = array_column($list, 'cate_id');
+				$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
+				$cateArr = array_column($cateArr, 'count', 'cate_id');
+				$languageList = make('app/service/Language')->getListData();
+				$languageList = array_column($languageList, null, 'lan_id');
+				unset($languageList[1]);
+				$len = count($languageList);
+				//图片
+				$attachArr = array_filter(array_column($list, 'attach_id'));
+				if (!empty($attachArr)) {
+					$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+					$attachArr = array_column($attachArr, 'url', 'attach_id');
+				}
+				foreach ($list as $key => $value) {
+					$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
+					$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
+					$list[$key] = $value;
+				}
 			}
 		}
 		

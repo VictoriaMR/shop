@@ -9,7 +9,7 @@ class Category extends Base
 
 	public function getInfo($cateId)
 	{
-		$list = $this->getListCache();
+		$list = $this->getList();
 		$list = array_column($list, null, 'cate_id');
 		if (!isset($list[$cateId])) {
 			return false;
@@ -34,31 +34,29 @@ class Category extends Base
 		return $tempArr[$siteCateId] ?? [];
 	}
 
-	protected function getList()
+	protected function getList($cache=true)
 	{
 		if (empty($this->_list)) {
-			$this->_list = $this->getListCache();
+			$cacheKey = $this->getCacheKey();
+			if ($cache) {
+				$this->_list = redis()->get($cacheKey);
+				if (!empty($this->_list)) {
+					return $this->_list;
+				}
+			}
+			$tempArr = $this->getListData();
+			$tempArr = $this->listFormat($tempArr);
+			$this->arrayFormat($tempArr, $this->_list);
+			if ($cache) {
+				redis()->set($cacheKey, $this->_list);
+			}
 		}
 		return $this->_list;
 	}
 
-	public function getListCache()
+	public function getListFormat($cache=true)
 	{
-		$cacheKey = $this->getCacheKey();
-		$list = redis()->get($cacheKey);
-		if (!$list) {
-			$tempArr = $this->getListData();
-			$tempArr = $this->listFormat($tempArr);
-			$list = [];
-			$this->arrayFormat($tempArr, $list);
-			redis()->set($cacheKey, $list);
-		}
-		return $list;
-	}
-
-	public function getListFormat()
-	{
-		$list = $this->getList();
+		$list = $this->getList($cache);
 		$list = $this->listFormat($list, 0, 0);
 		$returnData = [];
 		$this->arrayFormat($list, $returnData);

@@ -9,7 +9,6 @@ class Uuid extends Base
 	{
 		$where = [
 			'uuid' => $uuid,
-			'site_id' => $this->siteId(),
 		];
 		return $this->loadData($where);
 	}

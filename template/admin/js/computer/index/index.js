@@ -5,20 +5,19 @@ const INDEX = {
 	init: function() {
 		//左1切换大小
 		$('#index-page .left-one .toggle').on('click', function() {
-			if ($(this).hasClass('open')) {
-				var status = 'close';
+			var pObj = $(this).parents('.nav-left');
+			let type = 0;
+			if (pObj.hasClass('left-close')) {
+				pObj.removeClass('left-close');
 			} else {
-				var status = 'open';
-				//把内容展开
-				$('#index-page .person .info').show();
-				$('#index-page .left-two').show().css({width: '145px'});
+				pObj.addClass('left-close');
+				type = 1
 			}
-			localStorage.setItem('toggle_status', status);
-			INDEX.initPage();
+			post(URI+'Index/index', {opn: 'setLeft', key: 'left_type', value: type});
 		});
 		//左侧悬浮标题
 		$('#index-page .left-one [data-title]').on('mouseover', function(){
-			if ($('.left-one .toggle').hasClass('open')) return false;
+			if ($('.nav-left.left-close').length == 0) return false;
 			var offTop = $(this).position().top;
 			var oh = $(this).height();
 			var diff = (oh - 24) / 2;
@@ -44,30 +43,19 @@ const INDEX = {
 			$('#index-page .left-two .nav-son-content .item').hide();
 			$('#index-page .left-two .nav-son-content [data-for="'+$(this).data('to')+'"]').show();
 			$('#index-page .left-two .title .text').text($(this).data('title'));
+			post(URI+'Index/index', {opn: 'setLeft', key: 'last_group', value: $(this).data('to')});
 		});
 		$('#index-page .left-content .nav-son-content li').on('click', function(){
 			$(this).addClass('select').siblings().removeClass('select');
 			var src = $(this).data('src');
 			$('#href-to-iframe').attr('src', src);
+			post(URI+'Index/index', {opn: 'setLeft', key: 'last_url', value: src});
 		});
-		this.initPage();
-		$('#index-page .left-content .nav-content li').eq(0).trigger('click');
-		$('#index-page .left-content .nav-son-content .item:visible li').eq(0).trigger('click');
-	},
-	initPage:function() {
-		var status = localStorage.getItem('toggle_status');
-		if (!status) {
-			return false;
-		}
-		if (status == 'open') {
-			$('.left-one .toggle').addClass('open');
-			$('#index-page .nav-left').css({'width': '256px'});
-			$('#index-page .nav-left .left-one').css({width: 'calc(100% - 145px)'})
-			$('#index-page .content-right').css({'width': 'calc(100% - 256px)'});
+		if ($('#index-page .left-content .auto-select').length > 0) {
+			$('#index-page .left-content .auto-select').trigger('click');
 		} else {
-			$('.left-one .toggle').removeClass('open');
-			$('#index-page .nav-left').css({'width': '185px'});
-			$('#index-page .content-right').css({'width': 'calc(100% - 185px)'});
+			$('#index-page .left-content .nav-content li').eq(0).trigger('click');
+			$('#index-page .left-content .nav-son-content .item:visible li').eq(0).trigger('click');
 		}
 	}
 };

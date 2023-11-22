@@ -72,6 +72,6 @@ class Login extends AdminBase
 
 	public function signature()
 	{
-		make('app/service/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', $info['name'], 12, 30, 10, 80, [235, 235, 235]);
+		make('app/service/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', session()->get(type().'_info', '', 'nickname'), 12, 30, 10, 80, [235, 235, 235]);
 	}
 }

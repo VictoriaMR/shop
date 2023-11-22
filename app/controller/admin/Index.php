@@ -17,12 +17,30 @@ class Index extends AdminBase
 
 	public function index()
 	{
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['setLeft'])) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
 		html()->addCss();
 		html()->addJs();
-		dd(session()->get('admin_info'));
 		$this->assign('funcList', make('app/service/controller/Controller')->getList());
-		$this->assign('info', session()->get('admin_info'));
+		$this->assign('info', session()->get(type().'_info'));
+		$this->assign('leftInfo', session()->get('left_info'));
 		$this->view();
+	}
+
+	protected function setLeft()
+	{
+		$key = ipost('key');
+		$value = ipost('value');
+		if (empty($key)) {
+			$this->error('非法参数');
+		}
+		session()->set('left_info', $value, $key);
+		$this->success('设置成功');
 	}
 
 	public function statInfo()
