@@ -99,11 +99,12 @@ const CRAWLERINIt = {
 	},
 	crawlerPageinit: function() {
 		const _this = this;
-		CRAWLER.init(function(code, data, message){
+		CRAWLER.init(function(code, data, msg){
+			console.log(code, data, msg)
 			if (code === 0) {
 				_this.crawlerPage(data);
 			} else {
-				_this.error(message);
+				_this.error(msg);
 			}
 			_this.clickInit();
 		});
