@@ -7,5 +7,5 @@ class Zone extends Base
 {
 	protected $_table = 'zone';
 	protected $_primaryKey = 'zone_id';
-	protected $_addTime = ['zone_id', 'sort'];
+	protected $_intFields = ['zone_id', 'sort'];
 }

@@ -14,7 +14,6 @@ class Base
 	protected $_addTime;
 	protected $_updateTime;
 	protected $_intFields = [];
-	protected $_withSiteId = true;
 
 	private function instance()
 	{
@@ -26,7 +25,6 @@ class Base
 		$this->_instance->setParam('_addTime', $this->_addTime);
 		$this->_instance->setParam('_updateTime', $this->_updateTime);
 		$this->_instance->setParam('_intFields', $this->_intFields);
-		$this->_instance->setParam('_withSiteId', $this->_withSiteId);
 		return $this->_instance;
 	}
 

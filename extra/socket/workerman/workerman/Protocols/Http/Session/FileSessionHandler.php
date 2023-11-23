@@ -141,10 +141,7 @@ class FileSessionHandler implements \SessionHandlerInterface
             if ($path[\strlen($path)-1] !== DIRECTORY_SEPARATOR) {
                 $path .= DIRECTORY_SEPARATOR;
             }
-            static::$_sessionSavePath = $path;
-            if (!\is_dir($path)) {
-                \mkdir($path, 0755, true);
-            }
+            static::$_sessionSavePath = createDir($path);
         }
         return $path;
     }

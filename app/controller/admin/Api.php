@@ -19,11 +19,27 @@ class Api extends AdminBase
 
 	public function helperData()
 	{
+		$cateList = make('app/service/category/Category')->getListFormat(false);
+		$tempArr = [];
+		$indexId = 0;
+		foreach ($cateList as $value) {
+			if ($value['parent_id'] == 0) {
+				$indexId = $value['cate_id'];
+				$tempArr[$indexId] = [
+					'name' => $value['name'],
+					'son' => [],
+				];
+			} else {
+				$tempArr[$indexId]['son'][] = $value;
+			}
+		}
 		$data = [
 			'domain' => domain(),
 			'version' => version(),
 			'socket_domain' => domain().'socket.io/',
 			'action' => $this->_helperAction,
+			'site_list' => make('app/service/site/Site')->getListData(['site_id'=>['>', 80]], 'site_id,name'),
+			'cate_list' => $tempArr,
 		];
 		$this->success($data);
 	}
@@ -54,30 +70,32 @@ class Api extends AdminBase
 	public function addProduct()
 	{
 		$data = ipost();
-		$cacheKey = 'queue-add-product:'.$data['bc_site_id'];
-		if (redis(2)->hExists($cacheKey, $data['bc_product_id'])) {
-			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
-			$this->success('加入队列成功');
+		if (empty($data)) {
+			$this->error('参数不能为空');
 		}
-		if (empty($data['bc_product_category'])) {
-			$this->error('产品分类不能为空');
+		$channelId = 0;
+		switch ($data['domain']) {
+			case 'taobao':
+				$channelId = 6051;
+				break;
+			case 'tmall':
+				$channelId = 6052;
+				break;
+			case '1688':
+				$channelId = 6053;
+				break;
 		}
-		if (empty($data['bc_product_site'])) {
-			$this->error('站点不能为空');
+		$where = [
+			'purchase_channel_id' => $channelId,
+			'item_id' => $data['item_id'],
+		];
+		if (purchase()->product()->count($where) == 0) {
+			purchase()->product()->addData($where);
 		}
-		$rst = make('app/service/Queue')->push([
-			'class' => 'app/service/product/Spu',
-			'method' => 'addProduct',
-			'param' => $data,
-		]);
-		if ($rst) {
-			redis(2)->hSet($cacheKey, $data['bc_product_id'], 1);
-			//更新待入库状态
-			make('app/service/supplier/Url')->updateData(['name'=>$data['bc_site_id'], 'item_id'=>$data['bc_product_id']], ['status'=>2]);
-			$this->success('加入队列成功');
-		} else {
-			$this->error('加入队列失败');
-		}
+		$rst = purchase()->product()->updateData($where, ['status'=>1]);
+		$path = createDir(ROOT_PATH.'storage'.DS.'product_data'.DS.$channelId.DS).$data['item_id'].'.json';
+		file_put_contents($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+		$this->success('上传成功');
 	}
 
 	public function addAfter()

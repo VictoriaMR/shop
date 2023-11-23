@@ -60,10 +60,7 @@ class Debug
 		$destination = ROOT_PATH.'runtime'.DS.date('Ym').DS.date('d').(empty($type) ? '' : '_'.$type).'.log';
 
 		if (!is_file($destination)) {
-			$path = dirname($destination);
-			if (!is_dir($path)) {
-				mkdir($path, 0755, true);
-			}
+			$path = createDir(dirname($destination));
 		}
 		// 获取基本信息
 		$current_uri = '';

@@ -19,11 +19,7 @@ class File
 		$attachment = make('app/service/attachment/Attachment');
 		$data = $attachment->getAttachmentByName($name, $cate);
 		if (empty($data)) {
-			$path = ROOT_PATH.$this->savePath.DS.$cate.DS;
-			//创建目录
-			if (!is_dir($path)) {
-				mkdir($path, 0755, true);
-			}
+			$path = createDir(ROOT_PATH.$this->savePath.DS.$cate.DS);
 			$saveUrl = $path.$name.'.'.$ext;
 			$result = move_uploaded_file($file['tmp_name'], $saveUrl);
 			if (!$result) {
@@ -75,11 +71,7 @@ class File
 			$list = array_column($list, 'attach_id', 'url_md5');
 		}
 		$root_path = ROOT_PATH.$this->savePath.DS;
-		$path = $root_path.$cate.DS;
-		//创建目录
-		if (!is_dir($path)) {
-			mkdir($path, 0755, true);
-		}
+		$path = createDir($root_path.$cate.DS);
 
 		$insert = [];
 		foreach ($urlArr as $key => $value) {

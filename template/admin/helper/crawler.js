@@ -14,9 +14,7 @@ var CRAWLER = {
         } else if (_this.isOffShelf()) {
             callback(-2, {}, '产品已下架!');
         } else {
-            setTimeout(function(){
-                _this.data(callback);
-            }, Math.random()*3000 + 1000);
+            _this.data(callback);
         }
     },
     isOffShelf: function() {
@@ -64,23 +62,106 @@ var CRAWLER = {
             return false;
         }
         let ret_data = {};
+        let obj;
+        ret_data.channel_id = 6053;
+        ret_data.item_id = __INIT_DATA.globalData.tempModel.offerId;
+        ret_data.name = __INIT_DATA.globalData.tempModel.offerTitle;
+        ret_data.product_url = 'https://detail.1688.com/offer/'+ret_data.item_id+'.html';
+        obj = document.querySelector('.logistics-express-price');
+        ret_data.post_fee = obj ? obj.innerText.replace(/[^0-9]/ig, '') : 0;
+        ret_data.seller = {
+            shop_id: __INIT_DATA.globalData.tempModel.sellerMemberId.replace('b2b-', ''),
+            shop_name: __INIT_DATA.globalData.tempModel.companyName,
+            shop_url: __INIT_DATA.globalData.offerBaseInfo.sellerWinportUrl,
+            service: {},
+        };
+        if (__STORE_DATA && __STORE_DATA.components['38229149']) {
+            for (var i in __STORE_DATA.components['38229149'].moduleData.appData.serviceList) {
+                var name = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].serviceKey;
+                var len = name.indexOf('_');
+                name = name.substr(0, len);
+                ret_data.seller.service[name] = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].score;
+            }
+        }
+        ret_data.pdt_picture = [];
+        for (var i=0; i<__INIT_DATA.globalData.images.length; i++) {
+            ret_data.pdt_picture.push(__INIT_DATA.globalData.images[i].fullPathImageURI);
+        }
+        ret_data.attr = {};
+        let attrMap = {};
+        for (var i=0; i<__INIT_DATA.globalData.skuModel.skuProps.length; i++) {
+            var item = __INIT_DATA.globalData.skuModel.skuProps[i];
+            var value = {};
+            for (var j=0; j<item.value.length; j++) {
+                value[item.value[j].name] = {
+                    name: item.value[j].name,
+                };
+                if (item.value[j].imageUrl) {
+                    value[item.value[j].name].img = item.value[j].imageUrl;
+                }
+                attrMap[item.value[j].name] = item.prop;
+            }
+            ret_data.attr[item.prop] = {
+                name: item.prop,
+                value: value
+            };
+        }
+        ret_data.sku = {};
+        for (var i in __INIT_DATA.globalData.skuModel.skuInfoMap) {
+            var item = __INIT_DATA.globalData.skuModel.skuInfoMap[i];
+            let tempMap = i.replace('&gt', '');
+            var attr = tempMap.split(';');
+            let pvs = {};
+            for (let r in attr) {
+                pvs[attrMap[attr[r]]] = attr[r];
+            }
+            ret_data.sku[item.skuId] = {
+                pvs: pvs,
+                sku_map: tempMap,
+                price: item.price,
+                stock: item.canBookCount
+            };
+        }
+        ret_data.detail = [];
+        obj = document.querySelectorAll('.offer-attr-list .offer-attr-item');
+        for (var i=0; i<obj.length; i++) {
+            ret_data.detail.push({name:obj[i].querySelector('.offer-attr-item-name').innerText, value:obj[i].querySelector('.offer-attr-item-value').innerText});
+        }
+        ret_data.desc_picture = [];
+        obj = document.querySelectorAll('.content-detail img.desc-img-loaded');
+        for (var i=0; i<obj.length; i++) {
+            ret_data.desc_picture.push(obj[i].getAttribute('data-lazyload-src'));
+        }
+        callback(0, ret_data, '获取成功!');
     },
     getTaobao: function(callback) {
         if (typeof Hub === 'undefined') {
             callback(-1, {}, '获取数据失败!');
             return false;
         }
+        let obj;
         let ret_data = {};
         ret_data.channel_id = 6051;
         ret_data.item_id = g_config.idata.item.id;
         ret_data.name = g_config.idata.item.title;
+        ret_data.product_url = 'https://item.taobao.com/item.htm?id='+ret_data.item_id;
+        obj = document.querySelector('#J_WlServiceTitle');
+        ret_data.post_fee = obj ? obj.innerText.replace(/[^0-9]/ig, '') : 0;
+        ret_data.pdt_picture = [];
+        obj = document.querySelectorAll('#J_UlThumb li');
+        for (var i=0; i<obj.length; i++) {
+            var tempObj = obj[i].querySelector('img');
+            if (tempObj) {
+                ret_data.pdt_picture.push(tempObj.getAttribute('data-src').replace('_50x50.jpg', ''));
+            }
+        }
         ret_data.seller = {
             shop_id: g_config.shopId,
             shop_name: g_config.shopName,
             shop_url: g_config.idata.shop.url,
             service: {},
         };
-        let obj = document.querySelectorAll('.tb-shop-rate dl');
+        obj = document.querySelectorAll('.tb-shop-rate dl');
         var descMap = {'描述':'desc', '物流':'post', '服务':'serv'};
         for (var i=0; i<obj.length; i++) {
             var name = obj[i].querySelector('dt').innerText;
@@ -113,8 +194,8 @@ var CRAWLER = {
                 value: attrValue
             };
         }
+        ret_data.sku = {};
         if (Hub.config.config.sku.valItemInfo.skuMap) {
-            ret_data.sku = {};
             for (let k in Hub.config.config.sku.valItemInfo.skuMap) {
                 let item = Hub.config.config.sku.valItemInfo.skuMap[k];
                 if (item.skuId != '0') {
@@ -142,9 +223,17 @@ var CRAWLER = {
             ret_data.detail.push({name:item[0], value:item[1]});
         }
         ret_data.desc_picture = [];
-        obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
-        for (var i=0; i<obj.length; i++) {
-            ret_data.desc_picture.push(obj[i].src);
+        if (typeof desc !== 'undefined') {
+            var des_pic_craw = desc.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
+            for (let i = 0; i < des_pic_craw.length; i++) {
+                var src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
+                ret_data.desc_picture.push(src);
+            }
+        } else {
+            obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
+            for (var i=0; i<obj.length; i++) {
+                ret_data.desc_picture.push(obj[i].src);
+            }
         }
         callback(0, ret_data, '获取成功!');
     },
@@ -163,7 +252,7 @@ var CRAWLER = {
             ret_data.item_id = info.item.itemId;
             ret_data.name = info.item.title;
             ret_data.channel_id = 6052;
-
+            ret_data.product_url = 'https://detail.tmall.com/item.htm?id='+ret_data.item_id;
             ret_data.pdt_picture = info.item.images;
             ret_data.seller = {
                 shop_id: info.seller.shopId,

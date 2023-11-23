@@ -40,8 +40,8 @@ const CRAWLERINIt = {
 		HELPERINIT.request({action: 'delCache', cache_key: 'crawler_data_cache'}, function() {
 			document.getElementById('googleHelper_crawler_js').remove();
 			document.getElementById('googleHelper_crawler_css').remove();
-			window.postMessage({ type: 'reload_page_css', value: 'googleHelper/crawler.css'}, "*");
-			window.postMessage({ type: 'reload_page_js', value: 'googleHelper/crawler.js'}, "*");
+			window.postMessage({type: 'reload_page_css', value: 'googleHelper/crawler.css'}, "*");
+			window.postMessage({type: 'reload_page_js', value: 'googleHelper/crawler.js'}, "*");
 		});
 	},
 	goNext: function() {
@@ -99,264 +99,184 @@ const CRAWLERINIt = {
 	},
 	crawlerPageinit: function() {
 		const _this = this;
-		CRAWLER.init(function(code, data, msg){
-			console.log(code, data, msg)
-			if (code === 0) {
-				_this.crawlerPage(data);
+		HELPERINIT.request({action: 'getCache', cache_key: 'helper_all_data_cache'}, function(res) {
+			if (res.code == 200) {
+				_this.cate_list = res.data.cate_list;
+				_this.site_list = res.data.site_list;
+				CRAWLER.init(function(code, data, msg){
+					console.log(code, data, msg)
+					if (code === 0) {
+						_this.crawlerPage(data);
+					} else {
+						_this.error(msg);
+					}
+					_this.clickInit();
+				});
 			} else {
-				_this.error(msg);
+				_this.error(res.msg);
 			}
-			_this.clickInit();
 		});
 	},
 	crawlerPage: function(data) {
 		const _this = this;
-		_this.category = info.site_category;
-		_this.site = info.site;
 		var crawlerPage = document.getElementById('item-content');
 		var count = 0;
 		var html = `<form id="crawler_form">
-						<input type="hidden" name="bc_shop_name" value="` + data.shop_name + `" />
-						<input type="hidden" name="bc_shop_url" value="` + data.shop_url + `" />
-						<div class="productAttLine">
+						<input type="hidden" name="seller[shop_id]" value="` + data.seller.shop_id + `" />
+						<input type="hidden" name="seller[shop_name]" value="` + data.seller.shop_name + `" />
+						<input type="hidden" name="seller[shop_url]" value="` + data.seller.shop_url + `" />`;
+						for (var i in data.seller.service) {
+							html += `<input type="hidden" name="seller[service][`+i+`]" value="` + data.seller.service[i] + `" />`;
+						}
+				html += `<div class="productAttLine">
 							<div class="label">供应商:</div>
 							<div class="fill_in">
-								<input type="text" name="bc_site_id" value="` + HELPERINIT.getDomain().replace('.com', '') + `" />
+								<input type="text" name="domain" value="` + HELPERINIT.getDomain().replace('.com', '') + `" />
 							</div>
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">产品ID:</div>
 							<div class="fill_in">
-								<input type="text" name="bc_product_id" value="` + data.item_id + `" />
+								<input type="text" name="item_id" value="` + data.item_id + `" />
 							</div>
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">站点:</div>
 							<div class="fill_in">
-								<select name="bc_product_site" class="bc_product_site">
+								<select name="site_id">
 									<option value="">请选择站点</option>
 									` + _this.getSiteHtml() + `
 								</select>
 							</div>
 							<div class="clear"></div>
 						</div>
-						<div id="category">
-							<div class="productAttLine">
-								<div class="label">产品分类:</div>
-								<div class="fill_in">
-									<select name="bc_product_category" class="bc_product_category">
-										<option value="">请选择分类</option>
-									</select>
-								</div>
-								<div class="clear"></div>
+						<div class="productAttLine">
+							<div class="label">品类:</div>
+							<div class="fill_in">
+								<select name="root_category">
+									<option value="">请选择品类</option>
+									`+_this.getCategoryHtml(0)+`
+								</select>
 							</div>
+							<div class="clear"></div>
+						</div>
+						<div class="productAttLine">
+							<div class="label">分类:</div>
+							<div class="fill_in">
+								<select name="cate_id">
+									<option value="">请选择分类</option>
+								</select>
+							</div>
+							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">邮费:</div>
 							<div class="fill_in">
-								<input name="bc_post_fee" value="`+data.post_fee+`" placeholder="邮费">
+								<input name="post_fee" value="`+data.post_fee+`" placeholder="邮费">
 							</div>
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">重量:</div>
 							<div class="fill_in">
-								<input name="bc_product_weight" value="" placeholder="产品重量(g)">
+								<input name="weight" value="" placeholder="产品重量(g)">
 							</div>
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">体积:</div>
 							<div class="fill_in">
-								<input name="bc_product_volume" value="" placeholder="长,宽,高(mm)">
+								<input name="volume" value="" placeholder="长,宽,高(mm)">
 							</div>
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">产品名称:</div>
 							<div class="fill_in">
-								<input name="bc_product_name" value="` + _this.nameFormat(data.name) + `" />
+								<input name="name" value="` +data.name + `" />
 							</div>
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
 							<div class="label">产品URL:</div>
 							<div class="fill_in">
-								<input type="text" name="bc_product_url" value="` + data.product_url + `" />
+								<input type="text" name="url" value="` + data.product_url + `" />
 							</div>
 							<div class="clear"></div>
 						</div>`;
 		// 属性分区
 		if (data.attr) {
-			html += `<div class="productAttLine">
-						<div class="picTitle" style="margin-bottom: 0;">产品属性名：</div>
-						<div class="attr-content"></div>`;
-			html += `</div>`;
-			html += `<div class="productAttLine">
-						<div class="picTitle" style="margin-bottom: 0;">产品属性值：</div>
-						<div class="attv-content"></div>`;
+			html += `<div class="item-block">`;
+			for (var i in data.attr) {
+				html += `<div class="attr-item">
+							<p class="title">`+data.attr[i].name+`</p>
+							<div class="value-content">`;
+				for (var j in data.attr[i].value) {
+					html += `<p class="
+					value">`+data.attr[i].value[j].name+`</p>`;
+				}
+				html += `</div>
+						</div>`;
+			}
 			html += `</div>`;
 		}
-		if (data.multi_sku) {
+		if (data.sku) {
 			//sku
-			html += `<div class="productAttLine">
-						<div class="picTitle" style="margin-bottom: 0;">SKU：</div>
-						<div class="pdtPicHere">`;
-			var count = 0;
+			html += `<div class="sku-list mt12">
+						<div class="title">SKU：</div>
+						<table border="0" width="100%">
+							<tr>
+								<td>SKU</td>
+								<td>报价</td>
+								<td>库存</td>
+							</tr>
+						`;
 			for (var i in data.sku) {
-				html += `<div class="sku-item">
-							<input type="hidden" name="bc_sku[` + count + `][sku_id]" value="`+i+`"/>
-							<div class="cancel-btn">x</div>
-							<div class="flex w100">
-							<div class="sku_img">`;
-				if (data.sku[i].sku_img) {
-					html += `<img src="` + data.sku[i].sku_img + `">
-									<input type="hidden" name="bc_sku[` + count + `][img]" value="` + data.sku[i].sku_img + `"/>`;
+				var skuAttr = '';
+				for (var j in data.sku[i].pvs) {
+					skuAttr += data.attr[j].value[data.sku[i].pvs[j]].name+'; ';
 				}
-				html += `</div>`;
-				if (data.sku[i].pvs) {
-					html += `<div class="flex1">
-								<div class="sku-attr">`;
-					if (data.sku[i].pvs.length) {
-						for (var j=0;j<data.sku[i].pvs.length;j++) {
-							html += `<div class="flex">
-										<div class="sku-attr-name">`+j+`:</div>
-										<div class="flex1">
-											<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku[i].pvs[j].text) + `"/>
-											<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku[i].pvs[j].img + `"/>
-										</div>
-									</div>`;
-						}
-					} else {
-						for (var j in data.sku[i].pvs) {
-							html += `<div class="flex">
-										<div class="sku-attr-name">`+j+`:</div>
-										<div class="flex1">
-											<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku[i].pvs[j].text) + `"/>
-											<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku[i].pvs[j].img + `"/>
-										</div>
-									</div>`;
-						}
-					}
-					html += `</div>`;
-				}
-				html += `<div class="price-stock">
-							<div class="flex">
-								<div style="margin-right: 12px;">价格: <input name="bc_sku[` + count + `][price]" value="` + data.sku[i].price + `"/></div>
-								<div>库存: <input name="bc_sku[` + count + `][stock]" value="` + data.sku[i].stock + `"/></div>
-							</div>
-						</div>`;
-				html += `</div></div></div>`;
-				count++;
+				html += `<tr>
+							<td>`+skuAttr+`</td>
+							<td>`+data.sku[i].price+`</td>
+							<td>`+data.sku[i].stock+`</td>
+						</tr>`;
 			}
-			html += `</div></div>`;
-		} else {
-			if (data.sku) {
-				html += `<div class="productAttLine">
-							<div class="picTitle" style="margin-bottom: 0px;">SKU：</div>
-							<div class="pdtPicHere">
-								<div class="sku-item flex">
-									<div class="cancel-btn">x</div>
-									<div class="flex w100">
-							<div class="sku_img">`;
-				if (data.sku.sku_img) {
-					html += `<img src="` + data.sku.sku_img + `">
-								<input type="hidden" name="bc_sku[` + count + `][img]" value="` + data.sku.sku_img + `"/>`;
-				}
-				html += `</div>`;
-				if (data.sku.pvs) {
-					html += '<div class="flex1">';
-					html += `<div class="flex">
-								<div style="width:32px;">
-								<span>属性:</span>
-							</div>
-							<div class="flex1 sku-attr">`;
-					if (data.sku.pvs.length) {
-						for (var j=0;j<data.sku.pvs.length;j++) {
-							html += `<div>
-										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku.pvs[j].text) + `"/>
-										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
-									</div>`;
-						}
-					} else {
-						for (var j in data.sku.pvs) {
-							html += `<div>
-										<input name="bc_sku[` + count + `][attr][` + j + `][text]" value="` + _this.formatStr(data.sku.pvs[j].text) + `"/>
-										<input type="hidden" name="bc_sku[` + count + `][attr][` + j + `][img]" value="` + data.sku.pvs[j].img + `"/>
-									</div>`;
-						}
-					}
-					html += `</div></div>`;
-				}
-				html += `<div class="flex price-stock">
-									<div style="margin-right: 12px;">价格: <input name="bc_sku[` + count + `][price]" value="` + data.sku.price + `"/></div>
-									<div>库存: <input name="bc_sku[` + count + `][stock]" value="` + data.sku.stock + `"/></div>
-								</div>
-							</div>
-						</div></div>`;
-				html += `</div></div>`;
-			}
+			html += '</table>';
 		}
 		if (data.pdt_picture) {
 			html += `<div class="clear"></div>
-					<div class="productMainPic">
-						<div class="picTitle">产品图：</div>
-						<div class="pdtPicHere" id="pdt_picture">
-							<input type="hidden" name="bc_product_img" class="bc_product_picture" value="` + data.pdt_picture.join(',') + `"/>`;
-			html += `<div>`;
+					<div class="productMainPic mt12">
+						<div class="title">产品图：</div>
+						<div class="pdtPicHere" id="pdt_picture">`;
 			for (var i=0;i< data.pdt_picture.length;i++) {
-				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />`;
-				if ((i+1)%4===0) {
-					html += '</div><div style="clear:both;"></div><div>';
-				}
+				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />
+						<input type="hidden" name="product_img[`+i+`]" value="` + data.pdt_picture[i] + `"/>`;
 			}
-			html += `</div>`;
 			html += `</div></div>`;
 		}
-		if (data.des_picture) {
+		if (data.desc_picture) {
 			html += `<div class="clear"></div>
-					<div class="productMainPic">
-						<div class="picTitle">产品详情图：<span style="color:red;font-size:12px;"></span></div>
-						<div class="pdtPicHere" id="pdt_desc_picture">
-							<input type="hidden" name="bc_product_des_picture" class="bc_product_picture" value="` + data.des_picture.join(',') + `"/>`;
-			html += `<div>`;
-			for (var i=0;i<data.des_picture.length;i++) {
-				html += `<img class="imgList" src="` + data.des_picture[i] + `" />`;
-				if ((i+1)%4===0) {
-					html += '</div><div style="clear:both;"></div><div>';
-				}
+					<div class="productMainPic mt12">
+						<div class="title">产品详情图：</div>
+						<div class="pdtPicHere" id="pdt_desc_picture">`;
+			for (var i=0;i<data.desc_picture.length;i++) {
+				html += `<img class="imgList" src="` + data.desc_picture[i] + `" />
+						<input type="hidden" name="product_desc_img[`+i+`]" value="` + data.desc_picture[i] + `"/>`;
 			}
-			html += `</div>`;
 			html += `</div></div>`;
 		}
-		var attributes = {};
-		if (data.attributes.length > 0) {
-			var ignoreArr = _this.attrIgnore();
-			for (var i=0; i<data.attributes.length; i++) {
-				var check = false;
-				for (var j=0; j<ignoreArr.length; j++) {
-					if (data.attributes[i].name.indexOf(ignoreArr[j])>=0 && !check) {
-						check = true;
-					}
-				}
-				if (!check) {
-					attributes[data.attributes[i].name] = data.attributes[i].value;
-				}
-			}
-		}
-		if (attributes) {
+		if (data.detail) {
 			html += `<div class="clear"></div>
-							<div class="productMainPic">
-								<div class="picTitle">产品描述属性：</div>
-								<div id="pdt_des_text">`;
-			for (var i in attributes) {
-				html += `<div class="sku-attr">
-							<input type="text" name="bc_des_text[`+i+`][key]" value="`+_this.formatStr(i)+`"> - 
-							<input type="text" name="bc_des_text[`+i+`][value]" value="`+_this.formatStr(attributes[i])+`">
-							<div class="cancel-btn">x</div>
-						</div>`;
+						<div class="item-block mt12">
+							<div class="title">产品描述属性：</div>
+							<div id="pdt_des_text">`;
+			for (var i=0; i<data.detail.length; i++) {
+				html += `<p>`+data.detail[i].name+`: `+data.detail[i].value+`</p>
+							<input type="hidden" name="desc_text[`+i+`][key]" value="`+data.detail[i].name+`">
+							<input type="hidden" name="desc_text[`+i+`][value]" value="`+data.detail[i].value+`">`;
 			}
 			html += `</div></div>`;
 		}
@@ -364,45 +284,6 @@ const CRAWLERINIt = {
 		html += `<button id="post-product-btn" type="button">上传产品</button>`;
 		crawlerPage.innerHTML = html;
 		crawlerPage.style.display = 'block';
-		_this.initAttr(data.attr);
-	},
-	initAttr: function(attr) {
-		var _this = this;
-		var obj = document.querySelector('.attr-content');
-		var objv = document.querySelector('.attv-content');
-		if (obj) {
-			var html = '';
-			var attrValueHtml = '';
-			for (var i in attr){
-				html += `<div>
-							<span class="old-value">`+_this.formatStr(attr[i].attrName)+`</span>
-							<span>替换</span>
-							<input type="text" value="` + _this.formatStr(attr[i].attrName) + `" />
-							<button type="button" class="btn1">确定</button>
-						</div>`;
-				for (var j in attr[i].attrValue) {
-					attrValueHtml += `<div>
-							<span class="old-value">`+_this.formatStr(attr[i].attrValue[j].name)+`</span>
-							<span>替换</span>
-							<input type="text" value="` + _this.formatStr(attr[i].attrValue[j].name) + `" />
-							<button type="button" class="btn1">确定</button>
-							<span class="cancel-btn">x</span>
-						</div>`;
-				}
-			}
-			obj.innerHTML = html;
-			objv.innerHTML = attrValueHtml;
-		}
-	},
-	nameFormat: function(name) {
-		var arr = ['跨境', '亚马逊', '欧美', '2020年', '2021年', '2022年', '2020', '2021', '2022', '外贸'];
-		for (var i=0; i<arr.length; i++) {
-			name = name.replace(arr[i], '');
-		}
-		return name;
-	},
-	attrIgnore: function() {
-		return ['来源', '货源', '产地', '库存', '货号', '品牌', '下游', '销售', '跨境', '成分2', '上市年份', '认证', '证书', '安装服务', '配送上门', '专利', '纳税人', '年份季节', '型号', '外贸', '适合年龄', '省份', '地市', '上市时间'];
 	},
 	clickInit: function() {
 		const _this = this;
@@ -427,137 +308,51 @@ const CRAWLERINIt = {
 				});
 			}
 		}
-		//图片按钮点击删除
-		var obj3 = document.getElementById('pdt_picture');
-		if (obj3) {
-			const tobj = obj3.querySelectorAll('img');
-			for (var i = 0; i < tobj.length; i++) {
-				tobj[i].onclick = function(event) {
-					this.parentNode.removeChild(this)
-					_this.initPdtImgValue(obj3);
-				}
-			}
-		}
-		//图片介绍图
-		var obj4 = document.getElementById('pdt_desc_picture');
-		if (obj4) {
-			const tobj = obj4.querySelectorAll('img');
-			for (var i = 0; i < tobj.length; i++) {
-				tobj[i].onclick = function(event) {
-					this.parentNode.removeChild(this)
-					_this.initPdtImgValue(obj4);
-				}
-			}
-		}
-		//描述文件删除
-		var obj5 = document.getElementById('pdt_des_text');
-		if (obj5) {
-			tobj = obj5.querySelectorAll('.sku-attr .cancel-btn');
-			for (var i = 0; i < tobj.length; i++) {
-				tobj[i].onclick = function(event) {
-					this.parentNode.remove();
-				}
-			}
-		}
-		// sku 点击删除
-		var obj6 = document.querySelectorAll('.sku-item .cancel-btn');
-		if (obj6) {
-			for (var i = 0; i < obj6.length; i++) {
-				obj6[i].onclick = function(event) {
-					this.parentNode.remove();
-				}
-			}
-		}
-		//站点改变切换分类
-		var obj7 = document.querySelector('#crawler-page .bc_product_site');
-		if (obj7) {
-			obj7.onchange = function(){
-				const index = obj7.selectedIndex;
-				_this.getCategoryHtml(obj7.options[index].value);
-			}
-		}
-		//属性切换点击
-		var obj8 = document.querySelectorAll('#crawler-page .attr-content button');
-		if (obj8) {
-			for (var i = 0; i < obj8.length; i++) {
-				obj8[i].onclick = function(event) {
-					var oldValue = this.parentNode.querySelector('.old-value').innerText;
-					var value = this.parentNode.querySelector('input').value;
-					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
-					for (var j=0; j<skuObj.length; j++) {
-						if (skuObj[j].querySelector('.sku-attr-name').innerText == oldValue+':') {
-							skuObj[j].querySelector('.sku-attr-name').innerText = value+':';
-							var inputObj = skuObj[j].querySelectorAll('input');
-							for (var n=0; n<inputObj.length; n++) {
-								inputObj[n].setAttribute('name', inputObj[n].getAttribute('name').replace(oldValue, value));
-							}
-						}
-					}
-					this.parentNode.querySelector('.old-value').innerText = value;
-				}
-			}
-		}
-		//属性切换点击
-		var obj9 = document.querySelectorAll('#crawler-page .attv-content button');
-		if (obj9) {
-			for (var i = 0; i < obj9.length; i++) {
-				obj9[i].onclick = function(event) {
-					var oldValue = this.parentNode.querySelector('.old-value').innerText;
-					var value = this.parentNode.querySelector('input').value;
-					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
-					for (var j=0; j<skuObj.length; j++) {
-						if (skuObj[j].querySelector('input').value == oldValue) {
-							skuObj[j].querySelector('input').value = value;
-						}
-					}
-					this.parentNode.querySelector('.old-value').innerText = value;
-				}
-			}
-		}
-		var obj10 = document.querySelectorAll('#crawler-page .attv-content .cancel-btn');
-		if (obj10) {
-			for (var i = 0; i < obj10.length; i++) {
-				obj10[i].onclick = function(event) {
-					var oldValue = this.parentNode.querySelector('input').value;
-					var skuObj = document.querySelectorAll('#crawler-page .sku-item .sku-attr .flex');
-					for (var j=0; j<skuObj.length; j++) {
-						if (skuObj[j].querySelector('input').value == oldValue) {
-							skuObj[j].parentNode.parentNode.parentNode.parentNode.remove();
-						}
-					}
-					this.parentNode.remove();
-				}
+		//切换品类
+		var obj2 = document.querySelector('#crawler-page select[name="root_category"]');
+		if (obj2) {
+			obj2.onchange = function(){
+				const index = obj2.selectedIndex;
+				var html = _this.getCategoryHtml(obj2.options[index].value);
+				html = '<option value="">请选择分类</option>'+html;
+				console.log(html, obj2.options[index].value)
+				document.querySelector('#crawler-page select[name="cate_id"]').innerHTML=html;
 			}
 		}
 	},
 	getSiteHtml: function() {
 		var html = '';
-		const list = this.site;
-		if (list) {
-			for (var i = 0; i < list.length; i++) {
-				html += '<option value="'+list[i].site_id+'">'+list[i].name+'</option>';
+		if (this.site_list) {
+			for (var i = 0; i < this.site_list.length; i++) {
+				html += '<option value="'+this.site_list[i].site_id+'">'+this.site_list[i].name+'</option>';
 			}	
 		}
 		return html;
 	},
-	getCategoryHtml: function(siteId) {
+	getCategoryHtml: function(pid) {
 		var html = '';
-		const list = this.category[siteId];
-		if (list) {
-			html = '<option value="">请选择分类</option>';
-			for (var i = 0; i < list.length; i++) {
-				var paddingStr = '';
-				var disable = false;
-				if (list[i+1] && list[i+1].parent_id == list[i].cate_id) {
-					disable = true;
+		var start = false;
+		if (this.cate_list) {
+			if (pid == 0) {
+				for (var i in this.cate_list) {
+					html += '<option value="'+i+'">'+this.cate_list[i].name+'</option>';
 				}
-				for (var p=0; p<=list[i].level; p++) {
-					paddingStr += '&nbsp;&nbsp;&nbsp;&nbsp;';
+			} else {
+				var list = this.cate_list[pid].son;
+				for (var i = 0; i < list.length; i++) {
+					var disable = '';
+					var padding = '';
+					for (var j=1; j<list[i].level; j++) {
+						padding += '&nbsp;&nbsp;&nbsp;';
+					}
+					if (list[i+1] && list[i+1].level > list[i].level) {
+						disable = 'disabled="disabled"';
+					}
+					html += '<option '+disable+' value="'+list[i].cate_id+'">'+padding+list[i].name+'</option>';
 				}
-				html += '<option value="'+list[i].cate_id+'" '+(disable?'disabled="disabled"':'')+'>'+paddingStr+list[i].name+'</option>';
 			}
 		}
-		document.querySelector('#crawler-page .bc_product_category').innerHTML = html;
+		return html;
 	},
 	serializeForm: function(formobj) {
 		if (formobj) {

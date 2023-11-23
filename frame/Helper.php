@@ -227,3 +227,9 @@ function uuId(){
 function hasZht($str){
 	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;
 }
+function createDir($dir) {
+	if (!is_dir($dir)) {
+		mkdir($dir, 0755, true);
+	}
+	return $dir;
+}

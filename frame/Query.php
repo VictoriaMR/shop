@@ -36,17 +36,14 @@ final class Query
 
 	public function where($columns, $operator=null, $val1=null, $val2=null)
 	{
-		if ($this->_withSiteId) {
-			$this->_where[] = ['site_id', '=', siteId()];
-		}
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) $this->_where[] = isset($value[2]) ? [$key, strtoupper($value[0]), $value[1], $value[2]] : [$key, strtoupper($value[0]), $value[1]];
-				else $this->_where[] = [$key, '=', $value];
+				else $this->_where[$key] = [$key, '=', $value];
 			}
 		} else {
-			if (is_null($value)) $this->_where[] = [$columns, '=', $operator];
-			else $this->_where[] = [$columns, $operator, $value];
+			if (is_null($value)) $this->_where[$columns] = [$columns, '=', $operator];
+			else $this->_where[$columns] = [$columns, $operator, $value];
 		}
 		return $this;
 	}
@@ -139,6 +136,9 @@ final class Query
 		$insertTime = [];
 		if (!empty($this->_addTime)) {
 			$insertTime = explode(',', $this->_addTime);
+		}
+		if (in_array('site_id', $this->_intFields) && !isset($data['site_id'])) {
+			$data['site_id'] = siteId();
 		}
 		$fields = array_merge(array_keys(current($data)), $insertTime);
 		foreach ($fields as $key => $value) {
@@ -234,6 +234,9 @@ final class Query
 	private function analyzeWhere()
 	{
 		if (empty($this->_where)) return '';
+		if (in_array('site_id', $this->_intFields) && !isset($this->_where['site_id'])) {
+			$this->_where['site_id'] = ['site_id', '=', siteId()];
+		}
 		$where  = '1=1';
 		foreach ($this->_where as $item) {
 			$where .= ' AND '.$this->formatKey($item[0]).' '.$item[1].' ';

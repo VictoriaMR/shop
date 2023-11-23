@@ -68,8 +68,8 @@ class Html
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template'.DS.template().DS;
-		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
+		$path = ROOT_PATH.'template'.DS.template().DS.'static'.DS;
+		$file = (isMobile()?'m_':'c_').$name.'.'.$type;
 		if (\App::get('base_info', 'static_cache') && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
@@ -80,7 +80,7 @@ class Html
 				$str .= trim(file_get_contents($source)).PHP_EOL;
 			}
 		}
-		if (!is_dir($path.'static')) mkdir($path.'static', 0755, true);
+		$path = createDir($path);
 		file_put_contents($path.$file, trim($str, PHP_EOL));
 		return $file;
 	}

@@ -115,10 +115,7 @@ class Image
 		if (empty($moveto))
 			$moveto = $src;
 
-		$dirPath = dirname($moveto);
-		if (!is_dir($dirPath)) {
-			mkdir($dirPath, 0755, true);
-		}
+		$dirPath = createDir(dirname($moveto));
 
 		$imagefunc($returnPic, $moveto);
 		if ($toWebp) {
@@ -142,10 +139,8 @@ class Image
 		$srcImageHeight = $srcImageInfo[1];
 		$srcImageMime = $srcImageInfo['mime'];
 
-		$movetoPath = pathinfo($moveto, PATHINFO_DIRNAME);
-		if (!is_dir($movetoPath)) {
-			mkdir($movetoPath, 0755, true);
-		}
+		$movetoPath = createDir(pathinfo($moveto, PATHINFO_DIRNAME));
+
 		$imagecreatefromfunc = $imagefunc = null;
 		$toWebp = true;
 		switch($srcImageMime) {
@@ -206,10 +201,7 @@ class Image
 		imagefill($returnPic, 0, 0, $white);
 
 		imagecopyresampled($returnPic, $srcImage, $dst_x + $diff_x, $dst_y + $diff_y, $src_x, $src_y, $real_w, $real_h, $src_w, $src_h);
-		$dirPath = dirname($moveto);
-		if (!is_dir($dirPath)) {
-			mkdir($dirPath, 0755, true);
-		}
+		$dirPath = createDir(dirname($moveto));
 		if ($toWebp) {
 			imagewebp($returnPic, str_replace('.'.pathinfo($moveto)['extension'], '.webp', $moveto));
 		} else {

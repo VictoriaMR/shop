@@ -216,9 +216,9 @@ class SiteMap extends TaskDriver
 		//站点路径
 		$filePath = $this->getPath();
 		if (empty($filePath)) return false;
-		if (!is_dir($filePath)) {
-			mkdir($filePath, 0755, true);
-		}
+
+		$filePath = createDir($filePath);
+		
 		//自动命名
 		if (empty($name)) {
 			$count = count($this->xmlFile);
