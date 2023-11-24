@@ -6,5 +6,6 @@ use app\model\Base;
 class ValueLanguage extends Base
 {
 	protected $_table = 'attr_value_language';
+	protected $_primaryKey = 'item_id';
 	protected $_intFields = ['item_id', 'attv_id'];
 }

@@ -6,7 +6,6 @@ use app\model\Base;
 class Order extends Base
 {
 	protected $_table = 'order';
-	protected $_primaryKey = 'order_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
 	protected $_intFields = ['order_id', 'site_id', 'mem_id', 'status', 'coupon_id', 'payment_id', 'isMobile()', 'is_review', 'is_delete'];

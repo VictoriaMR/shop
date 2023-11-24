@@ -6,7 +6,6 @@ use app\model\Base;
 class Email extends Base
 {
 	protected $_table = 'email';
-	protected $_primaryKey = 'email_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
 	protected $_intFields = ['email_id', 'site_id', 'account_id', 'mem_id', 'type', 'status'];

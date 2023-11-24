@@ -9,5 +9,5 @@ class Address extends Base
 	protected $_primaryKey = 'address_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
-	protected $_intFields = ['address_id', 'mem_id', 'zone_id', 'is_default', 'is_bill'];
+	protected $_intFields = ['address_id', 'site_id', 'mem_id', 'zone_id', 'is_default', 'is_bill'];
 }
