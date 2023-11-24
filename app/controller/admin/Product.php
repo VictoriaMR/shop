@@ -130,8 +130,8 @@ class Product extends AdminBase
 			// 用户
 			$userList = array_filter(array_column($list, 'mem_id'));
 			if (!empty($userList)) {
-				$userList = make('app/service/Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name');
-				$userList = array_column($userList, 'nick_name', 'mem_id');
+				$userList = make('app/service/Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name,avatar,sex');
+				$userList = array_column($userList, null, 'mem_id');
 			}
 			// 店铺
 			$shopList = array_filter(array_column($list, 'purchase_shop_id'));
@@ -140,7 +140,7 @@ class Product extends AdminBase
 				$shopList = array_column($shopList, null, 'purchase_shop_id');
 			}
 			foreach ($list as $key=>$value) {
-				$list[$key]['nick_name'] = $userList[$value['mem_id']] ?? '--';
+				$list[$key]['user_info'] = $this->avatar($userList[$value['mem_id']] ?? '');
 				$list[$key]['shop_info'] = $shopList[$value['purchase_shop_id']] ?? [];
 			}
 		}
@@ -160,6 +160,14 @@ class Product extends AdminBase
 		$this->assign('channelList', $channelList);
 		$this->assign('statusList', $statusList);
 		$this->view();
+	}
+
+	public function initPurchase()
+	{
+		$id = iget('id/d', 0);
+		if ($id <= 0) {
+			\App::error('参数不正确');
+		}
 	}
 
 	public function detail()

@@ -13,14 +13,4 @@ class Product extends Base
 	const STATUS_SET = 1;
 	const STATUS_USED = 2;
 	const STATUS_FAIL = 3;
-
-	public function getStatusList()
-    {
-        return [
-        	self::STATUS_NORMAL => '未使用',
-        	self::STATUS_SET => '已上传',
-        	self::STATUS_USED => '已使用',
-        	self::STATUS_FAIL => '已废弃',
-        ];
-    }
 }

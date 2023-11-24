@@ -44,7 +44,7 @@ class Member extends AdminBase
 			$where['mobile'] = ['like', '%'.$phone.'%'];
 		}
 
-		$member = make('app/service/admin/Member');
+		$member = make('app/service/Member');
 		$total = $member->getCountData($where);
 		if ($total > 0) {
 			$fields = 'mem_id,name,nickname,phone,email,status,salt,create_at';

@@ -27,6 +27,7 @@ img{
     max-height:100%
 }
 table{
+    table-layout: fixed
     border-collapse:collapse;
     border-spacing:0;
     border-bottom:solid 1px #dedede
@@ -122,3 +123,9 @@ button{cursor: pointer;}
     from {transform: rotate(0deg)}
     to {transform: rotate(360deg)}
 }
+.userAvatarInfo {width: max-content}
+.userAvatarInfo .avatarStyle {width: 36px; height: 36px;position: relative;display: inline-block;}
+.userAvatarInfo img {position:absolute;width: 36px; height: 36px; border-radius:50%;right: 0px;bottom:0px;}
+.userAvatarInfo .avatarStyle, .userAvatarInfo .two {display: inline-block; vertical-align: top; font-size: 0;}
+.userAvatarInfo .two p {line-height: 18px; font-size: 12px;}
+.userAvatarInfo .avatarStyle:hover img {width: 120px; height: 120px; transition: 700ms;max-width: 120px;max-height: 120px}

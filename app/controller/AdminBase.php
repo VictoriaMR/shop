@@ -49,4 +49,11 @@ class AdminBase extends Base
 		$rst = make('app/service/Translate')->getText($name, $trCode, $fromCode);
 		$this->success('', $rst);
 	}
+
+	protected function avatar($info)
+	{
+		if (empty($info)) return '';
+		$img = make('app/service/Member')->getAvatar($info['avatar'], $info['sex']);
+		return '<div class="userAvatarInfo"><span class="avatarStyle"><img src="'.$img.'"></span><span class="two"><p>'.$info['nick_name'].'</p><p>'.$info['mem_id'].'</p></span></div>';
+	}
 }

@@ -5,6 +5,7 @@ use frame\Container;
 class App
 {
 	private static $appData = [];
+	private static $error = [];
 
 	public static function init()
 	{
@@ -90,5 +91,10 @@ class App
 	{
 		defined('APP_VERSION') || define('APP_VERSION', redis(2)->get('frame:app:version')?:'1.0.0');
 		return APP_VERSION;
+	}
+
+	public static function error($msg)
+	{
+		self::$error[] = $msg;
 	}
 }
