@@ -21,21 +21,40 @@ class Request
 
 	public function ipost($name='', $default=null)
 	{
-		if (empty($name)) return $_POST;
-		return $_POST[$name] ?? $default;
+		return $this->format($_POST, $name, $default);
 	}
 
 	public function iget($name='', $default=null)
 	{
-		if (empty($name)) return $_GET;
-		return $_GET[$name] ?? $default;
+		return $this->format($_GET, $name, $default);
 	}
 
 	public function input($name='', $default=null)
 	{
-		$arr = array_merge($_GET, $_POST);
-		if (empty($name)) return $arr;
-		return $arr[$name] ?? $default;
+		return $this->format(array_merge($_GET, $_POST), $name, $default);
+	}
+
+	private function format($arr, $name, $default)
+	{
+		if (!$name) return $arr;
+		$index = strrpos($name, '/');
+		if ($index === false) {
+			$type = 's';
+		} else {
+			$type = substr($name, $index+1);
+			$name = substr($name, 0, $index);
+		}
+		if (!isset($arr[$name])) return $default;
+		switch ($type) {
+			case 'd': //整数
+				return (int)$arr[$name];
+			case 'f': //浮点数
+				return (float) $arr[$name];
+			case 't': //时间 time
+				return false === strtotime($arr[$name]) ? $default : $arr[$name];
+			default:
+				return $arr[$name];
+		}
 	}
 
 	public function getIp()

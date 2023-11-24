@@ -36,6 +36,9 @@ class Base
 	public function loadData($where, $field='', $orderBy=[])
 	{
 		if (!is_array($where)) {
+			if (!$this->_primaryKey) {
+				$this->_primaryKey = $this->_table.'_id';
+			}
 			$where = [$this->_primaryKey => $where];
 		}
 		return $this->instance()->where($where)->field($field)->orderBy($orderBy)->find();
@@ -44,6 +47,9 @@ class Base
 	public function updateData($where, $data)
 	{
 		if (!is_array($where)) {
+			if (!$this->_primaryKey) {
+				$this->_primaryKey = $this->_table.'_id';
+			}
 			$where = [$this->_primaryKey => $where];
 		}
 		return $this->instance()->where($where)->update($data);
@@ -52,6 +58,9 @@ class Base
 	public function deleteData($where)
 	{
 		if (!is_array($where)) {
+			if (!$this->_primaryKey) {
+				$this->_primaryKey = $this->_table.'_id';
+			}
 			$where = [$this->_primaryKey => $where];
 		}
 		return $this->instance()->where($where)->delete();

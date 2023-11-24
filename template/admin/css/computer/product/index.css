@@ -1,5 +1,5 @@
-.form-group select.form-control {
-	min-width: 180px;
+.form-inline .form-group {
+    margin-top: 10px;
 }
 #spu-list .spu-item {
 	width: calc((100% - 50px) / 5);

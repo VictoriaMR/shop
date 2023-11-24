@@ -1,9 +1,9 @@
 <div class="container-fluid">
 	<form action="<?php echo adminUrl('product');?>" class="form-inline" method="get">
-		<div class="form-group mt10 mr20">
+		<div class="form-group">
 			<input type="text" class="form-control" name="spu_id" value="<?php echo empty($spuId) ? '' : $spuId;?>" placeholder="SPU ID" autocomplete="off">
 		</div>
-		<div class="form-group mt10 mr20">
+		<div class="form-group">
 			<select class="form-control" name="status">
 				<option value="-1">请选择状态</option>
 				<?php if (!empty($statusList)) {
@@ -12,7 +12,7 @@
 				<?php } }?>
 			</select>
 		</div>
-		<div class="form-group mt10 mr20">
+		<div class="form-group">
 			<select class="form-control" name="site">
 				<option value="-1">请选择站点</option>
 				<?php if (!empty($siteList)) {
@@ -21,16 +21,16 @@
 				<?php } }?>
 			</select>
 		</div>
-		<div class="form-group mt10 mr20">
+		<div class="form-group">
 			<select class="form-control" name="cate">
 				<option value="-1">请选择分类</option>
 			</select>
 		</div>
-		<div class="mr20 form-group mt10">
+		<div class="form-group">
 			<input class="form-control form_datetime" type="text" value="<?php echo $stime;?>" name="stime" placeholder="开始时间" autocomplete="off"> - 
 			<input class="form-control form_datetime" type="text" value="<?php echo $etime;?>" name="etime" placeholder="结束时间" autocomplete="off">
 		</div>
-		<div class="mr20 form-group mt10">
+		<div class="form-group">
 			<button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
 		</div>
 		<div class="clear"></div>

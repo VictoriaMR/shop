@@ -105,6 +105,7 @@ const CRAWLERINIt = {
 				_this.site_list = res.data.site_list;
 				CRAWLER.init(function(code, data, msg){
 					console.log(code, data, msg)
+					localStorage.setItem('test', JSON.stringify(data));
 					if (code === 0) {
 						_this.crawlerPage(data);
 					} else {

@@ -76,6 +76,7 @@ var CRAWLER = {
             service: {},
         };
         if (__STORE_DATA && __STORE_DATA.components['38229149']) {
+            ret_data.seller.service.star = __STORE_DATA.components['38229149'].moduleData.appData.customerStar;
             for (var i in __STORE_DATA.components['38229149'].moduleData.appData.serviceList) {
                 var name = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].serviceKey;
                 var len = name.indexOf('_');
@@ -161,6 +162,10 @@ var CRAWLER = {
             shop_url: g_config.idata.shop.url,
             service: {},
         };
+        obj = document.querySelector('.tb-shop-info');
+        if (obj) {
+           ret_data.seller.service.level = this.getLevel(obj.getAttribute('data-creditflag'), obj.querySelectorAll('.tb-shop-rank dd i').length); 
+        }
         obj = document.querySelectorAll('.tb-shop-rate dl');
         var descMap = {'描述':'desc', '物流':'post', '服务':'serv'};
         for (var i=0; i<obj.length; i++) {
@@ -315,5 +320,23 @@ var CRAWLER = {
             }
             callback(0, ret_data, '获取成功!');
         }
+    },
+    getLevel:function(flag, number){
+        var level = 0;
+        switch(flag) {
+            case 'blue':
+            case '钻级':
+                level = 5;
+                break;
+            case 'cap':
+            case 'cap1':
+            case '冠级':
+                level = 10;
+                break;
+            case 'crown':
+                level = 15;
+                break;
+        }
+        return level + number;
     },
 };

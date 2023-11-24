@@ -82,9 +82,6 @@
     background: #424d56;
     cursor: pointer;
 }
-#index-page .body .nav-left .left-content .left-one .toggle .glyphicon {
-    top: 6px;
-}
 #index-page .body .nav-left .left-content .left-one .toggle:hover .glyphicon {
 	color: #ffffff;
 }

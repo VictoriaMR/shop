@@ -13,4 +13,9 @@ class Purchase
     {
         return make('app/service/purchase/Product');
     }
+
+    public function shop()
+    {
+        return make('app/service/purchase/Shop');
+    }
 }

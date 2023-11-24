@@ -89,10 +89,20 @@ class Api extends AdminBase
 			'purchase_channel_id' => $channelId,
 			'item_id' => $data['item_id'],
 		];
-		if (purchase()->product()->count($where) == 0) {
-			purchase()->product()->addData($where);
+		if (purchase()->product()->where($where)->count() == 0) {
+			purchase()->product()->insertData($where);
 		}
-		$rst = purchase()->product()->updateData($where, ['status'=>1]);
+		$shopId = 0;
+		if (!empty($data['seller'])) {
+			// 添加店铺
+			$shopId = purchase()->shop()->addShop($channelId, $data['seller']['shop_id'], $data['seller']['shop_name'], $data['seller']['shop_url'], $data['seller']['service']);
+		}
+		$updateData = [
+			'status' => purchase()->product()->getConst('STATUS_SET'),
+			'mem_id' => userId(),
+			'purchase_shop_id' => $shopId,
+		];
+		$rst = purchase()->product()->updateData($where, $updateData);
 		$path = createDir(ROOT_PATH.'storage'.DS.'product_data'.DS.$channelId.DS).$data['item_id'].'.json';
 		file_put_contents($path, json_encode($data, JSON_UNESCAPED_UNICODE));
 		$this->success('上传成功');

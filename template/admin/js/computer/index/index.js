@@ -28,12 +28,15 @@ const INDEX = {
 		});
 		//左2点击切换收起
 		$('#index-page .left-two .title .glyphicon-backward').on('click', function(){
-			var width = $('#index-page .nav-left').width();
-			$('#index-page .left-two').css({width: '0px'}).hide();
-			$('#index-page .nav-left').css({'transition': '0.1s', width: '40px'});
-			$('#index-page .body .nav-left .left-content .left-one').css({width: '100%'}).find('.toggle').removeClass('open');
-			$('#index-page .person .info').hide();
-			$('#index-page .content-right').css({'transition': '0.1s', 'width': 'calc(100% - 40px)'});
+			var pObj = $(this).parents('.nav-left');
+			let type = 0;
+			if (pObj.hasClass('left-close')) {
+				pObj.removeClass('left-close');
+			} else {
+				pObj.addClass('left-close');
+				type = 1
+			}
+			post(URI+'Index/index', {opn: 'setLeft', key: 'left_type', value: type});
 		});
 		//选择点击
 		$('#index-page .left-content .nav-content li').on('click', function(){

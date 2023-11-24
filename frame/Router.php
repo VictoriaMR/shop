@@ -20,6 +20,7 @@ final class Router
 	{
 		if (!empty($_SERVER['REQUEST_URI'])) {
 			$tempArr = array_reverse(array_filter(explode('-', str_replace('.html', '', ltrim(parse_url($_SERVER['REQUEST_URI'])['path'], '/')))));
+			array_shift($_GET);
 			foreach ($tempArr as $key=>$value) {
 				if ($key%2 == 0) {
 					if (is_numeric($value)) {

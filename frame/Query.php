@@ -226,7 +226,7 @@ final class Query
 		if ($whereString) $sql .= ' WHERE ' . $whereString;
 		if ($this->_groupBy) $sql .= ' GROUP BY ' . $this->_groupBy;
 		if ($this->_orderBy) $sql .= ' ORDER BY ' . trim($this->_orderBy, ',');
-		if ($this->_offset) $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		if (!is_null($this->_offset)) $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
 		if ($this->_having) $sql .= ' HAVING ' . $this->_having;
 		return $sql;
 	}

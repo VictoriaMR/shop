@@ -9,6 +9,7 @@ class Product extends AdminBase
 	{
 		$this->_arr = [
 			'index' => 'SPU列表',
+			'purchaseList' => '采购产品',
 			'detail' => 'SPU详情',
 		];
 		$this->_ignore = ['detail'];
@@ -89,6 +90,75 @@ class Product extends AdminBase
 		$this->assign('total', $total);
 		$this->assign('size', $size);
 		$this->assign('list', $list ?? []);
+		$this->view();
+	}
+
+	public function purchaseList()
+	{
+		html()->addCss();
+		html()->addJs();
+
+		$status = iget('status/d', -1);
+		$channelId = iget('purchase_channel_id/d', 0);
+		$itemId = iget('item_id', '');
+		$stime = iget('stime/t', '');
+		$etime = iget('etime/t', '');
+		$page = iget('page/d', 1);
+		$size = iget('size/d', 30);
+
+		$where = [];
+		if ($status > -1) {
+			$where['status'] = $status;
+		}
+		if ($channelId > 0) {
+			$where['purchase_channel_id'] = $channelId;
+		}
+		if ($itemId) {
+			$where['item_id'] = $itemId;
+		}
+		if ($stime && $etime) {
+			$where['add_time'] = ['between', [date('Y-m-d', strtotime($stime)).' 00:00:00', date('Y-m-d', strtotime($etime)).' 23:59:59']];
+		} elseif ($stime) {
+			$where['add_time'] = ['>=', date('Y-m-d', strtotime($stime)).' 00:00:00'];
+		} elseif ($etime) {
+			$where['add_time'] = ['<=', date('Y-m-d', strtotime($etime)).' 23:59:59'];
+		}
+		$product = make('app/service/purchase/Product');
+		$total = $product->count($where);
+		if ($total > 0) {
+			$list = $product->getListData($where, '*', $page, $size, ['purchase_product_id'=>'desc']);
+			// 用户
+			$userList = array_filter(array_column($list, 'mem_id'));
+			if (!empty($userList)) {
+				$userList = make('app/service/Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name');
+				$userList = array_column($userList, 'nick_name', 'mem_id');
+			}
+			// 店铺
+			$shopList = array_filter(array_column($list, 'purchase_shop_id'));
+			if (!empty($shopList)) {
+				$shopList = purchase()->shop()->getListData(['purchase_shop_id'=>['in', $shopList]]);
+				$shopList = array_column($shopList, null, 'purchase_shop_id');
+			}
+			foreach ($list as $key=>$value) {
+				$list[$key]['nick_name'] = $userList[$value['mem_id']] ?? '--';
+				$list[$key]['shop_info'] = $shopList[$value['purchase_shop_id']] ?? [];
+			}
+		}
+
+		$channelList = make('app/service/purchase/Channel')->getListData();
+		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
+		$statusList = $product->getStatusList();
+
+		$this->assign('status', $status);
+		$this->assign('purchase_channel_id', $channelId);
+		$this->assign('item_id', $itemId);
+		$this->assign('stime', $stime);
+		$this->assign('etime', $etime);
+		$this->assign('total', $total);
+		$this->assign('size', $size);
+		$this->assign('list', $list ?? []);
+		$this->assign('channelList', $channelList);
+		$this->assign('statusList', $statusList);
 		$this->view();
 	}
 
