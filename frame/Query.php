@@ -137,8 +137,10 @@ final class Query
 		if (!empty($this->_addTime)) {
 			$insertTime = explode(',', $this->_addTime);
 		}
-		if (in_array('site_id', $this->_intFields) && !isset($data['site_id'])) {
-			$data['site_id'] = siteId();
+		foreach ($data as $key=>$value) {
+			if (in_array('site_id', $this->_intFields) && !isset($value['site_id'])) {
+				$data[$key]['site_id'] = siteId();
+			}
 		}
 		$fields = array_merge(array_keys(current($data)), $insertTime);
 		foreach ($fields as $key => $value) {
@@ -177,8 +179,11 @@ final class Query
 
 	protected function formatKey($key)
 	{
+		if (!$key) return $key;
+		return '`'.trim($key).'`';
+		
 		$key = trim($key);
-		if (in_array($key, $this->_specialKey)) return '`'.$key.'`';
+		if (in_array($key, $this->_specialKey)) return '`'.trim($key).'`';
 		return $key;
 	}
 

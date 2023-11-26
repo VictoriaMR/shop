@@ -34,7 +34,7 @@ class Product extends AdminBase
 		$spu = make('app/service/product/Spu');
 		$statusList = $spu->getStatusList();
 		//分类
-		$cateList = make('app/service/category/Category')->getListFormat();
+		$cateList = make('app/service/category/Category')->getListFormat(false);
 		$cateArr = array_column($cateList, 'name', 'cate_id');
 		//站点
 		$siteList = make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name,cate_id');

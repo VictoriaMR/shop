@@ -1,4 +1,3 @@
-console.log(123123)
 !function(e) {
     function t(t) {
         for (var n, r, i = t[0], a = t[1], c = 0, s = []; c < i.length; c++)
@@ -19569,7 +19568,8 @@ console.log(123123)
             function t(e) {
                 if (l && clearTimeout(l),
                 f.parentNode && f.parentNode.removeChild(f),
-                "TIMEOUT" === e)
+                "TIMEOUT" === e) {
+                    console.log(u, 'u')
                     window[u] = function() {
                         window[u] = void 0;
                         try {
@@ -19577,7 +19577,7 @@ console.log(123123)
                         } catch (e) {}
                     }
                     ;
-                else {
+                } else {
                     window[u] = void 0;
                     try {
                         delete window[u]

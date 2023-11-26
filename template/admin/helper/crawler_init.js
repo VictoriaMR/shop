@@ -9,7 +9,6 @@ const CRAWLERINIt = {
 	},
 	crawlerInit: function() {
 		this.bodyPageInit();
-		this.crawlerPageinit();
 	},
 	bodyPageInit: function() {
 		const _this = this;
@@ -31,6 +30,7 @@ const CRAWLERINIt = {
 			bodyPage.innerHTML = html;
 			HELPERINIT.request({action: 'getCache', cache_key: 'crawler_show_status'}, function(res) {
 				_this.crawlerPageShow(res.data === '1' ? '1' : 0);
+				_this.crawlerPageinit();
 			});
 		}
 		return bodyPage;
@@ -215,8 +215,7 @@ const CRAWLERINIt = {
 							<p class="title">`+data.attr[i].name+`</p>
 							<div class="value-content">`;
 				for (var j in data.attr[i].value) {
-					html += `<p class="
-					value">`+data.attr[i].value[j].name+`</p>`;
+					html += `<p class="value">`+data.attr[i].value[j].name+`</p>`;
 				}
 				html += `</div>
 						</div>`;
@@ -247,7 +246,7 @@ const CRAWLERINIt = {
 			}
 			html += '</table>';
 		}
-		if (data.pdt_picture) {
+		if (data.pdt_picture.length > 0) {
 			html += `<div class="clear"></div>
 					<div class="productMainPic mt12">
 						<div class="title">产品图：</div>
@@ -258,7 +257,7 @@ const CRAWLERINIt = {
 			}
 			html += `</div></div>`;
 		}
-		if (data.desc_picture) {
+		if (data.desc_picture.length > 0) {
 			html += `<div class="clear"></div>
 					<div class="productMainPic mt12">
 						<div class="title">产品详情图：</div>
@@ -269,7 +268,7 @@ const CRAWLERINIt = {
 			}
 			html += `</div></div>`;
 		}
-		if (data.detail) {
+		if (data.detail.length > 0) {
 			html += `<div class="clear"></div>
 						<div class="item-block mt12">
 							<div class="title">产品描述属性：</div>
@@ -284,7 +283,6 @@ const CRAWLERINIt = {
 		html += '</form>';
 		html += `<button id="post-product-btn" type="button">上传产品</button>`;
 		crawlerPage.innerHTML = html;
-		crawlerPage.style.display = 'block';
 	},
 	clickInit: function() {
 		const _this = this;

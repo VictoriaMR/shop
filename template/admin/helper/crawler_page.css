@@ -84,6 +84,7 @@
 	display: none;
     border-top: 1px solid #321679;
     margin-top: 4px;
+    padding-bottom: 48px;
 }
 #crawler-page .userinfo-content .name-content {
 	max-width: 120px;
@@ -166,8 +167,10 @@
     width: calc(25% - 4px);
     margin: 2px;
 }
-#post-product-btn {
-    width: 100% !important;
+#crawler-page #post-product-btn {
+    position: absolute;
+    bottom: 8px;
+    width: calc(100% - 8px);
     margin-top: 8px;
     height: 32px;
 }

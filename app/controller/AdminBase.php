@@ -35,7 +35,7 @@ class AdminBase extends Base
 			'remark' => $msg,
 			'type' => 3,
 		];
-		make('app/service/admin/Logger')->addLog($data);
+		make('app/service/login/Logger')->addLog($data);
 	}
 
 	protected function transfer()
