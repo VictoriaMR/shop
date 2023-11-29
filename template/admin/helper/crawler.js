@@ -115,10 +115,16 @@ var CRAWLER = {
             for (let r in attr) {
                 pvs[attrMap[attr[r]]] = attr[r];
             }
+            var price;
+            if (item.price) {
+                price = item.price;
+            } else {
+                price = __INIT_DATA.globalData.skuModel.skuPriceScale.split('-')[1];
+            }
             ret_data.sku[item.skuId] = {
                 pvs: pvs,
                 sku_map: tempMap,
-                price: item.price,
+                price: price,
                 stock: item.canBookCount
             };
         }

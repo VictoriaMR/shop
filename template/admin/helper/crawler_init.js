@@ -213,9 +213,14 @@ const CRAWLERINIt = {
 			for (var i in data.attr) {
 				html += `<div class="attr-item">
 							<p class="title">`+data.attr[i].name+`</p>
+							<input type="hidden" name="attr[`+i+`][name]" value="`+data.attr[i].name+`">
 							<div class="value-content">`;
 				for (var j in data.attr[i].value) {
 					html += `<p class="value">`+data.attr[i].value[j].name+`</p>`;
+					html += '<input type="hidden" name="attr['+i+'][value]['+j+'][name]" value="'+data.attr[i].value[j].name+'">';
+					if (data.attr[i].value[j].img) {
+						html += '<input type="hidden" name="attr['+i+'][value]['+j+'][img]" value="'+data.attr[i].value[j].img+'">';
+					}
 				}
 				html += `</div>
 						</div>`;
@@ -238,6 +243,16 @@ const CRAWLERINIt = {
 				for (var j in data.sku[i].pvs) {
 					skuAttr += data.attr[j].value[data.sku[i].pvs[j]].name+'; ';
 				}
+				for (var j in data.sku[i]) {
+					if (typeof data.sku[i][j] == 'object') {
+						for (var k in data.sku[i][j]) {
+							skuAttr += '<input type="hidden" name="sku['+i+']['+j+']['+k+']" value="'+data.sku[i][j][k]+'">';
+						}
+					} else{
+						skuAttr += '<input type="hidden" name="sku['+i+']['+j+']" value="'+data.sku[i][j]+'">';
+					}
+				}
+				skuAttr 
 				html += `<tr>
 							<td>`+skuAttr+`</td>
 							<td>`+data.sku[i].price+`</td>
