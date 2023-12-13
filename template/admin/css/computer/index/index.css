@@ -17,7 +17,7 @@
 	position: relative;
 }
 #index-page .body .nav-left {
-	width: 256px;
+	width: 220px;
 	height: 100%;
 	background: #e5e6e7;
 	float: left;
@@ -43,7 +43,7 @@
 	padding-left: 8px;
 	width: calc(100% - 38px);
 }
-#index-page .body .nav-left.left-close .person .info {
+#index-page .body .nav-left.left-close .person .info .user-id {
     display: none;
 }
 #index-page .body .nav-left .person .info .glyphicon-off {
@@ -59,19 +59,13 @@
 	height: calc(100% - 48px);
 }
 #index-page .body .nav-left .left-content .left-one {
-	width: calc(100% - 145px);
+	width: calc(100% - 120px);
 	height: 100%;
 	background: #3a444c;
 	float: left;
 }
 #index-page .body .nav-left.left-close {
-    width: 40px;
-}
-#index-page .body .nav-left.left-close .left-content .left-one {
-    width: 100%;
-}
-#index-page .body .nav-left.left-close .left-content .left-two{
-    display: none;
+    width: 148px;
 }
 #index-page .body .nav-left .left-content .left-one .toggle {
     width: 100%;
@@ -86,7 +80,7 @@
 	color: #ffffff;
 }
 #index-page .body .nav-left .left-content .left-two {
-	width: 145px;
+	width: 120px;
 	height: 100%;
 	background: #e5e6e7;
 	float: left;
@@ -118,10 +112,9 @@
 #index-page .body .nav-left .left-content .left-two .title {
     height: 40px;
     line-height: 40px;
-    padding: 0 10px;
+    padding-left: 6px;
     font-weight: 500;
     font-size: 15px;
-    padding-left: 10px;
     position: relative;
 }
 #index-page .body .nav-left .left-content .left-two .title .glyphicon:hover {
@@ -129,16 +122,16 @@
 }
 #index-page .body .nav-left .left-content .left-two .title .glyphicon {
 	position: absolute;
-	top: 5px;
-	right: 5px;
+	top: 11px;
+	right: 6px;
 }
 #index-page .body .nav-left.left-close ~ .content-right {
-    width: calc(100% - 40px);
+    width: calc(100% - 148px);
 }
 #index-page .nav-content ul>li {
 	width: 100%;
     text-align: left;
-    padding-left: 12px;
+    padding-left: 6px;
     height: 40px;
     line-height: 40px;
     position: relative;
@@ -168,7 +161,7 @@
 	height: 35px;
     line-height: 35px;
     font-size: 13px;
-    padding-left: 14px;
+    padding-left: 6px;
     position: relative;
     cursor: pointer;
 }
@@ -183,7 +176,7 @@
 	right: 5px;
 }
 #index-page .body .content-right {
-	width: calc(100% - 256px);
+	width: calc(100% - 220px);
 	height: 100%;
 	position: relative;
 	overflow: hidden;
