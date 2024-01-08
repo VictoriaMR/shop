@@ -1,6 +1,17 @@
 const HELPERINIT = {
 	init: function() {
 		const _this = this;
+		window.addEventListener('message', function(ev){
+			if (ev && ev.data) {
+				console.log(ev.data, 'data')
+				switch (ev.data.action) {
+					case 'detail-url':
+						_this.detail_url = ev.data.data.url;
+						break;
+				}
+			}
+			console.log(_this, '_this');
+		});
 		//获取域名
 		_this.getDomain();
 		//获取动作开关
@@ -32,7 +43,8 @@ const HELPERINIT = {
 		});
 	},
 	getExtId: function() {
-		return localStorage.getItem('helper_extid');
+		this.helper_extid = this.helper_extid ? this.helper_extid : localStorage.getItem('helper_extid');
+		return this.helper_extid;
 	},
 	getDomain: function() {
 		if (this.domain) {

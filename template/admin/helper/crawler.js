@@ -18,12 +18,12 @@ var CRAWLER = {
             var maxCount = 0;
             var intervalId = setInterval(function(){
                 maxCount++;
-                _this.data(function(code, data, msg) {
-                    if (_this.loadData || maxCount > 100) {
+                if (!_this.loadData) {
+                    _this.data(function(code, data, msg) {
                         clearInterval(intervalId);
                         callback(code, data, msg);
-                    }
-                });
+                    });
+                }
             }, 300);
         }
     },
@@ -44,10 +44,29 @@ var CRAWLER = {
                 _this.get1688(callback);
                 break;
             case 'taobao.com':
-                _this.getTaobao(callback);
-                break;
             case 'tmall.com':
-                _this.getTmall(callback);
+                if (!HELPERINIT.detail_url) {
+                    callback(-1, {}, '详情链接URL不存在!请刷新页面重试');
+                } else {
+                    _this.loadData = true;
+                    _this.ajax({
+                        url: HELPERINIT.detail_url,
+                        data: {},
+                        dataType: 'json',
+                        success: function (res) {
+                            if (typeof res.data == 'undefined') {
+                                callback(-1, {}, res.ret.split(';'));
+                                return false;
+                            } else {
+                                _this.baseInfo = res.data;
+                                _this.getTaobao(callback);
+                            }
+                        },
+                        error: function (error) {
+                            callback(-1, error, '请求发生错误');
+                        }
+                    });
+                }
                 break;
             default:
                 callback(-1, {}, '未知渠道商品详情页面');
@@ -141,15 +160,10 @@ var CRAWLER = {
         callback(0, ret_data, '获取成功!');
     },
     getTaobao: function(callback) {
-        if (typeof Hub === 'undefined') {
+        if (!_this.baseInfo) {
             callback(-1, {}, '获取数据失败!');
             return false;
         }
-        if (!document.querySelector('.descV8-container ') && typeof desc == 'undefined') {
-            callback(-1, {}, '获取数据失败!');
-            return false;
-        }
-        this.loadData = true;
         let obj;
         let ret_data = {};
         ret_data.channel_id = 6051;
@@ -267,6 +281,7 @@ var CRAWLER = {
         let obj;
         let ret_data = {};
         var info = window.g_config.baseInfo;
+        
         ret_data.item_id = info.item.itemId;
         ret_data.name = info.item.title;
         ret_data.channel_id = 6052;
@@ -358,4 +373,84 @@ var CRAWLER = {
         }
         return level + number;
     },
+    ajax: function(params) {
+        params = params || {};
+        params.data = params.data || {};
+        var json = params.dataType === 'jsonp' ? jsonp(params) : json(params);
+        // jsonp请求
+        function jsonp(params) {
+            //创建script标签并加入到页面中
+            var callbackName = params.jsonp ? params.jsonp : 'jsonp_' + random();
+            var head = document.getElementsByTagName('head')[0];
+            // 设置传递给后台的回调参数名
+            params.data['callback'] = callbackName;
+            var data = formatParams(params.data);
+            var script = document.createElement('script');
+            head.appendChild(script);
+            //创建jsonp回调函数
+            window[callbackName] = function (json) {
+                head.removeChild(script);
+                clearTimeout(script.timer);
+                window[callbackName] = null;
+                params.success && params.success(json);
+            };
+            //发送请求
+            script.src = params.url + (data?'?' + data:'');
+            //为了得知此次请求是否成功，设置超时处理
+            if (params.time) {
+                script.timer = setTimeout(function () {
+                    window[callbackName] = null;
+                    head.removeChild(script);
+                    params.error && params.error({
+                        message: '超时'
+                    });
+                }, time);
+            }
+        };
+        //普通json请求
+        function json(params) {
+            params.type = (params.type || 'GET').toUpperCase();
+            params.data = formatParams(params.data);
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4) {
+                    var status = xhr.status;
+                    if (status >= 200 && status < 300) {
+                        var response = '';
+                        var type = xhr.getResponseHeader('Content-type');
+                        if (type.indexOf('xml') !== -1 && xhr.responseXML) {
+                            response = xhr.responseXML; //Document对象响应
+                        } else {
+                            response = JSON.parse(xhr.responseText); //JSON响应
+                        };
+                        params.success && params.success(response);
+                    } else {
+                        params.error && params.error(status);
+                    }
+                };
+            };
+            //请求方式，默认是GET
+            if (params.type == 'GET') {
+                xhr.open(params.type, params.url + (params.data?'?' + params.data:''), true);
+                xhr.send(null);
+            } else {
+                xhr.open(params.type, params.url, true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                xhr.send(params.data);
+            }
+        }
+        //格式化参数方法
+        function formatParams(data) {
+            var arr = [];
+            for (var name in data) {
+                arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+            };
+            return arr.join('&');
+        }
+        // 获取随机数方法 
+        function random() {
+            return Math.floor(Math.random() * 10000 + 500);
+        }
+    }
 };
