@@ -13,7 +13,8 @@
 					<img src="<?php echo $info['avatar'];?>">
 				</div>
 				<div class="info">
-					<p class="e1 cf"><?php echo $info['nick_name']??'';?>&nbsp;&nbsp;&nbsp;<?php echo $info['mem_id'];?></p>
+					<p class="e1 cf">
+						<span class="name"><?php echo $info['nick_name']??'';?></span><span class="user-id">&nbsp;&nbsp;&nbsp;<?php echo $info['mem_id'];?></span></p>
 					<p class="e1 cr"><?php echo $info['mobile'];?></p>
 				</div>
 			</div>
@@ -35,8 +36,7 @@
 				</div>
 				<div class="left-two">
 					<div class="title">
-						<span class="text block c5f e1">页面标题</span>
-						<span class="glyphicon glyphicon-backward" title="收起"></span>
+						<span class="text block e1 c2">页面标题</span>
 					</div>
 					<div class="nav-son-content">
 						<?php foreach ($funcList as $value){?>
@@ -46,7 +46,7 @@
 								<?php foreach ($value['son'] as $sv){?>
 								<li data-src="<?php echo adminUrl($sv['value']);?>" <?php echo ($leftInfo['last_url']??'')==adminUrl($sv['value'])?'class="auto-select"':'';?>>
 									<span class="glyphicon glyphicon-<?php echo $sv['icon'];?>"></span>
-									<span class="ml6"><?php echo $sv['name'];?></span>
+									<span class="ml2"><?php echo $sv['name'];?></span>
 									<a class="glyphicon glyphicon-link right" title="新窗口打开" target="_blank" href="<?php echo adminUrl($sv['value']);?>"></a>
 								</li>
 								<?php } ?>

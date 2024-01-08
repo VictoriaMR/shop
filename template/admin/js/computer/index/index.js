@@ -26,18 +26,6 @@ const INDEX = {
 		}).on('mouseleave', function(){
 			$(this).parent().find('.tooltips').remove();
 		});
-		//左2点击切换收起
-		$('#index-page .left-two .title .glyphicon-backward').on('click', function(){
-			var pObj = $(this).parents('.nav-left');
-			let type = 0;
-			if (pObj.hasClass('left-close')) {
-				pObj.removeClass('left-close');
-			} else {
-				pObj.addClass('left-close');
-				type = 1
-			}
-			post(URI+'Index/index', {opn: 'setLeft', key: 'left_type', value: type});
-		});
 		//选择点击
 		$('#index-page .left-content .nav-content li').on('click', function(){
 			if ($(this).hasClass('select')) return false;
@@ -46,6 +34,8 @@ const INDEX = {
 			$('#index-page .left-two .nav-son-content .item').hide();
 			$('#index-page .left-two .nav-son-content [data-for="'+$(this).data('to')+'"]').show();
 			$('#index-page .left-two .title .text').text($(this).data('title'));
+			$('#index-page .left-two .title .text').find('.glyphicon').remove();
+			$('#index-page .left-two .title .text').append($(this).find('.glyphicon').clone());
 			post(URI+'Index/index', {opn: 'setLeft', key: 'last_group', value: $(this).data('to')});
 		});
 		$('#index-page .left-content .nav-son-content li').on('click', function(){
