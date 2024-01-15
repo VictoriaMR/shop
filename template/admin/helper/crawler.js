@@ -15,8 +15,8 @@ var CRAWLER = {
             callback(-2, {}, '产品已下架!');
         } else {
             _this.loadData = false;
-            var maxCount = 0;
-            var intervalId = setInterval(function(){
+            let maxCount = 0;
+            const intervalId = setInterval(function(){
                 maxCount++;
                 if (!_this.loadData) {
                     _this.data(function(code, data, msg) {
@@ -45,27 +45,67 @@ var CRAWLER = {
                 break;
             case 'taobao.com':
             case 'tmall.com':
-                if (!HELPERINIT.detail_url) {
-                    callback(-1, {}, '详情链接URL不存在!请刷新页面重试');
+                if (g_config && g_config.idata) {
+                    _this.getTaobao2(callback);
                 } else {
                     _this.loadData = true;
-                    _this.ajax({
-                        url: HELPERINIT.detail_url,
-                        data: {},
-                        dataType: 'json',
-                        success: function (res) {
-                            if (typeof res.data == 'undefined') {
-                                callback(-1, {}, res.ret.split(';'));
-                                return false;
-                            } else {
-                                _this.baseInfo = res.data;
-                                _this.getTaobao(callback);
+                    const cookie = _this.getCookie('_m_h5_tk');
+                    if (!cookie) {
+                        callback(-1, {}, 'cookie异常');
+                    } else {
+                        let theRequest = new Object();
+                        if (location.search.indexOf('?') >= 0) {
+                            let strs = location.search.substr(1).split('&');
+                            for (let i = 0; i < strs.length; i++) {
+                                let tmp = strs[i].split('=');
+                                theRequest[tmp[0]] = unescape(tmp[1]);
                             }
-                        },
-                        error: function (error) {
-                            callback(-1, error, '请求发生错误');
                         }
-                    });
+                        const t = new Date().getTime();
+                        const appKey = '12574478';
+                        const data = JSON.stringify({
+                            exParams: JSON.stringify({
+                                id: theRequest.id,
+                                spm: theRequest.spm,
+                                queryParams: 'id='+theRequest.id+'&spm='+theRequest.spm,
+                            }),
+                            detail_v: "3.3.2",
+                            id: theRequest.id
+                        });
+                        const paramStr = cookie.split('_')[0] + '&' + t + '&' + appKey + '&' + data;
+                        const queryParam = {
+                            'jsv': '2.4.11',
+                            'appKey': appKey,
+                            't': t,
+                            'sign': _this.hex_md5(paramStr), // 获取sign,md5加密
+                            'api': 'mtop.taobao.pcdetail.data.get',
+                            'v': '1.0',
+                            'type': 'json',
+                            'isSec': 0,
+                            'timeout': 10000,
+                            'ttid': '2022@taobao_litepc_9.17.0',
+                            'AntiFlood': true,
+                            'AntiCreep': true,
+                            'dataType': 'json',
+                            'data': data
+                        };
+                        _this.ajax({
+                            url: 'https://h5api.m.'+HELPERINIT.getDomain()+'/h5/mtop.taobao.pcdetail.data.get/1.0/',
+                            data: queryParam,
+                            dataType: 'json',
+                            success: function (res) {
+                                if (typeof res.data == 'undefined') {
+                                    callback(-1, {}, res.ret.split(';'));
+                                } else {
+                                    _this.baseInfo = res.data;
+                                    _this.getTaobao1(callback);
+                                }
+                            },
+                            error: function (error) {
+                                callback(-1, error, '请求发生错误');
+                            }
+                        });
+                    }
                 }
                 break;
             default:
@@ -159,14 +199,104 @@ var CRAWLER = {
         }
         callback(0, ret_data, '获取成功!');
     },
-    getTaobao: function(callback) {
+    getTaobao1: function(callback) {
+        const _this = this;
         if (!_this.baseInfo) {
             callback(-1, {}, '获取数据失败!');
             return false;
         }
         let obj;
         let ret_data = {};
-        ret_data.channel_id = 6051;
+        ret_data.channel_id = HELPERINIT.getChannelId();
+        ret_data.item_id = _this.baseInfo.item.itemId;
+        ret_data.name = _this.baseInfo.item.title;
+        ret_data.url = _this.getUrl(ret_data.item_id);
+        ret_data.post_fee = '';
+        ret_data.pdt_picture = _this.baseInfo.item.images;
+        // 商家信息
+        ret_data.seller = {
+            shop_id: _this.baseInfo.seller.sellerId,
+            shop_name: _this.baseInfo.seller.shopName,
+            shop_url: _this.baseInfo.seller.pcShopUrl,
+            level: _this.baseInfo.seller.creditLevel;
+            service: {},
+        };
+        for (let i=0; i<_this.baseInfo.seller.evaluates; i++) {
+            ret_data.seller.service[_this.baseInfo.seller.evaluates[i].type] = _this.baseInfo.seller.evaluates[i].score;
+        }
+
+        ret_data.attr = {};
+        for (let i = 0; i < _this.baseInfo.skuBase.props.length; i++) {
+            const tmp = _this.baseInfo.skuBase.props[i];
+            ret_data.attr[tmp.pid] = {
+                name: tmp.name,
+                value: {}
+            };
+            for (let j=0; j<tmp.values.length; j++) {
+                ret_data.attr[tmp.pid].value[tmp.values[j].vid] = {
+                    name: tmp.values[j].name,
+                    img: tmp.values[j].image ? tmp.values[j].image : '',
+                };
+            }
+        }
+        let skuMap = {};
+        for (let i = 0; i < _this.baseInfo.skuBase.skus.length; i++) {
+            const tmp = _this.baseInfo.skuBase.skus[i];
+            skuMap[tmp.skuId] = tmp.propPath;
+        }
+        ret_data.sku = {};
+        for (let i = 0; i < _this.baseInfo.skuCore.sku2info.length; i++) {
+            
+        }
+        if (Hub.config.config.sku.valItemInfo.skuMap) {
+            for (let k in Hub.config.config.sku.valItemInfo.skuMap) {
+                let item = Hub.config.config.sku.valItemInfo.skuMap[k];
+                if (item.skuId != '0') {
+                    let tempMap = k.substr(1, k.length - 2);
+                    var attr = tempMap.split(';');
+                    let pvs = {};
+                    for (let r in attr) {
+                        let attr_item = attr[r].split(':');
+                        pvs[attr_item[0]] = attr_item[1];
+                    }
+                    ret_data.sku[item.skuId] = {
+                        pvs: pvs,
+                        sku_map: tempMap,
+                        price: item.price,
+                        stock: item.stock
+                    };
+                }
+            }
+        }
+        // 描述
+        ret_data.detail = [];
+        obj = document.querySelectorAll('.attributes-list li');
+        for (var i=0; i<obj.length; i++) {
+            var item = obj[i].innerText.split(': ');
+            ret_data.detail.push({name:item[0], value:item[1]});
+        }
+        ret_data.desc_picture = [];
+        if (typeof desc !== 'undefined') {
+            var des_pic_craw = desc.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
+            if (des_pic_craw) {
+                for (let i = 0; i < des_pic_craw.length; i++) {
+                    var src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
+                    ret_data.desc_picture.push(src);
+                }
+            }
+        } else {
+            obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
+            for (var i=0; i<obj.length; i++) {
+                ret_data.desc_picture.push(obj[i].src);
+            }
+        }
+        callback(0, ret_data, '获取成功!');
+    },
+    getTaobao2: function(callback) {
+        const _this = this;
+        let obj;
+        let ret_data = {};
+        ret_data.channel_id = HELPERINIT.getChannelId();
         ret_data.item_id = g_config.idata.item.id;
         ret_data.name = g_config.idata.item.title;
         ret_data.product_url = 'https://item.taobao.com/item.htm?id='+ret_data.item_id;
@@ -268,93 +398,6 @@ var CRAWLER = {
         }
         callback(0, ret_data, '获取成功!');
     },
-    getTmall: function(callback) {
-        if (typeof window.g_config.baseInfo === 'undefined') {
-            callback(-1, {}, '获取数据失败!');
-            return false;
-        }
-        if (document.querySelector('.descV8-container ') && document.querySelectorAll('.descV8-container .descV8-singleImage>img').length == 0) {
-            callback(-1, {}, '获取数据失败!');
-            return false;
-        }
-        this.loadData = true;
-        let obj;
-        let ret_data = {};
-        var info = window.g_config.baseInfo;
-        
-        ret_data.item_id = info.item.itemId;
-        ret_data.name = info.item.title;
-        ret_data.channel_id = 6052;
-        ret_data.product_url = 'https://detail.tmall.com/item.htm?id='+ret_data.item_id;
-        ret_data.pdt_picture = info.item.images;
-        obj = document.querySelector('.delivery-info .freight');
-        ret_data.post_fee = obj ? obj.innerText.replace(/[^0-9]/ig, '') : 0;
-        ret_data.seller = {
-            shop_id: info.seller.shopId,
-            shop_name: info.seller.shopName,
-            shop_url: info.seller.pcShopUrl,
-            service: {},
-        };
-        for (var i=0; i<info.seller.evaluates.length; i++) {
-            ret_data.seller.service[info.seller.evaluates[i].type] = info.seller.evaluates[i].score;
-        }
-        ret_data.attr = {};
-        for (var i=0; i<info.skuBase.props.length; i++) {
-            var item = info.skuBase.props[i];
-            ret_data.attr[item.pid] = {
-                name: item.name,
-                value: {},
-            };
-            for (var j=0; j<item.values.length; j++) {
-                ret_data.attr[item.pid].value[item.values[j].vid] = {
-                    name: item.values[j].name,
-                }
-                if (item.values[j].image) {
-                   ret_data.attr[item.pid].value[item.values[j].vid].img =  item.values[j].image;
-                }
-            }
-        }
-        ret_data.sku = {};
-        let skuMap = {};
-        for (var i=0; i<info.skuBase.skus.length; i++) {
-            var item = info.skuBase.skus[i];
-            skuMap[item.skuId] = item.propPath;
-        }
-        for (var i in info.skuCore.sku2info) {
-            var item = info.skuCore.sku2info[i];
-            if (i != '0') {
-                var attr = skuMap[i].split(';');
-                let pvs = {};
-                for (let r in attr) {
-                    let attr_item = attr[r].split(':');
-                    pvs[attr_item[0]] = attr_item[1];
-                }
-                ret_data.sku[i] = {
-                    pvs: pvs,
-                    sku_map: skuMap[i],
-                    price: item.price.priceText,
-                    stock: item.quantity,
-                };
-            }
-        }
-        ret_data.detail = [];
-        obj = document.querySelectorAll('.ItemDetail--attrs--3t-mTb3 .Attrs--attr--33ShB6X');
-        for (var i=0; i<obj.length; i++) {
-            var item = obj[i].innerText.split('：');
-            ret_data.detail.push({name:item[0], value:item[1]});
-        }
-        obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
-        ret_data.desc_picture = [];
-        console.log(obj, 'obj')
-        for (var i=0; i<obj.length; i++) {
-            if (obj[i].getAttribute('data-src')) {
-                ret_data.desc_picture.push(obj[i].getAttribute('data-src'));
-            } else {
-                ret_data.desc_picture.push(obj[i].src);
-            }
-        }
-        callback(0, ret_data, '获取成功!');
-    },
     getLevel:function(flag, number){
         var level = 0;
         switch(flag) {
@@ -372,6 +415,18 @@ var CRAWLER = {
                 break;
         }
         return level + number;
+    },
+    getUrl: function(itemId) {
+        switch (HELPERINIT.getDomain()) {
+            case 'taobao.com':
+                return 'https://item.taobao.com/item.htm?id='+itemId;
+            case 'tmall.com':
+                return 'https://detail.tmall.com/item.htm?id='+itemId;
+            case '1688.com':
+                return 'https://detail.1688.com/offer/'+itemId+'.html';
+                default:
+                return '';
+        }
     },
     ajax: function(params) {
         params = params || {};
@@ -452,5 +507,173 @@ var CRAWLER = {
         function random() {
             return Math.floor(Math.random() * 10000 + 500);
         }
+    },
+    getCookie: function(key) {
+        var cookieArr = document.cookie.split(';');
+        for (var i in cookieArr) {
+            if (typeof cookieArr[i] == 'string') {
+                var splitArr = cookieArr[i].trim().split('=');
+                if (splitArr[0] == key) {
+                    return splitArr[1];
+                }
+            }
+        }
+        return false;
+    },
+    hex_md5: function(a) {
+        function b(a, b) {
+            return a << b | a >>> 32 - b
+        }
+        function c(a, b) {
+            var c, d, e, f, g;
+            return e = 2147483648 & a,
+            f = 2147483648 & b,
+            c = 1073741824 & a,
+            d = 1073741824 & b,
+            g = (1073741823 & a) + (1073741823 & b),
+            c & d ? 2147483648 ^ g ^ e ^ f : c | d ? 1073741824 & g ? 3221225472 ^ g ^ e ^ f : 1073741824 ^ g ^ e ^ f : g ^ e ^ f
+        }
+        function d(a, b, c) {
+            return a & b | ~a & c
+        }
+        function e(a, b, c) {
+            return a & c | b & ~c
+        }
+        function f(a, b, c) {
+            return a ^ b ^ c
+        }
+        function g(a, b, c) {
+            return b ^ (a | ~c)
+        }
+        function h(a, e, f, g, h, i, j) {
+            return a = c(a, c(c(d(e, f, g), h), j)),
+            c(b(a, i), e)
+        }
+        function i(a, d, f, g, h, i, j) {
+            return a = c(a, c(c(e(d, f, g), h), j)),
+            c(b(a, i), d)
+        }
+        function j(a, d, e, g, h, i, j) {
+            return a = c(a, c(c(f(d, e, g), h), j)),
+            c(b(a, i), d)
+        }
+        function k(a, d, e, f, h, i, j) {
+            return a = c(a, c(c(g(d, e, f), h), j)),
+            c(b(a, i), d)
+        }
+        function l(a) {
+            for (var b, c = a.length, d = c + 8, e = (d - d % 64) / 64, f = 16 * (e + 1), g = new Array(f - 1), h = 0, i = 0; c > i; )
+                b = (i - i % 4) / 4,
+                h = i % 4 * 8,
+                g[b] = g[b] | a.charCodeAt(i) << h,
+                i++;
+            return b = (i - i % 4) / 4,
+            h = i % 4 * 8,
+            g[b] = g[b] | 128 << h,
+            g[f - 2] = c << 3,
+            g[f - 1] = c >>> 29,
+            g
+        }
+        function m(a) {
+            var b, c, d = "", e = "";
+            for (c = 0; 3 >= c; c++)
+                b = a >>> 8 * c & 255,
+                e = "0" + b.toString(16),
+                d += e.substr(e.length - 2, 2);
+            return d
+        }
+        function n(a) {
+            a = a.replace(/\r\n/g, "\n");
+            for (var b = "", c = 0; c < a.length; c++) {
+                var d = a.charCodeAt(c);
+                128 > d ? b += String.fromCharCode(d) : d > 127 && 2048 > d ? (b += String.fromCharCode(d >> 6 | 192),
+                b += String.fromCharCode(63 & d | 128)) : (b += String.fromCharCode(d >> 12 | 224),
+                b += String.fromCharCode(d >> 6 & 63 | 128),
+                b += String.fromCharCode(63 & d | 128))
+            }
+            return b
+        }
+        var o, p, q, r, s, t, u, v, w, x = [], y = 7, z = 12, A = 17, B = 22, C = 5, D = 9, E = 14, F = 20, G = 4, H = 11, I = 16, J = 23, K = 6, L = 10, M = 15, N = 21;
+        for (a = n(a),
+        x = l(a),
+        t = 1732584193,
+        u = 4023233417,
+        v = 2562383102,
+        w = 271733878,
+        o = 0; o < x.length; o += 16)
+            p = t,
+            q = u,
+            r = v,
+            s = w,
+            t = h(t, u, v, w, x[o + 0], y, 3614090360),
+            w = h(w, t, u, v, x[o + 1], z, 3905402710),
+            v = h(v, w, t, u, x[o + 2], A, 606105819),
+            u = h(u, v, w, t, x[o + 3], B, 3250441966),
+            t = h(t, u, v, w, x[o + 4], y, 4118548399),
+            w = h(w, t, u, v, x[o + 5], z, 1200080426),
+            v = h(v, w, t, u, x[o + 6], A, 2821735955),
+            u = h(u, v, w, t, x[o + 7], B, 4249261313),
+            t = h(t, u, v, w, x[o + 8], y, 1770035416),
+            w = h(w, t, u, v, x[o + 9], z, 2336552879),
+            v = h(v, w, t, u, x[o + 10], A, 4294925233),
+            u = h(u, v, w, t, x[o + 11], B, 2304563134),
+            t = h(t, u, v, w, x[o + 12], y, 1804603682),
+            w = h(w, t, u, v, x[o + 13], z, 4254626195),
+            v = h(v, w, t, u, x[o + 14], A, 2792965006),
+            u = h(u, v, w, t, x[o + 15], B, 1236535329),
+            t = i(t, u, v, w, x[o + 1], C, 4129170786),
+            w = i(w, t, u, v, x[o + 6], D, 3225465664),
+            v = i(v, w, t, u, x[o + 11], E, 643717713),
+            u = i(u, v, w, t, x[o + 0], F, 3921069994),
+            t = i(t, u, v, w, x[o + 5], C, 3593408605),
+            w = i(w, t, u, v, x[o + 10], D, 38016083),
+            v = i(v, w, t, u, x[o + 15], E, 3634488961),
+            u = i(u, v, w, t, x[o + 4], F, 3889429448),
+            t = i(t, u, v, w, x[o + 9], C, 568446438),
+            w = i(w, t, u, v, x[o + 14], D, 3275163606),
+            v = i(v, w, t, u, x[o + 3], E, 4107603335),
+            u = i(u, v, w, t, x[o + 8], F, 1163531501),
+            t = i(t, u, v, w, x[o + 13], C, 2850285829),
+            w = i(w, t, u, v, x[o + 2], D, 4243563512),
+            v = i(v, w, t, u, x[o + 7], E, 1735328473),
+            u = i(u, v, w, t, x[o + 12], F, 2368359562),
+            t = j(t, u, v, w, x[o + 5], G, 4294588738),
+            w = j(w, t, u, v, x[o + 8], H, 2272392833),
+            v = j(v, w, t, u, x[o + 11], I, 1839030562),
+            u = j(u, v, w, t, x[o + 14], J, 4259657740),
+            t = j(t, u, v, w, x[o + 1], G, 2763975236),
+            w = j(w, t, u, v, x[o + 4], H, 1272893353),
+            v = j(v, w, t, u, x[o + 7], I, 4139469664),
+            u = j(u, v, w, t, x[o + 10], J, 3200236656),
+            t = j(t, u, v, w, x[o + 13], G, 681279174),
+            w = j(w, t, u, v, x[o + 0], H, 3936430074),
+            v = j(v, w, t, u, x[o + 3], I, 3572445317),
+            u = j(u, v, w, t, x[o + 6], J, 76029189),
+            t = j(t, u, v, w, x[o + 9], G, 3654602809),
+            w = j(w, t, u, v, x[o + 12], H, 3873151461),
+            v = j(v, w, t, u, x[o + 15], I, 530742520),
+            u = j(u, v, w, t, x[o + 2], J, 3299628645),
+            t = k(t, u, v, w, x[o + 0], K, 4096336452),
+            w = k(w, t, u, v, x[o + 7], L, 1126891415),
+            v = k(v, w, t, u, x[o + 14], M, 2878612391),
+            u = k(u, v, w, t, x[o + 5], N, 4237533241),
+            t = k(t, u, v, w, x[o + 12], K, 1700485571),
+            w = k(w, t, u, v, x[o + 3], L, 2399980690),
+            v = k(v, w, t, u, x[o + 10], M, 4293915773),
+            u = k(u, v, w, t, x[o + 1], N, 2240044497),
+            t = k(t, u, v, w, x[o + 8], K, 1873313359),
+            w = k(w, t, u, v, x[o + 15], L, 4264355552),
+            v = k(v, w, t, u, x[o + 6], M, 2734768916),
+            u = k(u, v, w, t, x[o + 13], N, 1309151649),
+            t = k(t, u, v, w, x[o + 4], K, 4149444226),
+            w = k(w, t, u, v, x[o + 11], L, 3174756917),
+            v = k(v, w, t, u, x[o + 2], M, 718787259),
+            u = k(u, v, w, t, x[o + 9], N, 3951481745),
+            t = c(t, p),
+            u = c(u, q),
+            v = c(v, r),
+            w = c(w, s);
+        var O = m(t) + m(u) + m(v) + m(w);
+        return O.toLowerCase()
     }
 };

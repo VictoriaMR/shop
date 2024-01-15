@@ -55,6 +55,17 @@ const HELPERINIT = {
 		this.domain = host[len-2]+'.'+host[len-1];
 		return this.domain;
 	},
+	getChannelId: function() {
+		switch(this.getDomain()) {
+			case 'taobao.com':
+				return 6051;
+			case 'tmall.com':
+				return 6052;
+			case '1688.com':
+				return 6053;
+		}
+		return 0;
+	},
 	isItemPage: function() {
 		if (this.item_id) {
 			return this.item_id;
