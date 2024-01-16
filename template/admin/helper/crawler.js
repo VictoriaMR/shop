@@ -14,16 +14,12 @@ var CRAWLER = {
         } else if (_this.isOffShelf()) {
             callback(-2, {}, '产品已下架!');
         } else {
-            _this.loadData = false;
-            let maxCount = 0;
-            const intervalId = setInterval(function(){
-                maxCount++;
-                if (!_this.loadData) {
-                    _this.data(function(code, data, msg) {
-                        clearInterval(intervalId);
-                        callback(code, data, msg);
-                    });
-                }
+            setTimeout(function(){
+                _this.data(function(code, data, msg) {
+                    console.log(code, data, msg);
+                    localStorage.setItem('CRAWLER_DATA', JSON.stringify(data));
+                    callback(code, data, msg);
+                });
             }, 300);
         }
     },
@@ -48,7 +44,6 @@ var CRAWLER = {
                 if (g_config && g_config.idata) {
                     _this.getTaobao2(callback);
                 } else {
-                    _this.loadData = true;
                     const cookie = _this.getCookie('_m_h5_tk');
                     if (!cookie) {
                         callback(-1, {}, 'cookie异常');
@@ -118,13 +113,12 @@ var CRAWLER = {
             callback(-1, {}, '获取数据失败!');
             return false;
         }
-        this.loadData = true;
         let ret_data = {};
         let obj;
         ret_data.channel_id = 6053;
         ret_data.item_id = __INIT_DATA.globalData.tempModel.offerId;
         ret_data.name = __INIT_DATA.globalData.tempModel.offerTitle;
-        ret_data.product_url = 'https://detail.1688.com/offer/'+ret_data.item_id+'.html';
+        ret_data.url = this.getUrl(ret_data.item_id);
         obj = document.querySelector('.logistics-express-price');
         ret_data.post_fee = obj ? obj.innerText.replace(/[^0-9]/ig, '') : 0;
         ret_data.seller = {
@@ -135,23 +129,23 @@ var CRAWLER = {
         };
         if (__STORE_DATA && __STORE_DATA.components['38229149']) {
             ret_data.seller.service.star = __STORE_DATA.components['38229149'].moduleData.appData.customerStar;
-            for (var i in __STORE_DATA.components['38229149'].moduleData.appData.serviceList) {
-                var name = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].serviceKey;
-                var len = name.indexOf('_');
+            for (let i in __STORE_DATA.components['38229149'].moduleData.appData.serviceList) {
+                let name = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].serviceKey;
+                let len = name.indexOf('_');
                 name = name.substr(0, len);
                 ret_data.seller.service[name] = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].score;
             }
         }
         ret_data.pdt_picture = [];
-        for (var i=0; i<__INIT_DATA.globalData.images.length; i++) {
+        for (let i=0; i<__INIT_DATA.globalData.images.length; i++) {
             ret_data.pdt_picture.push(__INIT_DATA.globalData.images[i].fullPathImageURI);
         }
         ret_data.attr = {};
         let attrMap = {};
-        for (var i=0; i<__INIT_DATA.globalData.skuModel.skuProps.length; i++) {
-            var item = __INIT_DATA.globalData.skuModel.skuProps[i];
-            var value = {};
-            for (var j=0; j<item.value.length; j++) {
+        for (let i=0; i<__INIT_DATA.globalData.skuModel.skuProps.length; i++) {
+            const item = __INIT_DATA.globalData.skuModel.skuProps[i];
+            let value = {};
+            for (let j=0; j<item.value.length; j++) {
                 value[item.value[j].name] = {
                     name: item.value[j].name,
                 };
@@ -166,15 +160,15 @@ var CRAWLER = {
             };
         }
         ret_data.sku = {};
-        for (var i in __INIT_DATA.globalData.skuModel.skuInfoMap) {
-            var item = __INIT_DATA.globalData.skuModel.skuInfoMap[i];
+        for (let i in __INIT_DATA.globalData.skuModel.skuInfoMap) {
+            const item = __INIT_DATA.globalData.skuModel.skuInfoMap[i];
             let tempMap = i.replace('&gt', '');
-            var attr = tempMap.split(';');
+            const attr = tempMap.split(';');
             let pvs = {};
             for (let r in attr) {
                 pvs[attrMap[attr[r]]] = attr[r];
             }
-            var price;
+            let price;
             if (item.price) {
                 price = item.price;
             } else {
@@ -189,13 +183,16 @@ var CRAWLER = {
         }
         ret_data.detail = [];
         obj = document.querySelectorAll('.offer-attr-list .offer-attr-item');
-        for (var i=0; i<obj.length; i++) {
+        for (let i=0; i<obj.length; i++) {
             ret_data.detail.push({name:obj[i].querySelector('.offer-attr-item-name').innerText, value:obj[i].querySelector('.offer-attr-item-value').innerText});
         }
         ret_data.desc_picture = [];
-        obj = document.querySelectorAll('.content-detail img.desc-img-loaded');
-        for (var i=0; i<obj.length; i++) {
-            ret_data.desc_picture.push(obj[i].getAttribute('data-lazyload-src'));
+        obj = document.querySelectorAll('.desc-img-loaded,.desc-img-no-load');
+        for (let i=0; i<obj.length; i++) {
+            const url = obj[i].getAttribute('data-lazyload-src');
+            if (url.indexOf('__r__') >= 0) {
+                ret_data.desc_picture.push(url);
+            }
         }
         callback(0, ret_data, '获取成功!');
     },
@@ -211,18 +208,25 @@ var CRAWLER = {
         ret_data.item_id = _this.baseInfo.item.itemId;
         ret_data.name = _this.baseInfo.item.title;
         ret_data.url = _this.getUrl(ret_data.item_id);
-        ret_data.post_fee = '';
+        let post_fee = 0;
+        if (_this.baseInfo.componentsVO.deliveryVO.freight) {
+            post_fee = _this.baseInfo.componentsVO.deliveryVO.freight.replace(/[^\d]/g, '');
+            if (post_fee) {
+                ret_data.post_fee = parseInt(post_fee) / 100;
+            }
+        }
+        ret_data.post_fee = post_fee;
         ret_data.pdt_picture = _this.baseInfo.item.images;
         // 商家信息
         ret_data.seller = {
             shop_id: _this.baseInfo.seller.sellerId,
             shop_name: _this.baseInfo.seller.shopName,
             shop_url: _this.baseInfo.seller.pcShopUrl,
-            level: _this.baseInfo.seller.creditLevel;
+            level: _this.baseInfo.seller.creditLevel,
             service: {},
         };
-        for (let i=0; i<_this.baseInfo.seller.evaluates; i++) {
-            ret_data.seller.service[_this.baseInfo.seller.evaluates[i].type] = _this.baseInfo.seller.evaluates[i].score;
+        for (let i=0; i<_this.baseInfo.seller.evaluates.length; i++) {
+            ret_data.seller.service[_this.baseInfo.seller.evaluates[i].type] = _this.baseInfo.seller.evaluates[i].score.trim();
         }
 
         ret_data.attr = {};
@@ -245,49 +249,52 @@ var CRAWLER = {
             skuMap[tmp.skuId] = tmp.propPath;
         }
         ret_data.sku = {};
-        for (let i = 0; i < _this.baseInfo.skuCore.sku2info.length; i++) {
-            
-        }
-        if (Hub.config.config.sku.valItemInfo.skuMap) {
-            for (let k in Hub.config.config.sku.valItemInfo.skuMap) {
-                let item = Hub.config.config.sku.valItemInfo.skuMap[k];
-                if (item.skuId != '0') {
-                    let tempMap = k.substr(1, k.length - 2);
-                    var attr = tempMap.split(';');
-                    let pvs = {};
-                    for (let r in attr) {
-                        let attr_item = attr[r].split(':');
-                        pvs[attr_item[0]] = attr_item[1];
-                    }
-                    ret_data.sku[item.skuId] = {
-                        pvs: pvs,
-                        sku_map: tempMap,
-                        price: item.price,
-                        stock: item.stock
-                    };
+        for (let i in _this.baseInfo.skuCore.sku2info) {
+            if (i != '0') {
+                const tmp = _this.baseInfo.skuCore.sku2info[i];
+                const attr = skuMap[i].split(';');
+                let pvs = {};
+                for (let r in attr) {
+                    let attr_item = attr[r].split(':');
+                    pvs[attr_item[0]] = attr_item[1];
+                }
+
+                for (let r in attr) {
+                    let attr_item = attr[r].split(':');
+                    pvs[attr_item[0]] = attr_item[1];
+                }
+                ret_data.sku[i] = {
+                    pvs: pvs,
+                    sku_map: skuMap[i],
+                    price: tmp.price.priceText,
+                    stock: tmp.quantity,
                 }
             }
         }
         // 描述
         ret_data.detail = [];
-        obj = document.querySelectorAll('.attributes-list li');
-        for (var i=0; i<obj.length; i++) {
-            var item = obj[i].innerText.split(': ');
-            ret_data.detail.push({name:item[0], value:item[1]});
-        }
-        ret_data.desc_picture = [];
-        if (typeof desc !== 'undefined') {
-            var des_pic_craw = desc.match(/<img(?:[^>]+)src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])(?:[^>]*)>/g);
-            if (des_pic_craw) {
-                for (let i = 0; i < des_pic_craw.length; i++) {
-                    var src = des_pic_craw[i].match(/src=(?:[\s|\\\\]*["']([^"'\\]+)[\s|\\\\]*["'])/)[1];
-                    ret_data.desc_picture.push(src);
+        if (_this.baseInfo.componentsVO.extensionInfoVO.infos) {
+            for (let i=0; i<_this.baseInfo.componentsVO.extensionInfoVO.infos.length; i++) {
+                if (_this.baseInfo.componentsVO.extensionInfoVO.infos[i].type == 'BASE_PROPS') {
+                    const tmp = _this.baseInfo.componentsVO.extensionInfoVO.infos[i].items;
+                    for (let j=0; j<tmp.length; j++) {
+                        ret_data.detail.push({name:tmp[j].title, value:tmp[j].text.join(' ')});
+                    }
                 }
             }
-        } else {
-            obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
-            for (var i=0; i<obj.length; i++) {
-                ret_data.desc_picture.push(obj[i].src);
+        }
+        //描述图片
+        ret_data.desc_picture = [];
+        obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
+        for (var i=0; i<obj.length; i++) {
+            let url = '';
+            if (obj[i].getAttribute('data-src')) {
+                url = obj[i].getAttribute('data-src');
+            } else {
+                url = obj[i].src;
+            }
+            if (url.indexOf('img.alicdn.com') >= 0) {
+                ret_data.desc_picture.push(url);
             }
         }
         callback(0, ret_data, '获取成功!');
@@ -299,7 +306,7 @@ var CRAWLER = {
         ret_data.channel_id = HELPERINIT.getChannelId();
         ret_data.item_id = g_config.idata.item.id;
         ret_data.name = g_config.idata.item.title;
-        ret_data.product_url = 'https://item.taobao.com/item.htm?id='+ret_data.item_id;
+        ret_data.url = _this.getUrl(ret_data.item_id);
         obj = document.querySelector('#J_WlServiceTitle');
         ret_data.post_fee = obj ? obj.innerText.replace(/[^0-9]/ig, '') : 0;
         ret_data.pdt_picture = [];

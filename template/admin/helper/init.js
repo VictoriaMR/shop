@@ -1,27 +1,15 @@
 const HELPERINIT = {
 	init: function() {
 		const _this = this;
-		window.addEventListener('message', function(ev){
-			if (ev && ev.data) {
-				console.log(ev.data, 'data')
-				switch (ev.data.action) {
-					case 'detail-url':
-						_this.detail_url = ev.data.data.url;
-						break;
-				}
-			}
-			console.log(_this, '_this');
-		});
 		//获取域名
 		_this.getDomain();
 		//获取动作开关
 		_this.request({action: 'getCache', cache_key: 'helper_action_status'}, function(res){
-			let action = res.data;
-			if (action && action.crawler_switch_status == '1' && _this.isItemPage()) {
+			if (res.data && res.data.crawler_switch_status == '1' && _this.isItemPage()) {
 				//产品详情抓取
 				_this.crawlerItem();
 			}
-			if (action && action.auto_check_switch_status == '1') {
+			if (res.data && res.data.auto_check_switch_status == '1') {
 				//产品维护
 				_this.autoCheckItem();
 			}
@@ -129,7 +117,7 @@ const HELPERINIT = {
 		if (_this.url) {
 			_this.loadStaticUrl(action, value, callback);
 		} else {
-			_this.request({action: 'request', value: 'api/getHelperData', cache_key: 'helper_all_data_cache'}, function(res) {
+			_this.request({action: 'request', value: 'api/helperData', cache_key: 'helper_all_data_cache'}, function(res) {
 				if (res.code == 200) {
 					_this.url = res.data.domain;
 					_this.version = res.data.version;
@@ -139,28 +127,24 @@ const HELPERINIT = {
 		}
 	},
 	loadStaticUrl: function(action, value, callback){
-		const id = value.replace(/\//g, '_').replace(/\./g, '_');
+		const id = value.replace(/\/|\./g, '-');
 		if (document.getElementById(id)) {
 			return false;
 		}
 		let obj = document.querySelector('head');
-		let loadObj;
+		let loadObj = document.createElement(action=='js'?'script':'link');
 		let url = this.url+value+'?v='+this.version;
 		switch (action) {
 			case 'js': //加载js
-				loadObj = document.createElement('script');
 				loadObj.type = 'text/javascript';
 				loadObj.src = url;
 				loadObj.charset = 'utf-8';
 				break;
 			case 'css': //加载css
-				loadObj = document.createElement('link');
 				loadObj.rel = 'stylesheet';
 				loadObj.href = url;
 				loadObj.type = 'text/css'
 				break;
-			default:
-				return false;
 		}
 		loadObj.id = id;
 		obj.appendChild(loadObj);

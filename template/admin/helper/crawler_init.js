@@ -104,14 +104,12 @@ const CRAWLERINIt = {
 				_this.cate_list = res.data.cate_list;
 				_this.site_list = res.data.site_list;
 				CRAWLER.init(function(code, data, msg){
-					console.log(code, data, msg)
-					localStorage.setItem('test', JSON.stringify(data));
 					if (code === 0) {
 						_this.crawlerPage(data);
 					} else {
 						_this.error(msg);
 					}
-					_this.clickInit();
+					_this.clickInit(data);
 				});
 			} else {
 				_this.error(res.msg);
@@ -122,13 +120,7 @@ const CRAWLERINIt = {
 		const _this = this;
 		var crawlerPage = document.getElementById('item-content');
 		var count = 0;
-		var html = `<form id="crawler_form">
-						<input type="hidden" name="seller[shop_id]" value="` + data.seller.shop_id + `" />
-						<input type="hidden" name="seller[shop_name]" value="` + data.seller.shop_name + `" />
-						<input type="hidden" name="seller[shop_url]" value="` + data.seller.shop_url + `" />`;
-						for (var i in data.seller.service) {
-							html += `<input type="hidden" name="seller[service][`+i+`]" value="` + data.seller.service[i] + `" />`;
-						}
+		var html = `<form id="crawler_form">`;
 				html += `<div class="productAttLine">
 							<div class="label">供应商:</div>
 							<div class="fill_in">
@@ -203,7 +195,7 @@ const CRAWLERINIt = {
 						<div class="productAttLine">
 							<div class="label">产品URL:</div>
 							<div class="fill_in">
-								<input type="text" name="url" value="` + data.product_url + `" />
+								<input type="text" name="url" value="` + data.url + `" />
 							</div>
 							<div class="clear"></div>
 						</div>`;
@@ -213,14 +205,9 @@ const CRAWLERINIt = {
 			for (var i in data.attr) {
 				html += `<div class="attr-item">
 							<p class="title">`+data.attr[i].name+`</p>
-							<input type="hidden" name="attr[`+i+`][name]" value="`+data.attr[i].name+`">
 							<div class="value-content">`;
 				for (var j in data.attr[i].value) {
 					html += `<p class="value">`+data.attr[i].value[j].name+`</p>`;
-					html += '<input type="hidden" name="attr['+i+'][value]['+j+'][name]" value="'+data.attr[i].value[j].name+'">';
-					if (data.attr[i].value[j].img) {
-						html += '<input type="hidden" name="attr['+i+'][value]['+j+'][img]" value="'+data.attr[i].value[j].img+'">';
-					}
 				}
 				html += `</div>
 						</div>`;
@@ -243,15 +230,6 @@ const CRAWLERINIt = {
 				for (var j in data.sku[i].pvs) {
 					skuAttr += data.attr[j].value[data.sku[i].pvs[j]].name+'; ';
 				}
-				for (var j in data.sku[i]) {
-					if (typeof data.sku[i][j] == 'object') {
-						for (var k in data.sku[i][j]) {
-							skuAttr += '<input type="hidden" name="sku['+i+']['+j+']['+k+']" value="'+data.sku[i][j][k]+'">';
-						}
-					} else{
-						skuAttr += '<input type="hidden" name="sku['+i+']['+j+']" value="'+data.sku[i][j]+'">';
-					}
-				}
 				skuAttr 
 				html += `<tr>
 							<td>`+skuAttr+`</td>
@@ -267,8 +245,7 @@ const CRAWLERINIt = {
 						<div class="title">产品图：</div>
 						<div class="pdtPicHere" id="pdt_picture">`;
 			for (var i=0;i< data.pdt_picture.length;i++) {
-				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />
-						<input type="hidden" name="product_img[`+i+`]" value="` + data.pdt_picture[i] + `"/>`;
+				html += `<img class="imgList" src="` + data.pdt_picture[i] + `" />`;
 			}
 			html += `</div></div>`;
 		}
@@ -278,8 +255,7 @@ const CRAWLERINIt = {
 						<div class="title">产品详情图：</div>
 						<div class="pdtPicHere" id="pdt_desc_picture">`;
 			for (var i=0;i<data.desc_picture.length;i++) {
-				html += `<img class="imgList" src="` + data.desc_picture[i] + `" />
-						<input type="hidden" name="product_desc_img[`+i+`]" value="` + data.desc_picture[i] + `"/>`;
+				html += `<img class="imgList" src="` + data.desc_picture[i] + `" />`;
 			}
 			html += `</div></div>`;
 		}
@@ -289,9 +265,7 @@ const CRAWLERINIt = {
 							<div class="title">产品描述属性：</div>
 							<div id="pdt_des_text">`;
 			for (var i=0; i<data.detail.length; i++) {
-				html += `<p>`+data.detail[i].name+`: `+data.detail[i].value+`</p>
-							<input type="hidden" name="desc_text[`+i+`][key]" value="`+data.detail[i].name+`">
-							<input type="hidden" name="desc_text[`+i+`][value]" value="`+data.detail[i].value+`">`;
+				html += `<p>`+data.detail[i].name+`: `+data.detail[i].value+`</p>`;
 			}
 			html += `</div></div>`;
 		}
@@ -299,7 +273,7 @@ const CRAWLERINIt = {
 		html += `<button id="post-product-btn" type="button">上传产品</button>`;
 		crawlerPage.innerHTML = html;
 	},
-	clickInit: function() {
+	clickInit: function(data) {
 		const _this = this;
 		//上传产品按钮
 		var obj1 = document.getElementById('post-product-btn');
@@ -309,10 +283,13 @@ const CRAWLERINIt = {
 					return false;
 				}
 				const param = _this.serializeForm(document.getElementById('crawler_form'));
+				for (let i in param) {
+					data[i] = param[i];
+				}
 				var _thisobj = this;
 				_thisobj.innerHTML = '数据发送中...';
 				_thisobj.classList.add('loading');
-				HELPERINIT.request({action: 'request', value: 'api/addProduct', param:param}, function(res) {
+				HELPERINIT.request({action: 'request', value: 'api/addProduct', param:data}, function(res) {
 					_thisobj.classList.remove('loading');
 					_thisobj.innerHTML = '上传产品';
 					_this.error(res.msg);
@@ -329,7 +306,6 @@ const CRAWLERINIt = {
 				const index = obj2.selectedIndex;
 				var html = _this.getCategoryHtml(obj2.options[index].value);
 				html = '<option value="">请选择分类</option>'+html;
-				console.log(html, obj2.options[index].value)
 				document.querySelector('#crawler-page select[name="cate_id"]').innerHTML=html;
 			}
 		}
@@ -374,86 +350,6 @@ const CRAWLERINIt = {
 			return Object.fromEntries(formData.entries());
 		}
 		return {};
-	},
-	initPdtImgValue: function(pobj) {
-		var imgValueObj = pobj.querySelector('.bc_product_picture');
-		if (imgValueObj === null) {
-			pobj.innerHTML += '<input type="hidden" name="bc_product_img" class="bc_product_picture" value=""/>';
-			imgValueObj = pobj.querySelector('.bc_product_picture');
-		}
-		const imgobj = pobj.getElementsByTagName('img');
-		var value = '';
-		var count = 0;
-		for (var i = 0; i < imgobj.length; i++) {
-			if (imgobj[i].src) {
-				if (count > 0) {
-					value += ',';
-				}
-				value += imgobj[i].src;
-				count ++;
-			}
-		}
-		if (imgValueObj) {
-			imgValueObj.value = value;
-		}
-	},
-	formatStr: function(str) {
-		if (typeof str === 'undefined') {
-			return '';
-		}
-		const arr = {
-			'   ': ' ',
-			'（': '(',
-			'）': ')',
-			' (': '(',
-			' - ': '-',
-			' -': '-',
-			'- ': '-',
-			' * ': '*',
-			' *': '*',
-			'* ': '*',
-			' CM': 'CM',
-			' cm': 'cm',
-			' / ': '/',
-			' /': '/',
-			'/ ': '/',
-			' , ': ',',
-			', ': ',',
-			' ,': ',',
-			' + ': '+',
-			' +': '+',
-			'+ ': '+',
-			'E 27': 'E27',
-			' ＜ ': '<',
-			' < ': '<',
-			' <': '<',
-			'< ': '<',
-			'≦': '≤',
-			' ≤ ': '≤',
-			' ≤': '≤',
-			'≤ ': '≤',
-			' ~ ': '~',
-			'~ ': '~',
-			' ~': '~',
-			' W': 'W',
-			'，': ',',
-			'、': ',',
-			' mm': 'mm',
-			' MM': 'MM',
-			'2XL': 'XXL',
-			'3XL': 'XXXL',
-			'4XL': 'XXXXL',
-			'(%)': '%',
-			'(含)': '',
-			'其他休闲': '休闲',
-		};
-		for (const i in arr) {
-			str = str.replace(i, arr[i]);
-			for (var j=0; j<5; j++) {
-				str = str.replace(i, arr[i]);
-			}
-		}
-		return str;
 	},
 };
 CRAWLERINIt.init();
