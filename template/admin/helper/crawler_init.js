@@ -30,7 +30,6 @@ const CRAWLERINIt = {
 			document.querySelector('body').appendChild(bodyPage);
 			bodyPage.innerHTML = html;
 			HELPERINIT.request({action: 'getCache', cache_key: 'crawler_show_status'}, function(res) {
-				console.log(res, 'res')
 				_this.crawlerPageinit(function(){
 					_this.crawlerPageShow(res.data === '1' ? '1' : '0');
 				});
@@ -87,7 +86,6 @@ const CRAWLERINIt = {
 		document.querySelector('#crawler-page .top-content .error-msg').innerText = msg;
 	},
 	crawlerPageShow: function(status) {
-		console.log(status, 'status')
 		const obj1 = document.getElementById('crawler-show-btn');
 		const obj2 = document.getElementById('crawler-page');
 		if (status === '1') {
