@@ -16,6 +16,7 @@ const CRAWLERINIt = {
 		if (!bodyPage) {
 			bodyPage = document.createElement('div');
 			bodyPage.id = 'crawler-page';
+			bodyPage.classList = 'close';
 			const html = `<div class="top-content">
 							<div class="button-content">
 								<button class="hide" id="reload-btn" onclick="CRAWLERINIt.reloadPage()">刷新</button>
@@ -29,8 +30,11 @@ const CRAWLERINIt = {
 			document.querySelector('body').appendChild(bodyPage);
 			bodyPage.innerHTML = html;
 			HELPERINIT.request({action: 'getCache', cache_key: 'crawler_show_status'}, function(res) {
-				_this.crawlerPageShow(res.data === '1' ? '1' : 0);
-				_this.crawlerPageinit();
+				console.log(res, 'res')
+				_this.crawlerPageinit(function(){
+					_this.crawlerPageShow(res.data === '1' ? '1' : '0');
+				});
+				
 			});
 		}
 		return bodyPage;
@@ -83,21 +87,18 @@ const CRAWLERINIt = {
 		document.querySelector('#crawler-page .top-content .error-msg').innerText = msg;
 	},
 	crawlerPageShow: function(status) {
+		console.log(status, 'status')
+		const obj1 = document.getElementById('crawler-show-btn');
+		const obj2 = document.getElementById('crawler-page');
 		if (status === '1') {
-			document.getElementById('crawler-show-btn').innerText = '收起';
-			document.getElementById('crawler-page').setAttribute('class', 'open');
-			document.getElementById('reload-btn').setAttribute('class', 'show');
-			document.getElementById('go-next-btn').setAttribute('class', 'show');
-			document.getElementById('item-content').style.display = 'block';
+			obj1.innerText = '收起';
+			obj2.classList.remove('close');
 		} else {
-			document.getElementById('crawler-show-btn').innerText = '展开';
-			document.getElementById('crawler-page').setAttribute('class', 'close');
-			document.getElementById('reload-btn').setAttribute('class', 'hide');
-			document.getElementById('go-next-btn').setAttribute('class', 'hide');
-			document.getElementById('item-content').style.display = 'none';
+			obj1.innerText = '展开';
+			obj2.classList.add('close');
 		}
 	},
-	crawlerPageinit: function() {
+	crawlerPageinit: function(callback) {
 		const _this = this;
 		HELPERINIT.request({action: 'getCache', cache_key: 'helper_all_data_cache'}, function(res) {
 			if (res.code == 200) {
@@ -110,9 +111,11 @@ const CRAWLERINIt = {
 						_this.error(msg);
 					}
 					_this.clickInit(data);
+					callback();
 				});
 			} else {
 				_this.error(res.msg);
+				callback();
 			}
 		});
 	},
@@ -271,6 +274,7 @@ const CRAWLERINIt = {
 		}
 		html += '</form>';
 		html += `<button id="post-product-btn" type="button">上传产品</button>`;
+		crawlerPage.style += 'border-top: 1px solid #321679; margin-top: 4px; padding-bottom: 48px;';
 		crawlerPage.innerHTML = html;
 	},
 	clickInit: function(data) {

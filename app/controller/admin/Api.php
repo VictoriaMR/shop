@@ -97,10 +97,16 @@ class Api extends AdminBase
 			// 添加店铺
 			$shopId = purchase()->shop()->addShop($channelId, $data['seller']['shop_id'], $data['seller']['shop_name'], $data['seller']['shop_url'], $data['seller']['service']);
 		}
+		$price = 0;
+		if (!empty($data['sku'])) {
+			$price = min(array_column($data['sku'], 'price'));
+		}
 		$updateData = [
 			'status' => purchase()->product()->getConst('STATUS_SET'),
 			'mem_id' => userId(),
 			'purchase_shop_id' => $shopId,
+			'sale_count' => $data['sale_count'] ?? 0,
+			'price' => $price,
 		];
 		$rst = purchase()->product()->updateData($where, $updateData);
 		$path = createDir(ROOT_PATH.'storage'.DS.'product_data'.DS.$channelId.DS).$data['item_id'].'.json';

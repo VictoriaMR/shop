@@ -48,40 +48,47 @@ var CRAWLER = {
                     if (!cookie) {
                         callback(-1, {}, 'cookie异常');
                     } else {
-                        let theRequest = new Object();
+                        let id;
                         if (location.search.indexOf('?') >= 0) {
                             let strs = location.search.substr(1).split('&');
                             for (let i = 0; i < strs.length; i++) {
                                 let tmp = strs[i].split('=');
-                                theRequest[tmp[0]] = unescape(tmp[1]);
+                                if (tmp[0] == 'id') {
+                                    id = unescape(tmp[1]);
+                                    break;
+                                }
                             }
                         }
                         const t = new Date().getTime();
                         const appKey = '12574478';
-                        const data = JSON.stringify({
+                        let data = {
+                            detail_v: '3.3.2',
+                            id: id,
                             exParams: JSON.stringify({
-                                id: theRequest.id,
-                                spm: theRequest.spm,
-                                queryParams: 'id='+theRequest.id+'&spm='+theRequest.spm,
-                            }),
-                            detail_v: "3.3.2",
-                            id: theRequest.id
-                        });
-                        const paramStr = cookie.split('_')[0] + '&' + t + '&' + appKey + '&' + data;
-                        const queryParam = {
-                            'jsv': '2.4.11',
+                                id: id,
+                                queryParams: 'id='+id,
+                                domain: location.origin,
+                                path_name: location.pathname
+                            })
+                        };
+                        data = JSON.stringify(data);
+                        var queryParam = {
+                            'jsv': '2.6.1',
                             'appKey': appKey,
                             't': t,
-                            'sign': _this.hex_md5(paramStr), // 获取sign,md5加密
+                            'sign': _this.hex_md5(cookie.split('_')[0] + '&' + t + '&' + appKey + '&' + data),
                             'api': 'mtop.taobao.pcdetail.data.get',
                             'v': '1.0',
-                            'type': 'json',
-                            'isSec': 0,
+                            'isSec': '0',
+                            'ecode': '0',
                             'timeout': 10000,
                             'ttid': '2022@taobao_litepc_9.17.0',
                             'AntiFlood': true,
                             'AntiCreep': true,
                             'dataType': 'json',
+                            'valueType': 'string',
+                            'preventFallback': true,
+                            'type': 'json',
                             'data': data
                         };
                         _this.ajax({
@@ -89,8 +96,8 @@ var CRAWLER = {
                             data: queryParam,
                             dataType: 'json',
                             success: function (res) {
-                                if (typeof res.data == 'undefined') {
-                                    callback(-1, {}, res.ret.split(';'));
+                                if (!res.data.item) {
+                                    callback(-1, {}, res.ret.join(';'));
                                 } else {
                                     _this.baseInfo = res.data;
                                     _this.getTaobao1(callback);
@@ -217,13 +224,15 @@ var CRAWLER = {
         }
         ret_data.post_fee = post_fee;
         ret_data.pdt_picture = _this.baseInfo.item.images;
+        ret_data.sale_count = _this.baseInfo.item.vagueSellCount.replace('+', '').trim();
         // 商家信息
         ret_data.seller = {
             shop_id: _this.baseInfo.seller.sellerId,
             shop_name: _this.baseInfo.seller.shopName,
             shop_url: _this.baseInfo.seller.pcShopUrl,
-            level: _this.baseInfo.seller.creditLevel,
-            service: {},
+            service: {
+                level: _this.baseInfo.seller.creditLevel
+            },
         };
         for (let i=0; i<_this.baseInfo.seller.evaluates.length; i++) {
             ret_data.seller.service[_this.baseInfo.seller.evaluates[i].type] = _this.baseInfo.seller.evaluates[i].score.trim();
