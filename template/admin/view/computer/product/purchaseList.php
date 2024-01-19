@@ -65,7 +65,7 @@
                     <?php }?>
                     <a target="_blank" class="btn btn-info btn-xs" href="<?php echo purchase()->product()->url($value['purchase_channel_id'], $value['item_id']);?>"><?php echo $value['status']==0?'上传':'更新';?></a>
                     <?php if ($value['status'] == 1) {?>
-                    <a class="btn btn-primary btn-xs" href="<?php echo adminUrl('product/initPurchase', ['id'=>$value['purchase_product_id']]);?>">配置</a>
+                    <a class="btn btn-primary btn-xs" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_product_id']]);?>">配置</a>
                     <?php }?>
                     <?php } else {?>
                     <?php }?>

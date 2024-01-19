@@ -109,8 +109,7 @@ class Api extends AdminBase
 			'price' => $price,
 		];
 		$rst = purchase()->product()->updateData($where, $updateData);
-		$path = createDir(ROOT_PATH.'storage'.DS.'product_data'.DS.$channelId.DS).$data['item_id'].'.json';
-		file_put_contents($path, json_encode($data, JSON_UNESCAPED_UNICODE));
+		$rst = purchase()->product()->saveResult($channelId, $data['item_id'], $data)
 		$this->success('上传成功');
 	}
 

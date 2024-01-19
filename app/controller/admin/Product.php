@@ -162,12 +162,18 @@ class Product extends AdminBase
 		$this->view();
 	}
 
-	public function initPurchase()
+	public function operate()
 	{
 		$id = iget('id/d', 0);
 		if ($id <= 0) {
 			\App::error('参数不正确');
 		}
+		$product = make('app/service/purchase/Product');
+		$info = $product->getInfo($id);
+		if (empty($info['sku'])) {
+			\App::error('数据不存在, 请重新上传');
+		}
+		$this->view();
 	}
 
 	public function detail()
