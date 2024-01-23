@@ -11,8 +11,10 @@ class Product extends AdminBase
 			'index' => 'SPU列表',
 			'purchaseList' => '采购产品',
 			'detail' => 'SPU详情',
+			'operate' => '添加产品',
+			'purchaseShop' => '供应商店铺',
 		];
-		$this->_ignore = ['detail'];
+		$this->_ignore = ['detail', 'operate'];
 		$this->_default = '产品管理';
 		parent::_init();
 	}
@@ -123,10 +125,9 @@ class Product extends AdminBase
 		} elseif ($etime) {
 			$where['add_time'] = ['<=', date('Y-m-d', strtotime($etime)).' 23:59:59'];
 		}
-		$product = make('app/service/purchase/Product');
-		$total = $product->count($where);
+		$total = purchase()->product()->count($where);
 		if ($total > 0) {
-			$list = $product->getListData($where, '*', $page, $size, ['purchase_product_id'=>'desc']);
+			$list = purchase()->product()->getListData($where, '*', $page, $size, ['purchase_product_id' => 'desc']);
 			// 用户
 			$userList = array_filter(array_column($list, 'mem_id'));
 			if (!empty($userList)) {
@@ -142,12 +143,17 @@ class Product extends AdminBase
 			foreach ($list as $key=>$value) {
 				$list[$key]['user_info'] = $this->avatar($userList[$value['mem_id']] ?? '');
 				$list[$key]['shop_info'] = $shopList[$value['purchase_shop_id']] ?? [];
+				$list[$key]['url'] = purchase()->product()->url($value['purchase_channel_id'], $value['item_id']);
+				// 标题补全
+				if ($value['status'] == purchase()->product()->getConst('STATUS_SET') && !$value['name']) {
+					$list[$key]['name'] = purchase()->product()->updateTitle($value['purchase_channel_id'], $value['item_id']);
+				}
 			}
 		}
 
 		$channelList = make('app/service/purchase/Channel')->getListData();
 		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
-		$statusList = $product->getStatusList();
+		$statusList = purchase()->product()->getStatusList();
 
 		$this->assign('status', $status);
 		$this->assign('purchase_channel_id', $channelId);
@@ -164,15 +170,34 @@ class Product extends AdminBase
 
 	public function operate()
 	{
+		html()->addCss();
+		html()->addJs();
+
 		$id = iget('id/d', 0);
 		if ($id <= 0) {
 			\App::error('参数不正确');
 		}
 		$product = make('app/service/purchase/Product');
-		$info = $product->getInfo($id);
+		$info = purchase()->product()->getInfo($id);
 		if (empty($info['sku'])) {
 			\App::error('数据不存在, 请重新上传');
 		}
+		$shopInfo = purchase()->shop()->loadData($info['purchase_shop_id']);
+		// 映射属性名
+		$attrNs = attr()->nameMap()->getMapList(array_column($info['attr'], 'name'));
+		$attrNs = array_column($attrNs, null, 'name');
+		// 映射属性值
+		$attrVs = [];
+		foreach ($info['attr'] as $value) {
+			$attrVs = array_merge($attrVs, array_column($value['value'], 'name'));
+		}
+		$attrVs = attr()->valueMap()->getMapList($attrVs);
+		$attrVs = array_column($attrVs, null, 'name');
+
+		$this->assign('attrNs', $attrNs);
+		$this->assign('attrVs', $attrVs);
+		$this->assign('info', $info);
+		$this->assign('shopInfo', $shopInfo);
 		$this->view();
 	}
 
@@ -583,5 +608,48 @@ class Product extends AdminBase
 			$this->success('更新成功');
 		}
 		$this->error('更新失败');
+	}
+
+	public function purchaseShop()
+	{
+
+		html()->addCss();
+		html()->addJs();
+
+		$status = iget('status/d', -1);
+		$channelId = iget('purchase_channel_id/d', 0);
+		$uniqueId = iget('unique_id', '');
+		$page = iget('page/d', 1);
+		$size = iget('size/d', 30);
+
+		$where = [];
+		if ($channelId > 0) {
+			$where['purchase_channel_id'] = $channelId;
+		}
+		if ($uniqueId) {
+			$where['unique_id'] = $uniqueId;
+		}
+		$total = purchase()->shop()->count($where);
+		if ($total > 0) {
+			$list = purchase()->shop()->getListData($where, '*', $page, $size, ['purchase_shop_id' => 'desc']);
+			$shopIds = array_unique(array_column($list, 'purchase_shop_id'));
+			$productCount = make('app/service/purchase/Product')->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
+			$productCount = array_column($productCount, 'c_count', 'purchase_shop_id');
+			foreach ($list as $key=>$value) {
+				$list[$key]['product_count'] = $productCount[$value['purchase_shop_id']] ?? 0;
+			}
+		}
+
+		$channelList = make('app/service/purchase/Channel')->getListData();
+		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
+
+		$this->assign('status', $status);
+		$this->assign('purchase_channel_id', $channelId);
+		$this->assign('unique_id', $uniqueId);
+		$this->assign('total', $total);
+		$this->assign('size', $size);
+		$this->assign('list', $list ?? []);
+		$this->assign('channelList', $channelList);
+		$this->view();
 	}
 }

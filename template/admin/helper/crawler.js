@@ -128,6 +128,10 @@ var CRAWLER = {
         ret_data.url = this.getUrl(ret_data.item_id);
         obj = document.querySelector('.logistics-express-price');
         ret_data.post_fee = obj ? obj.innerText.replace(/[^0-9]/ig, '') : 0;
+        ret_data.sale_count = 0;
+        if (__INIT_DATA.data['1081181309095'].data) {
+            ret_data.sale_count = Math.ceil(__INIT_DATA.data['1081181309095'].data.saleNum.replace(/[\<\+]/g, '')/3);
+        }
         ret_data.seller = {
             shop_id: __INIT_DATA.globalData.tempModel.sellerMemberId.replace('b2b-', ''),
             shop_name: __INIT_DATA.globalData.tempModel.companyName,
@@ -136,6 +140,7 @@ var CRAWLER = {
         };
         if (__STORE_DATA && __STORE_DATA.components['38229149']) {
             ret_data.seller.service.star = __STORE_DATA.components['38229149'].moduleData.appData.customerStar;
+            ret_data.seller.service.year = __STORE_DATA.components['38229149'].moduleData.tpYear;
             for (let i in __STORE_DATA.components['38229149'].moduleData.appData.serviceList) {
                 let name = __STORE_DATA.components['38229149'].moduleData.appData.serviceList[i].serviceKey;
                 let len = name.indexOf('_');
@@ -189,9 +194,11 @@ var CRAWLER = {
             };
         }
         ret_data.detail = [];
-        obj = document.querySelectorAll('.offer-attr-list .offer-attr-item');
-        for (let i=0; i<obj.length; i++) {
-            ret_data.detail.push({name:obj[i].querySelector('.offer-attr-item-name').innerText, value:obj[i].querySelector('.offer-attr-item-value').innerText});
+        if (__INIT_DATA.data['1081181309201'].data) {
+            for (let i=0; i<__INIT_DATA.data['1081181309201'].data.length; i++) {
+                const tmp = __INIT_DATA.data['1081181309201'].data[i]
+                ret_data.detail.push({name:tmp.name, value:tmp.value});
+            }
         }
         ret_data.desc_picture = [];
         obj = document.querySelectorAll('.desc-img-loaded,.desc-img-no-load');

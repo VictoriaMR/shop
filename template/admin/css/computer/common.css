@@ -27,7 +27,7 @@ img{
     max-height:100%
 }
 table{
-    table-layout: fixed
+    table-layout: fixed;
     border-collapse:collapse;
     border-spacing:0;
     border-bottom:solid 1px #dedede

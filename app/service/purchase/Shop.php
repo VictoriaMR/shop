@@ -23,10 +23,13 @@ class Shop extends Base
         }
     }
 
-    public function shopInfo($data)
+    public function shopInfo($data, $name=true)
     {
         if (empty($data)) return '--';
-        $html = '<p>'.$data['name'].'</p>';
+        $html = '';
+        if ($name) {
+            $html .= '<p><a href="https://'.$data['url'].'" target="_black">'.$data['name'].'</a></p>';
+        }
         if (!empty($data['info'])) {
             $data['info'] = json_decode($data['info'], true);
             $html .= '<p class="desc-info">';
@@ -47,6 +50,7 @@ class Shop extends Base
             'post' => '物流',
             'serv' => '服务',
             'star' => '综合服务',
+            'year' => '年限',
             'lgt' => '物流时效',
             'rdf' => '退换体验',
             'dspt' => '纠纷解决',

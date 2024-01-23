@@ -33,11 +33,13 @@
     <table class="table mt10" id="data-list">
         <tbody>
             <tr>
-                <th width="50">ID</th>
+                <th width="30">ID</th>
                 <th width="50">渠道</th>
-                <th width="100">源ID</th>
+                <th width="60">源ID</th>
+                <th width="50">价格/销量</th>
+                <th width="120">标题</th>
                 <th width="50">状态</th>
-                <th width="120">店铺信息</th>
+                <th width="100">店铺信息</th>
                 <th width="60">添加人</th>
                 <th width="80">添加时间</th>
                 <th width="100">操作</th>
@@ -54,16 +56,25 @@
                 <td><?php echo $value['purchase_product_id'];?></td>
                 <td><?php echo $channelList[$value['purchase_channel_id']]??'--';?></td>
                 <td><?php echo $value['item_id'];?></td>
+                <td>
+                    <span title="价格"><?php echo $value['price']>0?$value['price']:'--';?></span>
+                    <br>
+                    <span title="标题"><?php echo $value['sale_count']?:'--';?></span>
+                </td>
+                <td>
+                    <a href="<?php echo $value['url'];?>" target="_blank"><?php echo $value['name']?:'--';?></a>
+                </td>
                 <td class="status status-<?php echo $value['status'];?>"><?php echo $statusList[$value['status']] ?? $value['status'];?></td>
                 <td><?php echo purchase()->shop()->shopInfo($value['shop_info']);?></td>
-                <td><?php echo $value['user_info'];?></td>
-                <td><?php echo $value['add_time'];?></td>
+                <td><?php echo $value['user_info']?:'--';?></td>
+                <td>
+                    <span title="添加时间"><?php echo $value['add_time'];?></span>
+                    <br>
+                    <span title="更新时间"><?php echo $value['update_time']?:'--';?></span>
+                </td>
                 <td>
                     <?php if (in_array($value['status'], [0, 1])){?>
-                    <?php if ($value['status'] == 0) {?>
-                    <button class="btn btn-primary btn-xs">设置</button>
-                    <?php }?>
-                    <a target="_blank" class="btn btn-info btn-xs" href="<?php echo purchase()->product()->url($value['purchase_channel_id'], $value['item_id']);?>"><?php echo $value['status']==0?'上传':'更新';?></a>
+                    <a target="_blank" class="btn btn-info btn-xs" href="<?php echo $value['url'];?>"><?php echo $value['status']==0?'上传':'更新';?></a>
                     <?php if ($value['status'] == 1) {?>
                     <a class="btn btn-primary btn-xs" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_product_id']]);?>">配置</a>
                     <?php }?>

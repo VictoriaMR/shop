@@ -76,9 +76,9 @@ class Base
 		return $this->instance()->where($where)->count();
 	}
 
-	public function getListData(array $where=[], $fields=[], $page=0, $size=20, $order=[])
+	public function getListData(array $where=[], $fields=[], $page=0, $size=20, $order=[], $group='')
 	{
-		return $this->instance()->where($where)->field($fields)->page($page, $size)->orderBy($order)->get();
+		return $this->instance()->where($where)->field($fields)->page($page, $size)->orderBy($order)->groupBy($group)->get();
 	}
 
 	public function sql()

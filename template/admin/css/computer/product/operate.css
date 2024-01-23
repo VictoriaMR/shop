@@ -1,0 +1,168 @@
+#add-product-page .field-row {
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 5px;
+}
+#add-product-page .field-row>dt {
+    min-width: 80px;
+    width: 80px;
+    word-break: break-all;
+    font-weight: 700;
+    text-align: right;
+}
+#add-product-page .left .field-row {
+    margin-bottom: 15px;
+}
+#add-product-page .left .field-row>dt {
+    line-height: 32px;
+}
+#add-product-page .field-row>dd {
+    flex: 1;
+}
+#add-product-page .field-row>dd.subclass {
+    line-height: 32px;
+}
+#add-product-page .must {
+    color: #e7502b;
+}
+#add-product-page .field-row dd input {
+    width: 100%;
+}
+#add-product-page .supplier-info-content {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+#add-product-page .right h4 {
+    margin-bottom: 10px;
+    font-weight: 500;
+    font-size: 18px;
+}
+#add-product-page .attr-item {
+    cursor: pointer;
+    display: inline-block;
+    padding: 2px;
+    margin: 0 5px 2px 0;
+    border-radius: 4px;
+    border: 1px solid #e7502b;
+    color: #e7502b;
+    position: relative;
+}
+#add-product-page .attr-item.success {
+    color: #4cae4c;
+    border-color: #4cae4c;
+}
+#add-product-page .spu-image {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    position: relative;
+}
+#add-product-page .spu-image .pic-wrap {
+    margin: 5px 5px 0 5px;
+    height: 128px;
+    overflow: hidden;
+}
+#add-product-page .spu-image .pic-wrap .item {
+    position: relative;
+    width: 123px;
+    height: 123px;
+    margin: 0 5px 5px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    vertical-align: top;
+    background-color: #fff;
+    overflow: hidden;
+    cursor: pointer;
+}
+.image-bottom-tips {
+    position: absolute;
+    bottom: -22px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+}
+.image-bottom-tips:before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background: #000;
+    opacity: 0.6;
+}
+.image-bottom-tips .btn {
+    padding: 1px 2px;
+    z-index: 99;
+    position: relative;
+}
+.image-left-tips {
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 0;
+}
+.image-left-tips .image-selected {
+    background-color: #93cc7d;
+    display: inline-block;
+    padding:2px;
+    border-radius: 4px;
+    font-size:0;
+    vertical-align: top;
+}
+.image-left-tips .image-selected input[type=checkbox]{
+    margin:0;
+}
+.pic-thumb{
+    width: 123px;
+    height: 123px;
+    text-align: center;
+    line-height: 123px;
+}
+.pic-thumb:hover ~ .image-bottom-tips {
+    bottom: 0px;
+    transition: bottom 0.3s;
+}
+.pic-wrap .item .num {
+    position: absolute;
+    background: red;
+    color: #fff;
+    bottom: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+}
+.image-left-tips .spu-sign {
+    display: inline-block;
+    font-size: 12px;
+    color: #fff;
+    margin-left: 4px;
+    border-radius: 4px;
+    background: #337ab7;
+    vertical-align: top;
+    padding: 1px 2px;
+}
+.mapping-popper {
+    position: absolute;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    right: -5px;
+    top: 22px;
+    z-index: 99;
+    border-radius: 8px;
+    width: 250px;
+    text-align: right;
+}
+.mapping-popper .glyphicon-remove {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+.mapping-popper input {
+    margin-bottom: 12px;
+}

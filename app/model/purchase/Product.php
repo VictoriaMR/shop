@@ -7,7 +7,8 @@ class Product extends Base
 {
 	protected $_table = 'purchase_product';
 	protected $_addTime = 'add_time';
-	protected $_intFields = ['purchase_product_id', 'purchase_channel_id', 'mem_id', 'purchase_shop_id', 'status'];
+	protected $_updateTime = 'update_time';
+	protected $_intFields = ['purchase_product_id', 'purchase_channel_id', 'mem_id', 'purchase_shop_id', 'status', 'sale_count'];
 
 	const STATUS_NORMAL = 0;
 	const STATUS_SET = 1;

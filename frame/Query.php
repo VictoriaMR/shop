@@ -38,8 +38,12 @@ final class Query
 	{
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
-				if (is_array($value)) $this->_where[] = isset($value[2]) ? [$key, strtoupper($value[0]), $value[1], $value[2]] : [$key, strtoupper($value[0]), $value[1]];
-				else $this->_where[$key] = [$key, '=', $value];
+				if (is_array($value)){
+					//2是between;
+					$this->_where[$key] = isset($value[2]) ? [$key, strtoupper($value[0]), $value[1], $value[2]] : [$key, strtoupper($value[0]), $value[1]];
+				} else {
+					$this->_where[$key] = [$key, is_array($value)?'IN':'=', $value];
+				}
 			}
 		} else {
 			if (is_null($value)) $this->_where[$columns] = [$columns, '=', $operator];
@@ -56,29 +60,42 @@ final class Query
 
 	public function orderBy($columns, $operator=null)
 	{
-		if (is_array($columns)) {
-			foreach ($columns as $key => $value) {
-				$this->_orderBy .= $this->formatKey($key).' '.strtoupper($value).',';
+		if ($columns) {
+			if (!is_array($columns)) {
+				$columns = [$columns=>$operator];
 			}
-		} else $this->_orderBy .= $this->formatKey($columns).' '.strtoupper($operator).',';
+			foreach ($columns as $key => $value) {
+				if (is_array($value)) {
+					$this->_orderBy .= 'FIELD('.$this->formatKey($key).', '.implode(',', $value).'),';
+				} else {
+					$this->_orderBy .= $this->formatKey($key).' '.strtoupper($value).',';
+				}
+			}
+		}
 		return $this;
 	}
 
 	public function groupBy($columns)
 	{
-		$this->_groupBy .= $this->formatKey($columns);
+		if ($columns) {
+			$this->_groupBy .= $this->formatKey($columns);
+		}
 		return $this;
 	}
 
 	public function having($columns, $operator, $value)
 	{
-		$this->_having = $this->formatKey($columns).' '.$operator.' '.$value;
+		if ($columns) {
+			$this->_having = $this->formatKey($columns).' '.$operator.' '.$value;
+		}
 		return $this;
 	}
 
 	public function field($columns)
 	{
-		$this->_columns .= is_array($columns) ? implode(',', $columns) : $columns;
+		if ($columns) {
+			$this->_columns .= is_array($columns) ? implode(',', $columns) : $columns;
+		}
 		return $this;
 	}
 

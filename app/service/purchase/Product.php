@@ -65,6 +65,9 @@ class Product extends Base
     public function getResult(int $channelId, int $itemId)
     {
         $path = $this->resultPath($channelId, $itemId);
+        if (!is_file($path)) {
+            return false;
+        }
         $rst = file_get_contents($path);
         return isJson($rst);
     }
@@ -76,5 +79,20 @@ class Product extends Base
             createDir($path);
         }
         return $path.$itemId.'.json';
+    }
+
+    public function updateTitle($channelId, int $itemId)
+    {
+        $path = $this->resultPath($channelId, $itemId);
+        if (!is_file($path)) {
+            return false;
+        }
+        $rst = isJson(file_get_contents($path));
+        $rst = isJson($rst);
+        if (empty($rst['name'])) {
+            return false;
+        }
+        $this->updateData(['purchase_channel_id'=>$channelId, 'item_id'=>$itemId], ['name'=>$rst['name']]);
+        return $rst['name'];
     }
 }

@@ -109,7 +109,7 @@ class Api extends AdminBase
 			'price' => $price,
 		];
 		$rst = purchase()->product()->updateData($where, $updateData);
-		$rst = purchase()->product()->saveResult($channelId, $data['item_id'], $data)
+		$rst = purchase()->product()->saveResult($channelId, $data['item_id'], $data);
 		$this->success('上传成功');
 	}
 
