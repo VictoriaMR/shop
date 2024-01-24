@@ -107,23 +107,20 @@
 				<?php foreach ($info['attr'] as $ak=>$av){?>
 				<tr>
 					<td width="100">
-						<div class="attr-item <?php echo isset($attrNs[$av['name']])?'success':'error';?>">
+						<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>">
 							<span><?php echo $av['name'];?></span>
+							<?php if (!isset($attrNs[$av['name']])){?>
 							<span class="glyphicon glyphicon-edit"></span>
-							<div class="mapping-popper">
-								<div class="content">
-									<input class="form-control" type="text" name="name" placeholder="请输入映射值">
-									<button class="btn btn-primary btn-sm">保存</button>
-								</div>
-								<i class="glyphicon glyphicon-remove"></i>
-							</div>
+							<?php }?>
 						</div>
 					</td>
 					<td>
 						<?php foreach ($av['value'] as $avk=>$avv){?>
-						<div class="attr-item <?php echo isset($attrVs[$avv['name']])?'success':'error';?>">
+						<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>">
 							<span><?php echo $avv['name'];?></span>
+							<?php if (!isset($attrVs[$avv['name']])){?>
 							<span class="glyphicon glyphicon-edit"></span>
+							<?php }?>
 						</div>
 						<?php }?>
 					</td>

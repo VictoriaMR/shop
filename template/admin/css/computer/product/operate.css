@@ -147,12 +147,12 @@
     padding: 1px 2px;
 }
 .mapping-popper {
-    position: absolute;
+    position: fixed;
     padding: 20px;
     background-color: #fff;
     border: 1px solid #e5e5e5;
-    right: -5px;
-    top: 22px;
+    left: calc(50% - 125px);
+    top: calc(50% - 125px);
     z-index: 99;
     border-radius: 8px;
     width: 250px;
@@ -163,6 +163,21 @@
     top: 5px;
     right: 5px;
 }
+.mapping-popper .content p {
+    margin-bottom: 5px;
+    text-align: left;
+}
+.mapping-popper .content p span{
+    font-size: 14px;
+    color: #000;
+}
 .mapping-popper input {
     margin-bottom: 12px;
+}
+.mapping-popper .add-map-content .item input {
+    display: inline-block;
+    width: calc((100% - 10px)/2);
+}
+.mapping-popper .add-map-content .item span {
+    display: inline-block;
 }

@@ -170,6 +170,13 @@ class Product extends AdminBase
 
 	public function operate()
 	{
+		if (request()->isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['attrMap'])) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
 		html()->addCss();
 		html()->addJs();
 
@@ -199,6 +206,25 @@ class Product extends AdminBase
 		$this->assign('info', $info);
 		$this->assign('shopInfo', $shopInfo);
 		$this->view();
+	}
+
+	protected function attrMap()
+	{
+		$name = trim(ipost('name', ''));
+		$fromName = trim(ipost('from_name', ''));
+		$type = ipost('type', 0);
+		if (empty($name) || empty($fromName) || !in_array($type, [1, 2])) {
+			$this->error('参数不正确');
+		}
+		if ($type == 1) {
+			$rst = attr()->nameMap()->addMap($fromName, $name);
+		} else {
+			$rst = attr()->valueMap()->addMap($fromName, $name);
+		}
+		if ($rst) {
+			$this->success('添加属性映射成功');
+		}
+		$this->error('添加属性映射失败');
 	}
 
 	public function detail()
