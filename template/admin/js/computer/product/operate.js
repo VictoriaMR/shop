@@ -4,9 +4,21 @@ $(function(){
 const OPERATE = {
 	init: function(){
 		//初始化
-		$('.attr-item.error').on('click', function(e){
+		$('.attr-item').on('click', function(e){
 			const name = $(this).find('span').eq(0).text();
 			const type = $(this).hasClass('attr-name') ? '1' : '2';
+			const toName = $(this).data('name');
+			let ext = $(this).data('ext');
+			let extHtml = '';
+			if (ext) {
+				for (let i in ext) {
+					extHtml += `<div class="item">
+									<input type="input" class="form-control" name="attr[name][]" value="`+i+`" />
+									<span>: </span>
+									<input type="input" class="form-control" name="attr[value][]" value="`+ext[i]+`" />
+								</div>`;
+				}
+			}
 			let html = `<form class="mapping-popper">
 							<div class="content">
 								<p>
@@ -16,9 +28,9 @@ const OPERATE = {
 									<i class="glyphicon glyphicon-random"></i>
 								</p>
 								<div class="map-content">
- 									<input class="form-control" type="text" name="name" placeholder="请输入映射值" />
+ 									<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
  								</div>
- 								<div class="add-map-content"></div>	
+ 								<div class="add-map-content">`+extHtml+`</div>	
 								<input type="hidden" name="opn" value="attrMap">`;
 			if (type == '2') {
 				html += `<button type="button" class="btn btn-info btn-sm btn-add" style="margin-right:10px;">新增映射</button>`;
@@ -46,10 +58,10 @@ const OPERATE = {
 			const fromName = obj.find('p span').eq(0).text();
 			_thisobj.button('loading');
 			post('', obj.serializeArray(), function(res){
+				showTips(res);
+				_thisobj.button('reset');
 				if (res.code == 200) {
 
-				} else {
-					_thisobj.button('reset');
 				}
 			});
 		});

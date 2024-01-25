@@ -210,16 +210,17 @@ class Product extends AdminBase
 
 	protected function attrMap()
 	{
-		$name = trim(ipost('name', ''));
-		$fromName = trim(ipost('from_name', ''));
-		$type = ipost('type', 0);
+		$name = ipost('name', '');
+		$fromName = ipost('from_name', '');
+		$type = ipost('type/d', 0);
+		$attr = ipost('attr/a', []);
 		if (empty($name) || empty($fromName) || !in_array($type, [1, 2])) {
 			$this->error('参数不正确');
 		}
 		if ($type == 1) {
 			$rst = attr()->nameMap()->addMap($fromName, $name);
 		} else {
-			$rst = attr()->valueMap()->addMap($fromName, $name);
+			$rst = attr()->valueMap()->addMap($fromName, $name, $attr);
 		}
 		if ($rst) {
 			$this->success('添加属性映射成功');

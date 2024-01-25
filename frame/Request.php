@@ -52,6 +52,10 @@ class Request
 				return (float) $arr[$name];
 			case 't': //时间 time
 				return false === strtotime($arr[$name]) ? $default : $arr[$name];
+			case 'a': //数组
+				return is_array($arr[$name]) ? $arr[$name] : $default;
+			case 's':
+				return trim($arr[$name] ?? $default);
 			default:
 				return $arr[$name];
 		}

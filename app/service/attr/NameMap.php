@@ -32,14 +32,16 @@ class NameMap extends Base
 
 	public function addMap($fromName, $toName)
 	{
-		if ($this->getCountData(['name'=>$fromName])) {
-			return true;
-		}
 		$list = attr()->name()->addNotExist($toName);
+		$info = $this->loadData(['name'=>$fromName]);
+		if (!$info) {
+			$id = $this->insertGetId(['name'=>$fromName]);
+		} else {
+			$id = $info['item_id'];
+		}
 		$data = [
 			'attrn_id' => $list[$toName],
-			'name' => $fromName,
 		];
-		return $this->insertData($data);
+		return $this->updateData($id, $data);
 	}
 }

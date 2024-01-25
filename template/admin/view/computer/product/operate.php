@@ -7,6 +7,7 @@
 		        <dd class="subclass">
 		        	<div class="title-line" style="display: inline-block;"></div>
 	                <button type="button" class="btn btn-primary btn-xs">修改分类</button>
+	                <a href="<?php echo $info['url'];?>" class="glyphicon glyphicon-link" target="_blank"></a>
 		        </dd>
 		    </dl>
 			<dl class="field-row">
@@ -107,20 +108,16 @@
 				<?php foreach ($info['attr'] as $ak=>$av){?>
 				<tr>
 					<td width="100">
-						<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>">
+						<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>" data-name="<?php echo isset($attrNs[$av['name']]) ? $attrNs[$av['name']]['attrn_name'] : '';?>">
 							<span><?php echo $av['name'];?></span>
-							<?php if (!isset($attrNs[$av['name']])){?>
 							<span class="glyphicon glyphicon-edit"></span>
-							<?php }?>
 						</div>
 					</td>
 					<td>
 						<?php foreach ($av['value'] as $avk=>$avv){?>
-						<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>">
+						<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>" data-name="<?php echo isset($attrVs[$avv['name']]) ? $attrVs[$avv['name']]['attrv_name'] : '';?>" data-ext='<?php echo isset($attrVs[$avv['name']]['ext']) ? json_encode($attrVs[$avv['name']]['ext']) : '';?>'>
 							<span><?php echo $avv['name'];?></span>
-							<?php if (!isset($attrVs[$avv['name']])){?>
 							<span class="glyphicon glyphicon-edit"></span>
-							<?php }?>
 						</div>
 						<?php }?>
 					</td>
