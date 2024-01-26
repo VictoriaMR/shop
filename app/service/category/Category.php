@@ -92,12 +92,12 @@ class Category extends Base
 		return true;
 	}
 
-	public function getSubCategoryById($id, $simple=false)
+	public function sCate($id, $simple=false)
 	{
 		return $this->getSubCategory($this->getList(), $id, $simple);
 	}
 
-	public function getParentCategoryById($id, $self=true, $siteId=0)
+	public function pCate($id, $self=true, $reverse=false)
 	{
 		$returnData = [];
 		$list = $this->getList();
@@ -108,9 +108,9 @@ class Category extends Base
 		if ($self) $returnData[] = $list[$id];
 		$id = $list[$id]['parent_id'];
 		if (isset($list[$id])) {
-			$returnData = array_merge($returnData, $this->getParentCategoryById($id));
+			$returnData = array_merge($returnData, $this->pCate($id));
 		}
-		return $returnData;
+		return $reverse ? array_reverse($returnData) : $returnData;
 	}
 
 	protected function getSubCategory($list, $pid, $simple=false) 

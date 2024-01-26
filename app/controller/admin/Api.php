@@ -19,7 +19,7 @@ class Api extends AdminBase
 
 	public function helperData()
 	{
-		$cateList = make('app/service/category/Category')->getListFormat(false);
+		$cateList = category()->getListFormat(false);
 		$tempArr = [];
 		$indexId = 0;
 		foreach ($cateList as $value) {
@@ -38,7 +38,7 @@ class Api extends AdminBase
 			'version' => version(),
 			'socket_domain' => domain().'socket.io/',
 			'action' => $this->_helperAction,
-			'site_list' => make('app/service/site/Site')->getListData(['site_id'=>['>', 80]], 'site_id,name'),
+			'site_list' => site()->getListData(['site_id'=>['>', 80]], 'site_id,name'),
 			'cate_list' => $tempArr,
 		];
 		$this->success($data);

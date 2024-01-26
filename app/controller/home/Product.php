@@ -21,7 +21,7 @@ class Product extends HomeBase
 			$lanId = lanId();
 			$info = $spu->getInfoCache($spuId, $lanId, siteId());
 			if ($info) {
-				$cateList = make('app/service/category/Category')->getParentCategoryById($info['cate_id']);
+				$cateList = make('app/service/category/Category')->pCate($info['cate_id']);
 				$cateList = array_reverse($cateList);
 				if ($lanId == 1) {
 					$lanArr = array_column($cateList, 'name_en', 'cate_id');

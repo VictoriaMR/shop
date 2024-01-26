@@ -10,10 +10,15 @@
     font-weight: 700;
     text-align: right;
 }
-#add-product-page .left .field-row {
+#add-product-page .product-info-content {
+    width:calc(100% - 400px);
+    padding-right: 15px;
+    max-width: 1200px;
+}
+#add-product-page .product-info-content .field-row {
     margin-bottom: 15px;
 }
-#add-product-page .left .field-row>dt {
+#add-product-page .product-info-content .field-row>dt {
     line-height: 32px;
 }
 #add-product-page .field-row>dd {
@@ -59,7 +64,6 @@
 }
 #add-product-page .spu-image .pic-wrap {
     margin: 5px 5px 0 5px;
-    height: 128px;
     overflow: hidden;
 }
 #add-product-page .spu-image .pic-wrap .item {
@@ -146,7 +150,7 @@
     vertical-align: top;
     padding: 1px 2px;
 }
-.mapping-popper {
+.s-modal {
     position: fixed;
     padding: 20px;
     background-color: #fff;
@@ -158,16 +162,16 @@
     width: 250px;
     text-align: right;
 }
-.mapping-popper .glyphicon-remove {
+.s-modal .glyphicon-remove {
     position: absolute;
     top: 5px;
     right: 5px;
 }
-.mapping-popper .content p {
+.s-modal .content p {
     margin-bottom: 5px;
     text-align: left;
 }
-.mapping-popper .content p span{
+.s-modal .content p span{
     font-size: 14px;
     color: #000;
 }
@@ -180,4 +184,83 @@
 }
 .mapping-popper .add-map-content .item span {
     display: inline-block;
+}
+.s-modal.change-category-modal {
+    width: 400px;
+    display: none;
+}
+.change-category-modal .input-group {
+    margin-bottom: 10px;
+}
+
+.hy-sl-list-inline {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+
+.hy-sl-txt {
+    display: inline-block;
+    margin: 0px 5px 5px 0px;
+    padding: 1px;
+    line-height: 30px;
+}
+
+.hy-sl-list-inline.hy-sl-vertical li {
+    display: block;
+}
+
+.hy-sl-txt .hy-sl-set {
+    display: inline-block;
+    width: 100%;
+    position: relative;
+    margin: 0px;
+}
+
+.hy-sl-txt .hy-sl-set > a {
+    text-decoration: none;
+    width: 100%;
+    display: inline-block;
+    padding: 0px 9px;
+    border: 1px solid rgb(184, 183, 189);
+    color: rgb(85, 85, 85);
+    border-radius: 4px;
+}
+
+.hy-sl-selected .hy-sl-set > a, .hy-sl-txt .hy-sl-set > a:hover {
+    text-decoration: none;
+    color: rgb(85, 85, 85);
+    border: 2px solid rgb(231, 80, 43);
+    margin: -1px;
+}
+
+.hy-sl-check {
+    display: none;
+    background: url('/image/computer/check.png') no-repeat;
+    position: absolute;
+    bottom: 0px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-color: transparent;
+    margin: -1px;
+    border-bottom-right-radius: 4px;
+}
+.hy-sl-selected .hy-sl-check {
+    display: block;
+}
+.hy-sl-list-inline.hy-sl-vertical li{
+    position:relative;
+}
+.hy-sl-list-inline.hy-sl-vertical li .image-num{
+    position: absolute;
+    right: -4px;
+    top: -3px;
+    background: #e7502b;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    color: #fff;
 }

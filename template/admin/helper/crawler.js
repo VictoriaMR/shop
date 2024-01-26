@@ -153,7 +153,6 @@ var CRAWLER = {
             ret_data.pdt_picture.push(__INIT_DATA.globalData.images[i].fullPathImageURI);
         }
         ret_data.attr = {};
-        let attrMap = {};
         for (let i=0; i<__INIT_DATA.globalData.skuModel.skuProps.length; i++) {
             const item = __INIT_DATA.globalData.skuModel.skuProps[i];
             let value = {};
@@ -164,9 +163,8 @@ var CRAWLER = {
                 if (item.value[j].imageUrl) {
                     value[item.value[j].name].img = item.value[j].imageUrl;
                 }
-                attrMap[item.value[j].name] = item.prop;
             }
-            ret_data.attr[item.prop] = {
+            ret_data.attr[item.fid] = {
                 name: item.prop,
                 value: value
             };
@@ -177,8 +175,14 @@ var CRAWLER = {
             let tempMap = i.replace('&gt', '');
             const attr = tempMap.split(';');
             let pvs = {};
+            let tmpAttr = JSON.parse(JSON.stringify(ret_data.attr));
+            let img = '';
             for (let r in attr) {
-                pvs[attrMap[attr[r]]] = attr[r];
+                let attrMap = this.getAttr(attr[r], tmpAttr);
+                pvs[attrMap.name] = attrMap.value;
+                if (attrMap.img) {
+                    img = attrMap.img;
+                }
             }
             let price;
             if (item.price) {
@@ -190,7 +194,8 @@ var CRAWLER = {
                 pvs: pvs,
                 sku_map: tempMap,
                 price: price,
-                stock: item.canBookCount
+                stock: item.canBookCount,
+                img: img,
             };
         }
         ret_data.detail = [];
@@ -209,6 +214,21 @@ var CRAWLER = {
             }
         }
         callback(0, ret_data, '获取成功!');
+    },
+    getAttr: function(attr, attrArr) {
+        for (let k in attrArr) {
+            for (let j in attrArr[k]['value']) {
+                if (attrArr[k]['value'][j].name == attr) {
+                    var arr = {
+                        name: k,
+                        img: attrArr[k]['value'][j].img,
+                        value: j
+                    };
+                    delete attrArr[k];
+                    return arr;
+                }
+            }
+        }
     },
     getTaobao1: function(callback) {
         const _this = this;
@@ -270,20 +290,20 @@ var CRAWLER = {
                 const tmp = _this.baseInfo.skuCore.sku2info[i];
                 const attr = skuMap[i].split(';');
                 let pvs = {};
+                let img = '';
                 for (let r in attr) {
                     let attr_item = attr[r].split(':');
                     pvs[attr_item[0]] = attr_item[1];
-                }
-
-                for (let r in attr) {
-                    let attr_item = attr[r].split(':');
-                    pvs[attr_item[0]] = attr_item[1];
+                    if (ret_data.attr[attr_item[0]].value[attr_item[1]].img) {
+                        img = ret_data.attr[attr_item[0]].value[attr_item[1]].img;
+                    }
                 }
                 ret_data.sku[i] = {
                     pvs: pvs,
                     sku_map: skuMap[i],
                     price: tmp.price.priceText,
                     stock: tmp.quantity,
+                    img: img,
                 }
             }
         }

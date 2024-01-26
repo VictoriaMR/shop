@@ -1,13 +1,28 @@
 <div class="container-fluid" id="add-product-page">
-	<div class="left" style="width:calc(100% - 400px);padding-right: 15px;">
+	<div class="left product-info-content">
 		<form action="<?php echo url("product/operate");?>" method="post" enctype="multipart/form-data">
 			<input type="hidden" name="opn" value="add">
+			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
+			<input type="hidden" name="cate_id" value="<?php echo $info['cate_id'];?>">
+			<dl class="field-row">
+		        <dt class="title-line"><strong class="must">*</strong>站点：</dt>
+		        <dd class="subclass">
+		        	<select name="site_id" class="form-control" style="width:200px">
+		        		<option value="0">请选择站点</option>
+		        		<?php foreach($siteList ?? [] as $value){?>
+		        		<option value="<?php echo $value['site_id'];?>" <?php echo $info['site_id']==$value['site_id']?'selected':'';?>><?php echo $value['name'];?></option>
+		        		<?php }?>
+		        	</select>
+		        </dd>
+		    </dl>
 			<dl class="field-row">
 		        <dt class="title-line"><strong class="must">*</strong>产品分类：</dt>
 		        <dd class="subclass">
-		        	<div class="title-line" style="display: inline-block;"></div>
-	                <button type="button" class="btn btn-primary btn-xs">修改分类</button>
-	                <a href="<?php echo $info['url'];?>" class="glyphicon glyphicon-link" target="_blank"></a>
+		        	<?php if ($info['cate_id']){
+		        		$cateArr = category()->pCate($info['cate_id'], true, true);
+		        	}?>
+		        	<div class="title-line category-name" style="display: inline-block;"><?php echo implode(' - ', empty($cateArr)?[]:array_column($cateArr, 'name'));?></div>
+	                <button type="button" class="btn btn-primary btn-xs change-category-bth">修改分类</button>
 		        </dd>
 		    </dl>
 			<dl class="field-row">
@@ -17,48 +32,28 @@
 	            </dd>
 			</dl>
 			<dl class="field-row">
-				<dt class="title-line"><strong class="must">*</strong>产品数据：</dt>
-	            <dd style="margin-right: 10px;">
-                    <div class="input-group input-product">
-                        <span class="input-group-addon">重量</span>
-                        <input type="text" class="form-control isNum" name="spu_weight" value="<?php echo $info['weight']??'';?>">
-                        <span class="input-group-addon">克</span>
-                    </div>
-                </dd>
-                <dd style="margin-right: 10px;">
-                    <div class="input-group input-product">
-                        <span class="input-group-addon">长度</span>
-                        <input type="text" class="form-control isNum" name="spu_length" value="<?php echo $info['length']??'';?>">
-                        <span class="input-group-addon">厘米</span>
-                    </div>
-                </dd>
-                <dd style="margin-right: 10px;">
-                    <div class="input-group input-product">
-                        <span class="input-group-addon">宽度</span>
-                        <input type="text" class="form-control isNum" name="spu_width" value="<?php echo $info['width']??'';?>">
-                        <span class="input-group-addon">厘米</span>
-                    </div>
-                </dd>
-                <dd>
-                    <div class="input-group input-product">
-                        <span class="input-group-addon">高度</span>
-                        <input type="text" class="form-control isNum" name="spu_height" value="<?php echo $info['height']??'';?>">
-                        <span class="input-group-addon">厘米</span>
-                    </div>
-                </dd>
-			</dl>
-			<dl class="field-row">
-                <dt class="title-line">产品数据：</dt>
+                <dt class="title-line"><strong class="must">*</strong>产品图片：</dt>
                 <dd>
                 	<div class="left" style="width: 100px;padding-left: 10px;">
-                		<ul>
-                			<li data-image_type_id="2520" class="hy-sl-txt hy-sl-image_type_id hy-sl-selected">
-                				<div class="hy-sl-set"><a href="javascript:void(0);" title="ID: 2520">厂商橱窗</a><i class="hy-sl-check"></i></div>
-                				<div class="image-num">5</div></li><li data-image_type_id="2520" class="hy-sl-txt hy-sl-image_type_id hy-sl-selected"><div class="hy-sl-set"><a href="javascript:void(0);" title="ID: 2520">厂商橱窗</a><i class="hy-sl-check"></i></div><div class="image-num">5</div></li>
+                		<ul class="hy-sl-list-inline hy-sl-vertical">
+                			<li class="hy-sl-txt hy-sl-selected" data-id="2500">
+                				<div class="hy-sl-set">
+                					<a href="javascript:void(0);">厂商橱窗</a>
+                					<i class="hy-sl-check"></i>
+                				</div>
+                				<div class="image-num"><?php echo count($info['pdt_picture']);?></div>
+                			</li>
+                			<li class="hy-sl-txt" data-id="2510">
+                				<div class="hy-sl-set">
+                					<a href="javascript:void(0);">厂素材</a>
+                					<i class="hy-sl-check"></i>
+                				</div>
+                				<div class="image-num"><?php echo count($info['desc_picture']);?></div>
+                			</li>
                 		</ul>
                 	</div>
                 	<div class="right spu-image" style="width: calc(100% - 100px);">
-                		<div class="pic-wrap">
+                		<div class="pic-wrap" data-id="2500">
                 			<?php foreach ($info['pdt_picture'] as $key=>$value){?>
                 			<div class="item">
                 				<div class="pic-thumb">
@@ -81,13 +76,88 @@
                 			</div>
                 			<?php }?>
                 		</div>
+                		<div class="pic-wrap" data-id="2510" style="display: none;">
+                			<?php foreach ($info['desc_picture'] as $key=>$value){?>
+                			<div class="item">
+                				<div class="pic-thumb">
+                					<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
+                				</div>
+                				<div class="image-left-tips">
+                					<span class="image-selected">
+                						<input type="checkbox">
+                					</span>
+                				</div>
+                				<div class="num"><?php echo $key+1;?></div>
+                				<div class="image-bottom-tips">
+                                    <button class="btn btn-xs btn-primary set-spu-cover" type="button">SPU</button>
+                                    <button class="btn btn-xs btn-success set-sku-cover" type="button">SKU</button>
+                                    <button class="btn btn-xs btn-default view-large-image" type="button">查看</button>
+                                </div>
+                			</div>
+                			<?php }?>
+                		</div>
                 	</div>
                 </dd>
             </dl>
+            <dl class="field-row">
+                <dt class="title-line"><strong class="must">*</strong>产品SKU：</dt>
+                <dd>
+                	<table class="table table-bordered">
+                		<thead>
+                			<tr>
+                				<th width="60">封面图</th>
+                				<th width="50">使用</th>
+                				<th width="100">采购价(RMB)</th>
+                				<th width="150">供应商SKU</th>
+                				<th width="80">库存</th>
+                				<th width="60">单位</th>
+                				<th width="80">重量(g)</th>
+                				<th width="80">长度(cm)</th>
+                				<th width="80">宽度(cm)</th>
+                				<th width="80">高度(cm)</th>
+                			</tr>
+                		</thead>
+                		<tbody>
+	                		<?php foreach($info['sku'] as $key=>$value){?>
+	                		<tr>
+	                			<td>
+	                				<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload">
+	                			</td>
+	                			<td></td>
+	                			<td><?php echo $value['price'];?></td>
+	                			<td>
+	                				<?php $tmpAttr = [];
+	                				foreach($value['pvs'] as $ak=>$av) {
+	                					$tmpAttr[] = $info['attr'][$ak]['value'][$av]['name'];
+	                				}?>
+	                				<span title="SKU属性"><?php echo implode('; ', $tmpAttr);?></span>
+	                				<br>
+	                				<span title="SKUID"><?php echo $key;?></span>
+	                			</td>
+	                			<td><?php echo $value['stock'];?></td>
+	                			<td>
+	                				<select name="type" class="form-control">
+	                					<option value="0">--</option>
+	                					<option value="1">件</option>
+	                					<option value="2">个</option>
+	                					<option value="3">套</option>
+	                					<option value="4">打</option>
+	                					<option value="5">箱</option>
+	                				</select>
+	                			</td>
+	                			<td></td>
+	                			<td></td>
+	                			<td></td>
+	                			<td></td>
+	                		</tr>
+	                		<?php }?>
+                		</tbody>
+                	</table>
+                </dd>
+            </dl>
 		</form>
-		
 	</div>
-	<div class="right" style="width: 400px;">
+	<div class="left" style="width: 400px;">
 		<div class="supplier-info-content">
 			<h4>供应商基本信息</h4>
 			<dl class="field-row">
@@ -102,6 +172,13 @@
 				<dd>
 					<a href="https://<?php echo $shopInfo['url'];?>" target="_blank"><?php echo $shopInfo['url'];?></a>
 					<a href="https://<?php echo $shopInfo['url'];?>" target="_blank" class="glyphicon glyphicon-link"></a>
+				</dd>
+			</dl>
+			<dl class="field-row">
+				<dt class="title-line">货号：</dt>
+				<dd>
+					<a href="<?php echo $info['url'];?>" target="_blank"><?php echo $info['purchase_channel_id'].' - '.$info['item_id'];?></a>
+					<a href="<?php echo $info['url'];?>" target="_blank" class="glyphicon glyphicon-link"></a>
 				</dd>
 			</dl>
 			<table class="table table-bordered">
@@ -127,3 +204,31 @@
 		</div>
 	</div>
 </div>
+<div class="s-modal change-category-modal">
+	<div class="content">
+		<p><span>分类修改</span></p>
+		<div class="form-horizontal">
+			<div class="input-group">
+	            <div class="input-group-addon"><span>品类：</span></div>
+	            <select name="root_category_id" class="form-control">
+	            	<option value="0">请选择品类</option>
+	            	<?php foreach($cateList as $value){
+	            		if ($value['parent_id'] == 0){?>
+	            	<option value="<?php echo $value['cate_id'];?>"><?php echo $value['name'];?></option>
+	            	<?php }} ?>
+	            </select>
+	        </div>
+	        <div class="input-group">
+	            <div class="input-group-addon"><span>分类：</span></div>
+	            <select name="category_id" class="form-control">
+	            	<option value="0">请先选择品类</option>
+	            </select>
+	        </div>
+		</div>
+		<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
+	</div>
+	<i class="glyphicon glyphicon-remove"></i>
+</div>
+<script>
+const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;
+</script>

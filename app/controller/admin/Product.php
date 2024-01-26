@@ -201,10 +201,15 @@ class Product extends AdminBase
 		$attrVs = attr()->valueMap()->getMapList($attrVs);
 		$attrVs = array_column($attrVs, null, 'name');
 
+		$siteList = site()->getListData(['site_id'=>['>', 80]], 'site_id,name');
+		$cateList = category()->getListFormat(false);
+
 		$this->assign('attrNs', $attrNs);
 		$this->assign('attrVs', $attrVs);
 		$this->assign('info', $info);
 		$this->assign('shopInfo', $shopInfo);
+		$this->assign('siteList', $siteList);
+		$this->assign('cateList', $cateList);
 		$this->view();
 	}
 
@@ -264,7 +269,7 @@ class Product extends AdminBase
 			}
 			$siteCate = $cateArr[$info['site_id']];
 
-			$info['category'] = array_reverse($category->getParentCategoryById($info['cate_id']));
+			$info['category'] = array_reverse($category->pCate($info['cate_id']));
 
 			$tempArr = [];
 			foreach ($info['desc'] as $value) {

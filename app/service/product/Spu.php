@@ -212,7 +212,7 @@ class Spu extends Base
 		$info = $this->loadData($spuId);
 		if (empty($info)) return false;
 		//分类
-		$info['category'] = array_reverse(make('app/service/category/Category')->getParentCategoryById($info['cate_id']));
+		$info['category'] = array_reverse(make('app/service/category/Category')->pCate($info['cate_id']));
 		//SpuData
 		$info['data'] = make('app/service/product/SpuData')->loadData($spuId);
 		$info['shop'] = make('app/service/supplier/Shop')->loadData($info['data']['shop_id']);

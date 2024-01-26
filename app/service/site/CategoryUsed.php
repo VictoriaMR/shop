@@ -18,7 +18,7 @@ class CategoryUsed extends Base
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 		}
 		foreach ($list as $key => $value) {
-			$value['parent'] = array_reverse($cateService->getParentCategoryById($value['cate_id'], false));
+			$value['parent'] = array_reverse($cateService->pCate($value['cate_id'], false));
 			$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
 			$list[$key] = $value;
 		}

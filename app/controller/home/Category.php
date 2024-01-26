@@ -44,7 +44,7 @@ class Category extends HomeBase
 			$this->assign('_keyword', $lanArr[1]??distT('_keyword', ['name'=>$cateInfo['name']]));
 			$this->assign('_desc', $lanArr[2]??distT('_desc', ['name'=>$cateInfo['name']]));
 			//父级面包屑导航
-			$cateParent = $category->getParentCategoryById($cateId);
+			$cateParent = $category->pCate($cateId);
 			$cateParent = array_reverse($cateParent);
 			if ($lanId == 1) {
 				$lanArr = array_column($cateParent, 'name_en', 'cate_id');
@@ -65,7 +65,7 @@ class Category extends HomeBase
 			}
 		}
 		//子集
-		$cateSon = $category->getSubCategoryById($cateId ? $cateId : 101, !$cateId);
+		$cateSon = $category->sCate($cateId ? $cateId : 101, !$cateId);
 		foreach ($cateSon as $key=>$value) {
 			if (!$value['is_show']) {
 				unset($cateSon[$key]);
