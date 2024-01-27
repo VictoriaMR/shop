@@ -33,12 +33,12 @@
 #add-product-page .field-row dd input {
     width: 100%;
 }
-#add-product-page .supplier-info-content {
+#add-product-page .info-content {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-#add-product-page .right h4 {
+#add-product-page h4 {
     margin-bottom: 10px;
     font-weight: 500;
     font-size: 18px;
@@ -129,6 +129,9 @@
     bottom: 0px;
     transition: bottom 0.3s;
 }
+.image-bottom-tips:hover {
+    bottom: 0px;
+}
 .pic-wrap .item .num {
     position: absolute;
     background: red;
@@ -166,6 +169,9 @@
     position: absolute;
     top: 5px;
     right: 5px;
+}
+.s-modal .content {
+    margin-bottom: 10px;
 }
 .s-modal .content p {
     margin-bottom: 5px;
@@ -263,4 +269,21 @@
     line-height: 16px;
     text-align: center;
     color: #fff;
+}
+.batch-btn {
+    cursor: pointer;
+    user-select: none;
+}
+#sku-list .success {
+    color: #4cae4c;
+}
+#sku-list .error {
+    color: #e7502b;
+}
+.desc-info-content .item {
+    margin-bottom: 8px;
+}
+.desc-info-content .item input {
+    display: inline-block;
+    width: calc((100% - 40px)/2);
 }

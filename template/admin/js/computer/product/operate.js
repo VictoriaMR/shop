@@ -20,7 +20,7 @@ const OPERATE = {
 								</div>`;
 				}
 			}
-			let html = `<form class="mapping-popper s-modal">
+			let html = `<div class="mapping-popper s-modal">
 							<div class="content">
 								<p>
 									<span>`+name+`</span>
@@ -28,7 +28,7 @@ const OPERATE = {
 									<input type="hidden" name="type" value="`+type+`" />
 									<i class="glyphicon glyphicon-random"></i>
 								</p>
-								<div class="map-content">
+								<div class="content">
  									<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
  								</div>
  								<div class="add-map-content">`+extHtml+`</div>	
@@ -39,7 +39,7 @@ const OPERATE = {
 			html += `<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
 				</div>
 				<i class="glyphicon glyphicon-remove"></i>
-			</form>`;
+			</div>`;
 			$('.mapping-popper').remove();
 			$('body').append(html);
 		});
@@ -104,6 +104,67 @@ const OPERATE = {
 			}
 			$(this).addClass('hy-sl-selected').siblings().removeClass('hy-sl-selected');
 			$('.pic-wrap[data-id="'+$(this).data('id')+'"]').show().siblings().hide();
+		});
+		// 批量修改弹窗
+		$('.batch-btn').on('dblclick', function(){
+			const type = $(this).data('type');
+			let html = `<div class="batch-edit-modal s-modal">
+							<input type="hidden" name="type" value="`+type+`">
+							<div class="content">`;
+								
+			switch (type) {
+				case 'unit':
+					html += `<p>
+								<span>单位</span>
+							</p>
+							<div class="content">
+								<select name="`+type+`" class="form-control">
+                					<option value="0">--</option>
+                					<option value="1">件</option>
+                					<option value="2">个</option>
+                					<option value="3">套</option>
+                					<option value="4">打</option>
+                					<option value="5">箱</option>
+                				</select>
+							</div>`;
+					break;
+				default:
+					let name = '';
+					if (type == 'weight') {
+						name = '重量(g)';
+					} else if (type == 'length') {
+						name = '长度(cm)';
+					} else if (type == 'width') {
+						name = '宽度(cm)';
+					} else if (type == 'hight') {
+						name = '高度(cm)';
+					}
+					html += `<p>
+							<span>`+name+`</span>
+						</p>
+						<div class="content">
+							<input class="form-control" type="text" name="`+type+`" value="" placeholder="`+name+`"/>
+						</div>`;
+					break;
+			}
+			html += `<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
+				</div>
+				<i class="glyphicon glyphicon-remove"></i>
+			</div>`;
+			$('.batch-edit-modal').remove();
+			$('body').append(html);
+		});
+		// 批量确认
+		$('body').on('click', '.batch-edit-modal .btn-save', function(){
+			const obj = $(this).parents('.batch-edit-modal');
+			const type = obj.find('[name="type"]').val();
+			const value = obj.find('[name="'+type+'"]').val();
+			$('#sku-list .'+type).val(value);
+			obj.hide();
+		});
+		// 描述删除
+		$('.desc-info-content .glyphicon-remove').on('click', function(){
+			$(this).parents('.item').remove();
 		});
 	},
 	initCate: function(pid) {
