@@ -44,6 +44,14 @@ var CRAWLER = {
                 if (g_config && g_config.idata) {
                     _this.getTaobao2(callback);
                 } else {
+                    //查询请求池是否有数据
+                    let tmp = _this.getResponse('pcdetail.data.get');
+                    if (tmp) {
+                        _this.baseInfo = tmp;
+                        _this.getTaobao1(callback);
+                        return false;
+                    }
+                    // api请求数据
                     const cookie = _this.getCookie('_m_h5_tk');
                     if (!cookie) {
                         callback(-1, {}, 'cookie异常');
@@ -321,19 +329,43 @@ var CRAWLER = {
         }
         //描述图片
         ret_data.desc_picture = [];
-        obj = document.querySelectorAll('.descV8-container .descV8-singleImage>img');
-        for (var i=0; i<obj.length; i++) {
-            let url = '';
-            if (obj[i].getAttribute('data-src')) {
-                url = obj[i].getAttribute('data-src');
-            } else {
-                url = obj[i].src;
+        const internalId = setInterval(function(){
+            let tmp = _this.getResponse('detail.getDwdetailDesc');
+            if (tmp) {
+                clearInterval(internalId);
+                if (tmp && tmp.components && tmp.components.componentData) {
+                    if (tmp.components.componentData.desc_richtext_pc) {
+                        tmp = tmp.components.componentData.desc_richtext_pc.model.text.match(/(?<=src=[\'\"])([^\'\"]*)(?=[\'\"])/g);
+                        for (let i=0; i<tmp.length; i++) {
+                            if (tmp[i].indexOf('img.alicdn.com') > -1) {
+                                ret_data.desc_picture.push(tmp[i]);
+                            }
+                        }
+                    } else {
+                        for (let i in tmp.components.componentData) {
+                            if (tmp.components.componentData[i] && tmp.components.componentData[i].indexOf('img.alicdn.com') > -1) {
+                                ret_data.desc_picture.push(tmp.components.componentData[i]);
+                            }
+                        }
+                    }
+                }
+                if (ret_data.desc_picture.length == 0) {
+                    obj = document.querySelectorAll('.descV8-singleImage>img');
+                    for (var i=0; i<obj.length; i++) {
+                        let url = '';
+                        if (obj[i].getAttribute('data-src')) {
+                            url = obj[i].getAttribute('data-src');
+                        } else {
+                            url = obj[i].src;
+                        }
+                        if (url.indexOf('img.alicdn.com') >= 0) {
+                            ret_data.desc_picture.push(url);
+                        }
+                    }
+                }
+                callback(0, ret_data, '获取成功!');
             }
-            if (url.indexOf('img.alicdn.com') >= 0) {
-                ret_data.desc_picture.push(url);
-            }
-        }
-        callback(0, ret_data, '获取成功!');
+        }, 100);
     },
     getTaobao2: function(callback) {
         const _this = this;
@@ -718,5 +750,15 @@ var CRAWLER = {
             w = c(w, s);
         var O = m(t) + m(u) + m(v) + m(w);
         return O.toLowerCase()
+    },
+    getResponse: function(key) {
+        for (let i=0; i<window.customerAjaxRespone.length; i++) {
+            if (window.customerAjaxRespone[i] && window.customerAjaxRespone[i].api && window.customerAjaxRespone[i].api.indexOf(key) > -1) {
+                if (JSON.stringify(window.customerAjaxRespone[i].data) != '{}') {
+                    return window.customerAjaxRespone[i].data;
+                }
+            }
+        }
+        return false;
     }
 };

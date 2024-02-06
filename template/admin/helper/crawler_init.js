@@ -227,13 +227,13 @@ const CRAWLERINIt = {
 							</tr>
 						`;
 			for (var i in data.sku) {
-				var skuAttr = '';
+				var skuAttr = new Array();
 				for (var j in data.sku[i].pvs) {
-					skuAttr += data.attr[j].value[data.sku[i].pvs[j]].name+'; ';
+					skuAttr.push(data.attr[j].value[data.sku[i].pvs[j]].name);
 				}
 				skuAttr 
 				html += `<tr>
-							<td>`+skuAttr+`</td>
+							<td>`+skuAttr.join(';')+`</td>
 							<td>`+data.sku[i].price+`</td>
 							<td>`+data.sku[i].stock+`</td>
 						</tr>`;

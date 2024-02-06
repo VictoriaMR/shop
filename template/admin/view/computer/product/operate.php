@@ -34,27 +34,27 @@
 			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>产品图片：</dt>
 				<dd>
-					<div class="left" style="width: 100px;padding-left: 10px;">
+					<div class="left" style="width: 100px;padding-right: 10px;">
 						<ul class="hy-sl-list-inline hy-sl-vertical">
 							<li class="hy-sl-txt hy-sl-selected" data-id="2500">
 								<div class="hy-sl-set">
 									<a href="javascript:void(0);">厂商橱窗</a>
 									<i class="hy-sl-check"></i>
 								</div>
-								<div class="image-num"><?php echo count($info['pdt_picture']);?></div>
+								<div class="image-num"><?php echo count($info['pdt_picture'] ?? []);?></div>
 							</li>
 							<li class="hy-sl-txt" data-id="2510">
 								<div class="hy-sl-set">
 									<a href="javascript:void(0);">厂素材</a>
 									<i class="hy-sl-check"></i>
 								</div>
-								<div class="image-num"><?php echo count($info['desc_picture']);?></div>
+								<div class="image-num"><?php echo count($info['desc_picture'] ?? []);?></div>
 							</li>
 						</ul>
 					</div>
 					<div class="right spu-image" style="width: calc(100% - 100px);">
 						<div class="pic-wrap" data-id="2500">
-							<?php foreach ($info['pdt_picture'] as $key=>$value){?>
+							<?php foreach ($info['pdt_picture'] ?? [] as $key=>$value){?>
 							<div class="item">
 								<div class="pic-thumb">
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
@@ -77,7 +77,7 @@
 							<?php }?>
 						</div>
 						<div class="pic-wrap" data-id="2510" style="display: none;">
-							<?php foreach ($info['desc_picture'] as $key=>$value){?>
+							<?php foreach ($info['desc_picture'] ?? [] as $key=>$value){?>
 							<div class="item">
 								<div class="pic-thumb">
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
