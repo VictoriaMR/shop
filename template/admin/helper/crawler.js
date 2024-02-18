@@ -343,8 +343,16 @@ var CRAWLER = {
                         }
                     } else {
                         for (let i in tmp.components.componentData) {
-                            if (tmp.components.componentData[i] && tmp.components.componentData[i].indexOf('img.alicdn.com') > -1) {
-                                ret_data.desc_picture.push(tmp.components.componentData[i]);
+                            if (i.indexOf('detail_pic') >=0 && tmp.components.componentData[i]) {
+                                let pic = '';
+                                if (typeof tmp.components.componentData[i] == 'object') {
+                                    pic = tmp.components.componentData[i].model.picUrl;
+                                } else {
+                                    pic = tmp.components.componentData[i];
+                                }
+                                if (pic.indexOf('img.alicdn.com') > -1) {
+                                    ret_data.desc_picture.push(pic);
+                                }
                             }
                         }
                     }

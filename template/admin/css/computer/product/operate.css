@@ -162,7 +162,7 @@
     top: calc(50% - 125px);
     z-index: 99;
     border-radius: 8px;
-    width: 250px;
+    width: 400px;
     text-align: right;
 }
 .s-modal .glyphicon-remove {
