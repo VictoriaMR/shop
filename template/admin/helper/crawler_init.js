@@ -101,7 +101,6 @@ const CRAWLERINIt = {
 		HELPERINIT.request({action: 'getCache', cache_key: 'helper_all_data_cache'}, function(res) {
 			if (res.code == 200) {
 				_this.cate_list = res.data.cate_list;
-				_this.site_list = res.data.site_list;
 				CRAWLER.init(function(code, data, msg){
 					if (code === 0) {
 						_this.crawlerPage(data);
@@ -133,16 +132,6 @@ const CRAWLERINIt = {
 							<div class="label">产品ID:</div>
 							<div class="fill_in">
 								<input type="text" name="item_id" value="` + data.item_id + `" />
-							</div>
-							<div class="clear"></div>
-						</div>
-						<div class="productAttLine">
-							<div class="label">站点:</div>
-							<div class="fill_in">
-								<select name="site_id">
-									<option value="">请选择站点</option>
-									` + _this.getSiteHtml() + `
-								</select>
 							</div>
 							<div class="clear"></div>
 						</div>
@@ -311,15 +300,6 @@ const CRAWLERINIt = {
 				document.querySelector('#crawler-page select[name="cate_id"]').innerHTML=html;
 			}
 		}
-	},
-	getSiteHtml: function() {
-		var html = '';
-		if (this.site_list) {
-			for (var i = 0; i < this.site_list.length; i++) {
-				html += '<option value="'+this.site_list[i].site_id+'">'+this.site_list[i].name+'</option>';
-			}	
-		}
-		return html;
 	},
 	getCategoryHtml: function(pid) {
 		var html = '';

@@ -5,17 +5,6 @@
 			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
 			<input type="hidden" name="cate_id" value="<?php echo $info['cate_id'];?>">
 			<dl class="field-row">
-				<dt class="title-line"><strong class="must">*</strong>站点：</dt>
-				<dd class="subclass">
-					<select name="site_id" class="form-control" style="width:200px">
-						<option value="0">请选择站点</option>
-						<?php foreach($siteList ?? [] as $value){?>
-						<option value="<?php echo $value['site_id'];?>" <?php echo $info['site_id']==$value['site_id']?'selected':'';?>><?php echo $value['name'];?></option>
-						<?php }?>
-					</select>
-				</dd>
-			</dl>
-			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>产品分类：</dt>
 				<dd class="subclass">
 					<?php if ($info['cate_id']){

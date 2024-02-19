@@ -38,7 +38,6 @@ class Api extends AdminBase
 			'version' => version(),
 			'socket_domain' => domain().'socket.io/',
 			'action' => $this->_helperAction,
-			'site_list' => site()->getListData(['site_id'=>['>', 80]], 'site_id,name'),
 			'cate_list' => $tempArr,
 		];
 		$this->success($data);
