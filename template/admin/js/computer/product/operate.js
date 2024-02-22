@@ -20,7 +20,7 @@ const OPERATE = {
 								</div>`;
 				}
 			}
-			let html = `<div class="mapping-popper s-modal">
+			let html = `<form class="mapping-popper s-modal">
 							<div class="content">
 								<p>
 									<span>`+name+`</span>
@@ -36,11 +36,10 @@ const OPERATE = {
 			if (type == '2') {
 				html += `<button type="button" class="btn btn-info btn-sm btn-add" style="margin-right:10px;">新增映射</button>`;
 			}
-			html += `<button type="button" class="btn btn-success btn-sm btn-tmp-save" style="margin-right:10px;">临时保存</button>`;
 			html += `<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
 				</div>
 				<i class="glyphicon glyphicon-remove"></i>
-			</div>`;
+			</form>`;
 			$('.mapping-popper').remove();
 			$('body').append(html);
 		});
@@ -57,7 +56,6 @@ const OPERATE = {
 				return false;
 			}
 			const _thisobj = $(this);
-			const fromName = obj.find('p span').eq(0).text();
 			_thisobj.button('loading');
 			post('', obj.serializeArray(), function(res){
 				showTips(res);
@@ -162,9 +160,6 @@ const OPERATE = {
 			const value = obj.find('[name="'+type+'"]').val();
 			$('#sku-list .'+type).val(value);
 			obj.hide();
-		});
-		// 临时映射
-		$('body').on('click', '.batch-edit-modal .btn-tmp-save', function(){
 		});
 		// 描述删除
 		$('.desc-info-content .glyphicon-remove').on('click', function(){

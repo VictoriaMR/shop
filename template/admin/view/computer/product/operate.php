@@ -95,50 +95,45 @@
 						<thead>
 							<tr>
 								<th width="60">封面图</th>
-								<th width="50">使用</th>
-								<th width="100">采购价(RMB)</th>
-								<th width="130">供应商SKU</th>
-								<th width="130">映射属性</th>
+								<th width="60">采购价</th>
+								<th width="150">供应商SKU</th>
+								<th width="150">映射属性</th>
 								<th width="60">库存</th>
-								<th width="80" class="batch-btn" data-type="unit">
+								<th width="60" class="batch-btn" data-type="unit">
 									<span>单位</span>
 								</th>
-								<th width="80" class="batch-btn" data-type="weight">
+								<th width="60" class="batch-btn" data-type="weight">
 									<span>重量(g)</span>
 								</th>
-								<th width="80" class="batch-btn" data-type="length">
+								<th width="60" class="batch-btn" data-type="length">
 									<span>长度(cm)</span>
 								</th>
-								<th width="80" class="batch-btn" data-type="width">
+								<th width="60" class="batch-btn" data-type="width">
 									<span>宽度(cm)</span>
 								</th>
-								<th width="80" class="batch-btn" data-type="hight">
+								<th width="60" class="batch-btn" data-type="hight">
 									<span>高度(cm)</span>
 								</th>
 							</tr>
 						</thead>
 						<tbody>
-							<?php foreach($info['sku'] as $key=>$value){?>
-							<tr>
-								<td>
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload">
-								</td>
-								<td style="text-align: center;font-size: 20px;">
-									<?php $check=true;
-									foreach ($value['pvs'] as $pk=>$pv) {
-										$attrName = $info['attr'][$pk]['name'];
-										$attrValue = $info['attr'][$pk]['value'][$pv]['name'];
-										if (!isset($attrNs[$attrName])){
-											$check = false;
-											break;
-										}
-										if (!isset($attrVs[$attrValue])) {
-											$check = false;
-											break;
-										}
+							<?php foreach($info['sku'] as $key=>$value){
+								foreach ($value['pvs'] as $pk=>$pv) {
+									$attrName = $info['attr'][$pk]['name'];
+									$attrValue = $info['attr'][$pk]['value'][$pv]['name'];
+									if (!isset($attrNs[$attrName])){
+										$check = false;
+										break;
 									}
-									?>
-									<span class="glyphicon glyphicon-ok-circle" style="color:<?php echo $check?'#4cae4c':'gray';?>"></span>
+									if (!isset($attrVs[$attrValue])) {
+										$check = false;
+										break;
+									}
+								}
+							?>
+							<tr>
+								<td class="<?php echo $check?'check':'';?>">
+									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload">
 								</td>
 								<td><?php echo $value['price'];?></td>
 								<td>

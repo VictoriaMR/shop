@@ -287,3 +287,6 @@
     display: inline-block;
     width: calc((100% - 40px)/2);
 }
+.check img {
+    border: 2px solid #4cae4c;
+}
