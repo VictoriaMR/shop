@@ -19,7 +19,7 @@
 				<img id="refresh" class="left pointer ml10" height="34" width="80" src="<?php echo adminUrl('login/loginCode');?>" onclick="document.getElementById('refresh').src='<?php echo adminUrl('login/loginCode', ['is_ajax'=>1]);?>'" title="看不清？换一张">
 				<div class="clear"></div>
 			</div>
-			<button id="login-btn" type="button" class="btn w100 mt20">登录</button>
+			<button id="login-btn" class="btn w100 mt20">登录</button>
 		</form>
 	</div>
 </div>

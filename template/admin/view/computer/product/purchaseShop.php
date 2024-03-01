@@ -40,7 +40,7 @@
                 <td><?php echo $value['purchase_shop_id'];?></td>
                 <td><?php echo $channelList[$value['purchase_channel_id']]??'--';?></td>
                 <td><?php echo $value['unique_id'];?></td>
-                <td><a href="https://<?php echo $value['url'];?>" target="_blank"><?php echo $value['name']?:'--';?></a></td>
+                <td><span class="glyphicon glyphicon-link"></span> <a href="https://<?php echo $value['url'];?>" target="_blank"><?php echo $value['name']?:'--';?></a></td>
                 <td><?php echo $value['product_count']?:'--';?></td>
                 <td><?php echo purchase()->shop()->shopInfo($value, false);?></td>
                 <td>

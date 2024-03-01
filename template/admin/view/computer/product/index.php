@@ -13,15 +13,6 @@
 			</select>
 		</div>
 		<div class="form-group">
-			<select class="form-control" name="site">
-				<option value="-1">请选择站点</option>
-				<?php if (!empty($siteList)) {
-					foreach ($siteList as $key => $value) {?>
-				<option <?php if ($site==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value['name'];?></option>
-				<?php } }?>
-			</select>
-		</div>
-		<div class="form-group">
 			<select class="form-control" name="cate">
 				<option value="-1">请选择分类</option>
 			</select>
@@ -48,9 +39,7 @@
 				<div class="name-content f600">
 					<div class="spu-name e2 f400"><?php echo $value['name'];?></div>
 					<div>
-						<div class="w50 left e1">分类: <?php echo $cateArr[$value['cate_id']] ?? '--';?></div>
-						<div class="w50 right e1">站点: <?php echo $siteList[$value['site_id']]['name'];?></div>
-						<div class="clear"></div>
+						<div class="e1">分类: <?php echo $cateArr[$value['cate_id']] ?? '--';?></div>
 					</div>
 					<div class="e1">价格: <?php echo $value['min_price'] < $value['max_price'] ? '￥'.$value['min_price'].' - ￥'.$value['max_price'] : '￥'.$value['min_price'];?></div>
 					<div>

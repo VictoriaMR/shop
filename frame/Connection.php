@@ -7,13 +7,11 @@ final class Connection
 	private $_connect;
 	private $_selectdb;
 
-	private function connect($host, $username, $password, $port='3306', $database='', $charset='utf8')
+	private function connect($host, $username, $password, $port='3306', $database='')
 	{
 		$this->_connect = new \mysqli($host, $username, $password, $database, $port);
 		if ($this->_connect->connect_error) {
 			$this->_connect = false;
-		} else {
-			$this->_connect->set_charset($charset);
 		}
 	}
 
@@ -31,14 +29,12 @@ final class Connection
 				$config['password'],
 				$config['port'] ?? '3306',
 				$config['database'],
-				$config['charset'] ?? 'utf8'
 			);
 			$this->_selectdb = $config['database'];
 		}
 		if ($this->_connect && $this->_selectdb != $config['database']) {
 			$this->_connect->select_db($config['database']);
 			$this->_selectdb = $config['database'];
-			$config['charset'] && $this->_connect->set_charset($config['charset']);
 		}
 		return $this->_connect;
 	}

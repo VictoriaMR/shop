@@ -38,9 +38,6 @@ class Product extends AdminBase
 		//分类
 		$cateList = make('app/service/category/Category')->getListFormat(false);
 		$cateArr = array_column($cateList, 'name', 'cate_id');
-		//站点
-		$siteList = make('app/service/site/Site')->getListData(['site_id'=>['>=', 80]], 'site_id,name,cate_id');
-		$siteList = array_column($siteList, null, 'site_id');
 		$tempArr = [];
 		$cateId = 0;
 		foreach ($cateList as $value) {
@@ -51,9 +48,6 @@ class Product extends AdminBase
 			$tempArr[$cateId][] = $value;
 		}
 		$cateList = [];
-		foreach ($siteList as $key=>$value) {
-			$cateList[$key] = $tempArr[$value['cate_id']] ?? [];
-		}
 		$where = [];
 		if ($status > -1) {
 			$where['status'] = $status;
@@ -83,7 +77,6 @@ class Product extends AdminBase
 		$this->assign('status', $status);
 		$this->assign('statusList', $statusList);
 		$this->assign('site', $site);
-		$this->assign('siteList', $siteList);
 		$this->assign('cate', $cate);
 		$this->assign('cateList', $cateList);
 		$this->assign('cateArr', $cateArr);

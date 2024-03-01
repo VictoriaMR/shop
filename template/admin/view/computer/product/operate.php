@@ -117,7 +117,9 @@
 							</tr>
 						</thead>
 						<tbody>
-							<?php foreach($info['sku'] as $key=>$value){
+							<?php
+							foreach($info['sku'] as $key=>$value){
+								$check=true;
 								foreach ($value['pvs'] as $pk=>$pv) {
 									$attrName = $info['attr'][$pk]['name'];
 									$attrValue = $info['attr'][$pk]['value'][$pv]['name'];
