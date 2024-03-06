@@ -235,7 +235,7 @@
 				</dl>
 			</div>
 			<div class="attr-info-content mt12">
-				<h4>属性</h4>
+				<h4>属性映射</h4>
 				<table class="table table-bordered">
 					<?php foreach ($info['attr'] as $ak=>$av){?>
 					<tr>
@@ -258,7 +258,7 @@
 				</table>
 			</div>
 			<div class="desc-info-content mt12">
-				<h4>描述</h4>
+				<h4>描述&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-success">添加描述</button></h4>
 				<?php foreach($info['detail'] as $value){?>
 				<div class="item">
 					<input type="text" class="form-control" name="desc[name][]" value="<?php echo $value['name'];?>">
