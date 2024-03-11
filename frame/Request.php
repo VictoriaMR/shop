@@ -69,19 +69,6 @@ class Request
 		return '';
 	}
 
-	public function filterUrl($str, $c='', $id='', $page='')
-	{
-		if (empty($str)) return '';
-		$str = preg_replace('/[^-A-Za-z0-9 ]/', '', $str);
-		$str = preg_replace('/( ){2,}/', ' ', $str);
-		$str = str_replace(' ', '-', $str);
-		$str = str_replace(['---', '--'], '-', $str);
-		$str = strtolower($str);
-		$str .= '-'.$c.'-'.$id;
-		if (!empty($page)) $str .= '-p'.$page;
-		return config('env.domain()').$str.(empty(config('env.TEMPLATE_SUFFIX')) ? '' : '.'.config('env.TEMPLATE_SUFFIX'));
-	}
-
 	public function getBrowser($agent='')
 	{
 		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';

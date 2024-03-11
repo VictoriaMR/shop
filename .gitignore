@@ -1,10 +1,14 @@
 /.idea
-/config/env.php
+/config/baidu.php
 /config/domain.php
+/config/database.php
+/config/redis.php
+/config/socket.php
+/config/task.php
+/config/token.php
 /vendor
 /runtime/*
 /storage/*
-/.env
 /composer.lock
 /template/*/static
 /template/*/sitemap

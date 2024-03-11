@@ -1,2 +1,5 @@
 <?php
-return [];
+return [
+	'BAIDU_APPID' => '20190522000300560',
+	'BAIDU_SECRET_KEY' => 'tU7vX7MgPzDbFC29W94n',
+];
