@@ -1,4 +1,5 @@
 $(function(){
+	$('#login-page [name="mobile"]').val(localStorage.getItem('login_number'));
 	$('#login-btn').on('click', function(){
 		var _thisObj = $(this);
 		var mobile = $('input[name="mobile"]').val();
@@ -20,6 +21,7 @@ $(function(){
 		post('/login/login', {mobile:mobile,password:password,code:code}, function(res) {
 			console.log(res, 'res')
 			if (res.code === 200) {
+				localStorage.setItem('login_number', mobile);
 				window.location.href = res.data.url;
 			} else {
 				errorTips(res.msg);

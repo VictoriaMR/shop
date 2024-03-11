@@ -96,7 +96,7 @@ function isCli(){
 	return defined('IS_CLI');
 }
 function isDebug(){
-	return config('env', 'APP_DEBUG');
+	return App::get('base_info', 'debug');
 }
 function isAdmin(){
 	return siteId() == 80;

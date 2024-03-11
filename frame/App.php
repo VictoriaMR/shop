@@ -86,7 +86,7 @@ class App
 		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
 		if (isDebug()) {
 			make('frame/Debug')->runlog();
-			self::get('base_info', 'debug') && !isCli() && !isAjax() && make('frame/Debug')->init();
+			!isCli() && !isAjax() && make('frame/Debug')->init();
 		}
 		exit();
 	}
