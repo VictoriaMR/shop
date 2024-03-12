@@ -41,7 +41,7 @@ const INDEX = {
 		$('#index-page .left-content .nav-son-content li').on('click', function(){
 			$(this).addClass('select').siblings().removeClass('select');
 			var src = $(this).data('src');
-			$('#href-to-iframe').attr('src', src);
+			$('#href-to-iframe').attr('src', src+'?iframe=1');
 			post(URI+'Index/index', {opn: 'setLeft', key: 'last_url', value: src});
 		});
 		if ($('#index-page .left-content .auto-select').length > 0) {

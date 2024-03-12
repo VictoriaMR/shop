@@ -126,9 +126,9 @@ final class Query
 		return $this->find();
 	}
 
-	public function count()
+	public function count($where=[])
 	{
-		return $this->value('COUNT(*) AS core_count')['core_count'] + 0;
+		return $this->where($where)->value('COUNT(*) AS core_count')['core_count'] + 0;
 	}
 
 	public function max($field)

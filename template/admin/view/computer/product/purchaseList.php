@@ -30,7 +30,7 @@
         </div>
         <div class="clear"></div>
     </form>
-    <table class="table mt10" id="data-list">
+    <table class="table mt6" id="data-list">
         <tbody>
             <tr>
                 <th width="30">ID</th>
@@ -75,6 +75,7 @@
                 <td>
                     <?php if (in_array($value['status'], [0, 1])){?>
                     <a target="_blank" class="btn btn-info btn-xs" href="<?php echo $value['url'];?>"><?php echo $value['status']==0?'上传':'更新';?></a>
+                    <button class="btn btn-success btn-xs">编辑</button>
                     <?php if ($value['status'] == 1) {?>
                     <a class="btn btn-primary btn-xs" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_product_id']]);?>">配置</a>
                     <?php }?>

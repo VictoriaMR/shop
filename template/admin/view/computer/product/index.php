@@ -29,7 +29,7 @@
 </div>
 <div class="container-fluid">
 	<?php if (!empty($list)) { ?>
-	<div id="spu-list" class="w100 mt20">
+	<div id="spu-list" class="w100 mt6">
 		<?php foreach ($list as $value) { ?>
 		<div class="spu-item">
 			<a href="<?php echo adminUrl('product/detail', ['id'=>$value['spu_id']]);?>" class="block">

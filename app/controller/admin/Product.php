@@ -657,8 +657,10 @@ class Product extends AdminBase
 		if ($total > 0) {
 			$list = purchase()->shop()->getListData($where, '*', $page, $size, ['purchase_shop_id' => 'desc']);
 			$shopIds = array_unique(array_column($list, 'purchase_shop_id'));
-			$productCount = make('app/service/purchase/Product')->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
-			$productCount = array_column($productCount, 'c_count', 'purchase_shop_id');
+			if (!empty($shopIds)) {
+				$productCount = make('app/service/purchase/Product')->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
+				$productCount = array_column($productCount, 'c_count', 'purchase_shop_id');
+			}
 			foreach ($list as $key=>$value) {
 				$list[$key]['product_count'] = $productCount[$value['purchase_shop_id']] ?? 0;
 			}

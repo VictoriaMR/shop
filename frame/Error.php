@@ -52,6 +52,7 @@ class Error
 		} else {
 			$str = 'Error:'.$data['code'];
 		}
+		http_response_code(500);
 		if (isAjax()) {
 			header('Content-Type:application/json; charset=utf-8');
 			echo json_encode(['code'=>500, 'msg'=>$str], JSON_UNESCAPED_UNICODE);

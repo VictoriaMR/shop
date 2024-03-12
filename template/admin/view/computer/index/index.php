@@ -59,7 +59,7 @@
 			</div>
 		</div>
 		<div class="content-right" style="background: transparent url('<?php echo adminUrl('login/signature');?>') repeat;">
-			<iframe src="<?php echo $leftInfo['last_url']??'javascript:;';?>" id="href-to-iframe" width="100%" marginwidth="0" height="100%" marginheight="0" align="top" scrolling="Yes" frameborder="0" hspace="0" vspace="0"></iframe>
+			<iframe src="javascript:;" id="href-to-iframe" width="100%" marginwidth="0" height="100%" marginheight="0" align="top" scrolling="Yes" frameborder="0" hspace="0" vspace="0"></iframe>
 		</div>
 		<div class="claer"></div>
 	</div>

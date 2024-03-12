@@ -17,7 +17,7 @@
         </div>
         <div class="clear"></div>
     </form>
-    <table class="table mt10" id="data-list">
+    <table class="table mt6" id="data-list">
         <tbody>
             <tr>
                 <th width="30">ID</th>
@@ -30,7 +30,7 @@
             </tr>
             <?php if (empty($list)){ ?>
             <tr>
-                <td colspan="8">
+                <td colspan="7">
                     <div class="tc orange">暂无数据</div>
                 </td>
             </tr>

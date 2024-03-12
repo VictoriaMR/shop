@@ -3,7 +3,7 @@
     padding:0;
     box-sizing:border-box
 }
-body, input, textarea, select, button, td, th, p, div, span, ul, li, .normal {
+body, input, textarea, select, button, td, th, p, div, ul, li, .normal {
     font-family: 'Segoe UI', Helvetica, Arial, '宋体', sans-serif;
     font-size: 13px;
     color: #5f5f5f;
@@ -133,3 +133,4 @@ button{cursor: pointer;}
 .userAvatarInfo .avatarStyle, .userAvatarInfo .two {display: inline-block; vertical-align: top; font-size: 0;}
 .userAvatarInfo .two p {line-height: 18px; font-size: 12px;}
 .userAvatarInfo .avatarStyle:hover img {width: 120px; height: 120px; transition: 700ms;max-width: 120px;max-height: 120px}
+.container-fluid .form-inline .form-group {margin-bottom: 10px}
