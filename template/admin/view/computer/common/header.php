@@ -31,6 +31,16 @@
 	</div>
 </div>
 <?php } ?>
+<?php if (!empty(\App::$error)){?>
+<div class="container-fluid">
+	<div class="alert alert-danger"><?php echo implode(PHP_EOL, \App::$error);?></div>
+</div>
+<?php }?>
+<?php if (!empty(\App::$seccess)){?>
+<div class="container-fluid">
+	<div class="alert alert-success"><?php echo implode(PHP_EOL, \App::$seccess);?></div>
+</div>
+<?php }?>
 <?php if (!empty($_tag)) {?>
 <div class="container-fluid" style="margin-bottom: 15px;">
 	<ul class="nav nav-tabs">
@@ -42,4 +52,4 @@
 	</ul>
 	<div class="clear"></div>
 </div>
-<?php } ?>
+<?php }?>

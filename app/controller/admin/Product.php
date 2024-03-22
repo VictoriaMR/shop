@@ -176,32 +176,33 @@ class Product extends AdminBase
 		$id = iget('id/d', 0);
 		if ($id <= 0) {
 			\App::error('参数不正确');
-		}
-		$product = make('app/service/purchase/Product');
-		$info = purchase()->product()->getInfo($id);
-		if (empty($info['sku'])) {
-			\App::error('数据不存在, 请重新上传');
-		}
-		$shopInfo = purchase()->shop()->loadData($info['purchase_shop_id']);
-		// 映射属性名
-		$attrNs = attr()->nameMap()->getMapList(array_column($info['attr'], 'name'));
-		$attrNs = array_column($attrNs, null, 'name');
-		// 映射属性值
-		$attrVs = [];
-		foreach ($info['attr'] as $value) {
-			$attrVs = array_merge($attrVs, array_column($value['value'], 'name'));
-		}
-		$attrVs = attr()->valueMap()->getMapList($attrVs);
-		$attrVs = array_column($attrVs, null, 'name');
+		} else {
+			$info = purchase()->product()->getInfo($id);
+			if (empty($info['sku'])) {
+				\App::error('数据不存在, 请重新上传');
+			} else {
+				$shopInfo = purchase()->shop()->loadData($info['purchase_shop_id']);
+				// 映射属性名
+				$attrNs = attr()->nameMap()->getMapList(array_column($info['attr'], 'name'));
+				$attrNs = array_column($attrNs, null, 'name');
+				// 映射属性值
+				$attrVs = [];
+				foreach ($info['attr'] as $value) {
+					$attrVs = array_merge($attrVs, array_column($value['value'], 'name'));
+				}
+				$attrVs = attr()->valueMap()->getMapList($attrVs);
+				$attrVs = array_column($attrVs, null, 'name');
 
-		$siteList = site()->getListData(['site_id'=>['>', 80]], 'site_id,name');
-		$cateList = category()->getListFormat(false);
-		$this->assign('attrNs', $attrNs);
-		$this->assign('attrVs', $attrVs);
-		$this->assign('info', $info);
-		$this->assign('shopInfo', $shopInfo);
-		$this->assign('siteList', $siteList);
-		$this->assign('cateList', $cateList);
+				$siteList = site()->getListData(['site_id'=>['>', 80]], 'site_id,name');
+				$cateList = category()->getListFormat(false);
+				$this->assign('attrNs', $attrNs);
+				$this->assign('attrVs', $attrVs);
+				$this->assign('info', $info);
+				$this->assign('shopInfo', $shopInfo);
+				$this->assign('siteList', $siteList);
+				$this->assign('cateList', $cateList);	
+			}
+		}
 		$this->view();
 	}
 
@@ -243,8 +244,7 @@ class Product extends AdminBase
 			//spu状态
 			$statusList = $spuService->getStatusList();
 			//站点分类
-			$category = make('app/service/category/Category');
-			$cateArr = $category->getListFormat();
+			$cateArr = category()->getListFormat();
 			$siteArr = make('app/service/site/Site')->getListData([], 'site_id,name,cate_id');
 			$tempArr = [];
 			$cateId = 0;
@@ -261,7 +261,7 @@ class Product extends AdminBase
 			}
 			$siteCate = $cateArr[$info['site_id']];
 
-			$info['category'] = array_reverse($category->pCate($info['cate_id']));
+			$info['category'] = array_reverse(category()->pCate($info['cate_id']));
 
 			$tempArr = [];
 			foreach ($info['desc'] as $value) {

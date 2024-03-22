@@ -6,16 +6,16 @@ class Purchase
 {
     public function channel()
     {
-        return make('app/service/purchase/Channel');
+        return service('purchase/Channel');
     }
 
     public function product()
     {
-        return make('app/service/purchase/Product');
+        return service('purchase/Product');
     }
 
     public function shop()
     {
-        return make('app/service/purchase/Shop');
+        return service('purchase/Shop');
     }
 }

@@ -52,7 +52,10 @@ class Product extends Base
             return false;
         }
         $result = $this->getResult($info['purchase_channel_id'], $info['item_id']);
-        return array_merge($info, $result ?: []);
+        if (empty($result)) {
+            return false;
+        }
+        return array_merge($info, $result);
     }
 
     public function saveResult(int $channelId, int $itemId, array $data)

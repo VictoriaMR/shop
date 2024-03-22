@@ -23,29 +23,35 @@ function config($type, $name='', $default=''){
 function redirect($url=''){
 	header('Location:'.$url);exit();	
 }
-function make($name, $params=null, $static=true){
-	return \App::make($name, $params, $static);
+function make($name, $params=null){
+	return \App::make($name, $params);
+}
+function service($name, $params=null) {
+	return make('app/service/'.$name, $params);
+}
+function model($name, $params=null) {
+	return make('app/model/'.$name, $params);
 }
 function html(){
-	return \App::make('frame/Html');
+	return make('frame/Html');
 }
 function session(){
-	return \App::make('frame/Session');
+	return make('frame/Session');
 }
 function router(){
-	return \App::make('frame/Router');
+	return make('frame/Router');
 }
 function request(){
-	return \App::make('frame/Request');
+	return make('frame/Request');
 }
 function redis($db=0){
-	return \App::make('frame/Redis')->setDb($db);
+	return make('frame/Redis')->setDb($db);
 }
 function db($db=null){
-	return \App::make('frame/Query')->setDb($db);
+	return make('frame/Query')->setDb($db);
 }
 function page($size=0, $total=0){
-	return \App::make('frame/Paginator')->make($size, $total);
+	return make('frame/Paginator')->make($size, $total);
 }
 function url($name='', $param=[], $joint=true) {
     return router()->url($name, $param, $joint);
@@ -85,11 +91,11 @@ function isJson($string){
 	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
 }
 function isAjax(){
-	if (!defined('IS_AJAX')) define('IS_AJAX', \App::make('frame/Request')->isAjax());
+	if (!defined('IS_AJAX')) define('IS_AJAX', make('frame/Request')->isAjax());
 	return IS_AJAX;
 }
 function isMobile(){
-	if (!defined('IS_MOBILE')) define('IS_MOBILE', \App::make('frame/Request')->isMobile());
+	if (!defined('IS_MOBILE')) define('IS_MOBILE', make('frame/Request')->isMobile());
 	return IS_MOBILE;
 }
 function isCli(){
@@ -111,13 +117,13 @@ function type() {
 	return isAdmin()?'admin':'home';
 }
 function ipost($name='', $default=null){
-	return \App::make('frame/Request')->ipost($name, $default);
+	return make('frame/Request')->ipost($name, $default);
 }
 function iget($name='', $default=null){
-	return \App::make('frame/Request')->iget($name, $default);
+	return make('frame/Request')->iget($name, $default);
 }
 function input($name='', $default=null){
-	return \App::make('frame/Request')->input($name, $default);
+	return make('frame/Request')->input($name, $default);
 }
 function now($time=null){
 	return date('Y-m-d H:i:s', $time?$time:time());
@@ -222,7 +228,7 @@ function currencyId(){
 	return session()->get('site_currency_id', 'USD');
 }
 function uuId(){
-	return \App::make('frame/Cookie')->get('uuid');
+	return make('frame/Cookie')->get('uuid');
 }
 function hasZht($str){
 	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;
@@ -232,4 +238,19 @@ function createDir($dir) {
 		mkdir($dir, 0755, true);
 	}
 	return $dir;
+}
+function purchase() {
+    return service('purchase/Purchase');
+}
+function attr() {
+    return service('attr/Attr');
+}
+function site() {
+    return service('site/Site');
+}
+function category() {
+    return service('category/Category');
+}
+function product() {
+	return service('product/Product');
 }

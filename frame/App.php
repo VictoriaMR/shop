@@ -5,7 +5,8 @@ use frame\Container;
 class App
 {
 	private static $data = [];
-	private static $error = [];
+	public static $success = [];
+	public static $error = [];
 
 	public static function init()
 	{
@@ -13,7 +14,7 @@ class App
 		self::make('frame/Error')->register();
 	}
 
-	public static function make($abstract, $params=null, $static=true)
+	public static function make($abstract, $params=null)
 	{
 		$instance = self::get('autoload', $abstract);
 		if (!$instance) {
@@ -24,17 +25,14 @@ class App
 				$instance = $concrete($this);
 			} else {
 				$reflector = new \ReflectionClass($concrete);
-				if ($reflector->isInstantiable()) {
-					if (is_null($reflector->getConstructor())) {
-						$instance = $reflector->newInstance();
-					} else {
-						$instance = $reflector->newInstance($params);
-					}
+				!$reflector->isInstantiable() && throw new \Exception($concrete.' is not instantiable!');
+				if (is_null($reflector->getConstructor())) {
+					$instance = $reflector->newInstance();
 				} else {
-					throw new \Exception($concrete.' is not instantiable!', 1);
+					$instance = $reflector->newInstance($params);
 				}
 			}
-			$static && self::set('autoload', $instance, $abstract);
+			self::set('autoload', $instance, $abstract);
 		}
 		return $instance;
 	}
@@ -43,7 +41,7 @@ class App
 	{
 		$domain = $_SERVER['HTTP_HOST'] ?? '';
 		$info = config('domain', $domain);
-		if (empty($info)) throw new \Exception('domain: '.$domain.' was not exist!', 1);
+		!$info && throw new \Exception('domain: '.$domain.' was not exist!');
 		$info['domain'] = $domain;
 		self::set('base_info', $info);
 		//路由解析
@@ -53,20 +51,18 @@ class App
 		//执行方法
 		$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
 		$callArr = [$call, $info['func']];
-		if (is_callable($callArr)) {
-			self::make('app/middleware/VerifyToken')->handle($info);
-			call_user_func_array($callArr, []);
-		} else {
-			throw new \Exception('type '.$info['class'].', class '.$info['path'].', function '.$info['func'].' was not exist!', 1);
+		self::make('app/middleware/VerifyToken')->handle($info);
+		call_user_func_array($callArr, []);
+		// debug开启
+		if (isDebug()) {
+			make('frame/Debug')->runlog();
+			!isCli() && !isAjax() && !iget('iframe', false) && make('frame/Debug')->init();
 		}
-		self::runOver();
 	}
 
 	private static function autoload($abstract, $params=null)
 	{
-		$file = ROOT_PATH.strtr($abstract, '\\', DS).'.php';
-		if (is_file($file)) require $file;
-		else throw new \Exception($file.' to autoload '.$abstract.' was failed!', 1);
+		require(ROOT_PATH.strtr($abstract, '\\', DS).'.php');
 	}
 
 	public static function set($name, $value, $key=null)
@@ -79,16 +75,6 @@ class App
 	{
 		if (is_null($key)) return self::$data[$name] ?? null;
 		else return empty(self::$data[$name][$key]) ? null : self::$data[$name][$key];
-	}
-
-	public static function runOver()
-	{
-		if (function_exists('fastcgi_finish_request')) fastcgi_finish_request();
-		if (isDebug()) {
-			make('frame/Debug')->runlog();
-			!isCli() && !isAjax() && !iget('iframe', false) && make('frame/Debug')->init();
-		}
-		exit();
 	}
 
 	public static function setVersion($version)
