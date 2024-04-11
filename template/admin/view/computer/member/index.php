@@ -34,16 +34,15 @@
 	<table class="table table-hover mt20" id="data-list">
         <tbody>
 	        <tr>
-	            <th class="col-md-1">ID</th>
-	            <th class="col-md-1">头像</th>
-	            <th class="col-md-1">名称</th>
-	            <th class="col-md-1">昵称</th>
-	            <th class="col-md-1">手机</th>
-	            <th class="col-md-1">状态</th>
-	            <th class="col-md-1">邮箱</th>
-	            <th class="col-md-1">盐值</th>
-	            <th class="col-md-1">添加时间<br />更新时间</th>
-	            <th class="col-md-2">操作</th>
+	            <th width="50">ID</th>
+	            <th width="50">头像</th>
+	            <th width="100">名称</th>
+	            <th width="100">昵称</th>
+	            <th width="100">手机</th>
+	            <th width="50">状态</th>
+	            <th width="100">邮箱</th>
+	            <th width="120">添加时间<br />更新时间</th>
+	            <th width="100">操作</th>
 	        </tr>
         	<?php if (empty($list)){ ?>
         	<tr>
@@ -54,24 +53,27 @@
         	<?php } else {?>
         	<?php foreach ($list as $key => $value) { ?>
         	<tr data-id="<?php echo $value['mem_id'];?>">
-        		<td class="col-md-1"><?php echo $value['mem_id'];?></td>
-        		<td class="col-md-1">
+        		<td><?php echo $value['mem_id'];?></td>
+        		<td>
         			<div class="avatar-hover">
         				<img src="<?php echo $value['avatar'];?>">
         			</div>
         		</td>
-        		<td class="col-md-1"><?php echo $value['name'];?></td>
-        		<td class="col-md-1"><?php echo $value['nickname'];?></td>
-        		<td class="col-md-1"><?php echo $value['mobile'];?></td>
-        		<td class="col-md-1">
+        		<td><?php echo trim($value['first_name'].' '.$value['last_name']);?></td>
+        		<td><?php echo $value['nick_name'];?></td>
+        		<td><?php echo $value['mobile'];?></td>
+        		<td>
         			<div class="switch_botton" data-status="<?php echo $value['status'];?>">
                         <div class="switch_status <?php echo $value['status'] == 1 ? 'on' : 'off';?>"></div>
                     </div>
         		</td>
-        		<td class="col-md-1"><?php echo $value['email'];?></td>
-        		<td class="col-md-1"><?php echo $value['salt'];?></td>
-        		<td class="col-md-1"><?php echo $value['add_time'];?><br /><?php echo $value['update_time'];?></td>
-        		<td class="col-md-2">
+        		<td><?php echo $value['email'];?></td>
+        		<td>
+        			<span title="增加时间"><?php echo $value['add_time'];?></span>
+        			<br>
+        			<span title="登录时间"><?php echo $value['login_time'];?></span>
+        		</td>
+        		<td>
         			<button class="btn btn-primary btn-xs modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
                     <button class="btn btn-danger btn-xs delete mt2" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>
         		</td>

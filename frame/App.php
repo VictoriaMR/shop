@@ -53,11 +53,7 @@ class App
 		$callArr = [$call, $info['func']];
 		self::make('app/middleware/VerifyToken')->handle($info);
 		call_user_func_array($callArr, []);
-		// debug开启
-		if (isDebug()) {
-			make('frame/Debug')->runlog();
-			!isCli() && !isAjax() && !iget('iframe', false) && make('frame/Debug')->init();
-		}
+		self::runOver();
 	}
 
 	private static function autoload($abstract, $params=null)
@@ -91,5 +87,14 @@ class App
 	public static function error($msg)
 	{
 		self::$error[] = $msg;
+	}
+
+	public static function runOver()
+	{
+		// debug开启
+		if (isDebug()) {
+			make('frame/Debug')->runlog();
+			!isCli() && !isAjax() && !iget('iframe', false) && make('frame/Debug')->init();
+		}
 	}
 }

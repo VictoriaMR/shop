@@ -13,4 +13,6 @@ class Logger extends Base
 
 	const TYPE_LOGIN = 0;
 	const TYPE_LOGOUT = 1;
+	const TYPE_LOGIN_FAIL = 2;
+	const TYPE_BEHAVIOR = 3;
 }

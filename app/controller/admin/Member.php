@@ -33,22 +33,24 @@ class Member extends AdminBase
 		$stime = trim(iget('stime', ''));
 		$etime = trim(iget('etime', ''));
 
-		$where = [];
+		$where = [
+			'site_id' => siteId(),
+		];
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
 		if (!empty($name)) {
-			$where['name,nickname'] = ['like', '%'.$name.'%'];
+			$where['first_name,last_name,nick_name'] = ['like', '%'.$name.'%'];
 		}
 		if (!empty($phone)) {
 			$where['mobile'] = ['like', '%'.$phone.'%'];
 		}
 
-		$member = make('app/service/Member');
+		$member = service('Member');
 		$total = $member->getCountData($where);
 		if ($total > 0) {
-			$fields = 'mem_id,name,nickname,phone,email,status,salt,create_at';
-			$list = $member->getListData($where, '*', $page, $size);
+			$fields = 'mem_id,avatar,sex,first_name,last_name,nick_name,mobile,email,status,add_time,login_time';
+			$list = $member->getListData($where, $fields, $page, $size);
 			foreach ($list as $key => $value) {
 				$value['avatar'] = $member->getAvatar($value['avatar'], $value['sex']);
 				$list[$key] = $value;
@@ -73,7 +75,7 @@ class Member extends AdminBase
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$result = make('app/service/admin/Member')->updateData($memId, ['status'=>$status, 'update_time'=>now()]);
+		$result = service('Member')->updateData($memId, ['status'=>$status, 'update_time'=>now()]);
 		if ($result) {
 			$this->addLog('修改用户状态-'.$memId.($status==1?'-启用':'-停用'));
 			$this->success('操作成功');
@@ -88,7 +90,7 @@ class Member extends AdminBase
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$info = make('app/service/admin/Member')->loadData($memId);
+		$info = service('Member')->loadData($memId);
 		if (empty($info)) {
 			$this->error('找不到用户数据');
 		}
@@ -136,7 +138,7 @@ class Member extends AdminBase
 		if (!empty($password)) {
 			$data['password'] = $password;
 		}
-		$service = make('app/service/admin/Member');
+		$service = service('Member');
 		if (empty($mem_id)) {
 			$result = $service->create($data);
 			$this->addLog('新增用户-'.$result);
@@ -160,12 +162,12 @@ class Member extends AdminBase
 		$stime = trim(iget('stime'));
 		$etime = trim(iget('etime'));
 
-		$logger = make('app/service/admin/Logger');
+		$logger = service('login/Logger');
 		$where = [];
 		if ($typeId >= 0) {
 			$where['type'] = (int) $typeId;
 		}
-		$member = make('app/service/admin/Member');
+		$member = service('Member');
 		if (!empty($name)) {
 			$memIdArr = $member->getMemIdsByName($name);
 			if (!empty($memIdArr)) {
@@ -186,7 +188,7 @@ class Member extends AdminBase
 
 		$total = $logger->getCountData($where);
 		if ($total > 0) {
-			$list = $logger->getList($where, '*', $page, $size);
+			$list = $logger->getListData($where, '*', $page, $size);
 		}
 
 		$this->assign('typeArr', $logger->getTypeList());

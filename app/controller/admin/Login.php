@@ -46,8 +46,6 @@ class Login extends AdminBase
 		if ($result) {
 			$this->success(['url' => url('index')], '登录成功!');
 		} else {
-			$log = make('app\service\admin\Logger');
-			$log->addLog(['type' => $log->getConst('TYPE_LOGIN_FAIL')]);
 			$this->error('账号或者密码不匹配!');
 		}
 	}

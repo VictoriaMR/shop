@@ -17,7 +17,7 @@ class AdminBase extends Base
 				if (empty($this->_default)) {
 					$this->_nav = $this->_arr;
 				} else {
-					$this->_nav = ['default' => $this->_default]+$this->_arr;
+					$this->_nav = ['default'=>$this->_default]+$this->_arr;
 				}
 				$this->assign('_ignore', $this->_ignore);
 				$this->assign('_tag', $this->_arr);
@@ -31,11 +31,10 @@ class AdminBase extends Base
 
 	protected function addLog($msg)
 	{
-		$data = [
+		return make('app/service/login/Logger')->addLog([
 			'remark' => $msg,
 			'type' => 3,
-		];
-		make('app/service/login/Logger')->addLog($data);
+		]);
 	}
 
 	protected function transfer()

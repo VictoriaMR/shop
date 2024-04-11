@@ -1,7 +1,7 @@
 $(function(){
 	$('#login-page [name="mobile"]').val(localStorage.getItem('login_number'));
-	$('#login-btn').on('click', function(){
-		var _thisObj = $(this);
+	$('#login-page form').on('submit', function(){
+		var _thisObj = $('#login-btn');
 		var mobile = $('input[name="mobile"]').val();
 		if (!VERIFY['mobile'](mobile)) {
 			errorTips('手机号码格式不正确');
@@ -28,5 +28,6 @@ $(function(){
 				_thisObj.button('reset');
 			}
 		});
+		return false;
 	});
 });

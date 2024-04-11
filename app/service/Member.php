@@ -15,6 +15,7 @@ class Member extends Base
 	public function login($mobile, $password='', $type='mobile')
 	{
 		if (empty($mobile)) return false;
+		$field = 'mem_id,site_id,first_name,last_name,mobile,email,avatar,sex,verify';
 		switch($type) {
 			case 'mobile':
 				$info = $this->loadData(['mobile'=>$mobile]);
@@ -42,7 +43,7 @@ class Member extends Base
 
 	public function logout()
 	{
-		$this->addLog(['type'=>1]);
+		$this->addLog(['type'=>service('login/Logger')->getConst('TYPE_LOGOUT')]);
 		session()->set(type().'_info');
 		make('frame/Cookie')->clear();
 		return true;
@@ -50,12 +51,6 @@ class Member extends Base
 
 	protected function loginSuccess($info)
 	{
-		$except = ['status', 'password', 'salt', 'add_time', 'update_time', 'login_time'];
-		foreach ($info as $key=>$value) {
-			if (in_array($key, $except)) {
-				unset($info[$key]);
-			}
-		}
 		if (!empty($info['avatar'])) {
 			$info['avatar'] = $this->getAvatar($info['avatar'], $info['sex']);
 		}
@@ -112,5 +107,10 @@ class Member extends Base
 		$info = $this->loadData($where);
 		if (empty($info)) return false;
 		return $this->updateData($where, ['password'=>$this->getPassword($password, $info['salt']), 'update_time'=>now()]);
+	}
+
+	public function addLog(array $data=[])
+	{
+		return service('login/Logger')->addLog($data);
 	}
 }

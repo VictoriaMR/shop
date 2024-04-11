@@ -13,9 +13,4 @@ class Member extends Base
 
 	const INFO_CACHE_TIMEOUT = 3600 * 24;
 	const TOKEN_CACHE_TIMEOUT = 3600 * 24 *7;
-
-	public function addLog(array $data=[])
-	{
-		return make('app/model/login/Logger')->addLog($data);
-	}
 }
