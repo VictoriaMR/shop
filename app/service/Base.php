@@ -15,7 +15,7 @@ abstract class Base
         if (!$this->_model) {
             $this->_model = str_replace('\\service\\', '\\model\\', get_called_class());
         }
-        $this->baseModel = make($this->_model);
+        $this->baseModel = \App::make($this->_model);
     }
 
     public function __call($func, $arg)

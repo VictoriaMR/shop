@@ -30,12 +30,12 @@ class Site extends AdminBase
 			$this->error('非法请求');
 		}
 		html()->addJs();
-		$site = make('app/service/site/Site');
+		$site = service('site/Site');
 		$list = $site->getListData([], 'site_id,name,path,status,remark,add_time');
 		if (!empty($list)) {
 			//获取站点对应的语言和货币
-			$language = make('app/service/site/LanguageUsed');
-			$currency = make('app/service/site/CurrencyUsed');
+			$language = service('site/LanguageUsed');
+			$currency = service('site/CurrencyUsed');
 			foreach ($list as $key => $value) {
 				$value['language'] = $language->getListCache($value['site_id']);
 				$value['currency'] = $currency->getListCache($value['site_id']);
@@ -52,17 +52,17 @@ class Site extends AdminBase
 		html()->addJs();
 		$id = iget('id');
 
-		$site = make('app/service/site/Site')->loadData($id);
+		$site = service('site/Site')->loadData($id);
 
 		if (!empty($site)) {
-			$currencyList = make('app/service/currency/Currency')->getListData();
+			$currencyList = service('currency/Currency')->getListData();
 			$currencyList = array_column($currencyList, null, 'code');
-			$languageList = make('app/service/Language')->getListData();
+			$languageList = service('Language')->getListData();
 			$languageList = array_column($languageList, null, 'code');
 			//语言关联
-			$siteLanguage = make('app/service/site/LanguageUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
+			$siteLanguage = service('site/LanguageUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
 			//货币关联
-			$siteCurrency = make('app/service/site/CurrencyUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
+			$siteCurrency = service('site/CurrencyUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
 			$this->assign('currencyList', $currencyList);
 			$this->assign('languageList', $languageList);
 			$this->assign('siteLanguage', $siteLanguage);
@@ -79,7 +79,7 @@ class Site extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$info = make('app/service/site/Site')->loadData($id);
+		$info = service('site/Site')->loadData($id);
 		if (empty($info)) {
 			$this->error('获取数据失败');
 		} else {
@@ -101,9 +101,9 @@ class Site extends AdminBase
 			'description' => $description,
 		];
 		if (empty($id)) {
-			$result = make('app/service/site/Site')->insert($data);
+			$result = service('site/Site')->insert($data);
 		} else {
-			$result = make('app/service/site/Site')->updateData($id, $data);
+			$result = service('site/Site')->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -134,7 +134,7 @@ class Site extends AdminBase
 		if (empty($data)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/Site');
+		$service = service('site/Site');
 		$rst = $service->updateData($id, $data);
 		if ($rst) {
 			if (empty($status)) $service->updateCache($id);
@@ -154,7 +154,7 @@ class Site extends AdminBase
 		if (!empty($id)) {
 			$where['domain_id'] = ['<>', $id];
 		}
-		$service = make('app/service/site/Domain');
+		$service = service('site/Domain');
 		if ($service->getCountData($where)) {
 			$this->error('域名已经存在');
 		}
@@ -183,7 +183,7 @@ class Site extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/Domain');
+		$service = service('site/Domain');
 		$rst = $service->updateData($id, ['status'=>$status]);
 		if ($rst) {
 			$service->updateCache($id);
@@ -200,7 +200,7 @@ class Site extends AdminBase
 		if (empty($id) && (empty($siteId) || empty($domain))) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/Domain');
+		$service = service('site/Domain');
 		$where = [];
 		if (empty($id)) {
 			$where['site_id'] = $siteId;
@@ -228,7 +228,7 @@ class Site extends AdminBase
 		if (empty($id) && (empty($siteId) || empty($code))) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/LanguageUsed');
+		$service = service('site/LanguageUsed');
 		$where = [];
 		if (empty($id)) {
 			$where['site_id'] = $siteId;
@@ -243,7 +243,7 @@ class Site extends AdminBase
 		$rst = $service->deleteData($where);
 		if ($rst) {
 			//删除站点翻译缓存
-			make('app/service/site/Language')->updateCache($info['site_id'], $info['code']);
+			service('site/Language')->updateCache($info['site_id'], $info['code']);
 			$this->success('删除成功');
 		}
 		$this->error('删除失败');
@@ -256,7 +256,7 @@ class Site extends AdminBase
 		if (empty($siteId) || empty($code)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/LanguageUsed');
+		$service = service('site/LanguageUsed');
 		$where = [];
 		$where['site_id'] = $siteId;
 		$where['code'] = $code;
@@ -277,7 +277,7 @@ class Site extends AdminBase
 			$this->error('参数不正确');
 		}
 		$sort = ipost('sort');
-		$service = make('app/service/site/LanguageUsed');
+		$service = service('site/LanguageUsed');
 		$info = $service->loadData($id, 'site_id');
 		if (empty($info)) {
 			$this->error('数据不存在');
@@ -298,7 +298,7 @@ class Site extends AdminBase
 		if (empty($id) && (empty($siteId) || empty($code))) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/CurrencyUsed');
+		$service = service('site/CurrencyUsed');
 		$where = [];
 		if (empty($id)) {
 			$where['site_id'] = $siteId;
@@ -324,7 +324,7 @@ class Site extends AdminBase
 		if (empty($siteId) || empty($code)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/CurrencyUsed');
+		$service = service('site/CurrencyUsed');
 		$where = [];
 		$where['site_id'] = $siteId;
 		$where['code'] = $code;
@@ -345,7 +345,7 @@ class Site extends AdminBase
 			$this->error('参数不正确');
 		}
 		$sort = ipost('sort');
-		$service = make('app/service/site/CurrencyUsed');
+		$service = service('site/CurrencyUsed');
 		$info = $service->loadData($id, 'site_id');
 		if (empty($info)) {
 			$this->error('数据不存在');
@@ -366,7 +366,7 @@ class Site extends AdminBase
 		if (empty($siteId) || empty($name)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/site/Site')->updateData($siteId, [$name=>$value]);
+		$rst = service('site/Site')->updateData($siteId, [$name=>$value]);
 		if ($rst) {
 			$this->success('编辑成功');
 		}
@@ -381,13 +381,13 @@ class Site extends AdminBase
 			$this->error('参数不正确');
 		}
 		//站点语言列表
-		$languageList = make('app/service/site/LanguageUsed')->getListData(['site_id'=>$siteId], 'code', 0, 0, ['sort'=>'asc']);
+		$languageList = service('site/LanguageUsed')->getListData(['site_id'=>$siteId], 'code', 0, 0, ['sort'=>'asc']);
 		if (empty($languageList)) {
 			$this->error('该站点没有配置语言');
 		}
-		$languageList = make('app/service/Language')->getListData(['code'=>['in', array_column($languageList, 'code')]]);
+		$languageList = service('Language')->getListData(['code'=>['in', array_column($languageList, 'code')]]);
 		//获取已有的翻译文本
-		$transArr = make('app/service/site/Language')->getListData(['site_id'=>$siteId, 'type'=>$type]);
+		$transArr = service('site/Language')->getListData(['site_id'=>$siteId, 'type'=>$type]);
 		$transArr = array_column($transArr, null, 'lan_id');
 		foreach ($languageList as $key => $value) {
 			$languageList[$key]['tr_text'] = empty($transArr[$value['code']]) ? '' : $transArr[$value['code']]['name'];
@@ -399,7 +399,7 @@ class Site extends AdminBase
 	{
 		$trCode = ipost('tr_code');
 		$name = ipost('name');
-		$rst = make('app/service/Translate')->getText($name, $trCode);
+		$rst = service('Translate')->getText($name, $trCode);
 		$this->success($rst, '');
 	}
 
@@ -411,7 +411,7 @@ class Site extends AdminBase
 		if (empty($siteId) || empty($type) || empty($language)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/Language');
+		$service = service('site/Language');
 		foreach ($language as $key => $value) {
 			$service->setNxLanguage($siteId, $key, $type, $value);
 		}
@@ -424,7 +424,7 @@ class Site extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/site/Domain');
+		$service = service('site/Domain');
 		$info = $service->loadData($id);
 		if (empty($info)) {
 			$this->error('数据不存在');
@@ -443,7 +443,7 @@ class Site extends AdminBase
 		}
 		html()->addJs();
 		$files = [];
-		$siteList = make('app/service/site/Site')->getListData([], 'path');
+		$siteList = service('site/Site')->getListData([], 'path');
 		foreach ($siteList as $key => $value) {
 			$path = ROOT_PATH.$value['path'].DS.'static';
 			$this->getFileList($path, $files);
@@ -480,7 +480,7 @@ class Site extends AdminBase
 		}
 		if ($name == 'all') {
 			$files = [];
-			$siteList = make('app/service/site/Site')->getListData([], 'path');
+			$siteList = service('site/Site')->getListData([], 'path');
 			foreach ($siteList as $key => $value) {
 				$path = ROOT_PATH.$value['path'].DS.'static';
 				$this->getFileList($path, $files);
@@ -490,7 +490,7 @@ class Site extends AdminBase
 					unlink($value);
 				}
 			}
-			make('app/service/site/StaticFile')->deleteData(['static_id'=>['>', 0]]);
+			service('site/StaticFile')->deleteData(['static_id'=>['>', 0]]);
 		} else {
 			$file = ROOT_PATH.$name;
 			if (!is_file($file)) {
@@ -498,7 +498,7 @@ class Site extends AdminBase
 			}
 			unlink($file);
 			list($name, $type) = explode('.', $name);
-			make('app/service/site/StaticFile')->deleteData(['name'=>$name, 'type'=>$type]);
+			service('site/StaticFile')->deleteData(['name'=>$name, 'type'=>$type]);
 		}
 		$this->success('操作成功');
 	}

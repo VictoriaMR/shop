@@ -19,7 +19,7 @@ class Order extends HomeBase
 			if ($status) {
 				$where['status'] = $status;
 			}
-			$list = make('app/service/order/Order')->getList($where, $page, $size);
+			$list = service('order/Order')->getList($where, $page, $size);
 		}
 
 		$this->assign('list', $list ?? []);
@@ -41,7 +41,7 @@ class Order extends HomeBase
 			if ($status) {
 				$where['status'] = $status;
 			}
-			$list = make('app/service/order/Order')->getList($where, $page, $size);
+			$list = service('order/Order')->getList($where, $page, $size);
 		}
 		$this->success($list ?? [], '');
 	}
@@ -52,11 +52,11 @@ class Order extends HomeBase
 		if (empty($id)) {
 			$this->error(appT('order_error'));
 		}
-		if (!make('app/service/order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$id])) {
+		if (!service('order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$id])) {
 			$this->error(appT('order_error'));
 		}
-		$list = make('app/service/order/Product')->getListData(['order_id'=>$id], 'sku_id,quantity');
-		$cartService = make('app/service/Cart');
+		$list = service('order/Product')->getListData(['order_id'=>$id], 'sku_id,quantity');
+		$cartService = service('Cart');
 		foreach ($list as $value) {
 			$cartService->addToCart($value['sku_id'], $value['quantity']);
 		}
@@ -69,7 +69,7 @@ class Order extends HomeBase
 		if (empty($id)) {
 			$this->error(appT('order_error'));
 		}
-		$orderService = make('app/service/order/Order');
+		$orderService = service('order/Order');
 		if (!$orderService->getCountData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_WAIT_PAY')])) {
 			$this->error(appT('order_error'));
 		}
@@ -87,7 +87,7 @@ class Order extends HomeBase
 		if (empty($id)) {
 			$this->error(appT('order_error'));
 		}
-		$orderService = make('app/service/order/Order');
+		$orderService = service('order/Order');
 		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_PAIED')]);
 		if (empty($info)) {
 			$this->error(appT('order_error'));
@@ -95,7 +95,7 @@ class Order extends HomeBase
 		$status = $orderService->getConst('STATUS_REFUNDING');
 		$rst = $orderService->updateData($id, ['status'=>$status]);
 		if ($rst) {
-			make('app/service/order/StatusHistory')->addLog($id, $status, $info['lan_id']);
+			service('order/StatusHistory')->addLog($id, $status, $info['lan_id']);
 			$this->success();
 		} else {
 			$this->error();
@@ -108,7 +108,7 @@ class Order extends HomeBase
 		if (empty($id)) {
 			$this->error(appT('order_error'));
 		}
-		$orderService = make('app/service/order/Order');
+		$orderService = service('order/Order');
 		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_SHIPPED')]);
 		if (empty($info)) {
 			$this->error(appT('order_error'));
@@ -116,7 +116,7 @@ class Order extends HomeBase
 		$status = $orderService->getConst('STATUS_FINISHED');
 		$rst = $orderService->updateData($id, ['status'=>$status]);
 		if ($rst) {
-			make('app/service/order/StatusHistory')->addLog($id, $status, $info['lan_id']);
+			service('order/StatusHistory')->addLog($id, $status, $info['lan_id']);
 			$this->success();
 		} else {
 			$this->error();
@@ -129,7 +129,7 @@ class Order extends HomeBase
 		if (empty($id)) {
 			$this->error(appT('order_error'));
 		}
-		$orderService = make('app/service/order/Order');
+		$orderService = service('order/Order');
 		$info = $orderService->loadData(['mem_id'=>userId(), 'order_id'=>$id, 'status'=>$orderService->getConst('STATUS_WAIT_PAY')]);
 		if (empty($info)) {
 			$this->error(appT('order_error'));
@@ -137,7 +137,7 @@ class Order extends HomeBase
 		$status = $orderService->getConst('STATUS_CANCEL');
 		$rst = $orderService->updateData($id, ['status'=>$status]);
 		if ($rst) {
-			make('app/service/order/StatusHistory')->addLog($id, $status, $info['lan_id']);
+			service('order/StatusHistory')->addLog($id, $status, $info['lan_id']);
 			$this->success();
 		} else {
 			$this->error();
@@ -150,10 +150,10 @@ class Order extends HomeBase
 		if (empty($orderId)) {
 			$this->error('Sorry, we can\' find any order param here, Please try agin.');
 		}
-		if (!make('app/service/order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$orderId])) {
+		if (!service('order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$orderId])) {
 			$this->error('Sorry, we can\' find any order info here, Please try agin.');
 		}
-		$info = make('app/service/order/Address')->loadData(['order_id'=>$orderId, 'type'=>1]);
+		$info = service('order/Address')->loadData(['order_id'=>$orderId, 'type'=>1]);
 		$this->success($info, 'success');
 	}
 
@@ -195,7 +195,7 @@ class Order extends HomeBase
 		if (empty($address1)) {
 			$this->error('Address is required');
 		}
-		if (!make('app/service/order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$orderId])) {
+		if (!service('order/Order')->getCountData(['mem_id'=>userId(), 'order_id'=>$orderId])) {
 			$this->error('Sorry, we can\' find any order info here, Please try agin.');
 		}
 		$data = [
@@ -210,10 +210,10 @@ class Order extends HomeBase
 			'address1' => substr($address1, 0, 64),
 			'address2' => substr($address2, 0, 64),
 		];
-		$countryInfo = make('app/service/address/Country')->loadData($country_code2, 'dialing_code');
+		$countryInfo = service('address/Country')->loadData($country_code2, 'dialing_code');
 		$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$phone;
 
-		$rst = make('app/service/order/Address')->updateData(['order_id'=>$orderId, 'type'=>1], $data);
+		$rst = service('order/Address')->updateData(['order_id'=>$orderId, 'type'=>1], $data);
 		if ($rst) {
 			$this->success('Update your billing address success.');
 		} else {
@@ -232,7 +232,7 @@ class Order extends HomeBase
 
 		if (userId()) {
 			$where = ['mem_id'=>userId(), 'is_delete'=>0];
-			$list = make('app/service/order/Order')->getListByKeyword($where, $keyword, $page, $size);
+			$list = service('order/Order')->getListByKeyword($where, $keyword, $page, $size);
 		}
 
 		$this->assign('page', $page);
@@ -251,7 +251,7 @@ class Order extends HomeBase
 
 		if (!empty($keyword)) {
 			$where = ['mem_id'=>userId(), 'is_delete'=>0];
-			$list = make('app/service/order/Order')->getListByKeyword($where, $keyword, $page, $size);
+			$list = service('order/Order')->getListByKeyword($where, $keyword, $page, $size);
 		}
 		$this->success($list ?? [], '');
 	}
@@ -266,7 +266,7 @@ class Order extends HomeBase
 
 		if (userId()) {
 			$where = ['mem_id'=>userId(), 'is_delete'=>1];
-			$list = make('app/service/order/Order')->getList($where, $page, $size);
+			$list = service('order/Order')->getList($where, $page, $size);
 		}
 
 		$this->assign('page', $page);
@@ -285,7 +285,7 @@ class Order extends HomeBase
 		if (empty($id)) {
 			$error = appT('order_error');
 		} else {
-			$orderService = make('app/service/order/Order');
+			$orderService = service('order/Order');
 			$orderInfo = $orderService->getInfo($id);
 			if (empty($orderInfo)) {
 				$error = appT('order_error');
@@ -297,7 +297,7 @@ class Order extends HomeBase
 						$status = $orderService->getConst('STATUS_CANCEL');
 						$rst = $orderService->updateData($id, ['status'=>$status]);
 						if ($rst) {
-							make('app/service/order/StatusHistory')->addLog($id, $status, $orderInfo['base']['lan_id']);
+							service('order/StatusHistory')->addLog($id, $status, $orderInfo['base']['lan_id']);
 						}
 						$orderInfo = $orderService->getInfo($id);
 					}

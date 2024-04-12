@@ -25,25 +25,25 @@ class Api extends HomeBase
 			'path' => implode('/', $path),
 			'param' => json_encode($param),
 		];
-		$rst = make('app/service/Logger')->addLog($data);
+		$rst = service('Logger')->addLog($data);
 		if ($data['path'] == 'home/Product/index') {
 			if (isset($param['pid'])) {
 				$spuId = $param['pid'];
 			} elseif (isset($param['sid'])) {
-				$spuId = make('app/service/product/Sku')->loadData($param['sid'], 'spu_id')['spu_id'] ?? 0;
+				$spuId = service('product/Sku')->loadData($param['sid'], 'spu_id')['spu_id'] ?? 0;
 			}
 			if ($spuId) {
 				//更新浏览人数
-				$rst = make('app/service/product/Spu')->where(['spu_id'=>$spuId])->increment('visit_total');
+				$rst = service('product/Spu')->where(['spu_id'=>$spuId])->increment('visit_total');
 				//浏览历史
 				if ($rst && userId()) {
-					make('app/service/member/History')->addHistory($spuId);
+					service('member/History')->addHistory($spuId);
 				}
 			}
 		}
 		$data = [];
 		if (!empty($param['cart'])) {
-			$data['cart_count'] = make('app/service/Cart')->getCartCount();
+			$data['cart_count'] = service('Cart')->getCartCount();
 		}
 		if (!empty($param['login'])) {
 			$data['member'] = userId() ? session()->get(type().'_info', []) : [];
@@ -58,7 +58,7 @@ class Api extends HomeBase
 			$this->error(appT('param_error'));
 		}
 		$cate = $_POST['cate'] ?? '';
-		$fileService = make('app/service/File');
+		$fileService = service('File');
 
 		if (!in_array($cate, $fileService::FILE_TYPE)) {
 			$this->error(appT('param_error'));
@@ -77,7 +77,7 @@ class Api extends HomeBase
 		if (empty($url)) {
 			$this->error('url 不能为空');
 		}
-		make('app/service/supplier/Url')->addUrl($url, $priority);
+		service('supplier/Url')->addUrl($url, $priority);
 		$this->success();
 	}
 }

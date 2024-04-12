@@ -32,10 +32,10 @@ class Name extends Base
 		if (!empty($list)) {
 			//翻译字段 统计
 			$tempArr = array_column($list, 'descn_id');
-			$tempArr = make('app/service/desc/NameLanguage')->where(['descn_id'=>['in', $tempArr]])->field('count(*) as count, descn_id')->groupBy('descn_id')->get();
+			$tempArr = service('desc/NameLanguage')->where(['descn_id'=>['in', $tempArr]])->field('count(*) as count, descn_id')->groupBy('descn_id')->get();
 			$tempArr = array_column($tempArr, 'count', 'descn_id');
 			//需要翻译的语言列表
-			$languageList = make('app/service/Language')->getTransList();
+			$languageList = service('Language')->getTransList();
 			$len = count($languageList);
 			$transArr = [
 				0 => [],
@@ -63,7 +63,7 @@ class Name extends Base
 	public function getListById($id, $lanId=1)
 	{
 		$list = $this->getListData(['descn_id'=>['in', $id]], 'descn_id,name');
-		$lanArr = make('app/service/desc/NameLanguage')->getListData(['descn_id'=>['in', $id], 'lan_id'=>$lanId], 'descn_id,name');
+		$lanArr = service('desc/NameLanguage')->getListData(['descn_id'=>['in', $id], 'lan_id'=>$lanId], 'descn_id,name');
 		$lanArr = array_column($lanArr, 'name', 'descn_id');
 		foreach ($list as $key => $value) {
 			if (isset($lanArr[$value['descn_id']])) {

@@ -146,7 +146,7 @@
 			<a href="javascript:;" class="address-info-content mt12">
 				<div class="address-info">
 					<p><?php echo trim($orderInfo['shipping_address']['first_name'].' '.$orderInfo['shipping_address']['last_name']);?></p>
-					<p><?php echo $orderInfo['shipping_address']['city'].' '.($orderInfo['shipping_address']['state'] ? $orderInfo['shipping_address']['state'].' ' : '').make('app/service/address/Country')->getName($orderInfo['shipping_address']['country_code2']).', '.$orderInfo['shipping_address']['postcode'];?></p>
+					<p><?php echo $orderInfo['shipping_address']['city'].' '.($orderInfo['shipping_address']['state'] ? $orderInfo['shipping_address']['state'].' ' : '').service('address/Country')->getName($orderInfo['shipping_address']['country_code2']).', '.$orderInfo['shipping_address']['postcode'];?></p>
 					<p><?php echo trim($orderInfo['shipping_address']['address1'].' '.$orderInfo['shipping_address']['address2']);?></p>
 					<p><?php echo $orderInfo['shipping_address']['phone'];?></p>
 					<?php if (!empty($orderInfo['shipping_address']['tax_number'])){?>
@@ -164,7 +164,7 @@
 			<a href="javascript:;" class="address-info-content mt12">
 				<div class="address-info">
 					<p><?php echo trim($orderInfo['billing_address']['first_name'].' '.$orderInfo['billing_address']['last_name']);?></p>
-					<p><?php echo $orderInfo['billing_address']['city'].' '.($orderInfo['billing_address']['state'] ? $orderInfo['billing_address']['state'].' ' : '').make('app/service/address/Country')->getName($orderInfo['billing_address']['country_code2']).', '.$orderInfo['billing_address']['postcode'];?></p>
+					<p><?php echo $orderInfo['billing_address']['city'].' '.($orderInfo['billing_address']['state'] ? $orderInfo['billing_address']['state'].' ' : '').service('address/Country')->getName($orderInfo['billing_address']['country_code2']).', '.$orderInfo['billing_address']['postcode'];?></p>
 					<p><?php echo trim($orderInfo['billing_address']['address1'].' '.$orderInfo['billing_address']['address2']);?></p>
 					<p><?php echo $orderInfo['billing_address']['phone'];?></p>
 					<?php if (!empty($orderInfo['billing_address']['tax_number'])){?>

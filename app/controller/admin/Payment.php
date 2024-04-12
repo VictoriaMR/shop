@@ -32,7 +32,7 @@ class Payment extends AdminBase
 		$page = iget('page', 1);
 		$size = iget('size', 20);
 
-		$paymentService = make('app/service/payment/Payment');
+		$paymentService = service('payment/Payment');
 		$where = [];
 		if (!empty($type)) {
 			$where['type'] = (int) $type;
@@ -70,7 +70,7 @@ class Payment extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$info = make('app/service/payment/Payment')->loadData($id);
+		$info = service('payment/Payment')->loadData($id);
 		if (empty($info)) {
 			$this->error('找不到数据');
 		}
@@ -98,7 +98,7 @@ class Payment extends AdminBase
 		if (empty($secretKey)) {
 			$this->error('Secret Key 不能为空');
 		}
-		$paymentService = make('app/service/payment/Payment');
+		$paymentService = service('payment/Payment');
 		$typeList = $paymentService->getTypeList();
 		if (empty($typeList[$type])) {
 			$this->error('账号类型不正确');
@@ -133,9 +133,9 @@ class Payment extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$result = make('app/service/payment/Payment')->deleteData($id);
+		$result = service('payment/Payment')->deleteData($id);
 		if ($result) {
-			make('app/service/payment/Used')->deleteData(['payment_id'=>$id]);
+			service('payment/Used')->deleteData(['payment_id'=>$id]);
 			$this->addLog('删除支付账户配置-'.$id);
 			$this->success('删除成功');
 		}
@@ -163,7 +163,7 @@ class Payment extends AdminBase
 			$data['is_sandbox'] = $isSandbox == 1 ? 1 : 0;
 			$type = '沙盒';
 		}
-		$result = make('app/service/payment/Payment')->updateData($id, $data);
+		$result = service('payment/Payment')->updateData($id, $data);
 		if ($result) {
 			$this->addLog('更改支付账户'.$type.'-'.$id);
 			$this->success('设置成功');
@@ -202,13 +202,13 @@ class Payment extends AdminBase
 		$typeList = make('app/payment/PaymentMethod')::methodList();
 		$typeList = array_column($typeList, 'name', 'type');
 		//站点列表
-		$siteList = make('app/service/site/Site')->getListData(['site_id'=>['<>', '0']], 'site_id, name');
+		$siteList = service('site/Site')->getListData(['site_id'=>['<>', '0']], 'site_id, name');
 		$siteList = array_column($siteList, 'name', 'site_id');
 		//账户列表
-		$paymentList = make('app/service/payment/Payment')->getListData([], 'payment_id, name');
+		$paymentList = service('payment/Payment')->getListData([], 'payment_id, name');
 		$paymentList = array_column($paymentList, 'name', 'payment_id');
 
-		$usedService = make('app/service/payment/Used');
+		$usedService = service('payment/Used');
 		$total = $usedService->getCountData($where);
 		if ($total > 0) {
 			$list = $usedService->getListData($where, '*', $page, $size);
@@ -230,7 +230,7 @@ class Payment extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$info = make('app/service/payment/Used')->loadData($id);
+		$info = service('payment/Used')->loadData($id);
 		if (empty($info)) {
 			$this->error('获取数据为空');
 		}
@@ -251,7 +251,7 @@ class Payment extends AdminBase
 			'type' => $type,
 			'payment_id' => $paymentId,
 		];
-		$usedService = make('app/service/payment/Used');
+		$usedService = service('payment/Used');
 		$where = $data;
 		if (!empty($id)) {
 			$where['item_id'] = ['<>', $id];
@@ -280,7 +280,7 @@ class Payment extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$result = make('app/service/payment/Used')->deleteData($id);
+		$result = service('payment/Used')->deleteData($id);
 		if ($result) {
 			$this->success('操作成功');
 		} else {

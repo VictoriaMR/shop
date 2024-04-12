@@ -14,7 +14,7 @@ class Index extends Base
 		$page = iget('page', 1);
 		$size = iget('size', 20);
 
-		$cateArr = make('app/service/category/Category')->getSiteCateList(cateId());
+		$cateArr = service('category/Category')->getSiteCateList(cateId());
 		$hotArr = [];
 		$popularCate = [];
 		$leftCate = [];
@@ -44,7 +44,7 @@ class Index extends Base
 			];
 		}
 
-		$bestSeller = make('app/service/product/Spu')->getRecommend($page, $size, $total);
+		$bestSeller = service('product/Spu')->getRecommend($page, $size, $total);
 
 
 		$this->assign('page', $page);

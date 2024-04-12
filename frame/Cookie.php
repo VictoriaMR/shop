@@ -25,12 +25,12 @@ class Cookie
 			$this->set('currency', 'usd', $exp);
 		} else {
 			//自动登录
-			$info = make('app/service/member/Uuid')->getInfo($uuid);
+			$info = service('member/Uuid')->getInfo($uuid);
 			if (!empty($info['mem_id'])) {
 				if (substr($info['mem_id'], 0, 1) == 5) {
-					$memberService = make('app/service/admin/Member');
+					$memberService = service('admin/Member');
 				} else {
-					$memberService = make('app/service/Member');
+					$memberService = service('Member');
 				}
 				$memberService->loginById($info['mem_id']);
 				session()->set('site_language_id', $info['lan_id']);
@@ -41,7 +41,7 @@ class Cookie
 
 	public function login($memId)
 	{
-		$uuidService = make('app/service/member/Uuid');
+		$uuidService = service('member/Uuid');
 		$where = [
 			'uuid' => $this->get('uuid'),
 			'site_id' => siteId(),
@@ -56,7 +56,7 @@ class Cookie
 
 	public function updateLanguage()
 	{
-		return make('app/service/member/Uuid')->updateData($this->get('uuid'), ['lan_id'=>lanId()]);
+		return service('member/Uuid')->updateData($this->get('uuid'), ['lan_id'=>lanId()]);
 	}
 
 	public function set($name, $value='', $option=null)
@@ -113,7 +113,7 @@ class Cookie
 			return false;
 		}
 		session()->set('setcookie', false);
-		make('app/service/member/Uuid')->deleteData($this->get('uuid'));
+		service('member/Uuid')->deleteData($this->get('uuid'));
 		$config = $this->config;
 		foreach ($_COOKIE as $key => $val) {
 			setcookie($key, '', $_SERVER['REQUEST_TIME'] - 3600, $config['path'], $config['domain'], $config['secure'], $config['httponly']);

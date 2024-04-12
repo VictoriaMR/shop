@@ -10,8 +10,8 @@ class App
 
 	public static function init()
 	{
-		spl_autoload_register([__CLASS__ , 'autoload']);
-		self::make('frame/Error')->register();
+		spl_autoload_register([__CLASS__, 'autoload']);
+		frame('Error')->register();
 	}
 
 	public static function make($abstract, $params=null)
@@ -41,11 +41,11 @@ class App
 	{
 		$domain = $_SERVER['HTTP_HOST'] ?? '';
 		$info = config('domain', $domain);
-		!$info && throw new \Exception('domain: '.$domain.' was not exist!');
+		$info || throw new \Exception('domain: '.$domain.' was not exist!');
 		$info['domain'] = $domain;
-		self::set('base_info', $info);
+		self::set('domain', $info);
 		//路由解析
-		$info = self::make('frame/Router')->analyze();
+		$info = frame('Router')->analyze();
 		$info['class'] = isAdmin()?'admin':'home';
 		self::set('router', $info);
 		//执行方法
@@ -78,12 +78,6 @@ class App
 		return redis(2)->set('frame:app:version', substr($version, 0, 5));
 	}
 
-	public static function getVersion()
-	{
-		defined('APP_VERSION') || define('APP_VERSION', redis(2)->get('frame:app:version')?:'1.0.0');
-		return APP_VERSION;
-	}
-
 	public static function error($msg)
 	{
 		self::$error[] = $msg;
@@ -93,8 +87,8 @@ class App
 	{
 		// debug开启
 		if (isDebug()) {
-			make('frame/Debug')->runlog();
-			!isCli() && !isAjax() && !iget('iframe', false) && make('frame/Debug')->init();
+			frame('Debug')->runlog();
+			!isCli() && !isAjax() && !iget('iframe', false) && frame('Debug')->init();
 		}
 	}
 }

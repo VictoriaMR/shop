@@ -20,7 +20,7 @@ class Logger extends Base
         $list = $this->getListData($where, '*', $page, $size, ['log_id'=>'desc']);
         if (!empty($list)) {
             $memIdArr = array_unique(array_column($list, 'mem_id'));
-            $member = make('app/service/admin/Member');
+            $member = service('admin/Member');
             $memData = $member->getListData(['mem_id'=>['in', $memIdArr]], 'mem_id,name,nickname,avatar,sex', 0);
             $memData = array_column($memData, null, 'mem_id');
             $typeArr = $this->getTypeList();

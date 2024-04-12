@@ -288,7 +288,7 @@ final class Query
 		$this->clear();
 		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
-		$mysqli = make('frame/Connection')->setDb($this->_database);
+		$mysqli = frame('Connection')->setDb($this->_database);
 		if (!$mysqli) {
 			return false;
 		}

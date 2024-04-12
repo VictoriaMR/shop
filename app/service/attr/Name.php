@@ -34,10 +34,10 @@ class Name extends Base
 		if (!empty($list)) {
 			//翻译字段 统计
 			$tempArr = array_column($list, 'attrn_id');
-			$tempArr = make('app/service/attr/NameLanguage')->where(['attrn_id'=>['in', $tempArr]])->field('count(*) as count, attrn_id')->groupBy('attrn_id')->get();
+			$tempArr = service('attr/NameLanguage')->where(['attrn_id'=>['in', $tempArr]])->field('count(*) as count, attrn_id')->groupBy('attrn_id')->get();
 			$tempArr = array_column($tempArr, 'count', 'attrn_id');
 			//需要翻译的语言列表
-			$languageList = make('app/service/Language')->getTransList();
+			$languageList = service('Language')->getTransList();
 			$len = count($languageList);
 			$transArr = [
 				0 => [],
@@ -73,7 +73,7 @@ class Name extends Base
 			$sort = ['lan_id'=>'asc'];
 			$where['lan_id'] = ['in', [1, $lanId]];
 		}
-		$lanArr = make('app/service/attr/NameLanguage')->getListData($where, 'attrn_id,name', 0, 0, $sort);
+		$lanArr = service('attr/NameLanguage')->getListData($where, 'attrn_id,name', 0, 0, $sort);
 		$lanArr = array_column($lanArr, 'name', 'attrn_id');
 		foreach ($list as $key => $value) {
 			if (isset($lanArr[$value['attrn_id']])) {

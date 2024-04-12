@@ -28,7 +28,7 @@ class Category extends AdminBase
 		}
 		html()->addJs();
 		$cid = iget('cid', 0);
-		$tempList = make('app/service/category/Category')->getListFormat(false);
+		$tempList = service('category/Category')->getListFormat(false);
 		if (!empty($tempList)) {
 			$list = [];
 			foreach ($tempList as $value) {
@@ -53,7 +53,7 @@ class Category extends AdminBase
 		}
 		html()->addJs();
 		$cid = iget('cid', 0);
-		$tempList = make('app/service/category/Category')->getListFormat(false);
+		$tempList = service('category/Category')->getListFormat(false);
 		if (!empty($tempList)) {
 			$count = 0;
 			$pList = [];
@@ -86,16 +86,16 @@ class Category extends AdminBase
 			}
 			if (!empty($list)) {
 				$cateArr = array_column($list, 'cate_id');
-				$cateArr = make('app/service/category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
+				$cateArr = service('category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
 				$cateArr = array_column($cateArr, 'count', 'cate_id');
-				$languageList = make('app/service/Language')->getListData();
+				$languageList = service('Language')->getListData();
 				$languageList = array_column($languageList, null, 'lan_id');
 				unset($languageList[1]);
 				$len = count($languageList);
 				//图片
 				$attachArr = array_filter(array_column($list, 'attach_id'));
 				if (!empty($attachArr)) {
-					$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
+					$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 					$attachArr = array_column($attachArr, 'url', 'attach_id');
 				}
 				foreach ($list as $key => $value) {
@@ -118,7 +118,7 @@ class Category extends AdminBase
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/category/Category')->loadData($cateId);
+		$info = service('category/Category')->loadData($cateId);
 		$this->success($info);
 	}
 
@@ -129,9 +129,9 @@ class Category extends AdminBase
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/category/Language')->getListData(['cate_id'=>$cateId, 'type'=>$type]);
+		$info = service('category/Language')->getListData(['cate_id'=>$cateId, 'type'=>$type]);
 		$info = array_column($info, 'name', 'lan_id');
-		$languageList = make('app/service/Language')->getListData();
+		$languageList = service('Language')->getListData();
 		$data = [];
 		foreach ($languageList as $key => $value) {
 			if ($value['lan_id'] <= 1 && !$type) continue;
@@ -154,7 +154,7 @@ class Category extends AdminBase
 		}
 		$language = ipost('language');
 		if (!empty($language)) {
-			$services = make('app/service/category/Language');
+			$services = service('category/Language');
 			foreach ($language as $key => $value) {
 				$services->setNxLanguage($cateId, $key, $type, strTrim($value));
 			}
@@ -178,11 +178,11 @@ class Category extends AdminBase
 			'name_en' => $name_en,
 		];
 		if (empty($cateId)) {
-			$result = make('app/service/category/Category')->insert($data);
+			$result = service('category/Category')->insert($data);
 			$this->addLog('新增分类-'.$result);
 		} else {
 			$this->addLog('修改分类信息-'.$cateId);
-			$result = make('app/service/category/Category')->updateData($cateId, $data);
+			$result = service('category/Category')->updateData($cateId, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -197,7 +197,7 @@ class Category extends AdminBase
 		if (empty($cateId)) {
 			$this->error('ID值不正确');
 		}
-		$services = make('app/service/category/Category');
+		$services = service('category/Category');
 		if ($services->hasChildren($cateId)) {
 			$this->error('该分类有子分类, 不能删除');
 		}
@@ -236,7 +236,7 @@ class Category extends AdminBase
 		if ($isHot >= 0) {
 			$data['is_hot'] = $isHot;
 		}
-		$categoryService = make('app/service/category/Category');
+		$categoryService = service('category/Category');
 		$rst = $categoryService->updateData($id, $data);
 		if ($rst) {
 			if ($status == 0 && $categoryService->hasChildren($id)) {

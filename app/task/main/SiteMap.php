@@ -21,14 +21,14 @@ class SiteMap extends TaskDriver
 
 	public function run()
 	{
-		$siteList = make('app/service/site/Site')->getListData([], 'site_id,path,domain,cate_id');
-		$category = make('app/service/category/Category');
-		$spuService = make('app/service/product/Spu');
-		$spuLanguageService = make('app/service/product/Language');
-		$skuService = make('app/service/product/Sku');
-		$attrUsedService = make('app/service/product/AttrUsed');
-		$attvLanguageService = make('app/service/attr/ValueLanguage');
-		$router = make('frame/Router');
+		$siteList = service('site/Site')->getListData([], 'site_id,path,domain,cate_id');
+		$category = service('category/Category');
+		$spuService = service('product/Spu');
+		$spuLanguageService = service('product/Language');
+		$skuService = service('product/Sku');
+		$attrUsedService = service('product/AttrUsed');
+		$attvLanguageService = service('attr/ValueLanguage');
+		$router = frame('Router');
 
 		$cateArr = $category->getListFormat();
 		$tempArr = [];

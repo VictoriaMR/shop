@@ -53,7 +53,7 @@ class Api extends AdminBase
 		if (!in_array($cate, $this->_cateArr)) {
 			$this->error('没有权限操作'.$cate.'文件夹');
 		}
-		$fileService = make('app/service/File');
+		$fileService = service('File');
 		$result = $fileService->upload($file, $cate);
 		if ($result) {
 			$this->success('上传成功', $result);
@@ -63,7 +63,7 @@ class Api extends AdminBase
 
 	public function stat()
 	{
-		make('app/service/Logger')->addLog();
+		service('Logger')->addLog();
 	}
 
 	public function addProduct()
@@ -114,7 +114,7 @@ class Api extends AdminBase
 
 	public function addAfter()
 	{
-		make('app/service/supplier/Url')->updateData(ipost('supp_id'), ['status'=>1]);
+		service('supplier/Url')->updateData(ipost('supp_id'), ['status'=>1]);
 			$this->success('操作成功');
 	}
 

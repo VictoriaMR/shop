@@ -18,7 +18,7 @@ class Queue extends TaskDriver
 
 	public function run()
 	{
-		$service = make('app/service/Queue');
+		$service = service('Queue');
 		if (!$service->count()) {
 			//任务挂起
 			$this->taskMonitor();

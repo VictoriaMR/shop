@@ -12,7 +12,7 @@ class AttrUsed extends Base
 		//$attr属性
 		$tempArr = array_unique(array_column($list, 'attrn_id'));
 		$lanArr = array_unique([1, $lanId]);
-		$tempArr = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrn_id,name');
+		$tempArr = service('attr/NameLanguage')->getListData(['attrn_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrn_id,name');
 		$data['attr'] = $data['attrMap'] = [];
 		foreach ($tempArr as $value) {
 			$data['attr'][$value['attrn_id']] = $value['name'];
@@ -21,7 +21,7 @@ class AttrUsed extends Base
 		$attrArr = array_keys($data['attr']);
 		//$attv属性
 		$tempArr = array_unique(array_column($list, 'attrv_id'));
-		$tempArr = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
+		$tempArr = service('attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
 		$data['attv'] = $attvArr = [];
 		foreach ($tempArr as $key => $value) {
 			$data['attv'][$value['attrv_id']] = $value['name'];
@@ -83,10 +83,10 @@ class AttrUsed extends Base
 		//$attr属性
 		$lanArr = array_unique([1, $lanId]);
 		$tempArr = array_column($list, 'attrn_id');
-		$tempArr = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrn_id,name');
+		$tempArr = service('attr/NameLanguage')->getListData(['attrn_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrn_id,name');
 		$attrn = array_column($tempArr, 'name', 'attrn_id');
 		$tempArr = array_column($list, 'attrv_id');
-		$tempArr = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
+		$tempArr = service('attr/ValueLanguage')->getListData(['attrv_id'=>['in', $tempArr], 'lan_id'=>['in', $lanArr]], 'attrv_id,name');
 		$attrv = array_column($tempArr, 'name', 'attrv_id');
 		foreach ($list as $key=>$value) {
 			$value['attrn_name'] = $attrn[$value['attrn_id']];
@@ -152,13 +152,13 @@ class AttrUsed extends Base
 			$rst = $tempArr;
 		}
 		$lanArr = array_unique([1, lanId()]);
-		$attrLanguage = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>['in', array_keys($rst)], 'lan_id'=>['in', $lanArr]], 'attrn_id,name', 0, 0, ['lan_id'=>'asc']);
+		$attrLanguage = service('attr/NameLanguage')->getListData(['attrn_id'=>['in', array_keys($rst)], 'lan_id'=>['in', $lanArr]], 'attrn_id,name', 0, 0, ['lan_id'=>'asc']);
 		$attrLanguage = array_column($attrLanguage, 'name', 'attrn_id');
 		$attvIdArr = [];
 		foreach ($rst as $value) {
 			$attvIdArr = array_merge($attvIdArr, $value);
 		}
-		$attvLanguage = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>['in', array_unique($attvIdArr)], 'lan_id'=>['in', $lanArr]], 'attrv_id,name', 0, 0, ['lan_id'=>'asc']);
+		$attvLanguage = service('attr/ValueLanguage')->getListData(['attrv_id'=>['in', array_unique($attvIdArr)], 'lan_id'=>['in', $lanArr]], 'attrv_id,name', 0, 0, ['lan_id'=>'asc']);
 		$attvLanguage = array_column($attvLanguage, 'name', 'attrv_id');
 		$result = [];
 		foreach ($rst as $key=>$value) {
@@ -186,7 +186,7 @@ class AttrUsed extends Base
 	{
 		$skuId = $this->getListData(['attrv_id'=>['in', $vidArr]], 'sku_id');
 		if ($skuId) {
-			$spuId = make('app/service/product/Sku')->getListData(['sku_id'=>['in', array_column($skuId, 'sku_id')]], 'spu_id');
+			$spuId = service('product/Sku')->getListData(['sku_id'=>['in', array_column($skuId, 'sku_id')]], 'spu_id');
 			return array_column($spuId, 'spu_id');
 		}
 		return [];

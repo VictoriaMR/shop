@@ -16,7 +16,7 @@ class Socket
 
 	protected function request($act, $param='')
 	{
-		$http = make('frame/Http');
+		$http = frame('Http');
 		if (is_string($param)) parse_str($param, $param);
 		$param['act'] = $act;
 		$param['token'] = $this->token;

@@ -31,12 +31,12 @@ class Transfer extends AdminBase
 		if (!empty($keyword)) {
 			$where['name'] = ['like', '%'.$keyword.'%'];
 		}
-		$service = make('app/service/Translate');
+		$service = service('Translate');
 		$total = $service->getCountData($where);
 		if ($total > 0) {
 			$list = $service->getListData($where, '*', $page, $size);
 			if (!empty($list)) {
-				$languageList = make('app/service/Language')->getListCache();
+				$languageList = service('Language')->getListCache();
 				$languageList = array_column($languageList, 'name', 'code');
 				foreach ($list as $key => $value) {
 					$value['type_name'] = $languageList[$value['type']] ?? '';
@@ -57,11 +57,11 @@ class Transfer extends AdminBase
 		if (empty($id)) {
 			$this->error('参数错误');
 		}
-		$info = make('app/service/Translate')->loadData($id);
+		$info = service('Translate')->loadData($id);
 		if (empty($info)) {
 			$this->error('获取数据为空');
 		}
-		$languageList = make('app/service/Language')->getInfoCache();
+		$languageList = service('Language')->getInfoCache();
 		$languageList = array_column($languageList, 'name', 'code');
 		$info['type_name'] = $languageList[$info['type']];
 		$this->success($info, '');
@@ -69,7 +69,7 @@ class Transfer extends AdminBase
 
 	protected function reloadCache()
 	{
-		$result = make('app/service/Translate')->reloadCache();
+		$result = service('Translate')->reloadCache();
 		if ($result) {
 			$this->success('重构成功');
 		} else {
@@ -90,7 +90,7 @@ class Transfer extends AdminBase
 		if ($code == 'zh') {
 			$this->success($value, '');
 		}
-		$languageList = make('app/service/Language')->getInfoCache();
+		$languageList = service('Language')->getInfoCache();
 		$languageList = array_column($languageList, 'tr_code', 'code');
 		$trCode = $languageList[$code];
 		$result = make('App\s\Translate')->getTranslate($value, $trCode);

@@ -40,7 +40,7 @@ class Order extends AdminBase
 			$where['order_id'] = $orderId;
 		}
 		if ($email) {
-			$memList = make('app/service/member/Member')->getListData(['email'=>$email], 'mem_id');
+			$memList = service('member/Member')->getListData(['email'=>$email], 'mem_id');
 			if (empty($memList)) {
 				$where = ['order_id' => 0];
 			} else {
@@ -53,13 +53,13 @@ class Order extends AdminBase
 		if ($etime) {
 			$where['add_time'] = ['<=', $etime];
 		}
-		$siteList = make('app/service/site/Site')->getListData([], 'site_id,name');
+		$siteList = service('site/Site')->getListData([], 'site_id,name');
 		$siteList = array_column($siteList, 'name', 'site_id');
 		//状态列表
-		$orderService = make('app/service/order/Order');
+		$orderService = service('order/Order');
 		$statusList = $orderService->orderStatus();
 		//支付账号
-		$paymentAccount = make('app/service/payment/Payment')->getList([], 0);
+		$paymentAccount = service('payment/Payment')->getList([], 0);
 		$paymentAccount = array_map(function($value){
 			$value['name'] = $value['type_name'].' - '.$value['name'];
 			return $value;

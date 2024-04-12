@@ -31,7 +31,7 @@ class AdminBase extends Base
 
 	protected function addLog($msg)
 	{
-		return make('app/service/login/Logger')->addLog([
+		return service('login/Logger')->addLog([
 			'remark' => $msg,
 			'type' => 3,
 		]);
@@ -45,14 +45,14 @@ class AdminBase extends Base
 		if (empty($trCode) || empty($name)) {
 			$this->error('参数错误');
 		}
-		$rst = make('app/service/Translate')->getText($name, $trCode, $fromCode);
+		$rst = service('Translate')->getText($name, $trCode, $fromCode);
 		$this->success('', $rst);
 	}
 
 	protected function avatar($info)
 	{
 		if (empty($info)) return '';
-		$img = make('app/service/Member')->getAvatar($info['avatar'], $info['sex']);
+		$img = service('Member')->getAvatar($info['avatar'], $info['sex']);
 		return '<div class="userAvatarInfo"><span class="avatarStyle"><img src="'.$img.'"></span><span class="two"><p>'.$info['nick_name'].'</p><p>'.$info['mem_id'].'</p></span></div>';
 	}
 }

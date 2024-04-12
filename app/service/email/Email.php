@@ -10,7 +10,7 @@ class Email extends Base
 
 	public function sendEmail($memId, $code, $type)
 	{
-		$data = make('app/service/email/Used')->getSiteAccountId();
+		$data = service('email/Used')->getSiteAccountId();
 		if (empty($data)) {
 			return false;
 		}
@@ -19,7 +19,7 @@ class Email extends Base
 		$data['content'] = $code;
 		$rst = $this->insert($data);
 		if ($rst) {
-			make('frame/Task')->taskStart('EmailTask');
+			frame('Task')->taskStart('EmailTask');
 		}
 		return $rst;
 	}
@@ -30,7 +30,7 @@ class Email extends Base
 		if (empty($info)) {
 			return false;
 		}
-		$memInfo = make('app/service/Member')->loadData($info['mem_id'], 'email');
+		$memInfo = service('Member')->loadData($info['mem_id'], 'email');
 		if (empty($memInfo['email'])) {
 			return false;
 		}
@@ -78,12 +78,12 @@ class Email extends Base
 
 	protected function send($toEmail, $toName, $subject, $content)
 	{
-		$auth = make('app/service/email/Account')->getInfoCache($this->emailAccountId);
+		$auth = service('email/Account')->getInfoCache($this->emailAccountId);
 		if(!$auth || !$auth['status']){
 			return false;
 		}
 
-		$mail = make('app/service/phpmailer/PHPMailer');
+		$mail = service('phpmailer/PHPMailer');
 		$mail->SMTPDebug = 4;
 		$mail->MessageID = randString(32).'@'.$this->siteInfo['domain'];
 		$mail->isSMTP();
@@ -126,7 +126,7 @@ class Email extends Base
 
 		$status = $mail->send();
 		if (!$status) {
-			make('frame/Debug')->addLog($mail->ErrorInfo, 'email_error');
+			frame('Debug')->addLog($mail->ErrorInfo, 'email_error');
 		}
 		return $status;
 	}

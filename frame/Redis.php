@@ -17,7 +17,7 @@ class Redis
 			$this->_link->connect(config('redis', 'host', '127.0.0.1'), config('redis', 'port', '6379'), self::DEFAULT_CONNECT_TIME);
 			$this->_connect = true;
 		} catch (\Exception $e) {
-			make('frame/Debug')->runlog($e->getMessage(), 'redis');
+			frame('Debug')->runlog($e->getMessage(), 'redis');
 		}
 		if ($this->_connect && !empty(config('redis', 'password'))) {
 			$this->_link->auth(config('redis', 'password'));

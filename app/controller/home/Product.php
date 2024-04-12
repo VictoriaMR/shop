@@ -14,14 +14,14 @@ class Product extends HomeBase
 		$skuId = (int)iget('sid', 0);
 		$crumbs = [];
 		if ($spuId>0 || $skuId>0) {
-			$spu = make('app/service/product/Spu');
+			$spu = service('product/Spu');
 			if (!$spuId) {
-				$spuId = make('app/service/product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
+				$spuId = service('product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
 			}
 			$lanId = lanId();
 			$info = $spu->getInfoCache($spuId, $lanId, siteId());
 			if ($info) {
-				$cateList = make('app/service/category/Category')->pCate($info['cate_id']);
+				$cateList = service('category/Category')->pCate($info['cate_id']);
 				$cateList = array_reverse($cateList);
 				if ($lanId == 1) {
 					$lanArr = array_column($cateList, 'name_en', 'cate_id');
@@ -29,7 +29,7 @@ class Product extends HomeBase
 					//分类语言
 					$where = ['cate_id'=>['in', array_column($cateList, 'cate_id')]];
 					$where['lan_id'] = $lanId;
-					$lanArr = make('app/service/category/Language')->getListData($where, 'cate_id,name');
+					$lanArr = service('category/Language')->getListData($where, 'cate_id,name');
 					$lanArr = array_column($lanArr, 'name', 'cate_id');
 				}
 				foreach ($cateList as $value) {
@@ -70,7 +70,7 @@ class Product extends HomeBase
 					$name = $title = $info['name'];
 					$seo = $title.implode(' ', $info['attv']??[]);
 				}
-				$isLiked = userId() ? make('app/service/member/Collect')->isCollect($spuId) : false;
+				$isLiked = userId() ? service('member/Collect')->isCollect($spuId) : false;
 				$this->assign('isLiked', $isLiked);
 				$this->assign('info', $info);
 				$this->assign('name', $name);
@@ -97,7 +97,7 @@ class Product extends HomeBase
 		if (empty($skuId)) {
 			$this->error('The product param was invalid.');
 		}
-		$sku = make('app/service/product/Sku');
+		$sku = service('product/Sku');
 		$where = [
 			'sku_id' => $skuId,
 			'site_id' => siteId(),
@@ -119,7 +119,7 @@ class Product extends HomeBase
 		if ($spuId <= 0) {
 			$this->error(distT('id_error'));
 		}
-		$info = make('app/service/product/Spu')->getInfoCache($spuId, lanId(), siteId());
+		$info = service('product/Spu')->getInfoCache($spuId, lanId(), siteId());
 		if ($info) {
 			unset($info['description']);
 			unset($info['introduce']);

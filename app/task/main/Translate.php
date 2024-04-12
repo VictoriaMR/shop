@@ -15,9 +15,9 @@ class Translate extends TaskDriver
 	public function run()
 	{
 		$language = array_column($this->getLanguage(), 'tr_code', 'lan_id');
-		$transService = make('app/service/Translate');
+		$transService = service('Translate');
 		//spu名称
-		$spuService = make('app/service/product/Language');
+		$spuService = service('product/Language');
 		$sql = 'SELECT * FROM product_language WHERE spu_id IN (SELECT spu_id FROM product_language GROUP BY spu_id HAVING COUNT(*) < '.count($language).' )';
 		$list = $spuService->getQuery($sql);
 		if (!empty($list)) {
@@ -53,10 +53,10 @@ class Translate extends TaskDriver
 			}
 		}
 		//待翻译属性名
-		$nameService = make('app/service/attr/Name');
+		$nameService = service('attr/Name');
 		$list = $nameService->getListData(['status'=>['<>', 2]]);
 		if (!empty($list)) {
-			$languageService = make('app/service/attr/NameLanguage');
+			$languageService = service('attr/NameLanguage');
 			foreach ($list as $key => $value) {
 				$hasLanguage = $languageService->getListData(['attrn_id'=>$value['attrn_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
@@ -90,10 +90,10 @@ class Translate extends TaskDriver
 			}
 		}
 		//待翻译属性值
-		$valueService = make('app/service/attr/Value');
+		$valueService = service('attr/Value');
 		$list = $valueService->getListData(['status'=>['<>', 2]]);
 		if (!empty($list)) {
-			$languageService = make('app/service/attr/ValueLanguage');
+			$languageService = service('attr/ValueLanguage');
 			foreach ($list as $key => $value) {
 				$hasLanguage = $languageService->getListData(['attrv_id'=>$value['attrv_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
@@ -127,10 +127,10 @@ class Translate extends TaskDriver
 			}
 		}
 		//待翻译描述值
-		$nameService = make('app/service/desc/Name');
+		$nameService = service('desc/Name');
 		$list = $nameService->getListData(['status'=>['<>', 2]]);
 		if (!empty($list)) {
-			$languageService = make('app/service/desc/NameLanguage');
+			$languageService = service('desc/NameLanguage');
 			foreach ($list as $key => $value) {
 				$hasLanguage = $languageService->getListData(['descn_id'=>$value['descn_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
@@ -163,10 +163,10 @@ class Translate extends TaskDriver
 				}
 			}
 		}
-		$valueService = make('app/service/desc/Value');
+		$valueService = service('desc/Value');
 		$list = $valueService->getListData(['status'=>['<>', 2]]);
 		if (!empty($list)) {
-			$languageService = make('app/service/desc/ValueLanguage');
+			$languageService = service('desc/ValueLanguage');
 			foreach ($list as $key => $value) {
 				$hasLanguage = $languageService->getListData(['descv_id'=>$value['descv_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
@@ -205,7 +205,7 @@ class Translate extends TaskDriver
 	private function getLanguage()
 	{
 		if (empty($this->language)) {
-			$this->language = make('app/service/Language')->getTransList();
+			$this->language = service('Language')->getTransList();
 		}
 		return $this->language;
 	}

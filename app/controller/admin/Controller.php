@@ -27,8 +27,8 @@ class Controller extends AdminBase
 
 		html()->addJs();
 
-		$list = make('app/service/controller/Controller')->getList();
-		$iconList = make('app/service/controller/Icon')->getListData([], 'icon_id,name,remark', 0, 0, ['sort'=>'asc']);
+		$list = service('controller/Controller')->getList();
+		$iconList = service('controller/Icon')->getListData([], 'icon_id,name,remark', 0, 0, ['sort'=>'asc']);
 		$this->assign('iconList', $iconList);
 		$this->assign('list', $list);
 		$this->view();
@@ -40,7 +40,7 @@ class Controller extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$info = make('app/service/controller/Controller')->loadData($id);
+		$info = service('controller/Controller')->loadData($id);
 		if (empty($info)) {
 			$this->error('查询不到有效数据');
 		}
@@ -65,9 +65,9 @@ class Controller extends AdminBase
 		];
 		if (empty($id)) {
 			$data['parent_id'] = ipost('parent_id');
-			$rst = make('app/service/controller/Controller')->insert($data);
+			$rst = service('controller/Controller')->insert($data);
 		} else {
-			$rst = make('app/service/controller/Controller')->updateData($id, $data);
+			$rst = service('controller/Controller')->updateData($id, $data);
 		}
 		if ($rst) {
 			$this->success('操作成功');
@@ -82,7 +82,7 @@ class Controller extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/controller/Controller');
+		$service = service('controller/Controller');
 		if ($service->getCountData(['parent_id'=>$id])) {
 			$this->error('此功能下有子功能, 不能删除');
 		}
@@ -100,7 +100,7 @@ class Controller extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/controller/Controller')->updateData($id, ['sort'=>$sort]);
+		$rst = service('controller/Controller')->updateData($id, ['sort'=>$sort]);
 		if ($rst) {
 			$this->success('排序成功');
 		}
@@ -119,7 +119,7 @@ class Controller extends AdminBase
 
 		html()->addJs();
 
-		$list = make('app/service/controller/Icon')->getListData([], 'icon_id,name,sort,remark', 0, 0, ['sort'=>'asc']);
+		$list = service('controller/Icon')->getListData([], 'icon_id,name,sort,remark', 0, 0, ['sort'=>'asc']);
 
 		$this->assign('list', $list);
 		$this->view();
@@ -131,7 +131,7 @@ class Controller extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$service = make('app/service/controller/Icon');
+		$service = service('controller/Icon');
 		$info = $service->loadData($id, 'icon_id,name,sort,remark');
 		if ($info) {
 			$this->success($info);
@@ -152,7 +152,7 @@ class Controller extends AdminBase
 		if (!empty($id)) {
 			$where['icon_id'] = ['<>', $id];
 		}
-		$service = make('app/service/controller/Icon');
+		$service = service('controller/Icon');
 		if ($service->getCountData($where)) {
 			$this->error('名称已经存在');
 		}
@@ -178,7 +178,7 @@ class Controller extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/controller/Icon')->deleteData($id);
+		$rst = service('controller/Icon')->deleteData($id);
 		if ($rst) {
 			$this->success('删除成功');
 		}
@@ -192,7 +192,7 @@ class Controller extends AdminBase
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/controller/Icon')->updateData($id, ['sort'=>$sort]);
+		$rst = service('controller/Icon')->updateData($id, ['sort'=>$sort]);
 		if ($rst) {
 			$this->success('排序成功');
 		}

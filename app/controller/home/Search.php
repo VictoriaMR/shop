@@ -25,7 +25,7 @@ class Search extends HomeBase
 		
 		$spuIdArr = [];
 		$where = [];
-		$spu = make('app/service/product/Spu');
+		$spu = service('product/Spu');
 		if ($keyword) {
 			$tempArr = $spu->getSpuIdByKeyword($keyword);
 			if ($tempArr !== false) {

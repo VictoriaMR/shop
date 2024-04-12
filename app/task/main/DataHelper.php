@@ -12,13 +12,13 @@ class DataHelper extends TaskDriver
 
 	public function run()
 	{
-		$info = make('app/service/supplier/Url')->loadData(['status'=>0]);
+		$info = service('supplier/Url')->loadData(['status'=>0]);
 		if (empty($info)) {
 			$this->taskMonitor();
 			return false;
 		}
 		//获取空闲机器
-		$socketService = make('app/service/Socket');
+		$socketService = service('Socket');
 		$list = $socketService->getAutoOnlineList();
 		if (empty($list)) {
 			sleep(10);

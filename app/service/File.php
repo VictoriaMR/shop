@@ -16,7 +16,7 @@ class File
 		$ext = explode('/', $file['type'])[1] ?? '';
 		if (!in_array($ext, self::FILE_ACCEPT)) return false;
 		$name = md5_file($file['tmp_name']);
-		$attachment = make('app/service/attachment/Attachment');
+		$attachment = service('attachment/Attachment');
 		$data = $attachment->getAttachmentByName($name, $cate);
 		if (empty($data)) {
 			$path = createDir(ROOT_PATH.$this->savePath.DS.$cate.DS);
@@ -25,7 +25,7 @@ class File
 			if (!$result) {
 				return false;
 			}
-			$image = make('app/service/Image');
+			$image = service('Image');
 			$image->compressImg($saveUrl);
 			$data = [
 				'name' => $name,
@@ -61,10 +61,10 @@ class File
 		}
 		$urlArr = $tempArr;
 
-		$attachUrl = make('app/service/attachment/Url');
-		$http = make('frame/Http');
-		$attachment = make('app/service/attachment/Attachment');
-		$image = make('app/service/Image');
+		$attachUrl = service('attachment/Url');
+		$http = frame('Http');
+		$attachment = service('attachment/Attachment');
+		$image = service('Image');
 
 		$list = $attachUrl->getListData(['url_md5'=>['in', array_values($urlArr)]], 'attach_id,url_md5');
 		if (!empty($list)) {

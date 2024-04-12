@@ -7,11 +7,11 @@ class Url extends Base
 {
     public function add($url)
     {
-        $channelId = make('app/service/product/Channel')->getChannelId($url);
+        $channelId = service('product/Channel')->getChannelId($url);
         if (!$channelId) {
             return false;
         }
-        $itemId = make('app/service/product/Channel')->getItemId($url);
+        $itemId = service('product/Channel')->getItemId($url);
         if (!$itemId) {
             return false;
         }

@@ -9,7 +9,7 @@ class Cart extends HomeBase
 	{	
 		html()->addCss();
 		html()->addJs();
-		$list = make('app/service/Cart')->getList();
+		$list = service('Cart')->getList();
 		$summary = [];
 		if (!empty($list)) {
 			$originalPriceTotal = 0;
@@ -20,7 +20,7 @@ class Cart extends HomeBase
 				'mem_id' => userId(),
 				'spu_id' => ['in', $spuIdArr],
 			];
-			$collect = make('app/service/member/Collect')->getListData($where, 'spu_id');
+			$collect = service('member/Collect')->getListData($where, 'spu_id');
 			$collect = array_column($collect, 'spu_id');
 			foreach ($list as $key => $value) {
 				if ($value['quantity'] == 0 || $value['quantity'] > $value['stock']) {
@@ -35,7 +35,7 @@ class Cart extends HomeBase
 				}
 				$list[$key] = $value;
 			}
-			$symbol = make('app/service/currency/Currency')->priceSymbol(2);
+			$symbol = service('currency/Currency')->priceSymbol(2);
 			$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 			$priceTotal = sprintf('%.2f', $priceTotal);
 			$summary[1] = [
@@ -60,7 +60,7 @@ class Cart extends HomeBase
 
 	public function cartSummary()
 	{
-		$list = make('app/service/Cart')->getList();
+		$list = service('Cart')->getList();
 		$originalPriceTotal = 0;
 		$priceTotal = 0;
 		if (!empty($list)) {
@@ -72,7 +72,7 @@ class Cart extends HomeBase
 			}
 		}
 		$summary = [];
-		$symbol = make('app/service/currency/Currency')->priceSymbol(2);
+		$symbol = service('currency/Currency')->priceSymbol(2);
 		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
 		$priceTotal = sprintf('%.2f', $priceTotal);
 		$summary[] = [
@@ -92,7 +92,7 @@ class Cart extends HomeBase
 
 	public function cartCount()
 	{
-		$rst = make('app/service/Cart')->getCartCount();
+		$rst = service('Cart')->getCartCount();
 		if ($rst) {
 			$this->success($rst);
 		} else {
@@ -107,7 +107,7 @@ class Cart extends HomeBase
 		if (empty($skuId)) {
 			$this->error(appT('param_error'));
 		}
-		$sku = make('app/service/product/Sku');
+		$sku = service('product/Sku');
 		$where = [
 			'sku_id' => $skuId,
 			'site_id' => siteId(),
@@ -121,7 +121,7 @@ class Cart extends HomeBase
 		if (!userId()) {
 			$where['uuid'] = uuId();
 		}
-		$cart = make('app/service/Cart');
+		$cart = service('Cart');
 		$cartSkuIno = $cart->loadData($where);
 		if (empty($cartSkuIno)) {
 			if ($skuInfo['stock'] < $num) {
@@ -161,12 +161,12 @@ class Cart extends HomeBase
 			$quantity = 1;
 		}
 		$where = ['mem_id' => userId(), 'cart_id' => $id];
-		$cart = make('app/service/Cart');
+		$cart = service('Cart');
 		$cartInfo = $cart->loadData($where);
 		if (empty($cartInfo)) {
 			$this->error(distT('cart_not_exist'));
 		}
-		$sku = make('app/service/product/Sku');
+		$sku = service('product/Sku');
 		$where = [
 			'sku_id' => $cartInfo['sku_id'],
 			'site_id' => siteId(),
@@ -197,7 +197,7 @@ class Cart extends HomeBase
 			'cart_id' => $id,
 			'mem_id' => userId(),
 		];
-		$rst = make('app/service/Cart')->deleteData($where);
+		$rst = service('Cart')->deleteData($where);
 		if ($rst) {
 			$this->success(distT('remove_success'));
 		} else {
@@ -216,7 +216,7 @@ class Cart extends HomeBase
 			'cart_id' => $id,
 			'mem_id' => userId(),
 		];
-		$rst = make('app/service/Cart')->updateData($where, ['checked'=>$check]);
+		$rst = service('Cart')->updateData($where, ['checked'=>$check]);
 		if ($rst) {
 			$this->success($check ? distT('move_to_cart_success') : distT('save_for_later_success'));
 		} else {
@@ -226,7 +226,7 @@ class Cart extends HomeBase
 
 	public function check()
 	{
-		$rst = make('app/service/Cart')->check();
+		$rst = service('Cart')->check();
 		if ($rst) {
 			$this->success(url('checkout'));
 		} else {
@@ -244,16 +244,16 @@ class Cart extends HomeBase
 			'cart_id' => $id,
 			'mem_id' => userId(),
 		];
-		$cart = make('app/service/Cart');
+		$cart = service('Cart');
 		$cartInfo = $cart->loadData($where, 'sku_id');
 		if (empty($cartInfo)) {
 			$this->error(distT('cart_not_exist'));
 		}
-		$info = make('app/service/product/Sku')->loadData($cartInfo['sku_id'], 'spu_id');
+		$info = service('product/Sku')->loadData($cartInfo['sku_id'], 'spu_id');
 		if (empty($info)) {
 			$this->error(distT('add_invalid'));
 		}
-		$info = make('app/service/product/Spu')->getInfoCache($info['spu_id'], lanId());
+		$info = service('product/Spu')->getInfoCache($info['spu_id'], lanId());
 		if (empty($info)) {
 			$this->error(distT('add_invalid'));
 		} else {
@@ -274,7 +274,7 @@ class Cart extends HomeBase
 			'cart_id' => $cartId,
 			'mem_id' => $memId,
 		];
-		$cart = make('app/service/Cart');
+		$cart = service('Cart');
 		$cartInfo = $cart->loadData($where, 'sku_id,quantity');
 		if (empty($cartInfo)) {
 			$this->error(distT('cart_not_exist'));

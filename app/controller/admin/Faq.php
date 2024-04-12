@@ -30,7 +30,7 @@ class Faq extends AdminBase
         $page = (int)iget('page', 1);
         $size = (int)iget('size', 20);
 
-        $group = make('app/service/faq/Group');
+        $group = service('faq/Group');
 
         $total = $group->getCountData();
         if ($total > 0) {
@@ -49,7 +49,7 @@ class Faq extends AdminBase
         if ($id < 1) {
             $this->error('ID值不正确');
         }
-        $data = make('app/service/faq/Group')->loadData($id, 'group_id,name,status');
+        $data = service('faq/Group')->loadData($id, 'group_id,name,status');
         $this->addLog('获取帮助文档分组信息-'.$id);
         if ($data) {
             $this->success('获取成功', $data);
@@ -65,7 +65,7 @@ class Faq extends AdminBase
         if (empty($name)) {
             $this->error('名称不能为空');
         }
-        $group = make('app/service/faq/Group');
+        $group = service('faq/Group');
         $data = [
             'status' => $status,
             'name' => $name,
@@ -87,7 +87,7 @@ class Faq extends AdminBase
         if ($id < 1) {
             $this->error('ID值不正确');
         }
-        $group = make('app/service/faq/Group');
+        $group = service('faq/Group');
         if ($group->getCountData(['group_id'=>$id]) < 1) {
             $this->error('分组数据不存在');
         }
@@ -105,9 +105,9 @@ class Faq extends AdminBase
         if (empty($id)) {
             $this->error('ID值不正确');
         }
-        $info = make('app/service/faq/GroupLanguage')->getListData(['group_id'=>$id]);
+        $info = service('faq/GroupLanguage')->getListData(['group_id'=>$id]);
         $info = array_column($info, 'name', 'lan_id');
-        $languageList = make('app/service/Language')->getListData();
+        $languageList = service('Language')->getListData();
         $data = [];
         foreach ($languageList as $key => $value) {
             if ($value['lan_id'] < 1) continue;
@@ -130,7 +130,7 @@ class Faq extends AdminBase
         }
         $language = ipost('language');
         if (!empty($language)) {
-            $services = make('app/service/faq/GroupLanguage');
+            $services = service('faq/GroupLanguage');
             foreach ($language as $key => $value) {
                 $services->setNxLanguage($id, $key, strTrim($value));
             }
@@ -154,14 +154,14 @@ class Faq extends AdminBase
         $page = (int)iget('page', 1);
         $size = (int)iget('size', 30);
 
-        $faq = make('app/service/faq/Faq');
+        $faq = service('faq/Faq');
 
         $total = $faq->getCountData();
         if ($total > 0) {
             $list = $faq->getListData([], '*', $page, $size);
         }
 
-        $group = make('app/service/faq/Group')->getListData();
+        $group = service('faq/Group')->getListData();
         $group = array_column($group, 'name', 'group_id');
 
         $this->assign('size', $size);
@@ -177,7 +177,7 @@ class Faq extends AdminBase
         if ($id < 1) {
             $this->error('ID值不正确');
         }
-        $data = make('app/service/faq/Faq')->loadData($id, 'faq_id,group_id,title,status,visit_total');
+        $data = service('faq/Faq')->loadData($id, 'faq_id,group_id,title,status,visit_total');
         $this->addLog('获取帮助文档信息-'.$id);
         if ($data) {
             $this->success('获取成功', $data);
@@ -198,10 +198,10 @@ class Faq extends AdminBase
         if ($groupId < 1) {
             $this->error('分组ID不正确');
         }
-        if (make('app/service/faq/Group')->getCountData(['group_id'=>$groupId]) < 1) {
+        if (service('faq/Group')->getCountData(['group_id'=>$groupId]) < 1) {
             $this->error('分组不存在');
         }
-        $faq = make('app/service/faq/Faq');
+        $faq = service('faq/Faq');
         $data = [
             'group_id' => $groupId,
             'status' => $status,
@@ -225,7 +225,7 @@ class Faq extends AdminBase
         if ($id < 1) {
             $this->error('ID值不正确');
         }
-        $faq = make('app/service/faq/Faq');
+        $faq = service('faq/Faq');
         if ($faq->getCountData(['faq_id'=>$id]) < 1) {
             $this->error('数据不存在');
         }
@@ -245,10 +245,10 @@ class Faq extends AdminBase
             $this->error('ID值不正确');
         }
         $this->addLog('获取帮助文档语言-'.$id);
-        $languageList = make('app/service/Language')->getListData();
+        $languageList = service('Language')->getListData();
         if ($lanId > 0) {
             $languageList = array_column($languageList, 'name', 'lan_id');
-            $info = make('app/service/faq/FaqLanguage')->loadData(['faq_id'=>$id, 'lan_id'=>$lanId]);
+            $info = service('faq/FaqLanguage')->loadData(['faq_id'=>$id, 'lan_id'=>$lanId]);
             $info = [
                 'faq_id' => $id,
                 'lan_id' => $lanId,
@@ -258,7 +258,7 @@ class Faq extends AdminBase
             ];
             $this->success($info);
         }
-        $info = make('app/service/faq/FaqLanguage')->getListData(['faq_id'=>$id]);
+        $info = service('faq/FaqLanguage')->getListData(['faq_id'=>$id]);
         $info = array_column($info, 'title', 'lan_id');
         $data = [];
         foreach ($languageList as $key => $value) {
@@ -290,13 +290,13 @@ class Faq extends AdminBase
         if (empty($content)) {
             $this->error('内容不能为空');
         }
-        if (make('app/service/faq/Faq')->getCountData(['faq_id'=>$id]) < 1) {
+        if (service('faq/Faq')->getCountData(['faq_id'=>$id]) < 1) {
             $this->error('帮助文档数据不存在');
         }
-        if (make('app/service/Language')->getCountData(['lan_id'=>$lanId]) < 1) {
+        if (service('Language')->getCountData(['lan_id'=>$lanId]) < 1) {
             $this->error('语言数据不存在');
         }
-        $rst = make('app/service/faq/FaqLanguage')->setNxLanguage($id, $lanId, $title, $content);
+        $rst = service('faq/FaqLanguage')->setNxLanguage($id, $lanId, $title, $content);
         $this->addLog('修改帮助文档语言-'.$id);
         if ($rst) {
             $this->success('操作成功');

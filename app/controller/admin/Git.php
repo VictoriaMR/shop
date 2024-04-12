@@ -20,7 +20,7 @@ class Git extends AdminBase
     public function index()
     {
         $list = $this->git_library;
-        $git = make('app/service/admin/Git');
+        $git = service('admin/Git');
         foreach ($list as $key => $value) {
             $info = $git->where(['library'=>$value])->field('release_time,commit_time,info,commit,status')->orderBy('git_id', 'desc')->find();
             $info['name'] = $value;
@@ -57,7 +57,7 @@ class Git extends AdminBase
         if ($id) {
             $where['library'] = $id;
         }
-        $git = make('app/service/admin/Git');
+        $git = service('admin/Git');
         $total = $git->getCountData($where);
         if ($total > 0) {
             $list = $git->getListData($where, '*', $page, $size, ['git_id'=>'desc']);
@@ -76,7 +76,7 @@ class Git extends AdminBase
         if (!in_array($id, $this->git_library)) {
             $this->error('版本库不合法');
         }
-        $rst = make('app/service/admin/Git')->upateLibrary($id, $msg);
+        $rst = service('admin/Git')->upateLibrary($id, $msg);
         if ($rst) {
             $this->success($msg);
         }
@@ -89,7 +89,7 @@ class Git extends AdminBase
         if ($id <= 0) {
             $this->error('参数不正确');
         }
-        $git = make('app/service/admin/Git');
+        $git = service('admin/Git');
         $info = $git->loadData($id);
         if (empty($info)) {
             $this->error('找不到版本记录');
@@ -98,7 +98,7 @@ class Git extends AdminBase
         if ($rst) {
             \App::setVersion($info['commit']);
             //删除缓存模板文件
-            make('app/service/site/Site')->deleteTemplateCache();
+            service('site/Site')->deleteTemplateCache();
             $this->success('发布成功');
         }
         $this->error('发布失败');

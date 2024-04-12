@@ -17,7 +17,7 @@ class Translate
 		];
 		$http_url = 'http://api.fanyi.baidu.com/api/trans/vip/translate';
 		$request = $http_url.'?'.http_build_query($data);
-		$http = make('frame/Http');
+		$http = frame('Http');
 		for ($i = 0; $i < 5; $i ++) {
 			$translateStr = $http->get($request);
 			if ($translateStr !== false) {

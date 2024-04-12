@@ -11,7 +11,7 @@ class Zone extends Base
 		if ($lanId == 2) {
 			return $nameEn;
 		}
-		$temp = make('app/service/address/ZoneLanguage')->loadData(['zone_id'=>$id, 'lan_id'=>$lanId], 'name');
+		$temp = service('address/ZoneLanguage')->loadData(['zone_id'=>$id, 'lan_id'=>$lanId], 'name');
 		if (empty($temp['name'])) {
 			return $nameEn;
 		}

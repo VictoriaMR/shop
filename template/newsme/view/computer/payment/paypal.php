@@ -1,4 +1,4 @@
-<?php if(!empty(make('app/service/payment/PayPal')->getToken())){?><div id="paypal-js" style="display:none;">
+<?php if(!empty(service('payment/PayPal')->getToken())){?><div id="paypal-js" style="display:none;">
     <form id="paypal-checkout-form" method="post" action="<?php echo url('checkout');?>" style="display:none;">
         <input type="hidden" name="paypal_order_id"/>
     </form>
@@ -25,7 +25,7 @@
         }
     } else {
         js_sdk_paypal = document.createElement('script');
-        js_sdk_paypal.src = "<?php echo make('app/service/payment/PayPal')->getJsSdk('', false, true);?>";
+        js_sdk_paypal.src = "<?php echo service('payment/PayPal')->getJsSdk('', false, true);?>";
         js_sdk_paypal.id = 'js-sdk-paypal';
         js_sdk_paypal.async = 'true';
         document.head.appendChild(js_sdk_paypal);

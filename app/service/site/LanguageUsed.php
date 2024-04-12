@@ -13,7 +13,7 @@ class LanguageUsed extends Base
 			$siteId = $this->siteId();
 		}
 		$list = $this->getListData(['site_id'=>$siteId], '*', 0, 0, ['sort'=>'asc']);
-		$service = make('app/service/Language');
+		$service = service('Language');
 		foreach ($list as $key => $value) {
 			$list[$key] += $service->getInfoCache($value['code']);
 		}

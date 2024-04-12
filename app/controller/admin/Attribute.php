@@ -38,7 +38,7 @@ class Attribute extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$nameService = make('app/service/attr/Name');
+		$nameService = service('attr/Name');
 		$total = $nameService->getCountData($where); 
 		if ($total > 0) {
 			$list = $nameService->getList($where, $page, $size);
@@ -58,7 +58,7 @@ class Attribute extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/Name')->loadData($id);
+		$info = service('attr/Name')->loadData($id);
 		$this->success($info, '');
 	}
 
@@ -68,9 +68,9 @@ class Attribute extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/NameLanguage')->getListData(['attrn_id'=>$id]);
+		$info = service('attr/NameLanguage')->getListData(['attrn_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getTransList();
+		$languageList = service('Language')->getTransList();
 		foreach ($languageList as $key => $value) {
 			$info[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
@@ -89,7 +89,7 @@ class Attribute extends AdminBase
 		if (empty($name)) {
 			$this->error('属性名不能为空');
 		}
-		$service = make('app/service/attr/Name');
+		$service = service('attr/Name');
 		if ($service->getCountData(['attrn_id'=>['<>',$id],'name' => $name])) {
 			$this->error($name.' 属性名已存在, 请勿重复添加');
 		}
@@ -120,17 +120,17 @@ class Attribute extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/attr/NameLanguage');
+		$services = service('attr/NameLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
-		$len = count(make('app/service/Language')->getTransList());
+		$len = count(service('Language')->getTransList());
 		if ($len <= count($language)) {
 			$status = 2;
 		} else {
 			$status = 1;
 		}
-		make('app/service/attr/Name')->updateData($id, ['status'=>$status]);
+		service('attr/Name')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -141,10 +141,10 @@ class Attribute extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/attr/Name')->deleteData($id);
+		$rst = service('attr/Name')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttrUsed')->deleteData(['attrn_id'=>$id]);
+			$rst = service('product/AttrUsed')->deleteData(['attrn_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -177,7 +177,7 @@ class Attribute extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$valueService = make('app/service/attr/Value');
+		$valueService = service('attr/Value');
 		$total = $valueService->getCountData($where); 
 		if ($total > 0) {
 			$list = $valueService->getList($where, $page, $size);
@@ -197,7 +197,7 @@ class Attribute extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/Value')->loadData($id);
+		$info = service('attr/Value')->loadData($id);
 		$this->success($info, '');
 	}
 
@@ -207,9 +207,9 @@ class Attribute extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/attr/ValueLanguage')->getListData(['attrv_id'=>$id]);
+		$info = service('attr/ValueLanguage')->getListData(['attrv_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getTransList();
+		$languageList = service('Language')->getTransList();
 		foreach ($languageList as $key => $value) {
 			$info[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
@@ -228,7 +228,7 @@ class Attribute extends AdminBase
 		if (empty($name)) {
 			$this->error('属性值不能为空');
 		}
-		$service = make('app/service/attr/Value');
+		$service = service('attr/Value');
 		if ($service->getCountData(['attrv_id'=>['<>',$id],'name' => $name])) {
 			$this->error($name.' 属性值已存在, 请勿重复添加');
 		}
@@ -259,17 +259,17 @@ class Attribute extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/attr/ValueLanguage');
+		$services = service('attr/ValueLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
-		$len = count(make('app/service/Language')->getTransList());
+		$len = count(service('Language')->getTransList());
 		if ($len <= count($language)) {
 			$status = 2;
 		} else {
 			$status = 1;
 		}
-		make('app/service/attr/Value')->updateData($id, ['status'=>$status]);
+		service('attr/Value')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -280,10 +280,10 @@ class Attribute extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/attr/Value')->deleteData($id);
+		$rst = service('attr/Value')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttrUsed')->deleteData(['attrv_id'=>$id]);
+			$rst = service('product/AttrUsed')->deleteData(['attrv_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);

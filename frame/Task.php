@@ -14,7 +14,7 @@ class Task
 			$lockTimeout = config('task', 'timeout');
 		}
 		if ($cas == '') {
-			$cas = make('frame/Locker')->lock($lockKey, $lockTimeout);
+			$cas = frame('Locker')->lock($lockKey, $lockTimeout);
 			if (!$cas) {
 				return false;
 			}
@@ -46,7 +46,7 @@ class Task
 			$rstSign = '';
 			exec($cmd.' > /dev/null 2>&1 &', $out, $rstSign);
 		}
-		make('frame/Debug')->runlog($cmd, 'task');
+		frame('Debug')->runlog($cmd, 'task');
 		return true;
 	}
 

@@ -21,20 +21,20 @@ class Category extends HomeBase
 		$page = (int)iget('page', 1);
 		$size = (int)iget('size', 36);
 		
-		$category = make('app/service/category/Category');
+		$category = service('category/Category');
 		$cateInfo = $category->getInfo($cateId);
 		$crumbs = [];
 		$where = [];
 		$cateSon = [];
 		//获取左侧过滤列表
-		$attrUsed = make('app/service/product/AttrUsed');
+		$attrUsed = service('product/AttrUsed');
 		$filter = $attrUsed->getSiteAttr();
-		$spu = make('app/service/product/Spu');
+		$spu = service('product/Spu');
 		$where['status'] = $spu->getConst('STATUS_OPEN');
 		$lanId = lanId();
 		if ($cateInfo) {
 			//desc, keyword
-			$cateLanguage = make('app/service/category/Language');
+			$cateLanguage = service('category/Language');
 			$lanArr = array_unique([1, $lanId]);
 			$lanArr = $cateLanguage->getListData(['cate_id'=>$cateId, 'lan_id'=>['in', $lanArr]], 'type,name', 0, 0, ['lan_id'=>'asc']);
 			$lanArr = array_column($lanArr, 'name', 'type');

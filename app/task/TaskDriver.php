@@ -18,8 +18,8 @@ abstract class TaskDriver
 	{
         if ($process) {
             //init 基础类
-            $this->locker = make('frame/Locker');
-            $this->tasker = make('frame/Task');
+            $this->locker = frame('Locker');
+            $this->tasker = frame('Task');
             //解析参数
             $process['lock'] = json_decode(base64_decode($process['lock']), true);
             list($this->lock, $this->cas) = $process['lock'];

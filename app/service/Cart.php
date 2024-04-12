@@ -64,9 +64,9 @@ class Cart extends Base
 	{
 		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,price as cart_price,checked', 0, 0, ['cart_id'=>'desc']);
 		if (!empty($list)) {
-			$sku = make('app/service/product/Sku');
+			$sku = service('product/Sku');
 			$list = array_column($list, null, 'sku_id');
-			$currencyService = make('app/service/currency/Currency');
+			$currencyService = service('currency/Currency');
 			$symbol = $currencyService->priceSymbol(2);
 			foreach ($list as $key => $value) {
 				$tempData = $sku->getInfoCache($value['sku_id'], $this->lanId());
@@ -88,7 +88,7 @@ class Cart extends Base
 		if (empty($list)) {
 			return false;
 		}
-		$sku = make('app/service/product/Sku');
+		$sku = service('product/Sku');
 		$skuList = $sku->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,spu_id,status,stock');
 		$skuList = array_column($skuList, null, 'sku_id');
 

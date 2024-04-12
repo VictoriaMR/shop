@@ -28,9 +28,9 @@ class Test extends TaskDriver
         $language = array_column($this->getLanguage(), 'tr_code', 'lan_id');
         unset($language[1]);
         $lanCount = count($language);
-        $transService = make('app/service/Translate');
-        $cateList = make('app/service/category/Category')->getListData();
-        $languageService = make('app/service/category/Language');
+        $transService = service('Translate');
+        $cateList = service('category/Category')->getListData();
+        $languageService = service('category/Language');
         foreach ($cateList as $key=>$value) {
             $hasLanguage = $languageService->getListData(['cate_id'=>$value['cate_id']], 'lan_id');
             if (count($hasLanguage) == $lanCount) continue;
@@ -67,7 +67,7 @@ class Test extends TaskDriver
     private function getLanguage()
     {
         if (empty($this->language)) {
-            $this->language = make('app/service/Language')->getTransList();
+            $this->language = service('Language')->getTransList();
         }
         return $this->language;
     }
@@ -120,8 +120,8 @@ class Test extends TaskDriver
     private function updateSpuPrice()
     {
         $this->echo('更新spu价格开始');
-        $spu = make('app/service/product/Spu');
-        $sku = make('app/service/product/Sku');
+        $spu = service('product/Spu');
+        $sku = service('product/Sku');
         $list = $spu->getListData([], 'spu_id');
         foreach ($list as $value) {
             $info = $sku->loadData(['spu_id'=>$value['spu_id']], 'max(price) as max_price,min(price) as min_price');

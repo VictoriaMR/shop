@@ -12,7 +12,7 @@ class CompressStatic extends TaskDriver
 
 	public function run()
 	{
-		$list = make('app/service/site/Site')->getListData(['status'=>1], 'path');
+		$list = service('site/Site')->getListData(['status'=>1], 'path');
 		if (empty($list)) {
 			return false;
 		}
@@ -22,7 +22,7 @@ class CompressStatic extends TaskDriver
 			'js' => 'https://www.toptal.com/developers/javascript-minifier/api/raw',
 			'css' => 'https://tool.oschina.net/action/jscompress/css_compress',
 		];
-		$http = make('frame/Http');
+		$http = frame('Http');
 		foreach ($list as $value) {
 			$dir = $basePath.$value.DS.'static';
 			if (!is_dir($dir)) continue;

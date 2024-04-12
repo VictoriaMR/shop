@@ -15,7 +15,7 @@ class Queue
 		} else {
 			cache(2)->lPush($this->key, $data);
 		}
-		make('frame/Task')->taskStart('Queue');
+		frame('Task')->taskStart('Queue');
 		return true;
 	}
 

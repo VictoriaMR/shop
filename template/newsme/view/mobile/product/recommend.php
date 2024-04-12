@@ -1,4 +1,4 @@
-<?php $list = $list??make('app/service/product/Spu')->getRecommend(1, 6);$isLogin=empty($show_like)?false:userId();?>
+<?php $list = $list??service('product/Spu')->getRecommend(1, 6);$isLogin=empty($show_like)?false:userId();?>
 <?php if (!empty($list)) {?><div id="recommend-page">
 	<?php if (!empty($title)){?><div class="list-title flex layer">
 		<div class="tcell">

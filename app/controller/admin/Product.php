@@ -33,10 +33,10 @@ class Product extends AdminBase
 		$page = iget('page', 1);
 		$size = iget('size', 30);
 		//spu状态
-		$spu = make('app/service/product/Spu');
+		$spu = service('product/Spu');
 		$statusList = $spu->getStatusList();
 		//分类
-		$cateList = make('app/service/category/Category')->getListFormat(false);
+		$cateList = service('category/Category')->getListFormat(false);
 		$cateArr = array_column($cateList, 'name', 'cate_id');
 		$tempArr = [];
 		$cateId = 0;
@@ -124,7 +124,7 @@ class Product extends AdminBase
 			// 用户
 			$userList = array_filter(array_column($list, 'mem_id'));
 			if (!empty($userList)) {
-				$userList = make('app/service/Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name,avatar,sex');
+				$userList = service('Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name,avatar,sex');
 				$userList = array_column($userList, null, 'mem_id');
 			}
 			// 店铺
@@ -144,7 +144,7 @@ class Product extends AdminBase
 			}
 		}
 
-		$channelList = make('app/service/purchase/Channel')->getListData();
+		$channelList = service('purchase/Channel')->getListData();
 		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
 		$statusList = purchase()->product()->getStatusList();
 
@@ -238,14 +238,14 @@ class Product extends AdminBase
 
 		html()->addCss();
 		html()->addJs();
-		$spuService = make('app/service/product/Spu');
+		$spuService = service('product/Spu');
 		$info = $spuService->getAdminInfo(iget('id'));
 		if (!empty($info)) {
 			//spu状态
 			$statusList = $spuService->getStatusList();
 			//站点分类
 			$cateArr = category()->getListFormat();
-			$siteArr = make('app/service/site/Site')->getListData([], 'site_id,name,cate_id');
+			$siteArr = service('site/Site')->getListData([], 'site_id,name,cate_id');
 			$tempArr = [];
 			$cateId = 0;
 			foreach ($cateArr as $value) {
@@ -277,7 +277,7 @@ class Product extends AdminBase
 			$info['desc'] = $tempArr;
 
 			//分组列表
-			$groupList = make('app/service/desc/Group')->getListData();
+			$groupList = service('desc/Group')->getListData();
 			$this->assign('info', $info);
 			$this->assign('statusList', $statusList);
 			$this->assign('groupList', $groupList);
@@ -289,10 +289,10 @@ class Product extends AdminBase
 	protected function getSpuNameLanguage()
 	{
 		$id = ipost('id');
-		$list = make('app/service/product/Language')->getListData(['spu_id'=>$id]);
+		$list = service('product/Language')->getListData(['spu_id'=>$id]);
 		$list = array_column($list, null, 'lan_id');
 		$list[0]['language_name'] = '名称';
-		$languageList = make('app/service/Language')->getListData();
+		$languageList = service('Language')->getListData();
 		foreach ($languageList as $key => $value) {
 			$list[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
@@ -312,7 +312,7 @@ class Product extends AdminBase
 		}
 		$language = ipost('language');
 		if (!empty($language)) {
-			$services = make('app/service/product/Language');
+			$services = service('product/Language');
 			foreach ($language as $key => $value) {
 				$services->setNxLanguage($spuId, $key, strTrim($value));
 			}
@@ -329,7 +329,7 @@ class Product extends AdminBase
 			$this->error('参数不正确');
 		}
 		$sort = ipost('sort');
-		$rst = make('app/service/product/SpuImage')->updateData(['spu_id'=>$spuId, 'attach_id'=>$attachId], ['sort'=>$sort]);
+		$rst = service('product/SpuImage')->updateData(['spu_id'=>$spuId, 'attach_id'=>$attachId], ['sort'=>$sort]);
 		if ($rst) {
 			$this->success('操作成功');
 		}
@@ -343,7 +343,7 @@ class Product extends AdminBase
 		if (empty($spuId) || empty($itemId)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/product/SpuImage')->deleteData(['spu_id'=>$spuId, 'item_id'=>$itemId]);
+		$rst = service('product/SpuImage')->deleteData(['spu_id'=>$spuId, 'item_id'=>$itemId]);
 		if ($rst) {
 			$this->success('删除成功');
 		}
@@ -357,7 +357,7 @@ class Product extends AdminBase
 		if (empty($spuId) || empty($attachId)) {
 			$this->error('参数不正确');
 		}
-		$imageService = make('app/service/product/SpuImage');
+		$imageService = service('product/SpuImage');
 		$data = ['spu_id'=>$spuId, 'attach_id'=>$attachId];
 		if ($imageService->getCountData($data)) {
 			$this->success('上传成功');
@@ -396,10 +396,10 @@ class Product extends AdminBase
 		if (empty($data)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/product/Spu')->updateData(['spu_id'=>$id], $data);
+		$rst = service('product/Spu')->updateData(['spu_id'=>$id], $data);
 		if ($rst) {
 			if (isset($data['attach_id'])) {
-				make('app/service/product/SpuImage')->updateData(['spu_id'=>$id, 'attach_id'=>$data['attach_id']], ['sort'=>0]);
+				service('product/SpuImage')->updateData(['spu_id'=>$id, 'attach_id'=>$data['attach_id']], ['sort'=>0]);
 			}
 			$this->success('修改成功');
 		} else {
@@ -415,7 +415,7 @@ class Product extends AdminBase
 			$this->error('参数不正确');
 		}
 		if (!empty($spuId)) {
-			$skuId = make('app/service/product/Sku')->getListData(['spu_id'=>$spuId], 'sku_id');
+			$skuId = service('product/Sku')->getListData(['spu_id'=>$spuId], 'sku_id');
 			$skuId = array_column($skuId, 'sku_id');
 		} elseif (!is_array($skuId)) {
 			$skuId = [$skuId];
@@ -450,9 +450,9 @@ class Product extends AdminBase
 			$this->error('更新的参数为空');
 		}
 		if (isset($data['cost_price'])) {
-			$service = make('app/service/product/SkuData');
+			$service = service('product/SkuData');
 		} else {
-			$service = make('app/service/product/Sku');
+			$service = service('product/Sku');
 		}
 		$rst = $service->updateData(['sku_id'=>['in', $skuId]], $data);
 		if ($rst) {
@@ -470,13 +470,13 @@ class Product extends AdminBase
 		if (empty($spuId) || empty($attrId) || empty($attvId)) {
 			$this->error('参数不正确');
 		}
-		$skuService = make('app/service/product/Sku');
+		$skuService = service('product/Sku');
 		$skuId = $skuService->getListData(['spu_id'=>$spuId], 'sku_id');
 		if (empty($skuId)) {
 			$this->error('SKU ID不能为空');
 		}
 		$skuId = array_column($skuId, 'sku_id');
-		$attrUsed = make('app/service/product/AttrUsed');
+		$attrUsed = service('product/AttrUsed');
 		$list = $attrUsed->getListData(['sku_id'=>['in', $skuId], 'attrn_id'=>$attrId, 'attrv_id'=>$attvId], 'item_id,sku_id');
 		if (empty($list)) {
 			$this->error('找不到sku属性');
@@ -507,16 +507,16 @@ class Product extends AdminBase
 			if(empty($param['value'])) {
 				$this->error('描述值不能为空');
 			}
-			$tempArr = make('app/service/desc/Name')->addNotExist($param['name']);
+			$tempArr = service('desc/Name')->addNotExist($param['name']);
 			$data['descn_id'] = $tempArr[$param['name']];
-			$tempArr = make('app/service/desc/Value')->addNotExist($param['value']);
+			$tempArr = service('desc/Value')->addNotExist($param['value']);
 			$data['descv_id'] = $tempArr[$param['value']];
 			$data['spu_id'] = $param['spu_id'];
 		}
 		if (empty($id)) {
-			$rst = make('app/service/product/DescUsed')->addDescUsed($param['spu_id'], $data);
+			$rst = service('product/DescUsed')->addDescUsed($param['spu_id'], $data);
 		} else {
-			$rst = make('app/service/product/DescUsed')->updateData($id, $data);
+			$rst = service('product/DescUsed')->updateData($id, $data);
 		}
 		if ($rst) {
 			$this->success('操作成功');
@@ -530,7 +530,7 @@ class Product extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/product/DescUsed')->deleteData($id);
+		$rst = service('product/DescUsed')->deleteData($id);
 		if ($rst) {
 			$this->success('删除成功');
 		}
@@ -543,11 +543,11 @@ class Product extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/product/DescUsed')->loadData($id);
+		$info = service('product/DescUsed')->loadData($id);
 		if ($info) {
-			$tempArr = make('app/service/desc/Name')->loadData($info['descn_id'], 'name');
+			$tempArr = service('desc/Name')->loadData($info['descn_id'], 'name');
 			$info['name'] = $tempArr['name'];
-			$tempArr = make('app/service/desc/Value')->loadData($info['descv_id'], 'name');
+			$tempArr = service('desc/Value')->loadData($info['descv_id'], 'name');
 			$info['value'] = $tempArr['name'];
 			$this->success($info, '获取成功');
 		}
@@ -561,7 +561,7 @@ class Product extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$sort = ipost('sort');
-		$rst = make('app/service/product/IntroduceUsed')->updateData($id, ['sort'=>$sort]);
+		$rst = service('product/IntroduceUsed')->updateData($id, ['sort'=>$sort]);
 		if ($rst) {
 			$this->success('排序成功');
 		}
@@ -575,7 +575,7 @@ class Product extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$sort = ipost('sort');
-		$rst = make('app/service/product/IntroduceUsed')->deleteData($id);
+		$rst = service('product/IntroduceUsed')->deleteData($id);
 		if ($rst) {
 			$this->success('删除成功');
 		}
@@ -589,7 +589,7 @@ class Product extends AdminBase
 		if (empty($spuId) || empty($attachId)) {
 			$this->error('参数不正确');
 		}
-		$imageService = make('app/service/product/IntroduceUsed');
+		$imageService = service('product/IntroduceUsed');
 		$data = ['spu_id'=>$spuId, 'attach_id'=>$attachId];
 		if ($imageService->getCountData($data)) {
 			$this->success('上传成功');
@@ -610,7 +610,7 @@ class Product extends AdminBase
 		if (empty($spuId) || empty($name)) {
 			$this->error('参数不正确');
 		}
-		$rst = make('app/service/product/SpuData')->updateData($spuId, [$name=>$value]);
+		$rst = service('product/SpuData')->updateData($spuId, [$name=>$value]);
 		if ($rst) {
 			$this->success('更新成功');
 		}
@@ -627,7 +627,7 @@ class Product extends AdminBase
 		if (empty($groupId)) {
 			$this->error('分组ID值不正确');
 		}
-		$rst = make('app/service/product/DescUsed')->updateData(['item_id'=>['in', $idArr]], ['descg_id'=>$groupId]);
+		$rst = service('product/DescUsed')->updateData(['item_id'=>['in', $idArr]], ['descg_id'=>$groupId]);
 		if ($rst) {
 			$this->success('更新成功');
 		}
@@ -658,7 +658,7 @@ class Product extends AdminBase
 			$list = purchase()->shop()->getListData($where, '*', $page, $size, ['purchase_shop_id' => 'desc']);
 			$shopIds = array_unique(array_column($list, 'purchase_shop_id'));
 			if (!empty($shopIds)) {
-				$productCount = make('app/service/purchase/Product')->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
+				$productCount = service('purchase/Product')->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
 				$productCount = array_column($productCount, 'c_count', 'purchase_shop_id');
 			}
 			foreach ($list as $key=>$value) {
@@ -666,7 +666,7 @@ class Product extends AdminBase
 			}
 		}
 
-		$channelList = make('app/service/purchase/Channel')->getListData();
+		$channelList = service('purchase/Channel')->getListData();
 		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
 
 		$this->assign('status', $status);

@@ -39,7 +39,7 @@ class Desc extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$nameService = make('app/service/desc/Name');
+		$nameService = service('desc/Name');
 		$total = $nameService->getCountData($where);
 		if ($total > 0) {
 			$list = $nameService->getList($where, $page, $size);
@@ -59,7 +59,7 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/desc/Name')->loadData($id);
+		$info = service('desc/Name')->loadData($id);
 		$this->success($info, '');
 	}
 
@@ -69,9 +69,9 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/desc/NameLanguage')->getListData(['descn_id'=>$id]);
+		$info = service('desc/NameLanguage')->getListData(['descn_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getTransList();
+		$languageList = service('Language')->getTransList();
 		foreach ($languageList as $key => $value) {
 			$info[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
@@ -94,11 +94,11 @@ class Desc extends AdminBase
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/desc/Name')->insert($data);
+			$result = service('desc/Name')->insert($data);
 			$this->addLog('新增属性-'.$result);
 		} else {
 			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/desc/Name')->updateData($id, $data);
+			$result = service('desc/Name')->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -117,17 +117,17 @@ class Desc extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/desc/NameLanguage');
+		$services = service('desc/NameLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
-		$len = count(make('app/service/Language')->getTransList());
+		$len = count(service('Language')->getTransList());
 		if ($len <= count($language)) {
 			$status = 2;
 		} else {
 			$status = 1;
 		}
-		make('app/service/desc/Name')->updateData($id, ['status'=>$status]);
+		service('desc/Name')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -138,10 +138,10 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/desc/Name')->deleteData($id);
+		$rst = service('desc/Name')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/DescUsed')->deleteData(['descn_id'=>$id]);
+			$rst = service('product/DescUsed')->deleteData(['descn_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -174,7 +174,7 @@ class Desc extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$valueService = make('app/service/desc/Value');
+		$valueService = service('desc/Value');
 		$total = $valueService->getCountData($where); 
 		if ($total > 0) {
 			$list = $valueService->getList($where, $page, $size);
@@ -194,7 +194,7 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/desc/Value')->loadData($id);
+		$info = service('desc/Value')->loadData($id);
 		$this->success($info, '');
 	}
 
@@ -204,9 +204,9 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/desc/ValueLanguage')->getListData(['descv_id'=>$id]);
+		$info = service('desc/ValueLanguage')->getListData(['descv_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getTransList();
+		$languageList = service('Language')->getTransList();
 		foreach ($languageList as $key => $value) {
 			$info[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
@@ -229,11 +229,11 @@ class Desc extends AdminBase
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/desc/Value')->insert($data);
+			$result = service('desc/Value')->insert($data);
 			$this->addLog('新增属性-'.$result);
 		} else {
 			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/desc/Value')->updateData($id, $data);
+			$result = service('desc/Value')->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -252,17 +252,17 @@ class Desc extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/desc/ValueLanguage');
+		$services = service('desc/ValueLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
-		$len = count(make('app/service/Language')->getTransList());
+		$len = count(service('Language')->getTransList());
 		if ($len <= count($language)) {
 			$status = 2;
 		} else {
 			$status = 1;
 		}
-		make('app/service/desc/Value')->updateData($id, ['status'=>$status]);
+		service('desc/Value')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -273,10 +273,10 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/desc/Value')->deleteData($id);
+		$rst = service('desc/Value')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/AttrUsed')->deleteData(['attv_id'=>$id]);
+			$rst = service('product/AttrUsed')->deleteData(['attv_id'=>$id]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);
@@ -309,7 +309,7 @@ class Desc extends AdminBase
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$nameService = make('app/service/desc/Group');
+		$nameService = service('desc/Group');
 		$total = $nameService->getCountData($where);
 		if ($total > 0) {
 			$list = $nameService->getList($where, $page, $size);
@@ -329,7 +329,7 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/desc/Group')->loadData($id);
+		$info = service('desc/Group')->loadData($id);
 		$this->success($info, '');
 	}
 
@@ -339,9 +339,9 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$info = make('app/service/desc/GroupLanguage')->getListData(['descn_id'=>$id]);
+		$info = service('desc/GroupLanguage')->getListData(['descn_id'=>$id]);
 		$info = array_column($info, null, 'lan_id');
-		$languageList = make('app/service/Language')->getTransList();
+		$languageList = service('Language')->getTransList();
 		foreach ($languageList as $key => $value) {
 			$info[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
@@ -364,11 +364,11 @@ class Desc extends AdminBase
 			'name' => $name,
 		];
 		if (empty($id)) {
-			$result = make('app/service/desc/Group')->insert($data);
+			$result = service('desc/Group')->insert($data);
 			$this->addLog('新增属性-'.$result);
 		} else {
 			$this->addLog('修改属性信息-'.$id);
-			$result = make('app/service/desc/Group')->updateData($id, $data);
+			$result = service('desc/Group')->updateData($id, $data);
 		}
 		if ($result) {
 			$this->success('操作成功');
@@ -387,17 +387,17 @@ class Desc extends AdminBase
 		if (empty($language)) {
 			$this->error('翻译值不能全部为空');
 		}
-		$services = make('app/service/desc/GroupLanguage');
+		$services = service('desc/GroupLanguage');
 		foreach ($language as $key => $value) {
 			$services->setNxLanguage($id, $key, strTrim($value));
 		}
-		$len = count(make('app/service/Language')->getTransList());
+		$len = count(service('Language')->getTransList());
 		if ($len <= count($language)) {
 			$status = 2;
 		} else {
 			$status = 1;
 		}
-		make('app/service/desc/Group')->updateData($id, ['status'=>$status]);
+		service('desc/Group')->updateData($id, ['status'=>$status]);
 		$this->addLog('修改属性语言-'.$id);
 		$this->success('操作成功');
 	}
@@ -408,10 +408,10 @@ class Desc extends AdminBase
 		if (empty($id)) {
 			$this->error('ID值不正确');
 		}
-		$rst = make('app/service/desc/Group')->deleteData($id);
+		$rst = service('desc/Group')->deleteData($id);
 		if ($rst) {
 			//删除属性关联
-			$rst = make('app/service/product/DescUsed')->updateData(['descg_id'=>$id], ['descg_id'=>0]);
+			$rst = service('product/DescUsed')->updateData(['descg_id'=>$id], ['descg_id'=>0]);
 		}
 		if ($rst) {
 			$this->addLog('删除属性-'.$id);

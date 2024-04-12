@@ -12,7 +12,7 @@ class Email extends TaskDriver
 
 	public function run()
 	{
-		$email = make('app/service/email/Email');
+		$email = service('email/Email');
 		$list = $email->getListData(['status'=>0], 'email_id');
 		if (empty($list)) {
 			$this->taskMonitor();

@@ -1,6 +1,6 @@
 <?php
-$countryList = make('app/service/address/Country')->getListData(['status'=>1], 'code2,dialing_code,name_en', 0, 0, ['sort'=>'asc']);
-$tempArr = make('app/service/address/Zone')->getListData([], 'zone_id,country_code2,name_en', 0, 0, ['sort'=>'asc']);
+$countryList = service('address/Country')->getListData(['status'=>1], 'code2,dialing_code,name_en', 0, 0, ['sort'=>'asc']);
+$tempArr = service('address/Zone')->getListData([], 'zone_id,country_code2,name_en', 0, 0, ['sort'=>'asc']);
 $zoneList = [];
 foreach ($tempArr as $value) {
 	$zoneList[$value['country_code2']][] = $value;

@@ -26,7 +26,7 @@ class Index extends AdminBase
 		}
 		html()->addCss();
 		html()->addJs();
-		$this->assign('funcList', make('app/service/controller/Controller')->getList());
+		$this->assign('funcList', service('controller/Controller')->getList());
 		$this->assign('info', session()->get(type().'_info'));
 		$this->assign('leftInfo', session()->get('left_info'));
 		$this->view();
@@ -53,7 +53,7 @@ class Index extends AdminBase
 			$this->error('非法请求');
 		}
 		html()->addJs();
-		$log = make('app/service/Logger');
+		$log = service('Logger');
 		//浏览设备统计
 		$viewAgentInfo = $log->getStats('browser');
 		//每日浏览人数统计

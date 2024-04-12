@@ -6,31 +6,31 @@ class Attr
 {
     public function name()
     {
-        return make('app/service/attr/Name');
+        return service('attr/Name');
     }
 
     public function nameLanguage()
     {
-        return make('app/service/attr/NameLanguage');
+        return service('attr/NameLanguage');
     }
 
     public function nameMap()
     {
-        return make('app/service/attr/NameMap');
+        return service('attr/NameMap');
     }
 
     public function value()
     {
-        return make('app/service/attr/Value');
+        return service('attr/Value');
     }
 
     public function valueLanguage()
     {
-        return make('app/service/attr/ValueLanguage');
+        return service('attr/ValueLanguage');
     }
 
     public function valueMap()
     {
-        return make('app/service/attr/ValueMap');
+        return service('attr/ValueMap');
     }
 }

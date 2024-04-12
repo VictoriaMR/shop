@@ -5,7 +5,7 @@ class Sort
 {
     public function move($table, $pk, $index, $sortField='sort', $where=[], $config='database')
     {
-        $query = make('frame/Query')->database($database)->table($table);
+        $query = frame('Query')->database($database)->table($table);
         if(!is_array($pk)){
             $_pk=$query->getPk();
             if(is_array($_pk)){

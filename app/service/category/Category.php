@@ -146,14 +146,14 @@ class Category extends Base
 
 	public function hasProduct($id)
 	{
-		return make('app/service/product/Spu')->getCountData(['cate_id'=>$id]) > 0;
+		return service('product/Spu')->getCountData(['cate_id'=>$id]) > 0;
 	}
 
 	public function deleteDataById($cateId)
 	{
 		$result = $this->deleteData($cateId);
 		if ($result) {
-			$result = make('app/service/category/Language')->deleteData(['cate_id'=>$cateId]);
+			$result = service('category/Language')->deleteData(['cate_id'=>$cateId]);
 		}
 		return $result;
 	}

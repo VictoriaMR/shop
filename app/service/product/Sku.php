@@ -21,8 +21,8 @@ class Sku extends Base
 					$info['attr'][$key]['image'] = siteUrl($value['image']);
 				}
 			}
-			$currencyService = make('app/service/currency/Currency');
-			$spu = make('app/service/product/Spu');
+			$currencyService = service('currency/Currency');
+			$spu = service('product/Spu');
 			$info['original_price'] = $spu->getOriginalPrice($info['price']);
 			$info['show_price'] = $spu->showPrice($info['spu_id']);
 			$temp = $currencyService->priceFormat($info['price']);
@@ -42,11 +42,11 @@ class Sku extends Base
 			return false;
 		}
 		//属性列表
-		$info['attr'] = make('app/service/product/AttrUsed')->getListById($skuId, $lanId);
+		$info['attr'] = service('product/AttrUsed')->getListById($skuId, $lanId);
 		$imageArr = array_unique(array_filter(array_merge([$info['attach_id']], array_column($info['attr'], 'attach_id'))));
-		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $imageArr]], 200, false);
+		$imageArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $imageArr]], 200, false);
 		$imageArr = array_column($imageArr, null, 'attach_id');
-		$spu = make('app/service/product/Spu');
+		$spu = service('product/Spu');
 		foreach ($imageArr as $key => $value) {
 			$imageArr[$key] = $spu->attachmentFormat($value, 200);
 		}
@@ -57,7 +57,7 @@ class Sku extends Base
 			}
 		}
 		//获取语言
-		$info['name'] = make('app/service/product/Language')->loadData(['spu_id'=>$info['spu_id'], 'lan_id'=>['in', array_unique([1, $lanId])]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
+		$info['name'] = service('product/Language')->loadData(['spu_id'=>$info['spu_id'], 'lan_id'=>['in', array_unique([1, $lanId])]], 'name', ['lan_id'=>'desc'])['name'] ?? '';
 		if ($info['name']) {
 			$info['name'] .= ' - ';
 		}

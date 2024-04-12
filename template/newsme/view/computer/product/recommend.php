@@ -1,4 +1,4 @@
-<?php $recommendList = make('app/service/product/Spu')->getRecommend(1, 6);?>
+<?php $recommendList = service('product/Spu')->getRecommend(1, 6);?>
 <?php if (!empty($recommendList)) {?><div id="recommend-page">
 	<p class="title f24 f600 mb12 ml8">You May Also Like</p>
 	<div class="product-list">

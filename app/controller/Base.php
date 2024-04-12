@@ -33,11 +33,11 @@ class Base
 
 	protected function assign($name, $value=null)
 	{
-		return make('frame/View')->assign($name, $value);
+		return frame('View')->assign($name, $value);
 	}
 
 	protected function view($cache=false)
 	{
-		return make('frame/View')->display('', true, $cache);
+		return frame('View')->display('', true, $cache);
 	}
 }

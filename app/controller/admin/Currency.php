@@ -24,7 +24,7 @@ class Currency extends AdminBase
             $this->error('非法请求');
         }
         html()->addJs();
-        $list = make('app/service/currency/Currency')->getListData();
+        $list = service('currency/Currency')->getListData();
         $this->assign('list', $list);
         $this->view();
     }
@@ -35,13 +35,13 @@ class Currency extends AdminBase
         if (empty($id)) {
             $this->error('参数不正确, ID不能为空');
         }
-        $info = make('app/service/currency/Currency')->loadData($id, 'code,name,rate,symbol');
+        $info = service('currency/Currency')->loadData($id, 'code,name,rate,symbol');
         $this->success('获取成功', $info);
     }
 
     protected function updateCurrencyRate()
     {
-        $rst = make('app/service/currency/Currency')->updateRate();
+        $rst = service('currency/Currency')->updateRate();
         if ($rst) {
             $this->success('更新汇率成功');
         }

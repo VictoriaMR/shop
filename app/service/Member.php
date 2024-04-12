@@ -45,7 +45,7 @@ class Member extends Base
 	{
 		$this->addLog(['type'=>service('login/Logger')->getConst('TYPE_LOGOUT')]);
 		session()->set(type().'_info');
-		make('frame/Cookie')->clear();
+		frame('Cookie')->clear();
 		return true;
 	}
 
@@ -57,7 +57,7 @@ class Member extends Base
 		session()->set(type().'_info', $info);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
 		$this->addLog();
-		make('frame/Cookie')->login($info['mem_id']);
+		frame('Cookie')->login($info['mem_id']);
 		return true;
 	}
 

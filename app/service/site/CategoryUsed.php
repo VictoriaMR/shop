@@ -10,11 +10,11 @@ class CategoryUsed extends Base
 	public function getList($where=[], $page=1, $size=30)
 	{
 		$list = $this->getListData($where, '*', $page, $size, ['sort'=>'asc']);
-		$cateService = make('app/service/category/Category');
+		$cateService = service('category/Category');
 		//图片
 		$attachArr = array_filter(array_column($list, 'attach_id'));
 		if (!empty($attachArr)) {
-			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]], 200);
+			$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]], 200);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 		}
 		foreach ($list as $key => $value) {

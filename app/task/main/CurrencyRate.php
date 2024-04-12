@@ -12,7 +12,7 @@ class CurrencyRate extends TaskDriver
 
     public function run()
     {
-        make('app/service/currency/Currency')->updateRate();
+        service('currency/Currency')->updateRate();
         return false;
     }
 }

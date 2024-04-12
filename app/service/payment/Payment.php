@@ -42,7 +42,7 @@ class Payment extends Base
 
 	public function getSiteInfo($where)
 	{
-		$usedInfo = make('app/service/payment/Used')->loadData($where, 'payment_id');
+		$usedInfo = service('payment/Used')->loadData($where, 'payment_id');
 		if (empty($usedInfo)) {
 			return false;
 		}

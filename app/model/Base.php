@@ -18,7 +18,7 @@ class Base
 	private function instance()
 	{
 		if (is_null($this->_instance)) {
-			$this->_instance = make('frame/Query');
+			$this->_instance = frame('Query');
 		}
 		$this->_instance->setDb($this->_connect);
 		$this->_instance->table($this->_table);

@@ -87,7 +87,7 @@
                     data-pp-amount="<?php echo $summary[2]['price'];?>"
                     data-pp-style-layout="text"
                     data-pp-style-text-color="monochrome"
-                    data-pp-buyerCountry="<?php echo make('app/service/IP')->getCountryCode();?>"
+                    data-pp-buyerCountry="<?php echo service('IP')->getCountryCode();?>"
                 ></div>
             </div>
             <div class="summary-right">

@@ -49,7 +49,7 @@ class Debug
 					break;
 			}
 		}
-		$object = make('frame/View');
+		$object = frame('View');
 		$object->assign('trace', $trace);
 		$object->assign('runtime', $runtime);
 		$object->load('frame/pagetrace', [], false);

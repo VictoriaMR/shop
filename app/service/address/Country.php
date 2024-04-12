@@ -11,7 +11,7 @@ class Country extends Base
 		if ($lanId == 2) {
 			return $nameEn;
 		}
-		$temp = make('app/service/address/CountryLanguage')->loadData(['country_code2'=>$code2, 'lan_id'=>$lanId], 'name');
+		$temp = service('address/CountryLanguage')->loadData(['country_code2'=>$code2, 'lan_id'=>$lanId], 'name');
 		if (empty($temp['name'])) {
 			return $nameEn;
 		}

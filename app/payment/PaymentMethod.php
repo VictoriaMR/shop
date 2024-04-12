@@ -23,11 +23,11 @@ abstract class PaymentMethod
 	protected function getConfig()
 	{
 		if (empty($this->config)) {
-			$config = make('app/service/payment/Used')->loadData(['site_id'=>siteId(),'type'=>$this->type], 'payment_id');
+			$config = service('payment/Used')->loadData(['site_id'=>siteId(),'type'=>$this->type], 'payment_id');
 			if (empty($config['payment_id'])) {
 				return false;
 			}
-			$config = make('app/service/payment/Payment')->loadData($config['payment_id']);
+			$config = service('payment/Payment')->loadData($config['payment_id']);
 			if (empty($config['status'])) {
 				return false;
 			}
@@ -49,7 +49,7 @@ abstract class PaymentMethod
 	protected function getOrderInfo()
 	{
 		if (empty($this->orderInfo)) {
-			$this->orderInfo = make('app/service/order/Order')->getInfo($this->getOrderId()); 
+			$this->orderInfo = service('order/Order')->getInfo($this->getOrderId()); 
 		}
 		return $this->orderInfo;
 	}
@@ -94,7 +94,7 @@ abstract class PaymentMethod
 	{
 		$methodList = self::methodList();
 		//站点使用的支付方式
-		$usedList = make('app/service/payment/Used')->getListData(['site_id'=>siteId()], 'type', 0, 0, ['sort'=>'asc']);
+		$usedList = service('payment/Used')->getListData(['site_id'=>siteId()], 'type', 0, 0, ['sort'=>'asc']);
 		if (empty($usedList)) {
 			return [];
 		}
@@ -123,6 +123,6 @@ abstract class PaymentMethod
 
 	protected function getTemplate($path, $data=[])
 	{
-		return make('frame/View')->getContent($path, $data);
+		return frame('View')->getContent($path, $data);
 	}
 }

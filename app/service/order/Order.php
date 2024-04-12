@@ -12,7 +12,7 @@ class Order extends Base
 			'address_id' => $shippingAddressId,
 			'mem_id' => $this->userId(),
 		];
-		$address = make('app/service/member/Address');
+		$address = service('member/Address');
 		$shippingAddress = $address->loadData($where);
 		if (empty($shippingAddress)) {
 			return false;
@@ -27,7 +27,7 @@ class Order extends Base
 			}
 		}
 		//获取sku信息
-		$sku = make('app/service/product/Sku');
+		$sku = service('product/Sku');
 		$where = [
 			'site_id' => $this->siteId(),
 			'sku_id' => ['in', array_keys($skuIdArr)],
@@ -76,7 +76,7 @@ class Order extends Base
 			//todo 优惠券使用
 		}
 		//当前货币
-		$currency = make('app/service/Language')->currency();
+		$currency = service('Language')->currency();
 		//保险
 		$insuranceFree = $insurance ? $this->getInsurance($productTotal) : 0;
 		//运费
@@ -95,8 +95,8 @@ class Order extends Base
 			'product_total' => $productTotal,
 			'order_total' => $productTotal + $couponFree + $insuranceFree + $shippingFee,
 		];
-		$orderProduct = make('app/service/order/Product');
-		$orderProductAttr = make('app/service/order/ProductAttribute');
+		$orderProduct = service('order/Product');
+		$orderProductAttr = service('order/ProductAttribute');
 		$this->start();
 		$orderId = $this->insertGetId($insert);
 		$insert = [];
@@ -110,7 +110,7 @@ class Order extends Base
 				return $value;
 			}, $orderProductAttr[$value['sku_id']]);
 		}
-		make('app/service/order/ProductAttribute')->insert($insert);
+		service('order/ProductAttribute')->insert($insert);
 
 		$insert = [];
 		$insert[] = [
@@ -141,10 +141,10 @@ class Order extends Base
 			'postcode' => $billingAddress['postcode'],
 			'tax_number' => $billingAddress['tax_number'],
 		];
-		make('app/service/order/Address')->insert($insert);
+		service('order/Address')->insert($insert);
 		$this->commit();
 		//生成日志
-		make('app/service/order/StatusHistory')->addLog($orderId, 1, $this->lanId());
+		service('order/StatusHistory')->addLog($orderId, 1, $this->lanId());
 		return $orderId;
 	}
 
@@ -186,23 +186,23 @@ class Order extends Base
 		$temp['status_text'] = $this->getappTStatus($temp['status'], $temp['lan_id']);
 		$data['base'] = $temp;
 		//递送地址 账单地址
-		$temp = make('app/service/order/Address')->getListData(['order_id'=>$orderId]);
+		$temp = service('order/Address')->getListData(['order_id'=>$orderId]);
 		$temp = array_column($temp, null, 'type');
 		$data['shipping_address'] = $temp[0];
 		$data['billing_address'] = $temp[1];
 		//产品
-		$temp = make('app/service/order/Product')->getListData(['order_id'=>$orderId]);
+		$temp = service('order/Product')->getListData(['order_id'=>$orderId]);
 		$data['product'] = $temp;
 		$ids = array_column($temp, 'order_product_id');
 		//产品属性
-		$temp = make('app/service/order/ProductAttribute')->getListData(['order_product_id'=>['in', $ids]]);
+		$temp = service('order/ProductAttribute')->getListData(['order_product_id'=>['in', $ids]]);
 		//sku图片
 		$ids = array_column($data['product'], 'attach_id');
 		$ids = array_unique(array_merge($ids, array_column($temp, 'attach_id')));
-		$imageArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', $ids]]);
+		$imageArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $ids]]);
 		$imageArr = array_column($imageArr, null, 'attach_id');
 		$orderProductOriginPrice = 0;
-		$symbol = make('app/service/currency/Currency')->getSymbolByCode($data['base']['currency']);
+		$symbol = service('currency/Currency')->getSymbolByCode($data['base']['currency']);
 		foreach ($data['product'] as $key => $value) {
 			$value['attr'] = [];
 			foreach ($temp as $ak => $av) {
@@ -248,7 +248,7 @@ class Order extends Base
 		}
 		$data['fee_list'] = $temp;
 		//历史
-		$data['status_history'] = make('app/service/order/StatusHistory')->getListData(['order_id'=>$orderId], '*', 0, 0, ['item_id'=>'desc']);
+		$data['status_history'] = service('order/StatusHistory')->getListData(['order_id'=>$orderId], '*', 0, 0, ['item_id'=>'desc']);
 		return $data;
 	}
 
@@ -258,14 +258,14 @@ class Order extends Base
 		$list = $this->getListData($where, $fields, $page, $size, ['order_id'=>'desc']);
 		if (!empty($list)) {
 			//订单产品
-			$orderProductArr = make('app/service/order/Product')->getListData(['order_id'=>['in', array_column($list, 'order_id')]]);
+			$orderProductArr = service('order/Product')->getListData(['order_id'=>['in', array_column($list, 'order_id')]]);
 			//属性
-			$attrArr = make('app/service/order/ProductAttribute')->getListData(['order_product_id'=>['in', array_column($orderProductArr, 'order_product_id')]], 'order_product_id,attr_name,attv_name,attach_id', 0, 0, ['item_id'=>'asc']);
+			$attrArr = service('order/ProductAttribute')->getListData(['order_product_id'=>['in', array_column($orderProductArr, 'order_product_id')]], 'order_product_id,attr_name,attv_name,attach_id', 0, 0, ['item_id'=>'asc']);
 			//属性图片
 			$attachIdArr = array_filter(array_column($attrArr, 'attach_id'));
 			$attachIdArr = array_merge($attachIdArr, array_column($orderProductArr, 'attach_id'));
 			//文件
-			$attachArr = make('app/service/attachment/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
+			$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', array_unique($attachIdArr)]]);
 			$attachArr = array_column($attachArr, 'url', 'attach_id');
 			//产品属性归类
 			$tempArr = [];
@@ -291,7 +291,7 @@ class Order extends Base
 			}
 			$orderProductArr = $tempArr;
 			//订单产品归类
-			$currencyService = make('app/service/currency/Currency');
+			$currencyService = service('currency/Currency');
 			$currencyArr = array_unique(array_column($list, 'currency'));
 			$tempArr = [];
 			foreach ($currencyArr as $value) {

@@ -24,7 +24,7 @@ class Checkout extends HomeBase
 				$email = session()->get(type().'_info.guest_email', '');
 				$this->assign('email', $email);
 			} else {
-				$addressData = make('app/service/member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
+				$addressData = service('member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
 			}
 			if (!empty($addressData)) {
 				foreach ($addressData as $value) {
@@ -41,8 +41,8 @@ class Checkout extends HomeBase
 				if (empty($billingAddress)) {
 					$billAddress = $shipAddress;
 				}
-				$order = make('app/service/order/Order');
-				$symbol = make('app/service/currency/Currency')->priceSymbol(2);
+				$order = service('order/Order');
+				$symbol = service('currency/Currency')->priceSymbol(2);
 				$logisticsList = [[
 					'name' => appT('express_shipping'),
 					'fee' => $symbol.$order->getShippingFee($info['total']),
@@ -81,7 +81,7 @@ class Checkout extends HomeBase
 				$this->error(distT('email_empty'));
 			}
 			//注册
-			$memberService = make('app/service/Member');
+			$memberService = service('Member');
 			$memId = $memberService->insertGetId(['site_id'=>siteId(), 'email'=>$email]);
 			if (empty($memId)) {
 				$this->error(distT('regist_error'));
@@ -97,8 +97,8 @@ class Checkout extends HomeBase
 				$this->error(distT('address_empty'));
 			}
 			$addressData = array_column($addressData, null, 'address_id');
-			$addressService = make('app/service/member/Address');
-			$countryService = make('app/service/address/Country');
+			$addressService = service('member/Address');
+			$countryService = service('address/Country');
 			foreach ($addressData as $key => $value) {
 				unset($value['address_id']);
 				$countryInfo = $countryService->loadData($value['country_code2'], 'dialing_code');
@@ -121,7 +121,7 @@ class Checkout extends HomeBase
 				'mem_id' => userId(),
 				'checked' => 1,
 			];
-			$skuList = make('app/service/Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
+			$skuList = service('Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
 			if (empty($skuList)) {
 				$this->error(appT('checked_empty'));
 			}
@@ -132,11 +132,11 @@ class Checkout extends HomeBase
 			}
 			$skuList = [$skuIds=>$quantity];
 		}
-		$rst = make('app/service/order/Order')->createOrder($skuList, $shippingAddressId, $billingAddressId, $insurance);
+		$rst = service('order/Order')->createOrder($skuList, $shippingAddressId, $billingAddressId, $insurance);
 		if ($rst) {
 			//清空购物车
 			if (empty($skuIds)) {
-				make('app/service/Cart')->deleteData($where);
+				service('Cart')->deleteData($where);
 			}
 			$this->success(url('checkout/payOrder', ['id'=>$rst]));
 		} else {
@@ -147,8 +147,8 @@ class Checkout extends HomeBase
 	public function calculateOrderFee()
 	{
 		$info = $this->getCheckoutData();
-		$currencyService = make('app/service/currency/Currency');
-		$order = make('app/service/order/Order');
+		$currencyService = service('currency/Currency');
+		$order = service('order/Order');
 		$list = [];
 		$orderTotal = $info['total'];
 		$symbol = $currencyService->priceSymbol(2);
@@ -194,8 +194,8 @@ class Checkout extends HomeBase
 	public function selectLogistics()
 	{
 		$info = $this->getCheckoutData();
-		$language = make('app/service/Language');
-		$order = make('app/service/order/Order');
+		$language = service('Language');
+		$order = service('order/Order');
 		$logisticsList = [[
 			'name' => appT('express_shipping'),
 			'fee' => $language->priceSymbol(2).$order->getShippingFee($info['total']),
@@ -220,7 +220,7 @@ class Checkout extends HomeBase
 			if (empty(userId())) {
 				$where['uuid'] = uuId();
 			}
-			$skuList = make('app/service/Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
+			$skuList = service('Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
 			if (!empty($skuList)) {
 				$skuList = array_column($skuList, 'quantity', 'sku_id');
 			}
@@ -231,7 +231,7 @@ class Checkout extends HomeBase
 			return [];
 		}
 		//获取数值总额
-		$sku = make('app/service/product/Sku');
+		$sku = service('product/Sku');
 		$tempSkuList = $sku->getListData(['sku_id'=> ['in', array_keys($skuList)]], 'sku_id,spu_id,status,stock');
 		$tempSkuList = array_column($tempSkuList, null, 'sku_id');
 		$productTotal = 0;
@@ -274,7 +274,7 @@ class Checkout extends HomeBase
 			$error = appT('order_error');
 		}
 		if (empty($error)) {
-			$orderInfo = make('app/service/order/Order')->getInfo($orderId);
+			$orderInfo = service('order/Order')->getInfo($orderId);
 			if (empty($orderInfo)) {
 				$error = appT('order_error');
 			} else {
@@ -321,7 +321,7 @@ class Checkout extends HomeBase
 			'site_id' => siteId(),
 			'email' => $email,
 		];
-		$rst = make('app/service/Member')->getCountData($where);
+		$rst = service('Member')->getCountData($where);
 		if ($rst) {
 			$this->error(distT('email_exist'));
 		}

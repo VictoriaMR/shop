@@ -28,7 +28,7 @@ class Task extends AdminBase
 		}
 		html()->addCss();
 		html()->addJs();
-		$list = make('frame/Task')->getTaskList(true);
+		$list = frame('Task')->getTaskList(true);
 		foreach ($list as $key=>$value) {
 			if (!isset($value['boot'])) {
 				$list[$key]['boot'] = 'off';
@@ -45,7 +45,7 @@ class Task extends AdminBase
 	{
 		$type = ipost('type');
 		$key = trim(ipost('key', ''));
-		$tasker = make('frame/Task');
+		$tasker = frame('Task');
 		switch ($type) {
 			case 'start':
 			case 'stop':

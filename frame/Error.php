@@ -35,31 +35,18 @@ class Error
     protected function errorEcho($data)
     {
         $log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
-        make('frame/Debug')->runlog($log);
-        $str = 'Error:'.$data['code'].' - '.$this->errorType($data['code']);
+        frame('Debug')->runlog($log);
         if (isCli() || isDebug()) {
-            $br = isAjax() ? "\n" : (isCli() ? PHP_EOL : '<br />');
-            $str .= $br;
-            $str .= 'File: '.$data['file'].$br;
-            $str .= 'Line: '.$data['line'].$br;
-            $str .= 'Error Message: '.$data['message'].$br;
-            if (isset($data['trace'])) {
-                $str .= 'Stack trace:'.$br;
-                foreach ($data['trace'] as $key=>$value) {
-                    $str .= sprintf('%s# %s(%s): %s %s %s()', $key, $value['file'], $value['line'], $value['class']??'', $value['type']??'', $value['function']??'').$br;
-                }
+            http_response_code(500);
+            if (isAjax()) {
+                header('Content-Type:application/json; charset=utf-8');
+                echo json_encode(['code'=>500, 'msg'=>$log], JSON_UNESCAPED_UNICODE);
+            } else {
+                echo $log;
             }
         } else {
-
+            echo $data['message'];
         }
-        http_response_code(500);
-        if (isAjax()) {
-            header('Content-Type:application/json; charset=utf-8');
-            echo json_encode(['code'=>500, 'msg'=>$str], JSON_UNESCAPED_UNICODE);
-        } else {
-            echo $str;
-        }
-        exit();
     }
 
     private function errorType($code)

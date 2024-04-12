@@ -77,7 +77,7 @@ abstract class Stripe extends PaymentMethod
 		$header['Authorization'] = 'Bearer '.$this->config['secret_key'];
 		$header['Content-Type'] = 'application/json';
 
-		$rst = make('frame/Http')->post($url, $body, $header);
+		$rst = frame('Http')->post($url, $body, $header);
 
 		return isJson($rst);
 	}

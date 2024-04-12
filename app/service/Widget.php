@@ -16,7 +16,7 @@ class Widget
 		$rightDiff = $rightLen - $rightEnd + $page;//右侧按钮剩余数量
 		$rightEnd = $rightEnd + $leftDiff > $totalPage ? $rightEnd : $rightEnd + $leftDiff;
 		$leftStart = $leftStart - $rightDiff > 0 ? $leftStart - $rightDiff : 1;
-		$router = make('frame/Router');
+		$router = frame('Router');
 		//向上翻页箭头
 		if ($totalPage > 1) {
 			if ($page == 1) {

@@ -73,7 +73,7 @@ class Currency extends Base
 
 	public function updateRate()
 	{
-		$result = make('frame/Http')->get('https://www.bankofchina.com/sourcedb/whpj/enindex_1619.html?timestamprand='.time());
+		$result = frame('Http')->get('https://www.bankofchina.com/sourcedb/whpj/enindex_1619.html?timestamprand='.time());
         if (!$result) {
             return false;
         }
@@ -86,8 +86,8 @@ class Currency extends Base
         foreach ($arr[2] as $k => $v) {
             $result[$v] = number_format(1/$arr[4][$k]*100, 6, '.', '');
         }
-        $logger = make('app/service/currency/Logger');
-        $site = make('app/service/site/Site');
+        $logger = service('currency/Logger');
+        $site = service('site/Site');
         $currencyArr = $this->getListData();
         foreach ($currencyArr as $value) {
             if (!isset($result[$value['code']]) || $value['rate'] == $result[$value['code']]) {

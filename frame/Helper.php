@@ -1,57 +1,52 @@
 <?php
 function dd(...$arg){
-	$enter = isCli() ? PHP_EOL : '<br />';
 	foreach ($arg as $value) {
 		print_r($value);
-		echo $enter;
+		echo isCli() ? PHP_EOL : '<br />';
 	}
 	exit();
 }
 function config($type, $name='', $default=''){
-	if (!isset($GLOBALS[$type])) {
+	if (is_null(\App::get($type))) {
 		$file = ROOT_PATH.'config'.DS.$type.'.php';
 		if (is_file($file)) {
-			$GLOBALS[$type] = require $file;
-		} else {
-			$GLOBALS[$type] = null;
-			return $default;
+			\App::set($type, require $file);
 		}
 	}
-	if ($name) return isset($GLOBALS[$type][$name])?$GLOBALS[$type][$name]:$default;
-	return isset($GLOBALS[$type])?$GLOBALS[$type]:$default;
+	return \App::get($type, $name);
 }
 function redirect($url=''){
 	header('Location:'.$url);exit();	
 }
-function make($name, $params=null){
-	return \App::make($name, $params);
-}
 function service($name, $params=null) {
-	return make('app/service/'.$name, $params);
+	return \App::make('app/service/'.$name, $params);
 }
 function model($name, $params=null) {
-	return make('app/model/'.$name, $params);
+	return \App::make('app/model/'.$name, $params);
+}
+function frame($name) {
+	return \App::make('frame/'.$name);
 }
 function html(){
-	return make('frame/Html');
+	return frame('Html');
 }
 function session(){
-	return make('frame/Session');
+	return frame('Session');
 }
 function router(){
-	return make('frame/Router');
+	return frame('Router');
 }
 function request(){
-	return make('frame/Request');
+	return frame('Request');
 }
 function redis($db=0){
-	return make('frame/Redis')->setDb($db);
+	return frame('Redis')->setDb($db);
 }
 function db($db=null){
-	return make('frame/Query')->setDb($db);
+	return frame('Query')->setDb($db);
 }
 function page($size=0, $total=0){
-	return make('frame/Paginator')->make($size, $total);
+	return frame('Paginator')->make($size, $total);
 }
 function url($name='', $param=[], $joint=true) {
     return router()->url($name, $param, $joint);
@@ -60,29 +55,23 @@ function adminUrl($name='', $param=[]){
 	return router()->adminUrl($name, $param);
 }
 function siteUrl($name, $version=true){
-	$extension = pathinfo($name)['extension']??false;
-	if (!$extension) {
-		return $name;
-	}
-	if (in_array($extension, ['png', 'jpeg', 'jpg']) && is_file(ROOT_PATH.'storage'.DS.str_replace('.'.$extension, '.webp', $name))) {
-		$name = str_replace('.'.$extension, '.webp', $name);
-	}
 	$name = domain().trim($name, DS);
 	if ($version) $name .= '?v='.version();
 	return $name;
 }
 function mediaUrl($url, $width='', $version=true){
-	if (!empty($width)) {
+	if ($width) {
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
 	return siteUrl($url);
 }
 function version(){
-	return \App::getVersion();
+	defined('APP_VERSION') || define('APP_VERSION', redis(2)->get('frame:app:version')?:'1.0.0');
+	return APP_VERSION;
 }
 function isWin(){
-	if (!defined('IS_WIN')) define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
+	defined('IS_WIN') || define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
 	return IS_WIN;
 }
 function isJson($string){
@@ -91,54 +80,57 @@ function isJson($string){
 	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
 }
 function isAjax(){
-	if (!defined('IS_AJAX')) define('IS_AJAX', make('frame/Request')->isAjax());
+	defined('IS_AJAX')|| define('IS_AJAX', frame('Request')->isAjax());
 	return IS_AJAX;
 }
 function isMobile(){
-	if (!defined('IS_MOBILE')) define('IS_MOBILE', make('frame/Request')->isMobile());
+	defined('IS_MOBILE') || define('IS_MOBILE', frame('Request')->isMobile());
 	return IS_MOBILE;
 }
 function isCli(){
 	return defined('IS_CLI');
 }
 function isDebug(){
-	return App::get('base_info', 'debug');
+	return config('domain', 'debug');
 }
 function isAdmin(){
 	return siteId() == 80;
 }
 function domain(){
-	return 'https://'.\App::get('base_info', 'domain').'/';
+	return 'https://'.config('domain', 'domain').'/';
 }
 function template() {
-	return \App::get('base_info', 'template');
+	return config('domain', 'template');
 }
 function type() {
 	return isAdmin()?'admin':'home';
 }
 function ipost($name='', $default=null){
-	return make('frame/Request')->ipost($name, $default);
+	return frame('Request')->ipost($name, $default);
 }
 function iget($name='', $default=null){
-	return make('frame/Request')->iget($name, $default);
+	return frame('Request')->iget($name, $default);
 }
 function input($name='', $default=null){
-	return make('frame/Request')->input($name, $default);
+	return frame('Request')->input($name, $default);
 }
 function now($time=null){
 	return date('Y-m-d H:i:s', $time?$time:time());
 }
 function appT($text, $replace=[], $lanId='', $type='common'){
-	if (empty($lanId)) $lanId = lanId('code');
+	$lanId || $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
-	if (!isset($GLOBALS[$key])) {
+	if (is_null(\App::get($key))) {
 		$file = ROOT_PATH.'template'.DS.template().DS.'language'.DS.$type.DS.$lanId.'.php';
-		if (is_file($file)) $GLOBALS[$key] = include $file;
-		else $GLOBALS[$key] = null;
+		if (is_file($file)) {
+			\App::set($key, require $file);
+		} else {
+			\App::set($key, []);
+		}
 	}
-	if (isset($GLOBALS[$key][$text])) {
-		$text = $GLOBALS[$key][$text];
-		if (!empty($replace)) {
+	if (\App::get($key, $text)) {
+		$text = \App::get($key, $text);
+		if ($replace) {
 			$tempArr = [];
 			foreach ($replace as $key=>$value) {
 				$tempArr['{'.$key.'}'] = $value;
@@ -173,7 +165,7 @@ function getDirFile($path){
 		$newPath = $path.DS.$v;
 		if (is_file($newPath)) {
 			$fileItem[] = $newPath;
-		} elseif (is_dir($newPath)&&$v!='.'&&$v!='..') {
+		} elseif (is_dir($newPath) && $v!='.' && $v!='..') {
 			$fileItem = array_merge($fileItem, getDirFile($newPath));
 		}
 	}
@@ -205,10 +197,7 @@ function lanId($type='id'){
 	return session()->get('site_language_'.$type, $type=='code'?'en':1);
 }
 function siteId(){
-	return \App::get('base_info', 'site_id');
-}
-function cateId(){
-	return \App::get('base_info', 'cate_id');
+	return config('domain', 'site_id');
 }
 function userId(){
 	return session()->get(type().'_info', 0, 'mem_id');
@@ -228,7 +217,7 @@ function currencyId(){
 	return session()->get('site_currency_id', 'USD');
 }
 function uuId(){
-	return make('frame/Cookie')->get('uuid');
+	return frame('Cookie')->get('uuid');
 }
 function hasZht($str){
 	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;

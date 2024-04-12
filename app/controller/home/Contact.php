@@ -16,7 +16,7 @@ class Contact extends HomeBase
 
 	public function create()
 	{
-		$service = make('app/service/message/Message');
+		$service = service('message/Message');
 		$key = $service->createGroup(userId(), $service->getSystemId());
 		if ($key) {
 			$this->success($key, '');
@@ -33,7 +33,7 @@ class Contact extends HomeBase
 		if (empty($key)) {
 			$this->error('contact key empty.');
 		}
-		$list = make('app/service/message/Message')->getListData(['group_key'=>$key], '*', $page, $size, ['add_time'=>'desc']);
+		$list = service('message/Message')->getListData(['group_key'=>$key], '*', $page, $size, ['add_time'=>'desc']);
 		if (!empty($list)) {
 			$memId = userId();
 			$userInfo = $value['avatar'] = session()->get(type().'_info');

@@ -33,9 +33,9 @@ class DescUsed extends Base
 			$valueArr = array_unique(array_column($list, 'descv_id'));
 
 			$lanArr = array_unique([1, $lanId]);
-			$nameArr = make('app/service/desc/NameLanguage')->getListData(['descn_id'=>['in', $nameArr], 'lan_id'=>['in', $lanArr]], 'descn_id,name', 0, 0, ['lan_id'=>'asc']);
+			$nameArr = service('desc/NameLanguage')->getListData(['descn_id'=>['in', $nameArr], 'lan_id'=>['in', $lanArr]], 'descn_id,name', 0, 0, ['lan_id'=>'asc']);
 			$nameArr = array_column($nameArr, 'name', 'descn_id');
-			$valueArr = make('app/service/desc/ValueLanguage')->getListData(['descv_id'=>['in', $valueArr], 'lan_id'=>['in', $lanArr]], 'descv_id,name', 0, 0, ['lan_id'=>'asc']);
+			$valueArr = service('desc/ValueLanguage')->getListData(['descv_id'=>['in', $valueArr], 'lan_id'=>['in', $lanArr]], 'descv_id,name', 0, 0, ['lan_id'=>'asc']);
 			$valueArr = array_column($valueArr, 'name', 'descv_id');
 			foreach ($list as $key => $value) {
 				$list[$key] = [];
