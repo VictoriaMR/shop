@@ -9,7 +9,7 @@ class Product extends AdminBase
 	{
 		$this->_arr = [
 			'index' => 'SPU列表',
-			'purchaseList' => '采购产品',
+			'purchaseList' => '采购产品列表',
 			'detail' => 'SPU详情',
 			'operate' => '添加产品',
 			'purchaseShop' => '供应商店铺',

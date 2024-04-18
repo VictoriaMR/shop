@@ -34,7 +34,7 @@
         <tbody>
             <tr>
                 <th width="30">ID</th>
-                <th width="50">渠道</th>
+                <th width="30">渠道</th>
                 <th width="60">源ID</th>
                 <th width="50">价格/销量</th>
                 <th width="120">标题</th>

@@ -30,6 +30,13 @@ class Session
 		return true;
 	}
 
+	public function dGet($name, $key=null)
+	{
+		$rst = $this->get($name, null, $key);
+		$this->del($name, $key);
+		return $rst;
+	}
+
 	public function close()
 	{
 

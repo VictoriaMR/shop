@@ -214,11 +214,22 @@ var CRAWLER = {
             }
         }
         ret_data.desc_picture = [];
-        obj = document.querySelectorAll('.desc-img-loaded,.desc-img-no-load');
-        for (let i=0; i<obj.length; i++) {
-            const url = obj[i].getAttribute('data-lazyload-src');
-            if (url.indexOf('__r__') >= 0) {
-                ret_data.desc_picture.push(url);
+        if (typeof offer_details != 'undefined') {
+            obj = (new DOMParser()).parseFromString(offer_details.content, 'text/html');
+            obj = obj.querySelectorAll('img');
+            for (let i=0; i<obj.length; i++) {
+                const url = obj[i].getAttribute('src');
+                if (url) {
+                    ret_data.desc_picture.push(url);
+                }
+            }
+        } else {
+            obj = document.querySelectorAll('.desc-img-loaded,.desc-img-no-load');
+            for (let i=0; i<obj.length; i++) {
+                const url = obj[i].getAttribute('data-lazyload-src');
+                if (url) {
+                    ret_data.desc_picture.push(url);
+                }
             }
         }
         callback(0, ret_data, '获取成功!');

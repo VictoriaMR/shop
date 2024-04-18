@@ -25,11 +25,14 @@ class App
 				$instance = $concrete($this);
 			} else {
 				$reflector = new \ReflectionClass($concrete);
-				!$reflector->isInstantiable() && throw new \Exception($concrete.' is not instantiable!');
-				if (is_null($reflector->getConstructor())) {
-					$instance = $reflector->newInstance();
+				if ($reflector->isInstantiable()) {
+					if (is_null($reflector->getConstructor())) {
+						$instance = $reflector->newInstance();
+					} else {
+						$instance = $reflector->newInstance($params);
+					}
 				} else {
-					$instance = $reflector->newInstance($params);
+					throw new \Exception($concrete.' is not instantiable!');
 				}
 			}
 			self::set('autoload', $instance, $abstract);
@@ -41,19 +44,22 @@ class App
 	{
 		$domain = $_SERVER['HTTP_HOST'] ?? '';
 		$info = config('domain', $domain);
-		$info || throw new \Exception('domain: '.$domain.' was not exist!');
-		$info['domain'] = $domain;
-		self::set('domain', $info);
-		//路由解析
-		$info = frame('Router')->analyze();
-		$info['class'] = isAdmin()?'admin':'home';
-		self::set('router', $info);
-		//执行方法
-		$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
-		$callArr = [$call, $info['func']];
-		self::make('app/middleware/VerifyToken')->handle($info);
-		call_user_func_array($callArr, []);
-		self::runOver();
+		if ($info) {
+			$info['domain'] = $domain;
+			self::set('domain', $info);
+			//路由解析
+			$info = frame('Router')->analyze();
+			$info['class'] = isAdmin()?'admin':'home';
+			self::set('router', $info);
+			//执行方法
+			$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
+			$callArr = [$call, $info['func']];
+			self::make('app/middleware/VerifyToken')->handle($info);
+			call_user_func_array($callArr, []);
+			self::runOver();
+		} else {
+			throw new \Exception('domain: '.$domain.' was not exist!');
+		}
 	}
 
 	private static function autoload($abstract, $params=null)
@@ -83,12 +89,12 @@ class App
 		self::$error[] = $msg;
 	}
 
-	public static function runOver()
+	public static function runOver($debug=true)
 	{
 		// debug开启
 		if (isDebug()) {
 			frame('Debug')->runlog();
-			!isCli() && !isAjax() && !iget('iframe', false) && frame('Debug')->init();
+			!isCli() && !isAjax() && !iget('iframe', false) && $debug && frame('Debug')->init();
 		}
 	}
 }

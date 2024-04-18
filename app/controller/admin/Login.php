@@ -12,10 +12,8 @@ class Login extends AdminBase
 
 	public function index()
 	{	
-		html()->addJs('common', false);
-		html()->addJs('verify', false);
-		html()->addCss('common');
-		html()->addCss('space');
+		html()->addJs('common,verify', false);
+		html()->addCss('common,space');
 		html()->addCss();
 		html()->addJs();
 		$this->assign('_title', '后台登录');
@@ -44,7 +42,8 @@ class Login extends AdminBase
 		}
 		$result = service('Member')->login($mobile, $password);
 		if ($result) {
-			$this->success(['url' => url('index')], '登录成功!');
+			$returnUrl = session()->dGet('return_url');
+			$this->success(['url' => adminUrl($returnUrl)], '登录成功!');
 		} else {
 			$this->error('账号或者密码不匹配!');
 		}
@@ -64,8 +63,8 @@ class Login extends AdminBase
 
 	public function logout()
 	{
-		$log = make('app\service\Member')->logout();
-		redirect(url('login'));
+		$log = service('Member')->logout();
+		redirect(url('login'), false);
 	}
 
 	public function signature()

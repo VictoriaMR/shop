@@ -36,7 +36,7 @@ const OPERATE = {
 			if (type == '2') {
 				html += `<button type="button" class="btn btn-info btn-sm btn-add" style="margin-right:10px;">新增映射</button>`;
 			}
-			html += `<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
+			html += `<button type="button" class="btn btn-success btn-sm btn-tmp-save" style="margin-right:10px;">临时映射</button><button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
 				</div>
 				<i class="glyphicon glyphicon-remove"></i>
 			</form>`;

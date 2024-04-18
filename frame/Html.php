@@ -14,12 +14,11 @@ class Html
 			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
 			$name || $name = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
 		}
-		if (is_array($name)) {
-			foreach ($name as $value) {
-				$this->_CSS[] = $matchPath.$value;
-			}
-		} else {
-			$this->_CSS[] = $matchPath.$name;
+		if (!is_array($name)) {
+			$name = array_map('trim', explode(',', $name));
+		}
+		foreach ($name as $value) {
+			$this->_CSS[] = $matchPath.$value;
 		}
 	}
 
@@ -30,12 +29,11 @@ class Html
 			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
 			$name || $name = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
 		}
-		if (is_array($name)) {
-			foreach ($name as $value) {
-				$this->_JS[] = $matchPath.$value;
-			}
-		} else {
-			$this->_JS[] = $matchPath.$name;
+		if (!is_array($name)) {
+			$name = array_map('trim', explode(',', $name));
+		}
+		foreach ($name as $value) {
+			$this->_JS[] = $matchPath.$value;
 		}
 	}
 

@@ -1,3 +1,4 @@
+<?php if (!empty($info)){?>
 <div class="container-fluid" id="add-product-page">
 	<form action="<?php echo url("product/operate");?>" method="post" enctype="multipart/form-data">
 		<div class="left product-info-content">
@@ -299,3 +300,4 @@
 <script>
 const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;
 </script>
+<?php }?>

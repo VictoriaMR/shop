@@ -164,6 +164,7 @@
     border-radius: 8px;
     width: 400px;
     text-align: right;
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.09);
 }
 .s-modal .glyphicon-remove {
     position: absolute;
