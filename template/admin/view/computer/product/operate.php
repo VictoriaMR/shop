@@ -272,9 +272,10 @@
 		</div>
 	</form>
 </div>
-<div class="s-modal change-category-modal">
+<div class="s-modal change-category-modal" style="width: 440px">
+	<p class="title"><span>分类修改</span></p>
+	<i class="glyphicon glyphicon-remove"></i>
 	<div class="content">
-		<p><span>分类修改</span></p>
 		<div class="form-horizontal">
 			<div class="input-group">
 				<div class="input-group-addon"><span>品类：</span></div>
@@ -295,7 +296,6 @@
 		</div>
 		<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
 	</div>
-	<i class="glyphicon glyphicon-remove"></i>
 </div>
 <script>
 const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;

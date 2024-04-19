@@ -153,35 +153,6 @@
     vertical-align: top;
     padding: 1px 2px;
 }
-.s-modal {
-    position: fixed;
-    padding: 20px;
-    background-color: #fff;
-    border: 1px solid #e5e5e5;
-    left: calc(50% - 125px);
-    top: calc(50% - 125px);
-    z-index: 99;
-    border-radius: 8px;
-    width: 400px;
-    text-align: right;
-    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.09);
-}
-.s-modal .glyphicon-remove {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-}
-.s-modal .content {
-    margin-bottom: 10px;
-}
-.s-modal .content p {
-    margin-bottom: 5px;
-    text-align: left;
-}
-.s-modal .content p span{
-    font-size: 14px;
-    color: #000;
-}
 .mapping-popper input {
     margin-bottom: 12px;
 }
@@ -191,13 +162,6 @@
 }
 .mapping-popper .add-map-content .item span {
     display: inline-block;
-}
-.s-modal.change-category-modal {
-    width: 400px;
-    display: none;
-}
-.change-category-modal .input-group {
-    margin-bottom: 10px;
 }
 
 .hy-sl-list-inline {

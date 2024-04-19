@@ -134,3 +134,36 @@ button{cursor: pointer;}
 .userAvatarInfo .two p {line-height: 18px; font-size: 12px;}
 .userAvatarInfo .avatarStyle:hover img {width: 120px; height: 120px; transition: 700ms;max-width: 120px;max-height: 120px}
 .container-fluid .form-inline .form-group {margin-bottom: 10px}
+/*弹窗*/
+.s-modal {
+    display: none;
+    position: fixed;
+    padding: 20px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    z-index: 99;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px 0 rgba(0,0,0,0.09);
+}
+.s-modal .glyphicon-remove {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    top: 0;
+    right: 0;
+}
+.s-modal .title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.s-modal .content p {
+    margin-bottom: 5px;
+    text-align: left;
+}
+.s-modal .content p span{
+    font-size: 14px;
+    color: #000;
+}

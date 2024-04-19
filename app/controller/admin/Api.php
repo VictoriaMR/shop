@@ -88,8 +88,9 @@ class Api extends AdminBase
 			'purchase_channel_id' => $channelId,
 			'item_id' => $data['item_id'],
 		];
-		if (purchase()->product()->where($where)->count() == 0) {
-			purchase()->product()->insertData($where);
+		$id = purchase()->product()->loadData($where, 'purchase_product_id')['purchase_product_id'] ?? 0; 
+		if ($id <= 0) {
+			$id = purchase()->product()->insertData($where, true);
 		}
 		$shopId = 0;
 		if (!empty($data['seller'])) {
@@ -103,11 +104,14 @@ class Api extends AdminBase
 		$updateData = [
 			'status' => purchase()->product()->getConst('STATUS_SET'),
 			'mem_id' => userId(),
+			'name' => $data['name'],
 			'purchase_shop_id' => $shopId,
 			'sale_count' => $data['sale_count'] ?? 0,
 			'price' => $price,
 		];
 		$rst = purchase()->product()->updateData($where, $updateData);
+		//更新采购产品
+		$rst = purchase()->item()->addNotExist($id, $data['sku']);
 		$rst = purchase()->product()->saveResult($channelId, $data['item_id'], $data);
 		$this->success('上传成功');
 	}

@@ -23,39 +23,6 @@ function confirm(msg, callbck) {
 		callbck($(this), obj);
 	});
 }
-function addRightTips(info, type, delay) {
-	if (typeof info === 'undefined') {
-		return false;
-	}
-    if (typeof delay === 'undefined') {
-        delay = 5000;
-    }
-    info = info.replace(/\n/g,'<br>');
-    if($('#rightTips').length === 0) {
-        $('body').append('<div id="rightTips"></div>');
-        $('#rightTips').on('click', '.info .glyphicon-remove', function(){
-            $(this).parent().remove();
-        });
-    }
-    const timestamp = new Date().getTime();
-    $('#rightTips').prepend('<div class="info '+type+'" id="info_'+timestamp+'"><i class="glyphicon glyphicon-remove"></i>'+info+'</div>');
-    $("#info_" + timestamp).delay(delay).fadeOut('slow', function () {
-        $("#info_" + timestamp).remove()
-    });
-}
-function successTips(msg) {
-	addRightTips(msg, 'success');
-}
-function errorTips(msg) {
-	addRightTips(msg, 'error');
-}
-function showTips(res) {
-	if (res.code == 200) {
-		successTips(res.msg);
-	} else {
-		errorTips(res.msg);
-	}
-}
 function isScroll() {
     return document.body.scrollHeight > (window.innerHeight || document.documentElement.clientHeight);
 }
@@ -83,23 +50,16 @@ function S4() {
 function guid() {
    return (S4()+S4()+'-'+S4()+'-'+S4()+'-'+S4()+'-'+S4()+S4()+S4());
 }
-// (function($){
+$(function(){
+	var obj = $('.s-modal');
+	for (var i=0; i<obj.length; i++) {
+		var w = ($(window).innerWidth() - obj.eq(i).actual('width'))/2;
+		var h = ($(window).innerHeight() / 2) - (obj.eq(i).actual('height') / 2) - 30;
+		h = h < 0 ? 0 : h;
+		obj.eq(i).css({top: h+'px', left: w+'px'});
+	}
 // 	$.fn.offsetCenter = function(width, height) {
-// 		const obj = $(this).find('.centerShow');
-// 		let w = width;
-// 		if (typeof width === 'undefined'){
-// 			w = $(window).innerWidth();
-// 		}
-// 		w = (w - obj.innerWidth())/2;
-// 		let h = height
-// 		if(typeof height === 'undefined'){
-// 			h = $(window).innerHeight();
-// 		}
-// 		h = (h / 2) - (obj.actual('innerHeight') / 2);
-// 		h = h < 0 ? 0 : h;
-// 		obj.css('position','fixed');
-// 		obj.css('top',h+'px');
-// 		obj.css('left',w+'px');
+// 		
 // 		if (obj.data("resizeSign") !='ok') {
 // 			obj.data('resizeSign','ok');
 // 			$(window).resize(function () {
@@ -248,4 +208,4 @@ function guid() {
 // 	$('#progressing').show();
 // 	progressing(20);
 // 	$('img.lazyload').lazyload();
-// });
+});

@@ -66,9 +66,9 @@ class Base
 		return $this->instance()->where($where)->delete();
 	}
 
-	public function insertData($data)
+	public function insertData($data, $returnId=false)
 	{
-		return $this->instance()->insert($data);
+		return $returnId ? $this->instance()->insertGetId($data) : $this->instance()->insert($data);
 	}
 
 	public function getCountData(array $where=[]) 

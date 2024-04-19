@@ -14,6 +14,11 @@ class Purchase
         return service('purchase/Product');
     }
 
+    public function item()
+    {
+        return service('purchase/ProductItem');
+    }
+
     public function shop()
     {
         return service('purchase/Shop');

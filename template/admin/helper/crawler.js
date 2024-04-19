@@ -215,12 +215,10 @@ var CRAWLER = {
         }
         ret_data.desc_picture = [];
         if (typeof offer_details != 'undefined') {
-            obj = (new DOMParser()).parseFromString(offer_details.content, 'text/html');
-            obj = obj.querySelectorAll('img');
-            for (let i=0; i<obj.length; i++) {
-                const url = obj[i].getAttribute('src');
-                if (url) {
-                    ret_data.desc_picture.push(url);
+            var srcArr = offer_details.content.match(/(?<=src=[\'\"])[^\'\"]*(?=[\'\"])/gi);
+            for (let i=0; i<srcArr.length; i++) {
+                if (srcArr[i]) {
+                    ret_data.desc_picture.push(srcArr[i]);
                 }
             }
         } else {
