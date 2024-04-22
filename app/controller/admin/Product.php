@@ -93,6 +93,7 @@ class Product extends AdminBase
 		html()->addCss();
 		html()->addJs();
 
+		$id = iget('id/d', 0);
 		$status = iget('status/d', -1);
 		$channelId = iget('purchase_channel_id/d', 0);
 		$itemId = iget('item_id', '');
@@ -102,6 +103,9 @@ class Product extends AdminBase
 		$size = iget('size/d', 30);
 
 		$where = [];
+		if ($id > 0) {
+			$where['purchase_product_id'] = $id;
+		}
 		if ($status > -1) {
 			$where['status'] = $status;
 		}
@@ -148,6 +152,7 @@ class Product extends AdminBase
 		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
 		$statusList = purchase()->product()->getStatusList();
 
+		$this->assign('id', $id);
 		$this->assign('status', $status);
 		$this->assign('purchase_channel_id', $channelId);
 		$this->assign('item_id', $itemId);

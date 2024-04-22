@@ -1,6 +1,9 @@
 <div class="container-fluid" id="purchase-list-page">
     <form action="<?php echo adminUrl('product/purchaseList');?>" class="form-inline" method="get">
         <div class="form-group">
+            <input type="text" class="form-control" name="id" value="<?php echo $id>0?$id:'';?>" placeholder="ID" autocomplete="off">
+        </div>
+        <div class="form-group">
             <input type="text" class="form-control" name="item_id" value="<?php echo $item_id;?>" placeholder="产品源ID" autocomplete="off">
         </div>
         <div class="form-group">

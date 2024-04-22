@@ -11,10 +11,10 @@ class Base
 			'data' => $data,
 			'msg' => '',
 		];
+		http_response_code($code);
 		header('Content-Type:application/json; charset=utf-8');
 		echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
 		\App::runOver(false);
-		exit();
 	}
 
 	protected function success($msg='', $data=[])

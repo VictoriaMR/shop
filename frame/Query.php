@@ -6,14 +6,15 @@ final class Query
 {
 	private $_database;
 	private $_table;
-	private $_columns;
-	private $_where;
+	private $_where=[];
+	private $_columns='*';
 	private $_groupBy='';
 	private $_orderBy='';
 	private $_having='';
-	private $_offset;
+	private $_offset=0;
 	private $_limit=1;
 	private $_sql='';
+	private $_withSite = true;
 	private $_specialKey = ['status', 'name', 'order', 'system', 'type', 'rank', 'show', 'commit'];
 
 	public function setDb($database=null)
@@ -34,20 +35,12 @@ final class Query
 		return $this;
 	}
 
-	public function where($columns, $operator=null, $val1=null, $val2=null)
+	public function where($columns, $operator=null)
 	{
-		if (is_array($columns)) {
-			foreach ($columns as $key => $value) {
-				if (is_array($value)){
-					//2是between;
-					$this->_where[$key] = isset($value[2]) ? [$key, strtoupper($value[0]), $value[1], $value[2]] : [$key, strtoupper($value[0]), $value[1]];
-				} else {
-					$this->_where[$key] = [$key, is_array($value)?'IN':'=', $value];
-				}
-			}
+		if ($operator) {
+			$this->_where[$columns] = $operator;
 		} else {
-			if (is_null($value)) $this->_where[$columns] = [$columns, '=', $operator];
-			else $this->_where[$columns] = [$columns, $operator, $value];
+			$this->_where = array_merge($this->_where, $columns);
 		}
 		return $this;
 	}
@@ -60,10 +53,7 @@ final class Query
 
 	public function orderBy($columns, $operator=null)
 	{
-		if ($columns) {
-			if (!is_array($columns)) {
-				$columns = [$columns=>$operator];
-			}
+		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) {
 					$this->_orderBy .= 'FIELD('.$this->formatKey($key).', '.implode(',', $value).'),';
@@ -71,31 +61,27 @@ final class Query
 					$this->_orderBy .= $this->formatKey($key).' '.strtoupper($value).',';
 				}
 			}
+		} else {
+			$this->_orderBy .= $this->formatKey($columns).' '.strtoupper($operator).',';
 		}
 		return $this;
 	}
 
 	public function groupBy($columns)
 	{
-		if ($columns) {
-			$this->_groupBy .= $this->formatKey($columns);
-		}
+		$columns && $this->_groupBy .= $this->formatKey($columns);
 		return $this;
 	}
 
 	public function having($columns, $operator, $value)
 	{
-		if ($columns) {
-			$this->_having = $this->formatKey($columns).' '.$operator.' '.$value;
-		}
+		$this->_having = $this->formatKey($columns).' '.$operator.' '.$value;
 		return $this;
 	}
 
 	public function field($columns)
 	{
-		if ($columns) {
-			$this->_columns .= is_array($columns) ? implode(',', $columns) : $columns;
-		}
+		$columns && $this->_columns = is_array($columns) ? implode(',', $columns) : $columns;
 		return $this;
 	}
 
@@ -122,28 +108,27 @@ final class Query
 
 	public function value($name)
 	{
-		$this->_columns = $name;
-		return $this->find();
+		return $this->field($name)->find();
 	}
 
-	public function count($where=[])
+	public function count($where=[]):int
 	{
-		return $this->where($where)->value('COUNT(*) AS core_count')['core_count'] + 0;
+		return $this->where($where)->value('COUNT(*) AS core_count')['core_count'];
 	}
 
-	public function max($field)
+	public function max($field):int
 	{
-		return $this->value('MAX('.$this->formatKey($field).') AS core_max')['core_max']+0;
+		return $this->value('MAX('.$this->formatKey($field).') AS core_max')['core_max'];
 	}
 
-	public function min($field)
+	public function min($field):int
 	{
-		return $this->value('MIN('.$this->formatKey($field).') AS core_min')['core_min']+0;
+		return $this->value('MIN('.$this->formatKey($field).') AS core_min')['core_min'];
 	}
 
-	public function sum($field)
+	public function sum($field):int
 	{
-		return $this->value('SUM('.$this->formatKey($field).') AS core_sum')['core_sum']+0;
+		return $this->value('SUM('.$this->formatKey($field).') AS core_sum')['core_sum'];
 	}
 
 	public function insert(array $data)
@@ -196,17 +181,11 @@ final class Query
 
 	protected function formatKey($key)
 	{
-		if (!$key) return $key;
 		return '`'.trim($key).'`';
-		
-		$key = trim($key);
-		if (in_array($key, $this->_specialKey)) return '`'.trim($key).'`';
-		return $key;
 	}
 
 	protected function formatValue($key, $value)
 	{
-		$value = is_array($value) ? :trim($value);
 		if (in_array($key, $this->_intFields)) return (int)$value;
 		return "'".addslashes($value)."'";
 	}
@@ -243,39 +222,52 @@ final class Query
 
 	private function getSql()
 	{
+		$sql = 'SELECT '.$this->_columns.' FROM '.$this->_table;
 		$whereString = $this->analyzeWhere();
-		$sql = sprintf('SELECT %s FROM %s', $this->_columns ? $this->_columns : '*', $this->_table);
-		if ($whereString) $sql .= ' WHERE ' . $whereString;
-		if ($this->_groupBy) $sql .= ' GROUP BY ' . $this->_groupBy;
-		if ($this->_orderBy) $sql .= ' ORDER BY ' . trim($this->_orderBy, ',');
-		if (!is_null($this->_offset)) $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
-		if ($this->_having) $sql .= ' HAVING ' . $this->_having;
+		$whereString && $sql .= ' WHERE ' . $whereString;
+		$this->_groupBy && $sql .= ' GROUP BY ' . $this->_groupBy;
+		$this->_orderBy && $sql .= ' ORDER BY ' . trim($this->_orderBy, ',');
+		$this->_offset && $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		$this->_having && $sql .= ' HAVING ' . $this->_having;
 		return $sql;
 	}
 
 	private function analyzeWhere()
 	{
-		if (empty($this->_where)) return '';
-		if (in_array('site_id', $this->_intFields) && !isset($this->_where['site_id'])) {
-			$this->_where['site_id'] = ['site_id', '=', siteId()];
+		if (in_array('site_id', $this->_intFields) && $this->_withSite) {
+			$this->_where['site_id'] = siteId();
 		}
-		$where  = '1=1';
-		foreach ($this->_where as $item) {
-			$where .= ' AND '.$this->formatKey($item[0]).' '.$item[1].' ';
-			if ($item[1] == 'BETWEEN') {
-				if (!isset($item[3])) throw new \Exception('sql error: Sql where BETWEEN value error, must have the param 2', 1);
-				$where .= sprintf('%s AND %s', $this->formatValue($item[0], $item[2]), $this->formatValue($item[0], $item[3]));
+		$where = '';
+		foreach ($this->_where as $key => $item) {
+			$where = ' AND '.$this->formatKey($key);
+			if (is_array($item)) {
+				switch ($item[0]) {
+					case 'BETWEEN':
+					case 'between':
+						if (empty($item[1]) || count($item[1]) != 2) {
+							throw new \Exception('SQL WHERE '.$key.' BETWEEN VALUE ERROR', 1);
+						}
+						$where .= sprintf(' BETWEEN %s AND %s', $this->formatValue($key, $item[1][0]), $this->formatValue($key, $item[1][1]));
+						break;
+					case 'IN':
+					case 'in':
+						if (empty($item[1])) {
+							dd($this->_where);
+							throw new \Exception('SQL WHERE '.$key.' IN EMPTY VALUE', 1);
+						}
+						$value = [];
+						foreach ($item[1] as $v) {
+							$value[] = $this->formatValue($key, $v);
+						}
+						$where .= ' IN ('.implode(',', $value).')';
+						break;
+				}
 			} else {
-				if (is_array($item[2])) {
-					$value = [];
-					foreach ($item[2] as $v) {
-						$value[] = $this->formatValue($item[0], $v);
-					}
-					$where .= '('.implode(',', $value).')';
-				} else $where .= $this->formatValue($item[0], $item[2]);
+				$where .= '='.$this->formatValue($key, $item);
 			}
 		}
-		return $where;
+		$this->clear();
+		return $where ? trim($where, ' AND ') : $where;
 	}
 
 	public function sql()
@@ -285,7 +277,6 @@ final class Query
 
 	public function getQuery($sql)
 	{
-		$this->clear();
 		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
@@ -302,35 +293,26 @@ final class Query
 				}
 				$result->free();
 				return $returnData;
-			} else {
-				$error = [];
-				foreach ($mysqli->error_list as $value) {
-					$error[] = 'SQL: '.$sql;
-					$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
-				}
-				throw new \Exception(implode(PHP_EOL, $error), 1);
 			}
+			$error[] = 'SQL: '.$sql;
 		} catch (\Exception $e){
-			$error = '';
-			if ($mysqli) {
-				foreach ($mysqli->error_list as $value) {
-					$error.= 'SQL: '.$sql.sprintf(', errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']).PHP_EOL;
-				}
-			} else {
-				$error.= 'SQL: '.$sql.sprintf(', errno: %s, error: %s', $e->getCode(), $e->getMessage()).PHP_EOL;
-			}
-			throw new \Exception($error, 1);
+			$error[] = 'SQL: '.$sql;
+			$error[] = sprintf(', errno: %s, error: %s', $e->getCode(), $e->getMessage());
 		}
+		foreach ($mysqli->error_list as $value) {
+			$error[] = sprintf('errno: %s, sqlstate: %s, error: %s', $value['errno'], $value['sqlstate'], $value['error']);
+		}
+		throw new \Exception(implode(PHP_EOL, $error), 1);
 	}
 
 	private function clear()
 	{
-		$this->_columns = '';
 		$this->_where = [];
+		$this->_columns = '*';
 		$this->_groupBy = '';
 		$this->_orderBy = '';
 		$this->_having = '';
-		$this->_offset = null;
+		$this->_offset = 0;
 		$this->_limit = 1;
 	}
 

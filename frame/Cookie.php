@@ -14,9 +14,6 @@ class Cookie
 
 	public function init()
 	{
-		if (\App::get('router', 'path') == 'Login') {
-			return false;
-		}
 		$uuid = $this->get('uuid');
 		if (empty($uuid)) {
 			$exp = 3600*24*10;

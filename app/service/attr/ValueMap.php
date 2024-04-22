@@ -21,7 +21,7 @@ class ValueMap extends Base
 					$attvId = array_merge($attvId, array_values($tmp));
 				}
 			}
-			if (!empty($attvId)) {
+			if (!empty($attnId)) {
 				$attnId = attr()->name()->getListData(['attrn_id'=>['in', $attnId]], 'attrn_id,name');
 				$attnId = array_column($attnId, 'name', 'attrn_id');
 			}

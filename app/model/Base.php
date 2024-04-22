@@ -33,7 +33,7 @@ class Base
 		return constant(get_class($this).'::'.$name);
 	}
 
-	public function loadData($where, $field='', $orderBy=[])
+	public function loadData($where, $field='*', $orderBy=[])
 	{
 		if (!is_array($where)) {
 			if (!$this->_primaryKey) {
@@ -76,9 +76,9 @@ class Base
 		return $this->instance()->where($where)->count();
 	}
 
-	public function getListData(array $where=[], $fields=[], $page=0, $size=20, $order=[], $group='')
+	public function getListData(array $where=[], $field='*', $page=0, $size=20, $order=[], $group='')
 	{
-		return $this->instance()->where($where)->field($fields)->page($page, $size)->orderBy($order)->groupBy($group)->get();
+		return $this->instance()->where($where)->field($field)->page($page, $size)->orderBy($order)->groupBy($group)->get();
 	}
 
 	public function sql()
