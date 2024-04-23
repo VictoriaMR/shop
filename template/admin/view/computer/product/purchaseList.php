@@ -49,7 +49,7 @@
             </tr>
             <?php if (empty($list)){ ?>
             <tr>
-                <td colspan="8">
+                <td colspan="10">
                     <div class="tc orange">暂无数据</div>
                 </td>
             </tr>

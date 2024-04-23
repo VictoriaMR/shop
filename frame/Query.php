@@ -234,40 +234,42 @@ final class Query
 
 	private function analyzeWhere()
 	{
-		if (in_array('site_id', $this->_intFields) && $this->_withSite) {
+		if (in_array('site_id', $this->_intFields) && !isset($this->_where['site_id']) && $this->_withSite) {
 			$this->_where['site_id'] = siteId();
 		}
 		$where = '';
 		foreach ($this->_where as $key => $item) {
-			$where = ' AND '.$this->formatKey($key);
+			$where .= ' AND '.$this->formatKey($key).' ';
 			if (is_array($item)) {
-				switch ($item[0]) {
+				$keyName = strtoupper(trim($item[0]));
+				switch ($keyName) {
 					case 'BETWEEN':
-					case 'between':
 						if (empty($item[1]) || count($item[1]) != 2) {
 							throw new \Exception('SQL WHERE '.$key.' BETWEEN VALUE ERROR', 1);
 						}
-						$where .= sprintf(' BETWEEN %s AND %s', $this->formatValue($key, $item[1][0]), $this->formatValue($key, $item[1][1]));
+						$where .= sprintf('BETWEEN %s AND %s', $this->formatValue($key, $item[1][0]), $this->formatValue($key, $item[1][1]));
 						break;
 					case 'IN':
-					case 'in':
+					case 'NOT IN':
 						if (empty($item[1])) {
-							dd($this->_where);
-							throw new \Exception('SQL WHERE '.$key.' IN EMPTY VALUE', 1);
+							throw new \Exception('SQL WHERE '.$key.' '.$keyName.' EMPTY VALUE', 1);
 						}
 						$value = [];
 						foreach ($item[1] as $v) {
 							$value[] = $this->formatValue($key, $v);
 						}
-						$where .= ' IN ('.implode(',', $value).')';
+						$where .= strtoupper($item[0]).' ('.implode(',', $value).')';
+						break;
+					default:
+						$where .= $item[0].' '.$this->formatValue($key, $item[1]);
 						break;
 				}
 			} else {
-				$where .= '='.$this->formatValue($key, $item);
+				$where .= '= '.$this->formatValue($key, $item);
 			}
 		}
 		$this->clear();
-		return $where ? trim($where, ' AND ') : $where;
+		return trim($where, ' AND ');
 	}
 
 	public function sql()

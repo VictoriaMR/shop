@@ -203,14 +203,8 @@
 					</table>
 				</dd>
 			</dl>
-			<dl class="field-row">
-				<dt></dt>
-				<dd>
-					<button type="button" class="btn btn-success confirm-btn"><i class="glyphicon glyphicon-plus"></i> 确认</button>
-				</dd>
-			</dl>
 		</div>
-		<div class="left info-content" style="width: 400px;">
+		<div class="left info-content">
 			<div class="supplier-info-content">
 				<h4>供应商基本信息</h4>
 				<dl class="field-row">
@@ -270,6 +264,13 @@
 				<?php }?>
 			</div>
 		</div>
+		<div class="clear"></div>
+		<dl class="field-row">
+			<dt></dt>
+			<dd>
+				<button type="button" class="btn btn-success confirm-btn"><i class="glyphicon glyphicon-plus"></i> 确认</button>
+			</dd>
+		</dl>
 	</form>
 </div>
 <div class="s-modal change-category-modal" style="width: 440px">

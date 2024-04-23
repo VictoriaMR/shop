@@ -218,7 +218,7 @@ const CRAWLERINIt = {
 			for (var i in data.sku) {
 				var skuAttr = new Array();
 				for (var j in data.sku[i].pvs) {
-					skuAttr.push(data.attr[j].value[data.sku[i].pvs[j]].name);
+					skuAttr.push(data.sku[i].pvs[j]);
 				}
 				skuAttr 
 				html += `<tr>

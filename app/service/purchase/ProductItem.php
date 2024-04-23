@@ -19,16 +19,21 @@ class ProductItem extends Base
 				'purchase_product_id' => $purchaseProductId,
 				'item_id' => $key,
 			];
+			$tmp = [];
+			foreach ($value['pvs'] as $k=>$v) {
+				$tmp[] = $k.':'.$v;
+			}
+			$attr = trim(implode(';', $tmp));
 			if ($this->getCountData($where) > 0) {
 				$this->updateData($where, [
 					'stock' => $value['stock'],
 					'price' => $value['price'],
-					'attr' => $value['sku_map'],
+					'attr' => $attr,
 				]);
 			} else {
 				$where['stock'] = $value['stock'];
 				$where['price'] = $value['price'];
-				$where['attr'] = trim($value['sku_map']);
+				$where['attr'] = $attr;
 				$this->insertData($where);
 			}
 		}

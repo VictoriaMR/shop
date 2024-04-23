@@ -165,11 +165,11 @@ var CRAWLER = {
             const item = __INIT_DATA.globalData.skuModel.skuProps[i];
             let value = {};
             for (let j=0; j<item.value.length; j++) {
-                value[item.value[j].name] = {
+                value[j] = {
                     name: item.value[j].name,
                 };
                 if (item.value[j].imageUrl) {
-                    value[item.value[j].name].img = item.value[j].imageUrl;
+                    value[j].img = item.value[j].imageUrl;
                 }
             }
             ret_data.attr[item.fid] = {
@@ -187,7 +187,8 @@ var CRAWLER = {
             let img = '';
             for (let r in attr) {
                 let attrMap = this.getAttr(attr[r], tmpAttr);
-                pvs[attrMap.name] = attrMap.value;
+                // pvs[attrMap.name] = attrMap.value;
+                pvs[ret_data.attr[attrMap.name].name] = ret_data.attr[attrMap.name].value[attrMap.value].name;
                 if (attrMap.img) {
                     img = attrMap.img;
                 }
@@ -310,7 +311,7 @@ var CRAWLER = {
                 let img = '';
                 for (let r in attr) {
                     let attr_item = attr[r].split(':');
-                    pvs[attr_item[0]] = attr_item[1];
+                    pvs[ret_data.attr[attr_item[0]].name] = ret_data.attr[attr_item[0]].value[attr_item[1]].name;
                     if (ret_data.attr[attr_item[0]].value[attr_item[1]].img) {
                         img = ret_data.attr[attr_item[0]].value[attr_item[1]].img;
                     }
@@ -455,7 +456,7 @@ var CRAWLER = {
                     let pvs = {};
                     for (let r in attr) {
                         let attr_item = attr[r].split(':');
-                        pvs[attr_item[0]] = attr_item[1];
+                        pvs[ret_data.attr[attr_item[0]].name] = ret_data.attr[attr_item[0]].value[attr_item[1]].name;
                     }
                     ret_data.sku[item.skuId] = {
                         pvs: pvs,

@@ -200,6 +200,7 @@ class Product extends AdminBase
 
 				$siteList = site()->getListData(['site_id'=>['>', 80]], 'site_id,name');
 				$cateList = category()->getListFormat(false);
+				
 				$this->assign('attrNs', $attrNs);
 				$this->assign('attrVs', $attrVs);
 				$this->assign('info', $info);

@@ -9,6 +9,6 @@ class Site extends Base
 	protected $_primaryKey = 'site_id';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
-	protected $_intFields = ['status'];
+	protected $_intFields = ['site_id', 'status'];
 	const CACHE_KEY_LANGUAGE = 'site-languge:';
 }
