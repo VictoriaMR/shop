@@ -4,31 +4,14 @@ namespace app\controller;
 
 class Base
 {
-	protected function result($code, $data=[], $options=[])
+	protected function success($msg='', $data=[], $code=200)
 	{
-		$data = [
-			'code' => $code,
-			'data' => $data,
-			'msg' => '',
-		];
-		http_response_code($code);
-		header('Content-Type:application/json; charset=utf-8');
-		echo json_encode(array_merge($data, $options), JSON_UNESCAPED_UNICODE);
-		\App::runOver(false);
+		\App::jsonRespone($code, $data, $msg);
 	}
 
-	protected function success($msg='', $data=[])
+	protected function error($msg='', $data=[], $code=400)
 	{
-		if (!is_string($msg)) {
-			$data = $msg;
-			$msg = '';
-		}
-		$this->result(200, $data, ['msg' => $msg]);
-	}
-
-	protected function error($msg='', $code=400)
-	{
-		$this->result($code, [], ['msg'=>$msg]);
+		\App::jsonRespone($code, [], $msg);
 	}
 
 	protected function assign($name, $value=null)

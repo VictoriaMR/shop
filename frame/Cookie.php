@@ -12,28 +12,36 @@ class Cookie
 		'httponly' => true,
 	];
 
-	public function init()
+	public function init($home=true)
+	{
+		$uuid = $this->get('uuid');
+		if ($uuid) {
+			//自动登录
+			$info = service('member/Uuid')->getInfo($uuid);
+			if (!empty($info['mem_id'])) {
+				service('Member')->loginById($info['mem_id']);
+				if ($home && $info['lan_cur']) {
+					list($language, $currency) = explode('_', $info['lan_cur']);
+					$this->set('language', $language, $exp);
+					$this->set('currency', $currency, $exp);
+				}
+			}
+		}
+		session()->set('set_cookie', true);
+	}
+
+	public function setUuid($home=true)
 	{
 		$uuid = $this->get('uuid');
 		if (empty($uuid)) {
 			$exp = 3600*24*10;
 			$this->set('uuid', randString(32), $exp);
-			$this->set('language', 'en', $exp);
-			$this->set('currency', 'usd', $exp);
-		} else {
-			//自动登录
-			$info = service('member/Uuid')->getInfo($uuid);
-			if (!empty($info['mem_id'])) {
-				if (substr($info['mem_id'], 0, 1) == 5) {
-					$memberService = service('admin/Member');
-				} else {
-					$memberService = service('Member');
-				}
-				$memberService->loginById($info['mem_id']);
-				session()->set('site_language_id', $info['lan_id']);
+			if ($home) {
+				$this->set('language', 'en', $exp);
+				$this->set('currency', 'usd', $exp);
 			}
-			session()->set('setcookie', true);
 		}
+		session()->set('set_uuid', true);
 	}
 
 	public function login($memId)
@@ -47,13 +55,18 @@ class Cookie
 			return false;
 		}
 		$where['mem_id'] = $memId;
-		$where['lan_id'] = lanId();
+		$where['lan_cur'] = 'en_usd';
 		return $uuidService->insert($where);
 	}
 
-	public function updateLanguage()
+	public function updateLanguage($language)
 	{
-		return service('member/Uuid')->updateData($this->get('uuid'), ['lan_id'=>lanId()]);
+		return $this->set('language', $language);
+	}
+
+	public function updateCurrency($currency)
+	{
+		return $this->set('currency', $currency);
 	}
 
 	public function set($name, $value='', $option=null)
@@ -106,16 +119,8 @@ class Cookie
 
 	public function clear()
 	{
-		if (empty($_COOKIE)) {
-			return false;
-		}
-		session()->set('setcookie', false);
-		service('member/Uuid')->deleteData($this->get('uuid'));
-		$config = $this->config;
-		foreach ($_COOKIE as $key => $val) {
-			setcookie($key, '', $_SERVER['REQUEST_TIME'] - 3600, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
-		}
-		$_COOKIE = [];
+		// 清除登录状态
+		service('member/Uuid')->updateData(['uuid' =>$this->get('uuid')], ['mem_id'=>0]);
 		return true;
 	}
 }

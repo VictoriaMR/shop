@@ -51,15 +51,43 @@ class App
 			$info = frame('Router')->analyze();
 			$info['class'] = isAdmin()?'admin':'home';
 			self::set('router', $info);
-			//执行方法
-			$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
-			$callArr = [$call, $info['func']];
-			self::make('app/middleware/VerifyToken')->handle($info);
-			call_user_func_array($callArr, []);
+			// 中间组件方法
+			if (self::middleware($info)) {
+				//执行方法
+				$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
+				$callArr = [$call, $info['func']];
+				call_user_func_array($callArr, []);
+			}
 			self::runOver();
 		} else {
 			throw new \Exception('domain: '.$domain.' was not exist!');
 		}
+	}
+
+	// 中间组件方法
+	private static function middleware($request)
+	{
+		if (!session()->get('set_uuid', false)) {
+			frame('Cookie')->setUuid($request['class'] == 'home');
+		}
+		// 验证是否需要自动登录
+		if (!in_array($request['path'], ['Api','Login']) && !session()->get('set_cookie', false)) {
+			frame('Cookie')->init($request['class'] == 'home');
+		}
+		// 如果无需登录的, 初始化
+		$except = config('except', $request['class']);
+		if (isset($except[$request['path']])) return true;
+		if (isset($except[$request['path'].'/'.$request['func']])) return true;
+		// 需要登录的要重定向
+		if (!userId()) {
+			if (isAjax()) {
+				self::jsonRespone(400, 'need login');
+			} else {
+				redirect(url('login'));
+			}
+			return false;
+		}
+		return true;
 	}
 
 	private static function autoload($abstract, $params=null)
@@ -96,5 +124,16 @@ class App
 			frame('Debug')->runlog();
 			!isCli() && !isAjax() && !iget('iframe', false) && $debug && frame('Debug')->init();
 		}
+	}
+
+	public static function jsonRespone($code, $data=[], $msg='')
+	{
+		$data = [
+			'code' => $code,
+			'data' => $data,
+			'msg' => $msg,
+		];
+		header('Content-Type:application/json; charset=utf-8');
+		echo json_encode($data, JSON_UNESCAPED_UNICODE);
 	}
 }
