@@ -90,6 +90,14 @@ class Product extends AdminBase
 
 	public function purchaseList()
 	{
+		if (isAjax()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['edit'])) {
+				$opn .= 'PurchaseList';
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
 		html()->addCss();
 		html()->addJs();
 
@@ -164,6 +172,24 @@ class Product extends AdminBase
 		$this->assign('channelList', $channelList);
 		$this->assign('statusList', $statusList);
 		$this->view();
+	}
+
+	protected function editPurchaseList()
+	{
+		$id = ipost('id/d', 0);
+		$status = ipost('status/d', 0);
+		if ($id <= 0) {
+			$this->error('参数不正确');
+		}
+		$statusList = purchase()->product()->getStatusList();
+		if (!isset($statusList[$status])) {
+			$this->error('状态不正确');
+		}
+		$rst = purchase()->product()->updateData($id, ['status'=>$status]);
+		if ($rst) {
+			$this->success('更新成功');
+		}
+		$this->error('更新失败');
 	}
 
 	public function operate()

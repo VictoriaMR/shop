@@ -295,7 +295,7 @@
 				</select>
 			</div>
 		</div>
-		<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
+		<button type="button" class="btn btn-primary btn-lg btn-block btn-save">保存</button>
 	</div>
 </div>
 <script>

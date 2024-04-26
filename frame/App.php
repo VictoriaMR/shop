@@ -117,12 +117,17 @@ class App
 		self::$error[] = $msg;
 	}
 
-	public static function runOver($debug=true)
+	public static function runOver()
 	{
 		// debug开启
 		if (isDebug()) {
 			frame('Debug')->runlog();
-			!isCli() && !isAjax() && !iget('iframe', false) && $debug && frame('Debug')->init();
+		}
+		if (isAjax()) {
+			exit();
+		}
+		if (isDebug() && !isCli() && !iget('iframe', false)) {
+			frame('Debug')->init();
 		}
 	}
 
@@ -135,5 +140,6 @@ class App
 		];
 		header('Content-Type:application/json; charset=utf-8');
 		echo json_encode($data, JSON_UNESCAPED_UNICODE);
+		self::runOver();
 	}
 }

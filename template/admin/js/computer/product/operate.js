@@ -165,6 +165,9 @@ const OPERATE = {
 		$('.desc-info-content .glyphicon-remove').on('click', function(){
 			$(this).parents('.item').remove();
 		});
+		// 查看大图
+		$('img').bigImage();
+
 	},
 	initCate: function(pid) {
 		let html = '';

@@ -55,7 +55,10 @@
             </tr>
             <?php } else {?>
             <?php foreach ($list as $key => $value) { ?>
-            <tr>
+            <tr
+                data-id="<?php echo $value['purchase_product_id'];?>"
+                data-status="<?php echo $value['status'];?>"
+            >
                 <td><?php echo $value['purchase_product_id'];?></td>
                 <td><?php echo $channelList[$value['purchase_channel_id']]??'--';?></td>
                 <td><?php echo $value['item_id'];?></td>
@@ -78,11 +81,10 @@
                 <td>
                     <?php if (in_array($value['status'], [0, 1])){?>
                     <a target="_blank" class="btn btn-info btn-xs" href="<?php echo $value['url'];?>"><?php echo $value['status']==0?'上传':'更新';?></a>
-                    <button class="btn btn-success btn-xs">编辑</button>
-                    <?php if ($value['status'] == 1) {?>
-                    <a class="btn btn-primary btn-xs" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_product_id']]);?>">配置</a>
                     <?php }?>
-                    <?php } else {?>
+                    <button class="btn btn-success btn-xs btn-edit">编辑</button>
+                    <?php if ($value['status'] == 1) {?>
+                    <a class="btn btn-primary btn-xs" target="_blank" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_product_id']]);?>">配置</a>
                     <?php }?>
                 </td>
             </tr>
@@ -92,3 +94,22 @@
     </table>
     <?php echo page($size, $total);?>
 </div>
+<!-- 编辑弹窗 -->
+<form class="s-modal form-horizontal" id="edit-status-modal">
+    <input type="hidden" name="id" value="0">
+    <input type="hidden" name="opn" value="edit">
+    <p class="title"><span>状态修改</span></p>
+    <i class="glyphicon glyphicon-remove"></i>
+    <div class="content">
+        <div class="input-group">
+            <div class="input-group-addon"><span>操作行为：</span></div>
+            <select class="form-control" name="status">
+                <option value="-1">请选择状态</option>
+                <?php foreach ($statusList as $k => $v){?>
+                <option value="<?php echo $k;?>"><?php echo $v;?></option>
+                <?php }?>
+            </select>
+        </div>
+    </div>
+    <button type="button" class="btn btn-primary btn-lg btn-block btn-save">保存</button>
+</form>

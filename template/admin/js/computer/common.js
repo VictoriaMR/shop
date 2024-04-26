@@ -58,154 +58,156 @@ $(function(){
 		h = h < 0 ? 0 : h;
 		obj.eq(i).css({top: h+'px', left: w+'px'});
 	}
-// 	$.fn.offsetCenter = function(width, height) {
-// 		
-// 		if (obj.data("resizeSign") !='ok') {
-// 			obj.data('resizeSign','ok');
-// 			$(window).resize(function () {
-// 				obj.offsetCenter(width, height);
-// 			});
-// 			obj.find('.close').on('click', function() {
-// 				obj.parent().dealboxHide();
-// 			});
-// 			obj.parent().find('.mask').on('click', function() {
-// 				obj.parent().dealboxHide();
-// 			});
-// 		}
-// 		return $(this);
-// 	};
-// 	$.fn.dealboxShow = function(title, width, height) {
-// 		const obj = $(this);
-// 		obj.offsetCenter();
-// 		$('body').css({'overflow': 'hidden'});
-// 		if (isScroll()) {
-// 			$('body').css({'padding-right': '6.5px'});
-// 		}
-// 		if (title) {
-// 			obj.find('.dealbox-title').text(title);
-// 		}
-// 		obj.show();
-// 		return obj;
-// 	};
-// 	$.fn.dealboxHide = function(width, height) {
-// 		const obj = $(this);
-// 		$('body').css({'overflow': 'auto'});
-// 		$('body').css({'padding-right': 0});
-// 		obj.hide();
-// 		return obj;
-// 	};
-// 	$.fn.switchBtn = function(status) {
-// 		const obj = $(this);
-// 		obj.data('status', status);
-// 		if (status == 1) {
-// 			obj.find('.switch_status').removeClass('off').addClass('on');
-// 		} else {
-// 			obj.find('.switch_status').removeClass('on').addClass('off');
-// 		}
-// 		return obj;
-// 	};
-// 	$.fn.formFilter = function() {
-// 		const obj = $(this);
-// 		let status = true;
-// 		obj.find('[required="required"]').each(function(){
-// 			var val = $(this).val();
-// 			if (val == '') {
-// 				errorTips($(this).prev().text()+'不能为空');
-// 				status = false;
-// 				return false;
-// 			}
-// 		});
-// 		return status;
-// 	};
-// 	$.fn.bigImage = function(){
-// 		const obj = $(this);
-// 		obj.css({cursor: 'pointer'});
-// 		obj.attr('title', '点击查看大图');
-// 		obj.on('click', function(){
-// 			let bigImageObj = $('#dealbox-bigimage');
-// 			if (bigImageObj.length == 0) {
-// 				var html = '<div id="dealbox-bigimage">\
-// 								<div class="mask"></div>\
-// 								<div class="centerShow">\
-// 									<img src="'+URI+'image/common/noimg.png">\
-// 								</div>\
-// 							</div>';
-// 				$('body').append(html);
-// 				bigImageObj = $('#dealbox-bigimage');
-// 			}
-// 			const src = obj.attr('src').replace('/200', '').replace('/400', '').replace('/600', '');
-// 			bigImageObj.find('.centerShow img').attr('src', src);
-// 			bigImageObj.find('.centerShow img').on('load', function(){
-// 				bigImageObj.offsetCenter().dealboxShow();
-// 			});
-// 		});
-// 	};
-// 	$.fn.imageUpload = function(cate, callback) {
-// 		const obj = $(this);
-// 		obj.each(function(){
-// 			const thisobj = $(this);
-// 			thisobj.css({cursor: 'pointer'});
-// 			const guid_name = guid();
-// 			thisobj.data('file', guid_name);
-// 			thisobj.parent().append('<input name="'+guid_name+'" type="file" accept=".bmp,.jpg,.png,.jpeg,image/bmp,image/jpg,image/png,image/jpeg" class="hide" readonly="readonly"/>');
-// 			thisobj.on('click', function(event){
-// 				event.stopPropagation();
-// 				const file = $(this).data('file');
-// 				$('[name="'+file+'"]').click();
-// 			});
-// 			$('[name="'+guid_name+'"]').on('change', function (e) {
-// 	            const thissrc = thisobj.attr('src');
-// 	            thisobj.data('src', thissrc);
-// 	            thisobj.attr('src', URI+'image/common/loading.png').addClass('loading');
-// 				const files = $(this).prop('files');
-// 				const data = new FormData();
-//             	data.append('file', files[0]);
-//             	data.append('cate', cate);
-//             	post(URI+'api/upload', data, function(res){
-//             		if (res.code == 200) {
-// 						if (thisobj.get(0).tagName == 'IMG') {
-// 							thisobj.removeClass('loading').attr('src', res.data.url);
-// 						} else {
-// 							thisobj.removeClass('loading').find('img').attr('src', res.data.url);
-// 						}
-// 						if (callback) {
-// 							callback(res.data, thisobj);
-// 						}
-// 					} else {
-// 						showTips(res);
-// 						thisobj.removeClass('loading').attr('src', thisobj.data('src'));
-// 					}
-//             	});
-// 			});
-// 		});
-// 	};
-// 	$.fn.autoHeight = function(){
-// 		$(this).each(function(){
-// 			$(this).height(this.scrollHeight - 12);
-// 		});
-// 	};
-// }(jQuery));
-// $(function(){
-// 	$('form .btn-group .btn').on('click', function(){
-// 		const obj = $(this).parents('.row-item').find('input[type="hidden"]');
-// 		if (obj.length > 0) {
-// 			obj.val($(this).data('id'));
-// 			obj.parents('form').eq(0).submit();
-// 		}
-// 	});
-// 	$('.form_datetime').datetimepicker({
-// 		language: 'zh-CN',
-// 		format: 'yyyy-mm-dd',
-// 		weekStart: 1,
-// 		todayBtn:  1,
-// 		autoclose: 1,
-// 		todayHighlight: 1,
-// 		startView: 2,
-// 		forceParse: 0,
-// 		clearBtn: 1,
-// 		minView: 'month'
-// 	});
-// 	$('#progressing').show();
-// 	progressing(20);
-// 	$('img.lazyload').lazyload();
+	obj.find('.glyphicon-remove').on('click', function(){
+		$(this).parents('.s-modal').hide();
+	});
+	$.fn.offsetCenter = function(width, height) {
+		
+		if (obj.data("resizeSign") !='ok') {
+			obj.data('resizeSign','ok');
+			$(window).resize(function () {
+				obj.offsetCenter(width, height);
+			});
+			obj.find('.close').on('click', function() {
+				obj.parent().dealboxHide();
+			});
+			obj.parent().find('.mask').on('click', function() {
+				obj.parent().dealboxHide();
+			});
+		}
+		return $(this);
+	};
+	$.fn.dealboxShow = function(title, width, height) {
+		const obj = $(this);
+		obj.offsetCenter();
+		$('body').css({'overflow': 'hidden'});
+		if (isScroll()) {
+			$('body').css({'padding-right': '6.5px'});
+		}
+		if (title) {
+			obj.find('.dealbox-title').text(title);
+		}
+		obj.show();
+		return obj;
+	};
+	$.fn.dealboxHide = function(width, height) {
+		const obj = $(this);
+		$('body').css({'overflow': 'auto'});
+		$('body').css({'padding-right': 0});
+		obj.hide();
+		return obj;
+	};
+	$.fn.switchBtn = function(status) {
+		const obj = $(this);
+		obj.data('status', status);
+		if (status == 1) {
+			obj.find('.switch_status').removeClass('off').addClass('on');
+		} else {
+			obj.find('.switch_status').removeClass('on').addClass('off');
+		}
+		return obj;
+	};
+	$.fn.formFilter = function() {
+		const obj = $(this);
+		let status = true;
+		obj.find('[required="required"]').each(function(){
+			var val = $(this).val();
+			if (val == '') {
+				errorTips($(this).prev().text()+'不能为空');
+				status = false;
+				return false;
+			}
+		});
+		return status;
+	};
+	$.fn.bigImage = function(){
+		const obj = $(this);
+		obj.css({cursor: 'pointer'});
+		obj.attr('title', '点击查看大图');
+		obj.on('click', function(){
+			let bigImageObj = $('#dealbox-bigimage');
+			if (bigImageObj.length == 0) {
+				var html = '<div id="dealbox-bigimage">\
+								<div class="mask"></div>\
+								<div class="centerShow">\
+									<img src="'+URI+'image/common/noimg.png">\
+								</div>\
+							</div>';
+				$('body').append(html);
+				bigImageObj = $('#dealbox-bigimage');
+			}
+			const src = obj.attr('src').replace('/200', '').replace('/400', '').replace('/600', '');
+			bigImageObj.find('.centerShow img').attr('src', src);
+			bigImageObj.find('.centerShow img').on('load', function(){
+				bigImageObj.offsetCenter().dealboxShow();
+			});
+		});
+	};
+	$.fn.imageUpload = function(cate, callback) {
+		const obj = $(this);
+		obj.each(function(){
+			const thisobj = $(this);
+			thisobj.css({cursor: 'pointer'});
+			const guid_name = guid();
+			thisobj.data('file', guid_name);
+			thisobj.parent().append('<input name="'+guid_name+'" type="file" accept=".bmp,.jpg,.png,.jpeg,image/bmp,image/jpg,image/png,image/jpeg" class="hide" readonly="readonly"/>');
+			thisobj.on('click', function(event){
+				event.stopPropagation();
+				const file = $(this).data('file');
+				$('[name="'+file+'"]').click();
+			});
+			$('[name="'+guid_name+'"]').on('change', function (e) {
+	            const thissrc = thisobj.attr('src');
+	            thisobj.data('src', thissrc);
+	            thisobj.attr('src', URI+'image/common/loading.png').addClass('loading');
+				const files = $(this).prop('files');
+				const data = new FormData();
+            	data.append('file', files[0]);
+            	data.append('cate', cate);
+            	post(URI+'api/upload', data, function(res){
+            		if (res.code == 200) {
+						if (thisobj.get(0).tagName == 'IMG') {
+							thisobj.removeClass('loading').attr('src', res.data.url);
+						} else {
+							thisobj.removeClass('loading').find('img').attr('src', res.data.url);
+						}
+						if (callback) {
+							callback(res.data, thisobj);
+						}
+					} else {
+						showTips(res);
+						thisobj.removeClass('loading').attr('src', thisobj.data('src'));
+					}
+            	});
+			});
+		});
+	};
+	$.fn.autoHeight = function(){
+		$(this).each(function(){
+			$(this).height(this.scrollHeight - 12);
+		});
+	};
+}(jQuery));
+$(function(){
+	$('form .btn-group .btn').on('click', function(){
+		const obj = $(this).parents('.row-item').find('input[type="hidden"]');
+		if (obj.length > 0) {
+			obj.val($(this).data('id'));
+			obj.parents('form').eq(0).submit();
+		}
+	});
+	$('.form_datetime').datetimepicker({
+		language: 'zh-CN',
+		format: 'yyyy-mm-dd',
+		weekStart: 1,
+		todayBtn:  1,
+		autoclose: 1,
+		todayHighlight: 1,
+		startView: 2,
+		forceParse: 0,
+		clearBtn: 1,
+		minView: 'month'
+	});
+	$('#progressing').show();
+	progressing(20);
 });

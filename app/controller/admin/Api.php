@@ -40,7 +40,7 @@ class Api extends AdminBase
 			'action' => $this->_helperAction,
 			'cate_list' => $tempArr,
 		];
-		$this->success($data);
+		$this->success('获取成功', $data);
 	}
 
 	public function upload()

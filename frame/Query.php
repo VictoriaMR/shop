@@ -87,10 +87,8 @@ final class Query
 
 	public function page($page, $size)
 	{
-		if ($page >= 1) {
-			$this->_offset = ($page-1)*$size;
-			$this->_limit = (int)$size;
-		}
+		$this->_offset = $page > 0 ? ($page-1) * $size : 0;
+		$this->_limit = (int)$size;
 		return $this;
 	}
 
@@ -101,8 +99,7 @@ final class Query
 
 	public function find()
 	{
-		$this->_offset = 0;
-		$this->_limit = 1;
+		$this->page(0, 1);
 		return $this->get()[0] ?? [];
 	}
 
@@ -227,7 +224,7 @@ final class Query
 		$whereString && $sql .= ' WHERE ' . $whereString;
 		$this->_groupBy && $sql .= ' GROUP BY ' . $this->_groupBy;
 		$this->_orderBy && $sql .= ' ORDER BY ' . trim($this->_orderBy, ',');
-		$this->_offset && $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		$this->_limit && $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
 		$this->_having && $sql .= ' HAVING ' . $this->_having;
 		return $sql;
 	}
@@ -268,7 +265,6 @@ final class Query
 				$where .= '= '.$this->formatValue($key, $item);
 			}
 		}
-		$this->clear();
 		return trim($where, ' AND ');
 	}
 
@@ -282,6 +278,7 @@ final class Query
 		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
+		$this->clear();
 		if (!$mysqli) {
 			return false;
 		}

@@ -9,7 +9,7 @@ class Error
         error_reporting(E_ALL);
         set_error_handler(array($this, 'appError'));
         set_exception_handler(array($this, 'appException'));
-        // register_shutdown_function(array($this, 'appShutdown'));
+        register_shutdown_function(array($this, 'appShutdown'));
     }
 
     public function appError($errno, $errStr, $errfile='', $errline='')
@@ -37,10 +37,8 @@ class Error
         $log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
         frame('Debug')->runlog($log);
         if (isCli() || isDebug()) {
-            http_response_code(500);
             if (isAjax()) {
-                header('Content-Type:application/json; charset=utf-8');
-                echo json_encode(['code'=>500, 'msg'=>$log], JSON_UNESCAPED_UNICODE);
+                \App::jsonRespone(500, [], $log);
             } else {
                 echo $log;
             }
