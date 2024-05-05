@@ -17,9 +17,8 @@ $(function(){
 			errorTips('验证码格式不正确');
 			return false;
 		}
-		// _thisObj.button('loading');
+		_thisObj.button('loading');
 		post('/login/login', {mobile:mobile,password:password,code:code}, function(res) {
-			console.log(res, 'res')
 			if (res.code === 200) {
 				localStorage.setItem('login_number', mobile);
 				window.location.href = res.data.url;

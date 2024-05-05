@@ -104,10 +104,10 @@ table{
 .avatar-hover{position:relative;height:36px;cursor:pointer}
 .avatar-hover img{margin:0px;padding:0px;vertical-align:top;height:36px;width:36px;border-radius:50%;box-sizing:border-box;position:absolute;left:0px;bottom:0px;transition:700ms;max-width:unset;max-height:unset}
 .avatar-hover:hover img{width:120px;height:120px;transition:700ms}
-.centerShow{box-sizing:border-box;box-shadow:0 5px 7px rgb(0 0 0 / 30%);border-radius:5px;width:380px;height:auto;padding:20px;background-color:#f1f1F1;margin-right:auto;margin-left:auto;text-align:left;position:fixed;z-index:99;max-height:100vh;overflow-y: auto}
-#dealbox-bigimage .centerShow{width:auto;max-width:980px;max-height:980px}
-.centerShow .dealbox-title,.centerShow .input-group{margin-bottom:20px}
-.centerShow .input-group-addon{min-width:90px;text-align:right}
+.s-modal{box-shadow:0 5px 7px rgb(0 0 0 / 30%);border-radius:5px;width:440px;height:auto;padding:20px;background-color:#f1f1F1;margin-right:auto;margin-left:auto;text-align:left;position:fixed;z-index:99;max-height:100vh;overflow-y: auto}
+.s-modal .input-group{margin-bottom:10px}
+.s-modal .title{font-size: 22px;margin-bottom: 20px}
+.s-modal .glyphicon-remove{width:30px;height:30px;position: absolute;right: 0;top: 0;line-height: 30px;text-align: center;}
 .mask{position:fixed;height:100%;width:100%;background:#000;opacity:0.2;left:0;top:0;z-index:66}
 #rightTips{position:fixed;top:4px;right:4px;width:200px;z-index:999}
 #rightTips .info{position:relative;width:100%;padding:12px;border-radius:5px;background-color:#333336;margin-bottom:8px;color:white;word-break:break-all}

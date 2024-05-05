@@ -20,35 +20,27 @@ const OPERATE = {
 								</div>`;
 				}
 			}
-			let html = `<form class="mapping-popper s-modal">
-							<div class="content">
-								<p>
-									<span>`+name+`</span>
-									<input type="hidden" name="from_name" value="`+name+`" />
-									<input type="hidden" name="type" value="`+type+`" />
-									<i class="glyphicon glyphicon-random"></i>
-								</p>
-								<div class="content">
- 									<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
- 								</div>
+			let html = `<div class="input-group">
+									<div class="input-group-addon"><span>映射值：</span></div>
+									<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
+								</div>
  								<div class="add-map-content">`+extHtml+`</div>	
 								<input type="hidden" name="opn" value="attrMap">`;
+			html += `<div class="mt20">`;
 			if (type == '2') {
 				html += `<button type="button" class="btn btn-info btn-sm btn-add" style="margin-right:10px;">新增映射</button>`;
 			}
-			html += `<button type="button" class="btn btn-success btn-sm btn-tmp-save" style="margin-right:10px;">临时映射</button><button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
-				</div>
-				<i class="glyphicon glyphicon-remove"></i>
-			</form>`;
-			$('.mapping-popper').remove();
-			$('body').append(html);
-		});
-		//移除
-		$('body').on('click', '.s-modal .glyphicon-remove', function(){
-			$(this).parents('.s-modal').remove();
+			html += `<button type="button" class="btn btn-success btn-sm btn-tmp-save" style="margin-right:10px;">临时映射</button><button type="button" class="btn btn-primary btn-sm btn-save">保存</button>`;
+			html += `</div>`;
+			var obj = $('.mapping-popper');
+			obj.find('.title').text(name);
+			obj.find('[name="from_name"]').val(name);
+			obj.find('[name="type"]').val(type);
+			obj.find('.content').html(html);
+			obj.modalShow();
 		});
 		//保存
-		$('body').on('click', '.mapping-popper .btn-save', function(){
+		$('.mapping-popper').on('click', '.btn-save', function(){
 			const obj = $(this).parents('.mapping-popper');
 			const name = obj.find('[name="name"]').val();
 			if (!name) {
@@ -77,7 +69,7 @@ const OPERATE = {
 		});
 		// 修改分类
 		$('.change-category-bth').on('click', function(){
-			$('.change-category-modal').show();
+			$('.change-category-modal').modalShow();
 		});
 		// 分类变化
 		$('.change-category-modal [name="root_category_id"]').on('change', function(){
@@ -166,7 +158,7 @@ const OPERATE = {
 			$(this).parents('.item').remove();
 		});
 		// 查看大图
-		$('img').bigImage();
+		// $('img').bigImage();
 
 	},
 	initCate: function(pid) {

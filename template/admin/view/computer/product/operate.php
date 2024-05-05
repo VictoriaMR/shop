@@ -122,13 +122,11 @@
 							foreach($info['sku'] as $key=>$value){
 								$check=true;
 								foreach ($value['pvs'] as $pk=>$pv) {
-									$attrName = $info['attr'][$pk]['name'];
-									$attrValue = $info['attr'][$pk]['value'][$pv]['name'];
-									if (!isset($attrNs[$attrName])){
+									if (!isset($attrNs[$pk])){
 										$check = false;
 										break;
 									}
-									if (!isset($attrVs[$attrValue])) {
+									if (!isset($attrVs[$pv])) {
 										$check = false;
 										break;
 									}
@@ -142,31 +140,28 @@
 								<td>
 									<div title="SKU属性">
 										<?php foreach($value['pvs'] as $pk=>$pv) {?>
-										<p><?php echo $info['attr'][$pk]['name'].': '.$info['attr'][$pk]['value'][$pv]['name'];?></p>
+										<p><?php echo $pk.': '.$pv;?></p>
 										<?php }?>
 									</div>
 									<p title="SKUID"><?php echo $key;?></p>
 								</td>
 								<td>
-									<?php foreach ($value['pvs'] as $pk=>$pv) {
-										$attrName = $info['attr'][$pk]['name'];
-										$attrValue = $info['attr'][$pk]['value'][$pv]['name'];
-									?>
+									<?php foreach ($value['pvs'] as $pk=>$pv) {?>
 									<p>
-										<?php if (isset($attrNs[$attrName])){?>
-										<span class="success"><?php echo $attrNs[$attrName]['attrn_name'];?></span>
+										<?php if (isset($attrNs[$pk])){?>
+										<span class="success"><?php echo $attrNs[$pk]['name'];?></span>
 										<?php } else {?>
-										<span class="error"><?php echo $info['attr'][$pk]['name'];?></span>
+										<span class="error"><?php echo $pk;?></span>
 										<?php }?>
 										<span>: </span>
-										<?php if (isset($attrVs[$attrValue])){?>
-										<span class="success"><?php echo $attrVs[$attrValue]['attrv_name'];?></span>
+										<?php if (isset($attrVs[$pv])){?>
+										<span class="success"><?php echo $attrVs[$pv]['name'];?></span>
 										<?php } else {?>
-										<span class="error"><?php echo $info['attr'][$pk]['value'][$pv]['name'];?></span>
+										<span class="error"><?php echo $pv;?></span>
 										<?php }?>
 									</p>
-									<?php if (!empty(isset($attrVs[$attrValue]['ext']))){?>
-									<?php foreach($attrVs[$attrValue]['ext'] as $ek=>$ev){?>
+									<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
+									<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>
 									<p>
 										<span class="success"><?php echo $ek.': '.$ev;?></span>
 									</p>
@@ -235,14 +230,14 @@
 					<?php foreach ($info['attr'] as $ak=>$av){?>
 					<tr>
 						<td width="100">
-							<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>" data-name="<?php echo isset($attrNs[$av['name']]) ? $attrNs[$av['name']]['attrn_name'] : '';?>">
+							<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>" data-name="<?php echo isset($attrNs[$av['name']]) ? $attrNs[$av['name']]['name'] : '';?>">
 								<span><?php echo $av['name'];?></span>
 								<span class="glyphicon glyphicon-edit"></span>
 							</div>
 						</td>
 						<td>
 							<?php foreach ($av['value'] as $avk=>$avv){?>
-							<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>" data-name="<?php echo isset($attrVs[$avv['name']]) ? $attrVs[$avv['name']]['attrv_name'] : '';?>" data-ext='<?php echo isset($attrVs[$avv['name']]['ext']) ? json_encode($attrVs[$avv['name']]['ext']) : '';?>'>
+							<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>" data-name="<?php echo isset($attrVs[$avv['name']]) ? $attrVs[$avv['name']]['name'] : '';?>" data-ext='<?php echo isset($attrVs[$avv['name']]['ext']) ? json_encode($attrVs[$avv['name']]['ext']) : '';?>'>
 								<span><?php echo $avv['name'];?></span>
 								<span class="glyphicon glyphicon-edit"></span>
 							</div>
@@ -273,7 +268,7 @@
 		</dl>
 	</form>
 </div>
-<div class="s-modal change-category-modal" style="width: 440px">
+<div class="s-modal change-category-modal">
 	<p class="title"><span>分类修改</span></p>
 	<i class="glyphicon glyphicon-remove"></i>
 	<div class="content">
@@ -295,9 +290,17 @@
 				</select>
 			</div>
 		</div>
-		<button type="button" class="btn btn-primary btn-lg btn-block btn-save">保存</button>
+		<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
 	</div>
 </div>
+<form class="mapping-popper s-modal">
+	<p class="title"></p>
+	<input type="hidden" name="from_name">
+	<input type="hidden" name="type">
+	<i class="glyphicon glyphicon-remove"></i>
+	<div class="content"></div>
+</form>
+
 <script>
 const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;
 </script>

@@ -18,7 +18,7 @@
 #add-product-page .field-row {
     margin-bottom: 15px;
 }
-#add-product-page .field-row>dt {
+#add-product-page .product-info-content .field-row>dt {
     line-height: 32px;
 }
 #add-product-page .field-row>dd {

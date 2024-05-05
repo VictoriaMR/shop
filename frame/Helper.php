@@ -16,7 +16,7 @@ function config($type, $name='', $default=''){
 	return \App::get($type, $name);
 }
 function redirect($url='', $return=true){
-	$return && session()->set('return_url', trim($_SERVER['REQUEST_URI'], '/'));
+	$return && session()->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
 	header('Location:'.$url);exit();	
 }
 function service($name, $params=null) {

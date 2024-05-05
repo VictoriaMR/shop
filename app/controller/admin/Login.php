@@ -42,8 +42,7 @@ class Login extends AdminBase
 		}
 		$result = service('Member')->login($mobile, $password);
 		if ($result) {
-			$returnUrl = session()->dGet('return_url');
-			$this->success(['url' => adminUrl($returnUrl)], '登录成功!');
+			$this->success('登录成功', ['url' => session()->dGet('return_url')]);
 		} else {
 			$this->error('账号或者密码不匹配!');
 		}
