@@ -67,12 +67,13 @@
 #add-product-page .spu-image .pic-wrap {
     margin: 5px 5px 0 5px;
     overflow: hidden;
+    font-size: 0;
 }
 #add-product-page .spu-image .pic-wrap .item {
     position: relative;
     width: 123px;
     height: 123px;
-    margin: 0 5px 5px 0;
+    margin: 0 10px 10px 0;
     display: inline-block;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -122,10 +123,14 @@
     margin:0;
 }
 .pic-thumb{
-    width: 123px;
-    height: 123px;
+    width: 121px;
+    height: 121px;
     text-align: center;
-    line-height: 123px;
+    line-height: 121px;
+    font-size: 0;
+}
+.pic-thumb img {
+    vertical-align: middle;
 }
 .pic-thumb:hover ~ .image-bottom-tips {
     bottom: 0px;
@@ -155,14 +160,14 @@
     vertical-align: top;
     padding: 1px 2px;
 }
-.mapping-popper input {
-    margin-bottom: 12px;
+.map-modal .add-map-content .item {
+    margin-bottom: 10px;
 }
-.mapping-popper .add-map-content .item input {
+.map-modal .add-map-content .item input {
     display: inline-block;
     width: calc((100% - 10px)/2);
 }
-.mapping-popper .add-map-content .item span {
+.map-modal .add-map-content .item span {
     display: inline-block;
 }
 

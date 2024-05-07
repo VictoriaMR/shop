@@ -115,7 +115,7 @@ table{
 #rightTips .error{color:#a94442;background-color:#f2dede;border:1px solid #ebccd1}
 #rightTips .info .glyphicon-remove{cursor:pointer;position:absolute;top:4px;right:4px;transition:1s}
 #rightTips .info .glyphicon-remove:hover{transform:rotate(180deg)}
-#progressing{width:1px;height:3px;display:block;background-color:#e7502b;position:absolute;left:-1px;top:0px}
+#progressing{width:1px;height:3px;display:block;background-color:#e7502b;position:fixed;left:0px;top:0px}
 #header-nav{margin-top:10px;margin-bottom:15px}
 #header-nav .nav{border-left-width:2px;border-left-style:solid;border-left-color:#e7502b;line-height:20px;padding-left:10px}
 #header-nav .nav a{display:none}

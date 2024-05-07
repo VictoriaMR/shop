@@ -21,18 +21,17 @@ const OPERATE = {
 				}
 			}
 			let html = `<div class="input-group">
-									<div class="input-group-addon"><span>映射值：</span></div>
-									<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
-								</div>
- 								<div class="add-map-content">`+extHtml+`</div>	
-								<input type="hidden" name="opn" value="attrMap">`;
+							<div class="input-group-addon"><span>映射值</span></div>
+							<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
+						</div>
+						<div class="add-map-content">`+extHtml+`</div>`;
 			html += `<div class="mt20">`;
 			if (type == '2') {
 				html += `<button type="button" class="btn btn-info btn-sm btn-add" style="margin-right:10px;">新增映射</button>`;
 			}
 			html += `<button type="button" class="btn btn-success btn-sm btn-tmp-save" style="margin-right:10px;">临时映射</button><button type="button" class="btn btn-primary btn-sm btn-save">保存</button>`;
 			html += `</div>`;
-			var obj = $('.mapping-popper');
+			var obj = $('.map-modal');
 			obj.find('.title').text(name);
 			obj.find('[name="from_name"]').val(name);
 			obj.find('[name="type"]').val(type);
@@ -40,8 +39,8 @@ const OPERATE = {
 			obj.modalShow();
 		});
 		//保存
-		$('.mapping-popper').on('click', '.btn-save', function(){
-			const obj = $(this).parents('.mapping-popper');
+		$('.map-modal').on('click', '.btn-save', function(){
+			const obj = $(this).parents('.map-modal');
 			const name = obj.find('[name="name"]').val();
 			if (!name) {
 				errorTips('请输入映射值');
@@ -58,14 +57,13 @@ const OPERATE = {
 			});
 		});
 		//新增映射
-		$('body').on('click', '.mapping-popper .btn-add', function(){
+		$('.map-modal').on('click', '.btn-add', function(){
 			let html = `<div class="item">
 							<input type="input" class="form-control" name="attr[name][]" value="" />
 							<span>: </span>
 							<input type="input" class="form-control" name="attr[value][]" value="" />
 						</div>`;
-			const obj = $(this).parents('.mapping-popper');
-			obj.find('.add-map-content').append(html);
+			$(this).parents('.map-modal').find('.add-map-content').append(html);
 		});
 		// 修改分类
 		$('.change-category-bth').on('click', function(){
@@ -99,28 +97,21 @@ const OPERATE = {
 		// 批量修改弹窗
 		$('.batch-btn').on('dblclick', function(){
 			const type = $(this).data('type');
-			let html = `<div class="batch-edit-modal s-modal">
-							<input type="hidden" name="type" value="`+type+`">
-							<div class="content">`;
-								
+			let html = '';
+			var name = '';
 			switch (type) {
 				case 'unit':
-					html += `<p>
-								<span>单位</span>
-							</p>
-							<div class="content">
-								<select name="`+type+`" class="form-control">
+					name = '单位';
+					html += `<select name="`+type+`" class="form-control">
                 					<option value="0">--</option>
                 					<option value="1">件</option>
                 					<option value="2">个</option>
                 					<option value="3">套</option>
                 					<option value="4">打</option>
                 					<option value="5">箱</option>
-                				</select>
-							</div>`;
+                				</select>`;
 					break;
 				default:
-					let name = '';
 					if (type == 'weight') {
 						name = '重量(g)';
 					} else if (type == 'length') {
@@ -130,36 +121,38 @@ const OPERATE = {
 					} else if (type == 'hight') {
 						name = '高度(cm)';
 					}
-					html += `<p>
-							<span>`+name+`</span>
-						</p>
-						<div class="content">
-							<input class="form-control" type="text" name="`+type+`" value="" placeholder="`+name+`"/>
-						</div>`;
+					html += `<input class="form-control" type="text" name="`+type+`" value="" placeholder="`+name+`"/>`;
 					break;
 			}
-			html += `<button type="button" class="btn btn-primary btn-sm btn-save">保存</button>
-				</div>
-				<i class="glyphicon glyphicon-remove"></i>
-			</div>`;
-			$('.batch-edit-modal').remove();
-			$('body').append(html);
+			var obj = $('.batch-edit-modal');
+			obj.find('.title').text(name);
+			obj.find('[name="type"]').val(type);
+			obj.find('.content').html(html);
+			obj.modalShow();
 		});
 		// 批量确认
-		$('body').on('click', '.batch-edit-modal .btn-save', function(){
+		$('.batch-edit-modal').on('click', '.btn-save', function(){
 			const obj = $(this).parents('.batch-edit-modal');
 			const type = obj.find('[name="type"]').val();
 			const value = obj.find('[name="'+type+'"]').val();
+			console.log(value, 'value')
 			$('#sku-list .'+type).val(value);
-			obj.hide();
+			obj.modalHide();
 		});
 		// 描述删除
 		$('.desc-info-content .glyphicon-remove').on('click', function(){
 			$(this).parents('.item').remove();
 		});
-		// 查看大图
-		// $('img').bigImage();
-
+		// 描述添加
+		$('.btn-add-desc').on('click', function(){
+			var html = `<div class="item">
+						<input type="text" class="form-control" name="desc[name][]" value="">
+						<span>: </span>
+						<input type="text" class="form-control" name="desc[value][]" value="">
+						<i class="glyphicon glyphicon-remove"></i>
+					</div>`;
+			$('.desc-info-content .content').append(html);
+		});
 	},
 	initCate: function(pid) {
 		let html = '';

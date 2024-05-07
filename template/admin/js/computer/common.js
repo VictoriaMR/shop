@@ -35,7 +35,7 @@ function progressing(val) {
             val = val + 20;
         }
     }
-    $('#progressing').stop(true,true).animate({'width':val+'%'}, 100, function(){
+    $('#progressing').show().stop(true,true).animate({'width':val+'%'}, 100, function(){
         if (val >= 100) {
             $('#progressing').fadeOut(150);
         } else {
@@ -109,22 +109,19 @@ $(function(){
 		obj.css({cursor: 'pointer'});
 		obj.attr('title', '点击查看大图');
 		obj.on('click', function(){
-			let bigImageObj = $('#dealbox-bigimage');
-			if (bigImageObj.length == 0) {
-				var html = '<div id="dealbox-bigimage">\
-								<div class="mask"></div>\
-								<div class="centerShow">\
-									<img src="'+URI+'image/common/noimg.png">\
+			var obj = $('.bigImage-modal');
+			if (obj.length == 0) {
+				var html = '<div class="s-modal bigImage-modal" style="width:800px;height:800px">\
+								<i class="glyphicon glyphicon-remove"></i>\
+								<div class="content" style="font-size:0">\
+									<img src="">\
 								</div>\
 							</div>';
 				$('body').append(html);
-				bigImageObj = $('#dealbox-bigimage');
+				obj = $('.bigImage-modal');
 			}
-			const src = obj.attr('src').replace('/200', '').replace('/400', '').replace('/600', '');
-			bigImageObj.find('.centerShow img').attr('src', src);
-			bigImageObj.find('.centerShow img').on('load', function(){
-				bigImageObj.center().dealboxShow();
-			});
+			obj.find('.content img').attr('src', $(this).attr('src'));
+			obj.modalShow();
 		});
 	};
 	$.fn.imageUpload = function(cate, callback) {
@@ -173,8 +170,10 @@ $(function(){
 	};
 }(jQuery));
 $(function(){
+	// 初始加载进度条
+	progressing(20);
 	// 弹窗关闭
-	$('.s-modal .glyphicon-remove').on('click', function(){
+	$('body').on('click', '.s-modal .glyphicon-remove', function(){
 		$(this).parents('.s-modal').modalHide();
 	});
 	// 日期初始化
@@ -190,7 +189,6 @@ $(function(){
 		clearBtn: 1,
 		minView: 'month'
 	});
-	// 初始加载进度条
-	$('#progressing').show();
-	progressing(20);
+	// 查看大图
+	$('img.bigImage').bigImage();
 });

@@ -47,7 +47,7 @@
 							<?php foreach ($info['pdt_picture'] ?? [] as $key=>$value){?>
 							<div class="item">
 								<div class="pic-thumb">
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
+									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload bigImage">
 								</div>
 								<div class="image-left-tips">
 									<span class="image-selected">
@@ -61,7 +61,6 @@
 								<div class="image-bottom-tips">
 									<button class="btn btn-xs btn-primary set-spu-cover" type="button">SPU</button>
 									<button class="btn btn-xs btn-success set-sku-cover" type="button">SKU</button>
-									<button class="btn btn-xs btn-default view-large-image" type="button">查看</button>
 								</div>
 							</div>
 							<?php }?>
@@ -70,7 +69,7 @@
 							<?php foreach ($info['desc_picture'] ?? [] as $key=>$value){?>
 							<div class="item">
 								<div class="pic-thumb">
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
+									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload bigImage">
 								</div>
 								<div class="image-left-tips">
 									<span class="image-selected">
@@ -81,7 +80,6 @@
 								<div class="image-bottom-tips">
 									<button class="btn btn-xs btn-primary set-spu-cover" type="button">SPU</button>
 									<button class="btn btn-xs btn-success set-sku-cover" type="button">SKU</button>
-									<button class="btn btn-xs btn-default view-large-image" type="button">查看</button>
 								</div>
 							</div>
 							<?php }?>
@@ -134,7 +132,7 @@
 							?>
 							<tr>
 								<td class="<?php echo $check?'check':'';?>">
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload">
+									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload bigImage">
 								</td>
 								<td><?php echo $value['price'];?></td>
 								<td>
@@ -248,15 +246,17 @@
 				</table>
 			</div>
 			<div class="desc-info-content mt12">
-				<h4>描述&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-success">添加描述</button></h4>
-				<?php foreach($info['detail'] as $value){?>
-				<div class="item">
-					<input type="text" class="form-control" name="desc[name][]" value="<?php echo $value['name'];?>">
-					<span>: </span>
-					<input type="text" class="form-control" name="desc[value][]" value="<?php echo $value['value'];?>">
-					<i class="glyphicon glyphicon-remove"></i>
+				<h4>描述&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-success btn-add-desc">添加描述</button></h4>
+				<div class="content">
+					<?php foreach($info['detail'] as $value){?>
+					<div class="item">
+						<input type="text" class="form-control" name="desc[name][]" value="<?php echo $value['name'];?>">
+						<span>: </span>
+						<input type="text" class="form-control" name="desc[value][]" value="<?php echo $value['value'];?>">
+						<i class="glyphicon glyphicon-remove"></i>
+					</div>
+					<?php }?>
 				</div>
-				<?php }?>
 			</div>
 		</div>
 		<div class="clear"></div>
@@ -293,13 +293,23 @@
 		<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
 	</div>
 </div>
-<form class="mapping-popper s-modal">
+<!-- 属性映射弹窗 -->
+<form class="map-modal s-modal">
 	<p class="title"></p>
 	<input type="hidden" name="from_name">
 	<input type="hidden" name="type">
+	<input type="hidden" name="opn" value="attrMap">
 	<i class="glyphicon glyphicon-remove"></i>
 	<div class="content"></div>
 </form>
+<!-- 批量单位赋值 -->
+<div class="batch-edit-modal s-modal">
+	<p class="title"></p>
+	<input type="hidden" name="type" value="">
+	<i class="glyphicon glyphicon-remove"></i>
+	<div class="content"></div>
+	<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
+</div>
 
 <script>
 const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;
