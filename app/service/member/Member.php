@@ -1,6 +1,6 @@
 <?php 
 
-namespace app\service;
+namespace app\service\member;
 use app\service\Base;
 
 class Member extends Base
@@ -43,7 +43,7 @@ class Member extends Base
 
 	public function logout()
 	{
-		$this->addLog(['type'=>service('login/Logger')->getConst('TYPE_LOGOUT')]);
+		$this->addLog('登出成功');
 		session()->set(type().'_info');
 		frame('Cookie')->clear();
 		return true;
@@ -56,8 +56,8 @@ class Member extends Base
 		}
 		session()->set(type().'_info', $info);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
-		$this->addLog();
 		frame('Cookie')->login($info['mem_id']);
+		$this->addLog('登录成功');
 		return true;
 	}
 
@@ -97,7 +97,7 @@ class Member extends Base
 
 	public function getAvatar($avatar='', $sex=0)
 	{
-		return $avatar ? mediaUrl($avatar, '', false) : siteUrl('image/common/'.(empty($sex) ? 'female' : 'male').'.jpg');
+		return $avatar ? mediaUrl($avatar, '', false) : siteUrl('image/common/'.(empty($sex) ? 'male' : 'female').'.jpg');
 	}
 
 	public function resetPassword($mobile, $password, $type='email')
@@ -109,8 +109,8 @@ class Member extends Base
 		return $this->updateData($where, ['password'=>$this->getPassword($password, $info['salt']), 'update_time'=>now()]);
 	}
 
-	public function addLog(array $data=[])
+	public function addLog($info='')
 	{
-		return service('login/Logger')->addLog($data);
+		return service('log/Login')->addLog($info);
 	}
 }

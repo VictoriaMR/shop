@@ -63,7 +63,16 @@ class Api extends AdminBase
 
 	public function stat()
 	{
-		service('Logger')->addLog();
+		$url = ipost('url', '');
+		$url = parse_url($url);
+		if (isset($url['path'])) {
+			$data['path'] = trim($url['path'], '/');
+		}
+		if (isset($url['query'])) {
+			$data['param'] = $url['query'];
+		}
+		service('log/Visitor')->addLog($data);
+		$this->success('success');
 	}
 
 	public function addProduct()

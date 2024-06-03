@@ -29,14 +29,6 @@ class AdminBase extends Base
 		$this->assign('_title', $this->_arr[$router['func']] ?? '');
 	}
 
-	protected function addLog($msg)
-	{
-		return service('login/Logger')->addLog([
-			'remark' => $msg,
-			'type' => 3,
-		]);
-	}
-
 	protected function transfer()
 	{
 		$trCode = ipost('tr_code');
@@ -47,6 +39,11 @@ class AdminBase extends Base
 		}
 		$rst = service('Translate')->getText($name, $trCode, $fromCode);
 		$this->success('', $rst);
+	}
+
+	public function addLog($info='')
+	{
+		return service('log/Login')->addLog($info);
 	}
 
 	protected function avatar($info)

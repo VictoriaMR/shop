@@ -1,5 +1,5 @@
 <?php
-namespace app\service;
+namespace app\service\tool;
 
 use \MaxMind\Db\Reader;
 

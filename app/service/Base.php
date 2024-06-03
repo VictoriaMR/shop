@@ -29,6 +29,7 @@ abstract class Base
     protected function setError($message)
     {
         $this->_error[] = $message;
+        return false;
     }
 
     public function getError()

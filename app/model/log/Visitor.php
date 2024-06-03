@@ -1,17 +1,17 @@
 <?php
 
-namespace app\model;
+namespace app\model\log;
 use app\model\Base;
 
-class Logger extends Base
+class Visitor extends Base
 {
 	protected $_connect = 'static';
-	protected $_table = 'visitor_logger';
+	protected $_table = 'log_visitor';
 	protected $_primaryKey = 'log_id';
 	protected $_addTime = 'add_time';
 	protected $_intFields = ['log_id', 'site_id', 'mem_id', 'is_moblie'];
 
-	public function addLog(array $data)
+	public function addLog(array $data=[])
 	{
 		$data['site_id'] = siteId();
 		$data['mem_id'] = userId();
@@ -22,5 +22,15 @@ class Logger extends Base
 		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
 		$data['ip'] = request()->getIp();
 		return $this->insert($data);
+	}
+
+	public function getStats()
+	{
+
+	}
+
+	public function getIpDateStat()
+	{
+		
 	}
 }

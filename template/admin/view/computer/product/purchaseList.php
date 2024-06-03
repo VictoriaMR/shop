@@ -95,7 +95,7 @@
     <?php echo page($size, $total);?>
 </div>
 <!-- 编辑弹窗 -->
-<form class="s-modal form-horizontal" id="edit-status-modal">
+<form class="s-modal form-horizontal edit-status-modal">
     <input type="hidden" name="id" value="0">
     <input type="hidden" name="opn" value="edit">
     <p class="title"><span>状态修改</span></p>

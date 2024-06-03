@@ -1,6 +1,6 @@
 <?php
 
-namespace app\model;
+namespace app\model\member;
 use app\model\Base;
 
 class Member extends Base

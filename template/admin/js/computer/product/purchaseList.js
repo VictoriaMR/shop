@@ -9,14 +9,14 @@ const OPERATELIST = {
 			_this.initModal($(this).parents('tr').data());
 		});
 		// 保存
-		$('#edit-status-modal .btn-save').on('click', function(){
-			if ($('#edit-status-modal [name="status"]').val() < 0) {
+		$('.edit-status-modal .btn-save').on('click', function(){
+			if ($('.edit-status-modal [name="status"]').val() < 0) {
 				errorTips('请选择状态');
 				return false;
 			}
 			var thisObj = $(this);
 			thisObj.button('loading');
-			post('', $('#edit-status-modal').serializeArray(), function(res){
+			post('', $('.edit-status-modal').serializeArray(), function(res){
 				showTips(res);
 				if (res.code == 200) {
 					setTimeout(function(){
@@ -29,10 +29,10 @@ const OPERATELIST = {
 		});
 	},
 	initModal: function(data) {
-		var obj = $('#edit-status-modal');
+		var obj = $('.edit-status-modal');
 		for (var i in data) {
 			obj.find('[name="'+i+'"]').val(data[i]);
 		}
-		obj.show();
+		obj.modalShow();
 	}
 };

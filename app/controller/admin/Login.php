@@ -22,7 +22,7 @@ class Login extends AdminBase
 
 	public function loginCode()
 	{
-		$image = service('Image');
+		$image = service('tool/Image');
 		$code = randString(4, true, false, true);
 		session()->set('admin_login_code', $code);
 		$image->verifyCode($code, 80, 34);
@@ -40,7 +40,7 @@ class Login extends AdminBase
 		if (strtolower($code) != session()->get('admin_login_code')) {
 			$this->error('验证码错误');
 		}
-		$result = service('Member')->login($mobile, $password);
+		$result = service('member/Member')->login($mobile, $password);
 		if ($result) {
 			$this->success('登录成功', ['url' => session()->dGet('return_url')]);
 		} else {
@@ -62,12 +62,12 @@ class Login extends AdminBase
 
 	public function logout()
 	{
-		$log = service('Member')->logout();
+		$log = service('member/Member')->logout();
 		redirect(url('login'), false);
 	}
 
 	public function signature()
 	{
-		service('Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', session()->get(type().'_info', '', 'nickname'), 12, 30, 10, 80, [235, 235, 235]);
+		service('tool/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', session()->get(type().'_info', '', 'nickname'), 12, 30, 10, 80, [235, 235, 235]);
 	}
 }

@@ -25,7 +25,7 @@ class Api extends HomeBase
 			'path' => implode('/', $path),
 			'param' => json_encode($param),
 		];
-		$rst = service('Logger')->addLog($data);
+		$rst = service('log/Visitor')->addLog($data);
 		if ($data['path'] == 'home/Product/index') {
 			if (isset($param['pid'])) {
 				$spuId = $param['pid'];

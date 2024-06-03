@@ -262,12 +262,3 @@
 .check img {
     border: 2px solid #4cae4c;
 }
-@media (max-width: 1300px){
-    #add-product-page .product-info-content {
-        width: 100%;
-        padding-right: 0;
-    }
-    #add-product-page .info-content {
-        width: 100%;
-    }
-}

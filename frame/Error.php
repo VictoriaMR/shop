@@ -26,7 +26,7 @@ class Error
     {
         if (error_get_last()) {
             $_error = error_get_last();
-            $this->errorEcho(['code'=>$_error['code'], 'file'=>$_error['file'], 'line'=>$_error['line'], 'message'=>$_error['message']]);
+            $this->errorEcho(['code'=>$_error['code'] ?? '', 'file'=>$_error['file'], 'line'=>$_error['line'], 'message'=>$_error['message']]);
         }
         //关闭session
         session()->close();

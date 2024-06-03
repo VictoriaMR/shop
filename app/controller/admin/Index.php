@@ -53,7 +53,7 @@ class Index extends AdminBase
 			$this->error('非法请求');
 		}
 		html()->addJs();
-		$log = service('Logger');
+		$log = service('log/Visitor');
 		//浏览设备统计
 		$viewAgentInfo = $log->getStats('browser');
 		//每日浏览人数统计

@@ -196,6 +196,13 @@
 					</table>
 				</dd>
 			</dl>
+			<div class="clear"></div>
+			<dl class="field-row">
+				<dt></dt>
+				<dd>
+					<button type="button" class="btn btn-success confirm-btn"><i class="glyphicon glyphicon-plus"></i> 确认</button>
+				</dd>
+			</dl>
 		</div>
 		<div class="left info-content">
 			<div class="supplier-info-content">
@@ -259,13 +266,6 @@
 				</div>
 			</div>
 		</div>
-		<div class="clear"></div>
-		<dl class="field-row">
-			<dt></dt>
-			<dd>
-				<button type="button" class="btn btn-success confirm-btn"><i class="glyphicon glyphicon-plus"></i> 确认</button>
-			</dd>
-		</dl>
 	</form>
 </div>
 <div class="s-modal change-category-modal">
