@@ -46,7 +46,7 @@ class Member extends AdminBase
 			$where['mobile'] = ['like', '%'.$phone.'%'];
 		}
 
-		$member = service('Member');
+		$member = service('member/Member');
 		$total = $member->getCountData($where);
 		if ($total > 0) {
 			$fields = 'mem_id,avatar,sex,first_name,last_name,nick_name,mobile,email,status,add_time,login_time';
@@ -75,7 +75,7 @@ class Member extends AdminBase
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$result = service('Member')->updateData($memId, ['status'=>$status, 'update_time'=>now()]);
+		$result = service('member/Member')->updateData($memId, ['status'=>$status, 'update_time'=>now()]);
 		if ($result) {
 			$this->addLog('修改用户状态-'.$memId.($status==1?'-启用':'-停用'));
 			$this->success('操作成功');
@@ -90,7 +90,7 @@ class Member extends AdminBase
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$info = service('Member')->loadData($memId);
+		$info = service('member/Member')->loadData($memId);
 		if (empty($info)) {
 			$this->error('找不到用户数据');
 		}
@@ -138,7 +138,7 @@ class Member extends AdminBase
 		if (!empty($password)) {
 			$data['password'] = $password;
 		}
-		$service = service('Member');
+		$service = service('member/Member');
 		if (empty($mem_id)) {
 			$result = $service->create($data);
 			$this->addLog('新增用户-'.$result);

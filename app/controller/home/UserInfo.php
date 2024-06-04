@@ -83,7 +83,7 @@ class UserInfo extends HomeBase
 			'last_name' => substr($last_name, 0, 32),
 			'mobile' => substr($dialing_code.' '.$phone, 0, 20),
 		];
-		$rst = service('Member')->updateData(userId(), $data);
+		$rst = service('member/Member')->updateData(userId(), $data);
 		if ($rst) {
 			$info = session()->get(type().'_info');
 			session()->set(type().'_info', $info+$data);
@@ -107,7 +107,7 @@ class UserInfo extends HomeBase
 			$this->error('File was not exist.');
 		}
 		$avatar = $info['cate'].DS.$info['name'].'.'.$info['type'];
-		$rst = service('Member')->updateData(userId(), ['avatar'=>$avatar]);
+		$rst = service('member/Member')->updateData(userId(), ['avatar'=>$avatar]);
 		if ($rst) {
 			session()->set(type().'_info', $info['url'], 'avatar');
 		}

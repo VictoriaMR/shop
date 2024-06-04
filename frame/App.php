@@ -119,16 +119,13 @@ class App
 
 	public static function runOver()
 	{
-		// debug开启
 		if (isDebug()) {
+			if (!isAjax() && !isCli() && !iget('iframe', false)) {
+				frame('Debug')->init();
+			}
 			frame('Debug')->runlog();
 		}
-		if (isAjax()) {
-			exit();
-		}
-		if (isDebug() && !isCli() && !iget('iframe', false)) {
-			frame('Debug')->init();
-		}
+		exit();
 	}
 
 	public static function jsonRespone($code, $data=[], $msg='')

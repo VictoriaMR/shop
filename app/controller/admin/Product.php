@@ -136,7 +136,7 @@ class Product extends AdminBase
 			// 用户
 			$userList = array_filter(array_column($list, 'mem_id'));
 			if (!empty($userList)) {
-				$userList = service('Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name,avatar,sex');
+				$userList = service('member/Member')->getListData(['mem_id'=>['in', $userList]], 'mem_id,nick_name,avatar,sex');
 				$userList = array_column($userList, null, 'mem_id');
 			}
 			// 店铺

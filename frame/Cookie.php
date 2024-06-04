@@ -19,7 +19,7 @@ class Cookie
 			//自动登录
 			$info = service('member/Uuid')->getInfo($uuid);
 			if (!empty($info['mem_id'])) {
-				service('Member')->loginById($info['mem_id']);
+				service('member/Member')->loginById($info['mem_id']);
 				if ($home && $info['lan_cur']) {
 					list($language, $currency) = explode('_', $info['lan_cur']);
 					$this->set('language', $language, $exp);

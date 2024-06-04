@@ -30,7 +30,7 @@ class Email extends Base
 		if (empty($info)) {
 			return false;
 		}
-		$memInfo = service('Member')->loadData($info['mem_id'], 'email');
+		$memInfo = service('member/Member')->loadData($info['mem_id'], 'email');
 		if (empty($memInfo['email'])) {
 			return false;
 		}

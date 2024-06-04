@@ -18,7 +18,7 @@ class Login extends HomeBase
 			}
 			$code = redis(2)->get($this->getCacheKey($email, 'except'));
 			if ($code == $verifyCode) {
-				$rst = service('Member')->login($email, '', 'email');
+				$rst = service('member/Member')->login($email, '', 'email');
 				if ($rst) {
 					session()->del('login_email');
 					session()->del('login_exp_time');
@@ -49,7 +49,7 @@ class Login extends HomeBase
 		if (empty($email)) {
 			$this->error('Sorry, That email was Empty, Please try again.');
 		}
-		$member = service('Member');
+		$member = service('member/Member');
 		$where = [
 			'site_id' => siteId(),
 			'email' => $email,
@@ -82,7 +82,7 @@ class Login extends HomeBase
 		if (empty($email)) {
 			$this->error('Sorry, That email was Empty, Please try again.');
 		}
-		$member = service('Member');
+		$member = service('member/Member');
 		$where = [
 			'site_id' => siteId(),
 			'email' => $email,
@@ -120,7 +120,7 @@ class Login extends HomeBase
 			if (empty($email)) {
 				$this->error('error', 'Token was invalid, Please check your email and find the right link!');
 			}
-			$rst = service('Member')->resetPassword($email, $password, 'email');
+			$rst = service('member/Member')->resetPassword($email, $password, 'email');
 			if ($rst) {
 				redis(2)->del($cacheKey);
 				$this->success(['url'=>url('login')],'Password was reset success!');
@@ -168,12 +168,12 @@ class Login extends HomeBase
 		if (empty($param['password'])) {
 			$code = redis(2)->get($this->getCacheKey($param['email'], 'except'));
 			if ($code == $param['verify_code']) {
-				$rst = service('Member')->login($param['email'], '', 'email');
+				$rst = service('member/Member')->login($param['email'], '', 'email');
 			} else {
 				$this->error(['verify_code' => 'This Verification code was not match.']);
 			}
 		} else {
-			$rst = service('Member')->login($param['email'], $param['password'], 'email');
+			$rst = service('member/Member')->login($param['email'], $param['password'], 'email');
 		}
 		if (empty($rst)) {
 			$this->error('Sorry, login failed, Please try again.');
@@ -189,8 +189,8 @@ class Login extends HomeBase
 		if (empty($token)) {
 			$this->error('login token empty');
 		}
-		$member = service('Member');
-		$rst = service('Member')->loginByToken($token);
+		$member = service('member/Member');
+		$rst = service('member/Member')->loginByToken($token);
 		if ($rst) {
 			$this->success(['url'=>session()->get('callback_url')]);
 		} else {
@@ -200,7 +200,7 @@ class Login extends HomeBase
 
 	public function logout()
 	{
-		service('Member')->logout();
+		service('member/Member')->logout();
 		redirect(url('login'));
 	}
 
@@ -219,7 +219,7 @@ class Login extends HomeBase
 			'site_id' => siteId(),
 			'email' => $email,
 		];
-		$rst = service('Member')->getCountData($where);
+		$rst = service('member/Member')->getCountData($where);
 		if ($rst) {
 			$this->error('This Email has been register.');
 		} else {
@@ -245,7 +245,7 @@ class Login extends HomeBase
 			'site_id' => siteId(),
 			'email' => $email,
 		];
-		$service = service('Member');
+		$service = service('member/Member');
 		$rst = $service->getCountData($where);
 		if ($rst) {
 			$this->error(['email' => 'This Email has been register.']);

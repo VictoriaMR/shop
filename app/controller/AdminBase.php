@@ -49,7 +49,7 @@ class AdminBase extends Base
 	protected function avatar($info)
 	{
 		if (empty($info)) return '';
-		$img = service('Member')->getAvatar($info['avatar'], $info['sex']);
+		$img = service('member/Member')->getAvatar($info['avatar'], $info['sex']);
 		return '<div class="userAvatarInfo"><span class="avatarStyle"><img src="'.$img.'"></span><span class="two"><p>'.$info['nick_name'].'</p><p>'.$info['mem_id'].'</p></span></div>';
 	}
 }

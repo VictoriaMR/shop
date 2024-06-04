@@ -14,27 +14,27 @@ class Error
 
     public function appError($errno, $errStr, $errfile='', $errline='')
     {
-        $this->errorEcho(['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr]);
+        $this->errorEcho(__FUNCTION__, ['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr]);
     }
 
     public function appException($exception)
     {
-        $this->errorEcho(['code'=>$exception->getCode(), 'file'=>$exception->getFile(), 'line'=>$exception->getLine(), 'message'=>$exception->getMessage(), 'trace'=>$exception->getTrace()]);
+        $this->errorEcho(__FUNCTION__, ['code'=>$exception->getCode(), 'file'=>$exception->getFile(), 'line'=>$exception->getLine(), 'message'=>$exception->getMessage(), 'trace'=>$exception->getTrace()]);
     }
 
     public function appShutdown()
     {
-        if (error_get_last()) {
-            $_error = error_get_last();
-            $this->errorEcho(['code'=>$_error['code'] ?? '', 'file'=>$_error['file'], 'line'=>$_error['line'], 'message'=>$_error['message']]);
+        $_error = error_get_last();
+        if ($_error) {
+            $this->errorEcho(__FUNCTION__, ['code'=>$_error['code'] ?? '', 'file'=>$_error['file'], 'line'=>$_error['line'], 'message'=>$_error['message']]);
         }
         //关闭session
         session()->close();
     }
 
-    protected function errorEcho($data)
+    protected function errorEcho($type, $data)
     {
-        $log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
+        $log = "[{$type}]:[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
         frame('Debug')->runlog($log);
         if (isCli() || isDebug()) {
             if (isAjax()) {

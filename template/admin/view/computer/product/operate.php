@@ -145,26 +145,22 @@
 								</td>
 								<td>
 									<?php foreach ($value['pvs'] as $pk=>$pv) {?>
-									<p>
-										<?php if (isset($attrNs[$pk])){?>
-										<span class="success"><?php echo $attrNs[$pk]['name'];?></span>
-										<?php } else {?>
-										<span class="error"><?php echo $pk;?></span>
+									<div>
+										<p>
+											<span class="attr-name <?php echo isset($attrNs[$pk])?'success':'error';?>" data-name="<?php echo $pk;?>"><?php echo isset($attrNs[$pk])?$attrNs[$pk]['attrn_name']:$pk;?></span>
+											<span>: </span>
+											<span class="attr-value <?php echo isset($attrVs[$pv])?'success':'error';?>" data-name="<?php echo $pv;?>"><?php echo isset($attrVs[$pv])?$attrVs[$pv]['attrv_name']:$pv;?></span>
+										</p>
+										<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
+										<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>
+										<p class="attr-map">
+											<span class="attr-name success" data-name="<?php echo $ek;?>"><?php echo $ek;?></span>
+											<span>: </span>
+											<span class="attr-value success" data-name="<?php echo $ev;?>"><?php echo $ev;?></span>
+										</p>
 										<?php }?>
-										<span>: </span>
-										<?php if (isset($attrVs[$pv])){?>
-										<span class="success"><?php echo $attrVs[$pv]['name'];?></span>
-										<?php } else {?>
-										<span class="error"><?php echo $pv;?></span>
 										<?php }?>
-									</p>
-									<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
-									<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>
-									<p>
-										<span class="success"><?php echo $ek.': '.$ev;?></span>
-									</p>
-									<?php }?>
-									<?php }?>
+									</div>
 									<?php }?>
 								</td>
 								<td><?php echo $value['stock'];?></td>
@@ -235,14 +231,14 @@
 					<?php foreach ($info['attr'] as $ak=>$av){?>
 					<tr>
 						<td width="100">
-							<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>" data-name="<?php echo isset($attrNs[$av['name']]) ? $attrNs[$av['name']]['name'] : '';?>">
+							<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>" data-name="<?php echo $av['name'];?>">
 								<span><?php echo $av['name'];?></span>
 								<span class="glyphicon glyphicon-edit"></span>
 							</div>
 						</td>
 						<td>
 							<?php foreach ($av['value'] as $avk=>$avv){?>
-							<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>" data-name="<?php echo isset($attrVs[$avv['name']]) ? $attrVs[$avv['name']]['name'] : '';?>" data-ext='<?php echo isset($attrVs[$avv['name']]['ext']) ? json_encode($attrVs[$avv['name']]['ext']) : '';?>'>
+							<div class="attr-item attr-value <?php echo isset($attrVs[$avv['name']])?'success':'error';?>" data-name="<?php echo $avv['name'];?>" data-ext='<?php echo isset($attrVs[$avv['name']]['ext']) ? json_encode($attrVs[$avv['name']]['ext']) : '';?>'>
 								<span><?php echo $avv['name'];?></span>
 								<span class="glyphicon glyphicon-edit"></span>
 							</div>
@@ -310,7 +306,6 @@
 	<div class="content"></div>
 	<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
 </div>
-
 <script>
 const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;
 </script>

@@ -81,7 +81,7 @@ function isJson($string){
 	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
 }
 function isAjax(){
-	defined('IS_AJAX')|| define('IS_AJAX', frame('Request')->isAjax());
+	defined('IS_AJAX') || define('IS_AJAX', frame('Request')->isAjax());
 	return IS_AJAX;
 }
 function isMobile(){

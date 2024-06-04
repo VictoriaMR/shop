@@ -1,27 +1,33 @@
-$(function(){
-	OPERATE.init();
-});
 const OPERATE = {
 	init: function(){
 		const _this = this;
 		//初始化
 		$('.attr-item').on('click', function(e){
-			const name = $(this).find('span').eq(0).text();
+			let toName = $(this).find('span').eq(0).text();
 			const type = $(this).hasClass('attr-name') ? '1' : '2';
-			const toName = $(this).data('name');
-			let ext = $(this).data('ext');
+			const fromName = $(this).data('name');
+			let attrName = $(this).parents('tr').find('.attr-name').data('name');
+			attrName = $('#sku-list .attr-name[data-name="'+attrName+'"]').eq(0).text();
+			if (toName == fromName) {
+				toName = '';
+			}
+			let ext = $(this).parents('td').find('.success').eq(0).data('ext');
 			let extHtml = '';
 			if (ext) {
+				let setValue = false;
+				if ($(this).parents('td').find('.success').eq(0).data('name') == fromName) {
+					setValue = true;
+				}
 				for (let i in ext) {
 					extHtml += `<div class="item">
 									<input type="input" class="form-control" name="attr[name][]" value="`+i+`" />
 									<span>: </span>
-									<input type="input" class="form-control" name="attr[value][]" value="`+ext[i]+`" />
+									<input type="input" class="form-control" name="attr[value][]" value="`+(setValue?ext[i]:'')+`" />
 								</div>`;
 				}
 			}
 			let html = `<div class="input-group">
-							<div class="input-group-addon"><span>映射值</span></div>
+							<div class="input-group-addon"><span>`+attrName+`</span></div>
 							<input class="form-control" type="text" name="name" placeholder="请输入映射值" value="`+toName+`"/>
 						</div>
 						<div class="add-map-content">`+extHtml+`</div>`;
@@ -32,8 +38,8 @@ const OPERATE = {
 			html += `<button type="button" class="btn btn-success btn-sm btn-tmp-save" style="margin-right:10px;">临时映射</button><button type="button" class="btn btn-primary btn-sm btn-save">保存</button>`;
 			html += `</div>`;
 			var obj = $('.map-modal');
-			obj.find('.title').text(name);
-			obj.find('[name="from_name"]').val(name);
+			obj.find('.title').text(fromName);
+			obj.find('[name="from_name"]').val(fromName);
 			obj.find('[name="type"]').val(type);
 			obj.find('.content').html(html);
 			obj.modalShow();
@@ -52,8 +58,9 @@ const OPERATE = {
 				showTips(res);
 				_thisobj.button('reset');
 				if (res.code == 200) {
-
+					_this.mapAttrName(obj.find('.title').text(), name);
 				}
+				obj.modalHide();
 			});
 		});
 		//新增映射
@@ -64,6 +71,32 @@ const OPERATE = {
 							<input type="input" class="form-control" name="attr[value][]" value="" />
 						</div>`;
 			$(this).parents('.map-modal').find('.add-map-content').append(html);
+		});
+		// 临时映射
+		$('.map-modal').on('click', '.btn-tmp-save', function(){
+			const obj = $(this).parents('.map-modal');
+			const type = obj.find('[name="type"]').val(); // 1属性 2属性值
+			const name = obj.find('[name="name"]').val();
+			if (!name) {
+				errorTips('请输入映射值');
+				return false;
+			}
+			const _thisobj = $(this);
+			if (type == 1) {
+				_this.mapAttrName(obj.find('.title').text(), name);
+			} else {
+				let nameExt = {};
+				obj.find('.add-map-content .item').each(function(){
+					let tmpName = $(this).find('input').eq(0).val();
+					let tmpValue = $(this).find('input').eq(1).val();
+					if (tmpName && tmpValue) {
+						nameExt[tmpName] = tmpValue;
+					}
+				});
+				_this.mapAttrValue(obj.find('.title').text(), name, nameExt);
+
+			}
+			obj.modalHide();
 		});
 		// 修改分类
 		$('.change-category-bth').on('click', function(){
@@ -189,5 +222,40 @@ const OPERATE = {
 				}
 			}
 		}
+	},
+	mapAttrName: function(fromName, toName) {
+		$('#sku-list .attr-name[data-name="'+fromName+'"]').removeClass('error').addClass('success').text(toName);
+		$('.attr-info-content .attr-name[data-name="'+fromName+'"]').removeClass('error').addClass('success').attr('title', toName);
+	},
+	mapAttrValue: function(fromName, toName, nameExt) {
+		var obj = $('#sku-list .attr-value[data-name="'+fromName+'"]');
+		obj.removeClass('error').addClass('success').text(toName);
+		var pObj = obj.parents('div');
+		pObj.find('attr-map').remove();
+		const tmpAttrName = obj.eq(0).parents('p').find('.attr-name').text();
+		let titleArr = {tmpAttrName:toName};
+		let attrArr = new Array();
+		if (nameExt.toString() != '{}') {
+			var html = '';
+			for (var i in nameExt) {
+				html += `<p class="attr-map">
+							<span class="attr-name success" data-name="`+i+`">`+i+`</span>
+							<span>: </span>
+							<span class="attr-value success" data-name="`+nameExt[i]+`">`+nameExt[i]+`</span>
+						</p>`;
+				titleArr[i] = nameExt[i];
+			}
+			pObj.append(html);
+		}
+		let title = '';
+		if (titleArr.toString() != '{}') {
+			for (var i in titleArr) {
+				title += i+':'+titleArr[i]+';';
+			}
+		}
+		$('.attr-info-content .attr-value[data-name="'+fromName+'"]').removeClass('error').addClass('success').attr('title', title).data('ext', titleArr);
 	}
 };
+$(function(){
+	OPERATE.init();
+});

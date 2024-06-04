@@ -81,7 +81,7 @@ class Checkout extends HomeBase
 				$this->error(distT('email_empty'));
 			}
 			//注册
-			$memberService = service('Member');
+			$memberService = service('member/Member');
 			$memId = $memberService->insertGetId(['site_id'=>siteId(), 'email'=>$email]);
 			if (empty($memId)) {
 				$this->error(distT('regist_error'));
@@ -321,7 +321,7 @@ class Checkout extends HomeBase
 			'site_id' => siteId(),
 			'email' => $email,
 		];
-		$rst = service('Member')->getCountData($where);
+		$rst = service('member/Member')->getCountData($where);
 		if ($rst) {
 			$this->error(distT('email_exist'));
 		}
