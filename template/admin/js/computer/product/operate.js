@@ -8,6 +8,7 @@ const OPERATE = {
 			const fromName = $(this).data('name');
 			let attrName = $(this).parents('tr').find('.attr-name').data('name');
 			attrName = $('#sku-list .attr-name[data-name="'+attrName+'"]').eq(0).text();
+			toName = $('#sku-list .attr-value[data-name="'+toName+'"]').eq(0).text();
 			if (toName == fromName) {
 				toName = '';
 			}
@@ -19,11 +20,13 @@ const OPERATE = {
 					setValue = true;
 				}
 				for (let i in ext) {
-					extHtml += `<div class="item">
-									<input type="input" class="form-control" name="attr[name][]" value="`+i+`" />
-									<span>: </span>
-									<input type="input" class="form-control" name="attr[value][]" value="`+(setValue?ext[i]:'')+`" />
-								</div>`;
+					if (i != attrName) {
+						extHtml += `<div class="item">
+										<input type="input" class="form-control" name="attr[name][]" value="`+i+`" />
+										<span>: </span>
+										<input type="input" class="form-control" name="attr[value][]" value="`+(setValue?ext[i]:'')+`" />
+									</div>`;
+					}
 				}
 			}
 			let html = `<div class="input-group">
@@ -233,7 +236,8 @@ const OPERATE = {
 		var pObj = obj.parents('div');
 		pObj.find('attr-map').remove();
 		const tmpAttrName = obj.eq(0).parents('p').find('.attr-name').text();
-		let titleArr = {tmpAttrName:toName};
+		let titleArr = {};
+		titleArr[tmpAttrName] = toName;
 		let attrArr = new Array();
 		if (nameExt.toString() != '{}') {
 			var html = '';
