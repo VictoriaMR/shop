@@ -71,7 +71,7 @@ class Api extends AdminBase
 		if (isset($url['query'])) {
 			$data['param'] = $url['query'];
 		}
-		service('log/Visitor')->addLog($data);
+		slog()->visitor()->add($data);
 		$this->success('success');
 	}
 

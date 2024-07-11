@@ -1,15 +1,15 @@
 <?php
 function dd(...$arg){
-	foreach ($arg as $value) {
+	foreach ($arg as $value){
 		print_r($value);
 		echo isCli() ? PHP_EOL : '<br />';
 	}
 	exit();
 }
 function config($type, $name='', $default=''){
-	if (is_null(\App::get($type))) {
+	if (is_null(\App::get($type))){
 		$file = ROOT_PATH.'config'.DS.$type.'.php';
-		if (is_file($file)) {
+		if (is_file($file)){
 			\App::set($type, require $file);
 		}
 	}
@@ -19,13 +19,13 @@ function redirect($url='', $return=true){
 	$return && session()->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
 	header('Location:'.$url);exit();	
 }
-function service($name, $params=null) {
+function service($name, $params=null){
 	return \App::make('app/service/'.$name, $params);
 }
-function model($name, $params=null) {
+function model($name, $params=null){
 	return \App::make('app/model/'.$name, $params);
 }
-function frame($name) {
+function frame($name){
 	return \App::make('frame/'.$name);
 }
 function html(){
@@ -49,7 +49,7 @@ function db($db=null){
 function page($size=0, $total=0){
 	return frame('Paginator')->make($size, $total);
 }
-function url($name='', $param=[], $joint=true) {
+function url($name='', $param=[], $joint=true){
     return router()->url($name, $param, $joint);
 }
 function adminUrl($name='', $param=[]){
@@ -61,7 +61,7 @@ function siteUrl($name, $version=true){
 	return $name;
 }
 function mediaUrl($url, $width='', $version=true){
-	if ($width) {
+	if ($width){
 		$ext = pathinfo($url, PATHINFO_EXTENSION);
 		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
 	}
@@ -100,10 +100,10 @@ function isAdmin(){
 function domain(){
 	return 'https://'.config('domain', 'domain').'/';
 }
-function template() {
+function template(){
 	return config('domain', 'template');
 }
-function type() {
+function type(){
 	return isAdmin()?'admin':'home';
 }
 function ipost($name='', $default=null){
@@ -121,19 +121,19 @@ function now($time=null){
 function appT($text, $replace=[], $lanId='', $type='common'){
 	$lanId || $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
-	if (is_null(\App::get($key))) {
+	if (is_null(\App::get($key))){
 		$file = ROOT_PATH.'template'.DS.template().DS.'language'.DS.$type.DS.$lanId.'.php';
-		if (is_file($file)) {
+		if (is_file($file)){
 			\App::set($key, require $file);
 		} else {
 			\App::set($key, []);
 		}
 	}
-	if (\App::get($key, $text)) {
+	if (\App::get($key, $text)){
 		$text = \App::get($key, $text);
-		if ($replace) {
+		if ($replace){
 			$tempArr = [];
-			foreach ($replace as $key=>$value) {
+			foreach ($replace as $key=>$value){
 				$tempArr['{'.$key.'}'] = $value;
 			}
 			$text = strtr($text, $tempArr);
@@ -150,23 +150,23 @@ function utf8len($string){
 function get1024Peck($size, $dec=2){
 	$a = ['B', 'KB', 'MB', 'GB', 'TB'];
 	$pos = 0;
-	while ($size >= 1024) {
+	while ($size >= 1024){
 		$size /= 1024;
 		$pos++;
 	}
 	return round($size, $dec).' '.$a[$pos];
 }
 function getDirFile($path){
-	if (is_file($path)) {
+	if (is_file($path)){
 		return $path;
 	}
 	$files = scandir($path);
 	$fileItem = [];
-	foreach ($files as $v) {
+	foreach ($files as $v){
 		$newPath = $path.DS.$v;
-		if (is_file($newPath)) {
+		if (is_file($newPath)){
 			$fileItem[] = $newPath;
-		} elseif (is_dir($newPath) && $v!='.' && $v!='..') {
+		} elseif (is_dir($newPath) && $v!='.' && $v!='..'){
 			$fileItem = array_merge($fileItem, getDirFile($newPath));
 		}
 	}
@@ -179,7 +179,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	$number && $str .= '23456789';
 	$rStr = '';
 	$seedLen = strlen($str);
-	while ($len > 0) {
+	while ($len > 0){
 		$rStr .= $str[rand(0, $seedLen - 1)];
 		$len--;
 	}
@@ -201,12 +201,17 @@ function siteId(){
 	return config('domain', 'site_id');
 }
 function userId(){
-	return session()->get(type().'_info', 0, 'mem_id');
+	$uid = session()->get(type().'_info', 0, 'mem_id');
+	if (!$uid) $uid = sysUid();
+	return $uid;
+}
+function sysUid(){
+	return 10000;
 }
 function userName(){
 	$info = session()->get(type().'_info');
 	$name = trim($info['first_name'].' '.$info['last_name']);
-	if (!$name) {
+	if (!$name){
 		$name = $info['email'];
 	}
 	return $name;
@@ -223,24 +228,27 @@ function uuId(){
 function hasZht($str){
 	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;
 }
-function createDir($dir) {
-	if (!is_dir($dir)) {
+function createDir($dir){
+	if (!is_dir($dir)){
 		mkdir($dir, 0755, true);
 	}
 	return $dir;
 }
-function purchase() {
+function purchase(){
     return service('purchase/Purchase');
 }
-function attr() {
+function attr(){
     return service('attr/Attr');
 }
-function site() {
+function site(){
     return service('site/Site');
 }
-function category() {
+function category(){
     return service('category/Category');
 }
-function product() {
+function product(){
 	return service('product/Product');
+}
+function slog(){
+	return service('log/Base');
 }
