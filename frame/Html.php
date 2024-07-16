@@ -68,7 +68,7 @@ class Html
 	{
 		$path = ROOT_PATH.'template'.DS.template().DS;
 		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
-		if (\App::get('base_info', 'static_cache') && is_file($path.$file)) return $file;
+		if (\App::get('base_info', 'static_cache', false) && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
@@ -80,9 +80,19 @@ class Html
 		}
 		if ($str) {
 			createDir($path.'static'.DS);
-			file_put_contents($path.$file, trim($str, PHP_EOL));
+			if ($type == 'css') {
+				$str = $this->compressCss($str);
+			} elseif ($type == 'js') {
+
+			}
+			file_put_contents($path.$file, $str);
 			return $file;
 		}
 		return false;
+	}
+
+	protected function compressCss($css)
+	{
+		return str_replace(array(' {', ';}'), array('{', '}'), preg_replace('/\s*(?<=[}{:,;])\s*/', '', preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', str_replace(PHP_EOL, '', $css))));
 	}
 }

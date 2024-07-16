@@ -101,10 +101,10 @@ class App
 		else self::$data[$name] = $value;	
 	}
 
-	public static function get($name, $key=null)
+	public static function get($name, $key=null, $default=null)
 	{
-		if (is_null($key)) return self::$data[$name] ?? null;
-		else return empty(self::$data[$name][$key]) ? null : self::$data[$name][$key];
+		if (is_null($key)) return self::$data[$name] ?? $default;
+		else return empty(self::$data[$name][$key]) ? $default : self::$data[$name][$key];
 	}
 
 	public static function setVersion($version)

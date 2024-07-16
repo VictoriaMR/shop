@@ -51,15 +51,13 @@ button::-moz-focus-inner {
     border: 0;
     padding: 0
 }
-input, textarea{
+input,textarea {
     width: 100%;
-    font-family: Segoe UI, sans-serif;
     outline: none;
     font-size: 0.14rem;
     padding: 0 0.16rem;
 }
-input::placeholder,
-textarea::placeholder {
+input::placeholder,textarea::placeholder {
     color: #ccc;
 }
 table {
@@ -85,7 +83,6 @@ table {
 .right {
     float: right;
 }
-<<<<<<< HEAD
 .mask {
     position: absolute;
     transition: 0.3s;
@@ -290,7 +287,6 @@ table {
     padding: 0 0.06rem;
 }
 /*input组件 end*/
->>>>>>> 40af494c4b552f5ce6e85e631f02a117db99d1cc
 /*头部公共样式start*/
 header {
     background: #fff;
