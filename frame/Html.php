@@ -11,8 +11,8 @@ class Html
 	{
 		$matchPath = '';
 		if ($match) {
-			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
-			$name || $name = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
+			$matchPath = (isMobile() ? 'mobile' : 'computer').'/';
+			$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
 		}
 		if (!is_array($name)) {
 			$name = array_map('trim', explode(',', $name));
@@ -26,8 +26,8 @@ class Html
 	{
 		$matchPath = '';
 		if ($match) {
-			$matchPath = (isMobile() ? 'mobile' : 'computer').DS;
-			$name || $name = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
+			$matchPath = (isMobile() ? 'mobile' : 'computer').'/';
+			$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
 		}
 		if (!is_array($name)) {
 			$name = array_map('trim', explode(',', $name));
@@ -56,8 +56,8 @@ class Html
 
 	public function getLanguageJs()
 	{
-		$path = ROOT_PATH.'template'.DS.template().DS;
-		$file = 'js'.DS.(isMobile() ? 'mobile' : 'computer').DS.strtolower(\App::get('router', 'path')).DS.\App::get('router', 'func').'_'.lanId('code').'.js';
+		$path = ROOT_PATH.'template/'.config('domain', 'template').'/';
+		$file = 'js/'.(isMobile() ? 'mobile' : 'computer').'/'.strtolower(\App::get('router', 'path')).'/'.\App::get('router', 'func').'_'.lanId('code').'.js';
 		if (is_file($path.$file)) {
 			return $file;
 		}
@@ -66,20 +66,20 @@ class Html
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template'.DS.template().DS;
-		$file = 'static'.DS.(isMobile()?'m_':'c_').$name.'.'.$type;
+		$path = ROOT_PATH.'template/'.config('domain', 'template').'/';
+		$file = 'static/'.(isMobile()?'m_':'c_').$name.'.'.$type;
 		if (\App::get('base_info', 'static_cache', false) && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
-			$source = $path.$type.DS.$value.'.'.$type;
+			$source = $path.$type.'/'.$value.'.'.$type;
 			if (is_file($source)) {
 				$str .= '/* '.$name.' */'.PHP_EOL;
 				$str .= trim(file_get_contents($source)).PHP_EOL;
 			}
 		}
 		if ($str) {
-			createDir($path.'static'.DS);
+			createDir($path.'static/');
 			if ($type == 'css') {
 				$str = $this->compressCss($str);
 			} elseif ($type == 'js') {

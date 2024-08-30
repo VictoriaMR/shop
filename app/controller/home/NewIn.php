@@ -7,8 +7,8 @@ class NewIn extends HomeBase
 {
 	public function index()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		
 		$this->assign('_title', 'Product\'s New In');
 		$this->view(true);

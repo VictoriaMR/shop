@@ -4259,7 +4259,7 @@ class PHPMailer
                 }
             }
         }
-        $this->isHTML();
+        $this->isframe('Html');
         //Convert all message body line breaks to LE, makes quoted-printable encoding work much better
         $this->Body = static::normalizeBreaks($message);
         $this->AltBody = static::normalizeBreaks($this->html2text($message, $advanced));
@@ -4273,7 +4273,7 @@ class PHPMailer
 
     /**
      * Convert an HTML string into plain text.
-     * This is used by msgHTML().
+     * This is used by msgframe('Html').
      * Note - older versions of this function used a bundled advanced converter
      * which was removed for license reasons in #232.
      * Example usage:

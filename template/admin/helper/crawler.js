@@ -559,7 +559,7 @@ var CRAWLER = {
         function json(params) {
             params.type = (params.type || 'GET').toUpperCase();
             params.data = formatParams(params.data);
-            var xhr = new XMLHttpRequest();
+            var xhr = new XMLHttpframe('Request');
             xhr.withCredentials = true;
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4) {

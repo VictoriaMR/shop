@@ -17,15 +17,15 @@ class Faq extends AdminBase
 
     public function index()
     {   
-        if (request()->isPost()) {
+        if (frame('Request')->isPost()) {
             $opn = ipost('opn');
             if (in_array($opn, ['getGroupInfo', 'modifyGroupStatus', 'editGroupInfo', 'getGroupLanguage', 'transfer', 'editGroupLanguage'])) {
                 $this->$opn();
             }
         }
 
-        html()->addJs();
-        html()->addCss();
+        frame('Html')->addJs();
+        frame('Html')->addCss();
 
         $page = (int)iget('page', 1);
         $size = (int)iget('size', 20);
@@ -141,15 +141,15 @@ class Faq extends AdminBase
 
     public function faqList()
     {   
-        if (request()->isPost()) {
+        if (frame('Request')->isPost()) {
             $opn = ipost('opn');
             if (in_array($opn, ['getFaqInfo', 'modifyFaqStatus', 'editFaqInfo', 'getFaqLanguage', 'editFaqLanguage'])) {
                 $this->$opn();
             }
         }
 
-        html()->addJs();
-        html()->addCss();
+        frame('Html')->addJs();
+        frame('Html')->addCss();
 
         $page = (int)iget('page', 1);
         $size = (int)iget('size', 30);

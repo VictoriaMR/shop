@@ -19,14 +19,14 @@ class Category extends AdminBase
 
 	public function index()
 	{	
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, [''])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addJs();
+		frame('Html')->addJs();
 		$cid = iget('cid', 0);
 		$tempList = service('category/Category')->getListFormat(false);
 		if (!empty($tempList)) {
@@ -44,14 +44,14 @@ class Category extends AdminBase
 
 	public function cateList()
 	{	
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'transfer', 'modifyCategory'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addJs();
+		frame('Html')->addJs();
 		$cid = iget('cid', 0);
 		$tempList = service('category/Category')->getListFormat(false);
 		if (!empty($tempList)) {

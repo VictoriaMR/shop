@@ -23,7 +23,7 @@ KindEditor.plugin('preview', function(K) {
 			iframe = K('iframe', dialog.div),
 			doc = K.iframeDoc(iframe);
 		doc.open();
-		doc.write(self.fullHtml());
+		doc.write(self.fullframe('Html'));
 		doc.close();
 		K(doc.body).css('background-color', '#FFF');
 		iframe[0].contentWindow.focus();

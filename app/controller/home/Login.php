@@ -20,25 +20,25 @@ class Login extends HomeBase
 			if ($code == $verifyCode) {
 				$rst = service('member/Member')->login($email, '', 'email');
 				if ($rst) {
-					session()->del('login_email');
-					session()->del('login_exp_time');
+					frame('Session')->del('login_email');
+					frame('Session')->del('login_exp_time');
 					$this->success(distT('login_success'));
 				}
 			}
 			$this->error('verify_error');
 		}
-		html()->addCss();
-		html()->addJs();
-		$this->assign('login_email', session()->get('login_email'));
-		$this->assign('login_exp_time', session()->get('login_exp_time'));
+		frame('Html')->addCss();
+		frame('Html')->addJs();
+		$this->assign('login_email', frame('Session')->get('login_email'));
+		$this->assign('login_exp_time', frame('Session')->get('login_exp_time'));
 		$this->assign('_title', appT('login'));
 		$this->view(true);
 	}
 
 	public function forget()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$this->assign('_title', 'Forget Password');
 		$this->view();
 	}
@@ -110,7 +110,7 @@ class Login extends HomeBase
 	public function resetPassword()
 	{
 		$token = input('token');
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$password = ipost('password');
 			if (empty($token) || empty($password)) {
 				$this->error('Token or Password was Empty, Please try again!');
@@ -128,8 +128,8 @@ class Login extends HomeBase
 				$this->error('Password was reset success!');
 			}
 		}
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		if (empty($token)) {
 			$this->assign('error', 'Token was Empty, Please check your email and find the right link!');
 		} else {
@@ -180,7 +180,7 @@ class Login extends HomeBase
 		}
 		redis(2)->del($this->getCacheKey($param['email']));
 		redis(2)->del($this->getCacheKey($param['email'], 'except'));
-		$this->success(['url'=>session()->get('callback_url')]);
+		$this->success(['url'=>frame('Session')->get('callback_url')]);
 	}
 
 	public function loginToken()
@@ -192,7 +192,7 @@ class Login extends HomeBase
 		$member = service('member/Member');
 		$rst = service('member/Member')->loginByToken($token);
 		if ($rst) {
-			$this->success(['url'=>session()->get('callback_url')]);
+			$this->success(['url'=>frame('Session')->get('callback_url')]);
 		} else {
 			$this->error('login error');
 		}
@@ -256,7 +256,7 @@ class Login extends HomeBase
 		if ($rst) {
 			$rst = $service->login($email, $password, 'email');
 			if ($rst) {
-				$this->success(['token'=>$rst, 'url'=>session()->get('callback_url')], 'The "'.$email.'" register success, have a happy shopping day');
+				$this->success(['token'=>$rst, 'url'=>frame('Session')->get('callback_url')], 'The "'.$email.'" register success, have a happy shopping day');
 			}
 		}
 		$this->error(['alter' => 'Sorry, This Email register failed, Please try agin.']);

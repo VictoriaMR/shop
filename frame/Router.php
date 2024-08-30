@@ -16,7 +16,7 @@ final class Router
 		'search' => 'Search',
 	];
 
-	public function analyze()
+	public function analyze($class)
 	{
 		if (!empty($_SERVER['REQUEST_URI'])) {
 			$tempArr = array_reverse(array_filter(explode('-', str_replace('.html', '', ltrim(parse_url($_SERVER['REQUEST_URI'])['path'], '/')))));
@@ -34,7 +34,7 @@ final class Router
 				}
 			}
 		}
-		return ['path'=>$path??'Index', 'func'=>$func??'index'];
+		return ['class'=>$class, 'path'=>$path??'Index', 'func'=>$func??'index'];
 	}
 
 	protected function formatPath($type)
@@ -62,7 +62,7 @@ final class Router
 				$name .= DS.\App::get('router', 'func');
 			}
 		}
-		return domain().$name.($param?'?'.http_build_query($param):'');
+		return $name.($param?'?'.http_build_query($param):'');
 	}
 
 	public function nameFormat($name, $param=[])

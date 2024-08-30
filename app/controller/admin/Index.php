@@ -17,18 +17,18 @@ class Index extends AdminBase
 
 	public function index()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['setLeft'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$this->assign('funcList', service('controller/Controller')->getList());
-		$this->assign('info', session()->get(type().'_info'));
-		$this->assign('leftInfo', session()->get('left_info'));
+		$this->assign('info', frame('Session')->get(config('domain', 'class').'_info'));
+		$this->assign('leftInfo', frame('Session')->get('left_info'));
 		$this->view();
 	}
 
@@ -39,27 +39,27 @@ class Index extends AdminBase
 		if (empty($key)) {
 			$this->error('非法参数');
 		}
-		session()->set('left_info', $value, $key);
+		frame('Session')->set('left_info', $value, $key);
 		$this->success('设置成功');
 	}
 
 	public function statInfo()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getSystemInfo'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addJs();
+		frame('Html')->addJs();
 		$log = service('log/Visitor');
 		//浏览设备统计
 		$viewAgentInfo = $log->getStats('browser');
 		//每日浏览人数统计
 		$viewerInfo = $log->getIpDateStat();
 		//系统信息
-		if (isWin()) {
+		if (strtoupper(substr(PHP_OS, 0, 3))=='WIN') {
 			$cpuInfo = $this->sys_windows();
 		} else {
 			$cpuInfo = $this->sys_linux();
@@ -75,7 +75,7 @@ class Index extends AdminBase
 
 	protected function getSystemInfo()
 	{
-		if (isWin()) {
+		if (strtoupper(substr(PHP_OS, 0, 3))=='WIN') {
 			$returnData = $this->sys_windows();
 		} else {
 			$returnData = $this->sys_linux();

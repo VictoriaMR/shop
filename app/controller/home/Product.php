@@ -7,8 +7,8 @@ class Product extends HomeBase
 {
 	public function index()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$spuId = (int)iget('pid', 0);
 		$skuId = (int)iget('sid', 0);

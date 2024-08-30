@@ -7,8 +7,8 @@ class UserInfo extends HomeBase
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		if ($this->isLogin()) {
 			$info = session()->get(type().'_info');
@@ -133,11 +133,11 @@ class UserInfo extends HomeBase
 
 	public function address()
 	{
-		html()->addCss();
-		html()->addCss('common/address');
-		html()->addCss('common/productList');
-		html()->addJs();
-		html()->addJs('common/address');
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/address');
+		frame('Html')->addCss('common/productList');
+		frame('Html')->addJs();
+		frame('Html')->addJs('common/address');
 		if ($this->isLogin()) {
 			$page = iget('page', 1);
 			$size = iget('size', 10);
@@ -336,9 +336,9 @@ class UserInfo extends HomeBase
 
 	public function wishList()
 	{
-		html()->addCss();
-		html()->addCss('common/productList');
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/productList');
+		frame('Html')->addJs();
 		if ($this->isLogin()) {
 			$page = iget('page', 1);
 			$size = iget('size', 10);
@@ -366,9 +366,9 @@ class UserInfo extends HomeBase
 
 	public function history()
 	{
-		html()->addCss();
-		html()->addCss('common/productList');
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/productList');
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 10);
@@ -428,9 +428,9 @@ class UserInfo extends HomeBase
 
 	public function coupon()
 	{
-		html()->addCss();
-		html()->addCss('common/productList');
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/productList');
+		frame('Html')->addJs();
 		$this->assign('_title', distT('my_coupon'));
 		$this->view();
 	}

@@ -12,12 +12,12 @@
 	<meta content="yes" name="apple-touch-fullscreen"/>
 	<meta content="telephone=no,email=no" name="format-detection"/>
 	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl(html()->getCommonCss());?>">
-	<?php if (!empty($file = html()->getCss())){?>
+	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl(frame('Html')->getCommonCss());?>">
+	<?php if (!empty($file = frame('Html')->getCss())){?>
 	<link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>">
 	<?php } ?>
-	<script type="text/javascript" src="<?php echo siteUrl(html()->getCommonJs());?>"></script>
-	<?php if (!empty($file = html()->getJs())){?>
+	<script type="text/javascript" src="<?php echo siteUrl(frame('Html')->getCommonJs());?>"></script>
+	<?php if (!empty($file = frame('Html')->getJs())){?>
 	<script type="text/javascript" src="<?php echo siteUrl($file);?>"></script>
 	<?php } ?>
 </head>

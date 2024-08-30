@@ -16,14 +16,14 @@ class Transfer extends AdminBase
 
 	public function index()
 	{	
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'editInfo', 'reloadCache', 'autoTransfer'])) {
 				$this->$opn();
 			}
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 		$keyword = iget('keyword');
 		$page = iget('page', 1);
 		$size = iget('size', 20);

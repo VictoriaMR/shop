@@ -1,3 +1,0 @@
-$(function(){
-	$('#nav-banner').slider();
-});

@@ -17,14 +17,14 @@ class Member extends AdminBase
 
 	public function index()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'modify', 'editInfo'])) {
 				$this->$opn();
 			}
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 		$status = (int) iget('status', -1);
 		$page = (int) iget('page', 1);
 		$size = (int) iget('size', 20);

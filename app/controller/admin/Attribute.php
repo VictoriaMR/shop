@@ -17,7 +17,7 @@ class Attribute extends AdminBase
 
 	public function index()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getAttrInfo', 'getAttrLanguage', 'transfer', 'editAttrInfo', 'editAttrLanguage', 'deleteAttrInfo'])) {
 				$this->$opn();
@@ -25,7 +25,7 @@ class Attribute extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
@@ -156,7 +156,7 @@ class Attribute extends AdminBase
 
 	public function attrValue()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getAttvInfo', 'getAttvLanguage', 'transfer', 'editAttvInfo', 'editAttvLanguage', 'deleteAttvInfo'])) {
 				$this->$opn();
@@ -164,7 +164,7 @@ class Attribute extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);

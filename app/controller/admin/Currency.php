@@ -16,14 +16,14 @@ class Currency extends AdminBase
 
     public function index()
     {
-        if (request()->isPost()) {
+        if (frame('Request')->isPost()) {
             $opn = ipost('opn');
             if (in_array($opn, ['getCurrencyInfo', 'updateCurrencyRate'])) {
                 $this->$opn();
             }
             $this->error('非法请求');
         }
-        html()->addJs();
+        frame('Html')->addJs();
         $list = service('currency/Currency')->getListData();
         $this->assign('list', $list);
         $this->view();

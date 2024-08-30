@@ -17,10 +17,10 @@ class Visitor extends Base
 		$data['mem_id'] = userId();
 		$data['lan_id'] = lanId();
 		$data['is_moblie'] = isMobile() ? 1 : 0;
-		$data['browser'] = request()->getBrowser();
-		$data['system'] = request()->getSystem();
+		$data['browser'] = frame('Request')->getBrowser();
+		$data['system'] = frame('Request')->getSystem();
 		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
-		$data['ip'] = request()->getIp();
+		$data['ip'] = frame('Request')->getIp();
 		return $this->insert($data);
 	}
 

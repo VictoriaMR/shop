@@ -11,7 +11,7 @@ KindEditor.plugin('clearhtml', function(K) {
 	var self = this, name = 'clearhtml';
 	self.clickToolbar(name, function() {
 		self.focus();
-		var html = self.html();
+		var html = self.frame('Html');
 		html = html.replace(/(<script[^>]*>)([\s\S]*?)(<\/script>)/ig, '');
 		html = html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/ig, '');
 		html = K.formatHtml(html, {

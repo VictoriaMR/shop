@@ -2679,7 +2679,7 @@ function _isEmptyNode(knode) {
 	if (knode.type != 1 || knode.isSingle()) {
 		return false;
 	}
-	return knode.html().replace(/<[^>]+>/g, '') === '';
+	return knode.frame('Html').replace(/<[^>]+>/g, '') === '';
 }
 
 
@@ -3814,7 +3814,7 @@ _extend(KEdit, KWidget, {
 		if (self._mousedownHandler) {
 			K(document).unbind('mousedown', self._mousedownHandler);
 		}
-		_elementVal(self.srcElement, self.html());
+		_elementVal(self.srcElement, self.frame('Html'));
 		self.srcElement.show();
 		self.iframe.unbind();
 		self.textarea.unbind();
@@ -3846,7 +3846,7 @@ _extend(KEdit, KWidget, {
 			}
 			K(body).html(val);
 			if (self.afterSetHtml) {
-				self.afterSetHtml();
+				self.afterSetframe('Html');
 			}
 			return self;
 		}
@@ -3860,7 +3860,7 @@ _extend(KEdit, KWidget, {
 		var self = this, val;
 		if (bool === undefined ? !self.designMode : bool) {
 			if (!self.designMode) {
-				val = self.html();
+				val = self.frame('Html');
 				self.designMode = true;
 				self.textarea.hide();
 				self.html(val);
@@ -3874,7 +3874,7 @@ _extend(KEdit, KWidget, {
 			}
 		} else {
 			if (self.designMode) {
-				val = self.html();
+				val = self.frame('Html');
 				self.designMode = false;
 				self.html(val);
 				self.iframe.hide();
@@ -4548,7 +4548,7 @@ function _loadStyle(url) {
 function _ajax(url, fn, method, param, dataType) {
 	method = method || 'GET';
 	dataType = dataType || 'json';
-	var xhr = window.XMLHttpRequest ? new window.XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP');
+	var xhr = window.XMLHttpRequest ? new window.XMLHttpframe('Request') : new ActiveXObject('Microsoft.XMLHTTP');
 	xhr.open(method, url, true);
 	xhr.onreadystatechange = function () {
 		if (xhr.readyState == 4 && xhr.status == 200) {
@@ -5110,7 +5110,7 @@ KEditor.prototype = {
 			},
 			afterSetHtml : function() {
 				self.edit = edit = this;
-				self.afterSetHtml();
+				self.afterSetframe('Html');
 			},
 			afterCreate : function() {
 				self.edit = edit = this;
@@ -5147,7 +5147,7 @@ KEditor.prototype = {
 				}
 				self.isCreated = true;
 				if (self.initContent === '') {
-					self.initContent = self.html();
+					self.initContent = self.frame('Html');
 				}
 				if (self._undoStack.length > 0) {
 					var prev = self._undoStack.pop();
@@ -5277,7 +5277,7 @@ KEditor.prototype = {
 	html : function(val) {
 		var self = this;
 		if (val === undefined) {
-			return self.isCreated ? self.edit.html() : _elementVal(self.srcElement);
+			return self.isCreated ? self.edit.frame('Html') : _elementVal(self.srcElement);
 		}
 		self.isCreated ? self.edit.html(val) : _elementVal(self.srcElement, val);
 		if (self.isCreated) {
@@ -5291,7 +5291,7 @@ KEditor.prototype = {
 	text : function(val) {
 		var self = this;
 		if (val === undefined) {
-			return _trim(self.html().replace(/<(?!img|embed).*?>/ig, '').replace(/&nbsp;/ig, ' '));
+			return _trim(self.frame('Html').replace(/<(?!img|embed).*?>/ig, '').replace(/&nbsp;/ig, ' '));
 		} else {
 			return self.html(_escape(val));
 		}
@@ -5300,10 +5300,10 @@ KEditor.prototype = {
 		return _trim(this.text().replace(/\r\n|\n|\r/, '')) === '';
 	},
 	isDirty : function() {
-		return _trim(this.initContent.replace(/\r\n|\n|\r|t/g, '')) !== _trim(this.html().replace(/\r\n|\n|\r|t/g, ''));
+		return _trim(this.initContent.replace(/\r\n|\n|\r|t/g, '')) !== _trim(this.frame('Html').replace(/\r\n|\n|\r|t/g, ''));
 	},
 	selectedHtml : function() {
-		var val = this.isCreated ? this.cmd.range.html() : '';
+		var val = this.isCreated ? this.cmd.range.frame('Html') : '';
 		val = _removeBookmarkTag(_removeTempTag(val));
 		return val;
 	},
@@ -5311,7 +5311,7 @@ KEditor.prototype = {
 		var self = this;
 		mode = (mode || 'html').toLowerCase();
 		if (mode === 'html') {
-			return self.html().length;
+			return self.frame('Html').length;
 		}
 		if (mode === 'text') {
 			return self.text().replace(/<(?:img|embed).*?>/ig, 'K').replace(/\r\n|\n|\r/g, '').length;
@@ -5344,7 +5344,7 @@ KEditor.prototype = {
 		return this;
 	},
 	appendHtml : function(val) {
-		this.html(this.html() + val);
+		this.html(this.frame('Html') + val);
 		if (this.isCreated) {
 			var cmd = this.cmd;
 			cmd.range.selectNodeContents(cmd.doc.body).collapse(false);
@@ -5353,7 +5353,7 @@ KEditor.prototype = {
 		return this;
 	},
 	sync : function() {
-		_elementVal(this.srcElement, this.html());
+		_elementVal(this.srcElement, this.frame('Html'));
 		return this;
 	},
 	focus : function() {
@@ -6644,7 +6644,7 @@ KindEditor.plugin('clearhtml', function(K) {
 	var self = this, name = 'clearhtml';
 	self.clickToolbar(name, function() {
 		self.focus();
-		var html = self.html();
+		var html = self.frame('Html');
 		html = html.replace(/(<script[^>]*>)([\s\S]*?)(<\/script>)/ig, '');
 		html = html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/ig, '');
 		html = K.formatHtml(html, {
@@ -8320,7 +8320,7 @@ SWFUpload.prototype.loadFlash = function () {
 		throw "Could not find the placeholder element: " + this.settings.button_placeholder_id;
 	}
 	tempParent = document.createElement("div");
-	tempParent.innerHTML = this.getFlashHTML();
+	tempParent.innerHTML = this.getFlashframe('Html');
 	targetElement.parentNode.replaceChild(tempParent.firstChild, targetElement);
 	if (window[this.movieName] == undefined) {
 		window[this.movieName] = this.getMovieElement();
@@ -9025,7 +9025,7 @@ KindEditor.plugin('preview', function(K) {
 			iframe = K('iframe', dialog.div),
 			doc = K.iframeDoc(iframe);
 		doc.open();
-		doc.write(self.fullHtml());
+		doc.write(self.fullframe('Html'));
 		doc.close();
 		K(doc.body).css('background-color', '#FFF');
 		iframe[0].contentWindow.focus();
@@ -9062,7 +9062,7 @@ KindEditor.plugin('quickformat', function(K) {
 			var firstChild = getFirstChild(child);
 			if (!firstChild || firstChild.name != 'img') {
 				if (blockMap[child.name]) {
-					child.html(child.html().replace(/^(\s|&nbsp;|　)+/ig, ''));
+					child.html(child.frame('Html').replace(/^(\s|&nbsp;|　)+/ig, ''));
 					child.css('text-indent', '2em');
 				} else {
 					subList.push(child);
@@ -9125,7 +9125,7 @@ KindEditor.plugin('table', function(K) {
 				x : pos.x,
 				y : pos.y + box.height(),
 				z : 811214,
-				selectedColor : K(this).html(),
+				selectedColor : K(this).frame('Html'),
 				colors : self.colorTable,
 				noColor : self.lang('noColor'),
 				shadowMode : self.shadowMode,
@@ -9218,8 +9218,8 @@ KindEditor.plugin('table', function(K) {
 							spacing = spacingBox.val(),
 							align = alignBox.val(),
 							border = borderBox.val(),
-							borderColor = K(colorBox[0]).html() || '',
-							bgColor = K(colorBox[1]).html() || '';
+							borderColor = K(colorBox[0]).frame('Html') || '',
+							bgColor = K(colorBox[1]).frame('Html') || '';
 						if (rows == 0 || !/^\d+$/.test(rows)) {
 							alert(self.lang('invalidRows'));
 							rowsBox[0].focus();
@@ -9477,8 +9477,8 @@ KindEditor.plugin('table', function(K) {
 							textAlign = textAlignBox.val(),
 							verticalAlign = verticalAlignBox.val(),
 							border = borderBox.val(),
-							borderColor = K(colorBox[0]).html() || '',
-							bgColor = K(colorBox[1]).html() || '';
+							borderColor = K(colorBox[0]).frame('Html') || '',
+							bgColor = K(colorBox[1]).frame('Html') || '';
 						if (!/^\d*$/.test(width)) {
 							alert(self.lang('invalidWidth'));
 							widthBox[0].focus();

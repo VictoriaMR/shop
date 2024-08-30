@@ -19,15 +19,15 @@ class Task extends AdminBase
 
 	public function index()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['modifyTask'])) {
 				$this->$opn();
 			}
 			$this->error('Unknown request');
 		}
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$list = frame('Task')->getTaskList(true);
 		foreach ($list as $key=>$value) {
 			if (!isset($value['boot'])) {

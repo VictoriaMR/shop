@@ -11,8 +11,8 @@ class Order extends HomeBase
 		$page = iget('page', 1);
 		$size = iget('size', 10);
 
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		if (userId()) {
 			$where = ['mem_id'=>userId(), 'is_delete'=>0];
@@ -223,8 +223,8 @@ class Order extends HomeBase
 
 	public function search()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 10);
@@ -258,8 +258,8 @@ class Order extends HomeBase
 
 	public function trash()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 10);
@@ -278,8 +278,8 @@ class Order extends HomeBase
 
 	public function detail()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$id = (int)iget('id');
 		if (empty($id)) {

@@ -8,7 +8,9 @@ class View
 
 	public function display($template, $match=true)
 	{
-		return $this->fetch(ROOT_PATH.'template'.DS.template().DS.'view'.DS.'layout.php', ['layout_include_path'=>$this->getTemplate($template, $match)]);
+		return $this->fetch(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', [
+			'layout_include_path'=>$this->getTemplate($template, $match)
+		]);
 	}
 
 	protected function fetch($template, array $data=[])
@@ -33,10 +35,9 @@ class View
 
 	private function getTemplate($template, $match=true)
 	{
-		$temp = $template;
 		if ($match) {
-			$template || $template = lcfirst(\App::get('router', 'path')).DS.\App::get('router', 'func');
-			$template = 'template'.DS.template().DS.'view'.DS.(isMobile()?'mobile':'computer').DS.$template;
+			$template || $template = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+			$template = 'template/'.config('domain', 'template').'/'.(isMobile()?'m':'c').'/view/'.$template;
 		}
 		return ROOT_PATH.$template.'.php';
 	}

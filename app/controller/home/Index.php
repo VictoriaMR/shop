@@ -7,8 +7,8 @@ class Index extends HomeBase
 {
 	public function index()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$this->view(true);
 	}
 }

@@ -12,10 +12,10 @@ class Login extends AdminBase
 
 	public function index()
 	{	
-		html()->addJs('common,verify', false);
-		html()->addCss('common,space');
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addJs('common,verify', false);
+		frame('Html')->addCss('common,space');
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$this->assign('_title', '后台登录');
 		$this->view();
 	}

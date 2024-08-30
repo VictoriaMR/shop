@@ -2,21 +2,18 @@
 function dd(...$arg){
 	foreach ($arg as $value){
 		print_r($value);
-		echo isCli() ? PHP_EOL : '<br />';
+		echo PHP_EOL;
 	}
 	exit();
 }
 function config($type, $name='', $default=''){
 	if (is_null(\App::get($type))){
-		$file = ROOT_PATH.'config'.DS.$type.'.php';
-		if (is_file($file)){
-			\App::set($type, require $file);
-		}
+		\App::set($type, require ROOT_PATH.'config/'.$type.'.php');
 	}
 	return \App::get($type, $name);
 }
 function redirect($url='', $return=true){
-	$return && session()->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
+	$return && frame('Session')->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
 	header('Location:'.$url);exit();	
 }
 function service($name, $params=null){
@@ -28,35 +25,10 @@ function model($name, $params=null){
 function frame($name){
 	return \App::make('frame/'.$name);
 }
-function html(){
-	return frame('Html');
-}
-function session(){
-	return frame('Session');
-}
-function router(){
-	return frame('Router');
-}
-function request(){
-	return frame('Request');
-}
-function redis($db=0){
-	return frame('Redis')->setDb($db);
-}
-function db($db=null){
-	return frame('Query')->setDb($db);
-}
 function page($size=0, $total=0){
 	return frame('Paginator')->make($size, $total);
 }
-function url($name='', $param=[], $joint=true){
-    return router()->url($name, $param, $joint);
-}
-function adminUrl($name='', $param=[]){
-	return router()->adminUrl($name, $param);
-}
 function siteUrl($name, $version=true){
-	$name = domain().trim($name, DS);
 	if ($version) $name .= '?v='.version();
 	return $name;
 }
@@ -68,12 +40,8 @@ function mediaUrl($url, $width='', $version=true){
 	return siteUrl($url);
 }
 function version(){
-	defined('APP_VERSION') || define('APP_VERSION', redis(2)->get('frame:app:version')?:'1.0.0');
+	defined('APP_VERSION') || define('APP_VERSION', frame('Redis')->setDb(2)->get('frame:app:version')?:'1.0.0');
 	return APP_VERSION;
-}
-function isWin(){
-	defined('IS_WIN') || define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
-	return IS_WIN;
 }
 function isJson($string){
 	if (is_array($string)) return $string;
@@ -88,24 +56,6 @@ function isMobile(){
 	defined('IS_MOBILE') || define('IS_MOBILE', frame('Request')->isMobile());
 	return IS_MOBILE;
 }
-function isCli(){
-	return defined('IS_CLI');
-}
-function isDebug(){
-	return config('domain', 'debug');
-}
-function isAdmin(){
-	return siteId() == 80;
-}
-function domain(){
-	return 'https://'.config('domain', 'domain').'/';
-}
-function template(){
-	return config('domain', 'template');
-}
-function type(){
-	return isAdmin()?'admin':'home';
-}
 function ipost($name='', $default=null){
 	return frame('Request')->ipost($name, $default);
 }
@@ -115,14 +65,11 @@ function iget($name='', $default=null){
 function input($name='', $default=null){
 	return frame('Request')->input($name, $default);
 }
-function now($time=null){
-	return date('Y-m-d H:i:s', $time?$time:time());
-}
 function appT($text, $replace=[], $lanId='', $type='common'){
 	$lanId || $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
 	if (is_null(\App::get($key))){
-		$file = ROOT_PATH.'template'.DS.template().DS.'language'.DS.$type.DS.$lanId.'.php';
+		$file = ROOT_PATH.'template/'.config('domain', 'template').'/language/'.$type.'/'.$lanId.'.php';
 		if (is_file($file)){
 			\App::set($key, require $file);
 		} else {
@@ -143,9 +90,6 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 }
 function distT($text, $replace=[], $lanId=''){
 	return appT($text, $replace, $lanId, lcfirst(\App::get('router', 'path')));
-}
-function utf8len($string){
-	return mb_strlen($string, 'UTF-8');
 }
 function get1024Peck($size, $dec=2){
 	$a = ['B', 'KB', 'MB', 'GB', 'TB'];
@@ -185,70 +129,17 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	}
 	return $rStr;
 }
-function nameFormat($name){
-	return strtr($name, ['\\'=>'-', DS=>'-']);
-}
-function strTrim($str){
-	return ltrim($str, " \t\n\r\0\x0B ");
-}
-function getUniqueName(){
-	return str_replace([':', ' ', '-', '0.'], '', now().explode(' ', microtime())[0]);
-}
 function lanId($type='id'){
-	return session()->get('site_language_'.$type, $type=='code'?'en':1);
-}
-function siteId(){
-	return config('domain', 'site_id');
+	return frame('Session')->get('site_language_'.$type, $type=='code'?'en':1);
 }
 function userId(){
-	$uid = session()->get(type().'_info', 0, 'mem_id');
-	if (!$uid) $uid = sysUid();
+	$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
+	if (!$uid) $uid = '10000';
 	return $uid;
-}
-function sysUid(){
-	return 10000;
-}
-function userName(){
-	$info = session()->get(type().'_info');
-	$name = trim($info['first_name'].' '.$info['last_name']);
-	if (!$name){
-		$name = $info['email'];
-	}
-	return $name;
-}
-function userEmail(){
-	return session()->get(type().'_info', '', 'email');
-}
-function currencyId(){
-	return session()->get('site_currency_id', 'USD');
-}
-function uuId(){
-	return frame('Cookie')->get('uuid');
-}
-function hasZht($str){
-	return preg_match('/[\x{4e00}-\x{9fa5}]/u', $str)>0;
 }
 function createDir($dir){
 	if (!is_dir($dir)){
 		mkdir($dir, 0755, true);
 	}
 	return $dir;
-}
-function purchase(){
-    return service('purchase/Purchase');
-}
-function attr(){
-    return service('attr/Attr');
-}
-function site(){
-    return service('site/Site');
-}
-function category(){
-    return service('category/Category');
-}
-function product(){
-	return service('product/Product');
-}
-function slog(){
-	return service('log/Base');
 }

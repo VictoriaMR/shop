@@ -7,8 +7,8 @@ class Cart extends HomeBase
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$list = service('Cart')->getList();
 		$summary = [];
 		if (!empty($list)) {

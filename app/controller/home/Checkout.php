@@ -7,10 +7,10 @@ class Checkout extends HomeBase
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addCss('common/address');
-		html()->addJs();
-		html()->addJs('common/address');
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/address');
+		frame('Html')->addJs();
+		frame('Html')->addJs('common/address');
 
 		$info = $this->getCheckoutData();
 
@@ -262,10 +262,10 @@ class Checkout extends HomeBase
 
 	public function payOrder()
 	{
-		html()->addCss();
-		html()->addCss('common/address');
-		html()->addJs('common/address');
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/address');
+		frame('Html')->addJs('common/address');
+		frame('Html')->addJs();
 
 		$orderId = (int)iget('id');
 		$method = iget('method');

@@ -57,16 +57,16 @@ class Debug
 
 	public function runlog($msg='', $type='')
 	{
-		$destination = ROOT_PATH.'runtime'.DS.date('Ym').DS.date('d').(empty($type) ? '' : '_'.$type).'.log';
+		$destination = ROOT_PATH.'runtime/'.date('Ym').'/'.date('d').(empty($type) ? '' : '_'.$type).'.log';
 
 		if (!is_file($destination)) {
 			$path = createDir(dirname($destination));
 		}
 		// 获取基本信息
 		$current_uri = '';
-		if (isCli()) {
+		if (defined('IS_CLI')) {
 			$current_uri = ' cmd: ' . implode(' ', $_SERVER['argv']);
-		} elseif (isset($_SERVER['HTTP_HOST'])) {
+		} else {
 			$current_uri = ' uri: ' . $_SERVER['HTTP_HOST'] . urldecode($_SERVER['REQUEST_URI']);
 		}
 		$runtime = number_format(microtime(true) - APP_TIME_START, 10,'.','');
@@ -78,7 +78,7 @@ class Debug
 		$info = $time_str . $memory_str . $file_load . PHP_EOL;
 		$server = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '0.0.0.0';
 		$remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
-		error_log('[runtime] '.now().' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'---------------------------------------------------------------'.PHP_EOL, 3, $destination);
+		error_log('[runtime] '.date('Y-m-d H:i:s').' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'---------------------------------------------------------------'.PHP_EOL, 3, $destination);
 		return $this;
 	}
 }

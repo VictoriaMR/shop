@@ -27,7 +27,7 @@ class Cookie
 				}
 			}
 		}
-		session()->set('set_cookie', true);
+		frame('Session')->set('set_cookie', true);
 	}
 
 	public function setUuid($home=true)
@@ -41,7 +41,7 @@ class Cookie
 				$this->set('currency', 'usd', $exp);
 			}
 		}
-		session()->set('set_uuid', true);
+		frame('Session')->set('set_uuid', true);
 	}
 
 	public function login($memId)
@@ -86,7 +86,7 @@ class Cookie
 		}
 		$expire = empty($config['expire']) ? 0 : $_SERVER['REQUEST_TIME'] + intval($config['expire']);
 		$_COOKIE[$name] = $value;
-		session()->set(type().'_info', $value, $name);
+		frame('Session')->set(config('domain', 'class').'_info', $value, $name);
 		return setcookie($name, $value, $expire, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
 	}
 

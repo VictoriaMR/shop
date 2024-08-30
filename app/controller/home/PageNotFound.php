@@ -7,8 +7,8 @@ class PageNotFound extends HomeBase
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addCss('common/productList');
+		frame('Html')->addCss();
+		frame('Html')->addCss('common/productList');
 
 		$siteName = \App::get('site_name');
 		$this->assign('siteName', $siteName);

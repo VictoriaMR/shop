@@ -232,7 +232,7 @@ final class Query
 	private function analyzeWhere()
 	{
 		if (in_array('site_id', $this->_intFields) && !isset($this->_where['site_id']) && $this->_withSite) {
-			$this->_where['site_id'] = siteId();
+			$this->_where['site_id'] = config('domain', 'site_id');
 		}
 		$where = '';
 		foreach ($this->_where as $key => $item) {
@@ -275,7 +275,7 @@ final class Query
 
 	public function getQuery($sql)
 	{
-		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
+		if (config('domain', 'debug')) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
 		$this->clear();

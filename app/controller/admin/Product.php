@@ -21,8 +21,8 @@ class Product extends AdminBase
 
 	public function index()
 	{	
-		html()->addJs();
-		html()->addCss();
+		frame('Html')->addJs();
+		frame('Html')->addCss();
 		
 		$status = iget('status', -1);
 		$site = iget('site', -1);
@@ -98,8 +98,8 @@ class Product extends AdminBase
 			}
 			$this->error('非法请求');
 		}
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$id = iget('id/d', 0);
 		$status = iget('status/d', -1);
@@ -194,15 +194,15 @@ class Product extends AdminBase
 
 	public function operate()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['attrMap'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$id = iget('id/d', 0);
 		if ($id <= 0) {
@@ -260,7 +260,7 @@ class Product extends AdminBase
 
 	public function detail()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage', 'modifySpuData', 'editDescGroupInfo'])) {
 				$this->$opn();
@@ -268,8 +268,8 @@ class Product extends AdminBase
 			$this->error('未知请求');
 		}
 
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$spuService = service('product/Spu');
 		$info = $spuService->getAdminInfo(iget('id'));
 		if (!empty($info)) {
@@ -669,8 +669,8 @@ class Product extends AdminBase
 	public function purchaseShop()
 	{
 
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$status = iget('status/d', -1);
 		$channelId = iget('purchase_channel_id/d', 0);

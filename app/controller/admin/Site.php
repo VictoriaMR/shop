@@ -22,14 +22,14 @@ class Site extends AdminBase
 
 	public function index()
 	{	
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['editSite', 'getInfo', 'modifySite', 'modifySite', 'deleteLanguage', 'addLanguage', 'sortLanguage', 'domainInfo', 'deleteDomain', 'editDomain', 'modifyDomain', 'deleteCurrency', 'addCurrency', 'sortCurrency', 'updateKeyword', 'editLanguage', 'getLanguage', 'transfer'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addJs();
+		frame('Html')->addJs();
 		$site = service('site/Site');
 		$list = $site->getListData([], 'site_id,name,path,status,remark,add_time');
 		if (!empty($list)) {
@@ -48,8 +48,8 @@ class Site extends AdminBase
 
 	public function siteInfo()
 	{
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 		$id = iget('id');
 
 		$site = service('site/Site')->loadData($id);
@@ -434,14 +434,14 @@ class Site extends AdminBase
 
 	public function staticCache()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['deleteStaticCache'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addJs();
+		frame('Html')->addJs();
 		$files = [];
 		$siteList = service('site/Site')->getListData([], 'path');
 		foreach ($siteList as $key => $value) {
@@ -519,14 +519,14 @@ class Site extends AdminBase
 
 	public function siteLog()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['deleteLog'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		html()->addJs();
+		frame('Html')->addJs();
 		$path = ROOT_PATH.'runtime';
 		$files = [];
 		$this->getFileList($path, $files);

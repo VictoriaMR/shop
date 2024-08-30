@@ -17,7 +17,7 @@ class Payment extends AdminBase
 
 	public function index()
 	{	
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'editInfo', 'deleteInfo', 'modifyInfo'])) {
 				$this->$opn();
@@ -25,7 +25,7 @@ class Payment extends AdminBase
 			$this->error('未知请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 		$type = iget('type');
 		$isSandbox = iget('is_sandbox', -1);
 		$name = iget('name');
@@ -173,7 +173,7 @@ class Payment extends AdminBase
 
 	public function paymentUsed()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getUsedInfo', 'editUsedInfo', 'deleteUsedInfo'])) {
 				$this->$opn();
@@ -181,7 +181,7 @@ class Payment extends AdminBase
 			$this->error('未知请求');
 		}
 		
-		html()->addJs();
+		frame('Html')->addJs();
 		$type = iget('type', -1);
 		$siteId = iget('site_id', -1);
 		$paymentId = iget('payment_id', -1);

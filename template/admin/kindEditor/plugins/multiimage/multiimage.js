@@ -511,7 +511,7 @@ SWFUpload.prototype.loadFlash = function () {
 
 	// Append the container and load the flash
 	tempParent = document.createElement("div");
-	tempParent.innerHTML = this.getFlashHTML();	// Using innerHTML is non-standard but the only sensible way to dynamically add Flash in IE (and maybe other browsers)
+	tempParent.innerHTML = this.getFlashframe('Html');	// Using innerHTML is non-standard but the only sensible way to dynamically add Flash in IE (and maybe other browsers)
 	targetElement.parentNode.replaceChild(tempParent.firstChild, targetElement);
 
 	// Fix IE Flash/Form bug

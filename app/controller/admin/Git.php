@@ -42,14 +42,14 @@ class Git extends AdminBase
 
     public function gitLog()
     {
-        if (request()->isPost()) {
+        if (frame('Request')->isPost()) {
             $opn = ipost('opn');
             if (in_array($opn, ['updateGit', 'releaseGit'])) {
                 $this->$opn();
             }
         }
 
-        html()->addJs();
+        frame('Html')->addJs();
         $id = iget('id', '');
         $page = iget('page', 1);
         $size = iget('size', 20);

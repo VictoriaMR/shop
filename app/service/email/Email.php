@@ -87,7 +87,7 @@ class Email extends Base
 		$mail->SMTPDebug = 4;
 		$mail->MessageID = randString(32).'@'.$this->siteInfo['domain'];
 		$mail->isSMTP();
-		$mail->isHTML();
+		$mail->isframe('Html');
 		// 使用smtp时，SMTPAuth必须是true
 		$mail->SMTPAuth = true;
 		$host = explode(':', $auth['smtp'], 2);

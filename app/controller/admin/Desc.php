@@ -18,7 +18,7 @@ class Desc extends AdminBase
 
 	public function index()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getDescInfo', 'getDescLanguage', 'transfer', 'editDescInfo', 'editDescLanguage', 'deleteDescInfo'])) {
 				$this->$opn();
@@ -26,7 +26,7 @@ class Desc extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
@@ -153,7 +153,7 @@ class Desc extends AdminBase
 
 	public function descValue()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getDescValueInfo', 'getDescValueLanguage', 'transfer', 'editDescValueInfo', 'editDescValueLanguage', 'deleteDescValueInfo'])) {
 				$this->$opn();
@@ -161,7 +161,7 @@ class Desc extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);
@@ -288,7 +288,7 @@ class Desc extends AdminBase
 
 	public function descGroup()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getDescGroupInfo', 'getDescGroupLanguage', 'transfer', 'editDescGroupInfo', 'editDescGroupLanguage', 'deleteDescGroupInfo'])) {
 				$this->$opn();
@@ -296,7 +296,7 @@ class Desc extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$page = iget('page', 1);
 		$size = iget('size', 40);

@@ -1,7 +1,5 @@
 <?php
-@ini_set('session.cookie_httponly', 1);
-@session_start();
-require ROOT_PATH.'frame'.DS.'App.php';
-require ROOT_PATH.'frame'.DS.'Helper.php';
-is_file(ROOT_PATH.'vendor'.DS.'autoload.php') && require ROOT_PATH.'vendor'.DS.'autoload.php';
+require './frame/App.php';
+require './frame/Helper.php';
+file_exists('./vendor/autoload.php') && require './vendor/autoload.php';
 \App::init();

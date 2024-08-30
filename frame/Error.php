@@ -8,81 +8,55 @@ class Error
     {
         error_reporting(E_ALL);
         set_error_handler(array($this, 'appError'));
-        set_exception_handler(array($this, 'appException'));
-        register_shutdown_function(array($this, 'appShutdown'));
+        set_exception_handler(array($this, 'appError'));
+        register_shutdown_function(array($this, 'appError'));
     }
 
-    public function appError($errno, $errStr, $errfile='', $errline='')
+    public function appError($errno='', $errStr='', $errfile='', $errline='')
     {
-        $this->errorEcho(__FUNCTION__, ['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr]);
-    }
-
-    public function appException($exception)
-    {
-        $this->errorEcho(__FUNCTION__, ['code'=>$exception->getCode(), 'file'=>$exception->getFile(), 'line'=>$exception->getLine(), 'message'=>$exception->getMessage(), 'trace'=>$exception->getTrace()]);
-    }
-
-    public function appShutdown()
-    {
-        $_error = error_get_last();
-        if ($_error) {
-            $this->errorEcho(__FUNCTION__, ['code'=>$_error['code'] ?? '', 'file'=>$_error['file'], 'line'=>$_error['line'], 'message'=>$_error['message']]);
-        }
-        //关闭session
-        session()->close();
-    }
-
-    protected function errorEcho($type, $data)
-    {
-        $log = "[{$type}]:[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
-        frame('Debug')->runlog($log);
-        if (isCli() || isDebug()) {
-            if (isAjax()) {
-                \App::jsonRespone(500, [], $log);
-            } else {
-                echo $log;
-            }
+        if (is_object($errno)) {
+            $data = ['code'=>$errno->getCode(), 'file'=>$errno->getFile(), 'line'=>$errno->getLine(), 'message'=>$errno->getMessage(), 'trace'=>$errno->getTrace()];
+        } elseif ($errno) {
+            $data = ['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr];
         } else {
-            echo $data['message'];
+            if ($data = error_get_last()) {
+                $data = ['code'=>$data['code'] ?? '', 'file'=>$data['file'], 'line'=>$data['line'], 'message'=>$data['message']];
+            }
+        }
+        if ($data) $this->errorEcho($data);
+    }
+
+    protected function errorEcho($data)
+    {
+        $log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
+        frame('Debug')->runlog($log);
+        if (config('domain', 'debug')) {
+            echo $log;
+        } else {
+            echo '500 Internal Server Error';
         }
     }
 
     private function errorType($code)
     {
-        switch($code) {
-            case 0:
-                return 'Fatal error';
-            case E_ERROR: // 1 //
-                return 'E_ERROR';
-            case E_WARNING: // 2 //
-                return 'E_WARNING';
-            case E_PARSE: // 4 //
-                return 'E_PARSE';
-            case E_NOTICE: // 8 //
-                return 'E_NOTICE';
-            case E_CORE_ERROR: // 16 //
-                return 'E_CORE_ERROR';
-            case E_CORE_WARNING: // 32 //
-                return 'E_CORE_WARNING';
-            case E_COMPILE_ERROR: // 64 //
-                return 'E_COMPILE_ERROR';
-            case E_COMPILE_WARNING: // 128 //
-                return 'E_COMPILE_WARNING';
-            case E_USER_ERROR: // 256 //
-                return 'E_USER_ERROR';
-            case E_USER_WARNING: // 512 //
-                return 'E_USER_WARNING';
-            case E_USER_NOTICE: // 1024 //
-                return 'E_USER_NOTICE';
-            case E_STRICT: // 2048 //
-                return 'E_STRICT';
-            case E_RECOVERABLE_ERROR: // 4096 //
-                return 'E_RECOVERABLE_ERROR';
-            case E_DEPRECATED: // 8192 //
-                return 'E_DEPRECATED';
-            case E_USER_DEPRECATED: // 16384 //
-                return 'E_USER_DEPRECATED';
-        }
-        return $code;
+        $arr = [
+            0 => 'Fatal',
+            E_ERROR => 'E_ERROR',
+            E_WARNING => 'E_WARNING',
+            E_PARSE => 'E_PARSE',
+            E_NOTICE => 'E_NOTICE',
+            E_CORE_ERROR => 'E_CORE_ERROR',
+            E_CORE_WARNING => 'E_CORE_WARNING',
+            E_COMPILE_ERROR => 'E_COMPILE_ERROR',
+            E_COMPILE_WARNING => 'E_COMPILE_WARNING',
+            E_USER_ERROR => 'E_USER_ERROR',
+            E_USER_WARNING => 'E_USER_WARNING',
+            E_USER_NOTICE => 'E_USER_NOTICE',
+            E_STRICT => 'E_STRICT',
+            E_RECOVERABLE_ERROR => 'E_RECOVERABLE_ERROR',
+            E_DEPRECATED => 'E_DEPRECATED',
+            E_USER_DEPRECATED => 'E_USER_DEPRECATED',
+        ];
+        return $arr[$code] ?? $code;
     }
 }

@@ -29,7 +29,7 @@ KindEditor.plugin('quickformat', function(K) {
 			var firstChild = getFirstChild(child);
 			if (!firstChild || firstChild.name != 'img') {
 				if (blockMap[child.name]) {
-					child.html(child.html().replace(/^(\s|&nbsp;|　)+/ig, ''));
+					child.html(child.frame('Html').replace(/^(\s|&nbsp;|　)+/ig, ''));
 					child.css('text-indent', '2em');
 				} else {
 					subList.push(child);

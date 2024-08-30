@@ -17,7 +17,7 @@ class Controller extends AdminBase
 
 	public function index()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'editInfo', 'deleteInfo', 'sortInfo'])) {
 				$this->$opn();
@@ -25,7 +25,7 @@ class Controller extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$list = service('controller/Controller')->getList();
 		$iconList = service('controller/Icon')->getListData([], 'icon_id,name,remark', 0, 0, ['sort'=>'asc']);
@@ -109,7 +109,7 @@ class Controller extends AdminBase
 
 	public function icon()
 	{
-		if (request()->isPost()) {
+		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getIconInfo', 'editIconInfo', 'deleteIconInfo', 'sortIconInfo'])) {
 				$this->$opn();
@@ -117,7 +117,7 @@ class Controller extends AdminBase
 			$this->error('非法请求');
 		}
 
-		html()->addJs();
+		frame('Html')->addJs();
 
 		$list = service('controller/Icon')->getListData([], 'icon_id,name,sort,remark', 0, 0, ['sort'=>'asc']);
 

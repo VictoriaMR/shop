@@ -11,7 +11,7 @@ class System extends Base
 		return $this->insertData([
 			'mem_id' => userId(),
 			'site_id' => siteId(),
-			'ip' => request()->getIp(),
+			'ip' => frame('Request')->getIp(),
 			'info' => trim($info),
 		]);
 	}

@@ -7,8 +7,8 @@ class Contact extends HomeBase
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addJs();
+		frame('Html')->addCss();
+		frame('Html')->addJs();
 
 		$this->assign('_title', appT('contact_us'));
 		$this->view();

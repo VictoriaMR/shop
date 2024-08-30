@@ -38,7 +38,7 @@ KindEditor.plugin('table', function(K) {
 				x : pos.x,
 				y : pos.y + box.height(),
 				z : 811214,
-				selectedColor : K(this).html(),
+				selectedColor : K(this).frame('Html'),
 				colors : self.colorTable,
 				noColor : self.lang('noColor'),
 				shadowMode : self.shadowMode,
@@ -139,8 +139,8 @@ KindEditor.plugin('table', function(K) {
 							spacing = spacingBox.val(),
 							align = alignBox.val(),
 							border = borderBox.val(),
-							borderColor = K(colorBox[0]).html() || '',
-							bgColor = K(colorBox[1]).html() || '';
+							borderColor = K(colorBox[0]).frame('Html') || '',
+							bgColor = K(colorBox[1]).frame('Html') || '';
 						if (rows == 0 || !/^\d+$/.test(rows)) {
 							alert(self.lang('invalidRows'));
 							rowsBox[0].focus();
@@ -407,8 +407,8 @@ KindEditor.plugin('table', function(K) {
 							textAlign = textAlignBox.val(),
 							verticalAlign = verticalAlignBox.val(),
 							border = borderBox.val(),
-							borderColor = K(colorBox[0]).html() || '',
-							bgColor = K(colorBox[1]).html() || '';
+							borderColor = K(colorBox[0]).frame('Html') || '',
+							bgColor = K(colorBox[1]).frame('Html') || '';
 						if (!/^\d*$/.test(width)) {
 							alert(self.lang('invalidWidth'));
 							widthBox[0].focus();

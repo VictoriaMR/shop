@@ -1,12 +1,7 @@
 <?php
-
-use frame\Container;
-
 class App
 {
-	private static $data = [];
-	public static $success = [];
-	public static $error = [];
+	private static $data = array();
 
 	public static function init()
 	{
@@ -20,19 +15,15 @@ class App
 		if (!$instance) {
 			self::autoload($abstract);
 			// 实例化对象
-			$concrete = strtr($abstract, DS, '\\');
+			$concrete = strtr($abstract, '/', '\\');
 			if ($concrete instanceof Closure) {
 				$instance = $concrete($this);
 			} else {
 				$reflector = new \ReflectionClass($concrete);
-				if ($reflector->isInstantiable()) {
-					if (is_null($reflector->getConstructor())) {
-						$instance = $reflector->newInstance();
-					} else {
-						$instance = $reflector->newInstance($params);
-					}
+				if ($reflector->getConstructor()) {
+					$instance = $reflector->newInstance($params);
 				} else {
-					throw new \Exception($concrete.' is not instantiable!');
+					$instance = $reflector->newInstance();
 				}
 			}
 			self::set('autoload', $instance, $abstract);
@@ -42,14 +33,11 @@ class App
 
 	public static function send()
 	{
-		$domain = $_SERVER['HTTP_HOST'] ?? '';
-		$info = config('domain', $domain);
+		$info = config('domain', $_SERVER['HTTP_HOST']);
 		if ($info) {
-			$info['domain'] = $domain;
 			self::set('domain', $info);
 			//路由解析
-			$info = frame('Router')->analyze();
-			$info['class'] = isAdmin()?'admin':'home';
+			$info = frame('Router')->analyze($info['class']);
 			self::set('router', $info);
 			// 中间组件方法
 			if (self::middleware($info)) {
@@ -60,18 +48,18 @@ class App
 			}
 			self::runOver();
 		} else {
-			throw new \Exception('domain: '.$domain.' was not exist!');
+			throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!');
 		}
 	}
 
 	// 中间组件方法
 	private static function middleware($request)
 	{
-		if (!session()->get('set_uuid', false)) {
+		if (!frame('Session')->get('set_uuid', false)) {
 			frame('Cookie')->setUuid($request['class'] == 'home');
 		}
 		// 验证是否需要自动登录
-		if (!in_array($request['path'], ['Api','Login']) && !session()->get('set_cookie', false)) {
+		if (!in_array($request['path'], ['Api','Login']) && !frame('Session')->get('set_cookie', false)) {
 			frame('Cookie')->init($request['class'] == 'home');
 		}
 		// 如果无需登录的, 初始化
@@ -92,7 +80,7 @@ class App
 
 	private static function autoload($abstract, $params=null)
 	{
-		require(ROOT_PATH.strtr($abstract, '\\', DS).'.php');
+		require(ROOT_PATH.$abstract.'.php');
 	}
 
 	public static function set($name, $value, $key=null)
@@ -107,22 +95,10 @@ class App
 		else return empty(self::$data[$name][$key]) ? $default : self::$data[$name][$key];
 	}
 
-	public static function setVersion($version)
-	{
-		return redis(2)->set('frame:app:version', substr($version, 0, 5));
-	}
-
-	public static function error($msg)
-	{
-		self::$error[] = $msg;
-	}
-
 	public static function runOver()
 	{
-		if (isDebug()) {
-			if (!isAjax() && !isCli() && !iget('iframe', false)) {
-				frame('Debug')->init();
-			}
+		if (config('domain', 'debug')) {
+			frame('Debug')->init();
 			frame('Debug')->runlog();
 		}
 		exit();
@@ -130,13 +106,12 @@ class App
 
 	public static function jsonRespone($code, $data=[], $msg='')
 	{
-		$data = [
+		header('Content-Type:application/json; charset=utf-8');
+		echo json_encode(array(
 			'code' => $code,
 			'data' => $data,
 			'msg' => $msg,
-		];
-		header('Content-Type:application/json; charset=utf-8');
-		echo json_encode($data, JSON_UNESCAPED_UNICODE);
+		), JSON_UNESCAPED_UNICODE);
 		self::runOver();
 	}
 }

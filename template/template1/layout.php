@@ -1,0 +1,1 @@
+<?php $this->load('common/header');include $layout_include_path;$this->load('common/footer');

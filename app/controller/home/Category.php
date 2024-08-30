@@ -7,11 +7,11 @@ class Category extends HomeBase
 {
 	public function index()
 	{	
-		html()->addCss();
-		html()->addJs();
-		html()->addCss('clothes-icon');
-		html()->addCss('product/list');
-		html()->addJs('product/list');
+		frame('Html')->addCss();
+		frame('Html')->addJs();
+		frame('Html')->addCss('clothes-icon');
+		frame('Html')->addCss('product/list');
+		frame('Html')->addJs('product/list');
 
 		$cateId = (int)iget('cid', 0);
 		$rid = (int)iget('rid', 0);
