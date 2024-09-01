@@ -32,7 +32,7 @@ class Login extends HomeBase
 		$this->assign('login_email', frame('Session')->get('login_email'));
 		$this->assign('login_exp_time', frame('Session')->get('login_exp_time'));
 		$this->assign('_title', appT('login'));
-		$this->view(true);
+		$this->view();
 	}
 
 	public function forget()

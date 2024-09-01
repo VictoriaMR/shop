@@ -40,8 +40,7 @@ function mediaUrl($url, $width='', $version=true){
 	return siteUrl($url);
 }
 function version(){
-	defined('APP_VERSION') || define('APP_VERSION', frame('Redis')->setDb(2)->get('frame:app:version')?:'1.0.0');
-	return APP_VERSION;
+	return '1.0.0';
 }
 function isJson($string){
 	if (is_array($string)) return $string;

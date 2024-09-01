@@ -1,11 +1,11 @@
 <?php
 return [
 	'admin' => [
-		'computer' => ['computer/common', 'computer/bootstrap', 'computer/space', 'icon'],
+		'computer' => ['common', 'bootstrap', 'space', 'icon'],
 		'mobile' => [],
 	],
 	'home' => [
-		'computer' => ['computer/common'],
-		'mobile' => ['mobile/common'],
+		'computer' => ['common'],
+		'mobile' => ['common'],
 	],
 ];

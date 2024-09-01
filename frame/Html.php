@@ -66,8 +66,8 @@ class Html
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template/'.config('domain', 'template').'/';
-		$file = 'static/'.(isMobile()?'m_':'c_').$name.'.'.$type;
+		$path = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/';
+		$file = 'static/'.$name.'.'.$type;
 		if (\App::get('base_info', 'static_cache', false) && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);

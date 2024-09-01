@@ -12,15 +12,22 @@ class Error
         register_shutdown_function(array($this, 'appError'));
     }
 
-    public function appError($errno='', $errStr='', $errfile='', $errline='')
+    public function appError(...$arg)
     {
-        if (is_object($errno)) {
-            $data = ['code'=>$errno->getCode(), 'file'=>$errno->getFile(), 'line'=>$errno->getLine(), 'message'=>$errno->getMessage(), 'trace'=>$errno->getTrace()];
-        } elseif ($errno) {
-            $data = ['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr];
-        } else {
+        if (empty($arg)) {
             if ($data = error_get_last()) {
                 $data = ['code'=>$data['code'] ?? '', 'file'=>$data['file'], 'line'=>$data['line'], 'message'=>$data['message']];
+            }
+        } else {
+            // dd($arg);
+            if (is_object($errno)) {
+                $data = ['code'=>$errno->getCode(), 'file'=>$errno->getFile(), 'line'=>$errno->getLine(), 'message'=>$errno->getMessage(), 'trace'=>$errno->getTrace()];
+            } elseif ($errno) {
+                $data = ['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr];
+            } else {
+                if ($data = error_get_last()) {
+                    $data = ['code'=>$data['code'] ?? '', 'file'=>$data['file'], 'line'=>$data['line'], 'message'=>$data['message']];
+                }
             }
         }
         if ($data) $this->errorEcho($data);

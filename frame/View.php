@@ -8,15 +8,11 @@ class View
 
 	public function display($template, $match=true)
 	{
-		return $this->fetch(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', [
+		return $this->getContent(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', [
 			'layout_include_path'=>$this->getTemplate($template, $match)
 		]);
 	}
 
-	protected function fetch($template, array $data=[])
-	{	
-		echo $this->getContent($template, $data);
-	}
 	private function loadFile($template, array $data)
 	{
 		if (is_file($template)) {
@@ -37,7 +33,7 @@ class View
 	{
 		if ($match) {
 			$template || $template = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
-			$template = 'template/'.config('domain', 'template').'/'.(isMobile()?'m':'c').'/view/'.$template;
+			$template = 'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/view/'.$template;
 		}
 		return ROOT_PATH.$template.'.php';
 	}
