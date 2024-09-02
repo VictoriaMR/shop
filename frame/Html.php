@@ -14,12 +14,7 @@ class Html
 			$matchPath = (isMobile() ? 'mobile' : 'computer').'/';
 			$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
 		}
-		if (!is_array($name)) {
-			$name = array_map('trim', explode(',', $name));
-		}
-		foreach ($name as $value) {
-			$this->_CSS[] = $matchPath.$value;
-		}
+		$this->_CSS[] = $matchPath.$name;
 	}
 
 	public function addJs($name='', $match=true)
@@ -29,17 +24,13 @@ class Html
 			$matchPath = (isMobile() ? 'mobile' : 'computer').'/';
 			$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
 		}
-		if (!is_array($name)) {
-			$name = array_map('trim', explode(',', $name));
-		}
-		foreach ($name as $value) {
-			$this->_JS[] = $matchPath.$value;
-		}
+		$this->_JS[] = $matchPath.$name;
 	}
 
 	public function getCss()
 	{
 		if (empty($this->_CSS)) return [];
+		dd($this->_CSS);
 		return $this->addStaticFile($this->_CSS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'css');
 	}
 

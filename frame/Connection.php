@@ -7,14 +7,6 @@ final class Connection
     private $_connect;
     private $_selectdb;
 
-    private function connect($host, $username, $password, $port='3306', $database='')
-    {
-        $this->_connect = new \mysqli($host, $username, $password, $database, $port);
-        if ($this->_connect->connect_error) {
-            $this->_connect = false;
-        }
-    }
-
     public function setDb($db=null)
     {
         is_null($db) && $db = 'default';
@@ -23,13 +15,10 @@ final class Connection
             throw new \Exception('Connect Error No Database Config', 1);
         }
         if (!$this->_connect) {
-            $this->connect(
-                $config['host'] ?? '127.0.0.1',
-                $config['username'],
-                $config['password'],
-                $config['port'] ?? '3306',
-                $config['database']
-            );
+            $this->_connect = new \mysqli($config['host']??'127.0.0.1', $config['username'], $config['password'], $config['database'], $config['port']??'3306');
+            if ($this->_connect->connect_error) {
+                throw new \Exception('Connect Error, '.$this->_connect->connect_error, 1);
+            }
             $this->_selectdb = $config['database'];
         }
         if ($this->_connect && $this->_selectdb != $config['database']) {
