@@ -16,8 +16,9 @@ class Login extends AdminBase
 		frame('Html')->addCss('common,space');
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$this->assign('_title', '后台登录');
-		$this->view();
+		$this->view([
+			'_title' => '后台登录',
+		]);
 	}
 
 	public function loginCode()

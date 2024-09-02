@@ -25,22 +25,24 @@ class Login extends HomeBase
 					$this->success(distT('login_success'));
 				}
 			}
-			$this->error('verify_error');
+			$this->error(distT('verify_error'));
 		}
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$this->assign('login_email', frame('Session')->get('login_email'));
-		$this->assign('login_exp_time', frame('Session')->get('login_exp_time'));
-		$this->assign('_title', appT('login'));
-		$this->view();
+		$this->view([
+			'login_email' => frame('Session')->get('login_email'),
+			'login_exp_time' => frame('Session')->get('login_exp_time'),
+			'_title' => appT('login'),
+		]);
 	}
 
 	public function forget()
 	{
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$this->assign('_title', 'Forget Password');
-		$this->view();
+		$this->view([
+			'_title' => distT('forget_password'),
+		]);
 	}
 
 	public function sengCode()

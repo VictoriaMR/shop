@@ -4,11 +4,9 @@ namespace frame;
 
 class View 
 {
-	protected $_data = [];
-
-	public function display($template, $match=true)
+	public function display($template, $match=true, $data=array())
 	{
-		return $this->getContent(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', [
+		$this->loadFile(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', [
 			'layout_include_path'=>$this->getTemplate($template, $match)
 		]);
 	}
@@ -16,17 +14,11 @@ class View
 	private function loadFile($template, array $data)
 	{
 		if (is_file($template)) {
-			extract(array_merge($this->_data, $data), EXTR_OVERWRITE);
-			return include $template;
+			$data && extract($data, EXTR_OVERWRITE);
+			include $template;
+		} else {
+			throw new \Exception($template.' was not exist!', 1);
 		}
-		throw new \Exception($template.' was not exist!', 1);
-	}
-
-	private function getContent($template, $data=[])
-	{
-		ob_start();
-		$this->loadFile($template, $data);
-		return ob_get_clean();
 	}
 
 	private function getTemplate($template, $match=true)
@@ -36,16 +28,6 @@ class View
 			$template = 'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/view/'.$template;
 		}
 		return ROOT_PATH.$template.'.php';
-	}
-
-	public function assign($name, $value = null)
-	{
-		if (is_array($name)) {
-			$this->_data = array_merge($this->_data, $name);
-		} else {
-			$this->_data[$name] = $value;
-		}
-		return $this;
 	}
 
 	public function load($template='', $data=[], $match=true)

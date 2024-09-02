@@ -14,13 +14,8 @@ class Base
 		\App::jsonRespone($code, [], $msg);
 	}
 
-	protected function assign($name, $value=null)
+	protected function view($data=array())
 	{
-		return frame('View')->assign($name, $value);
-	}
-
-	protected function view($cache=false)
-	{
-		return frame('View')->display('', true, $cache);
+		return frame('View')->display('', true, $data);
 	}
 }

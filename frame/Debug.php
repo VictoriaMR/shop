@@ -49,10 +49,10 @@ class Debug
 					break;
 			}
 		}
-		$object = frame('View');
-		$object->assign('trace', $trace);
-		$object->assign('runtime', $runtime);
-		$object->load('frame/pagetrace', [], false);
+		frame('View')->load('frame/pagetrace', [
+			'trace' => $trace,
+			'runtime' => $runtime,
+		], false);
 	}
 
 	public function runlog($msg='', $type='')

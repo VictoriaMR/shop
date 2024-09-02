@@ -9,13 +9,10 @@
             <?php foreach ($trace as $info) {?>
             <div style="display:none;">
                 <ol style="padding: 0; margin:0">
-                    <?php
-                    if (is_array($info)) {
+                    <?php if (is_array($info)) {
                         foreach ($info as $k => $val) {
-                            echo '<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px;word-break:break-all;">' . (is_numeric($k) ? '' : $k.' : ') . htmlentities(print_r($val,true), ENT_COMPAT, 'utf-8') . '</li>';
-                        }
-                    }
-                    ?>
+                        echo '<li style="border-bottom:1px solid #EEE;font-size:14px;padding:0 12px;word-break:break-all;">' . (is_numeric($k) ? '' : $k.' : ') . htmlentities(print_r($val,true), ENT_COMPAT, 'utf-8') . '</li>';
+                    } }?>
                 </ol>
             </div>
             <?php }?>
@@ -26,7 +23,7 @@
 <div id="think_page_trace_open" style="height:30px;float:right;text-align:right;overflow:hidden;position:fixed;bottom:1px;right:0;color:#000;line-height:30px;cursor:pointer;">
     <div style="background:#232323;color:#FFF;padding:0 6px;float:right;line-height:30px;font-size:14px;"><?php echo $runtime.'s ';?></div>
 </div>
-<script type="text/javascript">
+<script>
 (function(){
     var tab_tit  = document.getElementById('think_page_trace_tab_tit').getElementsByTagName('span');
     var tab_cont = document.getElementById('think_page_trace_tab_cont').getElementsByTagName('div');

@@ -19,15 +19,10 @@ class Error
                 $data = ['code'=>$data['code'] ?? '', 'file'=>$data['file'], 'line'=>$data['line'], 'message'=>$data['message']];
             }
         } else {
-            // dd($arg);
-            if (is_object($errno)) {
-                $data = ['code'=>$errno->getCode(), 'file'=>$errno->getFile(), 'line'=>$errno->getLine(), 'message'=>$errno->getMessage(), 'trace'=>$errno->getTrace()];
-            } elseif ($errno) {
-                $data = ['code'=>$errno, 'file'=>$errfile, 'line'=>$errline, 'message'=>$errStr];
+            if (is_object($arg[0])) {
+                $data = ['code'=>$arg[0]->getCode(), 'file'=>$arg[0]->getFile(), 'line'=>$arg[0]->getLine(), 'message'=>$arg[0]->getMessage(), 'trace'=>$arg[0]->getTrace()];
             } else {
-                if ($data = error_get_last()) {
-                    $data = ['code'=>$data['code'] ?? '', 'file'=>$data['file'], 'line'=>$data['line'], 'message'=>$data['message']];
-                }
+                $data = ['code'=>$arg[0], 'file'=>$arg[2], 'line'=>$arg[3], 'message'=>$arg[1]];
             }
         }
         if ($data) $this->errorEcho($data);

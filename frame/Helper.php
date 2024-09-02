@@ -28,9 +28,8 @@ function frame($name){
 function page($size=0, $total=0){
 	return frame('Paginator')->make($size, $total);
 }
-function siteUrl($name, $version=true){
-	if ($version) $name .= '?v='.version();
-	return $name;
+function siteUrl($name){
+	return '/'.(isMobile()?'mobile':'computer').'/'.$name.'?v='.version();
 }
 function mediaUrl($url, $width='', $version=true){
 	if ($width){
