@@ -43,7 +43,6 @@ class Login extends HomeBase
 		$this->view([
 			'_title' => distT('forget_password'),
 		]);
-		dd(frame('Html')->getCss());
 	}
 
 	public function sengCode()

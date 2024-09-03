@@ -9,6 +9,6 @@ class Index extends HomeBase
 	{
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$this->view(true);
+		$this->view();
 	}
 }

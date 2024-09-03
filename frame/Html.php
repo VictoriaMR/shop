@@ -7,37 +7,26 @@ class Html
 	protected $_CSS = [];
 	protected $_JS = [];
 
-	public function addCss($name='', $match=true)
+	public function addCss($name='')
 	{
-		$matchPath = '';
-		if ($match) {
-			$matchPath = (isMobile() ? 'mobile' : 'computer').'/';
-			$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
-		}
-		$this->_CSS[] = $matchPath.$name;
+		$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+		$this->_CSS[] = $name;
 	}
 
-	public function addJs($name='', $match=true)
+	public function addJs($name='')
 	{
-		$matchPath = '';
-		if ($match) {
-			$matchPath = (isMobile() ? 'mobile' : 'computer').'/';
-			$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
-		}
-		$this->_JS[] = $matchPath.$name;
+		$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+		$this->_JS[] = $name;
 	}
 
 	public function getCss()
 	{
-		if (empty($this->_CSS)) return [];
-		dd($this->_CSS);
-		return $this->addStaticFile($this->_CSS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'css');
+		return $this->_CSS ? $this->addStaticFile($this->_CSS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'css') : [];
 	}
 
 	public function getJs()
 	{
-		if (empty($this->_JS)) return [];
-		return $this->addStaticFile($this->_JS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'js');
+		return $this->_JS ? $this->addStaticFile($this->_JS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'js') : [];
 	}
 
 	public function getCommon($type)
@@ -59,7 +48,7 @@ class Html
 	{
 		$path = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/';
 		$file = 'static/'.$name.'.'.$type;
-		if (\App::get('base_info', 'static_cache', false) && is_file($path.$file)) return $file;
+		if (\App::get('domain', 'static_cache', false) && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
@@ -73,7 +62,7 @@ class Html
 			createDir($path.'static/');
 			if ($type == 'css') {
 				$str = $this->compressCss($str);
-			} elseif ($type == 'js') {
+			} else {
 
 			}
 			file_put_contents($path.$file, $str);

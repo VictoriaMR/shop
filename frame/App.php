@@ -67,7 +67,7 @@ class App
 		if (isset($except[$request['path']])) return true;
 		if (isset($except[$request['path'].'/'.$request['func']])) return true;
 		// 需要登录的要重定向
-		if (!userId()) {
+		if (userId() < 1) {
 			if (isAjax()) {
 				self::jsonRespone(400, 'need login');
 			} else {
@@ -97,10 +97,8 @@ class App
 
 	public static function runOver()
 	{
-		if (config('domain', 'debug')) {
-			frame('Debug')->init();
-			frame('Debug')->runlog();
-		}
+		config('domain', 'debug') && frame('Debug')->init();
+		config('domain', 'log') && frame('Debug')->runlog();
 		exit();
 	}
 

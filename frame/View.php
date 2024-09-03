@@ -23,6 +23,11 @@ class View
 		}
 	}
 
+	public function assign($key, $data)
+	{
+		$this->_data[$key] = $data;
+	}
+
 	private function getTemplate($template, $match=true)
 	{
 		if ($match) {
