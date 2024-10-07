@@ -1,0 +1,1 @@
+<div class="footer-copy-right">Copyright ©2020-<?php echo date('Y');?> <?php echo \App::get('domain', 'name'); ?> All Rights Reserved</div>
