@@ -1,35 +1,27 @@
-/* 页面ready */
-const $pageReady=function(){
-    var funcs = [];
+// 页面ready
+const $ready = (function() {
+    var funcs = new Array();
     var ready = false;
     function handler(e) {
-        if(!ready) {
-            for(var i=0; i<funcs.length; i++) {
-                funcs[i].call(e);
-            }
-            ready = true;
-            funcs = null;
+        ready = true;
+        for(var i=0; i<funcs.length; i++) {
+            funcs[i].call(e);
         }
     }
     if(document.addEventListener) {
-        document.addEventListener('DOMContentLoaded', handler, false);
-        document.addEventListener('readystatechange', handler, false);
         window.addEventListener('load', handler, false);
     }else if(document.attachEvent) {
-        document.attachEvent('onreadystatechange', handler);
         window.attachEvent('onload', handler);
+    } else {
+        fn.call(e);
     }
-    return function pageReady(fn) {
-        if (ready) {
-            fn.call(e);
-        } else {
-            funcs.push(fn);
-        }
+    return function dofunc(fn) {
+        ready ? fn.call(e) : funcs.push(fn);
     }
-}
-/* 绑定事件调用 */
-function $bindAction(type, name, fn){
+})();
+function bindHandle(type, name, fn) {
     var list = document.querySelectorAll(name);
+    console.log(name, list)
     for (var i=0; i<list.length; i++) {
         if(list[i].addEventListener) {
             list[i].addEventListener(type, fn, false);
@@ -38,27 +30,64 @@ function $bindAction(type, name, fn){
         }
     }
 }
-/* 点击事件绑定 */
-function $click(name, fn) {
-    $bindAction('click', name, fn);
-}
-/* 滚动事件 */
-function $scroll(){
-    $bindAction('scroll', name, fn);
-}
-/* 输入事件 */
-function $change(name, fn) {
-    $bindAction('input', name, fn);
-}
-/* 失去焦点事件 */
-function $blur(name, fn) {
-    $bindAction('blur', name, fn);
-}
-/* 失去焦点事件 */
-function $focus(name, fn) {
-    $bindAction('focus', name, fn);
-}
-/* 查找父类 */
+// 点击事件绑定
+const $click = (function(){
+    return function $click(name, fn) {
+        bindHandle('click', name, fn);
+    }
+})();
+// 滚动事件
+const $scroll = (function(){
+    var funcs = [];
+    window.addEventListener('scroll', function(e){
+        for (let i=0; i<funcs.length; i++) {
+            funcs[i].call(e);
+        }
+    });
+    return function $scroll(fn) {
+        funcs.push(fn);
+    }
+})();
+// 输入事件
+const $change = (function(){
+    return function $change(name, fn) {
+        var list = document.querySelectorAll(name);
+        for (var i=0; i<list.length; i++) {
+            if(list[i].addEventListener) {
+                list[i].addEventListener('input', fn, false);
+            }else if(list[i].attachEvent) {
+                list[i].attachEvent('input', fn);
+            }
+        }
+    }
+})();
+// 失去焦点事件
+const $blur = (function(){
+    return function $blur(name, fn) {
+        var list = document.querySelectorAll(name);
+        for (var i=0; i<list.length; i++) {
+            if(list[i].addEventListener) {
+                list[i].addEventListener('blur', fn, false);
+            }else if(list[i].attachEvent) {
+                list[i].attachEvent('blur', fn);
+            }
+        }
+    }
+})();
+// 失去焦点事件
+const $focus = (function(){
+    return function $focus(name, fn) {
+        var list = document.querySelectorAll(name);
+        for (var i=0; i<list.length; i++) {
+            if(list[i].addEventListener) {
+                list[i].addEventListener('focus', fn, false);
+            }else if(list[i].attachEvent) {
+                list[i].attachEvent('focus', fn);
+            }
+        }
+    }
+})();
+// 查找父类
 function parents(obj, className) {
     let node = obj;
     let status = true;
@@ -75,7 +104,7 @@ function parents(obj, className) {
     }
     return node;
 }
-/* 请求 */
+// 请求
 function post(url, param, callback) {
     let formData = new FormData();
     for (let i in param) {
@@ -90,7 +119,7 @@ function post(url, param, callback) {
         callback({code: 500, msg: error.message});
     });
 }
-/* 多语言翻译接口 */
+// 多语言翻译接口
 function distT(text, replace) {
     if (_language_translate && _language_translate[text]) {
         if (replace) {
@@ -100,7 +129,7 @@ function distT(text, replace) {
     }
     return text;
 }
-/* input组件错误 */
+// input组件错误
 function inputError(obj, text) {
     var pObj = obj.parentNode.parentNode;
     var obj = pObj.querySelector('.error-tips');
@@ -109,9 +138,20 @@ function inputError(obj, text) {
     }
     pObj.classList.remove('success');
     pObj.classList.add('error');
-    var p = document.createElement('p');
+    let p = document.createElement('p');
     p.className = 'error-tips';
     p.innerHTML = text
     pObj.appendChild(p);
     addShake(pObj.querySelector('.title'));
+}
+// 标签抖动
+function addShake(obj) {
+    obj.classList.add('shake');
+    navigator.vibrate = navigator.vibrate || navigator.webkitVibrate || navigator.mozVibrate || navigator.msVibrate;
+    if (navigator.vibrate) {
+        navigator.vibrate([200]);
+    }
+    setTimeout(function(){
+        obj.classList.remove('shake');
+    }, 600);
 }
