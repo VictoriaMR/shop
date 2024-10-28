@@ -1,6 +1,11 @@
 #address-container {
 	border-radius: .16rem .16rem 0 0;
 	max-height: 5.68rem;
+	bottom: -100%;
+	transition: bottom 0.4s;
+}
+#address-container.open {
+	bottom: 0;
 }
 #address-container .header {
 	border-bottom: 0.01rem solid #DFDFDF;
@@ -31,13 +36,29 @@
 	overflow-y: auto;
 }
 #address-container .middle .item {
-	margin-top: 0.16rem;
 	width: 100%;
+	margin-top: 0.16rem;
+}
+#address-container .middle .item.company-name-item {
+	display: none;
+}
+#address-container .middle .item .half-block {
+	height: 0.32rem;
+    line-height: 0.32rem;
+    text-align: center;
+    background: #F5F5F5;
+	cursor: pointer;
+}
+#address-container .middle .item .half-block.active {
+	font-weight: 700;
+	background: #000;
+	color: #fff;
 }
 #address-container .middle .item .item-left,
 #address-container .middle .item .item-right {
 	width: 50%;
-	display: table-cell;
+	display: inline-block;
+	-webkit-box-sizing: border-box;
 }
 #address-container .middle .item .item-left {
 	padding-right: 0.04rem;
@@ -63,12 +84,6 @@
 	border: 0.02rem solid #000;
 	padding: 0 0.29rem 0 .07rem;
 }
-#address-container .input-group input:focus ~ .dialing-code {
-	top: 0.02rem;
-	left: 0.02rem;
-	height: 0.36rem;
-	line-height: 0.36rem;
-}
 #address-container .input-group .dialing-code {
 	position: absolute;
 	top: 0.01rem;
@@ -83,11 +98,19 @@
 	background-color: #F5F5F5;
 	text-align: center;
 }
-#address-container .input-group .dialing-code ~ input {
+#address-container #phone-input-group input {
 	padding-left: 0.5rem;
+}
+#address-container #phone-input-group input:focus ~ 
+#address-container #phone-input-group .dialing-code {
+	top: 0.02rem;
+	left: 0.02rem;
+	height: 0.36rem;
+	line-height: 0.36rem;
 }
 #address-container .input-group .remove {
 	display: block;
+	opacity: 0;
 	width: 0.28rem;
 	height: 0.36rem;
 	background: url(/mobile/img/icon/remove.svg) no-repeat center center;
@@ -95,8 +118,8 @@
 	position: absolute;
 	top: 0.02rem;
 	right: 0.02rem;
-	transition: .4s allow-discrete;
+	transition: opacity .2s;
 }
 #address-container .input-group input:valid:focus ~ .remove {
-	display: block;
+	opacity: 1;
 }

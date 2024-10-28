@@ -1,11 +1,27 @@
-<div class="mask"></div>
-<div id="address-container" class="modal">
-	<div class="content">
+<div id="address-container" class="modal open">
+	<form class="content">
 		<div class="header">
 			<div class="title f14">Edit Address</div>
 			<div class="close-btn f0"><img src="<?php echo siteUrl('/img/icon/close.svg');?>" alt="close"></div>
 		</div>
 		<div class="middle">
+			<div class="item" style="border-radius: 0.06rem;overflow: hidden;">
+				<div class="item-left" style="padding-right: 0;">
+					<div class="half-block active">Personal</div>
+				</div><div class="item-right" style="padding-left: 0;">
+					<div class="half-block">Company</div>
+				</div>
+			</div>
+			<div class="item company-name-item">
+				<div class="input-group">
+					<div class="input-title">
+						<span class="c5">Company Name</span><span class="cr">*</span>
+					</div>
+					<div class="input-content">
+						<input type="text" name="company_name" autocomplete="off" placeholder="1-64 characters" maxlength="64" required="required"><i class="remove"></i>
+					</div>
+				</div>
+			</div>
 			<div class="item">
 				<div class="item-left">
 					<div class="input-group">
@@ -16,8 +32,7 @@
 							<input type="text" name="first_name" autocomplete="off" placeholder="1-32 characters" maxlength="32" required="required"><i class="remove"></i>
 						</div>
 					</div>
-				</div>
-				<div class="item-right">
+				</div><div class="item-right">
 					<div class="input-group">
 						<div class="input-title">
 							<span class="c5">Last Name</span><span class="cr">*</span>
@@ -39,8 +54,8 @@
 				</div>
 			</div>
 			<div class="item">
-				<div class="input-group">
-					<div class="input-title">Phone Number*</div>
+				<div class="input-group" id="phone-input-group">
+					<div class="input-title">Phone Number<span class="cr">*</span></div>
 					<div class="input-content">
 						<span class="dialing-code">+1</span><input class="phone-number" type="text" name="phone" autocomplete="off" id="phone" placeholder="For Delivery" maxlength="32" required="required"><i class="remove"></i>
 					</div>
@@ -80,5 +95,5 @@
 		<div class="footer">
 			<button class="btn btn-black">SAVE</button>
 		</div>
-	</div>
+	</form>
 </div>

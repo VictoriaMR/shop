@@ -102,7 +102,7 @@ input::-webkit-input-placeholder{
     right: 0;
     background: #000;
     opacity: 0.6;
-    transition: z-index .4s, opacity .3s;
+/*    transition: z-index .4s, opacity .3s;*/
     z-index: 101;
 }
 .modal.close{
@@ -110,9 +110,7 @@ input::-webkit-input-placeholder{
 }
 .modal {
     position: fixed;
-    left: 0;
     width: 100%;
-    bottom: 0;
     background-color: #ffffff;
     z-index: 102;
 }

@@ -5,7 +5,7 @@ return [
 		'mobile' => [],
 	],
 	'home' => [
-		'computer' => ['common', 'function'],
-		'mobile' => ['common', 'function'],
+		'computer' => ['function', 'common'],
+		'mobile' => ['function', 'common'],
 	],
 ];
