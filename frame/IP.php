@@ -2,8 +2,12 @@
 
 namespace frame;
 
+use \MaxMind\Db\Reader;
+
 class IP
 {
+	const DB_PATH = ROOT_PATH.'MaxMind/GeoLite2-City.mmdb';
+
 	public function isIp($ip)
 	{
 		return filter_var($ip, FILTER_VALIDATE_IP);
@@ -109,9 +113,25 @@ class IP
 		return $result;
 	}
 
-	public function ipMaskRange($ip, $mask){
+	public function ipMaskRange($ip, $mask)
+	{
 		$mask_size=$this->ipMaskSize($mask);
 		$rst=$this->ipRange($ip.'/'.$mask_size);
 		return $rst;
+	}
+
+	public function getIpCountry()
+	{
+		$reader = new Reader(self::DB_PATH);
+		$data = $reader->get($this->getIp());
+		return $data['country']['iso_code'] ?? '';
+	}
+
+	public function getIp()
+	{
+		if (!empty($_SERVER['HTTP_CLIENT_IP'])) return $_SERVER['HTTP_CLIENT_IP'];
+		if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) return $_SERVER['HTTP_X_FORWARDED_FOR'];
+		if (!empty($_SERVER['REMOTE_ADDR'])) return $_SERVER['REMOTE_ADDR'];
+		return '';
 	}
 }

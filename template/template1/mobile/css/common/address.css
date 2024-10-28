@@ -31,7 +31,7 @@
 	padding: 0.08rem 0.2rem;
 }
 #address-container .middle {
-	padding: 0 0.12rem;
+	padding: 0 0.12rem 0.12rem 0.12rem;
 	max-height: calc(100vh - 0.4rem - 0.56rem - 1.2rem);
 	overflow-y: auto;
 }
@@ -39,14 +39,17 @@
 	width: 100%;
 	margin-top: 0.16rem;
 }
+#address-container .middle .item.default-item {
+	border-top: 0.01rem solid #DFDFDF;
+}
 #address-container .middle .item.company-name-item {
 	display: none;
 }
 #address-container .middle .item .half-block {
 	height: 0.32rem;
-    line-height: 0.32rem;
-    text-align: center;
-    background: #F5F5F5;
+	line-height: 0.32rem;
+	text-align: center;
+	background: #F5F5F5;
 	cursor: pointer;
 }
 #address-container .middle .item .half-block.active {
@@ -58,6 +61,7 @@
 #address-container .middle .item .item-right {
 	width: 50%;
 	display: inline-block;
+	vertical-align: top;
 	-webkit-box-sizing: border-box;
 }
 #address-container .middle .item .item-left {
@@ -91,7 +95,7 @@
 	height: 0.38rem;
 	line-height: 0.38rem;
 	border-right: 0.01rem solid #CCC;
-	width: 0.4rem;
+	width: 0.39rem;
 	color: #555;
 	border-top-left-radius: 0.06rem;
 	border-bottom-left-radius: 0.06rem;
@@ -99,12 +103,15 @@
 	text-align: center;
 }
 #address-container #phone-input-group input {
-	padding-left: 0.5rem;
+	padding-left: 0.48rem;
 }
-#address-container #phone-input-group input:focus ~ 
-#address-container #phone-input-group .dialing-code {
+#address-container #phone-input-group input:focus {
+	padding-left: 0.47rem;
+}
+#address-container #phone-input-group input:focus + .dialing-code {
 	top: 0.02rem;
 	left: 0.02rem;
+	width: 0.38rem;
 	height: 0.36rem;
 	line-height: 0.36rem;
 }
@@ -122,4 +129,55 @@
 }
 #address-container .input-group input:valid:focus ~ .remove {
 	opacity: 1;
+}
+#address-container .select-group {
+	border: .01rem solid #ccc;
+	width: 100%;
+	padding: 0 0.3rem 0 .08rem;
+	height: 0.4rem;
+	border-radius: 0.06rem;
+	font-size: 0.14rem;
+	-webkit-box-sizing: border-box;
+}
+#address-container .middle .item.default-item .switch-item {
+	position: relative;
+	padding: 0.12rem 0 0.06rem;
+	line-height: 0.2rem;
+}
+.switch {
+	position: absolute;
+	width: 0.4rem;
+	height: 0.2rem;
+	border-radius: 1.1rem;
+	top: 0.12rem;
+	right: 0;
+}
+.switch .slider {
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #E5E5E5;
+	transition: .4s;
+	border-radius: 14px;
+}
+.switch .slider:before {
+	position: absolute;
+	content: "";
+	height: 0.16rem;
+	width: 0.16rem;
+	left: 0.02rem;
+	top: 0.02rem;
+	background-color: white;
+	transition: background-color .2s;
+	border-radius: 50%;
+}
+.switch.on .slider{
+	background-color: #222;
+}
+.switch.on .slider:before {
+	right: 0.02rem;
+	left: auto;
 }

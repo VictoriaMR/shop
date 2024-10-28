@@ -1,11 +1,11 @@
 <?php
 
-namespace app\model\currency;
+namespace app\model\system;
 use app\model\Base;
 
 class Currency extends Base
 {
-	protected $_table = 'currency';
+	protected $_table = 'sys_currency';
 	protected $_primaryKey = 'code';
 	protected $_updateTime = 'update_time';
 }

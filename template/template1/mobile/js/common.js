@@ -7,7 +7,7 @@ var docEl=document.documentElement;const xs=parseFloat(docEl.currentStyle?docEl.
 // modal 数组
 let modal_list=new Array();
 $(document).ready(function(){
-	$('.modal').on('click', '.close-btn', function(){
-		hideModal();
-	});
+	// 关闭弹窗
+	$('.modal').on('click', '.close-btn', hideModal);
+	$('body').on('click', '.mask', hideModal);
 });

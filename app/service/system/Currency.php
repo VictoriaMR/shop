@@ -1,6 +1,6 @@
 <?php 
 
-namespace app\service\currency;
+namespace app\service\system;
 use app\service\Base;
 
 class Currency extends Base

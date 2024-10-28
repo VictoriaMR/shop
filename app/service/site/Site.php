@@ -28,49 +28,13 @@ class Site extends Base
 		return $this->loadData([$type=>$key, 'status'=>1], 'site_id,type,path,name,domain,cate_id,email,view_cache,static_cache,debug');
 	}
 
-	public function deleteTemplateCache($siteId=0, $template=true, $static=true, $currency='')
+	public function getCountryCode()
 	{
-		$where = [];
-		if ($siteId > 0) {
-			$where['site_id'] = $siteId;
+		$countryCode = frame('Session')->get('default_country_code');
+		if (!$countryCode) {
+			$countryCode = frame('IP')->getIpCountry() ?: 'US';
+			frame('Session')->set('default_country_code', $countryCode);
 		}
-		$list = $this->getListData($where, 'path');
-		$path = ROOT_PATH.'template'.DS;
-		foreach ($list as $value) {
-			if ($template) {
-				$dir = $path.$value['path'].DS.'cache';
-				if ($currency) {
-					$this->deleteDir($dir.DS.'computer'.DS.$currency);
-					$this->deleteDir($dir.DS.'mobile'.DS.$currency);
-				} else {
-					$this->deleteDir($dir);
-				}
-			}
-			if ($static) {
-				$this->deleteDir($path.$value['path'].DS.'static');
-			}
-		}
-		return true;
-	}
-
-	private function deleteDir($dir)
-	{
-		if (!is_dir($dir)) {
-			return false;
-		}
-	    if (!$handle = @opendir($dir)) {
-	        return false;
-	    }
-	    while (false !== ($file = readdir($handle))) {
-	        if ($file !== "." && $file !== "..") {
-	            $file = $dir . '/' . $file;
-	            if (is_dir($file)) {
-	                $this->deleteDir($file);
-	            } else {
-	                @unlink($file);
-	            }
-	        }
-	    }
-	    @rmdir($dir);
+		return $countryCode;
 	}
 }

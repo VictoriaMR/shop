@@ -106,7 +106,7 @@ class IP
         if(isset($_SERVER['HTTP_CF_IPCOUNTRY'])){
             $code2 = $_SERVER['HTTP_CF_IPCOUNTRY'];
         }else{
-            $code2 = $this->getInfo(frame('Request')->getIp())['country_code'] ?? '';
+            $code2 = $this->getInfo(frame('IP')->getIp())['country_code'] ?? '';
         }
         if(empty($code2)){
             $code2 = 'US';

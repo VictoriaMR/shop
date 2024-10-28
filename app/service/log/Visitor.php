@@ -14,7 +14,7 @@ class Visitor extends Base
 		$data['browser'] = frame('Request')->getBrowser();
 		$data['system'] = frame('Request')->getSystem();
 		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
-		$data['ip'] = frame('Request')->getIp();
+		$data['ip'] = frame('IP')->getIp();
 		return $this->insertData($data);
 	}
 }

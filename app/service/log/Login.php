@@ -11,7 +11,7 @@ class Login extends Base
 			'mem_id' => userId(),
 			'site_id' => siteId(),
 			'info' => trim($info),
-			'ip' => frame('Request')->getIp(),
+			'ip' => frame('IP')->getIp(),
 		]);
 	}
 }
