@@ -29,22 +29,22 @@ function addShake(obj) {
 }
 // 弹窗展示
 function showModal(name) {
-	$(name).addClass('open');
-	modal_list.push(name);
-	if ($('#modal-mask').length == 0) {
-		$('body').append('<div id="modal-mask" class="mask"></div>');
-	}
+	var index = $('.modal.open').length * 2 + 101;
+	$(name).addClass('open').css('z-index', index+1);
+	$(name).after('<div class="mask" style="z-index:'+index+'"></div>');
 }
 // 弹窗关闭
-function hideModal() {
-	var len = modal_list.length;
-	if (len > 0) {
-		$(modal_list[len-1]).removeClass('open');
-		modal_list.splice(len-1, 1);
-		if (len <= 1) {
-			$('#modal-mask').fadeOut(200, function(){
-				$(this).remove();
-			});
-		}
-	}
+function hideModal1(e) {
+	var modal = $(this).parents('.modal');
+	modal.removeClass('open');
+	modal.next('.mask').fadeOut(200, function(){
+		$(this).remove();
+	});
+}
+// 弹窗关闭
+function hideModal2(e) {
+	$(this).prev('.modal').removeClass('open');
+	$(this).fadeOut(200, function(){
+		$(this).remove();
+	});
 }

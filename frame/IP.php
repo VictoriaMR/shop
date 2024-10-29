@@ -123,8 +123,7 @@ class IP
 	public function getIpCountry()
 	{
 		$reader = new Reader(self::DB_PATH);
-		$data = $reader->get($this->getIp());
-		return $data['country']['iso_code'] ?? '';
+		return $reader->get($this->getIp());
 	}
 
 	public function getIp()

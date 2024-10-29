@@ -23,17 +23,6 @@
 				</div>
 			</div>
 			<div class="item">
-				<div class="input-group">
-					<div class="input-title">
-						<span class="c5">Country</span><span class="cr">*</span>
-					</div>
-					<div class="select-group">
-						<div class="title">Unite State</div>
-						<i class="icon16 icon-down"></i>
-					</div>
-				</div>
-			</div>
-			<div class="item">
 				<div class="item-left">
 					<div class="input-group">
 						<div class="input-title">
@@ -57,10 +46,36 @@
 			<div class="item">
 				<div class="input-group">
 					<div class="input-title">
+						<span class="c5">Country</span><span class="cr">*</span>
+					</div>
+					<div class="select-group" data-to="#country-container">
+						<input type="hidden" name="country_code2" value="US">
+						<div class="title f14">Unite State</div>
+						<i class="icon16 icon-down"></i>
+					</div>
+				</div>
+			</div>
+			<div class="item">
+				<div class="input-group">
+					<div class="input-title">
 						<span class="c5">Zip/Post Code</span><span class="cr">*</span>
 					</div>
 					<div class="input-content">
 						<input type="text" name="postcode" autocomplete="off" placeholder="e.g. 20001 / 20001-0000" maxlength="32" required="required"><i class="remove"></i>
+					</div>
+				</div>
+			</div>
+			<div class="item state-item">
+				<div class="input-group">
+					<div class="input-title">
+						<span class="c5">State/Province</span><span class="cr">*</span>
+					</div>
+					<div class="select-group" data-to="#zone-container" style="display:none">
+						<div class="title f14">Select State/Province</div>
+						<i class="icon16 icon-down"></i>
+					</div>
+					<div class="input-content" style="display:none">
+						<input type="text" name="zone_name" autocomplete="off" placeholder="1-32 characters" maxlength="32" required="required"><i class="remove"></i>
 					</div>
 				</div>
 			</div>
@@ -124,9 +139,41 @@
 		</div>
 	</form>
 </div>
-<script>
-	const local_country = "<?php echo site()->getCountryCode();?>";
-	const country_list = "<?php echo json_encode(sys()->country()->getList());?>";
-
-</script>
-<?php 
+<div class="modal" id="country-container" data-type="country">
+	<div class="header">
+		<div class="title f14">Select Country</div>
+		<div class="close-btn f0"><img src="<?php echo siteUrl('/img/icon/close.svg');?>" alt="close"></div>
+	</div>
+	<div class="middle">
+		<div class="fliter-input-group">
+			<input type="text" name="fliter" placeholder="Search for Country">
+			<i class="icon16 icon-search"></i>
+		</div>
+		<div class="select-content">
+			<?php $group='';$local=site()->getCountryCode();
+			 foreach (sys()->country()->getList() as $value) {?>
+			<?php $firstName = substr($value['name'], 0, 1); if ($group != $firstName){?>
+			<div class="item group-name"><?php echo $firstName;?></div>
+			<?php $group=$firstName;}?>
+			<div class="item<?php echo $local==$value['code2']?' active':'';?>" data-code="<?php echo $value['code2'];?>" data-dialing_code="<?php echo $value['dialing_code'];?>" data-name="<?php echo $value['name'];?>"><?php echo $value['name'];?></div>
+			<?php }?>
+		</div>
+	</div>
+</div>
+<div class="modal" id="zone-container" data-type="zone">
+	<div class="header">
+		<div class="title f14">Select State/Province</div>
+		<div class="close-btn f0"><img src="<?php echo siteUrl('/img/icon/close.svg');?>" alt="close"></div>
+	</div>
+	<div class="middle">
+		<div class="fliter-input-group">
+			<input type="text" name="fliter" placeholder="Search for State/Province">
+			<i class="icon16 icon-search"></i>
+		</div>
+		<div class="select-content">
+			<?php foreach (sys()->zone()->getList() as $value) {?>
+			<div class="item" data-code2="<?php echo $value['country_code2'];?>" data-name="<?php echo $value['name'];?>"><?php echo $value['name'];?></div>
+			<?php }?>
+		</div>
+	</div>
+</div>

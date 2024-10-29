@@ -1,12 +1,42 @@
+function initSelectContent(name) {
+	var obj = $(name).find('.select-content');
+	var obj2 = obj.find('.item.active');
+	if (obj2.length > 0 && obj.scrollTop() <= 0) {
+		obj.scrollTop(obj2.position().top - obj.height()/2 - obj2.height()*2);
+	}
+}
+function initAddress(config) {
+
+}
+function initCountry(data) {
+	var pObj = $('#address-container');
+	var obj = pObj.find('input[name="country_code2"]');
+	var zObj = $('#zone-container');
+	obj.val(data.code);
+	obj.next().text(data.name);
+	pObj.find('.dialing-code').text('+'+data.dialing_code);
+	zObj.find('.select-content .item').hide();
+	if (zObj.find('[data-code2="'+data.code+'"]').length > 0) {
+		zObj.find('[data-code2="'+data.code+'"]').show();
+		pObj.find('.state-item .select-group').show();
+		pObj.find('.state-item .input-content').hide();
+	} else {
+		pObj.find('.state-item .input-content').show();
+		pObj.find('.state-item .select-group').hide();
+	}
+}
+function initZone(data) {
+	var pObj = $('#address-container .state-item');
+	pObj.find('input[name="zone_name"]').val(data.name);
+	pObj.find('.title').eq(0).text(data.name);
+}
 $(document).ready(function(){
+	initCountry($('#country-container .item.active').data());
 	$('.address-edit-btn').on('click', function(){
 		var config = $(this).data('config');
 		showModal('#address-container');
 		initAddress(config);
 	});
-	function initAddress(config) {
-
-	}
 	$('#address-container').on('click', '.remove', function(){
 		if ($(this).css('opacity') != '0') {
 			$(this).prev().val('');
@@ -50,6 +80,40 @@ $(document).ready(function(){
 		if (!check) {
 			return false;
 		}
-		console.log('here')
+		$.post('/api/address', form.serializeArray(), function(res){
+			
+		});
+	});
+	// 过滤
+	$('.modal').on('input', 'input[name="fliter"]', function(){
+		var val = $(this).val().toUpperCase();
+		if (val == '') {
+			$(this).parent().next().find('.item').show();
+		} else {
+			$(this).parent().next().find('.item').each(function(){
+				if ($(this).text().toUpperCase().indexOf(val) < 0) {
+					$(this).hide();
+				}
+			});
+		}
+	});
+	// 点击选择弹窗
+	$('#address-container').on('click', '.select-group', function(){
+		var to = $(this).data('to');
+		initSelectContent(to);
+		showModal(to);
+	});
+	$('.modal').on('click', '.select-content .item', function(){
+		$(this).addClass('active').siblings().removeClass('active');
+		var obj = $(this).parents('.modal');
+		if (obj.data('type') == 'country') {
+			initCountry($(this).data());
+			// 初始化state
+			$('#address-container .state-item .title').text('Select State/Province');
+			$('#address-container .state-item [name="zone_name"]').val('');
+		} else {
+			initZone($(this).data());
+		}
+		obj.find('.close-btn').click();
 	});
 });

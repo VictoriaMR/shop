@@ -7,6 +7,6 @@ class Country extends Base
 {
 	public function getList()
 	{
-		return $this->getListData([], 'code2,dialing_code,name_en as name');
+		return $this->getListData([], 'code2,dialing_code,name_en as name', 0, 0, ['name_en'=>'asc']);
 	}
 }

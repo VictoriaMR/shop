@@ -31,8 +31,8 @@ class Site extends Base
 	public function getCountryCode()
 	{
 		$countryCode = frame('Session')->get('default_country_code');
-		if (!$countryCode) {
-			$countryCode = frame('IP')->getIpCountry() ?: 'US';
+		if (true || !$countryCode) {
+			$countryCode = frame('IP')->getIpCountry()['country']['iso_code'] ?? 'US';
 			frame('Session')->set('default_country_code', $countryCode);
 		}
 		return $countryCode;
