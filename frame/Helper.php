@@ -54,6 +54,9 @@ function isMobile(){
 	defined('IS_MOBILE') || define('IS_MOBILE', frame('Request')->isMobile());
 	return IS_MOBILE;
 }
+function isLogin(){
+	return '';
+}
 function ipost($name='', $default=null){
 	return frame('Request')->ipost($name, $default);
 }
@@ -130,9 +133,9 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 function lanId($type='id'){
 	return frame('Session')->get('site_language_'.$type, $type=='code'?'en':1);
 }
-function userId(){
+function userId($login=true){
 	$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
-	if (!$uid) $uid = '10000';
+	if ($login && !$uid) $uid = '10000';
 	return $uid;
 }
 function createDir($dir){

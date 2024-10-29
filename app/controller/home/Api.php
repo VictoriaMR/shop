@@ -80,4 +80,47 @@ class Api extends HomeBase
 		service('supplier/Url')->addUrl($url, $priority);
 		$this->success();
 	}
+
+	public function address()
+	{
+		$company_name = ipost('company_name', '');
+		$first_name = ipost('first_name', '');
+		$last_name = ipost('last_name', '');
+		$country_code2 = ipost('country_code2', '');
+		$postcode = ipost('postcode', '');
+		$zone_name = ipost('zone_name', '');
+		$phone = ipost('phone', '');
+		$city = ipost('city', '');
+		$address_line1 = ipost('address_line1', '');
+		$address_line2 = ipost('address_line2', '');
+		$default_shipping_address = ipost('default_shipping_address/d', 0);
+		$default_billing_address = ipost('default_billing_address/d', 0);
+		if (empty($first_name)) {
+			$this->error(appT('first_name_vaild'));
+		}
+		if (empty($last_name)) {
+			$this->error(appT('last_name_vaild'));
+		}
+		if (empty($country_code2)) {
+			$this->error(appT('country_vaild'));
+		}
+		if (empty($zone_name)) {
+			$this->error(appT('zone_vaild'));
+		}
+		if (empty($phone)) {
+			$this->error(appT('phone_vaild'));
+		}
+		if (empty($city)) {
+			$this->error(appT('city_vaild'));
+		}
+		if (empty($address_line1)) {
+			$this->error(appT('address_line1_vaild'));
+		}
+		if ($this->isLogin()) {
+
+		} else {
+
+		}
+		dd(ipost());
+	}
 }

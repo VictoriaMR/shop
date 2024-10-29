@@ -135,7 +135,7 @@
 			</div>
 		</div>
 		<div class="footer">
-			<button type="button" class="btn btn-black btn-save"><SAVEdiv class="loader"></SAVEdiv></button>
+			<button type="button" class="btn btn-black btn-save">Save</button>
 		</div>
 	</form>
 </div>

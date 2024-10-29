@@ -48,3 +48,12 @@ function hideModal2(e) {
 		$(this).remove();
 	});
 }
+function loading(obj) {
+    obj.attr('disabled', 'disabled');
+    obj.data('loading_text', obj.text());
+    obj.html('<div class="loader"></div>');
+}
+function loaded(obj) {
+    obj.prop('disabled', false);
+    obj.html(obj.data('loading_text'));
+}

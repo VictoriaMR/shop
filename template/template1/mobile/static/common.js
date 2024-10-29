@@ -49,6 +49,15 @@ function hideModal2(e) {
 		$(this).remove();
 	});
 }
+function loading(obj) {
+    obj.attr('disabled', 'disabled');
+    obj.data('loading_text', obj.text());
+    obj.html('<div class="loader"></div>');
+}
+function loaded(obj) {
+    obj.prop('disabled', false);
+    obj.html(obj.data('loading_text'));
+}
 /* common */
 /* 页面缩放 */
 var docEl=document.documentElement;const xs=parseFloat(docEl.currentStyle?docEl.currentStyle["fontSize"]:getComputedStyle(docEl,false)["fontSize"])/100;const recalc=function(){docEl.style.fontSize=(docEl.clientWidth/3.75/xs)+"px"};window.addEventListener("orientationchange" in window?"orientationchange":"resize",recalc,false);recalc();

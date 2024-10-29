@@ -38,6 +38,33 @@
 	padding: 0.12rem 0 0.06rem;
 	line-height: 0.2rem;
 }
+.input-group .dialing-code {
+	position: absolute;
+	top: 0.01rem;
+	left: 0.01rem;
+	line-height: 0.38rem;
+	border-right: 0.01rem solid #CCC;
+	width: 0.39rem;
+	color: #555;
+	border-top-left-radius: 0.06rem;
+	border-bottom-left-radius: 0.06rem;
+	background-color: #F5F5F5;
+	text-align: center;
+	-webkit-box-sizing: border-box;
+}
+#phone-input-group input {
+	padding-left: 0.48rem;
+}
+#phone-input-group input:focus {
+	padding-left: 0.47rem;
+}
+#phone-input-group input:focus + .dialing-code {
+	top: 0.02rem;
+	left: 0.02rem;
+	width: 0.38rem;
+	line-height: 0.36rem;
+	padding-right: 0.01rem;
+}
 .switch {
 	position: absolute;
 	width: 0.4rem;

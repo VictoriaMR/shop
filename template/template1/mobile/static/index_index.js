@@ -10,8 +10,10 @@ function initAddress(config) {
 
 }
 function initCountry(data) {
+	if (!data) return false;
 	var pObj = $('#address-container');
 	var obj = pObj.find('input[name="country_code2"]');
+	obj.parents('.input-group').removeClass('error');
 	var zObj = $('#zone-container');
 	obj.val(data.code);
 	obj.next().text(data.name);
@@ -28,7 +30,9 @@ function initCountry(data) {
 }
 function initZone(data) {
 	var pObj = $('#address-container .state-item');
-	pObj.find('input[name="zone_name"]').val(data.name);
+	var obj = pObj.find('input[name="zone_name"]');
+	obj.parents('.input-group').removeClass('error');
+	obj.val(data.name);
 	pObj.find('.title').eq(0).text(data.name);
 }
 $(document).ready(function(){
@@ -70,7 +74,8 @@ $(document).ready(function(){
 	});
 	// 保存
 	$('#address-container').on('click', '.btn-save', function(){
-		var form = $(this).parents('form');
+		var obj = $(this);
+		var form = obj.parents('form');
 		var check = true;
 		form.find('[required="required"]').each(function(){
 			if ($(this).parents('.item').is(':visible') && !$(this).val()) {
@@ -81,6 +86,7 @@ $(document).ready(function(){
 		if (!check) {
 			return false;
 		}
+		loading(obj);
 		$.post('/api/address', form.serializeArray(), function(res){
 			
 		});
@@ -117,4 +123,7 @@ $(document).ready(function(){
 		}
 		obj.find('.close-btn').click();
 	});
+	$('#address-container').on('input', 'input', function(){
+		$(this).parents('.input-group').removeClass('error');
+	})
 });
