@@ -70,4 +70,23 @@ $(document).ready(function(){
 	// 关闭弹窗
 	$('.modal').on('click', '.close-btn', hideModal1);
 	$('body').on('click', '.mask', hideModal2);
+	// 过滤
+	$('.input-group').on('input', 'input[name="fliter"]', function(){
+		var val = $(this).val().toUpperCase();
+		if (val == '') {
+			$(this).parent().next().find('.item').show();
+		} else {
+			$(this).parent().next().find('.item').each(function(){
+				if ($(this).text().toUpperCase().indexOf(val) < 0) {
+					$(this).hide();
+				}
+			});
+		}
+	});
+	// 清空input内容
+	$('.input-group').on('click', '.remove', function(){
+		if ($(this).css('opacity') != '0') {
+			$(this).prev().val('');
+		}
+	});
 });

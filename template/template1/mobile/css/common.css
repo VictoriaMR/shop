@@ -29,6 +29,9 @@ input::-webkit-input-placeholder{
 .center {
 	text-align: center;
 }
+.relative {
+    position: relative;
+}
 .line-gray {
 	height: 0.1rem;
 	width: 100%;
@@ -98,6 +101,11 @@ input::-webkit-input-placeholder{
 	display: block;
 }
 /*icon start*/
+.icon12 {
+	width: 0.12rem;
+	height: 0.12rem;
+	display: inline-block;
+}
 .icon16 {
 	width: 0.16rem;
 	height: 0.16rem;
@@ -116,6 +124,9 @@ input::-webkit-input-placeholder{
 }
 .icon-search {
 	background: url(/mobile/img/icon/search.svg) no-repeat;
+}
+.icon-notice {
+	background: url(/mobile/img/icon/notice.svg) no-repeat;
 }
 /*icon end*/
 /*footer start*/
@@ -147,10 +158,21 @@ input::-webkit-input-placeholder{
 /*footer end*/
 /*header start*/
 #header .header-info{
-	height: 0.5rem;
+	height: 0.48rem;
 }
 #header .header-search{
 	padding: 0.06rem 0;
+}
+#header .header-search input {
+    border: none;
+    border-radius: 0.2rem;
+    background: #F5F5F5;
+    padding: 0 0.06rem 0 0.4rem;
+}
+#header .header-search .icon-search {
+    position: absolute;
+    top: 0.18rem;
+    left: 0.12rem;
 }
 /*header end*/
 /*modal start*/
