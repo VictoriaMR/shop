@@ -47,13 +47,13 @@ input::-webkit-input-placeholder{
 	font-size: 0.14rem;
 }
 .btn {
-    position: relative;
+	position: relative;
 	width: 100%;
 	height: 0.4rem;
 	font-size: 0.14rem;
 	font-weight: 600;
 	border-radius: 0.06rem;
-    overflow: hidden;
+	overflow: hidden;
 }
 .btn-black {
 	background-color: #000;
@@ -90,12 +90,12 @@ input::-webkit-input-placeholder{
 	background-color: #FFFAFA;
 }
 .input-group .error-tips {
-    display: none;
+	display: none;
 	color: #E00E00;
 	margin-top: 0.02rem;
 }
 .input-group.error .error-tips {
-    display: block;
+	display: block;
 }
 /*icon start*/
 .icon16 {
@@ -145,6 +145,14 @@ input::-webkit-input-placeholder{
 	color: #666666;
 }
 /*footer end*/
+/*header start*/
+#header .header-info{
+	height: 0.5rem;
+}
+#header .header-search{
+	padding: 0.06rem 0;
+}
+/*header end*/
 /*modal start*/
 .mask {
 	position: fixed;
@@ -257,12 +265,12 @@ input::-webkit-input-placeholder{
 }
 .modal .fliter-input-group input{
 	background: #f5f5f5;
-    border-radius: 0.2rem;
-    width: 100%;
-    height: 0.4rem;
-    line-height: 0.4rem;
-    padding: 0 0.08rem 0 0.4rem;
-    border: none;
+	border-radius: 0.2rem;
+	width: 100%;
+	height: 0.4rem;
+	line-height: 0.4rem;
+	padding: 0 0.08rem 0 0.4rem;
+	border: none;
 }
 .modal .fliter-input-group .icon16 {
 	position: absolute;
@@ -271,9 +279,9 @@ input::-webkit-input-placeholder{
 }
 .modal .select-content .item {
 	height: 0.4rem;
-    line-height: 0.4rem;
-    color: #333;
-    padding: 0 0.12rem;
+	line-height: 0.4rem;
+	color: #333;
+	padding: 0 0.12rem;
 }
 .modal .select-content .item.group-name {
 	font-weight: 700;
@@ -282,7 +290,7 @@ input::-webkit-input-placeholder{
 }
 .modal .select-content .item.active {
 	border-radius: 0.06rem;
-    background: #eee;
+	background: #eee;
 }
 .modal .select-content {
 	height: calc(100vh - 0.4rem - 0.56rem - 1.2rem - 0.68rem);
@@ -290,20 +298,20 @@ input::-webkit-input-placeholder{
 }
 /*input-group end*/
 .loader::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #fff;
-    opacity: 0.3;
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: #fff;
+	opacity: 0.3;
 }
 .loader::after {
-    content: '';
-    position: absolute;
-    top: calc(50% - 0.1rem);
-    left: calc(50% - 0.1rem);
+	content: '';
+	position: absolute;
+	top: calc(50% - 0.1rem);
+	left: calc(50% - 0.1rem);
 	border: 0.03rem solid #fff;
 	border-top: 0.01rem solid #4d4d4d;
 	border-radius: 50%;
@@ -311,7 +319,7 @@ input::-webkit-input-placeholder{
 	height: 0.2rem;
 	display: block;
 	animation: spin 1s linear infinite;
-    -webkit-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
 }
 @keyframes spin {
 	0% {transform: rotate(0deg)}

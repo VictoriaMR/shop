@@ -97,7 +97,7 @@ class App
 
 	public static function runOver()
 	{
-		config('domain', 'debug') && frame('Debug')->init();
+		config('domain', 'debug') && !isAjax() && frame('Debug')->init();
 		config('domain', 'log') && frame('Debug')->runlog();
 		exit();
 	}

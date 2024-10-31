@@ -85,9 +85,14 @@ $(document).ready(function(){
 		if (!check) {
 			return false;
 		}
-		loading(obj);
+		// loading(obj);
 		$.post('/api/address', form.serializeArray(), function(res){
-			
+			showTips(res);
+			if (res.code) {
+				setTimeOut(window.location.reload, 300);
+			} else {
+				loaded(obj);
+			}
 		});
 	});
 	// 过滤

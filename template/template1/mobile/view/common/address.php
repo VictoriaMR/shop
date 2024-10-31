@@ -1,5 +1,6 @@
 <div id="address-container" class="modal open">
 	<form class="content">
+		<input type="hidden" name="address_id" value="0">
 		<div class="header">
 			<div class="title f14">Edit Address</div>
 			<div class="close-btn f0"><img src="<?php echo siteUrl('/img/icon/close.svg');?>" alt="close"></div>

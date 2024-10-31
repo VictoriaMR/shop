@@ -83,6 +83,7 @@ class Api extends HomeBase
 
 	public function address()
 	{
+		$id = ipost('address_id/d', 0);
 		$company_name = ipost('company_name', '');
 		$first_name = ipost('first_name', '');
 		$last_name = ipost('last_name', '');
@@ -116,11 +117,36 @@ class Api extends HomeBase
 		if (empty($address_line1)) {
 			$this->error(appT('address_line1_vaild'));
 		}
+		$data = [
+			'company_name' => $company_name,
+			'first_name' => $first_name,
+			'last_name' => $last_name,
+			'country_code2' => $country_code2,
+			'postcode' => $postcode,
+			'state' => $zone_name,
+			'phone' => $phone,
+			'city' => $city,
+			'address1' => $address_line1,
+			'address2' => $address_line2,
+			'is_default' => $default_shipping_address,
+			'is_bill' => $default_billing_address,
+		];
 		if ($this->isLogin()) {
-
+			if ($id > 0) {
+				if (!service('member/Address')->getCountData(['address_id'=>$id, 'mem_id'=>userId()])) {
+					$this->error(appT('address_not_exist'));
+				}
+				$rst = service('member/Address')->updateData($id, $data);
+			} else {
+				$rst = service('member/Address')->insertData($data);
+			}
 		} else {
-
+			$rst = frame('Session')->set('guest_address', $data);
 		}
-		dd(ipost());
+		if ($rst) {
+			$this->success(appT('address_success'));
+		} else {
+			$this->error(appT('address_error'));
+		}
 	}
 }

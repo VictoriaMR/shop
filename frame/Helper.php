@@ -135,7 +135,7 @@ function lanId($type='id'){
 }
 function userId($login=true){
 	$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
-	if ($login && !$uid) $uid = '10000';
+	if (!$login && !$uid) $uid = '10000';
 	return $uid;
 }
 function createDir($dir){
@@ -143,4 +143,16 @@ function createDir($dir){
 		mkdir($dir, 0755, true);
 	}
 	return $dir;
+}
+function sys() {
+	return service('system/System');
+}
+function site() {
+	return service('site/Site');
+}
+function now() {
+	return date('Y-m-d H:i:s');
+}
+function siteId() {
+	return \App::get('domain', 'site_id');
 }
