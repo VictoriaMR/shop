@@ -3,11 +3,11 @@ body {
 	color: #000;
 	-webkit-user-select: none;
 	font-family: "Segoe UI", sans-serif;
-	-webkit-box-sizing: border-box;
 }
 body, textarea, select, button, td, th, p, div, span, ul, li {
 	font-size: 0.12rem;
 	font-weight: normal;
+	-webkit-box-sizing: border-box;
 }
 p {
 	margin: 0;
@@ -62,6 +62,11 @@ input::-webkit-input-placeholder{
 	background-color: #000;
 	color: #fff;
 	border:none;
+}
+.btn-white {
+	background-color: #fff;
+	color: #000;
+	border: 0.01rem solid #000;
 }
 .con12 {
 	padding: 0 0.12rem;
@@ -128,6 +133,9 @@ input::-webkit-input-placeholder{
 .icon-notice {
 	background: url(/mobile/img/icon/notice.svg) no-repeat;
 }
+.icon-close {
+	background: url(/mobile/img/icon/close.svg) no-repeat;
+}
 /*icon end*/
 /*footer start*/
 .footer-all .item {
@@ -185,6 +193,9 @@ input::-webkit-input-placeholder{
 	background: #000;
 	opacity: 0.6;
 	z-index: 101;
+}
+.mask.white {
+	background: #fff;
 }
 .modal.close{
 	bottom: -100%;
@@ -272,7 +283,6 @@ input::-webkit-input-placeholder{
 	height: 0.4rem;
 	line-height: 0.38rem;
 	border-radius: 0.06rem;
-	-webkit-box-sizing: border-box;
 	position: relative;
 }
 .select-group .icon16 {
@@ -341,7 +351,6 @@ input::-webkit-input-placeholder{
 	height: 0.2rem;
 	display: block;
 	animation: spin 1s linear infinite;
-	-webkit-box-sizing: border-box;
 }
 @keyframes spin {
 	0% {transform: rotate(0deg)}

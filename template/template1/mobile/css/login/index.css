@@ -13,3 +13,43 @@
 #login-page .input-title span {
 	font-size: 0.14rem;
 }
+.verify-code-modal {
+	display: none;
+    width: 3.51rem;
+    height: max-content;
+    left: 0.12rem;
+    top: 50%;
+    transform: translate(0, -50%);
+    background-color: #fff;
+    border-radius: 0.16rem;
+    padding: 0.32rem;
+    font-size: 0.13rem;
+    line-height: 0.17rem;
+    box-shadow: 0 0.02rem 0.06rem #ddd;
+}
+.verify-code-modal .icon16 {
+	position: absolute;
+	top: 0.08rem;
+	right: 0.08rem;
+}
+.verify-code-modal.open {
+	display: block;
+}
+#login-page .send-code-btn {
+    width: 0.80rem;
+    padding: 0;
+    height: 0.36rem;
+    position: absolute;
+    top: 0.02rem;
+    right: 0.02rem;
+    color: #666;
+    background-color: #fff;
+    text-decoration: underline;
+    border: none;
+}
+#login-page .button-content .btn{
+    margin-bottom: 0.2rem;
+}
+#login-page .button-content .btn:last-child {
+    margin-bottom: 0;
+}

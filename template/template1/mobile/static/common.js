@@ -31,8 +31,9 @@ function addShake(obj) {
 // 弹窗展示
 function showModal(name) {
 	var index = $('.modal.open').length * 2 + 101;
-	$(name).addClass('open').css('z-index', index+1);
-	$(name).after('<div class="mask" style="z-index:'+index+'"></div>');
+	var obj = $(name);
+	obj.addClass('open').css('z-index', index+1);
+	obj.after('<div class="mask '+obj.data('type')+'" style="z-index:'+index+'"></div>');
 }
 // 弹窗关闭
 function hideModal1(e) {

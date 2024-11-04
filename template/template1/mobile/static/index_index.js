@@ -42,11 +42,6 @@ $(document).ready(function(){
 		showModal('#address-container');
 		initAddress(config);
 	});
-	$('#address-container').on('click', '.remove', function(){
-		if ($(this).css('opacity') != '0') {
-			$(this).prev().val('');
-		}
-	});
 	$('#address-container').on('click', '.half-block', function(){
 		if ($(this).hasClass('active')) {
 			return false;
@@ -96,19 +91,7 @@ $(document).ready(function(){
 			}
 		});
 	});
-	// 过滤
-	$('.modal').on('input', 'input[name="fliter"]', function(){
-		var val = $(this).val().toUpperCase();
-		if (val == '') {
-			$(this).parent().next().find('.item').show();
-		} else {
-			$(this).parent().next().find('.item').each(function(){
-				if ($(this).text().toUpperCase().indexOf(val) < 0) {
-					$(this).hide();
-				}
-			});
-		}
-	});
+	
 	// 点击选择弹窗
 	$('#address-container').on('click', '.select-group', function(){
 		var to = $(this).data('to');
