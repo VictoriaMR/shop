@@ -58,3 +58,7 @@ function loaded(obj) {
 	obj.prop('disabled', false);
 	obj.html(obj.data('loading_text'));
 }
+// 请求
+function post(url, param, callback) {
+	$.post(url, window.btoa(JSON.stringify(param)), callback);
+}

@@ -30,7 +30,7 @@ input::-webkit-input-placeholder{
 	text-align: center;
 }
 .relative {
-    position: relative;
+	position: relative;
 }
 .line-gray {
 	height: 0.1rem;
@@ -52,7 +52,7 @@ input::-webkit-input-placeholder{
 .btn {
 	position: relative;
 	width: 100%;
-	height: 0.4rem;
+	height: 0.44rem;
 	font-size: 0.14rem;
 	font-weight: 600;
 	border-radius: 0.06rem;
@@ -136,6 +136,12 @@ input::-webkit-input-placeholder{
 .icon-close {
 	background: url(/mobile/img/icon/close.svg) no-repeat;
 }
+.icon-eye-close {
+	background: url(/mobile/img/icon/eye-close.svg) no-repeat center center;
+}
+.icon-eye-open {
+	background: url(/mobile/img/icon/eye-open.svg) no-repeat center center;
+}
 /*icon end*/
 /*footer start*/
 .footer-all .item {
@@ -172,15 +178,15 @@ input::-webkit-input-placeholder{
 	padding: 0.06rem 0;
 }
 #header .header-search input {
-    border: none;
-    border-radius: 0.2rem;
-    background: #F5F5F5;
-    padding: 0 0.06rem 0 0.4rem;
+	border: none;
+	border-radius: 0.2rem;
+	background: #F5F5F5;
+	padding: 0 0.06rem 0 0.4rem;
 }
 #header .header-search .icon-search {
-    position: absolute;
-    top: 0.18rem;
-    left: 0.12rem;
+	position: absolute;
+	top: 0.18rem;
+	left: 0.12rem;
 }
 /*header end*/
 /*modal start*/
@@ -253,7 +259,7 @@ input::-webkit-input-placeholder{
 	border: .01rem solid #ccc;
 	width: 100%;
 	padding: 0 0.3rem 0 .08rem;
-	height: 0.4rem;
+	height: 0.44rem;
 	border-radius: 0.06rem;
 	font-size: 0.14rem;
 }
@@ -265,7 +271,7 @@ input::-webkit-input-placeholder{
 	display: block;
 	opacity: 0;
 	width: 0.28rem;
-	height: 0.36rem;
+	height: 0.4rem;
 	background: url(/mobile/img/icon/remove.svg) no-repeat center center;
 	background-size: 0.2rem 0.2rem;
 	position: absolute;
@@ -355,4 +361,28 @@ input::-webkit-input-placeholder{
 @keyframes spin {
 	0% {transform: rotate(0deg)}
 	100% {transform: rotate(360deg)}
+}
+.line-content {
+	display: table;
+	width: 100%;
+	height: .2rem;
+}
+.line-content .line-title {
+	display: table-cell;
+	width: 58%;
+	font-size: .14rem;
+	color: #666;
+	text-align: center;
+	margin: .16rem 0;
+}
+.line-content .line-tcell {
+	display: table-cell;
+	width: 21%;
+	height: 100%;
+	vertical-align: middle;
+}
+.line-content .line-tcell .line {
+	width: 100%;
+	height: .01rem;
+	background: #f5f5f5;
 }

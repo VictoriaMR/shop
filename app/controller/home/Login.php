@@ -8,6 +8,9 @@ class Login extends HomeBase
 	public function index()
 	{	
 		if (isAjax()) {
+			dd($_POST);
+			dd(base64_decode(key(ipost())));
+
 			$email = ipost('email');
 			$verifyCode = ipost('verify_code');
 			if (!verify($email, 'email')) {

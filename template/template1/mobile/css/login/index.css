@@ -1,17 +1,24 @@
-#login-page {
-	padding-top: 0.4rem;
+#login-page,
+#register-page {
+	padding: 0.4rem 0;
 }
-#login-page .title {
+#page-content .title {
 	font-size: .20rem;
     text-align: center;
     font-weight: 600;
-    margin-bottom: 0.24rem;
+    margin-bottom: 0.4rem;
 }
-#login-page .input-group {
+#page-content .input-group {
 	margin-bottom: 0.2rem;
 }
-#login-page .input-title span {
+#page-content .input-title span {
 	font-size: 0.14rem;
+}
+.input-group .input-content .icon24 {
+    position: absolute;
+    top: 0.02rem;
+    right: 0.12rem;
+    height: 0.4rem;
 }
 .verify-code-modal {
 	display: none;
@@ -35,10 +42,10 @@
 .verify-code-modal.open {
 	display: block;
 }
-#login-page .send-code-btn {
+#login-page .verify-code-group .send-code-btn {
     width: 0.80rem;
     padding: 0;
-    height: 0.36rem;
+    height: 0.4rem;
     position: absolute;
     top: 0.02rem;
     right: 0.02rem;
@@ -47,9 +54,36 @@
     text-decoration: underline;
     border: none;
 }
-#login-page .button-content .btn{
-    margin-bottom: 0.2rem;
+#login-page .verify-code-group input {
+    padding-right: 0.82rem;
 }
-#login-page .button-content .btn:last-child {
-    margin-bottom: 0;
+#login-page .verify-code-group .remove {
+    right: 0.82rem;
+}
+#login-page .button-content {
+    padding-top: 0.3rem;
+}
+.btn-white.no-border {
+    border: none;
+    text-decoration: underline;
+}
+#login-page .password {
+    display: none;
+}
+#page-content .password-group input {
+    padding-right: 0.54rem;
+}
+#page-content .password-group .remove {
+    right: 0.38rem;
+}
+#page-content .sign-up-agree {
+    margin-bottom: 0.15rem;
+    color: #666;
+}
+#page-content .sign-up-agree a {
+    color: #666;
+    text-decoration: underline;
+}
+#page-content .button-content .btn{
+    margin-top: 0.2rem;
 }

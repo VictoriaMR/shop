@@ -110,7 +110,4 @@ $(document).ready(function(){
 		}
 		obj.find('.close-btn').click();
 	});
-	$('#address-container').on('input', 'input', function(){
-		$(this).parents('.input-group').removeClass('error');
-	})
 });

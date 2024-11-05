@@ -38,6 +38,9 @@ function mediaUrl($url, $width='', $version=true){
 	}
 	return siteUrl($url);
 }
+function url($c='', $p=[]) {
+	return frame('Router')->url($c, $p);
+}
 function version(){
 	return '1.0.0';
 }

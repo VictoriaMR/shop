@@ -4,42 +4,23 @@ namespace frame;
 
 final class Router
 {
-	private $include_param = ['rid', 'vid', 'aid', 'sort', 'page', 'size'];
-	private $include_path = ['c', 'p', 's', 'f', 'g', 'search'];
-	private $path_format = [
-		'a' => 'Article',
-		'c'=> 'Category',
-		'p' => 'Product',
-		's' => 'Product',
-		'f' => 'Faq',
-		'g' => 'Faq',
-		'search' => 'Search',
-	];
+	protected $funcExcept = ['faq', 'product'];
 
 	public function analyze($class)
-	{
-		if (!empty($_SERVER['REQUEST_URI'])) {
-			$tempArr = array_reverse(array_filter(explode('-', str_replace('.html', '', ltrim(parse_url($_SERVER['REQUEST_URI'])['path'], '/')))));
-			array_shift($_GET);
-			foreach ($tempArr as $key=>$value) {
-				if ($key%2 == 0) {
-					if (is_numeric($value)) {
-						$_GET[$tempArr[$key+1]??'id'] = $value;
-					} else {
-						$tempArr = explode('/', $value);
-						$path = ucfirst($tempArr[0]);
-						isset($tempArr[1]) && $func = $tempArr[1];
-						break;
-					}
+	{		
+		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', rtrim(key($_GET), '_html'), $match)) {
+			if (!empty($match[1])) {
+				$path = ucfirst($match[1]);
+			}
+			if (!empty($match[2])) {
+				if (in_array($match[1], $this->funcExcept)) {
+					$_GET['id'] = $match[2];
+				} else {
+					$func = $match[2];
 				}
 			}
 		}
 		return ['class'=>$class, 'path'=>$path??'Index', 'func'=>$func??'index'];
-	}
-
-	protected function formatPath($type)
-	{
-		return $this->path_format[$type]??'';
 	}
 
 	public function url($name='', $param=[], $joint=true)
@@ -51,7 +32,7 @@ final class Router
 			$name .= ($joint?'-':'/'). $param;
 		}
 		if ($name) $name .= '.html';
-		return domain().$name;
+		return 'https://'.$_SERVER['HTTP_HOST'].'/'.$name;
 	}
 
 	public function adminUrl($name='', $param=[])
