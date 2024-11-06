@@ -355,7 +355,7 @@ input::-webkit-input-placeholder{
 	border-radius: 50%;
 	width: 0.2rem;
 	height: 0.2rem;
-	display: block;
+	box-sizing: border-box;
 	animation: spin 1s linear infinite;
 }
 @keyframes spin {
@@ -385,4 +385,27 @@ input::-webkit-input-placeholder{
 	width: 100%;
 	height: .01rem;
 	background: #f5f5f5;
+}
+/* messag pop */
+.pop-tips{
+    position: fixed;
+    width: calc(100% - 0.24rem);
+    padding: 0.16rem 0.4rem 0.16rem 0.16rem;
+    background: #111;
+    opacity: 1;
+    border-radius: 0.12rem;
+    top: -100%;
+    left: 0.12rem;
+    color: #fff;
+    font-size: 0.14rem;
+    z-index:199;
+}
+.pop-tips::after {
+	content: '';
+	width: 0.16rem;
+	height: 0.16rem;
+	background: url('/mobile/img/icon/close-white.svg');
+	position: absolute;
+	top: calc(50% - 0.08rem);
+	right: 0.12rem;
 }

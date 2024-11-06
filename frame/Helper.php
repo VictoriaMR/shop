@@ -73,21 +73,13 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 	$lanId || $lanId = lanId('code');
 	$key = 'translate_'.$type.'_'.$lanId;
 	if (is_null(\App::get($key))){
-		$file = ROOT_PATH.'template/'.config('domain', 'template').'/language/'.$type.'/'.$lanId.'.php';
-		if (is_file($file)){
-			\App::set($key, require $file);
-		} else {
-			\App::set($key, []);
-		}
+		$file = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/language/'.$type.'/'.$lanId.'.php';
+		\App::set($key, is_file($file) ? require $file : []);
 	}
 	if (\App::get($key, $text)){
 		$text = \App::get($key, $text);
 		if ($replace){
-			$tempArr = [];
-			foreach ($replace as $key=>$value){
-				$tempArr['{'.$key.'}'] = $value;
-			}
-			$text = strtr($text, $tempArr);
+			$text = strtr($text, $replace);
 		}
 	}
 	return $text;
@@ -158,4 +150,7 @@ function now() {
 }
 function siteId() {
 	return \App::get('domain', 'site_id');
+}
+function redis($db=0) {
+	return frame('Redis')->setDb($db);
 }

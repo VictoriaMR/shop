@@ -8,20 +8,47 @@ class Login extends HomeBase
 	public function index()
 	{	
 		if (isAjax()) {
-			dd($_POST);
-			dd(base64_decode(key(ipost())));
-
 			$email = ipost('email');
-			$verifyCode = ipost('verify_code');
-			if (!verify($email, 'email')) {
-				$this->error(distT('email_error'));
+			$code = ipost('verify_code');
+			$password = ipost('password');
+			$cpassword = ipost('confirm_password');
+			if (!$this->verify($email, 'email')) {
+				$this->error(distT('email_invalid'));
 			}
-			if (!verify($verifyCode, 'code')) {
-				$this->error(distT('code_error'));
+			if (empty($code) && empty($password)) {
+				$this->error(distT('login_invalid'));
 			}
-			$code = redis(2)->get($this->getCacheKey($email, 'except'));
+			if ($code && !$this->verify($code, 'code')) {
+				$this->error(distT('code_invalid'));
+			}
+			if ($password) {
+				if ($password != $cpassword) {
+					$this->error(distT('confirm_password_invalid'));
+				}
+				if (!$this->verify($password, 'password')) {
+					$this->error(distT('password_invalid'));
+				}
+			}
+			// 登录限制
+			$limitKey = $this->getCacheKey(frame('IP')->getIp(), 'limit');
+			$max = (int)redis(2)->get($limitKey);
+			if ($max > 10) {
+				$this->error(distT('login_limit_10'));
+			}
+			$ttl = redis(2)->ttl($limitKey);
+			if ($ttl <= 0) {
+				$ttl = 60*10;
+			}
+			redis(2)->set($limitKey, $max+1, $ttl);
+			if ($code) {
+				$codeCache = redis(2)->get($this->getCacheKey($email, 'code'));
+				if ($code != $codeCache) {
+					$this->error(distT('code_invalid'));
+				}
+			} else {
+				$rst = service('member/Member')->loginByPassword($email, '', 'email');
+			}
 			if ($code == $verifyCode) {
-				$rst = service('member/Member')->login($email, '', 'email');
 				if ($rst) {
 					frame('Session')->del('login_email');
 					frame('Session')->del('login_exp_time');
@@ -51,8 +78,8 @@ class Login extends HomeBase
 	public function sengCode()
 	{
 		$email = ipost('email');
-		if (empty($email)) {
-			$this->error('Sorry, That email was Empty, Please try again.');
+		if (!$this->verify($email, 'email')) {
+			$this->error(distT('email_invalid'));
 		}
 		$member = service('member/Member');
 		$where = [
@@ -60,25 +87,24 @@ class Login extends HomeBase
 			'email' => $email,
 			'status' => 1,
 		];
-		$memId = $member->loadData($where, 'mem_id')['mem_id'] ?? 0;
-		if (empty($memId)) {
-			$this->error('Sorry, we couldn\'t find an account matching that email.');
+		$info = $member->loadData($where, 'mem_id');
+		if (empty($info)) {
+			$this->error(distT('account_not_exist'));
 		}
-		$cacheKey = $this->getCacheKey($email);
+		$cacheKey = $this->getCacheKey($email, 'code');
 		$ttl = redis(2)->TTL($cacheKey);
 		if ($ttl < -1) {
 			$code = randString(6, false, false);
 			$ttl = 120;
 			$service = service('email/Email');
-			$rst = $service->sendEmail($memId, $code, $service->getConst('TYPE_LOGIN_SEND_CODE'));
+			$rst = $service->sendEmail($info['mem_id'], $code, $service->getConst('TYPE_LOGIN_SEND_CODE'));
 			if ($rst) {
-				redis(2)->set($cacheKey, 1, $ttl);
-				redis(2)->set($this->getCacheKey($email, 'except'), $code, 600);
+				redis(2)->set($cacheKey, $code, $ttl);
 			} else {
-				$this->error('Sorry, we couldn\'t sent to “'.$email.'”, Please select another way to login.');
+				$this->error(distT('send_code_error', ['{email}'=>$email]));
 			}
 		}
-		$this->success($ttl, 'Verification code has been sent to “'.$email.'”, Please check your email.');
+		$this->success(distT('send_code_success', ['{email}'=>$email]), $ttl);
 	}
 
 	public function passwordVerify()
@@ -148,9 +174,9 @@ class Login extends HomeBase
 		$this->view();
 	}
 
-	protected function getCacheKey($email, $type='limit', $code='login-code')
+	protected function getCacheKey($email, $type='limit', $code='login')
 	{
-		return $code.'-'.siteId().':'.$type.':'.md5($email);
+		return siteId().':'.$code.':'.$type.':'.md5($email);
 	}
 
 	public function login()
@@ -236,12 +262,16 @@ class Login extends HomeBase
 	{
 		$email = ipost('email');
 		$password = ipost('password');
+		$cpassword = ipost('confirm_password');
 		$error = [];
-		if (empty($email)) {
-			$error['email'] = 'This Email is required.';
+		if (!$this->verify($email, 'email')) {
+			$error['email'] = distT('email_invalid');
 		}
-		if (empty($password)) {
-			$error['password'] = 'This Password is required.';
+		if (!$this->verify($password, 'password')) {
+			$error['password'] = distT('password_invalid');
+		}
+		if (!$this->verify($cpassword, 'password') || $password != $cpassword) {
+			$error['confirm_password'] = distT('confirm_password_invalid');
 		}
 		if (!empty($error)) {
 			$this->error($error);
@@ -253,17 +283,31 @@ class Login extends HomeBase
 		$service = service('member/Member');
 		$rst = $service->getCountData($where);
 		if ($rst) {
-			$this->error(['email' => 'This Email has been register.']);
+			$this->error(['email' => distT('email_registed')]);
 		}
 		$where['password'] = $password;
 		$where['status'] = 1;
-		$rst = $service->create($where);
+		$service->create($where);
+		$rst = $service->login($email, $password, 'email');
 		if ($rst) {
-			$rst = $service->login($email, $password, 'email');
-			if ($rst) {
-				$this->success(['token'=>$rst, 'url'=>frame('Session')->get('callback_url')], 'The "'.$email.'" register success, have a happy shopping day');
-			}
+			$this->success(distT('register_success', ['{email}' => $email]), ['url'=>frame('Session')->get('callback_url')]);
 		}
-		$this->error(['alter' => 'Sorry, This Email register failed, Please try agin.']);
+		$this->error(['email' => distT('register_error')]);
+	}
+
+	public function verify($info, $key)
+	{
+		switch ($key) {
+			case 'email':
+				return preg_match('/^([\.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/', $info);
+			case 'mobile':
+				return preg_match('/^1[3456789]\d{9}$/', $info);
+			case 'password':
+				return preg_match('/^[0-9A-Za-z]{6,}/', $info);
+			case 'code':
+				return preg_match('/^[0-9]{6}/', $info);
+			default:
+				return false;
+		}
 	}
 }

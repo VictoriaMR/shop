@@ -15,20 +15,17 @@ class Member extends Base
 	public function login($mobile, $password='', $type='mobile')
 	{
 		if (empty($mobile)) return false;
-		$field = 'mem_id,site_id,first_name,last_name,mobile,email,avatar,sex,verify';
+		$field = 'mem_id,site_id,first_name,last_name,nick_name,mobile,email,avatar,sex,status,verify,password,salt';
 		switch($type) {
 			case 'mobile':
-				$info = $this->loadData(['mobile'=>$mobile]);
+				$info = $this->loadData(['mobile'=>$mobile],$field);
 				break;
 			case 'email':
-				$info = $this->loadData(['email'=>$mobile]);
+				$info = $this->loadData(['email'=>$mobile],$field);
 				break;
 		}
-		if (empty($info)) return false;
-		if (empty($info['status'])) return false;
-		if (!empty($password) && !$this->checkPassword($password, $info['password'], $info['salt'])){
-			return false;
-		}
+		if (empty($info) || empty($info['status'])) return false;
+		if (!$this->checkPassword($password, $info['password'], $info['salt'])) return false;
 		return $this->loginSuccess($info);
 	}
 
@@ -44,7 +41,7 @@ class Member extends Base
 	public function logout()
 	{
 		$this->addLog('登出成功');
-		session()->set(type().'_info');
+		frame('Session')->set(\App::get('domain', 'class').'_info');
 		frame('Cookie')->clear();
 		return true;
 	}
@@ -54,7 +51,9 @@ class Member extends Base
 		if (!empty($info['avatar'])) {
 			$info['avatar'] = $this->getAvatar($info['avatar'], $info['sex']);
 		}
-		session()->set(type().'_info', $info);
+		unset($info['password']);
+		unset($info['salt']);
+		frame('Session')->set(\App::get('domain', 'class').'_info', $info);
 		$this->updateData($info['mem_id'], ['login_time'=>now()]);
 		frame('Cookie')->login($info['mem_id']);
 		$this->addLog('登录成功');
@@ -112,5 +111,10 @@ class Member extends Base
 	public function addLog($info='')
 	{
 		return service('log/Login')->addLog($info);
+	}
+
+	public function loginByPassword($email, $password)
+	{
+		return $this->login($email, $password, 'email');
 	}
 }

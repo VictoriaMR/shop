@@ -35,6 +35,7 @@ class App
 	{
 		$info = config('domain', $_SERVER['HTTP_HOST']);
 		if ($info) {
+			self::initParam();
 			self::set('domain', $info);
 			//路由解析
 			$info = frame('Router')->analyze($info['class']);
@@ -95,21 +96,29 @@ class App
 		else return empty(self::$data[$name][$key]) ? $default : self::$data[$name][$key];
 	}
 
-	public static function runOver()
+	public static function initParam()
 	{
-		config('domain', 'debug') && !isAjax() && frame('Debug')->init();
+		if (count($_POST) == 1 && $tmpArr = base64_decode(key($_POST))) {
+			$tmpArr = json_decode($tmpArr, true);
+			$_POST = isset($tmpArr[0]) ? array_column($tmpArr, 'value', 'name') : $tmpArr;
+		}
+	}
+
+	public static function runOver($ajax=false)
+	{
+		config('domain', 'debug') && !$ajax && frame('Debug')->init();
 		config('domain', 'log') && frame('Debug')->runlog();
 		exit();
 	}
 
 	public static function jsonRespone($code, $data=[], $msg='')
 	{
-		header('Content-Type:application/json; charset=utf-8');
+		header('Content-Type:application/json;charset=utf-8');
 		echo json_encode(array(
 			'code' => $code,
 			'data' => $data,
 			'msg' => $msg,
 		), JSON_UNESCAPED_UNICODE);
-		self::runOver();
+		self::runOver(true);
 	}
 }

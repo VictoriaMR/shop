@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all');?>
 <div class="con12" id="page-content">
-	<form id="login-page" style="display: none;">
+	<form id="login-page">
 		<div class="title">SIGN IN</div>
 		<div class="input-group">
 			<div class="input-title">
@@ -46,7 +46,7 @@
 		</div>
 		<button class="btn btn-white no-border new-account-btn" type="button">Create a New Account</button>
 	</form>
-	<form id="register-page" method="post" action="" onSubmit="return false;" >
+	<form id="register-page" method="post" action="" onSubmit="return false;" style="display: none;">
 		<div class="title">SIGN UP</div>
 		<div class="input-group">
 			<div class="input-title">

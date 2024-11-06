@@ -1,0 +1,15 @@
+<?php
+return [
+	'email_invalid' => 'The Email Address was invalid.',
+	'login_invalid' => 'Login invalid.',
+	'code_invalid' => 'The Verify Code was invalid.',
+	'confirm_password_invalid' => 'The Confirm Password Address was invalid.',
+	'password_invalid' => 'The Password Address was invalid.',
+	'login_limit_10' => 'Reach count limit, Please try again 10 minutes later.',
+	'email_registed' => 'This Email has been register.',
+	'register_error' => 'Sorry, This Email register failed, Please try agin.',
+	'register_success' => 'The {email} register success, have a happy shopping day.',
+	'account_not_exist' => 'Sorry, we couldn\'t find an account matching that email.',
+	'send_code_error' => 'Sorry, we couldn\'t sent to “{email}”, Please select another way to login.',
+	'send_code_success' => 'Verification code has been sent to “{email}”, Please check your email.',
+];

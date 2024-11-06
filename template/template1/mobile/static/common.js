@@ -63,6 +63,19 @@ function loaded(obj) {
 function post(url, param, callback) {
 	$.post(url, window.btoa(JSON.stringify(param)), callback);
 }
+// 弹窗显示
+function tips(text, type) {
+	if ($('.pop-tips').length==0) {
+		$('body').append('<div class="pop-tips '+(type?'pop-tips-'+type:'pop-tips-success')+'"></div>');
+	}
+	$('.pop-tips').html(text);
+	$('.pop-tips').animate({top: '0.12rem'}, 500);
+	setTimeout(function(){
+		$('.pop-tips').animate({top:'-100%'}, 500, function(){
+			$('.pop-tips').remove();
+		});
+	}, 2000);
+}
 /* common */
 /* 页面缩放 */
 var docEl=document.documentElement;const xs=parseFloat(docEl.currentStyle?docEl.currentStyle["fontSize"]:getComputedStyle(docEl,false)["fontSize"])/100;const recalc=function(){docEl.style.fontSize=(docEl.clientWidth/3.75/xs)+"px"};window.addEventListener("orientationchange" in window?"orientationchange":"resize",recalc,false);recalc();
@@ -98,5 +111,15 @@ $(document).ready(function(){
 	});
 	$('.input-group').on('input', 'input', function(){
 		$(this).parents('.input-group').removeClass('error');
-	})
+	});
+	$('body').on('click', '.pop-tips', function(){
+		$(this).animate({'top':'-100%'}, 500);
+	});
 });
+/* common */
+const _language_translate = {
+	'email_invalid': 'Email invalid',
+	'password_invalid': 'Password invalid',
+	'confirm_password_invalid': 'Confirm password invalid',
+	'confirm_password_not_match': 'Confirm password not match',
+};

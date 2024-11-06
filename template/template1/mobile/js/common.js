@@ -32,5 +32,8 @@ $(document).ready(function(){
 	});
 	$('.input-group').on('input', 'input', function(){
 		$(this).parents('.input-group').removeClass('error');
-	})
+	});
+	$('body').on('click', '.pop-tips', function(){
+		$(this).animate({'top':'-100%'}, 500);
+	});
 });

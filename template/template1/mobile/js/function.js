@@ -62,3 +62,16 @@ function loaded(obj) {
 function post(url, param, callback) {
 	$.post(url, window.btoa(JSON.stringify(param)), callback);
 }
+// 弹窗显示
+function tips(text, type) {
+	if ($('.pop-tips').length==0) {
+		$('body').append('<div class="pop-tips '+(type?'pop-tips-'+type:'pop-tips-success')+'"></div>');
+	}
+	$('.pop-tips').html(text);
+	$('.pop-tips').animate({top: '0.12rem'}, 500);
+	setTimeout(function(){
+		$('.pop-tips').animate({top:'-100%'}, 500, function(){
+			$('.pop-tips').remove();
+		});
+	}, 2000);
+}

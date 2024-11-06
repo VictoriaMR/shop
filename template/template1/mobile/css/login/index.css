@@ -43,7 +43,8 @@
 	display: block;
 }
 #login-page .verify-code-group .send-code-btn {
-    width: 0.80rem;
+    width: fit-content;
+    min-width: 0.80rem;
     padding: 0;
     height: 0.4rem;
     position: absolute;
@@ -53,6 +54,9 @@
     background-color: #fff;
     text-decoration: underline;
     border: none;
+}
+#login-page .verify-code-group .send-code-btn[disabled="disabled"] {
+    text-decoration: none;
 }
 #login-page .verify-code-group input {
     padding-right: 0.82rem;
