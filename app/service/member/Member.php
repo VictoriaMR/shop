@@ -25,7 +25,7 @@ class Member extends Base
 				break;
 		}
 		if (empty($info) || empty($info['status'])) return false;
-		if (!$this->checkPassword($password, $info['password'], $info['salt'])) return false;
+		if ($password && !$this->checkPassword($password, $info['password'], $info['salt'])) return false;
 		return $this->loginSuccess($info);
 	}
 

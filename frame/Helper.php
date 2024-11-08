@@ -57,8 +57,9 @@ function isMobile(){
 	defined('IS_MOBILE') || define('IS_MOBILE', frame('Request')->isMobile());
 	return IS_MOBILE;
 }
-function isLogin(){
-	return '';
+function isDebug() {
+	defined('IS_DEBUG') || define('IS_DEBUG', \App::get('domain', 'debug'));
+	return IS_DEBUG;
 }
 function ipost($name='', $default=null){
 	return frame('Request')->ipost($name, $default);
@@ -145,8 +146,8 @@ function sys() {
 function site() {
 	return service('site/Site');
 }
-function now() {
-	return date('Y-m-d H:i:s');
+function now($time=null) {
+	return date('Y-m-d H:i:s', $time);
 }
 function siteId() {
 	return \App::get('domain', 'site_id');

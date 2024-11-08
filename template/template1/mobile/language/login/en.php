@@ -12,4 +12,11 @@ return [
 	'account_not_exist' => 'Sorry, we couldn\'t find an account matching that email.',
 	'send_code_error' => 'Sorry, we couldn\'t sent to “{email}”, Please select another way to login.',
 	'send_code_success' => 'Verification code has been sent to “{email}”, Please check your email.',
+	'code_not_match' => 'This Verification code was not match.',
+	'login_fail' => 'Sorry, login failed, Please try again.',
+	'login_success' => 'Login success, have a happy shopping day.',
+	'reset_password' => 'Reset Password',
+	'forget_password' => 'Forgot Password',
+	'send_email_success' => 'The email has been sent to “{email}”, Please check your email.',
+	'send_email_error' => 'The email send fail, please try again or contact us.',
 ];

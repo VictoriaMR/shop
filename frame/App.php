@@ -45,7 +45,11 @@ class App
 				//执行方法
 				$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
 				$callArr = [$call, $info['func']];
-				call_user_func_array($callArr, []);
+				if (is_callable($callArr)) {
+					call_user_func_array($callArr, []);
+				} else {
+					throw new \Exception("class: {$info['class']} {$info['path']}, func: {$info['func']} was not exist!");
+				}
 			}
 			self::runOver();
 		} else {
@@ -106,8 +110,8 @@ class App
 
 	public static function runOver($ajax=false)
 	{
-		config('domain', 'debug') && !$ajax && frame('Debug')->init();
 		config('domain', 'log') && frame('Debug')->runlog();
+		isDebug() && !$ajax && frame('Debug')->init();
 		exit();
 	}
 

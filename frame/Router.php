@@ -7,8 +7,8 @@ final class Router
 	protected $funcExcept = ['faq', 'product'];
 
 	public function analyze($class)
-	{		
-		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', rtrim(key($_GET), '_html'), $match)) {
+	{
+		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', str_replace('_html', '', key($_GET)), $match)) {
 			if (!empty($match[1])) {
 				$path = ucfirst($match[1]);
 			}
@@ -27,11 +27,15 @@ final class Router
 	{
 		if ($param) {
 			if (is_array($param)) {
-				$param = $this->nameFormat(http_build_query($param));
+				$param = http_build_query($param);
+				if (in_array($name, $this->funcExcept)) {
+					$param = $this->nameFormat($param);
+					$name .= ($joint?'-':'/'). $param.'.html';
+				} else {
+					$name .= '.html?'.$param;
+				}
 			}
-			$name .= ($joint?'-':'/'). $param;
 		}
-		if ($name) $name .= '.html';
 		return 'https://'.$_SERVER['HTTP_HOST'].'/'.$name;
 	}
 

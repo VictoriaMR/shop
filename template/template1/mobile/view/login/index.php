@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all');?>
 <div class="con12" id="page-content">
-	<form id="login-page">
+	<form id="login-page" method="post" action="" onSubmit="return false;"  class="<?php echo iget('back')?'back-content':'';?>">
 		<div class="title">SIGN IN</div>
 		<div class="input-group">
 			<div class="input-title">
@@ -25,11 +25,12 @@
 				<span class="c5">Password</span>
 			</div>
 			<div class="input-content">
-				<input type="password" name="password" autocomplete="off" placeholder="Your password" maxlength="64" required="required"><i class="remove"></i>
+				<input type="password" name="password" autocomplete="off" placeholder="Your password" maxlength="64"><i class="remove"></i>
 			</div>
 		</div>
-		<div class="button-content">
-			<button class="btn btn-black">Sign In</button>
+		<div class="forgot-password-tips password"><a href="<?php echo url('login/forgot');?>">Forgot your password?</a></div>
+		<div class="button-content f0">
+			<button class="btn btn-black btn-save">Sign In</button>
 			<button class="btn btn-white verification" type="button">Log in with password</button>
 			<button class="btn btn-white password" type="button">Log in with Verification Code</button>
 		</div>
@@ -75,7 +76,7 @@
 		<div class="sign-up-agree">
             <p class="join_tips">By joining, you agree to our <a href="<?php echo url('faq/terms-and-conditions');?>">Terms & Conditions.</a></p>
         </div>
-		<div class="button-content">
+		<div class="button-content f0">
 			<button class="btn btn-black btn-save">Create a New Account</button>
 			<button class="btn btn-white no-border back-btn" type="button">Back to Sign in</button>
 		</div>

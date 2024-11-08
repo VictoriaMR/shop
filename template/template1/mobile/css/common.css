@@ -68,6 +68,10 @@ input::-webkit-input-placeholder{
 	color: #000;
 	border: 0.01rem solid #000;
 }
+.btn-white.no-border {
+	border: none;
+	text-decoration: underline;
+}
 .con12 {
 	padding: 0 0.12rem;
 }
@@ -388,17 +392,17 @@ input::-webkit-input-placeholder{
 }
 /* messag pop */
 .pop-tips{
-    position: fixed;
-    width: calc(100% - 0.24rem);
-    padding: 0.16rem 0.4rem 0.16rem 0.16rem;
-    background: #111;
-    opacity: 1;
-    border-radius: 0.12rem;
-    top: -100%;
-    left: 0.12rem;
-    color: #fff;
-    font-size: 0.14rem;
-    z-index:199;
+	position: fixed;
+	width: calc(100% - 0.24rem);
+	padding: 0.16rem 0.4rem 0.16rem 0.16rem;
+	background: #111;
+	opacity: 1;
+	border-radius: 0.12rem;
+	top: -100%;
+	left: 0.12rem;
+	color: #fff;
+	font-size: 0.14rem;
+	z-index:199;
 }
 .pop-tips::after {
 	content: '';

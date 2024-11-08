@@ -8,7 +8,7 @@ class Email extends Base
 	protected $emailAccountId = 0;
 	protected $siteInfo = [];
 
-	public function sendEmail($memId, $code, $type)
+	public function sendEmail($memId, $code, $type, $expire=0)
 	{
 		$data = service('email/Used')->getSiteAccountId();
 		if (empty($data)) {
@@ -17,6 +17,9 @@ class Email extends Base
 		$data['type'] = $type;
 		$data['mem_id'] = $memId;
 		$data['content'] = $code;
+		if ($expire) {
+			$data['expire_time'] = now(time()+$expire);
+		}
 		$rst = $this->insert($data);
 		if ($rst) {
 			frame('Task')->taskStart('EmailTask');

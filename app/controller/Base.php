@@ -16,6 +16,9 @@ class Base
 
 	protected function view($data=array())
 	{
+		if (isset($data['_title'])) {
+			$data['_title'] .= ' - '.\App::get('domain', 'name');
+		}
 		return frame('View')->display('', true, $data);
 	}
 }

@@ -32,11 +32,21 @@ class Error
     {
         $log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
         frame('Debug')->runlog($log);
-        if (config('domain', 'debug')) {
-            echo $log;
+        if (isDebug()) {
+            if (isAjax()) {
+                \App::jsonRespone(0, $data, $log);
+            } else {
+                print_r($data);
+                echo PHP_EOL.$log;
+            }
         } else {
-            echo '500 Internal Server Error';
+            if (isAjax()) {
+                \App::jsonRespone(0, array(), '500 Internal Server Error');
+            } else {
+                redirect(url('pageNotFound'));
+            }
         }
+        exit();
     }
 
     private function errorType($code)

@@ -275,7 +275,7 @@ final class Query
 
 	public function getQuery($sql)
 	{
-		if (config('domain', 'debug')) $GLOBALS['exec_sql'][] = $sql;
+		if (isDebug()) $GLOBALS['exec_sql'][] = $sql;
 		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
 		$this->clear();
