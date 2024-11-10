@@ -12,6 +12,7 @@ class AdminBase extends Base
 	protected function _init()
 	{
 		$router = \App::get('router');
+		$data = [];
 		if ($router['class'] == 'admin') {
 			if ($router['path'] !== 'Index') {
 				if (empty($this->_default)) {
@@ -19,14 +20,15 @@ class AdminBase extends Base
 				} else {
 					$this->_nav = ['default'=>$this->_default]+$this->_arr;
 				}
-				$this->assign('_ignore', $this->_ignore);
-				$this->assign('_tag', $this->_arr);
-				$this->assign('_nav', $this->_nav);
+				$data['_ignore'] = $this->_ignore;
+				$data['_tag'] = $this->_arr;
+				$data['_nav'] = $this->_nav;
 			}
 		}
-		$this->assign('_path', $router['path']);
-		$this->assign('_func', $router['func']);
-		$this->assign('_title', $this->_arr[$router['func']] ?? '');
+		$data['_path'] = $router['path'];
+		$data['_func'] = $router['func'];
+		$data['_title'] = $this->_arr[$router['func']] ?? '';
+		frame('View')->setData($data);
 	}
 
 	protected function transfer()

@@ -56,6 +56,7 @@
 	background-color: #fff;
 	text-decoration: underline;
 	border: none;
+	font-size: 0.12rem;
 }
 #login-page .verify-code-group .send-code-btn[disabled="disabled"] {
 	text-decoration: none;
@@ -66,8 +67,11 @@
 #login-page .verify-code-group .remove {
 	right: 0.82rem;
 }
-#login-page::not(.back-content) .password {
+#login-page .password {
 	display: none;
+}
+#login-page.back-content .password {
+	display: block;
 }
 #login-page.back-content .verification {
 	display: none;

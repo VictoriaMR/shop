@@ -19,7 +19,7 @@ $(function(){
 		}
 		_thisObj.button('loading');
 		post('/login/login', {mobile:mobile,password:password,code:code}, function(res) {
-			if (res.code === 200) {
+			if (res.code) {
 				localStorage.setItem('login_number', mobile);
 				window.location.href = res.data.url;
 			} else {

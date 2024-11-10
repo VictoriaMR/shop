@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all');?>
 <div class="con12" id="page-content">
-	<form id="login-page" method="post" action="" onSubmit="return false;"  class="<?php echo iget('back')?'back-content':'';?>">
+	<form id="login-page" method="post" action="" onSubmit="return false;" <?php echo iget('back')?'class="back-content"':'';?>>
 		<div class="title">SIGN IN</div>
 		<div class="input-group">
 			<div class="input-title">

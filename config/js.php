@@ -1,7 +1,7 @@
 <?php
 return [
 	'admin' => [
-		'computer' => ['jquery', 'common', 'bootstrap', 'bootstrap-plugin'],
+		'computer' => ['jquery', 'common', 'verify', 'bootstrap', 'bootstrap-plugin'],
 		'mobile' => [],
 	],
 	'home' => [

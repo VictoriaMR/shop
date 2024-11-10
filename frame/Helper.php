@@ -41,6 +41,9 @@ function mediaUrl($url, $width='', $version=true){
 function url($c='', $p=[]) {
 	return frame('Router')->url($c, $p);
 }
+function adminUrl($name='', $param=[]){
+	return frame('Router')->adminUrl($name, $param);
+}
 function version(){
 	return '1.0.0';
 }

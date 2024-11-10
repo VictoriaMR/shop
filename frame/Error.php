@@ -31,19 +31,23 @@ class Error
     protected function errorEcho($data)
     {
         $log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
-        frame('Debug')->runlog($log);
-        if (isDebug()) {
-            if (isAjax()) {
-                \App::jsonRespone(0, $data, $log);
-            } else {
-                print_r($data);
-                echo PHP_EOL.$log;
-            }
+        if (defined('IS_CLI')) {
+            echo $log;
+            frame('Debug')->runlog($log, 'task');
         } else {
-            if (isAjax()) {
-                \App::jsonRespone(0, array(), '500 Internal Server Error');
+            if (isDebug()) {
+                if (isAjax()) {
+                    \App::jsonRespone(0, $data, $log);
+                } else {
+                    print_r($data);
+                    echo PHP_EOL.$log;
+                }
             } else {
-                redirect(url('pageNotFound'));
+                if (isAjax()) {
+                    \App::jsonRespone(0, array(), '500 Internal Server Error');
+                } else {
+                    redirect(url('pageNotFound'));
+                }
             }
         }
         exit();

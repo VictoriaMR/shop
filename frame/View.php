@@ -15,7 +15,7 @@ class View
 	private function loadFile($template, array $data)
 	{
 		if (is_file($template)) {
-			$data && $this->_data += $data;
+			$this->setData($data);
 			extract($this->_data, EXTR_OVERWRITE);
 			include $template;
 		} else {
@@ -23,9 +23,9 @@ class View
 		}
 	}
 
-	public function assign($key, $data)
+	public function setData($data)
 	{
-		$this->_data[$key] = $data;
+		$this->_data += $data;
 	}
 
 	private function getTemplate($template, $match=true)

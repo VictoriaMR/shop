@@ -7,7 +7,7 @@
 			<a class="f16 f800 select" href="javascript:void(0);">密码登录</a>
 		</div>
 		<div class="clear"></div>
-		<form class="relative">
+		<form class="relative" action="" method="post" onsubmit="return false;">
 			<div class="mt20">
 				<input type="text" class="input w100" name="mobile" placeholder="请输入手机号码" autocomplete="off">
 			</div>

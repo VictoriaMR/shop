@@ -6,7 +6,7 @@
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
-	<link rel="icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="icon" href="/computer/favicon.ico" type="image/x-icon">
 	<?php if ($temp=frame('Html')->getCommon('css')){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($temp);?>">
 	<?php }?>
 	<?php if ($temp=frame('Html')->getCss()){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($temp);?>">
@@ -17,7 +17,6 @@
 	<?php } ?>
 </head>
 <body>
-<script> const URI='<?php echo 'https://'.$_SERVER['HTTP_HOST'];?>';</script>
 <?php if (!($_path == 'Index' && $_func == 'index') && $_path != 'Login'){?><div id="progressing"></div><?php }?>
 <?php if (!empty($_nav)) {?>
 <div id="header-nav" class="container-fluid">

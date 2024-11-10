@@ -47,7 +47,7 @@ final class Router
 				$name .= DS.\App::get('router', 'func');
 			}
 		}
-		return $name.($param?'?'.http_build_query($param):'');
+		return '/'.$name.($param?'?'.http_build_query($param):'');
 	}
 
 	public function nameFormat($name, $param=[])

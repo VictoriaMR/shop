@@ -48,11 +48,12 @@ class Html
 	{
 		$path = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/';
 		$file = 'static/'.$name.'.'.$type;
-		if (\App::get('domain', 'static_cache', false) && is_file($path.$file)) return $file;
+		if (\App::get('domain', 'static_cache') && is_file($path.$file)) return $file;
 		$str = '';
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
 			$source = $path.$type.'/'.$value.'.'.$type;
+			echo ($source).PHP_EOL;
 			if (is_file($source)) {
 				$str .= '/* '.$name.' */'.PHP_EOL;
 				$str .= trim(file_get_contents($source)).PHP_EOL;

@@ -141,7 +141,7 @@ $(document).ready(function(){
 			if (res.code) {
 				tips(res.msg);
 				setTimeout(function(){
-					// window.location.href = res.data.url ? res.data.url : '/';
+					window.location.href = res.data.url ? res.data.url : '/';
 				}, 2000);
 			} else {
 				for (var i in res.msg) {

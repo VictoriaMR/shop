@@ -1,5 +1,6 @@
 <?php
 return [
+	'login' => 'Login',
 	'email_invalid' => 'The Email Address was invalid.',
 	'login_invalid' => 'Login invalid.',
 	'code_invalid' => 'The Verify Code was invalid.',

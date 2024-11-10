@@ -8,30 +8,9 @@ class Task
 	
 	public function start($taskClass, $lockTimeout=0, $cas='')
 	{
-		$taskClass = $this->getStandClassName($taskClass);
-		$lockKey = $this->getKeyByClassName($taskClass);
-		if ($lockTimeout < 1) {
-			$lockTimeout = config('task', 'timeout');
-		}
-		if ($cas == '') {
-			$cas = frame('Locker')->lock($lockKey, $lockTimeout);
-			if (!$cas) {
-				return false;
-			}
-		}
-		$process = [
-			'class' => $taskClass,
-			'lock' => [$lockKey, $cas],
-		];
-		return $this->run($process);
-	}
-
-	public function run($process)
-	{
 		$param = [];
-		$param[] = $process['class'];
+		$param[] = $taskClass;
 		$param[] = 'start';
-		$param[] = 'lock='.base64_encode(json_encode($process['lock'], JSON_UNESCAPED_UNICODE));
 		return $this->localRunPhp(implode(' ', $param));
 	}
 
@@ -49,12 +28,7 @@ class Task
 		frame('Debug')->runlog($cmd, 'task');
 		return true;
 	}
-
-	protected function getStandClassName($classname)
-	{
-		return strtr($classname, '-', DS);
-	}
-
+	
 	protected function getKeyByClassName($classname)
 	{
 		return str_replace(['\\', DS], '-', $classname);
@@ -79,16 +53,16 @@ class Task
 		if ($main) {
 			$list[] = 'app/task/MainTask';
 		}
-        foreach ($files as $value) {
-            if ($value == '.' || $value == '..') continue;
-            $list[] = 'app/task/main/'.str_replace('.php', '', $value);
-        }
-        $list = array_flip($list);
-        foreach ($list as $key=>$value) {
-        	$class = make($key, null, false);
-        	$list[$key] = array_merge($class->config, $this->getInfo($key) ?: []);
-        }
-        return $list;
+		foreach ($files as $value) {
+			if ($value == '.' || $value == '..') continue;
+			$list[] = 'app/task/main/'.str_replace('.php', '', $value);
+		}
+		$list = array_flip($list);
+		foreach ($list as $key=>$value) {
+			$class = make($key, null, false);
+			$list[$key] = array_merge($class->config, $this->getInfo($key) ?: []);
+		}
+		return $list;
 	}
 
 	protected function getKey($key)
@@ -123,6 +97,12 @@ class Task
 		} else {
 			return $this->cache()->hGetAll($this->getKey($key));
 		}
+	}
+
+	public function getTaskInfo($class)
+	{
+		$cacheKey = self::TASKPREFIX.'list';
+		return $this->cache()->hGet($cacheKey, $this->getKeyByClassName($class));
 	}
 
 	public function countIncr($key, $field='count', $num=1)

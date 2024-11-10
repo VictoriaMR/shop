@@ -6,7 +6,6 @@ define('DS', '/');
 define('ROOT_PATH', strtr(__DIR__, '\\', '/').DS);
 define('APP_PATH', ROOT_PATH.'app'.DS);
 define('IS_CLI', true);
-ini_set('memory_limit', '512M');
 require ROOT_PATH.'frame'.DS.'Start.php';
 if (!isset($argv[1])) exit('class error');
 if (!isset($argv[2])) exit('function error');
@@ -18,4 +17,5 @@ foreach ($argv as $key=>$value) {
 	$param[$temp[0]] = $temp[1];
 }
 \App::make($argv[1], $param)->$func();
+dd($param);
 \App::runOver();
