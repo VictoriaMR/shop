@@ -26,10 +26,11 @@ class Index extends AdminBase
 		}
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$this->assign('funcList', service('controller/Controller')->getList());
-		$this->assign('info', frame('Session')->get(config('domain', 'class').'_info'));
-		$this->assign('leftInfo', frame('Session')->get('left_info'));
-		$this->view();
+		$this->view([
+			'funcList' => service('controller/Controller')->getList(),
+			'info' => frame('Session')->get(config('domain', 'class').'_info'),
+			'leftInfo' => frame('Session')->get('left_info'),
+		]);
 	}
 
 	protected function setLeft()

@@ -41,7 +41,7 @@
 						<span title="进程启动时间"><?php echo implode(PHP_EOL, $value['cron']);?></span>
 					</td>
 					<td>
-						<span title="开始时间"><?php echo empty($value['start_time']) ? '--': now($value['start_time']);?></span><br >
+						<span title="开始时间"><?php echo empty($value['start_at']) ? '--': now($value['start_at']);?></span><br >
 						<span title="运行时间"><?php echo empty($value['run_at']) ? '--': now($value['run_at']);?></span><br >
 						<span title="下次运行时间"><?php echo empty($value['next_run']) ? '--': ($value['next_run'] < time() ? 'alwaysRun' : now($value['next_run']));?></span><br >
 						<span title="使用内存"><?php echo empty($value['memory_usage']) ? '--' : get1024Peck($value['memory_usage']);?></span>
@@ -58,7 +58,7 @@
 						<span title="循环次数"><?php echo $value['loop_count'] ?? '--';?></span>
 					</td>
 					<td>
-						<span style="white-space: pre-wrap;"><?php echo $value['info'] ?? '--';?></span>
+						<span style="white-space: pre-wrap;"><?php echo $value['remark'] ?? '--';?></span>
 					</td>
 					<td>
 						<div class="btn-group" role="group" id="select-status">

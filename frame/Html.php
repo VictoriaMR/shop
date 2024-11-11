@@ -53,7 +53,6 @@ class Html
 		$arr = array_unique($arr);
 		foreach ($arr as $key => $value) {
 			$source = $path.$type.'/'.$value.'.'.$type;
-			echo ($source).PHP_EOL;
 			if (is_file($source)) {
 				$str .= '/* '.$name.' */'.PHP_EOL;
 				$str .= trim(file_get_contents($source)).PHP_EOL;

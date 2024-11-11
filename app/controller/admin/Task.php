@@ -5,9 +5,6 @@ use app\controller\AdminBase;
 
 class Task extends AdminBase
 {
-	const TASKPREFIX ='frame-task:';
-	const LOCKERPREFIX = 'frame-lock:';
-
 	public function __construct()
 	{
 		$this->_arr = [
@@ -24,7 +21,7 @@ class Task extends AdminBase
 			if (in_array($opn, ['modifyTask'])) {
 				$this->$opn();
 			}
-			$this->error('Unknown request');
+			$this->error('非法请求');
 		}
 		frame('Html')->addCss();
 		frame('Html')->addJs();
@@ -37,8 +34,9 @@ class Task extends AdminBase
 				$list[$key]['status'] = 'stop';
 			}
 		}
-		$this->assign('taskList', $list);
-		$this->view();
+		$this->view([
+			'taskList' => $list,
+		]);
 	}
 
 	protected function modifyTask()
@@ -52,26 +50,16 @@ class Task extends AdminBase
 				if (empty($key)) {
 					$this->error('未指定任务');
 				}
-				$status = $type=='start'?'on':'off';
-				$tasker->setInfo($key, 'boot', $status);
-				//更新总任务数据
-				$allInfo = $tasker->getInfo('all', $key);
-				$allInfo['boot'] = $status;
-				$tasker->setInfo('all', $key, $allInfo);
-				$tasker->setInfoArray($key, $allInfo);
-				if ($status == 'on') {
-					$tasker->start($key);
-				}
+				$tasker->boot($key, $type=='start'?'on':'off');
 				break;
 			case 'start-all':
 			case 'stop-all':
+				$list = frame('Task')->getTaskList(true);
+				foreach ($list as $key=>$value) {
+					$tasker->boot($key, $type=='start-all'?'on':'off');
+				}
 				break;
 		}
 		$this->success('操作成功');
-	}
-
-	protected function getKey($key, $type='task')
-	{
-		return ($type=='lock'?self::LOCKERPREFIX:self::TASKPREFIX).$key;
 	}
 }

@@ -17,5 +17,4 @@ foreach ($argv as $key=>$value) {
 	$param[$temp[0]] = $temp[1];
 }
 \App::make($argv[1], $param)->$func();
-dd($param);
 \App::runOver();

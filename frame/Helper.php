@@ -64,6 +64,10 @@ function isDebug() {
 	defined('IS_DEBUG') || define('IS_DEBUG', \App::get('domain', 'debug'));
 	return IS_DEBUG;
 }
+function isWin(){
+	defined('IS_WIN') || define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
+	return IS_WIN;
+}
 function ipost($name='', $default=null){
 	return frame('Request')->ipost($name, $default);
 }
@@ -149,8 +153,8 @@ function sys() {
 function site() {
 	return service('site/Site');
 }
-function now($time=null) {
-	return date('Y-m-d H:i:s', $time);
+function now($time=0) {
+	return $time > 0 ? date('Y-m-d H:i:s', $time) : date('Y-m-d H:i:s');
 }
 function siteId() {
 	return \App::get('domain', 'site_id');

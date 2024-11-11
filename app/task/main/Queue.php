@@ -10,18 +10,10 @@ class Queue extends TaskDriver
         'cron' => ['* * * * *'],
     ];
 
-	public function __construct($process=[])
-	{
-		parent::__construct($process);
-		$this->config['info'] = '延时队列任务';
-	}
-
 	public function run()
 	{
-		$service = service('Queue');
+		$service = service('tool/Queue');
 		if (!$service->count()) {
-			//任务挂起
-			$this->taskMonitor();
 			return false;
 		}
 		$data = $service->getInfo();

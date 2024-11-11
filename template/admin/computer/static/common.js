@@ -53,7 +53,7 @@ function errorTips(msg) {
 	addRightTips(msg, 'error');
 }
 function showTips(res) {
-	if (res.code == 200) {
+	if (res.code) {
 		successTips(res.msg);
 	} else {
 		errorTips(res.msg);

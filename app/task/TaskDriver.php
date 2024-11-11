@@ -7,94 +7,74 @@ abstract class TaskDriver
 	public $config = [];
 
 	protected $sleep = 1;
-
-	protected function echo($msg)
-	{
-		$this->tasker->setInfo($this->lock, 'remark', $msg);
-	}
-
-	protected function before(){}
-
-	protected function beforeShutdown() {}
-
-	protected function continueRuning()
-	{
-		if (!$this->updateLock()) {
-			return false;
-		}
-		// 关闭的不运行
-		$info = $this->tasker->getInfo($this->lock);
-		return substr($info['boot'], 0, 2) == 'on';
-	}
+	protected $taskInfo = [];
+	protected $tasker;
+	protected $loopCount;
 
 	public function start()
 	{
 		// 获取目标数据
-		$tasker = frame('Task');
-		$info = $tasker->getTaskInfo(get_class($this));
-		if (empty($info)) {
+		$this->tasker = frame('Task');
+		$classKey = $this->tasker->getClassKey(get_class($this));
+		$info = $this->tasker->getInfo($classKey);
+		if (empty($info) || $info['boot'] == 'off' || $info['next_run'] > time()) {
 			return false;
 		}
-		
-		if ($this->locker->getLock($this->lock, $this->cas)) {
-			$this->before();
-			// 设置任务当次启动时间
-			$data = [
-				'start_time' => time(),
-				'status' => 'starting',
-				'process_pid' => getmypid(),
-				'process_user' => get_current_user(),
-				'loop_count' => 0,
-				'info' => '',
-			];
-			$this->tasker->setInfoArray($this->lock, $data);
-			if (!$this->mainTask) {
-				$value = $this->tasker->getInfo('all', $this->lock);
-				$value['status'] = $data['status'];
-				$this->tasker->setInfo('all', $this->lock, $value);
-			}
-			//启动次数加1
-			$this->tasker->countIncr($this->lock);
-			//循环启动
-			$result = true;
-			while ($result) {
-				if ($this->continueRuning()) {
-					$this->tasker->loopCountIncr($this->lock);
-					$result = $this->run();
-					$data = [
-						'status' => 'running',
-						'memory_usage' => memory_get_usage()- APP_MEMORY_START,
-						'run_at' => time(),
-					];
-					$this->tasker->setInfoArray($this->lock, $data);
-					if ($result) {
-						sleep(empty($this->config['sleep']) ? $this->sleep : $this->config['sleep']);
-					}
-				} else {
-					$this->beforeShutdown();
+		if ($info['boot'] == 'offing') {
+			$info['boot'] = 'off';
+			$info['status'] = 'stop';
+			$info['remark'] = '任务已停止';
+			$this->tasker->setInfo($classKey, $info);
+			return false;
+		}
+		// 任务正在进行中
+		$info['start_at'] = time();
+		$info['count'] = ($info['count'] ?? 0)+1;
+		$info['boot'] = 'on';
+		$info['status'] = 'running';
+		// 当前进程ID
+		$info['process_pid'] = getmypid();
+		$info['process_user'] = get_current_user();
+		$info['remark'] = '';
+		$result = true;
+		while ($result) {
+			$this->taskInfo = [];
+			$update = $this->loopCount % 5 == 0;
+			if ($update && $this->loopCount > 0) {
+				$info = $this->tasker->getInfo($classKey);
+				if ($info['boot'] != 'on') {
+					$info['boot'] = 'off';
 					$result = false;
+					break;
 				}
 			}
-			//更新时间
-			$value = $this->tasker->getInfo('all', $this->lock);
-			$data = [
-				'status' => 'stop',
-				'memory_usage' => 0,
-				'info' => "任务已退出 \n".now(),
-				'next_run' => $value['next_run'] < time() ? $this->getNextTime($this->config['cron']) : $value['next_run'],
-			];
-			$this->tasker->setInfoArray($this->lock, $data);
-			if (!$this->mainTask) {
-				$value['status'] = 'stop';
-				$value['next_run'] = $data['next_run'];
-				$this->tasker->setInfo('all', $this->lock, $value);
+			$tmpData = [];
+			$result = $this->run();
+			$this->loopCount++;
+			if ($result) {
+				if ($update) {
+					$tmpData['loop_count'] = $this->loopCount;
+				}
+				if (!empty($tmpData)) {
+					$info['memory_usage'] =  memory_get_usage()- APP_MEMORY_START;
+					$info['run_at'] = time();
+					print_r($this->taskInfo);
+					$this->tasker->setInfo($classKey, $this->taskInfo + $tmpData + $info);
+				}
+				sleep($this->config['sleep'] ?? $this->sleep);
 			}
-			//释放锁
-			$this->locker->unlock($this->lock);
 		}
+		// 任务已退出
+		$info['run_at'] = time();
+		$info['status'] = 'stop';
+		$info['remark'] = '任务已退出'.PHP_EOL.now();
+		$info['memory_usage'] = 0;
+		$info['next_run'] = $this->getNextTime($this->config['cron']);
+		$this->tasker->setInfo($classKey, $info);
+		return true;
 	}
 
-	protected function getNextTime($cron)
+	public function getNextTime($cron)
 	{
 		$result=false;
 		foreach ($cron as $val){
@@ -260,13 +240,10 @@ abstract class TaskDriver
 		return -1;
 	}
 
-	abstract public function run();
-
-	protected function taskMonitor($time=86400)
+	protected function echo($info)
 	{
-		$value = $this->tasker->getInfo('all', $this->lock);
-		$value['next_run'] += $time;
-		$this->tasker->setInfo('all', $this->lock, $value);
-		$this->tasker->setInfo($this->lock, 'next_run', $value['next_run']);
+		$this->taskInfo['remark'] = $info;
 	}
+
+	abstract public function run();
 }

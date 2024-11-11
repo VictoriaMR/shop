@@ -5,49 +5,49 @@ use app\task\TaskDriver;
 
 class MainTask extends TaskDriver
 {
-    protected $mainTask = true;
-    public $config = [
-        'name' => '系统核心队列任务',
-        'cron' => ['* * * * *'],
-    ];
+	public $config = [
+		'name' => '系统核心队列任务',
+		'cron' => ['* * * * *'],
+	];
 
-    protected function before()
-    {
-        $this->tasker->delInfo('all');
-        //初始化
-        $data = [
-            'name' => $this->config['name'],
-            'sleep' => $this->config['sleep'],
-            'next_run' => $this->getNextTime($this->config['cron']),
-        ];
-        $this->tasker->setInfoArray($this->lock, $data);
-        $list = $this->tasker->getTaskList();
-        foreach ($list as $key => $data) {
-            $data['next_run'] = $this->getNextTime($data['cron']);
-            unset($data['cron']);
-            $this->tasker->setInfo('all', $key, ['boot'=>$data['boot']??'off', 'next_run'=>$data['next_run'], 'status'=>$data['status']??'stop']);
-            $this->tasker->setInfoArray($key, $data);
-        }
-    }
+	protected $allTask = [];
 
-    public function run()
-    {
-        $allTask = $this->tasker->getInfo('all');
-        foreach ($allTask as $key=>$value) {
-            //循环检查进程状态
-            if (isset($value['boot']) && $value['boot'] == 'on' && $value['status'] == 'stop' && $value['next_run'] <= time()) {
-                echo $key.PHP_EOL;
-                $this->startTask($key, $value);
-            }
-        }
-        return true;
-    }
+	public function run()
+	{
+		$data = ['memory_usage' => 0];
+		if ($this->loopCount % 5 == 0) {
+			$this->allTask = $this->tasker->getInfo();
+			$data['total'] = count($this->allTask);
+		}
+		foreach ($this->allTask as $key=>$value) {
+			$data['memory_usage'] += ($value['memory_usage'] ?? 0);
+			if ($key == 'app-task-MainTask') continue;
+			//循环检查进程状态
+			if (in_array($value['boot'], ['off', 'offing'])) {
+				$data['off'] +=1;
+				continue;
+			}
+			if ($value['status'] == 'stop' && $value['next_run'] <= time()) {
+				$this->allTask[$key]['status'] = 'starting';
+				$this->startTask($key, $value);
+			}
+		}
+		if ($this->loopCount % 5 == 0 && !empty($data)) {
+			$msg = [];
+			$data['off'] = $data['off'] ?? 0;
+			$msg[] = '任务总数: '.$data['total'];
+			$msg[] = '开启任务数: '.($data['total'] - $data['off']);
+			$msg[] = '关闭任务数: '.$data['off'];
+			$msg[] = '总运行内存: '.get1024Peck($data['memory_usage']);
+			$this->echo(implode(PHP_EOL, $msg));
+		}
+		return true;
+	}
 
-    protected function startTask($key, $value)
-    {
-        $value['status'] = 'starting';
-        $this->tasker->setInfoArray($key, $value);
-        $this->tasker->setInfo('all', $key, $value);
-        $this->tasker->start($key);
-    }
+	protected function startTask($key, $value)
+	{
+		$value['status'] = 'starting';
+		$this->tasker->setInfo($key, $value);
+		$this->tasker->start($key);
+	}
 }

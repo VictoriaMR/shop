@@ -6,10 +6,10 @@ class Task
 {
 	const TASKPREFIX ='frame:task:';
 	
-	public function start($taskClass, $lockTimeout=0, $cas='')
+	public function start($taskClass)
 	{
 		$param = [];
-		$param[] = $taskClass;
+		$param[] = str_replace('-', '/', $taskClass);
 		$param[] = 'start';
 		return $this->localRunPhp(implode(' ', $param));
 	}
@@ -21,34 +21,20 @@ class Task
 		if (isWin()) {
 			pclose(popen('start /B '.$cmd.' 1>NUL 2>NUL', 'r'));
 		} else {
-			$out = [];
-			$rstSign = '';
-			exec($cmd.' > /dev/null 2>&1 &', $out, $rstSign);
+			exec($cmd.' > /dev/null 2>&1 &', [], '');
 		}
 		frame('Debug')->runlog($cmd, 'task');
 		return true;
 	}
 	
-	protected function getKeyByClassName($classname)
+	public function getClassKey($classname)
 	{
-		return str_replace(['\\', DS], '-', $classname);
-	}
-
-	public function taskStart($key)
-	{
-		$key = 'app-task-main-'.$key;
-		$value = $this->cache()->hGet(self::TASKPREFIX.'all', $key);
-		if (isset($value['next_run']) && $value['next_run'] == 'alwaysRun') {
-			return true;
-		}
-		$value['next_run'] = 'alwaysRun';
-		$this->cache()->hSet(self::TASKPREFIX.'all', $key, $value);
-		return true;
+		return str_replace(['\\', '/'], '-', $classname);
 	}
 
 	public function getTaskList($main = false)
 	{
-		$files = scandir(APP_PATH.'task/main');
+		$files = scandir(ROOT_PATH.'app/task/main');
 		$list = [];
 		if ($main) {
 			$list[] = 'app/task/MainTask';
@@ -57,69 +43,65 @@ class Task
 			if ($value == '.' || $value == '..') continue;
 			$list[] = 'app/task/main/'.str_replace('.php', '', $value);
 		}
+		$listInfo = $this->getInfo();
 		$list = array_flip($list);
 		foreach ($list as $key=>$value) {
-			$class = make($key, null, false);
-			$list[$key] = array_merge($class->config, $this->getInfo($key) ?: []);
+			$classKey = $this->getClassKey($key);
+			if (empty($listInfo[$classKey])) {
+				$class = \App::make($key);
+				$listInfo[$classKey] = $class->config;
+			}
+			$list[$key] = $listInfo[$classKey];
 		}
 		return $list;
 	}
 
 	protected function getKey($key)
 	{
-		return self::TASKPREFIX.$this->getKeyByClassName($key);
+		return self::TASKPREFIX.$this->getClassKey($key);
 	}
 
-	protected function cache()
+	public function boot($key, $value)
 	{
-		return redis(2);
+		$classKey = $this->getClassKey($key);
+		$info = $this->getInfo($classKey);
+		if (empty($info)) {
+			$class = \App::make($key);
+			$info = $class->config;
+			$info['next_run'] = $class->getNextTime($info['cron']);
+		}
+		$info['boot'] = $value.'ing';
+		$info['status'] = 'stop';
+		$this->setInfo($classKey, $info);
+		if ($classKey == 'app-task-MainTask' && $value == 'on' && ($info['status'] ?? '') != 'running') {
+			$this->start($key);
+		}
+		return true;
 	}
 
-	public function setInfo($key, $field, $value)
+	public function setInfo($field, array $data)
 	{
-		return $this->cache()->hSet($this->getKey($key), $this->getKeyByClassName($field), $value);
+		return redis(2)->hSet($this->getKey('list'), $field, $data);
 	}
 
-	public function delInfo($key)
-	{
-		return $this->cache()->del($this->getKey($key));
-	}
-
-	public function setInfoArray($key, array $data)
-	{
-		return $this->cache()->hMset($this->getKey($key), $data);
-	}
-
-	public function getInfo($key, $field='')
+	public function getInfo($field='')
 	{
 		if ($field) {
-			return $this->cache()->hGet($this->getKey($key), $this->getKeyByClassName($field));
+			return redis(2)->hGet($this->getKey('list'), $field);
 		} else {
-			return $this->cache()->hGetAll($this->getKey($key));
+			return redis(2)->hGetAll($this->getKey('list'));
 		}
-	}
-
-	public function getTaskInfo($class)
-	{
-		$cacheKey = self::TASKPREFIX.'list';
-		return $this->cache()->hGet($cacheKey, $this->getKeyByClassName($class));
-	}
-
-	public function countIncr($key, $field='count', $num=1)
-	{
-		return $this->cache()->hIncrBy($this->getKey($key), $field, $num);
-	}
-
-	public function loopCountIncr($key)
-	{
-		return $this->countIncr($key, 'loop_count');
 	}
 
 	public function noticeTask($key)
 	{
-		$value = $this->getInfo('all', $key);
-		$value['next_run'] = time();
-		$this->setInfo('all', $key, $value);
-		$this->setInfo($key, 'next_run', $value['next_run']);
+		$key = $this->getClassKey($key);
+		$info = $this->getInfo($key);
+		if (empty($info) || $info['boot'] != 'on') {
+			return false;
+		}
+		$info['next_run'] = time();
+		$this->setInfo($key, $info);
+		return true;
 	}
 }

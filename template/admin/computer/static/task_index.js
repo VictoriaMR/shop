@@ -1,3 +1,4 @@
+/* task_index */
 $(function(){
 	TASK.init();
 });
