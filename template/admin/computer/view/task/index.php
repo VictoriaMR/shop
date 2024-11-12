@@ -43,7 +43,7 @@
 					<td>
 						<span title="开始时间"><?php echo empty($value['start_at']) ? '--': now($value['start_at']);?></span><br >
 						<span title="运行时间"><?php echo empty($value['run_at']) ? '--': now($value['run_at']);?></span><br >
-						<span title="下次运行时间"><?php echo empty($value['next_run']) ? '--': ($value['next_run'] < time() ? 'alwaysRun' : now($value['next_run']));?></span><br >
+						<span title="下次运行时间"><?php echo isset($value['next_run']) ? ($value['next_run'] <= 0 ? 'alwaysRun' : now($value['next_run'])) : '--';?></span><br >
 						<span title="使用内存"><?php echo empty($value['memory_usage']) ? '--' : get1024Peck($value['memory_usage']);?></span>
 					</td>
 					<td>

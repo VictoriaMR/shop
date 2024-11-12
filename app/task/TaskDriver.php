@@ -9,63 +9,72 @@ abstract class TaskDriver
 	protected $sleep = 1;
 	protected $taskInfo = [];
 	protected $tasker;
-	protected $loopCount;
 
 	public function start()
 	{
 		// 获取目标数据
 		$this->tasker = frame('Task');
 		$classKey = $this->tasker->getClassKey(get_class($this));
-		$info = $this->tasker->getInfo($classKey);
-		if (empty($info) || $info['boot'] == 'off' || $info['next_run'] > time()) {
+		if ($classKey == 'app-task-MainTask') {
+			$this->allTask = $this->tasker->getInfo();
+			$info = $this->allTask[$classKey] ?? [];
+		} else {
+			$info = $this->tasker->getInfo($classKey);
+		}
+		if (empty($info)) {
 			return false;
 		}
+
 		if ($info['boot'] == 'offing') {
 			$info['boot'] = 'off';
-			$info['status'] = 'stop';
-			$info['remark'] = '任务已停止';
-			$this->tasker->setInfo($classKey, $info);
-			return false;
+		}
+		if ($info['boot'] == 'off' || $info['next_run'] > time()) {
+			$result = false;
+		} else {
+			$result = true;
+			$loopCount = 0;
 		}
 		// 任务正在进行中
 		$info['start_at'] = time();
 		$info['count'] = ($info['count'] ?? 0)+1;
-		$info['boot'] = 'on';
-		$info['status'] = 'running';
+		$info['run_at'] = time();
 		// 当前进程ID
-		$info['process_pid'] = getmypid();
-		$info['process_user'] = get_current_user();
-		$info['remark'] = '';
-		$result = true;
+		if ($result) {
+			$info['boot'] = 'on';
+			$info['status'] = 'running';
+			$info['process_pid'] = getmypid();
+			$info['process_user'] = get_current_user();
+		}
 		while ($result) {
-			$this->taskInfo = [];
-			$update = $this->loopCount % 5 == 0;
-			if ($update && $this->loopCount > 0) {
-				$info = $this->tasker->getInfo($classKey);
-				if ($info['boot'] != 'on') {
-					$info['boot'] = 'off';
-					$result = false;
-					break;
+			$update = $loopCount % 5 == 0;
+			// 延时更新次数
+			if ($update && $loopCount > 0) {
+				if ($classKey == 'app-task-MainTask') {
+					$this->allTask = $this->tasker->getInfo();
+					$info = $this->allTask[$classKey] ?? [];
+				} else {
+					$info = $this->tasker->getInfo($classKey);
 				}
 			}
-			$tmpData = [];
+			if ($info['boot'] != 'on') {
+				$info['boot'] = 'off';
+				break;
+			}
+			$info['remark'] = '';
+			$this->taskInfo = [];
 			$result = $this->run();
-			$this->loopCount++;
+			$loopCount++;
 			if ($result) {
 				if ($update) {
-					$tmpData['loop_count'] = $this->loopCount;
-				}
-				if (!empty($tmpData)) {
+					$info['loop_count'] = $loopCount;
 					$info['memory_usage'] =  memory_get_usage()- APP_MEMORY_START;
 					$info['run_at'] = time();
-					print_r($this->taskInfo);
-					$this->tasker->setInfo($classKey, $this->taskInfo + $tmpData + $info);
+					$this->tasker->setInfo($classKey, $this->taskInfo + $info);
 				}
 				sleep($this->config['sleep'] ?? $this->sleep);
 			}
 		}
 		// 任务已退出
-		$info['run_at'] = time();
 		$info['status'] = 'stop';
 		$info['remark'] = '任务已退出'.PHP_EOL.now();
 		$info['memory_usage'] = 0;
@@ -79,15 +88,11 @@ abstract class TaskDriver
 		$result=false;
 		foreach ($cron as $val){
 			$v=$this->getNextTimeByCron($val);
-			if ($result) {
-				if ($v<$result) {
-					$result=$v;
-				}
-			} else {
+			if (is_bool($result) || $v<$result) {
 				$result=$v;
 			}
 		}
-		return $result;
+		return $result ?: 0;
 	}
 
 	// 在读取corn配置是个做基本检查和过滤， 包括：格式， 运行的字符，等， 传过来的必须是合规的字串
@@ -103,7 +108,7 @@ abstract class TaskDriver
 	{
 		$cornStr=preg_replace('/\s+/', ' ', trim($cornStr));
 		if ($cornStr=='* * * * *') {
-			return time();
+			return 0;
 		}
 		$arr=explode(' ', $cornStr);
 		$now=explode('-', date('i-H-d-m-w')); //'m-d-H-i' 月日时分
@@ -245,5 +250,5 @@ abstract class TaskDriver
 		$this->taskInfo['remark'] = $info;
 	}
 
-	abstract public function run();
+	abstract protected function run();
 }

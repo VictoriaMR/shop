@@ -84,9 +84,9 @@ class Currency extends Base
         }
         $result = [];
         foreach ($arr[2] as $k => $v) {
-            $result[$v] = number_format(1/$arr[4][$k]*100, 6, '.', '');
+            $result[$v] = number_format($arr[4][$k] / 100, 6, '.', '');
         }
-        $logger = service('currency/Logger');
+        $logCurrency = service('log/Currency');
         $site = service('site/Site');
         $currencyArr = $this->getListData();
         foreach ($currencyArr as $value) {
@@ -94,12 +94,11 @@ class Currency extends Base
                 continue;
             }
             $this->updateData($value['code'], ['rate'=>$result[$value['code']]]);
-            $logger->insert([
+            $logCurrency->insert([
                 'code' => $value['code'],
                 'old_rate' => $value['rate'],
                 'new_rate' => $result[$value['code']],
             ]);
-            $site->deleteTemplateCache(0, true, false, $value['code']);
         }
         return false;
 	}

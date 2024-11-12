@@ -16,6 +16,7 @@ class Task extends AdminBase
 
 	public function index()
 	{
+		service('system/Currency')->updateRate();
 		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['modifyTask'])) {
@@ -23,6 +24,7 @@ class Task extends AdminBase
 			}
 			$this->error('非法请求');
 		}
+		// frame('Task')->noticeTask('app/task/main/Queue');
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$list = frame('Task')->getTaskList(true);
