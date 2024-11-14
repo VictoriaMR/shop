@@ -104,4 +104,9 @@ class Task
 		$this->setInfo($key, $info);
 		return true;
 	}
+
+	public function taskStart($name)
+	{
+		return $this->noticeTask('app/task/main/'.$name);
+	}
 }

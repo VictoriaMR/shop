@@ -19,7 +19,7 @@ class Api extends AdminBase
 
 	public function helperData()
 	{
-		$cateList = category()->getListFormat(false);
+		$cateList = service('category/Category')->getListFormat(false);
 		$tempArr = [];
 		$indexId = 0;
 		foreach ($cateList as $value) {
@@ -65,11 +65,12 @@ class Api extends AdminBase
 	{
 		$url = ipost('url', '');
 		$url = parse_url($url);
+		$data = [];
 		if (isset($url['path'])) {
 			$data['path'] = trim($url['path'], '/');
 		}
-		if (isset($url['query'])) {
-			$data['param'] = $url['query'];
+		if (!empty($url['query'])) {
+			$data['path'] .= '?'.$url['query'];
 		}
 		service('log/Base')->visitor()->add($data);
 		$this->success('success');
