@@ -19,26 +19,11 @@ class Api extends AdminBase
 
 	public function helperData()
 	{
-		$cateList = service('category/Category')->getListFormat(false);
-		$tempArr = [];
-		$indexId = 0;
-		foreach ($cateList as $value) {
-			if ($value['parent_id'] == 0) {
-				$indexId = $value['cate_id'];
-				$tempArr[$indexId] = [
-					'name' => $value['name'],
-					'son' => [],
-				];
-			} else {
-				$tempArr[$indexId]['son'][] = $value;
-			}
-		}
 		$data = [
-			'domain' => domain(),
+			'domain' => 'https://'.$_SERVER['HTTP_HOST'],
 			'version' => version(),
-			'socket_domain' => domain().'socket.io/',
+			'socket_domain' => 'https://'.$_SERVER['HTTP_HOST'].'/socket.io/',
 			'action' => $this->_helperAction,
-			'cate_list' => $tempArr,
 		];
 		$this->success('获取成功', $data);
 	}

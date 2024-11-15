@@ -6,7 +6,7 @@ use app\task\TaskDriver;
 class DataHelper extends TaskDriver
 {
 	public $config = [
-        'name' => '数据入库任务',
+        'name' => '产品维护任务',
         'cron' => ['* * * * *'],
     ];
 

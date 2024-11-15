@@ -2,8 +2,8 @@ const CRAWLERINIt = {
 	init: function() {
 		const _this = this;
 		//载入分析数据js
-		HELPERINIT.loadStatic('css', 'helper/crawler_page.css');
-		HELPERINIT.loadStatic('js', 'helper/crawler.js', function(){
+		HELPERINIT.loadStatic('css', '/computer/helper/crawler_page.css');
+		HELPERINIT.loadStatic('js', '/computer/helper/crawler.js', function(){
 			_this.crawlerInit();
 		});
 	},
@@ -19,10 +19,7 @@ const CRAWLERINIt = {
 			bodyPage.classList = 'close';
 			const html = `<div class="top-content">
 							<div class="button-content">
-								<button class="hide" id="reload-btn" onclick="CRAWLERINIt.reloadPage()">刷新</button>
-								<button onclick="CRAWLERINIt.goNext()" class="hide" id="go-next-btn">跳过</button>
-								<button id="crawler-show-btn" onclick="CRAWLERINIt.openClose(this)" class="right">展开</button>
-								<div class="clear"></div>
+								<button class="hide" id="reload-btn" onclick="CRAWLERINIt.reloadPage()">刷新</button><button onclick="CRAWLERINIt.goNext()" class="hide" id="go-next-btn">跳过</button><button id="crawler-show-btn" onclick="CRAWLERINIt.openClose(this)" class="right">展开</button>
 							</div>
 							<div class="error-msg"></div>
 						</div>
@@ -31,7 +28,7 @@ const CRAWLERINIt = {
 			bodyPage.innerHTML = html;
 			HELPERINIT.request({action: 'getCache', cache_key: 'crawler_show_status'}, function(res) {
 				_this.crawlerPageinit(function(){
-					_this.crawlerPageShow(res.data === '1' ? '1' : '0');
+					_this.crawlerPageShow(res.data);
 				});
 				
 			});
@@ -56,10 +53,10 @@ const CRAWLERINIt = {
 		_thisobj.innerHTML = '数据发送中...';
 		_thisobj.classList.add('loading');
 		HELPERINIT.request({action: 'getCache', cache_key: 'reload_param_cache'}, function(res) {
-			if (res.code === '200') {
+			if (res.code) {
 				HELPERINIT.request({action: 'request', value: 'api/addAfter', param: res.data}, function(res) {
 					_this.error(res.msg);
-					if (res.code === '200') {
+					if (res.code) {
 						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
 					}
 				});
@@ -99,13 +96,14 @@ const CRAWLERINIt = {
 	crawlerPageinit: function(callback) {
 		const _this = this;
 		HELPERINIT.request({action: 'getCache', cache_key: 'helper_all_data_cache'}, function(res) {
-			if (res.code == 200) {
+			if (res.code) {
 				_this.cate_list = res.data.cate_list;
 				CRAWLER.init(function(code, data, msg){
-					if (code === 0) {
-						_this.crawlerPage(data);
-					} else {
+					console.log(code, data, msg)
+					if (code) {
 						_this.error(msg);
+					} else {
+						_this.crawlerPage(data);
 					}
 					_this.clickInit(data);
 					callback();
@@ -284,7 +282,7 @@ const CRAWLERINIt = {
 					_thisobj.classList.remove('loading');
 					_thisobj.innerHTML = '上传产品';
 					_this.error(res.msg);
-					if (res.code === '200') {
+					if (res.code) {
 						HELPERINIT.request({action: 'setSocket', value: {is_free: 1, type: 'auto_crawler'}});
 					}
 				});
