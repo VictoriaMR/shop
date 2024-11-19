@@ -3,7 +3,7 @@
 namespace app\service\purchase;
 use app\service\Base;
 
-class Product extends Base
+class Spu extends Base
 {
     public function addUrl($url)
     {
@@ -77,7 +77,7 @@ class Product extends Base
 
     protected function resultPath($channelId, int $itemId, $create=true)
     {
-        $path = ROOT_PATH.'storage'.DS.'product_data'.DS.$channelId.DS;
+        $path = ROOT_PATH.'storage/product_data/'.$channelId.'/';
         if ($create) {
             createDir($path);
         }

@@ -16,7 +16,7 @@ class Task extends AdminBase
 
 	public function index()
 	{
-		service('system/Currency')->updateRate();
+		sys()->currency()->updateRate();
 		if (frame('Request')->isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['modifyTask'])) {
@@ -60,6 +60,12 @@ class Task extends AdminBase
 				foreach ($list as $key=>$value) {
 					$tasker->boot($key, $type=='start-all'?'on':'off');
 				}
+				break;
+			case 'reset':
+				if ($key != 'app/task/MainTask') {
+					$this->error('非主进程任务不能重置');
+				}
+				frame('Task')->start($key);
 				break;
 		}
 		$this->success('操作成功');

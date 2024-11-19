@@ -32,44 +32,44 @@
 		<div class="clear"></div>
 	</form>
 	<table class="table table-hover mt20">
-        <tbody>
-	        <tr>
-	            <th class="col-md-1">ID</th>
-	            <th class="col-md-1">头像</th>
-	            <th class="col-md-1">名称</th>
-	            <th class="col-md-1">浏览器</th>
-	            <th class="col-md-1">操作系统</th>
-	            <th class="col-md-1">备注</th>
-	            <th class="col-md-1">IP</th>
-	            <th class="col-md-1">时间</th>
-	            <th class="col-md-4">设备详细</th>
-	        </tr>
-        	<?php if (empty($list)){ ?>
-        	<tr>
-        		<td colspan="9">
-        			<div class="tc orange">暂无数据</div>
-        		</td>
-        	</tr>
-        	<?php } else {?>
-        	<?php foreach ($list as $key => $value) { ?>
-        	<tr>
-        		<td class="col-md-1"><?php echo $value['log_id'];?></td>
-        		<td class="col-md-1">
-        			<div class="avatar-hover">
-        				<img src="<?php echo $value['avatar'];?>">
-        			</div>
-        		</td>
-        		<td class="col-md-1"><?php echo $value['name'];?></td>
-        		<td class="col-md-1"><?php echo $value['browser'];?></td>
-        		<td class="col-md-1"><?php echo $value['system'];?></td>
-        		<td class="col-md-1"><?php echo empty($value['remark']) ? $value['type_text'] : $value['remark'];?></td>
-        		<td class="col-md-1"><?php echo $value['ip'];?></td>
-        		<td class="col-md-1"><?php echo $value['add_time'];?></td>
-        		<td class="col-md-4"><?php echo $value['agent'];?></td>
-        	</tr>
-        	<?php } ?>
-        	<?php }?>
-        </tbody>
-    </table>
+		<tbody>
+			<tr>
+				<th class="col-md-1">ID</th>
+				<th class="col-md-1">头像</th>
+				<th class="col-md-1">名称</th>
+				<th class="col-md-1">浏览器</th>
+				<th class="col-md-1">操作系统</th>
+				<th class="col-md-1">备注</th>
+				<th class="col-md-1">IP</th>
+				<th class="col-md-1">时间</th>
+				<th class="col-md-4">设备详细</th>
+			</tr>
+			<?php if (empty($list)){ ?>
+			<tr>
+				<td colspan="9">
+					<div class="tc orange">暂无数据</div>
+				</td>
+			</tr>
+			<?php } else {?>
+			<?php foreach ($list as $key => $value) { ?>
+			<tr>
+				<td class="col-md-1"><?php echo $value['log_id'];?></td>
+				<td class="col-md-1">
+					<div class="avatar-hover">
+						<img src="<?php echo $value['avatar'];?>">
+					</div>
+				</td>
+				<td class="col-md-1"><?php echo $value['name'];?></td>
+				<td class="col-md-1"><?php echo $value['browser'];?></td>
+				<td class="col-md-1"><?php echo $value['system'];?></td>
+				<td class="col-md-1"><?php echo empty($value['remark']) ? $value['type_text'] : $value['remark'];?></td>
+				<td class="col-md-1"><?php echo $value['ip'];?></td>
+				<td class="col-md-1"><?php echo $value['add_time'];?></td>
+				<td class="col-md-4"><?php echo $value['agent'];?></td>
+			</tr>
+			<?php } ?>
+			<?php }?>
+		</tbody>
+	</table>
 	<?php echo page($size, $total);?>
 </div>

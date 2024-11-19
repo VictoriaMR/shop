@@ -83,31 +83,31 @@ class Api extends AdminBase
 			'purchase_channel_id' => $channelId,
 			'item_id' => $data['item_id'],
 		];
-		$id = purchase()->product()->loadData($where, 'purchase_product_id')['purchase_product_id'] ?? 0; 
+		$id = service('purchase/Purchase')->spu()->loadData($where, 'purchase_spu_id')['purchase_spu_id'] ?? 0; 
 		if ($id <= 0) {
-			$id = purchase()->product()->insertData($where, true);
+			$id = service('purchase/Purchase')->spu()->insertData($where, true);
 		}
 		$shopId = 0;
 		if (!empty($data['seller'])) {
 			// 添加店铺
-			$shopId = purchase()->shop()->addShop($channelId, $data['seller']['shop_id'], $data['seller']['shop_name'], $data['seller']['shop_url'], $data['seller']['service']);
+			$shopId = service('purchase/Purchase')->shop()->addShop($channelId, $data['seller']['shop_id'], $data['seller']['shop_name'], $data['seller']['shop_url'], $data['seller']['service']);
 		}
 		$price = 0;
 		if (!empty($data['sku'])) {
 			$price = min(array_column($data['sku'], 'price'));
 		}
 		$updateData = [
-			'status' => purchase()->product()->getConst('STATUS_SET'),
+			'status' => service('purchase/Purchase')->spu()->getConst('STATUS_SET'),
 			'mem_id' => userId(),
 			'name' => $data['name'],
 			'purchase_shop_id' => $shopId,
 			'sale_count' => $data['sale_count'] ?? 0,
 			'price' => $price,
 		];
-		$rst = purchase()->product()->updateData($where, $updateData);
+		$rst = service('purchase/Purchase')->spu()->updateData($where, $updateData);
 		//更新采购产品
-		$rst = purchase()->item()->addNotExist($id, $data['sku']);
-		$rst = purchase()->product()->saveResult($channelId, $data['item_id'], $data);
+		$rst = service('purchase/Purchase')->sku()->addNotExist($id, $data['sku']);
+		$rst = service('purchase/Purchase')->spu()->saveResult($channelId, $data['item_id'], $data);
 		$this->success('上传成功');
 	}
 
@@ -120,7 +120,7 @@ class Api extends AdminBase
 	public function notice()
 	{
 		foreach(ipost() as $value) {
-			purchase()->product()->addUrl($value);
+			service('purchase/Purchase')->spu()->addUrl($value);
 		}
 		$this->success();
 	}

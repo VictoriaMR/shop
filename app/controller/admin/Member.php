@@ -57,15 +57,16 @@ class Member extends AdminBase
 			}
 		}
 
-		$this->assign('total', $total);
-		$this->assign('list', $list ?? []);
-		$this->assign('size', $size);
-		$this->assign('status', $status);
-		$this->assign('name', $name);
-		$this->assign('phone', $phone);
-		$this->assign('stime', $stime);
-		$this->assign('etime', $etime);
-		$this->view();
+		$this->view([
+			'total' => $total,
+			'list' => $list ?? [],
+			'size' => $size,
+			'status' => $status,
+			'name' => $name,
+			'phone' => $phone,
+			'stime' => $stime,
+			'etime' => $etime,
+		]);
 	}
 
 	protected function modify()
@@ -150,5 +151,24 @@ class Member extends AdminBase
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
+	}
+
+	public function log()
+	{
+		$name = trim(iget('name', ''));
+		$mobile = trim(iget('mobile', ''));
+		$stime = trim(iget('stime', ''));
+		$etime = trim(iget('etime', ''));
+		$size = 50;
+		$total = 0;
+
+		$this->view([
+			'name' => $name,
+			'mobile' => $mobile,
+			'stime' => $stime,
+			'etime' => $etime,
+			'size' => $size,
+			'total' => $total,
+		]);
 	}
 }

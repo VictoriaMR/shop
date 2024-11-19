@@ -1,3 +1,4 @@
+/* member_index */
 $(function(){
 	MEMBERLIST.init();
 });

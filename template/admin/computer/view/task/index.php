@@ -31,8 +31,8 @@
 					<td>
 						<li class="cycle-<?php echo $value['boot'];?>"></li>
 						<div class="in-1" title="<?php echo $value['name'];?>">
-							<?php echo $value['name'];?><br>
-							<?php echo $key;?>
+							<p><?php echo $value['name'];?></p>
+							<p><?php echo $key;?></p>
 						</div>
 					</td>
 					<td>
@@ -64,6 +64,9 @@
 						<div class="btn-group" role="group" id="select-status">
 							<button class="btn btn-success btn-sm btn-task" data-type="start"<?php echo $value['boot']=='off'?'':'disabled';?>>启动</button>
 							<button class="btn btn-danger btn-sm btn-task" data-type="stop"<?php echo $value['boot']=='on'?'':'disabled';?>>停止</button>
+							<?php if ($key == 'app/task/MainTask'){?>
+							<button class="btn btn-danger btn-sm btn-task" data-type="reset"<?php echo $value['boot']=='on'||$value['boot']=='off'?'disabled':'';?>>重置</button>
+							<?php }?>
 						</div>
 					</td>
 				</tr>

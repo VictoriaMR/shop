@@ -203,10 +203,15 @@ var CRAWLER = {
 		ret_data.url = _this.getUrl(ret_data.item_id);
 		ret_data.post_fee = 0;
 		if (_this.baseInfo.componentsVO.deliveryVO.freight) {
-			ret_data.post_fee = parseInt(_this.baseInfo.componentsVO.deliveryVO.freight.replace(/[^\d]/g, '')) / 100;
+			ret_data.post_fee = _this.baseInfo.componentsVO.deliveryVO.freight.replace(/[^\d]/g, '');
+			if (ret_data.post_fee) {
+				ret_data.post_fee = parseInt(ret_data.post_fee) / 100;
+			} else {
+				ret_data.post_fee = 0;
+			}
 		}
 		ret_data.pdt_picture = _this.baseInfo.item.images;
-		ret_data.sale_count = _this.baseInfo.item.vagueSellCount.replace('+', '').trim();
+		ret_data.sale_count = _this.formatSale(_this.baseInfo.item.vagueSellCount);
 		// 商家信息
 		ret_data.seller = {
 			shop_id: _this.baseInfo.seller.sellerId,
@@ -262,24 +267,32 @@ var CRAWLER = {
 				}
 			}
 		}
-		// 描述
 		ret_data.detail = [];
-		if (_this.baseInfo.componentsVO.extensionInfoVO.infos) {
-			for (let i=0; i<_this.baseInfo.componentsVO.extensionInfoVO.infos.length; i++) {
-				if (_this.baseInfo.componentsVO.extensionInfoVO.infos[i].type == 'BASE_PROPS') {
-					const tmp = _this.baseInfo.componentsVO.extensionInfoVO.infos[i].items;
-					for (let j=0; j<tmp.length; j++) {
-						ret_data.detail.push({name:tmp[j].title, value:tmp[j].text.join(' ')});
+		ret_data.video = {};
+		if (_this.baseInfo.componentsVO) {
+			// 描述
+			if (_this.baseInfo.componentsVO.extensionInfoVO.infos) {
+				for (let i=0; i<_this.baseInfo.componentsVO.extensionInfoVO.infos.length; i++) {
+					if (_this.baseInfo.componentsVO.extensionInfoVO.infos[i].type == 'BASE_PROPS') {
+						const tmp = _this.baseInfo.componentsVO.extensionInfoVO.infos[i].items;
+						for (let j=0; j<tmp.length; j++) {
+							ret_data.detail.push({name:tmp[j].title, value:tmp[j].text.join(' ')});
+						}
 					}
+				}
+			}
+			// video
+			if (_this.baseInfo.componentsVO.headImageVO.videos.length > 0) {
+				ret_data.video = {
+					url: _this.baseInfo.componentsVO.headImageVO.videos[0].url,
+					img: _this.baseInfo.componentsVO.headImageVO.videos[0].videoThumbnailURL
 				}
 			}
 		}
 		//描述图片
 		ret_data.desc_picture = [];
-		console.log(ret_data, 'ret_data')
-		return false;
 		const internalId = setInterval(function(){
-			let tmp = _this.getResponse('detail.getDwdetailDesc');
+			let tmp = _this.getResponse('detail.getdesc');
 			if (tmp) {
 				clearInterval(internalId);
 				if (tmp && tmp.components && tmp.components.componentData) {
@@ -717,5 +730,12 @@ var CRAWLER = {
 			}
 		}
 		return false;
+	},
+	formatSale: function(str) {
+		if (!str) {
+			return 0;
+		}
+		str = str.replace('+', '').replace('万', '0000').replace('千', '000').replace('百', '00').trim();
+		return parseInt(str);
 	}
 };

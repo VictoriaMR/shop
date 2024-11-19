@@ -134,25 +134,6 @@ const CRAWLERINIt = {
 							<div class="clear"></div>
 						</div>
 						<div class="productAttLine">
-							<div class="label">品类:</div>
-							<div class="fill_in">
-								<select name="root_category">
-									<option value="">请选择品类</option>
-									`+_this.getCategoryHtml(0)+`
-								</select>
-							</div>
-							<div class="clear"></div>
-						</div>
-						<div class="productAttLine">
-							<div class="label">分类:</div>
-							<div class="fill_in">
-								<select name="cate_id">
-									<option value="">请选择分类</option>
-								</select>
-							</div>
-							<div class="clear"></div>
-						</div>
-						<div class="productAttLine">
 							<div class="label">邮费:</div>
 							<div class="fill_in">
 								<input name="post_fee" value="`+data.post_fee+`" placeholder="邮费">
@@ -209,8 +190,8 @@ const CRAWLERINIt = {
 						<table border="0" width="100%">
 							<tr>
 								<td>SKU</td>
-								<td>报价</td>
-								<td>库存</td>
+								<td width="50">报价</td>
+								<td width="50">库存</td>
 							</tr>
 						`;
 			for (var i in data.sku) {
@@ -288,41 +269,6 @@ const CRAWLERINIt = {
 				});
 			}
 		}
-		//切换品类
-		var obj2 = document.querySelector('#crawler-page select[name="root_category"]');
-		if (obj2) {
-			obj2.onchange = function(){
-				const index = obj2.selectedIndex;
-				var html = _this.getCategoryHtml(obj2.options[index].value);
-				html = '<option value="">请选择分类</option>'+html;
-				document.querySelector('#crawler-page select[name="cate_id"]').innerHTML=html;
-			}
-		}
-	},
-	getCategoryHtml: function(pid) {
-		var html = '';
-		var start = false;
-		if (this.cate_list) {
-			if (pid == 0) {
-				for (var i in this.cate_list) {
-					html += '<option value="'+i+'">'+this.cate_list[i].name+'</option>';
-				}
-			} else {
-				var list = this.cate_list[pid].son;
-				for (var i = 0; i < list.length; i++) {
-					var disable = '';
-					var padding = '';
-					for (var j=1; j<list[i].level; j++) {
-						padding += '&nbsp;&nbsp;&nbsp;';
-					}
-					if (list[i+1] && list[i+1].level > list[i].level) {
-						disable = 'disabled="disabled"';
-					}
-					html += '<option '+disable+' value="'+list[i].cate_id+'">'+padding+list[i].name+'</option>';
-				}
-			}
-		}
-		return html;
 	},
 	serializeForm: function(formobj) {
 		if (formobj) {

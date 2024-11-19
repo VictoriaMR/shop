@@ -8,9 +8,10 @@ final class Router
 
 	public function analyze($class)
 	{
-		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', str_replace('_html', '', key($_GET)), $match)) {
+		$key = key($_GET);
+		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', str_replace('_html', '', $key), $match)) {
 			if (!empty($match[1])) {
-				$path = ucfirst($match[1]);
+				$path = $match[1];
 			}
 			if (!empty($match[2])) {
 				if (in_array($match[1], $this->funcExcept)) {
@@ -19,6 +20,7 @@ final class Router
 					$func = $match[2];
 				}
 			}
+			unset($_GET[$key]);
 		}
 		return ['class'=>$class, 'path'=>$path??'Index', 'func'=>$func??'index'];
 	}
@@ -44,7 +46,7 @@ final class Router
 		if (!$name) {
 			$name = \App::get('router', 'path');
 			if (\App::get('router', 'func') != 'index') {
-				$name .= DS.\App::get('router', 'func');
+				$name .= '/'.\App::get('router', 'func');
 			}
 		}
 		return '/'.$name.($param?'?'.http_build_query($param):'');

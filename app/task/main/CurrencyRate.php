@@ -12,7 +12,7 @@ class CurrencyRate extends TaskDriver
 
     public function run()
     {
-        service('system/Currency')->updateRate();
+        sys()->currency()->updateRate();
         return false;
     }
 }

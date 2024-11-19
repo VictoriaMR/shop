@@ -27,19 +27,10 @@ class Category extends AdminBase
 			$this->error('非法请求');
 		}
 		frame('Html')->addJs();
-		$cid = iget('cid', 0);
-		$tempList = service('category/Category')->getListFormat(false);
-		if (!empty($tempList)) {
-			$list = [];
-			foreach ($tempList as $value) {
-				if ($value['level'] == 0) {
-					$list[] = $value;
-				}
-			}
-		}
-		
-		$this->assign('list', $list ?? []);
-		$this->view();
+
+		$this->view([
+			'list' => service('category/Category')->getListData(['parent_id'=>0])
+		]);
 	}
 
 	public function cateList()
@@ -53,11 +44,11 @@ class Category extends AdminBase
 		}
 		frame('Html')->addJs();
 		$cid = iget('cid', 0);
+		$pList = [];
+		$list = [];
 		$tempList = service('category/Category')->getListFormat(false);
 		if (!empty($tempList)) {
 			$count = 0;
-			$pList = [];
-			$list = [];
 			$status = false;
 			foreach ($tempList as $value) {
 				if ($value['level'] == 0) {
@@ -88,7 +79,7 @@ class Category extends AdminBase
 				$cateArr = array_column($list, 'cate_id');
 				$cateArr = service('category/Language')->where(['cate_id'=>['in', $cateArr]])->field('count(*) as count, cate_id')->groupBy('cate_id')->get();
 				$cateArr = array_column($cateArr, 'count', 'cate_id');
-				$languageList = service('Language')->getListData();
+				$languageList = sys()->language()->getListData();
 				$languageList = array_column($languageList, null, 'lan_id');
 				unset($languageList[1]);
 				$len = count($languageList);
@@ -105,11 +96,12 @@ class Category extends AdminBase
 				}
 			}
 		}
-		
-		$this->assign('cid', $cid);
-		$this->assign('pList', $pList ?? []);
-		$this->assign('list', $list ?? []);
-		$this->view();
+
+		$this->view([
+			'cid' => $cid,
+			'pList' => $pList,
+			'list' => $list,
+		]);
 	}
 
 	protected function getCateInfo()
