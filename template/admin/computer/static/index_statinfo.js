@@ -1,3 +1,4 @@
+/* index_statinfo */
 $(function(){
 	STATINFO.init();
 })

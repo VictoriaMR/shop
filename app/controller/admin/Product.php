@@ -66,6 +66,7 @@ class Product extends AdminBase
 			$where['add_time'] = ['<=', date('Y-m-d', strtotime($etime)).' 23:59:59'];
 		}
 		$total = $spu->getCountData($where);
+		$list = [];
 		if ($total > 0) {
 			$list = $spu->getList($where, '*', $page, $size);
 			foreach ($list as $key=>$value) {
@@ -73,19 +74,20 @@ class Product extends AdminBase
 			}
 		}
 
-		$this->assign('spuId', $spuId);
-		$this->assign('status', $status);
-		$this->assign('statusList', $statusList);
-		$this->assign('site', $site);
-		$this->assign('cate', $cate);
-		$this->assign('cateList', $cateList);
-		$this->assign('cateArr', $cateArr);
-		$this->assign('stime', $stime);
-		$this->assign('etime', $etime);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->view();
+		$this->view([
+			'spuId' => $spuId,
+			'status' => $status,
+			'statusList' => $statusList,
+			'site' => $site,
+			'cate' => $cate,
+			'cateList' => $cateList,
+			'cateArr' => $cateArr,
+			'stime' => $stime,
+			'etime' => $etime,
+			'total' => $total,
+			'size' => $size,
+			'list' => $list,
+		]);
 	}
 
 	public function purchaseList()
@@ -112,7 +114,7 @@ class Product extends AdminBase
 
 		$where = [];
 		if ($id > 0) {
-			$where['purchase_product_id'] = $id;
+			$where['purchase_spu_id'] = $id;
 		}
 		if ($status > -1) {
 			$where['status'] = $status;
@@ -130,9 +132,10 @@ class Product extends AdminBase
 		} elseif ($etime) {
 			$where['add_time'] = ['<=', date('Y-m-d', strtotime($etime)).' 23:59:59'];
 		}
-		$total = purchase()->product()->count($where);
+		$total = purchase()->spu()->count($where);
+		$list= [];
 		if ($total > 0) {
-			$list = purchase()->product()->getListData($where, '*', $page, $size, ['purchase_product_id' => 'desc']);
+			$list = purchase()->spu()->getListData($where, '*', $page, $size, ['purchase_spu_id' => 'desc']);
 			// 用户
 			$userList = array_filter(array_column($list, 'mem_id'));
 			if (!empty($userList)) {
@@ -148,30 +151,31 @@ class Product extends AdminBase
 			foreach ($list as $key=>$value) {
 				$list[$key]['user_info'] = $this->avatar($userList[$value['mem_id']] ?? '');
 				$list[$key]['shop_info'] = $shopList[$value['purchase_shop_id']] ?? [];
-				$list[$key]['url'] = purchase()->product()->url($value['purchase_channel_id'], $value['item_id']);
+				$list[$key]['url'] = purchase()->spu()->url($value['purchase_channel_id'], $value['item_id']);
 				// 标题补全
-				if ($value['status'] == purchase()->product()->getConst('STATUS_SET') && !$value['name']) {
-					$list[$key]['name'] = purchase()->product()->updateTitle($value['purchase_channel_id'], $value['item_id']);
+				if ($value['status'] == purchase()->spu()->getConst('STATUS_SET') && !$value['name']) {
+					$list[$key]['name'] = purchase()->spu()->updateTitle($value['purchase_channel_id'], $value['item_id']);
 				}
 			}
 		}
 
 		$channelList = service('purchase/Channel')->getListData();
 		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
-		$statusList = purchase()->product()->getStatusList();
+		$statusList = purchase()->spu()->getStatusList();
 
-		$this->assign('id', $id);
-		$this->assign('status', $status);
-		$this->assign('purchase_channel_id', $channelId);
-		$this->assign('item_id', $itemId);
-		$this->assign('stime', $stime);
-		$this->assign('etime', $etime);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->assign('channelList', $channelList);
-		$this->assign('statusList', $statusList);
-		$this->view();
+		$this->view([
+			'id' => $id,
+			'status' => $status,
+			'purchase_channel_id' => $channelId,
+			'item_id' => $itemId,
+			'stime' => $stime,
+			'etime' => $etime,
+			'total' => $total,
+			'size' => $size,
+			'list' => $list,
+			'channelList' => $channelList,
+			'statusList' => $statusList,
+		]);
 	}
 
 	protected function editPurchaseList()
@@ -181,11 +185,11 @@ class Product extends AdminBase
 		if ($id <= 0) {
 			$this->error('参数不正确');
 		}
-		$statusList = purchase()->product()->getStatusList();
+		$statusList = purchase()->spu()->getStatusList();
 		if (!isset($statusList[$status])) {
 			$this->error('状态不正确');
 		}
-		$rst = purchase()->product()->updateData($id, ['status'=>$status]);
+		$rst = purchase()->spu()->updateData($id, ['status'=>$status]);
 		if ($rst) {
 			$this->success('更新成功');
 		}
@@ -205,10 +209,11 @@ class Product extends AdminBase
 		frame('Html')->addJs();
 
 		$id = iget('id/d', 0);
+		$data = [];
 		if ($id <= 0) {
 			\App::error('参数不正确');
 		} else {
-			$info = purchase()->product()->getInfo($id);
+			$info = purchase()->spu()->getInfo($id);
 			if (empty($info['sku'])) {
 				\App::error('数据不存在, 请重新上传');
 			} else {
@@ -226,16 +231,16 @@ class Product extends AdminBase
 
 				$siteList = site()->getListData(['site_id'=>['>', 80]], 'site_id,name');
 				$cateList = category()->getListFormat(false);
-				
+
 				$this->assign('attrNs', $attrNs);
 				$this->assign('attrVs', $attrVs);
 				$this->assign('info', $info);
 				$this->assign('shopInfo', $shopInfo);
 				$this->assign('siteList', $siteList);
-				$this->assign('cateList', $cateList);	
+				$this->assign('cateList', $cateList);
 			}
 		}
-		$this->view();
+		$this->view($data);
 	}
 
 	protected function attrMap()
@@ -668,7 +673,6 @@ class Product extends AdminBase
 
 	public function purchaseShop()
 	{
-
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 
@@ -686,11 +690,12 @@ class Product extends AdminBase
 			$where['unique_id'] = $uniqueId;
 		}
 		$total = purchase()->shop()->count($where);
+		$list = [];
 		if ($total > 0) {
 			$list = purchase()->shop()->getListData($where, '*', $page, $size, ['purchase_shop_id' => 'desc']);
 			$shopIds = array_unique(array_column($list, 'purchase_shop_id'));
 			if (!empty($shopIds)) {
-				$productCount = service('purchase/Product')->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
+				$productCount = purchase()->spu()->getListData(['purchase_shop_id'=>['in', $shopIds]], 'count(*) as c_count,purchase_shop_id', 0, 0, [], 'purchase_shop_id');
 				$productCount = array_column($productCount, 'c_count', 'purchase_shop_id');
 			}
 			foreach ($list as $key=>$value) {
@@ -701,13 +706,14 @@ class Product extends AdminBase
 		$channelList = service('purchase/Channel')->getListData();
 		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
 
-		$this->assign('status', $status);
-		$this->assign('purchase_channel_id', $channelId);
-		$this->assign('unique_id', $uniqueId);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->assign('channelList', $channelList);
-		$this->view();
+		$this->view([
+			'status' => $status,
+			'purchase_channel_id' => $channelId,
+			'unique_id' => $uniqueId,
+			'total' => $total,
+			'size' => $size,
+			'list' => $list,
+			'channelList' => $channelList,
+		]);
 	}
 }

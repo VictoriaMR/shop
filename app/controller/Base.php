@@ -21,4 +21,9 @@ class Base
 		}
 		return frame('View')->display('', true, $data);
 	}
+
+	protected function assign($name, $value) 
+	{
+		return frame('View')->setData([$name=>$value]);
+	}
 }

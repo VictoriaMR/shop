@@ -45,7 +45,7 @@
 	<ul class="nav nav-tabs">
 		<?php foreach ($_tag as $key => $value) { if ($_func != $key && in_array($key, $_ignore)){continue;}?>
 		<li<?php if($_func == $key) echo ' class="active"';?>>
-			<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$key);?>"><?php echo $value;?></a>
+			<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$key, iget());?>"><?php echo $value;?></a>
 		</li>
 		<?php } ?>
 	</ul>

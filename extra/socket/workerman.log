@@ -1,0 +1,9 @@
+2024-11-21 18:57:00 pid:1 Exception: Failed to parse address ":" in D:\www\shop\extra\socket\workerman\Worker.php:2451
+Stack trace:
+#0 D:\www\shop\extra\socket\socket.php(46): Workerman\Worker->listen()
+#1 D:\www\shop\extra\socket\workerman\Worker.php(2583): {closure}(Object(Workerman\Worker))
+#2 D:\www\shop\extra\socket\workerman\Worker.php(1569): Workerman\Worker->run()
+#3 D:\www\shop\extra\socket\workerman\Worker.php(1487): Workerman\Worker::forkWorkersForWindows()
+#4 D:\www\shop\extra\socket\workerman\Worker.php(562): Workerman\Worker::forkWorkers()
+#5 D:\www\shop\extra\socket\socket.php(66): Workerman\Worker::runAll()
+#6 {main}

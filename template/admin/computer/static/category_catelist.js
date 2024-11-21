@@ -238,7 +238,7 @@ const CATEGORYLIST = {
 				}
 			});
 		});
-	}
+	},
 	initData: function(data) {
 		const obj = $('#dealbox');
 		if (data) {

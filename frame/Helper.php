@@ -153,6 +153,15 @@ function sys() {
 function site() {
 	return service('site/Site');
 }
+function category() {
+	return service('category/Category');
+}
+function purchase() {
+	return service('purchase/Purchase');
+}
+function attr() {
+	return service('attr/Attr');
+}
 function now($time=0) {
 	return $time > 0 ? date('Y-m-d H:i:s', $time) : date('Y-m-d H:i:s');
 }

@@ -13,7 +13,7 @@ const INDEX = {
 				pObj.addClass('left-close');
 				type = 1
 			}
-			post(URI+'Index/index', {opn: 'setLeft', key: 'left_type', value: type});
+			post('', {opn: 'setLeft', key: 'left_type', value: type});
 		});
 		//左侧悬浮标题
 		$('#index-page .left-one [data-title]').on('mouseover', function(){
@@ -36,13 +36,13 @@ const INDEX = {
 			$('#index-page .left-two .title .text').text($(this).data('title'));
 			$('#index-page .left-two .title .text').find('.glyphicon').remove();
 			$('#index-page .left-two .title .text').append($(this).find('.glyphicon').clone());
-			post(URI+'Index/index', {opn: 'setLeft', key: 'last_group', value: $(this).data('to')});
+			post('', {opn: 'setLeft', key: 'last_group', value: $(this).data('to')});
 		});
 		$('#index-page .left-content .nav-son-content li').on('click', function(){
 			$(this).addClass('select').siblings().removeClass('select');
 			var src = $(this).data('src');
 			$('#href-to-iframe').attr('src', src+'?iframe=1');
-			post(URI+'Index/index', {opn: 'setLeft', key: 'last_url', value: src});
+			post('', {opn: 'setLeft', key: 'last_url', value: src});
 		});
 		if ($('#index-page .left-content .auto-select').length > 0) {
 			$('#index-page .left-content .auto-select').trigger('click');

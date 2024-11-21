@@ -9,20 +9,18 @@ final class Router
 	public function analyze($class)
 	{
 		$key = key($_GET);
+		$path = 'Index';
+		$func = 'index';
 		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', str_replace('_html', '', $key), $match)) {
-			if (!empty($match[1])) {
+			if (!empty($match[1]) && $match[1] != 'null') {
 				$path = $match[1];
 			}
-			if (!empty($match[2])) {
-				if (in_array($match[1], $this->funcExcept)) {
-					$_GET['id'] = $match[2];
-				} else {
-					$func = $match[2];
-				}
+			if (!empty($match[2]) && $match[2] != 'null') {
+				$func = $match[2];
 			}
 			unset($_GET[$key]);
 		}
-		return ['class'=>$class, 'path'=>$path??'Index', 'func'=>$func??'index'];
+		return ['class'=>$class, 'path'=>$path, 'func'=>$func];
 	}
 
 	public function url($name='', $param=[], $joint=true)

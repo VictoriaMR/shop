@@ -70,7 +70,7 @@
 					</td>
 				</tr>
 			</tbody>
-    	</table>
+		</table>
 	</div>
 	<div class="w50 left pl10 mt10">
 		<p class="f16 f600">服务器信息</p>
@@ -141,7 +141,7 @@
 					</td>
 				</tr>
 			</tbody>
-    	</table>
+		</table>
 	</div>
 	<div class="clear"></div>
 </div>

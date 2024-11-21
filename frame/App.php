@@ -1,7 +1,8 @@
 <?php
 class App
 {
-	private static $data = array();
+	private static $data = [];
+	private static $_error = [];
 
 	public static function init()
 	{
@@ -43,7 +44,7 @@ class App
 			// 中间组件方法
 			if (self::middleware($info)) {
 				//执行方法
-				$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
+				$call = self::make('app/controller/'.$info['class'].'/'.ucfirst($info['path']));
 				$callArr = [$call, $info['func']];
 				if (is_callable($callArr)) {
 					call_user_func_array($callArr, []);
@@ -124,5 +125,13 @@ class App
 			'msg' => $msg,
 		), JSON_UNESCAPED_UNICODE);
 		self::runOver(true);
+	}
+
+	public static function error($msg)
+	{
+		if ($msg) {
+			self::$_error[] = $msg;
+		}
+		return self::$_error;
 	}
 }

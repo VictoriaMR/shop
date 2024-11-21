@@ -1,6 +1,6 @@
 <div id="login-page">
 	<div class="login-bg">
-		<img src="<?php echo siteUrl('image/computer/login_bg.jpg');?>">
+		<img src="<?php echo siteUrl('image/login_bg.jpg');?>">
 	</div>
 	<div class="login-box">
 		<div class="title">

@@ -65,13 +65,16 @@ class Index extends AdminBase
 		} else {
 			$cpuInfo = $this->sys_linux();
 		}
-		$mysqlVersion = $log->getQuery('SELECT version() AS version')[0] ?? [];
-
-		$this->assign('viewAgentInfo', $viewAgentInfo);
-		$this->assign('viewerInfo', $viewerInfo);
-		$this->assign('cpuInfo', $cpuInfo);
-		$this->assign('mysqlVersion', $mysqlVersion['version'] ?? '');
-		$this->view();
+		$mysqlVersion = $log->getQuery('SELECT version() AS version');
+		if (isset($mysqlVersion[0]['version'])) {
+			$mysqlVersion = $mysqlVersion[0]['version'];
+		}
+		$this->view([
+			'viewAgentInfo' => $viewAgentInfo,
+			'viewerInfo' => $viewerInfo,
+			'cpuInfo' => $cpuInfo,
+			'mysqlVersion' => $mysqlVersion,
+		]);
 	}
 
 	protected function getSystemInfo()
@@ -81,7 +84,7 @@ class Index extends AdminBase
 		} else {
 			$returnData = $this->sys_linux();
 		}
-		$this->success($returnData, '');
+		$this->success('获取成功', $returnData);
 	}
 
 	protected function sys_windows()
