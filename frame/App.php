@@ -41,10 +41,11 @@ class App
 			//路由解析
 			$info = frame('Router')->analyze($info['class']);
 			self::set('router', $info);
+			$info['path'] = ucfirst($info['path']);
 			// 中间组件方法
 			if (self::middleware($info)) {
 				//执行方法
-				$call = self::make('app/controller/'.$info['class'].'/'.ucfirst($info['path']));
+				$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
 				$callArr = [$call, $info['func']];
 				if (is_callable($callArr)) {
 					call_user_func_array($callArr, []);

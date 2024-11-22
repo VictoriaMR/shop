@@ -7,3 +7,23 @@ Stack trace:
 #4 D:\www\shop\extra\socket\workerman\Worker.php(562): Workerman\Worker::forkWorkers()
 #5 D:\www\shop\extra\socket\socket.php(66): Workerman\Worker::runAll()
 #6 {main}
+2024-11-22 17:42:16 pid:1 ArgumentCountError: Too few arguments to function Workerman\Connection\TcpConnection::send(), 0 passed in D:\www\shop\extra\socket\socket.php on line 63 and at least 1 expected in D:\www\shop\extra\socket\workerman\Connection\TcpConnection.php:320
+Stack trace:
+#0 D:\www\shop\extra\socket\socket.php(63): Workerman\Connection\TcpConnection->send()
+#1 D:\www\shop\extra\socket\workerman\Connection\TcpConnection.php(646): {closure}(Object(Workerman\Connection\TcpConnection), Array)
+#2 D:\www\shop\extra\socket\workerman\Events\Select.php(311): Workerman\Connection\TcpConnection->baseRead(Resource id #26)
+#3 D:\www\shop\extra\socket\workerman\Worker.php(1570): Workerman\Events\Select->loop()
+#4 D:\www\shop\extra\socket\workerman\Worker.php(1487): Workerman\Worker::forkWorkersForWindows()
+#5 D:\www\shop\extra\socket\workerman\Worker.php(562): Workerman\Worker::forkWorkers()
+#6 D:\www\shop\extra\socket\socket.php(77): Workerman\Worker::runAll()
+#7 {main}
+2024-11-22 17:50:28 pid:1 ArgumentCountError: Too few arguments to function Workerman\Connection\TcpConnection::send(), 0 passed in D:\www\shop\extra\socket\socket.php on line 64 and at least 1 expected in D:\www\shop\extra\socket\workerman\Connection\TcpConnection.php:320
+Stack trace:
+#0 D:\www\shop\extra\socket\socket.php(64): Workerman\Connection\TcpConnection->send()
+#1 D:\www\shop\extra\socket\workerman\Connection\TcpConnection.php(646): {closure}(Object(Workerman\Connection\TcpConnection), Array)
+#2 D:\www\shop\extra\socket\workerman\Events\Select.php(311): Workerman\Connection\TcpConnection->baseRead(Resource id #26)
+#3 D:\www\shop\extra\socket\workerman\Worker.php(1570): Workerman\Events\Select->loop()
+#4 D:\www\shop\extra\socket\workerman\Worker.php(1487): Workerman\Worker::forkWorkersForWindows()
+#5 D:\www\shop\extra\socket\workerman\Worker.php(562): Workerman\Worker::forkWorkers()
+#6 D:\www\shop\extra\socket\socket.php(78): Workerman\Worker::runAll()
+#7 {main}

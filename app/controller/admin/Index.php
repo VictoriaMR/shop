@@ -26,6 +26,7 @@ class Index extends AdminBase
 		}
 		frame('Html')->addCss();
 		frame('Html')->addJs();
+		frame('Html')->addJs('socket');
 		$this->view([
 			'funcList' => service('controller/Controller')->getList(),
 			'info' => frame('Session')->get(config('domain', 'class').'_info'),

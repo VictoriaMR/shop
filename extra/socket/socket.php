@@ -50,18 +50,28 @@ $worker->onWorkerStart = function(Worker $worker) {
 
 // 客户端连接
 $worker->onConnect = function(TcpConnection $connection) {
-
+	print_r('onConnect');
+	print_r($connection);
 };
 
 // 接收客户端数据
 $worker->onMessage = function(TcpConnection $connection, $data) {
 	$connection->last_time = time();
-	echo "new connection from ip " . $connection->getRemoteIp() . "\n";
+	print_r($data);
+	echo PHP_EOL;
+	$data = json_decode($data, true);
+	if ($data) {
+		switch ($data[0]) {
+			case 'ping':
+				$connection->send(json_encode(['pong', 'pong']));
+				break;
+		}
+	}
 };
 
 //链接关闭
 $worker->onClose = function(TcpConnection $connection) {
-
+	print_r('onClose');
 };
 
 // 运行worker
