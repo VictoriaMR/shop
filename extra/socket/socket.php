@@ -67,6 +67,7 @@ $worker->onMessage = function(TcpConnection $connection, $data) {
 				break;
 		}
 	}
+	$connection->send('getActiveLabel');
 };
 
 //链接关闭
