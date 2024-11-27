@@ -74,9 +74,6 @@ const ws_socket = {
 				_this.ws_status = false;
 				clearInterval(_this.interval);
 				console.log(e);
-				setTimeout(function(){
-					_this.init();
-				}, 2000);
 			};
 			// 错误
 			_this.socket.onerror = function(e) {

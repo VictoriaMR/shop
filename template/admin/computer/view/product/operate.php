@@ -4,11 +4,17 @@
 		<div class="left product-info-content">
 			<input type="hidden" name="opn" value="add">
 			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
-			<input type="hidden" name="cate_id" value="<?php echo $info['cate_id'];?>">
+			<dl class="field-row">
+				<dt class="title-line"><strong class="must">*</strong>站点：</dt>
+				<dd class="subclass">
+					<div class="title-line" style="display: inline-block;"></div>
+					<button type="button" class="btn btn-primary btn-xs change-site-bth">修改站点</button>
+				</dd>
+			</dl>
 			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>产品分类：</dt>
 				<dd class="subclass">
-					<?php if ($info['cate_id']){
+					<?php if (!empty($info['cate_id'])){
 						$cateArr = category()->pCate($info['cate_id'], true, true);
 					}?>
 					<div class="title-line category-name" style="display: inline-block;"><?php echo implode(' - ', empty($cateArr)?[]:array_column($cateArr, 'name'));?></div>
@@ -18,7 +24,7 @@
 			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>产品名称：</dt>
 				<dd>
-					<input type="text" class="form-control" name="spu_name" value="<?php echo $info['name'] ?? '';?>">
+					<input type="text" class="form-control" name="spu_name" value="<?php echo $info['name'];?>">
 				</dd>
 			</dl>
 			<dl class="field-row">
@@ -28,17 +34,24 @@
 						<ul class="hy-sl-list-inline hy-sl-vertical">
 							<li class="hy-sl-txt hy-sl-selected" data-id="2500">
 								<div class="hy-sl-set">
-									<a href="javascript:void(0);">厂商橱窗</a>
+									<a href="javascript:void(0);">橱窗</a>
 									<i class="hy-sl-check"></i>
 								</div>
 								<div class="image-num"><?php echo count($info['pdt_picture'] ?? []);?></div>
 							</li>
 							<li class="hy-sl-txt" data-id="2510">
 								<div class="hy-sl-set">
-									<a href="javascript:void(0);">厂素材</a>
+									<a href="javascript:void(0);">素材</a>
 									<i class="hy-sl-check"></i>
 								</div>
 								<div class="image-num"><?php echo count($info['desc_picture'] ?? []);?></div>
+							</li>
+							<li class="hy-sl-txt" data-id="2520">
+								<div class="hy-sl-set">
+									<a href="javascript:void(0);">视频</a>
+									<i class="hy-sl-check"></i>
+								</div>
+								<div class="image-num"><?php echo empty($info['video']) ? 0 : 1;?></div>
 							</li>
 						</ul>
 					</div>
@@ -84,6 +97,15 @@
 							</div>
 							<?php }?>
 						</div>
+						<div class="pic-wrap" data-id="2520" style="display: none;">
+							<?php if (!empty($info['video'])){?>
+							<div class="video-item">
+								<video controls width="250">
+								 	<source src="<?php echo $info['video']['url'];?>" type="video/webm" />
+								</video>
+							</div>
+							<?php } ?>
+						</div>
 					</div>
 				</dd>
 			</dl>
@@ -99,19 +121,19 @@
 								<th width="150">映射属性</th>
 								<th width="60">库存</th>
 								<th width="60" class="batch-btn" data-type="unit">
-									<span>单位</span>
+									<span title="双击批量修改">单位</span>
 								</th>
 								<th width="60" class="batch-btn" data-type="weight">
-									<span>重量(g)</span>
+									<span title="双击批量修改">重量(g)</span>
 								</th>
 								<th width="60" class="batch-btn" data-type="length">
-									<span>长度(cm)</span>
+									<span title="双击批量修改">长度(cm)</span>
 								</th>
 								<th width="60" class="batch-btn" data-type="width">
-									<span>宽度(cm)</span>
+									<span title="双击批量修改">宽度(cm)</span>
 								</th>
 								<th width="60" class="batch-btn" data-type="hight">
-									<span>高度(cm)</span>
+									<span title="双击批量修改">高度(cm)</span>
 								</th>
 							</tr>
 						</thead>

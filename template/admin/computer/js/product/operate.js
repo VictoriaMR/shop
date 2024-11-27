@@ -129,6 +129,7 @@ const OPERATE = {
 			}
 			$(this).addClass('hy-sl-selected').siblings().removeClass('hy-sl-selected');
 			$('.pic-wrap[data-id="'+$(this).data('id')+'"]').show().siblings().hide();
+			DROP.load();
 		});
 		// 批量修改弹窗
 		$('.batch-btn').on('dblclick', function(){
@@ -260,6 +261,19 @@ const OPERATE = {
 		$('.attr-info-content .attr-value[data-name="'+fromName+'"]').removeClass('error').addClass('success').attr('title', title).data('ext', titleArr);
 	}
 };
+const DROP = {
+	init: function() {
+		$('.pic-wrap').on('mousedown', '.item', function(){
+			console.log('here')
+			$(this).css({'cursor':'move'});
+		});
+		this.load();
+	},
+	load: function() {
+		var obj = $('.right .pic-wrap');
+	}
+};
 $(function(){
 	OPERATE.init();
+	DROP.init();
 });

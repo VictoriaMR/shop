@@ -209,7 +209,6 @@ class Product extends AdminBase
 		frame('Html')->addJs();
 
 		$id = iget('id/d', 0);
-		$data = [];
 		if ($id <= 0) {
 			\App::error('参数不正确');
 		} else {
@@ -240,7 +239,7 @@ class Product extends AdminBase
 				$this->assign('cateList', $cateList);
 			}
 		}
-		$this->view($data);
+		$this->view();
 	}
 
 	protected function attrMap()
