@@ -4,21 +4,23 @@
 		<div class="left product-info-content">
 			<input type="hidden" name="opn" value="add">
 			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
+			<input type="hidden" name="cate_id" value="0">
+			<input type="hidden" name="site_id" value="0">
 			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>站点：</dt>
-				<dd class="subclass">
-					<div class="title-line" style="display: inline-block;"></div>
-					<button type="button" class="btn btn-primary btn-xs change-site-bth">修改站点</button>
+				<dd class="item">
+					<div class="title-line site-name" style="display: inline-block;"></div>
+					<button type="button" class="btn btn-primary btn-xs change-site-btn">修改站点</button>
 				</dd>
 			</dl>
 			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>产品分类：</dt>
-				<dd class="subclass">
+				<dd class="item">
 					<?php if (!empty($info['cate_id'])){
 						$cateArr = category()->pCate($info['cate_id'], true, true);
 					}?>
 					<div class="title-line category-name" style="display: inline-block;"><?php echo implode(' - ', empty($cateArr)?[]:array_column($cateArr, 'name'));?></div>
-					<button type="button" class="btn btn-primary btn-xs change-category-bth">修改分类</button>
+					<button type="button" class="btn btn-primary btn-xs change-category-btn">修改分类</button>
 				</dd>
 			</dl>
 			<dl class="field-row">
@@ -152,7 +154,7 @@
 									}
 								}
 							?>
-							<tr>
+							<tr data-sku="<?php echo $key;?>">
 								<td class="<?php echo $check?'check':'';?>">
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload bigImage">
 								</td>
@@ -286,6 +288,7 @@
 		</div>
 	</form>
 </div>
+<!-- 分类选择 -->
 <div class="s-modal change-category-modal">
 	<p class="title"><span>分类修改</span></p>
 	<i class="glyphicon glyphicon-remove"></i>
@@ -311,6 +314,25 @@
 		<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
 	</div>
 </div>
+<!-- 站点选择 -->
+<div class="s-modal change-site-modal">
+	<p class="title"><span>站点修改</span></p>
+	<i class="glyphicon glyphicon-remove"></i>
+	<div class="content">
+		<div class="form-horizontal">
+			<div class="input-group">
+				<div class="input-group-addon"><span>站点：</span></div>
+				<select name="site_id" class="form-control">
+					<option value="0">请选站点</option>
+					<?php foreach($siteList as $value){?>
+					<option value="<?php echo $value['site_id'];?>"><?php echo $value['name'];?></option>
+					<?php } ?>
+				</select>
+			</div>
+		</div>
+		<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
+	</div>
+</div>
 <!-- 属性映射弹窗 -->
 <form class="map-modal s-modal">
 	<p class="title"></p>
@@ -327,6 +349,28 @@
 	<i class="glyphicon glyphicon-remove"></i>
 	<div class="content"></div>
 	<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
+</div>
+<!-- sku选择 -->
+<div class="s-modal sku-modal">
+	<p class="title" style="margin-bottom: 5px;"><span>SKU主图设置</span></p>
+	<i class="glyphicon glyphicon-remove"></i>
+	<div class="content">
+		<div class="form-horizontal" style="max-height: calc(100vh - 200px);overflow-y: auto;">
+			<?php foreach($info['sku'] as $key=>$value){
+				$arr = [];
+				foreach($value['pvs'] as $pk=>$pv) {
+					$arr[] = $pk.': '.$pv;
+				}
+			?>
+			<div class="checkbox">
+			    <label>
+			    	<input type="checkbox" data-sku="<?php echo $key;?>"> <?php echo implode('<br />', $arr);?>
+			    </label>
+			 </div>
+			<?php }?>
+		</div>
+		<button type="button" class="mt20 btn btn-primary btn-lg btn-block btn-save">保存</button>
+	</div>
 </div>
 <script>
 const category = <?php echo json_encode($cateList, JSON_UNESCAPED_UNICODE);?>;

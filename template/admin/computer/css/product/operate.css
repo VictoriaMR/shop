@@ -24,7 +24,7 @@
 #add-product-page .field-row>dd {
     flex: 1;
 }
-#add-product-page .field-row>dd.subclass {
+#add-product-page .field-row>dd.item {
     line-height: 32px;
 }
 #add-product-page .must {
@@ -261,4 +261,7 @@
 }
 .check img {
     border: 2px solid #4cae4c;
+}
+.sku-modal input[type="checkbox"] {
+    top: calc(50% - 7px);
 }

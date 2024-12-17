@@ -103,7 +103,7 @@ const OPERATE = {
 			obj.modalHide();
 		});
 		// 修改分类
-		$('.change-category-bth').on('click', function(){
+		$('.change-category-btn').on('click', function(){
 			$('.change-category-modal').modalShow();
 		});
 		// 分类变化
@@ -119,8 +119,24 @@ const OPERATE = {
 				return false;
 			}
 			const cateHtml = _this.pCate(cid, '');
-			$('.category-name').html(cateHtml);
+			$('#add-product-page .category-name').html(cateHtml);
 			$('#add-product-page [name="cate_id"]').val(cid);
+			obj.hide();
+		});
+		// 修改站点
+		$('.change-site-btn').on('click', function(){
+			$('.change-site-modal').modalShow();
+		});
+		//保存修改站点
+		$('.change-site-modal .btn-save').on('click', function(){
+			const obj = $(this).parents('.change-site-modal');
+			const sid = obj.find('[name="site_id"]').val();
+			if (sid == '0') {
+				errorTips('请选择站点');
+				return false;
+			}
+			$('#add-product-page .site-name').html(sid+' - '+obj.find('[name="site_id"] option:selected').text());
+			$('#add-product-page [name="site_id"]').val(sid);
 			obj.hide();
 		});
 		// 图片切换
@@ -141,13 +157,13 @@ const OPERATE = {
 				case 'unit':
 					name = '单位';
 					html += `<select name="`+type+`" class="form-control">
-                					<option value="0">--</option>
-                					<option value="1">件</option>
-                					<option value="2">个</option>
-                					<option value="3">套</option>
-                					<option value="4">打</option>
-                					<option value="5">箱</option>
-                				</select>`;
+									<option value="0">--</option>
+									<option value="1">件</option>
+									<option value="2">个</option>
+									<option value="3">套</option>
+									<option value="4">打</option>
+									<option value="5">箱</option>
+								</select>`;
 					break;
 				default:
 					if (type == 'weight') {
@@ -190,6 +206,32 @@ const OPERATE = {
 						<i class="glyphicon glyphicon-remove"></i>
 					</div>`;
 			$('.desc-info-content .content').append(html);
+		});
+		// 设置spu图
+		$('.set-spu-cover').on('click', function(){
+			var pObj = $(this).parents('.item');
+			if (pObj.find('.spu-sign').length > 0) {
+				return false;
+			}
+			pObj.find('.image-left-tips').append('<div class="spu-sign">SPU</div>');
+			pObj.siblings().find('.spu-sign').remove();
+		});
+		// 设置sku图
+		$('.set-sku-cover').on('click', function(){
+			var img = $(this).parents('.item').find('.pic-thumb img').attr('src');
+			var pObj = $('.sku-modal');
+			pObj.data('img', img);
+			pObj.find('input[type="checkbox"]').prop('checked', false);
+			pObj.modalShow();
+		});
+		// 保存sku图
+		$('.sku-modal .btn-save').on('click', function(){
+			var pObj = $(this).parents('.sku-modal');
+			var img = pObj.data('img');
+			pObj.find('input[type="checkbox"]:checked').each(function(){
+				$('#sku-list tr[data-sku="'+$(this).data('sku')+'"] img').attr('src', img);
+			});
+			pObj.modalHide();
 		});
 	},
 	initCate: function(pid) {
@@ -264,14 +306,37 @@ const OPERATE = {
 };
 const DROP = {
 	init: function() {
+		var _this = this;
 		$('.pic-wrap').on('mousedown', '.item', function(){
-			console.log('here')
-			$(this).css({'cursor':'move'});
+			// 计算当前对象绝对坐标
+			_this.obj = $(this);
+			
 		});
 		this.load();
 	},
 	load: function() {
 		var obj = $('.right .pic-wrap');
+		var width = obj.width();
+		$('body').on('mouseup', this.end);
+        obj.on('mousemove', '.item', this.move);
+        obj.on('mousedown', '.item', this.down);
+	},
+	down: function(e) {
+		this.obj = $(this);
+		this.item_width = $(this).width();
+		this.item_height = $(this).height();
+		this.init = true;
+		var left = $(this).offset().left;
+		var top = $(this).offset().top;
+		$(this).css({'cursor':'move', 'position':'fixed', 'left':left, 'top':top});
+	},
+	end: function() {
+		this.init = false;
+	},
+	move: function(e) {
+		if (this.init) {
+			this.obj.css({'left':e.pageX - item_width/2, 'top':e.pageY + item_height/2});
+		}
 	}
 };
 $(function(){
