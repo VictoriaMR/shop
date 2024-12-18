@@ -231,7 +231,7 @@ $(function(){
 		minView: 'month'
 	});
 	// 查看大图
-	$('img.bigImage').bigImage();
+	$('.bigImage').bigImage();
 	// 行为打点
 	post('/api/stat', {url: location.href});
 });

@@ -48,6 +48,7 @@
 								</div>
 								<div class="image-num"><?php echo count($info['desc_picture'] ?? []);?></div>
 							</li>
+							<?php if (!empty($info['video'])){?>
 							<li class="hy-sl-txt" data-id="2520">
 								<div class="hy-sl-set">
 									<a href="javascript:void(0);">视频</a>
@@ -55,6 +56,7 @@
 								</div>
 								<div class="image-num"><?php echo empty($info['video']) ? 0 : 1;?></div>
 							</li>
+							<?php }?>
 						</ul>
 					</div>
 					<div class="right spu-image" style="width: calc(100% - 100px);">
@@ -62,9 +64,11 @@
 							<?php foreach ($info['pdt_picture'] ?? [] as $key=>$value){?>
 							<div class="item">
 								<div class="pic-thumb">
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload bigImage">
+									<img draggable="true" src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
+									<div class="cover"></div>
 								</div>
 								<div class="image-left-tips">
+									<div class="bigImage" src="<?php echo $value;?>">大</div>
 									<span class="image-selected">
 										<input type="checkbox" checked>
 									</span>
@@ -84,9 +88,11 @@
 							<?php foreach ($info['desc_picture'] ?? [] as $key=>$value){?>
 							<div class="item">
 								<div class="pic-thumb">
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload bigImage">
+									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value;?>" alt="" class="lazyload">
+									<div class="cover"></div>
 								</div>
 								<div class="image-left-tips">
+									<div class="bigImage" src="<?php echo $value;?>">大</div>
 									<span class="image-selected">
 										<input type="checkbox" checked>
 									</span>
@@ -118,7 +124,7 @@
 						<thead>
 							<tr>
 								<th width="60">封面图</th>
-								<th width="60">采购价</th>
+								<th width="70">采购价</th>
 								<th width="150">供应商SKU</th>
 								<th width="150">映射属性</th>
 								<th width="60">库存</th>
@@ -157,8 +163,9 @@
 							<tr data-sku="<?php echo $key;?>">
 								<td class="<?php echo $check?'check':'';?>">
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload bigImage">
+									<input type="hidden" class="form-control img" name="sku[<?php echo $key;?>]['img']" value="<?php echo $value['img'];?>">
 								</td>
-								<td><?php echo $value['price'];?></td>
+								<td><input type="text" class="form-control price" name="sku[<?php echo $key;?>]['price']" value="<?php echo $value['price'];?>"></td>
 								<td>
 									<div title="SKU属性">
 										<?php foreach($value['pvs'] as $pk=>$pv) {?>
@@ -187,9 +194,11 @@
 									</div>
 									<?php }?>
 								</td>
-								<td><?php echo $value['stock'];?></td>
 								<td>
-									<select name="type" class="form-control unit">
+									<input type="text" class="form-control stock" name="sku[<?php echo $key;?>]['stock']" value="<?php echo $value['stock'];?>">
+								</td>
+								<td>
+									<select name="type" class="form-control unit" name="sku[<?php echo $key;?>]['unit']">
 										<option value="0" selected>--</option>
 										<option value="1">件</option>
 										<option value="2">个</option>
@@ -199,16 +208,16 @@
 									</select>
 								</td>
 								<td>
-									<input type="text" class="form-control weight" placeholder="重量(g)">
+									<input type="text" class="form-control weight" name="sku[<?php echo $key;?>]['weight']" placeholder="重量(g)">
 								</td>
 								<td>
-									<input type="text" class="form-control length" placeholder="长度(cm)">
+									<input type="text" class="form-control length" name="sku[<?php echo $key;?>]['length']" placeholder="长度(cm)">
 								</td>
 								<td>
-									<input type="text" class="form-control width" placeholder="宽度(cm)">
+									<input type="text" class="form-control width" name="sku[<?php echo $key;?>]['width']" placeholder="宽度(cm)">
 								</td>
 								<td>
-									<input type="text" class="form-control hight" placeholder="高度(cm)">
+									<input type="text" class="form-control hight" name="sku[<?php echo $key;?>]['hight']" placeholder="高度(cm)">
 								</td>
 							</tr>
 							<?php }?>

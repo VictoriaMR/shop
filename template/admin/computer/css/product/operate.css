@@ -81,6 +81,23 @@
     background-color: #fff;
     overflow: hidden;
     cursor: pointer;
+    z-index: 1;
+}
+#add-product-page .spu-image .pic-wrap .index {
+    display: inline-block;
+    height: 123px;
+    width: 5px;
+    background: #000;
+    margin: 0 10px 10px 0;
+}
+#add-product-page .pic-wrap .bigImage {
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    background: #0075ff;
+    color: #fff;
+    float: right;
+    text-align: center;
 }
 .image-bottom-tips {
     position: absolute;
@@ -110,6 +127,7 @@
     left: 0;
     top: 0;
     font-size: 0;
+    width: 100%;
 }
 .image-left-tips .image-selected {
     background-color: #93cc7d;
@@ -131,6 +149,14 @@
 }
 .pic-thumb img {
     vertical-align: middle;
+    cursor: move;
+}
+.pic-thumb .cover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 .pic-thumb:hover ~ .image-bottom-tips {
     bottom: 0px;

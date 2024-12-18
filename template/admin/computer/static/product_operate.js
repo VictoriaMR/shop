@@ -233,6 +233,22 @@ const OPERATE = {
 			});
 			pObj.modalHide();
 		});
+		// 保存配置
+		$('.confirm-btn').on('click', function(){
+			var obj = $(this).parents('form');
+			if (obj.find('[name="site_id"]').val() == '0') {
+				errorTips('请选择站点');
+				return false;
+			}
+			if (obj.find('[name="cate_id"]').val() == '0') {
+				errorTips('请选择站点');
+				return false;
+			}
+			if (obj.find('[name="spu_name"]').val() == '') {
+				errorTips('请选择站点');
+				return false;
+			}
+		});
 	},
 	initCate: function(pid) {
 		let html = '';
@@ -315,28 +331,58 @@ const DROP = {
 		this.load();
 	},
 	load: function() {
-		var obj = $('.right .pic-wrap');
-		var width = obj.width();
-		$('body').on('mouseup', this.end);
-        obj.on('mousemove', '.item', this.move);
-        obj.on('mousedown', '.item', this.down);
+		this.pObj = $('.right .pic-wrap:visible');
+		this.p_w = this.pObj.width();
+		this.p_h = this.pObj.height();
+		this.p_x = this.pObj.offset().left;
+		this.p_y = this.pObj.offset().top;
+		this.pObj.on('mouseup', '.item .cover', this.end);
+		this.pObj.on('mousemove', '.item .cover', this.move);
+		this.pObj.on('mousedown', '.item .cover', this.down);
 	},
 	down: function(e) {
-		this.obj = $(this);
-		this.item_width = $(this).width();
-		this.item_height = $(this).height();
-		this.init = true;
-		var left = $(this).offset().left;
-		var top = $(this).offset().top;
-		$(this).css({'cursor':'move', 'position':'fixed', 'left':left, 'top':top});
+		DROP.obj = $(this).parents('.item');
+		DROP.w = DROP.obj.width();
+		DROP.h = DROP.obj.height();
+		DROP.status = true;
+		DROP.obj.before('<div class="index"></div');
+		DROP.obj.css({'position':'fixed', 'left':DROP.obj.offset().left, 'top':DROP.obj.offset().top, 'z-index':2});
+		DROP.pObj.append(DROP.obj);
 	},
 	end: function() {
-		this.init = false;
+		if (DROP.pObj.find('.index').length > 0) {
+			DROP.obj.css({'position':'relative', left:0, top:0, 'z-index':1});
+			DROP.pObj.find('.index').before(DROP.obj);
+			DROP.pObj.find('.index').remove();
+			DROP.index();
+		}
+		DROP.status = false;
+		DROP.obj = null;
 	},
 	move: function(e) {
-		if (this.init) {
-			this.obj.css({'left':e.pageX - item_width/2, 'top':e.pageY + item_height/2});
+		if (DROP.status) {
+			DROP.x = e.pageX - DROP.w/2;
+			DROP.y = e.pageY - DROP.h/2;
+			DROP.obj.css({'left':DROP.x, 'top':DROP.y});
+			DROP.offset();
 		}
+	},
+	offset: function() {
+		if (this.x > this.p_x && this.x < this.p_x + this.p_w && this.y > this.p_y && this.y < this.p_y + this.p_h) {
+			// 判断在目标位置
+			var cos_num = parseInt(this.p_w / (this.w + 10));
+			var x_index = parseInt((this.x - this.p_x) / (this.w + 10)) + cos_num*parseInt((this.y - this.p_y) / (this.h + 10));
+			if (x_index != this.in_index) {
+				this.in_index = x_index;
+				this.pObj.find('.index').remove();
+				this.pObj.find('.item').eq(x_index).before('<div class="index"></div');
+			}
+		}
+	},
+	index: function() {
+		DROP.pObj.find('.item').each(function(index){
+			$(this).find('.num').text(index+1);
+		});
 	}
 };
 $(function(){
