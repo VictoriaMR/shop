@@ -70,10 +70,11 @@
 								<div class="image-left-tips">
 									<div class="bigImage" src="<?php echo $value;?>">大</div>
 									<span class="image-selected">
-										<input type="checkbox" checked>
+										<input type="checkbox" checked name="main_img[]" value="<?php echo $value;?>">
 									</span>
 									<?php if ($key == 0) {?>
 									<div class="spu-sign">SPU</div>
+									<input type="hidden" name="spu_img" value="<?php echo $value;?>">
 									<?php }?>
 								</div>
 								<div class="num"><?php echo $key+1;?></div>
@@ -94,7 +95,7 @@
 								<div class="image-left-tips">
 									<div class="bigImage" src="<?php echo $value;?>">大</div>
 									<span class="image-selected">
-										<input type="checkbox" checked>
+										<input type="checkbox" name="desc_img[]" checked value="<?php echo $value;?>">
 									</span>
 								</div>
 								<div class="num"><?php echo $key+1;?></div>
@@ -108,9 +109,15 @@
 						<div class="pic-wrap" data-id="2520" style="display: none;">
 							<?php if (!empty($info['video'])){?>
 							<div class="video-item">
-								<video controls width="250">
+								<video controls width="250" poster="<?php echo $info['video']['img'] ?? '';?>">
 								 	<source src="<?php echo $info['video']['url'];?>" type="video/webm" />
 								</video>
+								<div class="image-left-tips">
+									<span class="image-selected">
+										<input type="checkbox" name="video[url]" checked value="<?php echo $info['video']['url'];?>" style="margin-right: 10px;" title="视频">
+										<input type="checkbox" name="video[img]" <?php echo empty($info['video']['img'])?'':'checked';?> value="<?php echo $info['video']['img'] ?? '';?>" title="封面图">
+									</span>
+								</div>
 							</div>
 							<?php } ?>
 						</div>
@@ -170,6 +177,7 @@
 									<div title="SKU属性">
 										<?php foreach($value['pvs'] as $pk=>$pv) {?>
 										<p><?php echo $pk.': '.$pv;?></p>
+										<input type="hidden" name="sku[<?php echo $key;?>][attr][<?php echo $pk;?>]" value="<?php echo $pv;?>">
 										<?php }?>
 									</div>
 									<p title="SKUID"><?php echo $key;?></p>

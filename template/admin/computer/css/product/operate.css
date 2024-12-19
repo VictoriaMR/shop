@@ -139,6 +139,7 @@
 }
 .image-left-tips .image-selected input[type=checkbox]{
     margin:0;
+    width: auto !important;
 }
 .pic-thumb{
     width: 121px;

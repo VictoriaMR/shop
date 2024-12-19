@@ -188,7 +188,6 @@ const OPERATE = {
 			const obj = $(this).parents('.batch-edit-modal');
 			const type = obj.find('[name="type"]').val();
 			const value = obj.find('[name="'+type+'"]').val();
-			console.log(value, 'value')
 			$('#sku-list .'+type).val(value);
 			obj.modalHide();
 		});
@@ -345,7 +344,7 @@ const DROP = {
 		DROP.h = DROP.obj.height();
 		DROP.status = true;
 		DROP.obj.before('<div class="index"></div');
-		DROP.obj.css({'position':'fixed', 'left':DROP.obj.offset().left, 'top':DROP.obj.offset().top, 'z-index':2});
+		DROP.obj.css({'position':'fixed', 'left':DROP.obj.offset().left - $(document).scrollLeft(), 'top':DROP.obj.offset().top - $(document).scrollTop(), 'z-index':2});
 		DROP.pObj.append(DROP.obj);
 	},
 	end: function() {
@@ -362,14 +361,14 @@ const DROP = {
 		if (DROP.status) {
 			DROP.x = e.pageX - DROP.w/2;
 			DROP.y = e.pageY - DROP.h/2;
-			DROP.obj.css({'left':DROP.x, 'top':DROP.y});
+			DROP.obj.css({'left':DROP.x - $(document).scrollLeft(), 'top':DROP.y - $(document).scrollTop()});
 			DROP.offset();
 		}
 	},
 	offset: function() {
 		if (this.x > this.p_x && this.x < this.p_x + this.p_w && this.y > this.p_y && this.y < this.p_y + this.p_h) {
 			// 判断在目标位置
-			var cos_num = parseInt(this.p_w / (this.w + 10));
+			var cos_num = parseInt((this.p_w - 10) / (this.w + 10));
 			var x_index = parseInt((this.x - this.p_x) / (this.w + 10)) + cos_num*parseInt((this.y - this.p_y) / (this.h + 10));
 			if (x_index != this.in_index) {
 				this.in_index = x_index;
