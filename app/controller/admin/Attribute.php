@@ -17,7 +17,7 @@ class Attribute extends AdminBase
 
 	public function index()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getAttrInfo', 'getAttrLanguage', 'transfer', 'editAttrInfo', 'editAttrLanguage', 'deleteAttrInfo'])) {
 				$this->$opn();
@@ -156,7 +156,7 @@ class Attribute extends AdminBase
 
 	public function attrValue()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getAttvInfo', 'getAttvLanguage', 'transfer', 'editAttvInfo', 'editAttvLanguage', 'deleteAttvInfo'])) {
 				$this->$opn();

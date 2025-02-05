@@ -19,7 +19,7 @@ class Category extends AdminBase
 
 	public function index()
 	{	
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, [''])) {
 				$this->$opn();
@@ -35,7 +35,7 @@ class Category extends AdminBase
 
 	public function cateList()
 	{	
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getCateInfo', 'getCateLanguage', 'editInfo', 'editLanguage', 'sortCategory', 'deleteCategory', 'transfer', 'modifyCategory'])) {
 				$this->$opn();

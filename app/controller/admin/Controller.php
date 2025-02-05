@@ -17,7 +17,7 @@ class Controller extends AdminBase
 
 	public function index()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'editInfo', 'deleteInfo', 'sortInfo'])) {
 				$this->$opn();
@@ -109,7 +109,7 @@ class Controller extends AdminBase
 
 	public function icon()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getIconInfo', 'editIconInfo', 'deleteIconInfo', 'sortIconInfo'])) {
 				$this->$opn();

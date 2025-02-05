@@ -19,10 +19,10 @@ var n=m.attr("style");g.push(n);m.attr("style",n?n+";"+d:d);});};j=function(){c.
 }else{o.attr("style",n);}});};}h();var k=/(outer)/.test(b)?e[b](i.includeMargin):e[b]();j();return k;}});}));
 /* common */
 function post(url, param, callback) {
-	$.post(url, window.btoa(JSON.stringify(param)), callback);
+	$.post(url, param, callback);
 }
 function get(url, param, callback) {
-	$.get(url, window.btoa(JSON.stringify(param)), callback);
+	$.get(url, param, callback);
 }
 function addRightTips(info, type, delay) {
 	if (!info) {
@@ -201,7 +201,7 @@ $(function(){
 			$('[name="'+guid_name+'"]').on('change', function (e) {
 	            const thissrc = thisobj.attr('src');
 	            thisobj.data('src', thissrc);
-	            thisobj.attr('src', URI+'image/common/loading.png').addClass('loading');
+	            thisobj.attr('src', '/image/common/loading.png').addClass('loading');
 				const files = $(this).prop('files');
 				const data = new FormData();
             	data.append('file', files[0]);

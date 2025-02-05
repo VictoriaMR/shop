@@ -84,6 +84,7 @@
 					<?php if ($value['status'] == 1) {?>
 					<a class="btn btn-primary btn-xs" target="_blank" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_spu_id']]);?>">配置</a>
 					<?php } }?>
+					<button class="btn btn-default btn-xs btn-edit">编辑</button>
 				</td>
 			</tr>
 			<?php } ?>

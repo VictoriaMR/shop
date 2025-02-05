@@ -18,7 +18,7 @@ class Desc extends AdminBase
 
 	public function index()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getDescInfo', 'getDescLanguage', 'transfer', 'editDescInfo', 'editDescLanguage', 'deleteDescInfo'])) {
 				$this->$opn();
@@ -153,7 +153,7 @@ class Desc extends AdminBase
 
 	public function descValue()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getDescValueInfo', 'getDescValueLanguage', 'transfer', 'editDescValueInfo', 'editDescValueLanguage', 'deleteDescValueInfo'])) {
 				$this->$opn();
@@ -288,7 +288,7 @@ class Desc extends AdminBase
 
 	public function descGroup()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getDescGroupInfo', 'getDescGroupLanguage', 'transfer', 'editDescGroupInfo', 'editDescGroupLanguage', 'deleteDescGroupInfo'])) {
 				$this->$opn();

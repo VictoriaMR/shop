@@ -29,6 +29,7 @@ class Spu extends Base
 			$this->getConst('STATUS_NORMAL') => '未使用',
 			$this->getConst('STATUS_SET') => '已上传',
 			$this->getConst('STATUS_USED') => '已使用',
+			$this->getConst('STATUS_SPU') => '转化中',
 			$this->getConst('STATUS_FAIL') => '已废弃',
 		];
 	}

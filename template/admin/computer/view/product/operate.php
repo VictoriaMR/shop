@@ -2,7 +2,7 @@
 <div class="container-fluid" id="add-product-page">
 	<form action="<?php echo url("product/operate");?>" method="post" enctype="multipart/form-data">
 		<div class="left product-info-content">
-			<input type="hidden" name="opn" value="add">
+			<input type="hidden" name="opn" value="addProduct">
 			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
 			<input type="hidden" name="cate_id" value="0">
 			<input type="hidden" name="site_id" value="0">

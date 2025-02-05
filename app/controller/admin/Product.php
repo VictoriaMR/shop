@@ -198,9 +198,9 @@ class Product extends AdminBase
 
 	public function operate()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['attrMap'])) {
+			if (in_array($opn, ['attrMap', 'addProduct'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -262,9 +262,14 @@ class Product extends AdminBase
 		$this->error('添加属性映射失败');
 	}
 
+	protected function addProduct()
+	{
+		dd($_POST);
+	}
+
 	public function detail()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['editInfo', 'getSpuNameLanguage', 'transfer', 'editSpuLanguage', 'modifySpuImage', 'addSpuImage', 'deleteSpuImage', 'editSkuInfo', 'modifySkuAttrImage', 'modifySpuDesc', 'deleteSpuDesc', 'getSpuDescInfo', 'modifySpuIntroduceImage', 'deleteSpuIntroduceImage', 'addSpuIntroduceImage', 'modifySpuData', 'editDescGroupInfo'])) {
 				$this->$opn();

@@ -111,7 +111,7 @@ class Login extends HomeBase
 	public function resetPassword()
 	{
 		$token = input('token');
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$password = ipost('password');
 			if (empty($token) || empty($password)) {
 				$this->error('Token or Password was Empty, Please try again!');

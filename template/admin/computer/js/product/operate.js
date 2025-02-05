@@ -233,19 +233,32 @@ const OPERATE = {
 		});
 		// 保存配置
 		$('.confirm-btn').on('click', function(){
+			var _thisobj = $(this);
 			var obj = $(this).parents('form');
 			if (obj.find('[name="site_id"]').val() == '0') {
 				errorTips('请选择站点');
 				return false;
 			}
 			if (obj.find('[name="cate_id"]').val() == '0') {
-				errorTips('请选择站点');
+				errorTips('请选择分类');
 				return false;
 			}
 			if (obj.find('[name="spu_name"]').val() == '') {
-				errorTips('请选择站点');
+				errorTips('请设置产品标题');
 				return false;
 			}
+			_thisobj.button('loading');
+			post('', obj.serializeArray(), function(res){
+				showTips(res);
+				if (res.code == 200) {
+					setTimeout(function(){
+						window.location = '/product/purchaseList';
+					}, 300);
+				} else {
+					_thisobj.button('reset');
+				}
+				obj.modalHide();
+			});
 		});
 	},
 	initCate: function(pid) {
@@ -291,7 +304,7 @@ const OPERATE = {
 	mapAttrValue: function(fromName, toName, nameExt) {
 		var obj = $('#sku-list .attr-value[data-name="'+fromName+'"]');
 		obj.removeClass('error').addClass('success').text(toName);
-		var pObj = obj.parents('div');
+		var pObj = obj.parent().parent();
 		pObj.find('attr-map').remove();
 		const tmpAttrName = obj.eq(0).parents('p').find('.attr-name').text();
 		let titleArr = {};
@@ -324,7 +337,6 @@ const DROP = {
 		$('.pic-wrap').on('mousedown', '.item', function(){
 			// 计算当前对象绝对坐标
 			_this.obj = $(this);
-			
 		});
 		this.load();
 	},

@@ -17,7 +17,7 @@ class Payment extends AdminBase
 
 	public function index()
 	{	
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getInfo', 'editInfo', 'deleteInfo', 'modifyInfo'])) {
 				$this->$opn();
@@ -173,7 +173,7 @@ class Payment extends AdminBase
 
 	public function paymentUsed()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getUsedInfo', 'editUsedInfo', 'deleteUsedInfo'])) {
 				$this->$opn();

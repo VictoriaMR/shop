@@ -17,7 +17,7 @@ class Faq extends AdminBase
 
     public function index()
     {   
-        if (frame('Request')->isPost()) {
+        if (isPost()) {
             $opn = ipost('opn');
             if (in_array($opn, ['getGroupInfo', 'modifyGroupStatus', 'editGroupInfo', 'getGroupLanguage', 'transfer', 'editGroupLanguage'])) {
                 $this->$opn();
@@ -141,7 +141,7 @@ class Faq extends AdminBase
 
     public function faqList()
     {   
-        if (frame('Request')->isPost()) {
+        if (isPost()) {
             $opn = ipost('opn');
             if (in_array($opn, ['getFaqInfo', 'modifyFaqStatus', 'editFaqInfo', 'getFaqLanguage', 'editFaqLanguage'])) {
                 $this->$opn();

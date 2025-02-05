@@ -17,7 +17,7 @@ class Index extends AdminBase
 
 	public function index()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['setLeft'])) {
 				$this->$opn();
@@ -47,7 +47,7 @@ class Index extends AdminBase
 
 	public function statInfo()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getSystemInfo'])) {
 				$this->$opn();

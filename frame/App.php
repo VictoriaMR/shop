@@ -36,7 +36,6 @@ class App
 	{
 		$info = config('domain', $_SERVER['HTTP_HOST']);
 		if ($info) {
-			self::initParam();
 			self::set('domain', $info);
 			//路由解析
 			$info = frame('Router')->analyze($info['class']);
@@ -100,14 +99,6 @@ class App
 	{
 		if (is_null($key)) return self::$data[$name] ?? $default;
 		else return empty(self::$data[$name][$key]) ? $default : self::$data[$name][$key];
-	}
-
-	public static function initParam()
-	{
-		if (count($_POST) == 1 && $tmpArr = base64_decode(key($_POST))) {
-			$tmpArr = json_decode($tmpArr, true);
-			$_POST = isset($tmpArr[0]) ? array_column($tmpArr, 'value', 'name') : $tmpArr;
-		}
 	}
 
 	public static function runOver($ajax=false)

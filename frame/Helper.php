@@ -56,6 +56,10 @@ function isAjax(){
 	defined('IS_AJAX') || define('IS_AJAX', frame('Request')->isAjax());
 	return IS_AJAX;
 }
+function isPost() {
+	defined('IS_POST') || define('IS_POST', frame('Request')->isPost());
+	return IS_POST;
+}
 function isMobile(){
 	defined('IS_MOBILE') || define('IS_MOBILE', frame('Request')->isMobile());
 	return IS_MOBILE;

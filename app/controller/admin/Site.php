@@ -22,7 +22,7 @@ class Site extends AdminBase
 
 	public function index()
 	{	
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['editSite', 'getInfo', 'modifySite', 'modifySite', 'deleteLanguage', 'addLanguage', 'sortLanguage', 'domainInfo', 'deleteDomain', 'editDomain', 'modifyDomain', 'deleteCurrency', 'addCurrency', 'sortCurrency', 'updateKeyword', 'editLanguage', 'getLanguage', 'transfer'])) {
 				$this->$opn();
@@ -434,7 +434,7 @@ class Site extends AdminBase
 
 	public function staticCache()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['deleteStaticCache'])) {
 				$this->$opn();
@@ -519,7 +519,7 @@ class Site extends AdminBase
 
 	public function siteLog()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['deleteLog'])) {
 				$this->$opn();

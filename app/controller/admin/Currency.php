@@ -16,7 +16,7 @@ class Currency extends AdminBase
 
 	public function index()
 	{
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['getCurrencyInfo', 'updateCurrencyRate'])) {
 				$this->$opn();

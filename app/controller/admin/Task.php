@@ -17,7 +17,7 @@ class Task extends AdminBase
 	public function index()
 	{
 		sys()->currency()->updateRate();
-		if (frame('Request')->isPost()) {
+		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['modifyTask'])) {
 				$this->$opn();

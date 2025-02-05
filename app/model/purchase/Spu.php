@@ -13,5 +13,6 @@ class Spu extends Base
 	const STATUS_NORMAL = 0;
 	const STATUS_SET = 1;
 	const STATUS_USED = 2;
-	const STATUS_FAIL = 3;
+	const STATUS_SPU = 3;
+	const STATUS_FAIL = 4;
 }
