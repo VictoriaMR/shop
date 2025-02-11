@@ -7,11 +7,11 @@
 			<input type="text" class="form-control" name="item_id" value="<?php echo $item_id;?>" placeholder="产品源ID" autocomplete="off">
 		</div>
 		<div class="form-group">
-			<select class="form-control" name="purchase_channel_id">
+			<select class="form-control" name="channel_id">
 				<option value="-1">请选择渠道</option>
 				<?php if (!empty($channelList)) {
 					foreach ($channelList as $key => $value) {?>
-				<option <?php if ($purchase_channel_id==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value;?></option>
+				<option <?php if ($channel_id==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value;?></option>
 				<?php } }?>
 			</select>
 		</div>
@@ -60,7 +60,7 @@
 				data-status="<?php echo $value['status'];?>"
 			>
 				<td><?php echo $value['purchase_spu_id'];?></td>
-				<td><?php echo $channelList[$value['purchase_channel_id']]??'--';?></td>
+				<td><?php echo $channelList[$value['channel_id']]??'--';?></td>
 				<td><?php echo $value['item_id'];?></td>
 				<td>
 					<span title="价格"><?php echo $value['price']>0?$value['price']:'--';?></span>

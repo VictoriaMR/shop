@@ -6,6 +6,7 @@
 			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
 			<input type="hidden" name="cate_id" value="0">
 			<input type="hidden" name="site_id" value="0">
+			<input type="hidden" name="spu_image" value="<?php echo current($info['pdt_picture'] ?? []);?>">
 			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>站点：</dt>
 				<dd class="item">
@@ -74,7 +75,6 @@
 									</span>
 									<?php if ($key == 0) {?>
 									<div class="spu-sign">SPU</div>
-									<input type="hidden" name="spu_img" value="<?php echo $value;?>">
 									<?php }?>
 								</div>
 								<div class="num"><?php echo $key+1;?></div>
@@ -170,7 +170,7 @@
 							<tr data-sku="<?php echo $key;?>">
 								<td class="<?php echo $check?'check':'';?>">
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload bigImage">
-									<input type="hidden" class="form-control img" name="sku[<?php echo $key;?>]['img']" value="<?php echo $value['img'];?>">
+									<input type="hidden" class="form-control img" name="sku[<?php echo $key;?>][img]" value="<?php echo $value['img'];?>">
 								</td>
 								<td><input type="text" class="form-control price" name="sku[<?php echo $key;?>]['price']" value="<?php echo $value['price'];?>"></td>
 								<td>
@@ -261,7 +261,7 @@
 				<dl class="field-row">
 					<dt class="title-line">货号：</dt>
 					<dd>
-						<a href="<?php echo $info['url'];?>" target="_blank"><?php echo $info['purchase_channel_id'].' - '.$info['item_id'];?></a>
+						<a href="<?php echo $info['url'];?>" target="_blank"><?php echo $info['channel_id'].' - '.$info['item_id'];?></a>
 						<a href="<?php echo $info['url'];?>" target="_blank" class="glyphicon glyphicon-link"></a>
 					</dd>
 				</dl>

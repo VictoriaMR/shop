@@ -16,7 +16,7 @@ class Spu extends Base
 			return false;
 		}
 		$data = [
-			'purchase_channel_id' => $channelId,
+			'channel_id' => $channelId,
 			'item_id' => $itemId,
 		];
 		if ($this->getCountData($data)) return true;
@@ -52,16 +52,16 @@ class Spu extends Base
 		if (empty($info)) {
 			return false;
 		}
-		$result = $this->getResult($info['purchase_channel_id'], $info['item_id']);
+		$result = $this->getResult($info['channel_id'], $info['item_id']);
 		if (empty($result)) {
 			return false;
 		}
 		return array_merge($info, $result);
 	}
 
-	public function saveResult(int $channelId, int $itemId, array $data)
+	public function saveResult(int $channelId, int $itemId, array $data, $path='product_data')
 	{
-		$path = $this->resultPath($channelId, $itemId);
+		$path = $this->resultPath($channelId, $itemId, $path);
 		file_put_contents($path, json_encode($data, JSON_UNESCAPED_UNICODE));
 		return true;
 	}
@@ -76,12 +76,10 @@ class Spu extends Base
 		return isJson($rst);
 	}
 
-	protected function resultPath($channelId, int $itemId, $create=true)
+	protected function resultPath($channelId, int $itemId, $path='product_data')
 	{
-		$path = ROOT_PATH.'storage/product_data/'.$channelId.'/';
-		if ($create) {
-			createDir($path);
-		}
+		$path = ROOT_PATH.'storage/'.$path.'/'.$channelId.'/';
+		createDir($path);
 		return $path.$itemId.'.json';
 	}
 
@@ -95,7 +93,7 @@ class Spu extends Base
 		if (empty($rst['name'])) {
 			return false;
 		}
-		$this->updateData(['purchase_channel_id'=>$channelId, 'item_id'=>$itemId], ['name'=>$rst['name']]);
+		$this->updateData(['channel_id'=>$channelId, 'item_id'=>$itemId], ['name'=>$rst['name']]);
 		return $rst['name'];
 	}
 }

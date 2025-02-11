@@ -19,7 +19,7 @@ const OPERATELIST = {
 			thisObj.button('loading');
 			post('', $('.edit-status-modal').serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code) {
 					setTimeout(function(){
 						window.location.reload();
 					}, 500);

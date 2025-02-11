@@ -6,5 +6,5 @@ use app\model\Base;
 class Channel extends Base
 {
 	protected $_table = 'purchase_channel';
-	protected $_intFields = ['purchase_channel_id', 'status', 'sort'];
+	protected $_intFields = ['channel_id', 'status', 'sort'];
 }

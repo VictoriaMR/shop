@@ -4,11 +4,11 @@
             <input type="text" class="form-control" name="unique_id" value="<?php echo $unique_id;?>" placeholder="店铺源ID" autocomplete="off">
         </div>
         <div class="form-group">
-            <select class="form-control" name="purchase_channel_id">
+            <select class="form-control" name="channel_id">
                 <option value="-1">请选择渠道</option>
                 <?php if (!empty($channelList)) {
                     foreach ($channelList as $key => $value) {?>
-                <option <?php if ($purchase_channel_id==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value;?></option>
+                <option <?php if ($channel_id==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value;?></option>
                 <?php } }?>
             </select>
         </div>
@@ -38,7 +38,7 @@
             <?php foreach ($list as $key => $value) { ?>
             <tr>
                 <td><?php echo $value['purchase_shop_id'];?></td>
-                <td><?php echo $channelList[$value['purchase_channel_id']]??'--';?></td>
+                <td><?php echo $channelList[$value['channel_id']]??'--';?></td>
                 <td><?php echo $value['unique_id'];?></td>
                 <td><span class="glyphicon glyphicon-link"></span> <a href="https://<?php echo $value['url'];?>" target="_blank"><?php echo $value['name']?:'--';?></a></td>
                 <td><?php echo $value['product_count']?:'--';?></td>

@@ -61,7 +61,7 @@ const OPERATE = {
 			post('', obj.serializeArray(), function(res){
 				showTips(res);
 				_thisobj.button('reset');
-				if (res.code == 200) {
+				if (res.code) {
 					_this.mapAttrName(obj.find('.title').text(), name);
 				}
 				obj.modalHide();
@@ -214,6 +214,7 @@ const OPERATE = {
 			}
 			pObj.find('.image-left-tips').append('<div class="spu-sign">SPU</div>');
 			pObj.siblings().find('.spu-sign').remove();
+			$('#add-product-page form [name="spu_image"]').val(pObj.find('img').attr('src'));
 		});
 		// 设置sku图
 		$('.set-sku-cover').on('click', function(){
@@ -229,6 +230,7 @@ const OPERATE = {
 			var img = pObj.data('img');
 			pObj.find('input[type="checkbox"]:checked').each(function(){
 				$('#sku-list tr[data-sku="'+$(this).data('sku')+'"] img').attr('src', img);
+				$('#sku-list tr[data-sku="'+$(this).data('sku')+'"] input.img').val(img);
 			});
 			pObj.modalHide();
 		});
@@ -251,14 +253,13 @@ const OPERATE = {
 			_thisobj.button('loading');
 			post('', obj.serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code) {
 					setTimeout(function(){
-						window.location = '/product/purchaseList';
+						window.history.back();
 					}, 300);
 				} else {
 					_thisobj.button('reset');
 				}
-				obj.modalHide();
 			});
 		});
 	},
@@ -343,6 +344,9 @@ const DROP = {
 	},
 	load: function() {
 		this.pObj = $('.right .pic-wrap:visible');
+		if (this.pObj.length == 0) {
+			return false;
+		}
 		this.p_w = this.pObj.width();
 		this.p_h = this.pObj.height();
 		this.p_x = this.pObj.offset().left;

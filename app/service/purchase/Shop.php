@@ -8,7 +8,7 @@ class Shop extends Base
     public function addShop($channelId, $uniqueId, $name, $url, $ext)
     {
         $data = [
-            'purchase_channel_id' => $channelId,
+            'channel_id' => $channelId,
             'unique_id' => $uniqueId,
         ];
         $info = $this->loadData($data, 'purchase_shop_id');

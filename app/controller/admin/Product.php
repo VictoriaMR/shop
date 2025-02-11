@@ -105,7 +105,7 @@ class Product extends AdminBase
 
 		$id = iget('id/d', 0);
 		$status = iget('status/d', -1);
-		$channelId = iget('purchase_channel_id/d', 0);
+		$channelId = iget('channel_id/d', 0);
 		$itemId = iget('item_id', '');
 		$stime = iget('stime/t', '');
 		$etime = iget('etime/t', '');
@@ -120,7 +120,7 @@ class Product extends AdminBase
 			$where['status'] = $status;
 		}
 		if ($channelId > 0) {
-			$where['purchase_channel_id'] = $channelId;
+			$where['channel_id'] = $channelId;
 		}
 		if ($itemId) {
 			$where['item_id'] = $itemId;
@@ -151,22 +151,22 @@ class Product extends AdminBase
 			foreach ($list as $key=>$value) {
 				$list[$key]['user_info'] = $this->avatar($userList[$value['mem_id']] ?? '');
 				$list[$key]['shop_info'] = $shopList[$value['purchase_shop_id']] ?? [];
-				$list[$key]['url'] = purchase()->spu()->url($value['purchase_channel_id'], $value['item_id']);
+				$list[$key]['url'] = purchase()->spu()->url($value['channel_id'], $value['item_id']);
 				// 标题补全
 				if ($value['status'] == purchase()->spu()->getConst('STATUS_SET') && !$value['name']) {
-					$list[$key]['name'] = purchase()->spu()->updateTitle($value['purchase_channel_id'], $value['item_id']);
+					$list[$key]['name'] = purchase()->spu()->updateTitle($value['channel_id'], $value['item_id']);
 				}
 			}
 		}
 
 		$channelList = service('purchase/Channel')->getListData();
-		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
+		$channelList = array_column($channelList, 'name', 'channel_id');
 		$statusList = purchase()->spu()->getStatusList();
 
 		$this->view([
 			'id' => $id,
 			'status' => $status,
-			'purchase_channel_id' => $channelId,
+			'channel_id' => $channelId,
 			'item_id' => $itemId,
 			'stime' => $stime,
 			'etime' => $etime,
@@ -264,7 +264,32 @@ class Product extends AdminBase
 
 	protected function addProduct()
 	{
-		dd($_POST);
+		$id = ipost('id/d', 0);
+		$site_id = ipost('site_id/d', 0);
+		$cate_id = ipost('cate_id/d', 0);
+		$spu_name = ipost('spu_name', '');
+		if ($id <= 0) {
+			$this->error('ID参数不正确');
+		}
+		if ($site_id <= 0) {
+			$this->error('站点参数不正确');
+		}
+		if ($cate_id <= 0) {
+			$this->error('分类参数不正确');
+		}
+		if (empty($spu_name)) {
+			$this->error('SPU标题不能为空');
+		}
+		$info = purchase()->spu()->loadData($id);
+		if (empty($info)) {
+			$this->error('数据不存在');
+		}
+		$rst = purchase()->spu()->saveResult($info['channel_id'], $info['item_id'], ipost(), 'save_data');
+		dd($rst);
+		if ($rst) {
+			purchase()->spu()->updateData($id, ['status'=>purchase()->spu()->getConst('STATUS_SPU')]);
+		}
+		$this->success('保存成功');
 	}
 
 	public function detail()
@@ -681,14 +706,14 @@ class Product extends AdminBase
 		frame('Html')->addJs();
 
 		$status = iget('status/d', -1);
-		$channelId = iget('purchase_channel_id/d', 0);
+		$channelId = iget('channel_id/d', 0);
 		$uniqueId = iget('unique_id', '');
 		$page = iget('page/d', 1);
 		$size = iget('size/d', 30);
 
 		$where = [];
 		if ($channelId > 0) {
-			$where['purchase_channel_id'] = $channelId;
+			$where['channel_id'] = $channelId;
 		}
 		if ($uniqueId) {
 			$where['unique_id'] = $uniqueId;
@@ -708,11 +733,11 @@ class Product extends AdminBase
 		}
 
 		$channelList = service('purchase/Channel')->getListData();
-		$channelList = array_column($channelList, 'name', 'purchase_channel_id');
+		$channelList = array_column($channelList, 'name', 'channel_id');
 
 		$this->view([
 			'status' => $status,
-			'purchase_channel_id' => $channelId,
+			'channel_id' => $channelId,
 			'unique_id' => $uniqueId,
 			'total' => $total,
 			'size' => $size,

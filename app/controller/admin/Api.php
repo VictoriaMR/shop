@@ -80,7 +80,7 @@ class Api extends AdminBase
 				break;
 		}
 		$where = [
-			'purchase_channel_id' => $channelId,
+			'channel_id' => $channelId,
 			'item_id' => $data['item_id'],
 		];
 		$id = service('purchase/Purchase')->spu()->loadData($where, 'purchase_spu_id')['purchase_spu_id'] ?? 0; 

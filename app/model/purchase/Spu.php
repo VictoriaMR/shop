@@ -8,7 +8,7 @@ class Spu extends Base
 	protected $_table = 'purchase_spu';
 	protected $_addTime = 'add_time';
 	protected $_updateTime = 'update_time';
-	protected $_intFields = ['purchase_spu_id', 'purchase_channel_id', 'mem_id', 'purchase_shop_id', 'status', 'sale_count'];
+	protected $_intFields = ['purchase_spu_id', 'channel_id', 'mem_id', 'purchase_shop_id', 'status', 'sale_count'];
 
 	const STATUS_NORMAL = 0;
 	const STATUS_SET = 1;
