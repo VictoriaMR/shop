@@ -93,7 +93,7 @@ class Task
 		}
 	}
 
-	public function noticeTask($key)
+	protected function noticeTask($key)
 	{
 		$key = $this->getClassKey($key);
 		$info = $this->getInfo($key);

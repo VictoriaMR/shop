@@ -285,7 +285,6 @@ class Product extends AdminBase
 			$this->error('数据不存在');
 		}
 		$rst = purchase()->spu()->saveResult($info['channel_id'], $info['item_id'], ipost(), 'save_data');
-		dd($rst);
 		if ($rst) {
 			purchase()->spu()->updateData($id, ['status'=>purchase()->spu()->getConst('STATUS_SPU')]);
 		}

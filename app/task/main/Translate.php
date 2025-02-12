@@ -8,9 +8,9 @@ class Translate extends TaskDriver
 	private $language = [];
 
 	public $config = [
-        'name' => '自动翻译任务',
-        'cron' => ['0 6 * * *'],
-    ];
+		'name' => '自动翻译任务',
+		'cron' => ['0 6 * * *'],
+	];
 
 	public function run()
 	{

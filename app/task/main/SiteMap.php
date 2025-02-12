@@ -15,9 +15,9 @@ class SiteMap extends TaskDriver
 	const SITEMAP_CACHE_KEY = 'sitemap:last-change';
 
 	public $config = [
-        'name' => '站点地图任务',
-        'cron' => ['1 14 * * 00'],
-    ];
+		'name' => '站点地图任务',
+		'cron' => ['1 14 * * 00'],
+	];
 
 	public function run()
 	{

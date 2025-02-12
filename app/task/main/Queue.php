@@ -6,9 +6,9 @@ use app\task\TaskDriver;
 class Queue extends TaskDriver
 {
 	public $config = [
-        'name' => '延时队列任务',
-        'cron' => ['* * * * *'],
-    ];
+		'name' => '延时队列任务',
+		'cron' => ['* * * * *'],
+	];
 
 	public function run()
 	{

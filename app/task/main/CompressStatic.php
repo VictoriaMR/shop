@@ -6,9 +6,9 @@ use app\task\TaskDriver;
 class CompressStatic extends TaskDriver
 {
 	public $config = [
-        'name' => '静态文件压缩任务',
-        'cron' => ['0 */6 * * *'],
-    ];
+		'name' => '静态文件压缩任务',
+		'cron' => ['0 */6 * * *'],
+	];
 
 	public function run()
 	{
