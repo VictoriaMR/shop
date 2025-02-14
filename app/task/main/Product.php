@@ -14,5 +14,6 @@ class Product extends TaskDriver
 
 	public function run()
 	{
+		return purchase()->spu()->operateSpu();
 	}
 }
