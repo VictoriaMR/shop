@@ -112,23 +112,27 @@ class Spu extends Base
 		$descName = service('desc/Name');
 		$descValue = service('desc/Value');
 		$spuData = service('product/SpuData');
-		$file = service('File');
+		$file = service('tool/File');
 
 		$attrNameArr = [];
 		$attrValueArr = [];
 		//汇总属性|属性图片
-		$tempImageArr = [];
+		$allImageArr = array_merge($data['main_img'], $data['desc_img']);
+		$allImageArr[] = $data['spu_image'];
+
 		foreach ($data['sku'] as $key => $value) {
 			if (empty($value['attr'])) continue;
 			if (!empty($value['img'])) {
-				$tempImageArr[] = $value['img'];
+				$allImageArr[] = $value['img'];
 			}
 			$attrNameArr = array_merge($attrNameArr, array_keys($value['attr']));
 			$attrValueArr = array_merge($attrValueArr, array_column($value['attr'], 'text'));
-			$tempImageArr = array_merge($tempImageArr, array_column($value['attr'], 'img'));
+			$allImageArr = array_merge($allImageArr, array_column($value['attr'], 'img'));
 		}
-		$allImageArr = array_unique(array_merge($allImageArr, array_filter($tempImageArr)));
+		$allImageArr = array_unique(array_filter($allImageArr));
 		$allImageArr = $file->uploadUrlImage($allImageArr, 'product');
+		dd($allImageArr, 'spu');
+
 
 		//转换成键值对
 		foreach ($attrNameArr as $key => $value) {

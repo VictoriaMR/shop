@@ -127,23 +127,20 @@ class Image
 		return true;
 	}
 
-	public function thumbImage($src, $moveto, $outputWidth = 600, $outputHeight = 600)
+	public function thumbImage($src, $moveto, $outputWidth=600)
 	{
-		if (!extension_loaded('gd')) {
+		if (!extension_loaded('gd') || !file_exists($src)) {
 			return false;
 		}
-		if (!is_file($src)) return false;
 		//图片信息
 		$srcImageInfo = getimagesize($src);
 		$srcImageWidth = $srcImageInfo[0];
 		$srcImageHeight = $srcImageInfo[1];
-		$srcImageMime = $srcImageInfo['mime'];
+		// 判断创建文件夹
+		createDir(pathinfo($moveto, PATHINFO_DIRNAME));
 
-		$movetoPath = createDir(pathinfo($moveto, PATHINFO_DIRNAME));
-
-		$imagecreatefromfunc = $imagefunc = null;
 		$toWebp = true;
-		switch($srcImageMime) {
+		switch($srcImageInfo['mime']) {
 			case 'image/jpeg':
 			case 'image/jpg':
 				$imagecreatefromfunc = function_exists('imagecreatefromjpeg') ? 'imagecreatefromjpeg' : '';
@@ -159,49 +156,45 @@ class Image
 				$imagefunc = function_exists('imagepng') ? 'imagepng' : '';
 				break;
 		}
-		if (!$imagecreatefromfunc || !$imagefunc) {
+		if (empty($imagecreatefromfunc) || empty($imagefunc)) {
 			return false;
 		}
 		$srcImage = $imagecreatefromfunc($src);
 
-		//计算有效长度
-		if ($outputWidth > $srcImageWidth && $outputHeight > $srcImageHeight) {
-			if ($srcImageWidth > $srcImageHeight) {
-				$outputWidth = $outputHeight = $srcImageWidth;
-			} else {
-				$outputWidth = $outputHeight = $srcImageHeight;
-			}
-		} 
+		// 缩放比例[以宽为标准]
+		$ratio = $srcImageWidth / $outputWidth;
+		$outputHeight = $srcImageHeight / $ratio;
 
 		//创建画布
 		$returnPic = imagecreatetruecolor($outputWidth, $outputHeight);
 
+		// $dst_x = $dst_y = $src_x = $src_y = $diff_x = $diff_y = 0;
+
+		// $src_w = $srcImageWidth;
+		// $src_h = $srcImageHeight;
+
+		// if ($srcImageWidth > $srcImageHeight) {
+		// 	$ratio = $outputWidth / $srcImageWidth;
+		// } else {
+		// 	$ratio = $outputHeight / $srcImageHeight;
+		// }
+		// $real_h = (int)($srcImageHeight * $ratio);
+		// //上下留白
+		// $diff_y = (int)(($outputHeight - $real_h) / 2);
+
+		// $real_w = (int)($srcImageWidth * $ratio);
+		// //左右留白
+		// $diff_x = (int)(($outputWidth - $real_w) / 2);
+
+		// imagealphablending($returnPic, true);
+		// imagesavealpha($returnPic, true);
+		// $white = imagecolorallocatealpha($returnPic, 255, 255, 255, 127);//白色
+		// imagefill($returnPic, 0, 0, $white);
+
+		// 填充图片
 		//returnPic-输出图,img-拷贝的原图,dst_x-目标X坐标,dst_y-目标Y坐标,src_x-源X坐标,src_y-源Y坐标,dst_w-目标宽,dst_h-目标高,src_w-源宽,src_h-源高
-		$dst_x = $dst_y = $src_x = $src_y = $diff_x = $diff_y = 0;
-
-		$src_w = $srcImageWidth;
-		$src_h = $srcImageHeight;
-
-		if ($srcImageWidth > $srcImageHeight) {
-			$ratio = $outputWidth / $srcImageWidth;
-		} else {
-			$ratio = $outputHeight / $srcImageHeight;
-		}
-		$real_h = (int)($srcImageHeight * $ratio);
-		//上下留白
-		$diff_y = (int)(($outputHeight - $real_h) / 2);
-
-		$real_w = (int)($srcImageWidth * $ratio);
-		//左右留白
-		$diff_x = (int)(($outputWidth - $real_w) / 2);
-
-		imagealphablending($returnPic, true);
-		imagesavealpha($returnPic, true);
-		$white = imagecolorallocatealpha($returnPic, 255, 255, 255, 127);//白色
-		imagefill($returnPic, 0, 0, $white);
-
-		imagecopyresampled($returnPic, $srcImage, $dst_x + $diff_x, $dst_y + $diff_y, $src_x, $src_y, $real_w, $real_h, $src_w, $src_h);
-		$dirPath = createDir(dirname($moveto));
+		imagecopyresampled($returnPic, $srcImage, 0, 0, 0, 0, $outputWidth, $outputHeight, $srcImageWidth, $srcImageHeight);
+		// $dirPath = createDir(dirname($moveto));
 		if ($toWebp) {
 			imagewebp($returnPic, str_replace('.'.pathinfo($moveto)['extension'], '.webp', $moveto));
 		} else {
@@ -210,6 +203,9 @@ class Image
 		imagedestroy($returnPic);
 		imagedestroy($srcImage);
 		clearstatcache();
+		if ($srcImageWidth != $srcImageHeight) {
+			dd($src);
+		}
 		return true;
 	}
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace app\service\tool;
+
 // 更新排序类
 class Sort
 {

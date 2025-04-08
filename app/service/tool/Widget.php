@@ -1,5 +1,7 @@
 <?php
-namespace app\service;
+
+namespace app\service\tool;
+
 class Widget
 {
 	public function pageBar($page, $totalPage, $buttonNumber=7)

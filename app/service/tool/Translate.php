@@ -1,5 +1,7 @@
 <?php
+
 namespace app\service\tool;
+
 class Translate
 {
 	public function getText($text, $to = 'en', $from = 'zh')

@@ -137,6 +137,9 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	}
 	return $rStr;
 }
+function strTrim($str){
+	return trim($str, " \t\n\r\0\x0B ");
+}
 function lanId($type='id'){
 	return frame('Session')->get('site_language_'.$type, $type=='code'?'en':1);
 }
