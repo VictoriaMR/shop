@@ -186,9 +186,9 @@
 									<?php foreach ($value['pvs'] as $pk=>$pv) {?>
 									<div>
 										<p>
-											<span class="attr-name <?php echo isset($attrNs[$pk])?'success':'error';?>" data-name="<?php echo $pk;?>"><?php echo isset($attrNs[$pk])?$attrNs[$pk]['attrn_name']:$pk;?></span>
+											<span class="attr-name <?php echo isset($attrNs[$pk])?'success':'error';?>" data-name="<?php echo $pk;?>"><?php echo isset($attrNs[$pk])?$attrNs[$pk]['name']:$pk;?></span>
 											<span>: </span>
-											<span class="attr-value <?php echo isset($attrVs[$pv])?'success':'error';?>" data-name="<?php echo $pv;?>"><?php echo isset($attrVs[$pv])?$attrVs[$pv]['attrv_name']:$pv;?></span>
+											<span class="attr-value <?php echo isset($attrVs[$pv])?'success':'error';?>" data-name="<?php echo $pv;?>"><?php echo isset($attrVs[$pv])?$attrVs[$pv]['name']:$pv;?></span>
 										</p>
 										<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
 										<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>

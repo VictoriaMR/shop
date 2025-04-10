@@ -49,10 +49,10 @@ class Redis
 		if ($info) {
 			if (in_array($func, ['hGetAll'])) {
 				foreach ($info as $k => $v) {
-					$info[$k] = isJson($v);
+					$info[$k] = isArray($v);
 				}
 			} else {
-				$info = isJson($info);
+				$info = isArray($info);
 			}
 		}
 		return $info;

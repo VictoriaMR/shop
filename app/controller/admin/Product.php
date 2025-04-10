@@ -159,7 +159,7 @@ class Product extends AdminBase
 			}
 		}
 
-		$channelList = service('purchase/Channel')->getListData();
+		$channelList = purchase()->channel()->getListData();
 		$channelList = array_column($channelList, 'name', 'channel_id');
 		$statusList = purchase()->spu()->getStatusList();
 

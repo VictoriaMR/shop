@@ -167,30 +167,6 @@ class Image
 
 		//创建画布
 		$returnPic = imagecreatetruecolor($outputWidth, $outputHeight);
-
-		// $dst_x = $dst_y = $src_x = $src_y = $diff_x = $diff_y = 0;
-
-		// $src_w = $srcImageWidth;
-		// $src_h = $srcImageHeight;
-
-		// if ($srcImageWidth > $srcImageHeight) {
-		// 	$ratio = $outputWidth / $srcImageWidth;
-		// } else {
-		// 	$ratio = $outputHeight / $srcImageHeight;
-		// }
-		// $real_h = (int)($srcImageHeight * $ratio);
-		// //上下留白
-		// $diff_y = (int)(($outputHeight - $real_h) / 2);
-
-		// $real_w = (int)($srcImageWidth * $ratio);
-		// //左右留白
-		// $diff_x = (int)(($outputWidth - $real_w) / 2);
-
-		// imagealphablending($returnPic, true);
-		// imagesavealpha($returnPic, true);
-		// $white = imagecolorallocatealpha($returnPic, 255, 255, 255, 127);//白色
-		// imagefill($returnPic, 0, 0, $white);
-
 		// 填充图片
 		//returnPic-输出图,img-拷贝的原图,dst_x-目标X坐标,dst_y-目标Y坐标,src_x-源X坐标,src_y-源Y坐标,dst_w-目标宽,dst_h-目标高,src_w-源宽,src_h-源高
 		imagecopyresampled($returnPic, $srcImage, 0, 0, 0, 0, $outputWidth, $outputHeight, $srcImageWidth, $srcImageHeight);
@@ -203,9 +179,6 @@ class Image
 		imagedestroy($returnPic);
 		imagedestroy($srcImage);
 		clearstatcache();
-		if ($srcImageWidth != $srcImageHeight) {
-			dd($src);
-		}
 		return true;
 	}
 }

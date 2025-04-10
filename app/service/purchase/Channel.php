@@ -5,15 +5,15 @@ use app\service\Base;
 
 class Channel extends Base
 {
-    protected $_channelMap = [
-        'taobao' => 6051,
-        'tmall' => 6052,
-        '1688' => 6053,
-    ];
+    public function getChannel($type)
+    {
+        return $this->getConst('CHANNEL_'.strtoupper($type));
+    }
+
     public function getChannelId($url)
     {
         if (preg_match('/(http:|https:)?\/\/.*(taobao|tmall|1688)\.com/', $url, $match)) {
-            return $this->_channelMap[$match[2]] ?? false;
+            return $this->getChannel([$match[2]]);
         }
         return false;
     }

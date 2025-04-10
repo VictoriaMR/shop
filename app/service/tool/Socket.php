@@ -21,7 +21,7 @@ class Socket
 		$param['act'] = $act;
 		$param['token'] = $this->token;
 		$rst = $http->post($this->workerUrl, $param);
-		if ($rst) $rst = isJson($rst);
+		if ($rst) $rst = isArray($rst);
 		return $rst;
 	}
 

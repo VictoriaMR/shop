@@ -99,7 +99,7 @@ class File
 							$image->thumbImage($file, $to, $tv);
 						}
 					}
-					@unlink($tempName);
+					unlink($tempName);
 				}
 			}
 		}

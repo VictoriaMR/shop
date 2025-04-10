@@ -5,13 +5,16 @@ use app\service\Base;
 
 class Value extends Base
 {
-	const CACHE_KEY = 'product-attr:value_cache:';
+	const CACHE_KEY = 'product:attr:value:';
 
 	public function addNotExist($nameArr)
 	{
 		if (empty($nameArr)) return false;
 		if (!is_array($nameArr)) $nameArr = [$nameArr];
 		$nameArr = array_unique($nameArr);
+		$nameArr = array_map(function($value){
+			return strtoupper(strTrim($value));
+		}, $nameArr);
 		//获取已存在属性
 		$list = $this->getListData(['name'=>['in', $nameArr]], 'attrv_id,name');
 		$list = array_column($list, 'attrv_id', 'name');

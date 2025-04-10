@@ -64,7 +64,7 @@ class Debug
 		}
 		// 获取基本信息
 		$current_uri = '';
-		if (defined('IS_CLI')) {
+		if (defined('IS_CLI') && IS_CLI) {
 			$current_uri = ' cmd: ' . implode(' ', $_SERVER['argv']);
 		} else {
 			$current_uri = ' uri: ' . $_SERVER['HTTP_HOST'] . urldecode($_SERVER['REQUEST_URI']);

@@ -59,37 +59,31 @@ class Spu extends Base
 		return array_merge($info, $result);
 	}
 
-	public function saveResult(int $channelId, int $itemId, array $data, $path='product_data')
+	public function saveResult(int $channelId, int $itemId, array $data, $type='source_data')
 	{
-		$path = $this->resultPath($channelId, $itemId, $path);
-		file_put_contents($path, json_encode($data, JSON_UNESCAPED_UNICODE));
-		return true;
-	}
-
-	public function getResult(int $channelId, int $itemId, $path='product_data')
-	{
-		$path = $this->resultPath($channelId, $itemId, $path);
-		if (!is_file($path)) {
+		$data = isJson($data);
+		if (!$data) {
 			return false;
 		}
-		$rst = file_get_contents($path);
-		return isJson($rst);
+		return purchase()->result()->insert([
+			'channel_id' => $channelId,
+			'item_id' => $itemId,
+			$type => $data,
+		]);
 	}
 
-	protected function resultPath($channelId, int $itemId, $path='product_data')
+	public function getResult(int $channelId, int $itemId)
 	{
-		$path = ROOT_PATH.'storage/'.$path.'/'.$channelId.'/';
-		createDir($path);
-		return $path.$itemId.'.json';
+		$info = purchase()->result()->loadData(['channel_id' => $channelId, 'item_id' => $itemId]);
+		if (empty($info)) {
+			return false;
+		}
+		return isArray($info['source_data']);
 	}
 
 	public function updateTitle($channelId, int $itemId)
 	{
-		$path = $this->resultPath($channelId, $itemId);
-		if (!is_file($path)) {
-			return false;
-		}
-		$rst = isJson(file_get_contents($path));
+		$rst = $this->getResult($channelId, $itemId);
 		if (empty($rst['name'])) {
 			return false;
 		}
@@ -109,6 +103,8 @@ class Spu extends Base
 		}
 		
 		//属性组
+		$attrName = service('attr/Name');
+		$attrValue = service('attr/Value');
 		$descName = service('desc/Name');
 		$descValue = service('desc/Value');
 		$spuData = service('product/SpuData');
@@ -126,23 +122,16 @@ class Spu extends Base
 				$allImageArr[] = $value['img'];
 			}
 			$attrNameArr = array_merge($attrNameArr, array_keys($value['attr']));
-			$attrValueArr = array_merge($attrValueArr, array_column($value['attr'], 'text'));
+			$attrValueArr = array_merge($attrValueArr, $value['attr']);
 			$allImageArr = array_merge($allImageArr, array_column($value['attr'], 'img'));
 		}
+		// 上传图片
 		$allImageArr = array_unique(array_filter($allImageArr));
 		$allImageArr = $file->uploadUrlImage($allImageArr, 'product');
-		dd($allImageArr, 'spu');
-
-
-		//转换成键值对
-		foreach ($attrNameArr as $key => $value) {
-			$attrNameArr[$key] = trim(strtoupper(strTrim($value)));
-		}
-		foreach ($attrValueArr as $key => $value) {
-			$attrValueArr[$key] = trim(strtoupper(strTrim($value)));
-		}
-		$attrNameArr = $attrName->addNotExist(array_unique($attrNameArr));
-		$attrValueArr = $attrValue->addNotExist(array_unique($attrValueArr));
+		// 设置属性
+		$attrNameArr = $attrName->addNotExist($attrNameArr);
+		$attrValueArr = $attrValue->addNotExist($attrValueArr);
+		dd($attrNameArr, $attrValueArr);
 
 		//描述值
 		$descNameArr = [];

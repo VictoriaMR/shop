@@ -48,9 +48,14 @@ function version(){
 	return '1.0.0';
 }
 function isJson($string){
-	if (is_array($string)) return $string;
-	$temp = json_decode($string, true); 
+	if (!is_array($string)) return $string;
+	$temp = json_encode($string, JSON_UNESCAPED_UNICODE); 
 	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
+}
+function isArray($arr){
+	if (is_array($arr)) return $arr;
+	$temp = json_decode($arr, true); 
+	return json_last_error()==JSON_ERROR_NONE?$temp:$arr;
 }
 function isAjax(){
 	defined('IS_AJAX') || define('IS_AJAX', frame('Request')->isAjax());

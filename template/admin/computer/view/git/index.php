@@ -4,9 +4,9 @@
             <tr>
                 <th width="200">版本库</th>
                 <th width="150">发布状态</th>
-                <th width="350">发布时间<br>版本时间</th>
-                <th width="300">版本号</th>
-                <th width="300">版本信息</th>
+                <th width="150">发布时间<br>版本时间</th>
+                <th width="400">版本号</th>
+                <th width="400">版本信息</th>
                 <th>操作</th>
             </tr>
             <?php if (empty($list)){ ?>

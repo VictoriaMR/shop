@@ -79,6 +79,6 @@ abstract class Stripe extends PaymentMethod
 
 		$rst = frame('Http')->post($url, $body, $header);
 
-		return isJson($rst);
+		return isArray($rst);
 	}
 }

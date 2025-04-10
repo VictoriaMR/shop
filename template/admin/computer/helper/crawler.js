@@ -4,25 +4,25 @@ var CRAWLER = {
 		_this.intervalId = setInterval(function(){
 			if (!HELPERINIT.isItemPage()) {
 				clearInterval(_this.intervalId);
-				callback(-2, {}, '非产品详情页面!');
+				callback(-1, {}, '非产品详情页面!');
 			} else if (HELPERINIT.isLoginPage()) {
 				clearInterval(_this.intervalId);
-				callback(-1, {}, '页面需要登录!');
+				callback(-2, {}, '页面需要登录!');
 			} else if (HELPERINIT.isVerifyPage()) {
 				clearInterval(_this.intervalId);
-				callback(-1, {}, '页面需要验证!');
+				callback(-3, {}, '页面需要验证!');
 			} else if (HELPERINIT.isDenyPage()) {
 				clearInterval(_this.intervalId);
-				callback(-1, {}, '页面被阻止访问!');
+				callback(-4, {}, '页面被阻止访问!');
 			} else if (HELPERINIT.isErrorPage()) {
 				clearInterval(_this.intervalId);
-				callback(-2, {}, HELPERINIT.isErrorPage());
+				callback(-5, {}, HELPERINIT.isErrorPage());
 			} else if (_this.isOffShelf()) {
 				clearInterval(_this.intervalId);
-				callback(-2, {}, '产品已下架!');
+				callback(-6, {}, '产品已下架!');
 			} else {
 				_this.data(function(code, data, msg) {
-					clearInterval(_this.intervalId);
+					clearInterval(CRAWLER.intervalId);
 					localStorage.setItem('CRAWLER_DATA', JSON.stringify(data));
 					callback(code, data, msg);
 				});
@@ -43,7 +43,13 @@ var CRAWLER = {
 		const _this = this;
 		switch (HELPERINIT.getDomain()) {
 			case '1688.com':
-				_this.get1688(callback);
+				if (typeof __INIT_DATA !== 'undefined') {
+					_this.get16881(callback);
+				} else if (window.context && window.context.result && window.context.result.global && window.context.result.global.globalData) {
+					_this.get16882(callback);
+				} else {
+					callback(-8, {}, '获取数据失败!');
+				}
 				break;
 			case 'taobao.com':
 			case 'tmall.com':
@@ -60,15 +66,11 @@ var CRAWLER = {
 				}
 				break;
 			default:
-				callback(-1, {}, '未知渠道商品详情页面');
+				callback(-9, {}, '未知渠道商品详情页面');
 				break;
 		}
 	},
-	get1688: function(callback) {
-		if (typeof __INIT_DATA === 'undefined') {
-			callback(-1, {}, '获取数据失败!');
-			return false;
-		}
+	get16881: function(callback) {
 		let ret_data = {};
 		let obj;
 		ret_data.channel_id = 6053;
@@ -173,6 +175,20 @@ var CRAWLER = {
 			}
 		}
 		callback(0, ret_data, '获取成功!');
+	},
+	get16882: function(callback) {
+		var model = window.context.result.global.globalData.model;
+		let ret_data = {};
+		ret_data.channel_id = 6053;
+		ret_data.item_id = model.offerDetail.offerId;
+		ret_data.name = model.offerDetail.subject;
+		ret_data.url = this.getUrl(ret_data.item_id);
+		// 销量
+		ret_data.sale_count = model.tradeModel.sale_count;
+		// 邮费
+		// ret_data.post_fee = 
+		console.log(ret_data)
+		callback(-1, ret_data, 'get16882 待处理!');
 	},
 	getAttr: function(attr, attrArr) {
 		for (let k in attrArr) {

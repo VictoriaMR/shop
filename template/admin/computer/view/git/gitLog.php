@@ -20,14 +20,14 @@
     <table class="table table-hover mt20" id="data-list">
         <tbody>
             <tr>
-                <th width="100">ID</th>
+                <th width="80">ID</th>
                 <th width="150">版本库</th>
-                <th width="150">状态</th>
+                <th width="100">状态</th>
                 <th width="150">作者</th>
-                <th width="200">版本号</th>
-                <th width="200">版本/发布时间</th>
-                <th width="200">发布信息</th>
-                <th width="200">操作</th>
+                <th width="400">版本号</th>
+                <th width="150">版本/发布时间</th>
+                <th width="400">发布信息</th>
+                <th>操作</th>
             </tr>
             <?php if (empty($list)){ ?>
             <tr>

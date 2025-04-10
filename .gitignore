@@ -10,6 +10,6 @@
 /runtime/*
 /storage/*
 /composer.lock
-/template/*/static
+/template/*/*/static
 /template/*/sitemap
 /template/*/cache

@@ -41,7 +41,7 @@ class CompressStatic extends TaskDriver
 							break;
 						case 'css':
 							$reponse = $http->post($urlArr[$type], $source, ['Content-Type: text/html;charset=utf-8']);
-							$reponse = isJson($reponse)['result'] ?? '';
+							$reponse = isArray($reponse)['result'] ?? '';
 							break;
 					}
 					$count++;

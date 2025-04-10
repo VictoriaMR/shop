@@ -67,18 +67,7 @@ class Api extends AdminBase
 		if (empty($data)) {
 			$this->error('参数不能为空');
 		}
-		$channelId = 0;
-		switch ($data['domain']) {
-			case 'taobao':
-				$channelId = 6051;
-				break;
-			case 'tmall':
-				$channelId = 6052;
-				break;
-			case '1688':
-				$channelId = 6053;
-				break;
-		}
+		$channelId = purchase()->channel()->getChannel($data['domain']);
 		$where = [
 			'channel_id' => $channelId,
 			'item_id' => $data['item_id'],
