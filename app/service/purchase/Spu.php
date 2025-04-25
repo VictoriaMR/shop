@@ -65,20 +65,25 @@ class Spu extends Base
 		if (!$data) {
 			return false;
 		}
-		return purchase()->result()->insert([
+		$where = [
 			'channel_id' => $channelId,
 			'item_id' => $itemId,
-			$type => $data,
-		]);
+		];
+		if (purchase()->result()->getCountData($where) > 0) {
+			return purchase()->result()->updateData($where, $where+[$type=>$data]);
+		} else {
+			$where[$type] = $data;
+			return purchase()->result()->insert($where);
+		}
 	}
 
-	public function getResult(int $channelId, int $itemId)
+	public function getResult(int $channelId, int $itemId, $type='source_data')
 	{
 		$info = purchase()->result()->loadData(['channel_id' => $channelId, 'item_id' => $itemId]);
 		if (empty($info)) {
 			return false;
 		}
-		return isArray($info['source_data']);
+		return isArray($info[$type]);
 	}
 
 	public function updateTitle($channelId, int $itemId)
@@ -91,6 +96,23 @@ class Spu extends Base
 		return $rst['name'];
 	}
 
+	public function getVolume($str)
+	{
+		$arr = [
+			'length' => 0,
+			'width' => 0,
+			'height' => 0,
+		];
+		if ($str) {
+			$str = str_replace(['*','x','X','-','&',';',':'], ',', $str);
+			$str = explode(',', $str);
+			$arr['length'] = $str[0] ?? 0;
+			$arr['width'] = $str[1] ?? 0;
+			$arr['height'] = $str[2] ?? 0;
+		}
+		return $arr;
+	}
+
 	public function operateSpu()
 	{
 		$info = $this->loadData(['status'=>$this->getConst('STATUS_SPU')]);
@@ -101,6 +123,7 @@ class Spu extends Base
 		if (empty($data)) {
 			return false;
 		}
+		dd($data);
 		
 		//属性组
 		$attrName = service('attr/Name');
@@ -112,9 +135,17 @@ class Spu extends Base
 
 		$attrNameArr = [];
 		$attrValueArr = [];
+		$allImageArr = [];
+		if (!empty($data['desc_img'])) {
+			$allImageArr = $data['desc_img'];
+		}
 		//汇总属性|属性图片
-		$allImageArr = array_merge($data['main_img'], $data['desc_img']);
-		$allImageArr[] = $data['spu_image'];
+		if (!empty($data['main_img'])) {
+			$allImageArr = array_merge($data['main_img'], $allImageArr);
+		}
+		if (!empty($data['spu_image'])) {
+			$allImageArr[] = $data['spu_image'];
+		}
 
 		foreach ($data['sku'] as $key => $value) {
 			if (empty($value['attr'])) continue;

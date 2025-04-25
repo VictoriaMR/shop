@@ -172,7 +172,7 @@
 									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['img'];?>" alt="" class="lazyload bigImage">
 									<input type="hidden" class="form-control img" name="sku[<?php echo $key;?>][img]" value="<?php echo $value['img'];?>">
 								</td>
-								<td><input type="text" class="form-control price" name="sku[<?php echo $key;?>]['price']" value="<?php echo $value['price'];?>"></td>
+								<td><input type="text" class="form-control price" name="sku[<?php echo $key;?>][price]" value="<?php echo $value['price'];?>"></td>
 								<td>
 									<div title="SKU属性">
 										<?php foreach($value['pvs'] as $pk=>$pv) {?>
@@ -203,10 +203,10 @@
 									<?php }?>
 								</td>
 								<td>
-									<input type="text" class="form-control stock" name="sku[<?php echo $key;?>]['stock']" value="<?php echo $value['stock'];?>">
+									<input type="text" class="form-control stock" name="sku[<?php echo $key;?>][stock]" value="<?php echo $value['stock'];?>">
 								</td>
 								<td>
-									<select name="type" class="form-control unit" name="sku[<?php echo $key;?>]['unit']">
+									<select name="type" class="form-control unit" name="sku[<?php echo $key;?>][unit]">
 										<option value="0" selected>--</option>
 										<option value="1">件</option>
 										<option value="2">个</option>
@@ -216,16 +216,17 @@
 									</select>
 								</td>
 								<td>
-									<input type="text" class="form-control weight" name="sku[<?php echo $key;?>]['weight']" placeholder="重量(g)">
+									<input type="text" class="form-control weight" name="sku[<?php echo $key;?>][weight]" placeholder="重量(g)" value="<?php echo $info['weight'] ?? '';?>">
+								</td>
+								<?php $tmpArr = purchase()->spu()->getVolume($info['volume'] ?? '');?>
+								<td>
+									<input type="text" class="form-control length" name="sku[<?php echo $key;?>][length]" value="<?php echo $tmpArr['length'] ?: '';?>" placeholder="长度(cm)">
 								</td>
 								<td>
-									<input type="text" class="form-control length" name="sku[<?php echo $key;?>]['length']" placeholder="长度(cm)">
+									<input type="text" class="form-control width" name="sku[<?php echo $key;?>][width]" value="<?php echo $tmpArr['width'] ?: '';?>" placeholder="宽度(cm)">
 								</td>
 								<td>
-									<input type="text" class="form-control width" name="sku[<?php echo $key;?>]['width']" placeholder="宽度(cm)">
-								</td>
-								<td>
-									<input type="text" class="form-control hight" name="sku[<?php echo $key;?>]['hight']" placeholder="高度(cm)">
+									<input type="text" class="form-control hight" name="sku[<?php echo $key;?>][hight]" value="<?php echo $tmpArr['height'] ?: '';?>" placeholder="高度(cm)">
 								</td>
 							</tr>
 							<?php }?>

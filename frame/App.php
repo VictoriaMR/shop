@@ -103,7 +103,7 @@ class App
 
 	public static function runOver($ajax=false)
 	{
-		config('domain', 'log') && frame('Debug')->runlog();
+		config('domain', 'log') && frame('Debug')->runlog(isCli()?'task':'');
 		isDebug() && !$ajax && frame('Debug')->init();
 		exit();
 	}
@@ -119,7 +119,7 @@ class App
 		self::runOver(true);
 	}
 
-	public static function error($msg)
+	public static function error($msg='')
 	{
 		if ($msg) {
 			self::$_error[] = $msg;

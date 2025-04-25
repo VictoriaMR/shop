@@ -61,6 +61,10 @@ function isAjax(){
 	defined('IS_AJAX') || define('IS_AJAX', frame('Request')->isAjax());
 	return IS_AJAX;
 }
+function isCli(){
+	defined('IS_CLI') || define('IS_CLI', false);
+	return IS_CLI;
+}
 function isPost() {
 	defined('IS_POST') || define('IS_POST', frame('Request')->isPost());
 	return IS_POST;

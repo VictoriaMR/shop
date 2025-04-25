@@ -25,14 +25,14 @@
 		<?php if (!empty($_nav[$_func])){?>
 		<span>&gt; <?php echo $_nav[$_func];?></span>
 		<?php } ?>
-		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func, iget());?>" class="glyphicon glyphicon-repeat ml12" title="重新加载"></a>
-		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func, iget());?>" target="_blank" class="glyphicon glyphicon-link ml12" title="新页面打开"></a>
+		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func);?>" class="glyphicon glyphicon-repeat ml12" title="重新加载"></a>
+		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func);?>" target="_blank" class="glyphicon glyphicon-link ml12" title="新页面打开"></a>
 	</div>
 </div>
 <?php } ?>
-<?php if (!empty(\App::$error)){?>
+<?php if (!empty(\App::error())){?>
 <div class="container-fluid">
-	<div class="alert alert-danger"><?php echo implode(PHP_EOL, \App::$error);?></div>
+	<div class="alert alert-danger"><?php echo implode(PHP_EOL, \App::error());?></div>
 </div>
 <?php }?>
 <?php if (!empty(\App::$seccess)){?>
@@ -45,7 +45,7 @@
 	<ul class="nav nav-tabs">
 		<?php foreach ($_tag as $key => $value) { if ($_func != $key && in_array($key, $_ignore)){continue;}?>
 		<li<?php if($_func == $key) echo ' class="active"';?>>
-			<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$key, iget());?>"><?php echo $value;?></a>
+			<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$key);?>"><?php echo $value;?></a>
 		</li>
 		<?php } ?>
 	</ul>
