@@ -18,7 +18,7 @@ class Index extends AdminBase
 	public function index()
 	{
 		// test
-		purchase()->spu()->operateSpu();
+		// purchase()->spu()->operateSpu();
 
 		if (isPost()) {
 			$opn = ipost('opn');

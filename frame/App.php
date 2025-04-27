@@ -40,7 +40,6 @@ class App
 			//路由解析
 			$info = frame('Router')->analyze($info['class']);
 			self::set('router', $info);
-			$info['path'] = ucfirst($info['path']);
 			// 中间组件方法
 			if (self::middleware($info)) {
 				//执行方法
@@ -49,7 +48,7 @@ class App
 				if (is_callable($callArr)) {
 					call_user_func_array($callArr, []);
 				} else {
-					throw new \Exception("class: {$info['class']} {$info['path']}, func: {$info['func']} was not exist!");
+					throw new \Exception('class: '.$info['class'].'/'.$info['path'].'/'.$info['func'].' was not exist!');
 				}
 			}
 			self::runOver();
@@ -86,7 +85,11 @@ class App
 
 	private static function autoload($abstract, $params=null)
 	{
-		require(ROOT_PATH.$abstract.'.php');
+		if (is_file(ROOT_PATH.$abstract.'.php')) {
+			require(ROOT_PATH.$abstract.'.php');
+		} else {
+			throw new \Exception('file: '.$abstract.'was not exist!');
+		}
 	}
 
 	public static function set($name, $value, $key=null)

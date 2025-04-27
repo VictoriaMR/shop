@@ -13,7 +13,7 @@ final class Router
 		$func = 'index';
 		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', str_replace('_html', '', $key), $match)) {
 			if (!empty($match[1]) && $match[1] != 'null') {
-				$path = $match[1];
+				$path = ucfirst($match[1]);
 			}
 			if (!empty($match[2]) && $match[2] != 'null') {
 				$func = $match[2];

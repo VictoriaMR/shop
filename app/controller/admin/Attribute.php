@@ -44,12 +44,13 @@ class Attribute extends AdminBase
 			$list = $nameService->getList($where, $page, $size);
 		}
 
-		$this->assign('status', $status);
-		$this->assign('keyword', $keyword);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->view();
+		$this->view([
+			'status' => $status,
+			'keyword' => $keyword,
+			'total' => $total,
+			'size' => $size,
+			'list' => $list ?? [],
+		]);
 	}
 
 	protected function getAttrInfo()

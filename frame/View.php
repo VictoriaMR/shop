@@ -15,8 +15,7 @@ class View
 	private function loadFile($template, array $data)
 	{
 		if (is_file($template)) {
-			$this->setData($data);
-			extract($this->_data, EXTR_OVERWRITE);
+			extract($this->_data + $data, EXTR_OVERWRITE);
 			include $template;
 		} else {
 			throw new \Exception($template.' was not exist!', 1);
@@ -25,7 +24,9 @@ class View
 
 	public function setData($data)
 	{
-		$this->_data += $data;
+		if (!empty($data)) {
+			$this->_data = $this->_data + $data;
+		}
 	}
 
 	private function getTemplate($template, $match=true)

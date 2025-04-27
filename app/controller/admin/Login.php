@@ -70,6 +70,6 @@ class Login extends AdminBase
 
 	public function signature()
 	{
-		service('tool/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', frame('Session')->get(type().'_info', '', 'nickname'), 12, 30, 10, 80, [235, 235, 235]);
+		service('tool/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', frame('Session')->get('admin_info', '', 'nickname'), 12, 30, 10, 80, [235, 235, 235]);
 	}
 }
