@@ -184,22 +184,20 @@
 								</td>
 								<td>
 									<?php foreach ($value['pvs'] as $pk=>$pv) {?>
-									<div>
-										<p>
-											<span class="attr-name <?php echo isset($attrNs[$pk])?'success':'error';?>" data-name="<?php echo $pk;?>"><?php echo isset($attrNs[$pk])?$attrNs[$pk]['name']:$pk;?></span>
-											<span>: </span>
-											<span class="attr-value <?php echo isset($attrVs[$pv])?'success':'error';?>" data-name="<?php echo $pv;?>"><?php echo isset($attrVs[$pv])?$attrVs[$pv]['name']:$pv;?></span>
-										</p>
-										<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
-										<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>
-										<p class="attr-map">
-											<span class="attr-name success" data-name="<?php echo $ek;?>"><?php echo $ek;?></span>
-											<span>: </span>
-											<span class="attr-value success" data-name="<?php echo $ev;?>"><?php echo $ev;?></span>
-										</p>
-										<?php }?>
-										<?php }?>
-									</div>
+									<p>
+										<span class="attr-name <?php echo isset($attrNs[$pk])?'success':'error';?>" data-name="<?php echo $pk;?>"><?php echo isset($attrNs[$pk])?$attrNs[$pk]['name']:$pk;?></span>
+										<span>: </span>
+										<span class="attr-value <?php echo isset($attrVs[$pv])?'success':'error';?>" data-name="<?php echo $pv;?>"><?php echo isset($attrVs[$pv])?$attrVs[$pv]['name']:$pv;?></span>
+									</p>
+									<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
+									<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>
+									<p class="attr-map">
+										<span class="attr-name success" data-name="<?php echo $ek;?>"><?php echo $ek;?></span>
+										<span>: </span>
+										<span class="attr-value success" data-name="<?php echo $ev;?>"><?php echo $ev;?></span>
+									</p>
+									<?php }?>
+									<?php }?>
 									<?php }?>
 								</td>
 								<td>
@@ -270,9 +268,24 @@
 			<div class="attr-info-content mt12">
 				<h4>属性映射</h4>
 				<table class="table table-bordered">
+					<tr class="attr-rule">
+						<td width="100">规则: </td>
+						<td><input type="text" name="attr_rule_value" class="form-control" placeholder="输入分割字符串"></td>
+					</tr>
+					<tr class="attr-rule">
+						<td>属性
+							<button type="button" class="btn btn-primary btn-xs attr-rule-btn">生成</button>
+						</td>
+						<td class="attr-rule-name">
+							<input type="text" class="form-control" name="attr_rule_name[]" placeholder="属性1">
+							<input type="text" class="form-control" name="attr_rule_name[]" placeholder="属性2">
+							<input type="text" class="form-control" name="attr_rule_name[]" placeholder="属性3">
+							<input type="text" class="form-control" name="attr_rule_name[]" placeholder="属性4">
+						</td>
+					</tr>
 					<?php foreach ($info['attr'] as $ak=>$av){?>
 					<tr>
-						<td width="100">
+						<td>
 							<div class="attr-item attr-name <?php echo isset($attrNs[$av['name']])?'success':'error';?>" data-name="<?php echo $av['name'];?>">
 								<span><?php echo $av['name'];?></span>
 								<span class="glyphicon glyphicon-edit"></span>

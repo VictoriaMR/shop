@@ -1,8 +1,8 @@
 #purchase-list-page .status {
-    color: green;
+    color: grey;
 }
 #purchase-list-page .status.status-0 {
-    color: gray;
+    color: black;
 }
 #purchase-list-page .status.status-1 {
     color: orange;
@@ -11,5 +11,5 @@
     color: green;
 }
 #purchase-list-page .status.status-3 {
-    color: red;
+    color: darkgreen;
 }

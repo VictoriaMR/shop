@@ -293,3 +293,13 @@
 .sku-modal input[type="checkbox"] {
     top: calc(50% - 7px);
 }
+.attr-rule input.form-control {
+    display: inline-block;
+}
+.attr-rule .attr-rule-name input {
+    width: 128px;
+    margin-bottom: 5px;
+}
+.attr-rule .attr-rule-name input:nth-last-child(-n+2) {
+    margin-bottom: 0;
+}

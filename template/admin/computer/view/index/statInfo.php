@@ -63,12 +63,6 @@
 						<strong><?php echo get_cfg_var('memory_limit');?></strong>
 					</td>
 				</tr>
-				<tr>
-					<td width="130">内存限制</td>
-					<td>
-						<strong><?php echo get_cfg_var('memory_limit');?></strong>
-					</td>
-				</tr>
 			</tbody>
 		</table>
 	</div>

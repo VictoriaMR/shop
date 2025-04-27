@@ -79,11 +79,12 @@
 					<span title="更新时间"><?php echo $value['update_time']?:'--';?></span>
 				</td>
 				<td>
-					<?php if (in_array($value['status'], [0, 1])){?>
-					<a target="_blank" class="btn btn-info btn-xs" href="<?php echo $value['url'];?>"><?php echo $value['status']==0?'上传':'更新';?></a>
-					<?php if ($value['status'] == 1) {?>
+					<?php if (in_array($value['status'], [purchase()->spu()->getConst('STATUS_NORMAL'),purchase()->spu()->getConst('STATUS_SET')])){?>
+					<a target="_blank" class="btn btn-info btn-xs" href="<?php echo $value['url'];?>"><?php echo $value['status']==purchase()->spu()->getConst('STATUS_SET')?'上传':'更新';?></a>
+					<?php }?>
+					<?php if (in_array($value['status'], [purchase()->spu()->getConst('STATUS_SET'),purchase()->spu()->getConst('STATUS_SPU')])) {?>
 					<a class="btn btn-primary btn-xs" target="_blank" href="<?php echo adminUrl('product/operate', ['id'=>$value['purchase_spu_id']]);?>">配置</a>
-					<?php } }?>
+					<?php }?>
 					<button class="btn btn-default btn-xs btn-edit">编辑</button>
 				</td>
 			</tr>

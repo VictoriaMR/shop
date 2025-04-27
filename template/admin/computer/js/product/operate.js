@@ -96,8 +96,8 @@ const OPERATE = {
 						nameExt[tmpName] = tmpValue;
 					}
 				});
-				_this.mapAttrValue(obj.find('.title').text(), name, nameExt);
-
+				nameExt[obj.find('.input-group-addon').text()] = name;
+				_this.mapAttrValue(obj.find('.title').text(), nameExt);
 			}
 			obj.modalHide();
 		});
@@ -261,6 +261,39 @@ const OPERATE = {
 				}
 			});
 		});
+		// 规则生成
+		$('.attr-rule-btn').on('click', function(){
+			var value = $('.attr-rule [name="attr_rule_value"]').val();
+			if (!value) {
+				errorTips('请输入分配规则');
+				$('.attr-rule [name="attr_rule_value"]').focus();
+				return false;
+			}
+			var nameArr = {};
+			$('.attr-rule-name [name="attr_rule_name[]"]').each(function(index){
+				if ($(this).val()) {
+					nameArr[index] = $(this).val();
+				}
+			});
+			if (JSON.stringify(nameArr) == '{}') {
+				errorTips('没有分配属性名');
+				return false
+			}
+			$('.attr-info-content .attr-item').each(function(){
+				var name = $(this).data('name');
+				var tmpArr = [];
+				for (var i=0; i<name.length; i++) {
+					if (i % value == 0) {
+						tmpArr.push(name.substr(i, value));
+					}
+				}
+				var nameExt = {};
+				for (var i in nameArr) {
+					nameExt[nameArr[i]] = tmpArr[i];
+				}
+				_this.mapAttrValue(name, nameExt);
+			});
+		});
 	},
 	initCate: function(pid) {
 		let html = '';
@@ -302,15 +335,11 @@ const OPERATE = {
 		$('#sku-list .attr-name[data-name="'+fromName+'"]').removeClass('error').addClass('success').text(toName);
 		$('.attr-info-content .attr-name[data-name="'+fromName+'"]').removeClass('error').addClass('success').attr('title', toName);
 	},
-	mapAttrValue: function(fromName, toName, nameExt) {
+	mapAttrValue: function(fromName, nameExt) {
 		var obj = $('#sku-list .attr-value[data-name="'+fromName+'"]');
-		obj.removeClass('error').addClass('success').text(toName);
-		var pObj = obj.parent().parent();
-		pObj.find('attr-map').remove();
-		const tmpAttrName = obj.eq(0).parents('p').find('.attr-name').text();
-		let titleArr = {};
-		titleArr[tmpAttrName] = toName;
-		let attrArr = new Array();
+		var pObj = obj.parents('td');
+		pObj.empty();
+		let title = '';
 		if (nameExt.toString() != '{}') {
 			var html = '';
 			for (var i in nameExt) {
@@ -319,17 +348,11 @@ const OPERATE = {
 							<span>: </span>
 							<span class="attr-value success" data-name="`+nameExt[i]+`">`+nameExt[i]+`</span>
 						</p>`;
-				titleArr[i] = nameExt[i];
+				title += i+':'+nameExt[i]+';';
 			}
 			pObj.append(html);
 		}
-		let title = '';
-		if (titleArr.toString() != '{}') {
-			for (var i in titleArr) {
-				title += i+':'+titleArr[i]+';';
-			}
-		}
-		$('.attr-info-content .attr-value[data-name="'+fromName+'"]').removeClass('error').addClass('success').attr('title', title).data('ext', titleArr);
+		$('.attr-info-content .attr-value[data-name="'+fromName+'"]').removeClass('error').addClass('success').attr('title', title).data('ext', nameExt);
 	}
 };
 const DROP = {
