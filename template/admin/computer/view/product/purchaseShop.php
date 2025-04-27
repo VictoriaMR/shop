@@ -1,9 +1,6 @@
 <div class="container-fluid" id="purchase-list-page">
     <form action="<?php echo adminUrl('product/purchaseShop');?>" class="form-inline" method="get">
         <div class="form-group">
-            <input type="text" class="form-control" name="unique_id" value="<?php echo $unique_id;?>" placeholder="店铺源ID" autocomplete="off">
-        </div>
-        <div class="form-group">
             <select class="form-control" name="channel_id">
                 <option value="-1">请选择渠道</option>
                 <?php if (!empty($channelList)) {
@@ -11,6 +8,12 @@
                 <option <?php if ($channel_id==$key){ echo 'selected';}?> value="<?php echo $key;?>"><?php echo $value;?></option>
                 <?php } }?>
             </select>
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="unique_id" value="<?php echo $unique_id;?>" placeholder="源ID" autocomplete="off">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" name="name" value="<?php echo $name;?>" placeholder="名称" autocomplete="off">
         </div>
         <div class="form-group">
             <button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>

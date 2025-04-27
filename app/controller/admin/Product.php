@@ -707,6 +707,7 @@ class Product extends AdminBase
 		$status = iget('status/d', -1);
 		$channelId = iget('channel_id/d', 0);
 		$uniqueId = iget('unique_id', '');
+		$name = trim(iget('name', ''));
 		$page = iget('page/d', 1);
 		$size = iget('size/d', 30);
 
@@ -716,6 +717,9 @@ class Product extends AdminBase
 		}
 		if ($uniqueId) {
 			$where['unique_id'] = $uniqueId;
+		}
+		if ($name) {
+			$where['name'] = ['like', '%'.$name.'%'];
 		}
 		$total = purchase()->shop()->count($where);
 		$list = [];
@@ -738,6 +742,7 @@ class Product extends AdminBase
 			'status' => $status,
 			'channel_id' => $channelId,
 			'unique_id' => $uniqueId,
+			'name' => $name,
 			'total' => $total,
 			'size' => $size,
 			'list' => $list,
