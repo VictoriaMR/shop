@@ -254,6 +254,7 @@ const OPERATE = {
 				showTips(res);
 				if (res.code) {
 					setTimeout(function(){
+						_thisobj.button('reset');
 						window.history.back();
 					}, 300);
 				} else {
@@ -340,6 +341,7 @@ const OPERATE = {
 		var pObj = obj.parents('td');
 		pObj.empty();
 		let title = '';
+		var sku_id = pObj.parent('tr').data('sku');
 		if (nameExt.toString() != '{}') {
 			var html = '';
 			for (var i in nameExt) {
@@ -347,6 +349,7 @@ const OPERATE = {
 							<span class="attr-name success" data-name="`+i+`">`+i+`</span>
 							<span>: </span>
 							<span class="attr-value success" data-name="`+nameExt[i]+`">`+nameExt[i]+`</span>
+							<input type="hidden" name="sku[`+sku_id+`][attr][`+i+`]" value="`+nameExt[i]+`">
 						</p>`;
 				title += i+':'+nameExt[i]+';';
 			}

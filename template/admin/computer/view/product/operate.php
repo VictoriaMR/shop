@@ -31,6 +31,12 @@
 				</dd>
 			</dl>
 			<dl class="field-row">
+				<dt class="title-line"><strong class="must">*</strong>邮费：</dt>
+				<dd>
+					<input type="text" class="form-control" name="post_fee" value="<?php echo $info['post_fee'];?>">
+				</dd>
+			</dl>
+			<dl class="field-row">
 				<dt class="title-line"><strong class="must">*</strong>产品图片：</dt>
 				<dd>
 					<div class="left" style="width: 100px;padding-right: 10px;">
@@ -177,7 +183,6 @@
 									<div title="SKU属性">
 										<?php foreach($value['pvs'] as $pk=>$pv) {?>
 										<p><?php echo $pk.': '.$pv;?></p>
-										<input type="hidden" name="sku[<?php echo $key;?>][attr][<?php echo $pk;?>]" value="<?php echo $pv;?>">
 										<?php }?>
 									</div>
 									<p title="SKUID"><?php echo $key;?></p>
@@ -188,6 +193,7 @@
 										<span class="attr-name <?php echo isset($attrNs[$pk])?'success':'error';?>" data-name="<?php echo $pk;?>"><?php echo isset($attrNs[$pk])?$attrNs[$pk]['name']:$pk;?></span>
 										<span>: </span>
 										<span class="attr-value <?php echo isset($attrVs[$pv])?'success':'error';?>" data-name="<?php echo $pv;?>"><?php echo isset($attrVs[$pv])?$attrVs[$pv]['name']:$pv;?></span>
+										<input type="hidden" name="sku[<?php echo $key;?>][attr][<?php echo $pk;?>]" value="<?php echo $pv;?>">
 									</p>
 									<?php if (!empty(isset($attrVs[$pv]['ext']))){?>
 									<?php foreach($attrVs[$pv]['ext'] as $ek=>$ev){?>
@@ -195,6 +201,7 @@
 										<span class="attr-name success" data-name="<?php echo $ek;?>"><?php echo $ek;?></span>
 										<span>: </span>
 										<span class="attr-value success" data-name="<?php echo $ev;?>"><?php echo $ev;?></span>
+										<input type="hidden" name="sku[<?php echo $key;?>][attr][<?php echo $ek;?>]" value="<?php echo $ev;?>">
 									</p>
 									<?php }?>
 									<?php }?>

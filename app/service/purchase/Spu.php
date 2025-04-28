@@ -123,14 +123,12 @@ class Spu extends Base
 		if (empty($data)) {
 			return false;
 		}
-		dd($data);
 		
 		//属性组
 		$attrName = service('attr/Name');
 		$attrValue = service('attr/Value');
 		$descName = service('desc/Name');
 		$descValue = service('desc/Value');
-		$spuData = service('product/SpuData');
 		$file = service('tool/File');
 
 		$attrNameArr = [];
@@ -146,15 +144,17 @@ class Spu extends Base
 		if (!empty($data['spu_image'])) {
 			$allImageArr[] = $data['spu_image'];
 		}
-
+		$priceArr = [];
 		foreach ($data['sku'] as $key => $value) {
 			if (empty($value['attr'])) continue;
 			if (!empty($value['img'])) {
 				$allImageArr[] = $value['img'];
 			}
 			$attrNameArr = array_merge($attrNameArr, array_keys($value['attr']));
-			$attrValueArr = array_merge($attrValueArr, $value['attr']);
+			$attrValueArr = array_merge($attrValueArr, array_values($value['attr']));
 			$allImageArr = array_merge($allImageArr, array_column($value['attr'], 'img'));
+			// 价格合集
+			$priceArr[] = (float)($value['price']+($data['post_fee'] ?? 0));
 		}
 		// 上传图片
 		$allImageArr = array_unique(array_filter($allImageArr));
@@ -162,20 +162,36 @@ class Spu extends Base
 		// 设置属性
 		$attrNameArr = $attrName->addNotExist($attrNameArr);
 		$attrValueArr = $attrValue->addNotExist($attrValueArr);
-		dd($attrNameArr, $attrValueArr);
 
 		//描述值
 		$descNameArr = [];
 		$descValueArr = [];
-		foreach($data['bc_des_text'] as $value) {
-			$descNameArr[] = trim(strtoupper(strTrim($value['key'])));
-			$descValueArr[] = trim(strtoupper(strTrim($value['value'])));
+		foreach($data['desc']['name'] as $key=>$value) {
+			$descNameArr[] = strtoupper(strTrim($value));
+			$descValueArr[] = strtoupper(strTrim($data['desc']['value'][$key]));
 		}
-		$descNameArr = $descName->addNotExist(array_unique($descNameArr));
-		$descValueArr = $descValue->addNotExist(array_unique($descValueArr));
+		$descNameArr = $descName->addNotExist($descNameArr);
+		$descValueArr = $descValue->addNotExist($descValueArr);
+
+		// 写入采购spu, sku, 产品spu,sku
+		$this->start();
+		$insert = [
+			'status' => 0,
+			'site_id' => $data['site_id'],
+			'cate_id' => $data['cate_id'],
+			'attach_id' => $allImageArr[$data['spu_image'] ?? ''] ?? 0,
+			'min_price' => $this->getPrice(min($priceArr)),
+			'max_price' => $this->getPrice(max($priceArr)),
+		];
+		$this->start();
+		$spuId = $this->insertGetId($insert);
+		$spuId = 
+		$this->commit();
+
+		dd($data);
 
 		$where = [
-			'item_id' => $data['bc_product_id'],
+			'item_id' => $info['item_id'],
 			'supplier' => $data['bc_site_id'],
 		];	
 		
