@@ -343,7 +343,6 @@ const OPERATE = {
 		pObj.empty();
 		let title = '';
 		var sku_id = pObj.parent('tr').data('sku');
-		console.log(sku_id, 'sku_id')
 		if (nameExt.toString() != '{}') {
 			var html = '';
 			for (var i in nameExt) {
