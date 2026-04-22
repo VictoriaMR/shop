@@ -10,7 +10,7 @@ function config($type, $name='', $default=''){
 	if (is_null(\App::get($type))){
 		\App::set($type, require ROOT_PATH.'config/'.$type.'.php');
 	}
-	return \App::get($type, $name);
+	return \App::get($type, $name, $default);
 }
 function redirect($url='', $return=true){
 	$return && frame('Session')->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
@@ -141,7 +141,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	$rStr = '';
 	$seedLen = strlen($str);
 	while ($len > 0){
-		$rStr .= $str[rand(0, $seedLen - 1)];
+		$rStr .= $str[random_int(0, $seedLen - 1)];
 		$len--;
 	}
 	return $rStr;
@@ -182,7 +182,9 @@ function now($time=0) {
 	return $time > 0 ? date('Y-m-d H:i:s', $time) : date('Y-m-d H:i:s');
 }
 function siteId() {
-	return \App::get('domain', 'site_id');
+	static $id = null;
+	if ($id === null) $id = \App::get('domain', 'site_id');
+	return $id;
 }
 function redis($db=0) {
 	return frame('Redis')->setDb($db);

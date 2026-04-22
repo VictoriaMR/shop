@@ -25,7 +25,7 @@ class Debug
 		$base = [
 			'请求信息' => date('Y-m-d H:i:s', $_SERVER['REQUEST_TIME']) . ' ' . $uri,
 			'运行时间' => number_format((float) $runtime, 6) . 's[吞吐率：' . $reqs . ' req/s]',
-			'查询信息' => empty($GLOBALS['exec_sql']) ? 0 : count($GLOBALS['exec_sql']) . '条',
+			'查询信息' => count(\App::get('exec_sql') ?? []) . '条',
 			'内存消耗' => $mem . 'KB',
 			'文件加载' => count($info) . '个',
 			'文件总值' => $fileMem . 'KB',
@@ -45,7 +45,7 @@ class Debug
 					$trace[$title] = $info;
 					break;
 				case 'sql':
-					$trace[$title] = $GLOBALS['exec_sql'] ?? '';
+					$trace[$title] = \App::get('exec_sql') ?? '';
 					break;
 			}
 		}
@@ -60,24 +60,20 @@ class Debug
 		$destination = ROOT_PATH.'runtime/'.date('Ym').'/'.date('d').(empty($type) ? '' : '_'.$type).'.log';
 
 		if (!is_file($destination)) {
-			$path = createDir(dirname($destination));
+			createDir(dirname($destination));
 		}
 		// 获取基本信息
-		$current_uri = '';
-		if (defined('IS_CLI') && IS_CLI) {
+		if (isCli()) {
 			$current_uri = ' cmd: ' . implode(' ', $_SERVER['argv']);
 		} else {
 			$current_uri = ' uri: ' . $_SERVER['HTTP_HOST'] . urldecode($_SERVER['REQUEST_URI']);
 		}
 		$runtime = number_format(microtime(true) - APP_TIME_START, 10,'.','');
 		$reqs = $runtime > 0 ? number_format(1 / $runtime, 2,'.','') : '∞';
-		$time_str = '[Time：' . number_format($runtime, 6) . 's] [QPS：' . $reqs . 'req/s]';
 		$memory_use = number_format((memory_get_usage() - APP_MEMORY_START) / 1024, 2,'.','');
-		$memory_str = ' [MEM：' . $memory_use . 'kb]';
-		$file_load = ' [Files：' . count(get_included_files()) . ']';
-		$info = $time_str . $memory_str . $file_load . PHP_EOL;
-		$server = isset($_SERVER['SERVER_ADDR']) ? $_SERVER['SERVER_ADDR'] : '0.0.0.0';
-		$remote = isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '0.0.0.0';
+		$info = '[Time：' . number_format($runtime, 6) . 's] [QPS：' . $reqs . 'req/s] [MEM：' . $memory_use . 'kb] [Files：' . count(get_included_files()) . ']' . PHP_EOL;
+		$server = $_SERVER['SERVER_ADDR'] ?? '0.0.0.0';
+		$remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 		error_log('[runtime] '.date('Y-m-d H:i:s').' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'---------------------------------------------------------------'.PHP_EOL, 3, $destination);
 		return $this;
 	}

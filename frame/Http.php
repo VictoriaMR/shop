@@ -43,7 +43,7 @@ class Http
 		$opt[CURLOPT_URL] = $url;
 		curl_setopt_array($ch, $opt+$options);
 		$result = curl_exec($ch);
-		if (!$result = curl_exec($ch)) {
+		if (!$result) {
 			$this->setError([
 				'errno' => curl_errno($ch),
 				'msg' => curl_error($ch),

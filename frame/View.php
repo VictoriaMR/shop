@@ -16,7 +16,14 @@ class View
 	{
 		if (is_file($template)) {
 			extract($this->_data + $data, EXTR_OVERWRITE);
-			include $template;
+			ob_start();
+			try {
+				include $template;
+				ob_end_flush();
+			} catch (\Throwable $e) {
+				ob_end_clean();
+				throw $e;
+			}
 		} else {
 			throw new \Exception($template.' was not exist!', 1);
 		}

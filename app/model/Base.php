@@ -9,6 +9,7 @@ class Base
 	protected $_table;
 	protected $_primaryKey;
 	protected $_memId;
+	protected $_siteId;
 	protected $_lanId;
 	protected $_currencyId;
 	protected $_addTime;
@@ -17,14 +18,16 @@ class Base
 
 	private function instance()
 	{
-		if (is_null($this->_instance)) {
+		if ($this->_instance === null) {
 			$this->_instance = frame('Query');
 		}
-		$this->_instance->setDb($this->_connect);
-		$this->_instance->table($this->_table);
-		$this->_instance->setParam('_addTime', $this->_addTime);
-		$this->_instance->setParam('_updateTime', $this->_updateTime);
-		$this->_instance->setParam('_intFields', $this->_intFields);
+		if ($this->_instance->getTable() !== $this->_table) {
+			$this->_instance->setDb($this->_connect);
+			$this->_instance->table($this->_table);
+			$this->_instance->_addTime = $this->_addTime;
+			$this->_instance->_updateTime = $this->_updateTime;
+			$this->_instance->_intFields = $this->_intFields;
+		}
 		return $this->_instance;
 	}
 
