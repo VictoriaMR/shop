@@ -1,10 +1,13 @@
 <?php 
 
 namespace frame;
+use app\task\TaskDriver;
 
 class Task
 {
 	const TASKPREFIX ='frame:task:';
+	// classKey 缓存, 避免重复 str_replace
+	private $classKeyCache = [];
 	
 	public function start($taskClass)
 	{
@@ -29,7 +32,10 @@ class Task
 	
 	public function getClassKey($classname)
 	{
-		return str_replace(['\\', '/'], '-', $classname);
+		if (!isset($this->classKeyCache[$classname])) {
+			$this->classKeyCache[$classname] = str_replace(['\\', '/'], '-', $classname);
+		}
+		return $this->classKeyCache[$classname];
 	}
 
 	public function getTaskList($main = false)
@@ -76,6 +82,8 @@ class Task
 		if ($classKey == 'app-task-MainTask' && $value == 'on' && ($info['status'] ?? '') != 'running') {
 			$this->start($key);
 		}
+		// 唤醒 MainTask
+		redis(2)->lPush(TaskDriver::SIGNAL_KEY, '1');
 		return true;
 	}
 
@@ -102,6 +110,8 @@ class Task
 		}
 		$info['next_run'] = time();
 		$this->setInfo($key, $info);
+		// 唤醒 MainTask
+		redis(2)->lPush(TaskDriver::SIGNAL_KEY, '1');
 		return true;
 	}
 

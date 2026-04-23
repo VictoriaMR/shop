@@ -6,16 +6,25 @@ abstract class TaskDriver
 {
 	public $config = [];
 
+	// MainTask 唤醒信号 Redis Key
+	const SIGNAL_KEY = 'frame:task:signal';
+
 	protected $sleep = 1;
 	protected $taskInfo = [];
 	protected $tasker;
 
+	// 状态同步最小间隔(秒), 避免高频 Redis 写入
+	protected $stateInterval = 10;
+	// 上次同步时间戳
+	private $lastSyncAt = 0;
+
 	public function start()
 	{
-		// 获取目标数据
 		$this->tasker = frame('Task');
 		$classKey = $this->tasker->getClassKey(get_class($this));
-		if ($classKey == 'app-task-MainTask') {
+		$isMain = ($classKey === 'app-task-MainTask');
+
+		if ($isMain) {
 			$this->allTask = $this->tasker->getInfo();
 			$info = $this->allTask[$classKey] ?? [];
 		} else {
@@ -25,62 +34,145 @@ abstract class TaskDriver
 			return false;
 		}
 
-		if ($info['boot'] == 'offing') {
+		// 快速退出: boot=offing 转为 off
+		if ($info['boot'] === 'offing') {
 			$info['boot'] = 'off';
 		}
-		if ($info['boot'] == 'off' || $info['next_run'] > time()) {
-			$result = false;
-		} else {
-			$result = true;
-			$loopCount = 0;
+		// 未开启 或 未到执行时间
+		if ($info['boot'] === 'off' || $info['next_run'] > time()) {
+			$info['status'] = 'stop';
+			$this->tasker->setInfo($classKey, $info);
+			return false;
 		}
-		// 任务正在进行中
+
+		// 标记运行中
+		$info['boot'] = 'on';
+		$info['status'] = 'running';
 		$info['start_at'] = time();
-		$info['count'] = ($info['count'] ?? 0)+1;
 		$info['run_at'] = time();
-		// 当前进程ID
-		if ($result) {
-			$info['boot'] = 'on';
-			$info['status'] = 'running';
-			$info['process_pid'] = getmypid();
-			$info['process_user'] = get_current_user();
-		}
-		while ($result) {
-			$update = $loopCount % 5 == 0;
-			// 延时更新次数
-			if ($update && $loopCount > 0) {
-				if ($classKey == 'app-task-MainTask') {
-					$this->allTask = $this->tasker->getInfo();
-					$info = $this->allTask[$classKey] ?? [];
-				} else {
-					$info = $this->tasker->getInfo($classKey);
-				}
-			}
-			if ($info['boot'] != 'on') {
-				$info['boot'] = 'off';
-				break;
-			}
-			$info['remark'] = '';
-			$this->taskInfo = [];
-			$result = $this->run();
-			$loopCount++;
-			if ($result) {
-				if ($update) {
-					$info['loop_count'] = $loopCount;
-					$info['memory_usage'] =  memory_get_usage()- APP_MEMORY_START;
-					$info['run_at'] = time();
-					$this->tasker->setInfo($classKey, $this->taskInfo + $info);
-				}
-				sleep($this->config['sleep'] ?? $this->sleep);
-			}
-		}
-		// 任务已退出
-		$info['status'] = 'stop';
-		$info['remark'] = '任务已退出'.PHP_EOL.now();
-		$info['memory_usage'] = 0;
-		$info['next_run'] = $this->getNextTime($this->config['cron']);
+		$info['count'] = ($info['count'] ?? 0) + 1;
+		$info['process_pid'] = getmypid();
+		$info['process_user'] = get_current_user();
 		$this->tasker->setInfo($classKey, $info);
+		$this->lastSyncAt = time();
+
+		$loopCount = 0;
+
+		if ($isMain) {
+			// ========== MainTask 常驻模式: BLPOP 阻塞等待 ==========
+			// O(1) 清空历史残留信号
+			redis(2)->del(self::SIGNAL_KEY);
+
+			while (true) {
+				// 每轮都同步全量状态
+				$this->allTask = $this->tasker->getInfo();
+				$info = $this->allTask[$classKey] ?? $info;
+
+				// 检查是否被外部关闭
+				if ($info['boot'] !== 'on') {
+					$info['boot'] = 'off';
+					break;
+				}
+
+				// 执行调度, run() 返回下次唤醒等待秒数(合并遍历)
+				$this->taskInfo = [];
+				$waitSeconds = $this->run();
+				$loopCount++;
+
+				// 同步指标
+				$now = time();
+				$info['loop_count'] = $loopCount;
+				$info['memory_usage'] = memory_get_usage() - APP_MEMORY_START;
+				$info['run_at'] = $now;
+				$this->tasker->setInfo($classKey, $this->taskInfo + $info);
+				$this->lastSyncAt = $now;
+
+				// 阻塞等待: 信号唤醒 或 超时到期
+				if ($waitSeconds > 0) {
+					// 进入阻塞前, 清空处理期间堆积的信号(防止批量空转)
+					redis(2)->del(self::SIGNAL_KEY);
+					$this->waitForSignal($waitSeconds);
+				}
+			}
+		} else {
+			// ========== 子任务模式: 保持原有 sleep 循环 ==========
+			$sleepTime = $this->config['sleep'] ?? $this->sleep;
+
+			while (true) {
+				// 基于时间间隔同步状态, 替代固定轮次
+				$now = time();
+				if ($now - $this->lastSyncAt >= $this->stateInterval) {
+					$info = $this->tasker->getInfo($classKey) ?: $info;
+					// 检查是否被外部关闭
+					if ($info['boot'] !== 'on') {
+						$info['boot'] = 'off';
+						break;
+					}
+					// 增量写入: 只更新活跃指标
+					$info['loop_count'] = $loopCount;
+					$info['memory_usage'] = memory_get_usage() - APP_MEMORY_START;
+					$info['run_at'] = $now;
+					$this->tasker->setInfo($classKey, $this->taskInfo + $info);
+					$this->lastSyncAt = $now;
+				}
+
+				$this->taskInfo = [];
+				$result = $this->run();
+				$loopCount++;
+
+				if (!$result) {
+					break;
+				}
+				sleep($sleepTime);
+			}
+		}
+
+		// 退出清理
+		$info['status'] = 'stop';
+		$info['remark'] = '任务已退出' . PHP_EOL . now();
+		$info['memory_usage'] = 0;
+		$info['loop_count'] = $loopCount;
+		$info['next_run'] = $this->getNextTime($this->config['cron']);
+		$this->tasker->setInfo($classKey, $this->taskInfo + $info);
 		return true;
+	}
+
+	/**
+	 * 阻塞等待信号唤醒或超时
+	 * @param int $timeout 最大等待秒数
+	 */
+	protected function waitForSignal($timeout)
+	{
+		if ($timeout <= 0) return;
+		redis(2)->blPop(self::SIGNAL_KEY, $timeout);
+	}
+
+	/**
+	 * 通知 MainTask 尽快重启当前任务
+	 * 子任务空闲时调用, 设置 next_run 为当前时间, 并推送信号唤醒 MainTask
+	 */
+	protected function taskMonitor()
+	{
+		$this->taskInfo['next_run'] = time();
+		// 推送信号唤醒 MainTask
+		redis(2)->lPush(self::SIGNAL_KEY, '1');
+	}
+
+	/**
+	 * 更新运行锁 - 防止长时间处理的任务被 MainTask 误判为超时
+	 */
+	protected function updateLock()
+	{
+		$now = time();
+		if ($now - $this->lastSyncAt >= $this->stateInterval) {
+			$classKey = $this->tasker->getClassKey(get_class($this));
+			$info = $this->tasker->getInfo($classKey);
+			if ($info) {
+				$info['run_at'] = $now;
+				$this->tasker->setInfo($classKey, $info);
+			}
+			$this->lastSyncAt = $now;
+		}
 	}
 
 	public function getNextTime($cron)
