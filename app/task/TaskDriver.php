@@ -4,158 +4,65 @@ namespace app\task;
 
 abstract class TaskDriver
 {
-	public $config = [];
+	public static $config = [];
+	protected $task_info = [];
 
-	// MainTask 唤醒信号 Redis Key
-	const SIGNAL_KEY = 'frame:task:signal';
+	const TASKPREFIX ='frame:task:';
 
-	protected $sleep = 1;
-	protected $taskInfo = [];
-	protected $tasker;
+	protected $timeout = 600;
 
-	// 状态同步最小间隔(秒), 避免高频 Redis 写入
-	protected $stateInterval = 10;
-	// 上次同步时间戳
-	private $lastSyncAt = 0;
+	protected function beforeStart(){}
 
+	protected function beforeStop(){}
+
+	// 任务启动, 不判断其他参数, 直接启动
 	public function start()
 	{
-		$this->tasker = frame('Task');
-		$classKey = $this->tasker->getClassKey(get_class($this));
-		$isMain = ($classKey === 'app-task-MainTask');
-
-		if ($isMain) {
-			$this->allTask = $this->tasker->getInfo();
-			$info = $this->allTask[$classKey] ?? [];
+		$key = strtr(get_class($this), '\\', '/');
+		$this->task_info = $this->getCache($key);
+		if (empty($this->task_info)) {
+			$this->task_info = static::$config;
+			$this->task_info['boot'] = 'on';
+			$this->task_info['start_count'] = 0;
 		} else {
-			$info = $this->tasker->getInfo($classKey);
-		}
-		if (empty($info)) {
-			return false;
-		}
-
-		// 快速退出: boot=offing 转为 off
-		if ($info['boot'] === 'offing') {
-			$info['boot'] = 'off';
-		}
-		// 未开启 或 未到执行时间
-		if ($info['boot'] === 'off' || $info['next_run'] > time()) {
-			$info['status'] = 'stop';
-			$this->tasker->setInfo($classKey, $info);
-			return false;
-		}
-
-		// 标记运行中
-		$info['boot'] = 'on';
-		$info['status'] = 'running';
-		$info['start_at'] = time();
-		$info['run_at'] = time();
-		$info['count'] = ($info['count'] ?? 0) + 1;
-		$info['process_pid'] = getmypid();
-		$info['process_user'] = get_current_user();
-		$this->tasker->setInfo($classKey, $info);
-		$this->lastSyncAt = time();
-
-		$loopCount = 0;
-
-		if ($isMain) {
-			// ========== MainTask 常驻模式: BLPOP 阻塞等待 ==========
-			// O(1) 清空历史残留信号
-			redis(2)->del(self::SIGNAL_KEY);
-
-			while (true) {
-				// 每轮都同步全量状态
-				$this->allTask = $this->tasker->getInfo();
-				$info = $this->allTask[$classKey] ?? $info;
-
-				// 检查是否被外部关闭
-				if ($info['boot'] !== 'on') {
-					$info['boot'] = 'off';
-					break;
-				}
-
-				// 执行调度, run() 返回下次唤醒等待秒数(合并遍历)
-				$this->taskInfo = [];
-				$waitSeconds = $this->run();
-				$loopCount++;
-
-				// 同步指标
-				$now = time();
-				$info['loop_count'] = $loopCount;
-				$info['memory_usage'] = memory_get_usage() - APP_MEMORY_START;
-				$info['run_at'] = $now;
-				$this->tasker->setInfo($classKey, $this->taskInfo + $info);
-				$this->lastSyncAt = $now;
-
-				// 阻塞等待: 信号唤醒 或 超时到期
-				if ($waitSeconds > 0) {
-					// 进入阻塞前, 清空处理期间堆积的信号(防止批量空转)
-					redis(2)->del(self::SIGNAL_KEY);
-					$this->waitForSignal($waitSeconds);
-				}
+			if ($this->task_info['boot'] === 'off') {
+				return false;
 			}
-		} else {
-			// ========== 子任务模式: 保持原有 sleep 循环 ==========
-			$sleepTime = $this->config['sleep'] ?? $this->sleep;
-
-			while (true) {
-				// 基于时间间隔同步状态, 替代固定轮次
-				$now = time();
-				if ($now - $this->lastSyncAt >= $this->stateInterval) {
-					$info = $this->tasker->getInfo($classKey) ?: $info;
-					// 检查是否被外部关闭
-					if ($info['boot'] !== 'on') {
-						$info['boot'] = 'off';
-						break;
-					}
-					// 增量写入: 只更新活跃指标
-					$info['loop_count'] = $loopCount;
-					$info['memory_usage'] = memory_get_usage() - APP_MEMORY_START;
-					$info['run_at'] = $now;
-					$this->tasker->setInfo($classKey, $this->taskInfo + $info);
-					$this->lastSyncAt = $now;
-				}
-
-				$this->taskInfo = [];
-				$result = $this->run();
-				$loopCount++;
-
-				if (!$result) {
-					break;
-				}
-				sleep($sleepTime);
+			// 启动中的任务[防止重复启动]
+			if ($this->task_info['status'] === 'running' && $this->task_info['run_at'] + $this->timeout > time()) {
+				return false;
 			}
 		}
-
-		// 退出清理
-		$info['status'] = 'stop';
-		$info['remark'] = '任务已退出' . PHP_EOL . now();
-		$info['memory_usage'] = 0;
-		$info['loop_count'] = $loopCount;
-		$info['next_run'] = $this->getNextTime($this->config['cron']);
-		$this->tasker->setInfo($classKey, $this->taskInfo + $info);
+		$this->task_info['run_count'] = 0;
+		$this->task_info['status'] = 'running';
+		$this->task_info['start_at'] = time();
+		$this->task_info['start_count']++;
+		$this->task_info['process_pid'] = getmypid();
+		$this->task_info['process_user'] = get_current_user();
+		// 启动前准备
+		$this->beforeStart();
+		// 任务启动
+		while (true) {
+			$rst = $this->run();
+			$this->task_info['run_count']++;
+			$this->task_info['run_at'] = time();
+			$this->task_info['memory_usage'] = memory_get_usage() - APP_MEMORY_START;
+			$this->setCache($key, $this->task_info);
+			if ($rst === false) {
+				break;
+			}
+		}
+		// 任务结束
+		$this->beforeStop();
+		$this->task_info['status'] = 'stop';
+		$nextRun = $this->getNextTime(static::$config['cron']);
+		$this->task_info['run_next'] = $nextRun;
+		$this->setCache($key, $this->task_info);
+		// 重新入队延时队列, 等待 MainTask 下次调度
+		if ($nextRun > 0) {
+			$this->redis()->zAdd($this->getKey('delay'), $nextRun, $key);
+		}
 		return true;
-	}
-
-	/**
-	 * 阻塞等待信号唤醒或超时
-	 * @param int $timeout 最大等待秒数
-	 */
-	protected function waitForSignal($timeout)
-	{
-		if ($timeout <= 0) return;
-		redis(2)->blPop(self::SIGNAL_KEY, $timeout);
-	}
-
-	/**
-	 * 通知 MainTask 尽快重启当前任务
-	 * 子任务空闲时调用, 设置 next_run 为当前时间, 并推送信号唤醒 MainTask
-	 */
-	protected function taskMonitor()
-	{
-		$this->taskInfo['next_run'] = time();
-		// 推送信号唤醒 MainTask
-		redis(2)->lPush(self::SIGNAL_KEY, '1');
 	}
 
 	/**
@@ -163,16 +70,11 @@ abstract class TaskDriver
 	 */
 	protected function updateLock()
 	{
-		$now = time();
-		if ($now - $this->lastSyncAt >= $this->stateInterval) {
-			$classKey = $this->tasker->getClassKey(get_class($this));
-			$info = $this->tasker->getInfo($classKey);
-			if ($info) {
-				$info['run_at'] = $now;
-				$this->tasker->setInfo($classKey, $info);
-			}
-			$this->lastSyncAt = $now;
-		}
+		$key = get_class($this);
+		$info = $this->getCache($key);
+		$info['run_at'] = time();
+		$this->setCache($key, $info);
+		return true;
 	}
 
 	public function getNextTime($cron)
@@ -187,160 +89,239 @@ abstract class TaskDriver
 		return $result ?: 0;
 	}
 
-	// 在读取corn配置是个做基本检查和过滤， 包括：格式， 运行的字符，等， 传过来的必须是合规的字串
-	// 按下面格式配置， 可同时配置多条, 日与周同时配置， 忽略周配置
-	// * * * * *	分 时 日 月 周 (全为*表示持续运行)
-	// 0 3 * * *	数字精确配置, 星号为任意.(每天凌晨3点整)
-	// 15,30 3 * * *	逗号表示枚举 (每天3点15分和3点30分)
-	// 15-30 3 * * *	短线表示范围 (每天的3点15分到30分持续运行)
-	// 0-30/10 3 * * *	斜杠表示间隔 (每天3点0分到30分之间, 每10分钟一次)
-	// */10 5-8 * * *	斜杠表示间隔 (每天5-8点, 每10分钟一次)
-	// 获取类似linux crontab格式单条配置的下一次运行时间
+	/**
+	 * 在读取corn配置是个做基本检查和过滤， 包括：格式， 运行的字符，等， 传过来的必须是合规的字串
+	 * 按下面格式配置， 可同时配置多条, 日与周同时配置， 忽略周配置
+	 * * * * *	分 时 日 月 周 (全为*表示持续运行)
+	 * 0 3 * * *	数字精确配置, 星号为任意.(每天凌晨3点整)
+	 * 15,30 3 * * *	逗号表示枚举 (每天3点15分和3点30分)
+	 * 15-30 3 * * *	短线表示范围 (每天的3点15分到30分持续运行)
+	 * 0-30/10 3 * * *	斜杠表示间隔 (每天3点0分到30分之间, 每10分钟一次)
+	 * *\/10 5-8 * * *	斜杠表示间隔 (每天5-8点, 每10分钟一次)
+	 * 获取类似linux crontab格式单条配置的下一次运行时间
+	 * @param  [type] $cornStr
+	 * @author LiaoMr
+	 * @DateTime 2026-04-24 15:12
+	 */ 
 	protected function getNextTimeByCron($cornStr)
 	{
-		$cornStr=preg_replace('/\s+/', ' ', trim($cornStr));
-		if ($cornStr=='* * * * *') {
+		if ($cornStr === '* * * * *') {
 			return 0;
 		}
-		$arr=explode(' ', $cornStr);
-		$now=explode('-', date('i-H-d-m-w')); //'m-d-H-i' 月日时分
+		$arr = explode(' ', $cornStr);
 
-		//确定取值范围
-		$year=date('Y');
-		$minuteRange=$this->cronUnitParse($arr[0], range(0,59));
-		$hourRange=$this->cronUnitParse($arr[1], range(0,23));
-		$dayRange=$this->cronUnitParse($arr[2], range(1, date('t')));
-		$monthRange=$this->cronUnitParse($arr[3], range(1,12));
-		$weekRange=$this->cronUnitParse($arr[4], range(0,6));
-		//取值
-		$minute=$this->cronNextVal($minuteRange, $now[0]+1);
-		$step=0;
-		if ($minute<0) {
-			$minute=$minuteRange[0];
-			$step=1;
+		// 一次性获取当前时间各分量, 避免多次 date() 调用
+		$ts = time();
+		$nowMinute = (int)date('i', $ts);
+		$nowHour   = (int)date('H', $ts);
+		$nowDay    = (int)date('d', $ts);
+		$nowMonth  = (int)date('m', $ts);
+		$nowWeek   = (int)date('w', $ts);
+		$nowYear   = (int)date('Y', $ts);
+		$daysInMonth = (int)date('t', $ts);
+
+		// 直接算出有序结果集, 不再传入完整 range 数组
+		$minuteRange = $this->cronUnitParse($arr[0], 0, 59);
+		$hourRange   = $this->cronUnitParse($arr[1], 0, 23);
+		$dayRange    = $this->cronUnitParse($arr[2], 1, $daysInMonth);
+		$monthRange  = $this->cronUnitParse($arr[3], 1, 12);
+		$weekRange   = $this->cronUnitParse($arr[4], 0, 6);
+
+		$year = $nowYear;
+
+		// 取值: 从当前分量+1开始找下一个匹配值, 溢出则进位
+		$minute = $this->cronNextVal($minuteRange, $nowMinute + 1);
+		$step = 0;
+		if ($minute < 0) {
+			$minute = $minuteRange[0];
+			$step = 1;
 		}
-		$hour=$this->cronNextVal($hourRange, $now[1]+$step);
-		$step=0;
-		if ($hour<0) {
-			$hour=$hourRange[0];
-			$step=1;
+		$hour = $this->cronNextVal($hourRange, $nowHour + $step);
+		$step = 0;
+		if ($hour < 0) {
+			$hour = $hourRange[0];
+			$step = 1;
 		}
-		if($arr[4]=='*'||$arr[3]!='*') { // 按日参数计算
-			$day=$this->cronNextVal($dayRange,$now[2]+$step);
-			$step=0;
-			if($day<0){
-				$day=$dayRange[0];
-				$step=1;
+		if ($arr[4] == '*' || $arr[3] != '*') { // 按日参数计算
+			$day = $this->cronNextVal($dayRange, $nowDay + $step);
+			$step = 0;
+			if ($day < 0) {
+				$day = $dayRange[0];
+				$step = 1;
 			}
-			$month = $this->cronNextVal($monthRange,$now[3]+$step);
-			if($month<0){
+			$month = $this->cronNextVal($monthRange, $nowMonth + $step);
+			if ($month < 0) {
 				$month = $monthRange[0];
 				$year++;
 			}
 		} else { // 按周参数计算
-			$week = $this->cronNextVal($weekRange,$now[4]+$step);
-			$basetime=time();
-			if($week<0){
-				$week=$weekRange[0];
-				$basetime=$basetime+(7-date('w',$basetime)+$week)*24*60*60; // 基础时间递增一周
+			$week = $this->cronNextVal($weekRange, $nowWeek + $step);
+			$basetime = $ts;
+			if ($week < 0) {
+				$week = $weekRange[0];
+				$basetime += (7 - $nowWeek + $week) * 86400;
 			}
-			$basemonth = date('m',$basetime);
-			$month = $this->cronNextVal($monthRange,$basemonth);
-			if($month<0||date('m',$basetime)!=$month){
-				if($month<0) {
+			$basemonth = (int)date('m', $basetime);
+			$month = $this->cronNextVal($monthRange, $basemonth);
+			if ($month < 0 || $basemonth != $month) {
+				if ($month < 0) {
 					$month = $monthRange[0];
 					$year++;
 				}
-				$basetime = strtotime($year.'-'.$month.'-1 00:00:01');
-				for($i=0;$i<7;$i++){
-					$basetime = $basetime + $i*24*3600;
-					$calweek = date('w',$basetime);
-					if($calweek==$week){
+				$basetime = strtotime($year . '-' . $month . '-1 00:00:01');
+				for ($i = 0; $i < 7; $i++) {
+					if ((int)date('w', $basetime + $i * 86400) == $week) {
+						$basetime += $i * 86400;
 						break;
 					}
 				}
-				$day=date('d',$basetime);
+				$day = (int)date('d', $basetime);
 			} else {
-				$day=date('d',$basetime);
+				$day = (int)date('d', $basetime);
 			}
-
 		}
-		if($year!=date('Y')){
-			$month=$monthRange[0];
-			$day=$dayRange[0];
-			$hour=$hourRange[0];
-			$minute=$minuteRange[0];
+		// 高位进位时, 低位归零
+		if ($year != $nowYear) {
+			$month  = $monthRange[0];
+			$day    = $dayRange[0];
+			$hour   = $hourRange[0];
+			$minute = $minuteRange[0];
 		}
-		if($month!=date('m')){
-			$day=$dayRange[0];
-			$hour=$hourRange[0];
-			$minute=$minuteRange[0];
+		if ($month != $nowMonth) {
+			$day    = $dayRange[0];
+			$hour   = $hourRange[0];
+			$minute = $minuteRange[0];
 		}
-		if($day!=date('d')){
-			$hour=$hourRange[0];
-			$minute=$minuteRange[0];
+		if ($day != $nowDay) {
+			$hour   = $hourRange[0];
+			$minute = $minuteRange[0];
 		}
-		if($hour!=date('H')){
-			$minute=$minuteRange[0];
+		if ($hour != $nowHour) {
+			$minute = $minuteRange[0];
 		}
-		return mktime($hour,$minute,0,$month,$day,$year);
+		return mktime($hour, $minute, 0, $month, $day, $year);
 	}
 
-	protected function cronUnitParse($unit, $allowRange)
+	/**
+	 * 解析 cron 单个字段, 直接生成有序结果集
+	 * @param string $unit cron 字段值 (如 "*\/10", "1,5,15", "3-7", "*")
+	 * @param int $min 允许最小值
+	 * @param int $max 允许最大值
+	 * @return int[] 有序的匹配值数组
+	 */
+	protected function cronUnitParse($unit, $min, $max)
 	{
-		if ($unit=='*') {
-			$range = $allowRange;
-			$step = 1;
-		} else {
-			$step = 1;
-			$str = $unit;
-			if (strpos($str,'/')) {
-				list($str,$step)=explode('/',$str);
+		$step = 1;
+		$str = $unit;
+		// 提取步长
+		if (($pos = strpos($str, '/')) !== false) {
+			$step = max(1, (int)substr($str, $pos + 1));
+			$str = substr($str, 0, $pos);
+		}
+		if ($str === '*') {
+			// 全范围 + 步长: 直接用算术生成, 无需 range()
+			$result = [];
+			for ($v = $min; $v <= $max; $v += $step) {
+				$result[] = $v;
 			}
-			if ($str=='*') {
-				$range=$allowRange;
-			} else {
-				$range=[];
-				$str=explode(',', $str);
-				foreach ($str as $val) {
-					if (strpos($val, '-')) {
-						$tmp=explode('-', $val);
-						$range=array_merge($range, range($tmp[0], $tmp[1]));
-					} else {
-						$range[]=intval($val);
-					}
+			return $result;
+		}
+		// 解析枚举和范围
+		$values = [];
+		foreach (explode(',', $str) as $part) {
+			if (($dashPos = strpos($part, '-')) !== false) {
+				$lo = (int)substr($part, 0, $dashPos);
+				$hi = (int)substr($part, $dashPos + 1);
+				for ($v = $lo; $v <= $hi; $v++) {
+					$values[] = $v;
 				}
+			} else {
+				$values[] = (int)$part;
 			}
 		}
-		sort($range);
-		$step=(int)$step;
-		if ($step<1) {
-			$step=1;
+		// 有步长时按索引跳步
+		if ($step > 1) {
+			sort($values);
+			$result = [];
+			for ($i = 0, $cnt = count($values); $i < $cnt; $i += $step) {
+				$result[] = $values[$i];
+			}
+			return $result;
 		}
-		$i=0;
-		$result=[];
-		while (isset($range[$i])) {
-			$result[]=$range[$i];
-			$i=$i + $step;
-		}
-		return $result;
+		sort($values);
+		return $values;
 	}
 
+	/**
+	 * 在有序数组中找 >= $val 的最小值 (二分查找)
+	 * @param int[] $range 有序数组
+	 * @param int $val 目标值
+	 * @return int 找到的值, 不存在返回 -1
+	 */
 	protected function cronNextVal($range, $val)
 	{
-		reset($range);
-		foreach ($range as $v){
-			if($v>=$val){
-				return $v;
+		$cnt = count($range);
+		if ($cnt === 0 || $val > $range[$cnt - 1]) {
+			return -1;
+		}
+		if ($val <= $range[0]) {
+			return $range[0];
+		}
+		// 二分查找
+		$lo = 0;
+		$hi = $cnt - 1;
+		while ($lo < $hi) {
+			$mid = ($lo + $hi) >> 1;
+			if ($range[$mid] < $val) {
+				$lo = $mid + 1;
+			} else {
+				$hi = $mid;
 			}
 		}
-		return -1;
+		return $range[$lo];
 	}
 
 	protected function echo($info)
 	{
-		$this->taskInfo['remark'] = $info;
+		$this->task_info['remark'] = $info;
+	}
+
+	/**
+	 * 阻塞等待信号唤醒或超时
+	 * @param int $timeout 最大等待秒数
+	 */
+	protected function waitForSignal($timeout)
+	{
+		if ($timeout <= 0) return;
+		$key = $this->getKey('signal');
+		$end = time() + $timeout;
+		// 分段 blPop, 避免超过 Redis read_timeout
+		while (($remain = $end - time()) > 0) {
+			$wait = min($remain, 55);
+			$result = $this->redis()->blPop($key, $wait);
+			if ($result) return; // 被信号唤醒
+		}
 	}
 
 	abstract protected function run();
+
+	protected function getCache($key, $type='list')
+	{
+		return $this->redis()->hGet($this->getKey($type), $key);
+	}
+
+	protected function setCache($key, $value, $type='list')
+	{
+		return $this->redis()->hSet($this->getKey($type), $key, $value);
+	}
+
+	protected function getKey($type='list')
+	{
+		return self::TASKPREFIX.$type;
+	}
+
+	protected function redis($db=2)
+	{
+		return redis($db);
+	}
 }

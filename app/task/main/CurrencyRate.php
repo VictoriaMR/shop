@@ -5,7 +5,7 @@ use app\task\TaskDriver;
 
 class CurrencyRate extends TaskDriver
 {
-	public $config = [
+	public static $config = [
 		'name' => '货币汇率更新任务',
 		'cron' => ['0 8 * * *'],
 	];

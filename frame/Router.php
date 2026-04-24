@@ -36,7 +36,7 @@ final class Router
 				}
 			}
 		}
-		return 'https://'.$_SERVER['HTTP_HOST'].'/'.$name;
+		return 'https://'.($_SERVER['HTTP_HOST'] ?? '').'/'.$name;
 	}
 
 	public function adminUrl($name='', $param=[])

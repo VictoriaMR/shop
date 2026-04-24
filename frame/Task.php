@@ -55,7 +55,7 @@ class Task
 			$classKey = $this->getClassKey($key);
 			if (empty($listInfo[$classKey])) {
 				$class = \App::make($key);
-				$listInfo[$classKey] = $class->config;
+				$listInfo[$classKey] = $class::$config;
 			}
 			$list[$key] = $listInfo[$classKey];
 		}
@@ -73,7 +73,7 @@ class Task
 		$info = $this->getInfo($classKey);
 		if (empty($info)) {
 			$class = \App::make($key);
-			$info = $class->config;
+			$info = $class::$config;
 			$info['next_run'] = $class->getNextTime($info['cron']);
 		}
 		$info['boot'] = $value.'ing';

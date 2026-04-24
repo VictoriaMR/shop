@@ -7,7 +7,7 @@ class Test extends TaskDriver
 {
 	private $language = [];
 
-	public $config = [
+	public static $config = [
 		'name' => '测试任务',
 		'cron' => ['* * * * *'],
 	];

@@ -6,6 +6,7 @@ class Debug
 {
 	public function init()
 	{
+		if (isCli()) return;
 		// 获取基本信息
 		$runtime = number_format(microtime(true) - APP_TIME_START, 10, '.', '');
 		$reqs = $runtime > 0 ? number_format(1 / $runtime, 2) : '∞';
@@ -74,7 +75,7 @@ class Debug
 		$info = '[Time：' . number_format($runtime, 6) . 's] [QPS：' . $reqs . 'req/s] [MEM：' . $memory_use . 'kb] [Files：' . count(get_included_files()) . ']' . PHP_EOL;
 		$server = $_SERVER['SERVER_ADDR'] ?? '0.0.0.0';
 		$remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-		error_log('[runtime] '.date('Y-m-d H:i:s').' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'---------------------------------------------------------------'.PHP_EOL, 3, $destination);
+		error_log('[runtime] '.date('Y-m-d H:i:s').' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'--------'.PHP_EOL, 3, $destination);
 		return $this;
 	}
 }

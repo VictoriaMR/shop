@@ -49,20 +49,8 @@ class Error
 	protected function errorEcho($data)
 	{
 		$log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
-		if (isDebug()) {
-			if (isAjax()) {
-				\App::jsonResponse(0, $data, $log);
-			} else {
-				print_r($data);
-				echo PHP_EOL.$log;
-			}
-		} else {
-			if (isAjax()) {
-				\App::jsonResponse(0, array(), '500 Internal Server Error');
-			} else {
-				redirect(url('pageNotFound'));
-			}
-		}
+		echo isDebug() ? $log : '500 Internal Server Error';
+		echo PHP_EOL;
 		frame('Debug')->runlog($log, 'error');
 	}
 

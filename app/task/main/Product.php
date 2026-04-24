@@ -7,7 +7,7 @@ class Product extends TaskDriver
 {
 	private $language = [];
 
-	public $config = [
+	public static $config = [
 		'name' => '产品入库任务',
 		'cron' => ['* * * * *'],
 	];

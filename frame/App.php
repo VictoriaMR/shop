@@ -82,7 +82,7 @@ class App
 		return true;
 	}
 
-	private static function autoload($abstract)
+	public static function autoload($abstract)
 	{
 		if (is_file(ROOT_PATH.$abstract.'.php')) {
 			require ROOT_PATH.$abstract.'.php';
