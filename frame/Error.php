@@ -4,6 +4,8 @@ namespace frame;
 
 class Error
 {
+	private static $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR];
+
 	public function register()
 	{
 		error_reporting(E_ALL);
@@ -49,8 +51,16 @@ class Error
 	protected function errorEcho($data)
 	{
 		$log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
-		echo isDebug() ? $log : '500 Internal Server Error';
-		echo PHP_EOL;
+		$isFatal = in_array($data['code'], self::$fatalTypes) || isset($data['trace']);
+
+		// 致命错误/异常: 始终输出; 非致命错误: 仅 debug 输出
+		if ($isFatal) {
+			echo isDebug() ? $log : '500 Internal Server Error';
+			echo PHP_EOL;
+		} elseif (isDebug()) {
+			echo $log . PHP_EOL;
+		}
+
 		frame('Debug')->runlog($log, 'error');
 	}
 

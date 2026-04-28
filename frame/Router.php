@@ -11,12 +11,13 @@ final class Router
 		$key = key($_GET);
 		$path = 'Index';
 		$func = 'index';
-		if (preg_match('/^\/?([A-Za-z0-9-_]*)\/?([A-Za-z0-9-_]*)/', str_replace('_html', '', $key), $match)) {
-			if (!empty($match[1]) && $match[1] != 'null') {
-				$path = ucfirst($match[1]);
+		if ($key) {
+			$parts = explode('/', trim(str_replace('_html', '', $key), '/'));
+			if (!empty($parts[0]) && $parts[0] !== 'null') {
+				$path = ucfirst($parts[0]);
 			}
-			if (!empty($match[2]) && $match[2] != 'null') {
-				$func = $match[2];
+			if (!empty($parts[1]) && $parts[1] !== 'null') {
+				$func = $parts[1];
 			}
 			unset($_GET[$key]);
 		}

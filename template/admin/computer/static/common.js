@@ -252,8 +252,6 @@ $(function(){
 	});
 	// 查看大图
 	$('.bigImage').bigImage();
-	// 行为打点
-	post('/api/stat', {url: location.href});
 });
 /* common */
 const VERIFY = {

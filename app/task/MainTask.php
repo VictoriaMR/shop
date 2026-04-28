@@ -10,8 +10,10 @@ class MainTask extends TaskDriver
 		'cron' => ['* * * * *'],
 	];
 
+	/** @var array<string, array> */
 	protected $taskCrons = [];
 
+	/** @var int */
 	protected $wait = 0; // 首次不休眠
 
 	protected function beforeStart()
@@ -38,7 +40,7 @@ class MainTask extends TaskDriver
 		}
 	}
 
-	protected function listAdd($classPath, $nextRun)
+	protected function listAdd(string $classPath, int $nextRun)
 	{
 		return $this->redis()->zAdd($this->getKey('delay'), $nextRun, $classPath);
 	}
@@ -61,11 +63,10 @@ class MainTask extends TaskDriver
 		// 获取第一条未到期任务, 计算下次睡眠时间
 		$next = $this->redis()->zRange($key, 0, 0, true);
 		$this->wait = empty($next) ? 3600 : max(1, (int)current($next) - time());
-		$this->wait = 50;
 		return true;
 	}
 
-	protected function startTask($classPath)
+	protected function startTask(string $classPath)
 	{
 		$key = $this->getKey('delay');
 		$nextRun = $this->getNextTime($this->taskCrons[$classPath]);
@@ -75,6 +76,6 @@ class MainTask extends TaskDriver
 			$this->redis()->zRem($key, $classPath);
 		}
 		// 启动子进程
-		// frame('Task')->start($classPath);
+		frame('Task')->start($classPath);
 	}
 }

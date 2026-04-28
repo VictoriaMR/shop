@@ -10,11 +10,12 @@ function config($type, $name='', $default=''){
 	if (is_null(\App::get($type))){
 		\App::set($type, require ROOT_PATH.'config/'.$type.'.php');
 	}
-	return \App::get($type, $name, $default);
+	return $name === '' ? \App::get($type) : \App::get($type, $name, $default);
 }
 function redirect($url='', $return=true){
 	$return && frame('Session')->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
-	header('Location:'.$url);exit();	
+	header('Location:'.$url);
+	\App::runOver(true);
 }
 function service($name, $params=null){
 	return \App::make('app/service/'.$name, $params);
@@ -29,9 +30,13 @@ function page($size=0, $total=0){
 	return frame('Paginator')->make($size, $total);
 }
 function siteUrl($name){
-	return '/'.(isMobile()?'mobile':'computer').'/'.$name.'?v='.version();
+	static $prefix = null;
+	if ($prefix === null) {
+		$prefix = '/'.(isMobile()?'mobile':'computer').'/';
+	}
+	return $prefix.$name.'?v='.version();
 }
-function mediaUrl($url, $width='', $version=true){
+function mediaUrl($url, $width=''){
 	if ($width){
 		$pos = strrpos($url, '.');
 		if ($pos !== false) {
@@ -154,8 +159,11 @@ function lanId($type='id'){
 	return frame('Session')->get('site_language_'.$type, $type=='code'?'en':1);
 }
 function userId($login=true){
-	$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
-	if (!$login && !$uid) $uid = '10000';
+	static $uid = null;
+	if ($uid === null) {
+		$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
+	}
+	if (!$login && !$uid) return '10000';
 	return $uid;
 }
 function createDir($dir){

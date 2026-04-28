@@ -17,7 +17,6 @@ class App
 			if ($abstract instanceof \Closure) {
 				$instance = $abstract($params);
 			} else {
-				self::autoload($abstract);
 				$concrete = strtr($abstract, '/', '\\');
 				$instance = $params !== null ? new $concrete($params) : new $concrete();
 			}
@@ -29,48 +28,43 @@ class App
 	public static function send()
 	{
 		$info = config('domain', $_SERVER['HTTP_HOST']);
-		if ($info) {
-			self::set('domain', $info);
-			//路由解析
-			$info = frame('Router')->analyze($info['class']);
-			self::set('router', $info);
-			// 中间组件方法
-			if (self::middleware($info)) {
-				//执行方法
-				$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
-				if (method_exists($call, $info['func'])) {
-					$call->{$info['func']}();
-				} else {
-					throw new \Exception('class: '.$info['class'].'/'.$info['path'].'/'.$info['func'].' was not exist!');
-				}
-			}
-			self::runOver();
-		} else {
+		if (!$info) {
 			throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!');
 		}
+		self::$data['domain'] = $info;
+		self::$data['router'] = frame('Router')->analyze($info['class']);
+		$router = self::$data['router'];
+		if (self::middleware($router)) {
+			$call = self::make('app/controller/'.$router['class'].'/'.$router['path']);
+			if (method_exists($call, $router['func'])) {
+				$call->{$router['func']}();
+			} else {
+				throw new \Exception('class: '.$router['class'].'/'.$router['path'].'/'.$router['func'].' was not exist!');
+			}
+		}
+		self::runOver();
 	}
 
-	// 中间组件方法
 	private static function middleware($request)
 	{
-		// 白名单优先判断
 		$except = config('except', $request['class']);
 
 		if (session_status() === PHP_SESSION_NONE) {
 			session_start();
 		}
+
 		$session = frame('Session');
 		$isHome = $request['class'] === 'home';
 		if (!$session->get('set_uuid', false)) {
 			frame('Cookie')->setUuid($isHome);
 		}
-		if ($request['path'] !== 'Api' && $request['path'] !== 'Login' && !$session->get('set_cookie', false)) {
-			frame('Cookie')->init($isHome);
+		// 语言/货币 Cookie 仅前端需要
+		if ($isHome && $request['path'] !== 'Api' && $request['path'] !== 'Login' && !$session->get('set_cookie', false)) {
+			frame('Cookie')->init(true);
 		}
 
 		if (isset($except[$request['path']]) || isset($except[$request['path'].'/'.$request['func']])) return true;
 
-		// 需要登录的要重定向
 		if (userId() < 1) {
 			if (isAjax()) {
 				self::jsonResponse(400, 'need login');
@@ -124,11 +118,7 @@ class App
 	public static function jsonResponse($code, $data=[], $msg='')
 	{
 		header('Content-Type:application/json;charset=utf-8');
-		echo json_encode(array(
-			'code' => $code,
-			'data' => $data,
-			'msg' => $msg,
-		), JSON_UNESCAPED_UNICODE);
+		echo json_encode(['code' => $code, 'data' => $data, 'msg' => $msg], JSON_UNESCAPED_UNICODE);
 		self::runOver(true);
 	}
 

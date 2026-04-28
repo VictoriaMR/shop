@@ -4,11 +4,14 @@ namespace app\task;
 
 abstract class TaskDriver
 {
+	/** @var array */
 	public static $config = [];
+	/** @var array */
 	protected $task_info = [];
 
 	const TASKPREFIX ='frame:task:';
 
+	/** @var int */
 	protected $timeout = 600;
 
 	protected function beforeStart(){}
@@ -77,7 +80,7 @@ abstract class TaskDriver
 		return true;
 	}
 
-	public function getNextTime($cron)
+	public function getNextTime(array $cron)
 	{
 		$result=false;
 		foreach ($cron as $val){
@@ -99,11 +102,11 @@ abstract class TaskDriver
 	 * 0-30/10 3 * * *	斜杠表示间隔 (每天3点0分到30分之间, 每10分钟一次)
 	 * *\/10 5-8 * * *	斜杠表示间隔 (每天5-8点, 每10分钟一次)
 	 * 获取类似linux crontab格式单条配置的下一次运行时间
-	 * @param  [type] $cornStr
+	 * @param  string $cornStr
 	 * @author LiaoMr
 	 * @DateTime 2026-04-24 15:12
 	 */ 
-	protected function getNextTimeByCron($cornStr)
+	protected function getNextTimeByCron(string $cornStr)
 	{
 		if ($cornStr === '* * * * *') {
 			return 0;
@@ -112,12 +115,12 @@ abstract class TaskDriver
 
 		// 一次性获取当前时间各分量, 避免多次 date() 调用
 		$ts = time();
-		$nowMinute = (int)date('i', $ts);
-		$nowHour   = (int)date('H', $ts);
-		$nowDay    = (int)date('d', $ts);
-		$nowMonth  = (int)date('m', $ts);
-		$nowWeek   = (int)date('w', $ts);
-		$nowYear   = (int)date('Y', $ts);
+		$nowMinute   = (int)date('i', $ts);
+		$nowHour     = (int)date('H', $ts);
+		$nowDay      = (int)date('d', $ts);
+		$nowMonth    = (int)date('m', $ts);
+		$nowWeek     = (int)date('w', $ts);
+		$nowYear     = (int)date('Y', $ts);
 		$daysInMonth = (int)date('t', $ts);
 
 		// 直接算出有序结果集, 不再传入完整 range 数组
@@ -209,7 +212,7 @@ abstract class TaskDriver
 	 * @param int $max 允许最大值
 	 * @return int[] 有序的匹配值数组
 	 */
-	protected function cronUnitParse($unit, $min, $max)
+	protected function cronUnitParse(string $unit, int $min, int $max)
 	{
 		$step = 1;
 		$str = $unit;
@@ -258,7 +261,7 @@ abstract class TaskDriver
 	 * @param int $val 目标值
 	 * @return int 找到的值, 不存在返回 -1
 	 */
-	protected function cronNextVal($range, $val)
+	protected function cronNextVal(array $range, int $val)
 	{
 		$cnt = count($range);
 		if ($cnt === 0 || $val > $range[$cnt - 1]) {
@@ -281,7 +284,7 @@ abstract class TaskDriver
 		return $range[$lo];
 	}
 
-	protected function echo($info)
+	protected function echo(string $info)
 	{
 		$this->task_info['remark'] = $info;
 	}
@@ -290,7 +293,7 @@ abstract class TaskDriver
 	 * 阻塞等待信号唤醒或超时
 	 * @param int $timeout 最大等待秒数
 	 */
-	protected function waitForSignal($timeout)
+	protected function waitForSignal(int $timeout)
 	{
 		if ($timeout <= 0) return;
 		$key = $this->getKey('signal');
@@ -305,22 +308,28 @@ abstract class TaskDriver
 
 	abstract protected function run();
 
-	protected function getCache($key, $type='list')
+	protected function getCache(string $key, string $type='list')
 	{
 		return $this->redis()->hGet($this->getKey($type), $key);
 	}
 
-	protected function setCache($key, $value, $type='list')
+	/**
+	 * @param string $key
+	 * @param array|string $value
+	 * @param string $type
+	 * @return bool
+	 */
+	protected function setCache(string $key, $value, string $type='list')
 	{
 		return $this->redis()->hSet($this->getKey($type), $key, $value);
 	}
 
-	protected function getKey($type='list')
+	protected function getKey(string $type='list')
 	{
 		return self::TASKPREFIX.$type;
 	}
 
-	protected function redis($db=2)
+	protected function redis(int $db=2)
 	{
 		return redis($db);
 	}

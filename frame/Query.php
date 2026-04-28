@@ -81,7 +81,16 @@ final class Query
 	public function field($columns)
 	{
 		if (is_string($columns)) $columns = explode(',', $columns);
-		$this->_columns = '`'.implode('`,`', $columns).'`';
+		$parts = [];
+		foreach ($columns as $col) {
+			$col = trim($col);
+			if ($col === '*' || preg_match('/[\(\)\s\.\*]/', $col)) {
+				$parts[] = $col;
+			} else {
+				$parts[] = '`' . $col . '`';
+			}
+		}
+		$this->_columns = implode(',', $parts);
 		return $this;
 	}
 
@@ -276,9 +285,7 @@ final class Query
 
 	public function getQuery($sql, $bindParams=[])
 	{
-		if (isDebug()) {
-			\App::append('exec_sql', $sql);
-		}
+		isDebug() && \App::append('exec_sql', $sql);
 		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
 		$this->clearQuery();
@@ -287,6 +294,9 @@ final class Query
 		}
 		try {
 			$stmt = $mysqli->prepare($sql);
+			if ($stmt === false) {
+				throw new \Exception('SQL prepare failed: ' . $mysqli->error . PHP_EOL . 'SQL: ' . $sql, $mysqli->errno);
+			}
 			if ($bindParams) {
 				$stmt->bind_param(...$bindParams);
 			}

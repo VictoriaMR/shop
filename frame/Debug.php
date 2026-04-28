@@ -56,6 +56,12 @@ class Debug
 		], false);
 	}
 
+	/**
+	 * 记录运行日志
+	 * @param string $msg  日志内容, 空字符串表示仅记录运行时信息
+	 * @param string $type 日志类型后缀, 如 'error' 则文件名为 28_error.log
+	 * @return $this
+	 */
 	public function runlog($msg='', $type='')
 	{
 		$destination = ROOT_PATH.'runtime/'.date('Ym').'/'.date('d').(empty($type) ? '' : '_'.$type).'.log';
@@ -63,19 +69,32 @@ class Debug
 		if (!is_file($destination)) {
 			createDir(dirname($destination));
 		}
-		// 获取基本信息
+
+		// 请求来源
 		if (isCli()) {
 			$current_uri = ' cmd: ' . implode(' ', $_SERVER['argv']);
 		} else {
 			$current_uri = ' uri: ' . $_SERVER['HTTP_HOST'] . urldecode($_SERVER['REQUEST_URI']);
 		}
-		$runtime = number_format(microtime(true) - APP_TIME_START, 10,'.','');
-		$reqs = $runtime > 0 ? number_format(1 / $runtime, 2,'.','') : '∞';
-		$memory_use = number_format((memory_get_usage() - APP_MEMORY_START) / 1024, 2,'.','');
-		$info = '[Time：' . number_format($runtime, 6) . 's] [QPS：' . $reqs . 'req/s] [MEM：' . $memory_use . 'kb] [Files：' . count(get_included_files()) . ']' . PHP_EOL;
+
+		// 运行指标
+		$runtime = number_format(microtime(true) - APP_TIME_START, 6, '.', '');
+		$reqs = $runtime > 0 ? number_format(1 / $runtime, 2, '.', '') : '∞';
+		$mem = number_format((memory_get_usage() - APP_MEMORY_START) / 1024, 2, '.', '');
+		$fileCount = count(get_included_files());
+		$sqlCount = count(\App::get('exec_sql') ?? []);
+
+		// 组装日志行
+		$info = "[Time：{$runtime}s] [QPS：{$reqs}req/s] [MEM：{$mem}kb] [SQL：{$sqlCount}] [Files：{$fileCount}]" . PHP_EOL;
 		$server = $_SERVER['SERVER_ADDR'] ?? '0.0.0.0';
 		$remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-		error_log('[runtime] '.date('Y-m-d H:i:s').' [server addr] '.$server.' [remote addr] '.$remote.$current_uri.PHP_EOL.$info.($msg == '' ? '' : preg_replace('/\s(?=\s)/', '\\1', $msg).PHP_EOL).'--------'.PHP_EOL, 3, $destination);
+
+		$log = '[runtime] ' . date('Y-m-d H:i:s') . ' [server addr] ' . $server . ' [remote addr] ' . $remote . $current_uri . PHP_EOL
+			 . $info
+			 . ($msg !== '' ? $msg . PHP_EOL : '')
+			 . '--------' . PHP_EOL;
+
+		error_log($log, 3, $destination);
 		return $this;
 	}
 }
