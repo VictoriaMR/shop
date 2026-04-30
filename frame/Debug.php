@@ -92,7 +92,7 @@ class Debug
 		$log = '[runtime] ' . date('Y-m-d H:i:s') . ' [server addr] ' . $server . ' [remote addr] ' . $remote . $current_uri . PHP_EOL
 			 . $info
 			 . ($msg !== '' ? $msg . PHP_EOL : '')
-			 . '--------' . PHP_EOL;
+			 . PHP_EOL;
 
 		error_log($log, 3, $destination);
 		return $this;

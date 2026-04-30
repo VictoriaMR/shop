@@ -26,10 +26,10 @@
                     </div>
                 </td>
                 <td>
-                    <a class="btn btn-info btn-xs ml4" href="<?php echo adminUrl('category/attrUsed', ['cid'=>$value['cate_id']]);?>"><span class="glyphicon glyphicon-forward"></span>&nbsp;属性</a>
-                    <a class="btn btn-default btn-xs ml4 modify" href="<?php echo adminUrl('category/cateList', ['cid'=>$value['cate_id']]);?>"><span class="glyphicon glyphicon-align-left"></span>&nbsp;子类目</a>
-                    <button class="btn btn-primary btn-xs ml4 modify"><span class="glyphicon glyphicon-edit"></span>&nbsp;修改</button>
-                    <button class="btn btn-danger btn-xs ml4 delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
+                    <a class="btn btn-info btn-xs ml4" href="<?php echo adminUrl('category/attrUsed', ['cid'=>$value['cate_id']]);?>"><span class="fa fa-forward"></span>&nbsp;属性</a>
+                    <a class="btn btn-default btn-xs ml4 modify" href="<?php echo adminUrl('category/cateList', ['cid'=>$value['cate_id']]);?>"><span class="fa fa-list"></span>&nbsp;子类目</a>
+                    <button class="btn btn-primary btn-xs ml4 modify"><span class="fa fa-edit"></span>&nbsp;修改</button>
+                    <button class="btn btn-danger btn-xs ml4 delete"><span class="fa fa-trash"></span>&nbsp;删除</button>
                 </td>
             </tr>
             <?php } ?>

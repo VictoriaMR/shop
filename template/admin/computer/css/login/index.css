@@ -4,10 +4,6 @@
 	width: 100%;
     opacity: 0.7;
 }
-#login-page .login-bg img {
-	height:100%; 
-	width:100%;
-}
 #login-page .login-box {
     width: 400px;
     padding: 25px;
@@ -21,8 +17,5 @@
     border-radius: 4px;
 }
 #login-page .login-box input[name="code"] {
-    width: 258px;
-}
-#login-page #login-btn {
-    height: 40px;
+    width: 256px;
 }

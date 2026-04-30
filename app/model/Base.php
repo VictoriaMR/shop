@@ -19,9 +19,7 @@ class Base
 	private function instance()
 	{
 		if ($this->_instance === null) {
-			$this->_instance = frame('Query');
-		}
-		if ($this->_instance->getTable() !== $this->_table) {
+			$this->_instance = new \frame\Query();
 			$this->_instance->setDb($this->_connect);
 			$this->_instance->table($this->_table);
 			$this->_instance->_addTime = $this->_addTime;

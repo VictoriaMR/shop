@@ -68,7 +68,9 @@ final class Query
 
 	public function groupBy($columns)
 	{
-		$this->_groupBy .= '`'.$columns.'`';
+		if ($columns) {
+			$this->_groupBy .= '`'.$columns.'`';
+		}
 		return $this;
 	}
 
