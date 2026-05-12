@@ -4,9 +4,10 @@ namespace frame;
 
 class View 
 {
-	private $_data = array();
+	private $_data = [];
+	private $_device;
 
-	public function display($template, $match=true, $data=array())
+	public function display($template, $match=true, $data=[])
 	{
 		$this->setData($data);
 		$data['layout_include_path'] = $this->getTemplate($template, $match);
@@ -16,21 +17,27 @@ class View
 
 	private function loadFile($template, array $data=[])
 	{
-		if (is_file($template)) {
-			if ($data) {
-				$this->setData($data);
-			}
-			extract($this->_data, EXTR_OVERWRITE);
+		if (!is_file($template)) {
+			echo isDebug()
+				? '<pre style="color:red">[Error] Template not found: ' . $template . '</pre>'
+				: '<!-- template missing -->';
+			return;
+		}
+		$this->setData($data);
+		extract($this->_data, EXTR_OVERWRITE);
+		try {
 			include $template;
-		} else {
-			throw new \Exception($template.' was not exist!', 1);
+		} catch (\Throwable $e) {
+			echo isDebug()
+				? '<pre style="color:red">[Error] ' . $e->getMessage() . PHP_EOL . $e->getTraceAsString() . '</pre>'
+				: '<!-- render error -->';
 		}
 	}
 
 	public function setData($data)
 	{
-		if (!empty($data)) {
-			$this->_data = $this->_data + $data;
+		if ($data) {
+			$this->_data += $data;
 		}
 	}
 
@@ -38,7 +45,10 @@ class View
 	{
 		if ($match) {
 			$template || $template = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
-			$template = 'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/view/'.$template;
+			if (!$this->_device) {
+				$this->_device = isMobile() ? 'mobile' : 'computer';
+			}
+			$template = 'template/'.config('domain', 'template').'/'.$this->_device.'/view/'.$template;
 		}
 		return ROOT_PATH.$template.'.php';
 	}

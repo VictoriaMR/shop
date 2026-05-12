@@ -22,9 +22,9 @@ class Cookie
 			if (!empty($info['mem_id'])) {
 				service('member/Member')->loginById($info['mem_id']);
 				if ($home && $info['lan_cur']) {
-					list($language, $currency) = explode('_', $info['lan_cur']);
-					$this->set('language', $language);
-					$this->set('currency', $currency);
+					$arr = explode('_', $info['lan_cur']);
+					$this->set('language', $arr[0]);
+					$this->set('currency', $arr[1]);
 				}
 			}
 		}
@@ -72,14 +72,18 @@ class Cookie
 
 	public function set($name, $value='', $option=null)
 	{
-		$config = $this->config;
-		if (!is_null($option)) {
+		if ($option !== null) {
+			$config = $this->config;
 			if (is_numeric($option)) {
-				$option = ['expires' => $option];
+				$config['expire'] = $option;
 			} elseif (is_string($option)) {
 				parse_str($option, $option);
+				$config = array_merge($config, array_change_key_case($option));
+			} else {
+				$config = array_merge($config, array_change_key_case($option));
 			}
-			$config = array_merge($config, array_change_key_case($option));
+		} else {
+			$config = $this->config;
 		}
 		if (is_array($value)) {
 			array_walk_recursive($value, 'self::jsonFormat', 'encode');
@@ -111,17 +115,9 @@ class Cookie
 		}
 	}
 
-	private function jsonFormat(&$val, $key, $type='encode')
-	{
-		if (!empty($val)) {
-			$val = 'decode' == $type ? urldecode($val) : urlencode($val);
-		}
-	}
-
 	public function clear()
 	{
 		// 清除登录状态
-		service('member/Uuid')->updateData(['uuid' =>$this->get('uuid')], ['mem_id'=>0]);
-		return true;
+		return service('member/Uuid')->updateData(['uuid' =>$this->get('uuid')], ['mem_id'=>0]);
 	}
 }

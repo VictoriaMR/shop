@@ -5,7 +5,7 @@ use app\task\TaskDriver;
 
 class DataHelper extends TaskDriver
 {
-	public $config = [
+	public static $config = [
 		'name' => '产品维护任务',
 		'cron' => ['* * * * *'],
 	];

@@ -29,9 +29,13 @@ class Request
 		return $this->format($_GET, $name, $default);
 	}
 
+	private $_input;
 	public function input($name='', $default=null)
 	{
-		return $this->format(array_merge($_GET, $_POST), $name, $default);
+		if ($this->_input === null) {
+			$this->_input = array_merge($_GET, $_POST);
+		}
+		return $this->format($this->_input, $name, $default);
 	}
 
 	private function format($arr, $name, $default)

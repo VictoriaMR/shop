@@ -10,11 +10,12 @@ function config($type, $name='', $default=''){
 	if (is_null(\App::get($type))){
 		\App::set($type, require ROOT_PATH.'config/'.$type.'.php');
 	}
-	return \App::get($type, $name);
+	return $name === '' ? \App::get($type) : \App::get($type, $name, $default);
 }
 function redirect($url='', $return=true){
 	$return && frame('Session')->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
-	header('Location:'.$url);exit();	
+	header('Location:'.$url);
+	\App::runOver(true);
 }
 function service($name, $params=null){
 	return \App::make('app/service/'.$name, $params);
@@ -29,12 +30,18 @@ function page($size=0, $total=0){
 	return frame('Paginator')->make($size, $total);
 }
 function siteUrl($name){
-	return '/'.(isMobile()?'mobile':'computer').'/'.$name.'?v='.version();
+	static $prefix = null;
+	if ($prefix === null) {
+		$prefix = '/'.(isMobile()?'mobile':'computer').'/';
+	}
+	return $prefix.$name.'?v='.version();
 }
-function mediaUrl($url, $width='', $version=true){
+function mediaUrl($url, $width=''){
 	if ($width){
-		$ext = pathinfo($url, PATHINFO_EXTENSION);
-		$url = str_replace('.'.$ext, DS.$width.'.'.$ext, $url);
+		$pos = strrpos($url, '.');
+		if ($pos !== false) {
+			$url = substr($url, 0, $pos) . DS . $width . substr($url, $pos);
+		}
 	}
 	return siteUrl($url);
 }
@@ -74,11 +81,11 @@ function isMobile(){
 	return IS_MOBILE;
 }
 function isDebug() {
-	defined('IS_DEBUG') || define('IS_DEBUG', \App::get('domain', 'debug'));
+	defined('IS_DEBUG') || define('IS_DEBUG', isCli() ? true : \App::get('domain', 'debug'));
 	return IS_DEBUG;
 }
 function isWin(){
-	defined('IS_WIN') || define('IS_WIN', strtoupper(substr(PHP_OS, 0, 3))=='WIN');
+	defined('IS_WIN') || define('IS_WIN', PHP_OS_FAMILY === 'Windows');
 	return IS_WIN;
 }
 function ipost($name='', $default=null){
@@ -97,11 +104,9 @@ function appT($text, $replace=[], $lanId='', $type='common'){
 		$file = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/language/'.$type.'/'.$lanId.'.php';
 		\App::set($key, is_file($file) ? require $file : []);
 	}
-	if (\App::get($key, $text)){
-		$text = \App::get($key, $text);
-		if ($replace){
-			$text = strtr($text, $replace);
-		}
+	$translated = \App::get($key, $text);
+	if ($translated){
+		$text = $replace ? strtr($translated, $replace) : $translated;
 	}
 	return $text;
 }
@@ -109,29 +114,30 @@ function distT($text, $replace=[], $lanId=''){
 	return appT($text, $replace, $lanId, lcfirst(\App::get('router', 'path')));
 }
 function get1024Peck($size, $dec=2){
-	$a = ['B', 'KB', 'MB', 'GB', 'TB'];
-	$pos = 0;
-	while ($size >= 1024){
-		$size /= 1024;
-		$pos++;
-	}
-	return round($size, $dec).' '.$a[$pos];
+	static $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+	if ($size <= 0) return '0 B';
+	$pos = min((int)floor(log($size, 1024)), 4);
+	return round($size / (1024 ** $pos), $dec).' '.$units[$pos];
 }
-function getDirFile($path){
+function getDirFile($path, &$result = null){
+	if ($result === null) {
+		$result = [];
+	}
 	if (is_file($path)){
-		return $path;
+		$result[] = $path;
+		return $result;
 	}
 	$files = scandir($path);
-	$fileItem = [];
 	foreach ($files as $v){
+		if ($v === '.' || $v === '..') continue;
 		$newPath = $path.DS.$v;
 		if (is_file($newPath)){
-			$fileItem[] = $newPath;
-		} elseif (is_dir($newPath) && $v!='.' && $v!='..'){
-			$fileItem = array_merge($fileItem, getDirFile($newPath));
+			$result[] = $newPath;
+		} elseif (is_dir($newPath)){
+			getDirFile($newPath, $result);
 		}
 	}
-	return $fileItem;
+	return $result;
 }
 function randString($len=16, $lower=true, $upper=true, $number=true){
 	$str = '';
@@ -141,7 +147,7 @@ function randString($len=16, $lower=true, $upper=true, $number=true){
 	$rStr = '';
 	$seedLen = strlen($str);
 	while ($len > 0){
-		$rStr .= $str[rand(0, $seedLen - 1)];
+		$rStr .= $str[random_int(0, $seedLen - 1)];
 		$len--;
 	}
 	return $rStr;
@@ -153,8 +159,11 @@ function lanId($type='id'){
 	return frame('Session')->get('site_language_'.$type, $type=='code'?'en':1);
 }
 function userId($login=true){
-	$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
-	if (!$login && !$uid) $uid = '10000';
+	static $uid = null;
+	if ($uid === null) {
+		$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
+	}
+	if (!$login && !$uid) return '10000';
 	return $uid;
 }
 function createDir($dir){
@@ -182,7 +191,9 @@ function now($time=0) {
 	return $time > 0 ? date('Y-m-d H:i:s', $time) : date('Y-m-d H:i:s');
 }
 function siteId() {
-	return \App::get('domain', 'site_id');
+	static $id = null;
+	if ($id === null) $id = \App::get('domain', 'site_id');
+	return $id;
 }
 function redis($db=0) {
 	return frame('Redis')->setDb($db);

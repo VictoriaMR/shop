@@ -5,7 +5,7 @@ use app\task\TaskDriver;
 
 class Email extends TaskDriver
 {
-	public $config = [
+	public static $config = [
 		'name' => '邮件发送任务',
 		'cron' => ['* * * * *'],
 	];

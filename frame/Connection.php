@@ -6,18 +6,26 @@ final class Connection
 {
     private $_connect;
     private $_selectdb;
+    private $_configs = [];
 
     public function setDb($db=null)
     {
-        is_null($db) && $db = 'default';
-        $config = config('database', $db);
+        $db === null && $db = 'default';
+        if (!isset($this->_configs[$db])) {
+            $this->_configs[$db] = config('database', $db);
+        }
+        $config = $this->_configs[$db];
         if (empty($config)) {
             throw new \Exception('Connect Error No Database Config', 1);
         }
+        $host = $config['host'] ?? '127.0.0.1';
         if (!$this->_connect) {
-            $this->_connect = new \mysqli($config['host']??'127.0.0.1', $config['username'], $config['password'], $config['database'], $config['port']??'3306');
+            $this->_connect = new \mysqli($host, $config['username'], $config['password'], $config['database'], $config['port']);
             if ($this->_connect->connect_error) {
                 throw new \Exception('Connect Error, '.$this->_connect->connect_error, 1);
+            }
+            if (!empty($config['charset'])) {
+                $this->_connect->set_charset($config['charset']);
             }
             $this->_selectdb = $config['database'];
         }

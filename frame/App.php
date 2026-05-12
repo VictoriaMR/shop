@@ -12,22 +12,15 @@ class App
 
 	public static function make($abstract, $params=null)
 	{
-		$instance = self::get('autoload', $abstract);
-		if (!$instance) {
-			self::autoload($abstract);
-			// 实例化对象
-			$concrete = strtr($abstract, '/', '\\');
-			if ($concrete instanceof Closure) {
-				$instance = $concrete($this);
+		$instance = self::$data['autoload'][$abstract] ?? null;
+		if ($instance === null) {
+			if ($abstract instanceof \Closure) {
+				$instance = $abstract($params);
 			} else {
-				$reflector = new \ReflectionClass($concrete);
-				if ($reflector->getConstructor()) {
-					$instance = $reflector->newInstance($params);
-				} else {
-					$instance = $reflector->newInstance();
-				}
+				$concrete = strtr($abstract, '/', '\\');
+				$instance = $params !== null ? new $concrete($params) : new $concrete();
 			}
-			self::set('autoload', $instance, $abstract);
+			self::$data['autoload'][$abstract] = $instance;
 		}
 		return $instance;
 	}
@@ -35,46 +28,46 @@ class App
 	public static function send()
 	{
 		$info = config('domain', $_SERVER['HTTP_HOST']);
-		if ($info) {
-			self::set('domain', $info);
-			//路由解析
-			$info = frame('Router')->analyze($info['class']);
-			self::set('router', $info);
-			// 中间组件方法
-			if (self::middleware($info)) {
-				//执行方法
-				$call = self::make('app/controller/'.$info['class'].'/'.$info['path']);
-				$callArr = [$call, $info['func']];
-				if (is_callable($callArr)) {
-					call_user_func_array($callArr, []);
-				} else {
-					throw new \Exception('class: '.$info['class'].'/'.$info['path'].'/'.$info['func'].' was not exist!');
-				}
-			}
-			self::runOver();
-		} else {
+		if (!$info) {
 			throw new \Exception('domain: '.$_SERVER['HTTP_HOST'].' was not exist!');
 		}
+		self::$data['domain'] = $info;
+		self::$data['router'] = frame('Router')->analyze($info['class']);
+		$router = self::$data['router'];
+		if (self::middleware($router)) {
+			$call = self::make('app/controller/'.$router['class'].'/'.$router['path']);
+			if (method_exists($call, $router['func'])) {
+				$call->{$router['func']}();
+			} else {
+				throw new \Exception('class: '.$router['class'].'/'.$router['path'].'/'.$router['func'].' was not exist!');
+			}
+		}
+		self::runOver();
 	}
 
-	// 中间组件方法
 	private static function middleware($request)
 	{
-		if (!frame('Session')->get('set_uuid', false)) {
-			frame('Cookie')->setUuid($request['class'] == 'home');
-		}
-		// 验证是否需要自动登录
-		if (!in_array($request['path'], ['Api','Login']) && !frame('Session')->get('set_cookie', false)) {
-			frame('Cookie')->init($request['class'] == 'home');
-		}
-		// 如果无需登录的, 初始化
 		$except = config('except', $request['class']);
-		if (isset($except[$request['path']])) return true;
-		if (isset($except[$request['path'].'/'.$request['func']])) return true;
-		// 需要登录的要重定向
+
+		if (session_status() === PHP_SESSION_NONE) {
+			session_start();
+		}
+
+		$session = frame('Session');
+		$isHome = $request['class'] === 'home';
+		if (!$session->get('set_uuid', false)) {
+			frame('Cookie')->setUuid($isHome);
+		}
+		// 语言/货币 Cookie 仅前端需要
+		if ($isHome && $request['path'] !== 'Api' && $request['path'] !== 'Login' && !$session->get('set_cookie', false)) {
+			frame('Cookie')->init(true);
+		}
+
+		if (isset($except[$request['path']]) || isset($except[$request['path'].'/'.$request['func']])) return true;
+
 		if (userId() < 1) {
 			if (isAjax()) {
-				self::jsonRespone(400, 'need login');
+				self::jsonResponse(400, 'need login');
 			} else {
 				redirect(url('login'));
 			}
@@ -83,12 +76,12 @@ class App
 		return true;
 	}
 
-	private static function autoload($abstract, $params=null)
+	public static function autoload($abstract)
 	{
 		if (is_file(ROOT_PATH.$abstract.'.php')) {
-			require(ROOT_PATH.$abstract.'.php');
+			require ROOT_PATH.$abstract.'.php';
 		} else {
-			throw new \Exception('file: '.$abstract.'was not exist!');
+			throw new \Exception('file: '.$abstract.' was not exist!');
 		}
 	}
 
@@ -101,7 +94,12 @@ class App
 	public static function get($name, $key=null, $default=null)
 	{
 		if (is_null($key)) return self::$data[$name] ?? $default;
-		else return empty(self::$data[$name][$key]) ? $default : self::$data[$name][$key];
+		else return !isset(self::$data[$name][$key]) ? $default : self::$data[$name][$key];
+	}
+
+	public static function append($name, $value)
+	{
+		self::$data[$name][] = $value;
 	}
 
 	public static function runOver($ajax=false)
@@ -111,14 +109,16 @@ class App
 		exit();
 	}
 
+	// 保留旧方法名兼容
 	public static function jsonRespone($code, $data=[], $msg='')
 	{
+		return self::jsonResponse($code, $data, $msg);
+	}
+
+	public static function jsonResponse($code, $data=[], $msg='')
+	{
 		header('Content-Type:application/json;charset=utf-8');
-		echo json_encode(array(
-			'code' => $code,
-			'data' => $data,
-			'msg' => $msg,
-		), JSON_UNESCAPED_UNICODE);
+		echo json_encode(['code' => $code, 'data' => $data, 'msg' => $msg], JSON_UNESCAPED_UNICODE);
 		self::runOver(true);
 	}
 
