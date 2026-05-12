@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title><?php echo $_title;?></title>
+	<title><?php echo $_title ?? '';?></title>
 	<meta name="renderer" content="webkit|ie-comp|ie-stand">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	<meta http-equiv="Cache-Control" content="no-siteapp" />
@@ -11,13 +11,11 @@
 	<?php }?>
 	<?php if ($temp=frame('Html')->getCss()){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($temp);?>">
 	<?php } ?>
-	<?php if($temp=frame('Html')->getCommon('js')){?><script type="text/javascript" src="<?php echo siteUrl($temp);?>"></script>
-	<?php }?>
 	<?php if ($temp=frame('Html')->getJs()){?><script type="text/javascript" src="<?php echo siteUrl($temp);?>"></script>
 	<?php } ?>
 </head>
 <body>
-<?php if (!($_path == 'Index' && $_func == 'index') && $_path != 'Login'){?><div id="progressing"></div><?php }?>
+<?php if (!isset($_loading)){?><div id="progressing"></div><?php }?>
 <?php if (!empty($_nav)) {?>
 <div id="header-nav" class="container-fluid">
 	<div class="nav">

@@ -78,16 +78,16 @@ abstract class TaskDriver
 		$info['status'] = 'stop';
 		$info['remark'] = '任务已退出'.PHP_EOL.now();
 		$info['memory_usage'] = 0;
-		$info['next_run'] = $this->getNextTime($this->config['cron']);
+		$info['next_run'] = $this->getNextTimes($this->config['cron']);
 		$this->tasker->setInfo($classKey, $info);
 		return true;
 	}
 
-	public function getNextTime($cron)
+	public function getNextTimes($crons)
 	{
 		$result=false;
-		foreach ($cron as $val){
-			$v=$this->getNextTimeByCron($val);
+		foreach ($crons as $val){
+			$v=$this->getNextTime($val);
 			if (is_bool($result) || $v<$result) {
 				$result=$v;
 			}
@@ -95,23 +95,27 @@ abstract class TaskDriver
 		return $result ?: 0;
 	}
 
-	// 在读取corn配置是个做基本检查和过滤， 包括：格式， 运行的字符，等， 传过来的必须是合规的字串
-	// 按下面格式配置， 可同时配置多条, 日与周同时配置， 忽略周配置
-	// * * * * *	分 时 日 月 周 (全为*表示持续运行)
-	// 0 3 * * *	数字精确配置, 星号为任意.(每天凌晨3点整)
+	// 在读取corn配置是个做基本检查和过滤, 包括：格式, 运行的字符等, 传过来的必须是合规的字串
+	// 按下面格式配置, 可同时配置多条, 日与周同时配置, 忽略周配置
+	// * * * * *		分 时 日 月 周 (全为*表示持续运行)
+	// 0 3 * * *		数字精确配置, 星号为任意(每天凌晨3点整)
 	// 15,30 3 * * *	逗号表示枚举 (每天3点15分和3点30分)
 	// 15-30 3 * * *	短线表示范围 (每天的3点15分到30分持续运行)
 	// 0-30/10 3 * * *	斜杠表示间隔 (每天3点0分到30分之间, 每10分钟一次)
 	// */10 5-8 * * *	斜杠表示间隔 (每天5-8点, 每10分钟一次)
 	// 获取类似linux crontab格式单条配置的下一次运行时间
-	protected function getNextTimeByCron($cornStr)
+	protected function getNextTime($cron)
 	{
-		$cornStr=preg_replace('/\s+/', ' ', trim($cornStr));
-		if ($cornStr=='* * * * *') {
+		// 持续运行的
+		$cron = trim($cron);
+		if ($cron=='* * * * *') {
 			return 0;
 		}
-		$arr=explode(' ', $cornStr);
-		$now=explode('-', date('i-H-d-m-w')); //'m-d-H-i' 月日时分
+		$arr = preg_split('/\s+/', $cron);
+		if (count($arr) != 5) {
+			return false;
+		}
+		$now = explode('-', date('i-H-d-m-w')); //'m-d-H-i' 月日时分
 
 		//确定取值范围
 		$year=date('Y');
@@ -121,7 +125,7 @@ abstract class TaskDriver
 		$monthRange=$this->cronUnitParse($arr[3], range(1,12));
 		$weekRange=$this->cronUnitParse($arr[4], range(0,6));
 		//取值
-		$minute=$this->cronNextVal($minuteRange, $now[0]+1);
+		$minute = $this->cronNextVal($minuteRange, $now[0]+1);
 		$step=0;
 		if ($minute<0) {
 			$minute=$minuteRange[0];
@@ -134,7 +138,7 @@ abstract class TaskDriver
 			$step=1;
 		}
 		if($arr[4]=='*'||$arr[3]!='*') { // 按日参数计算
-			$day=$this->cronNextVal($dayRange,$now[2]+$step);
+			$day=$this->cronNextVal($dayRange, $now[2]+$step);
 			$step=0;
 			if($day<0){
 				$day=$dayRange[0];
@@ -194,51 +198,40 @@ abstract class TaskDriver
 		return mktime($hour,$minute,0,$month,$day,$year);
 	}
 
-	protected function cronUnitParse($unit, $allowRange)
+	protected function cronUnitParse($unit, $range)
 	{
-		if ($unit=='*') {
-			$range = $allowRange;
-			$step = 1;
-		} else {
-			$step = 1;
-			$str = $unit;
-			if (strpos($str,'/')) {
-				list($str,$step)=explode('/',$str);
+		$step = 1;
+		if ($unit != '*') {
+			if (strpos($unit, '/') !== false) {
+				list($unit, $step) = explode('/', $unit);
 			}
-			if ($str=='*') {
-				$range=$allowRange;
-			} else {
-				$range=[];
-				$str=explode(',', $str);
-				foreach ($str as $val) {
-					if (strpos($val, '-')) {
-						$tmp=explode('-', $val);
-						$range=array_merge($range, range($tmp[0], $tmp[1]));
+			if ($unit != '*') {
+				$range = [];
+				$unit = explode(',', $unit);
+				foreach ($unit as $val) {
+					if (strpos($val, '-') !== false) {
+						$tmp = explode('-', $val);
+						$range = array_merge($range, range($tmp[0], $tmp[1]));
 					} else {
-						$range[]=intval($val);
+						$range[] = intval($val);
 					}
 				}
+				sort($range);
 			}
-		}
-		sort($range);
-		$step=(int)$step;
-		if ($step<1) {
-			$step=1;
 		}
 		$i=0;
 		$result=[];
 		while (isset($range[$i])) {
-			$result[]=$range[$i];
-			$i=$i + $step;
+			$result[] = $range[$i];
+			$i = $i + $step;
 		}
 		return $result;
 	}
 
 	protected function cronNextVal($range, $val)
 	{
-		reset($range);
 		foreach ($range as $v){
-			if($v>=$val){
+			if($v >= $val){
 				return $v;
 			}
 		}
@@ -250,5 +243,9 @@ abstract class TaskDriver
 		$this->taskInfo['remark'] = $info;
 	}
 
+ 	protected function before(){}
+	protected function after(){}
+
 	abstract protected function run();
+
 }

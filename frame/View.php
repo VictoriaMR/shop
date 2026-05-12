@@ -8,14 +8,19 @@ class View
 
 	public function display($template, $match=true, $data=array())
 	{
+		$this->setData($data);
 		$data['layout_include_path'] = $this->getTemplate($template, $match);
+		print_r($data);
 		$this->loadFile(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', $data);
 	}
 
-	private function loadFile($template, array $data)
+	private function loadFile($template, array $data=[])
 	{
 		if (is_file($template)) {
-			extract($this->_data + $data, EXTR_OVERWRITE);
+			if ($data) {
+				$this->setData($data);
+			}
+			extract($this->_data, EXTR_OVERWRITE);
 			include $template;
 		} else {
 			throw new \Exception($template.' was not exist!', 1);

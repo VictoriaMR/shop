@@ -56,6 +56,8 @@ table{
 .input{height:40px;line-height:38px;width:100%;border:1px solid #f1eeee;padding:0 10px;border-radius:4px;background:#fff}
 .input::placeholder{color:#666666}
 .input:focus{outline:none}
+.error .input{border-color: red;}
+.success .input{border-color: green;}
 .left{float:left}
 .flex{display:flex}
 .hide,.hidden{display:none}

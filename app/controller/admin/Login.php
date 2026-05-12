@@ -5,44 +5,47 @@ use app\controller\AdminBase;
 
 class Login extends AdminBase
 {
-	public function __construct()
-	{
-		parent::_init();
-	}
-
+	protected $_init = false;
+	
 	public function index()
 	{	
-		frame('Html')->addJs('common,verify', false);
-		frame('Html')->addCss('common,space');
 		frame('Html')->addCss();
-		frame('Html')->addJs();
+		// frame('Html')->addJs();
+		frame('Html')->addJs('login/test2');
+		frame('Html')->addJs('login/test');
 
 		$this->view([
+			'_loading' => false,
 			'_title' => '后台登录',
 		]);
 	}
 
 	public function loginCode()
 	{
-		$image = service('tool/Image');
 		$code = randString(4, true, false, true);
 		frame('Session')->set('admin_login_code', $code);
-		$image->verifyCode($code, 80, 34);
+		service('tool/Image')->verifyCode($code, 80, 34);
 	}
 
 	public function login() 
 	{
-		$mobile = trim(ipost('mobile', ''));
-		$code = trim(ipost('code', ''));
-		$password = trim(ipost('password', ''));
+		$mobile = ipost('mobile', '');
+		$code = ipost('code', '');
+		$password = ipost('password', '');
 
-		if (empty($mobile) || empty($code) || empty($password)) {
-			$this->error('参数错误');
+		if (empty($mobile)) {
+			$this->error('手机/邮箱 不能为空');
+		}
+		if (empty($password)) {
+			$this->error('密码 不能为空');
+		}
+		if (empty($code)) {
+			$this->error('验证码 不能为空');
 		}
 		if (strtolower($code) != frame('Session')->get('admin_login_code')) {
 			$this->error('验证码错误');
 		}
-		$result = service('member/Member')->login($mobile, $password);
+		$result = service('member/Member')->login($mobile, $password, preg_match('/^1[3-9]\d{9}$/', $mobile) ? 'mobile' : 'email');
 		if ($result) {
 			$this->success('登录成功', ['url' => frame('Session')->dGet('return_url')]);
 		} else {

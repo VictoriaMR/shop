@@ -1,11 +1,11 @@
 <?php
 return [
 	'admin' => [
-		'computer' => ['jquery', 'common', 'verify', 'bootstrap', 'bootstrap-plugin'],
+		'computer' => ['jquery', 'common', 'bootstrap', 'bootstrap-plugin'],
 		'mobile' => [],
 	],
 	'home' => [
-		'computer' => ['function', 'common'],
-		'mobile' => ['function', 'common', 'language'],
+		'computer' => ['jquery', 'common', 'language'],
+		'mobile' => ['jquery', 'common', 'language'],
 	],
 ];

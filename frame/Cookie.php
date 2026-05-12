@@ -5,11 +5,12 @@ namespace frame;
 class Cookie
 {
 	protected $config = [
-		'expire' => 0,
+		'expires' => 0,
 		'path' => '/',
 		'domain' => '',
 		'secure' => true,
 		'httponly' => true,
+		'samesite' => 'lax',
 	];
 
 	public function init($home=true)
@@ -22,8 +23,8 @@ class Cookie
 				service('member/Member')->loginById($info['mem_id']);
 				if ($home && $info['lan_cur']) {
 					list($language, $currency) = explode('_', $info['lan_cur']);
-					$this->set('language', $language, $exp);
-					$this->set('currency', $currency, $exp);
+					$this->set('language', $language);
+					$this->set('currency', $currency);
 				}
 			}
 		}
@@ -74,7 +75,7 @@ class Cookie
 		$config = $this->config;
 		if (!is_null($option)) {
 			if (is_numeric($option)) {
-				$option = ['expire' => $option];
+				$option = ['expires' => $option];
 			} elseif (is_string($option)) {
 				parse_str($option, $option);
 			}
@@ -87,7 +88,7 @@ class Cookie
 		$expire = empty($config['expire']) ? 0 : $_SERVER['REQUEST_TIME'] + intval($config['expire']);
 		$_COOKIE[$name] = $value;
 		frame('Session')->set(config('domain', 'class').'_info', $value, $name);
-		return setcookie($name, $value, $expire, $config['path'], $config['domain'], $config['secure'], $config['httponly']);
+		return setcookie($name, $value, $config);
 	}
 
 	public function has($name)

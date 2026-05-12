@@ -184,7 +184,7 @@ final class Query
 	protected function formatValue($key, $value)
 	{
 		if (in_array($key, $this->_intFields)) return (int)$value;
-		return "'".addslashes($value)."'";
+		return "'".($value ? addslashes($value) : '')."'";
 	}
 
 	public function increment($value, $num=1) 

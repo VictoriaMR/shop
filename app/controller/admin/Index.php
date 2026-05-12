@@ -5,21 +5,10 @@ use app\controller\AdminBase;
 
 class Index extends AdminBase
 {
-	public function __construct()
-	{
-		$this->_arr = [
-			'index' => '首页',
-			'statInfo' => '统计信息',
-		];
-		$this->_default = '概览';
-		parent::_init();
-	}
+	protected $_init = false;
 
 	public function index()
 	{
-		// test
-		purchase()->spu()->operateSpu();
-
 		if (isPost()) {
 			$opn = ipost('opn');
 			if (in_array($opn, ['setLeft'])) {
@@ -31,8 +20,9 @@ class Index extends AdminBase
 		frame('Html')->addJs();
 		frame('Html')->addJs('socket');
 		$this->view([
+			'_loading' => false,
 			'funcList' => service('controller/Controller')->getList(),
-			'info' => frame('Session')->get(config('domain', 'class').'_info'),
+			'info' => frame('Session')->get(\App::get('domain', 'class').'_info'),
 			'leftInfo' => frame('Session')->get('left_info'),
 		]);
 	}

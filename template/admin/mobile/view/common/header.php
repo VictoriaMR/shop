@@ -22,6 +22,3 @@
 	<?php } ?>
 </head>
 <body>
-<script type="text/javascript">
-const URI = "<?php echo domain();?>";
-</script>

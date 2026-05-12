@@ -14,14 +14,14 @@
     color: #6c6c6c;
     background: #ffffff;
     position: fixed;
-    top: calc(50% - 160px);
+    top: calc(50% - 230px);
     right: calc(50% - 200px);
     box-shadow: 4px 4px 10px #333333;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
-#login-page .login-box input[name="code"] {
-    width: 258px;
+#login-page .login-box #code {
+    width: calc(100% - 100px);
 }
 #login-page #login-btn {
     height: 40px;

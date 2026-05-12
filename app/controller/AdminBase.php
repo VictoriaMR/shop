@@ -4,10 +4,16 @@ namespace app\controller;
 
 class AdminBase extends Base
 {
+	protected $_init = true;
 	protected $_nav = [];
 	protected $_ignore = [];
 	protected $_arr = [];
 	protected $_default;
+
+	public function __construct()
+	{
+		$this->_init &&$this->_init();
+	}
 
 	protected function _init()
 	{
@@ -20,14 +26,13 @@ class AdminBase extends Base
 				} else {
 					$this->_nav = ['default'=>$this->_default]+$this->_arr;
 				}
-				$data['_ignore'] = $this->_ignore;
-				$data['_tag'] = $this->_arr;
-				$data['_nav'] = $this->_nav;
 			}
 		}
+		$data['_ignore'] = $this->_ignore;
+		$data['_tag'] = $this->_arr;
+		$data['_nav'] = $this->_nav;
 		$data['_path'] = $router['path'];
 		$data['_func'] = $router['func'];
-		$data['_title'] = $this->_arr[$router['func']] ?? '';
 		frame('View')->setData($data);
 	}
 

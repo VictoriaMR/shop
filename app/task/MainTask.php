@@ -13,6 +13,7 @@ class MainTask extends TaskDriver
 
 	public function run()
 	{
+		dd($this->getNextTimes($this->config['cron']));
 		$data = [
 			'memory_usage' => 0,
 			'total' => count($this->allTask),

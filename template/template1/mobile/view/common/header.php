@@ -15,10 +15,10 @@
 	<meta content="yes" name="apple-mobile-web-app-capable"/>
 	<meta content="yes" name="apple-touch-fullscreen"/>
 	<meta content="telephone=no,email=no" name="format-detection"/>
-	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo siteUrl('apple-touch-icon.png');?>"/>
-	<link rel="icon" type="image/png" sizes="32x32" href="<?php echo siteUrl('favicon-32x32.png');?>"/>
-	<link rel="icon" type="image/png" sizes="16x16" href="<?php echo siteUrl('favicon-16x16.png');?>"/>
-	<link rel="icon" type="image/png" sizes="48x48" href="<?php echo siteUrl('favicon-48x48.png');?>"/>
+	<link rel="apple-touch-icon" sizes="180x180" href="<?php echo siteUrl('favicon/apple-touch-icon.png');?>"/>
+	<link rel="icon" type="image/png" sizes="32x32" href="<?php echo siteUrl('favicon/32x32.png');?>"/>
+	<link rel="icon" type="image/png" sizes="16x16" href="<?php echo siteUrl('favicon/16x16.png');?>"/>
+	<link rel="icon" type="image/png" sizes="48x48" href="<?php echo siteUrl('favicon/48x48.png');?>"/>
 	<?php if ($file = frame('Html')->getCommon('css')){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>"/>
 	<?php }?><?php if ($file = frame('Html')->getCss()){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($file);?>">
 	<?php }?><?php if ($file = frame('Html')->getCommon('js')){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script><?php }?><?php if ($file = frame('Html')->getJs()){?><script type="text/javascript" src="<?php echo siteUrl($file);?>"></script>

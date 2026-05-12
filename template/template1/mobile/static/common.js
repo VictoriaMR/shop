@@ -76,6 +76,22 @@ function tips(text, type) {
 		});
 	}, 2000);
 }
+// 复制文本
+function copyText(test) {
+	if (navigator.clipboard) {
+		navigator.clipboard.writeText(text);
+	} else {
+		var textarea = document.createElement('textarea');
+		document.body.appendChild(textarea);
+		textarea.style.position = 'fixed';
+		textarea.style.clip = 'rect(0 0 0 0)';
+		textarea.style.top = '10px';
+		textarea.value = text;
+		textarea.select();
+		document.execCommand('copy', true);
+		document.body.removeChild(textarea);
+	}
+}
 /* common */
 /* 页面缩放 */
 var docEl=document.documentElement;const xs=parseFloat(docEl.currentStyle?docEl.currentStyle["fontSize"]:getComputedStyle(docEl,false)["fontSize"])/100;const recalc=function(){docEl.style.fontSize=(docEl.clientWidth/3.75/xs)+"px"};window.addEventListener("orientationchange" in window?"orientationchange":"resize",recalc,false);recalc();
