@@ -295,23 +295,35 @@ final class Query
 			return false;
 		}
 		try {
-			$stmt = $mysqli->prepare($sql);
-			if ($stmt === false) {
-				throw new \Exception('SQL prepare failed: ' . $mysqli->error . PHP_EOL . 'SQL: ' . $sql, $mysqli->errno);
-			}
-			if ($bindParams) {
-				$stmt->bind_param(...$bindParams);
-			}
-			$stmt->execute();
-			$result = $stmt->get_result();
-			if (is_bool($result)) {
-				$this->_insert_id = $stmt->insert_id;	
-				$return = $stmt->affected_rows;
+			if (empty($bindParams)) {
+				$result = $mysqli->query($sql);
+				if ($result === false) {
+					throw new \Exception('SQL query failed: ' . $mysqli->error . PHP_EOL . 'SQL: ' . $sql, $mysqli->errno);
+				}
+				if (is_bool($result)) {
+					$this->_insert_id = $mysqli->insert_id;
+					$return = $mysqli->affected_rows;
+				} else {
+					$return = $result->fetch_all(MYSQLI_ASSOC);
+					$result->free();
+				}
 			} else {
-				$return = $result->fetch_all(MYSQLI_ASSOC);
-				$result->free();
+				$stmt = $mysqli->prepare($sql);
+				if ($stmt === false) {
+					throw new \Exception('SQL prepare failed: ' . $mysqli->error . PHP_EOL . 'SQL: ' . $sql, $mysqli->errno);
+				}
+				$stmt->bind_param(...$bindParams);
+				$stmt->execute();
+				$result = $stmt->get_result();
+				if (is_bool($result)) {
+					$this->_insert_id = $stmt->insert_id;	
+					$return = $stmt->affected_rows;
+				} else {
+					$return = $result->fetch_all(MYSQLI_ASSOC);
+					$result->free();
+				}
+				$stmt->close();
 			}
-			$stmt->close();
 			return $return;
 		} catch (\Exception $e){
 			$error[] = 'SQL: '.$sql;

@@ -7,10 +7,19 @@ function dd(...$arg){
 	exit();
 }
 function config($type, $name='', $default=''){
-	if (is_null(\App::get($type))){
-		\App::set($type, require ROOT_PATH.'config/'.$type.'.php');
+	static $configs = [];
+	$val = \App::get($type);
+	if ($val === null) {
+		$val = require ROOT_PATH.'config/'.$type.'.php';
+		\App::set($type, $val);
+		$configs[$type] = $val;
+	} elseif ($type === 'domain') {
+		$configs[$type] = $val;
 	}
-	return $name === '' ? \App::get($type) : \App::get($type, $name, $default);
+	if ($name === '') {
+		return $configs[$type];
+	}
+	return $configs[$type][$name] ?? $default;
 }
 function redirect($url='', $return=true){
 	$return && frame('Session')->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
@@ -18,13 +27,31 @@ function redirect($url='', $return=true){
 	\App::runOver(true);
 }
 function service($name, $params=null){
+	if ($params === null) {
+		static $instances = [];
+		if (!isset($instances[$name])) {
+			$instances[$name] = \App::make('app/service/'.$name);
+		}
+		return $instances[$name];
+	}
 	return \App::make('app/service/'.$name, $params);
 }
 function model($name, $params=null){
+	if ($params === null) {
+		static $instances = [];
+		if (!isset($instances[$name])) {
+			$instances[$name] = \App::make('app/model/'.$name);
+		}
+		return $instances[$name];
+	}
 	return \App::make('app/model/'.$name, $params);
 }
 function frame($name){
-	return \App::make('frame/'.$name);
+	static $instances = [];
+	if (!isset($instances[$name])) {
+		$instances[$name] = \App::make('frame/'.$name);
+	}
+	return $instances[$name];
 }
 function page($size=0, $total=0){
 	return frame('Paginator')->make($size, $total);
@@ -197,4 +224,7 @@ function siteId() {
 }
 function redis($db=0) {
 	return frame('Redis')->setDb($db);
+}
+function db($db=null) {
+	return frame('Connection')->setDb($db);
 }

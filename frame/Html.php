@@ -9,13 +9,13 @@ class Html
 
 	public function addCss($name='')
 	{
-		$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+		if ($name == '') $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
 		$this->_CSS[] = $name;
 	}
 
 	public function addJs($name='')
 	{
-		$name || $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+		if ($name == '') $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
 		$this->_JS[] = $name;
 	}
 

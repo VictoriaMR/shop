@@ -1,7 +1,7 @@
 $(function(){
 	$('#login-page #mobile').val(localStorage.getItem('login_number'));
-	$('#login-page #form').on('submit', function(){
-		var _thisObj = $('#login-page #login-btn');
+	$('#login-page #login-btn').on('click', function(){
+		var _thisObj = $(this);
 		var mobileObj = $('#login-page #mobile');
 		var passwordObj = $('#login-page #password');
 		var codeObj = $('#login-page #code');
@@ -11,24 +11,22 @@ $(function(){
 
 		if (!VERIFY['mobile'](mobile) && !VERIFY['email'](mobile)) {
 			errorTips('手机/邮箱 格式不正确');
-			mobileObj.focus();
 			mobileObj.parent().addClass('error');
 			return false;
 		}
 		if (!VERIFY['password'](password)) {
 			errorTips('密码 格式不正确');
-			passwordObj.focus();
 			passwordObj.parent().addClass('error');
 			return false;
 		}
+		console.log(code, VERIFY['code'](code));
 		if (!VERIFY['code'](code)) {
 			errorTips('验证码 格式不正确');
-			codeObj.focus();
 			codeObj.parent().addClass('error');
 			return false;
 		}
 		_thisObj.button('loading');
-		post('/login/login', {mobile:mobile, password:password, code:code}, function(res) {
+		post('', {opn:'login', mobile:mobile, password:password, code:code}, function(res) {
 			if (res.code) {
 				localStorage.setItem('login_number', mobile);
 				window.location.href = res.data.url;

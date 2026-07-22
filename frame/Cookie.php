@@ -75,23 +75,29 @@ class Cookie
 		if ($option !== null) {
 			$config = $this->config;
 			if (is_numeric($option)) {
-				$config['expire'] = $option;
-			} elseif (is_string($option)) {
-				parse_str($option, $option);
-				$config = array_merge($config, array_change_key_case($option));
+				$config['expires'] = $_SERVER['REQUEST_TIME'] + intval($option);
 			} else {
-				$config = array_merge($config, array_change_key_case($option));
+				if (is_string($option)) {
+					parse_str($option, $option);
+				}
+				$option = array_change_key_case($option);
+				$config = array_merge($config, $option);
+				if (isset($option['expire']) && !isset($option['expires'])) {
+					$config['expires'] = $_SERVER['REQUEST_TIME'] + intval($option['expire']);
+				} elseif (isset($config['expires']) && $config['expires'] > 0 && $config['expires'] < 1000000000) {
+					// Relative offset
+					$config['expires'] = $_SERVER['REQUEST_TIME'] + intval($config['expires']);
+				}
 			}
 		} else {
 			$config = $this->config;
 		}
 		if (is_array($value)) {
-			array_walk_recursive($value, 'self::jsonFormat', 'encode');
-			$value = 'json:' . json_encode($value);
+			$value = 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE);
 		}
-		$expire = empty($config['expire']) ? 0 : $_SERVER['REQUEST_TIME'] + intval($config['expire']);
 		$_COOKIE[$name] = $value;
 		frame('Session')->set(config('domain', 'class').'_info', $value, $name);
+		unset($config['expire']);
 		return setcookie($name, $value, $config);
 	}
 
@@ -107,7 +113,6 @@ class Cookie
 			if (strpos($value, 'json:') === 0) {
 				$value = substr($value, 5);
 				$value = json_decode($value, true);
-				array_walk_recursive($value, 'self::jsonFormat', 'decode');
 			}
 			return $value;
 		} else {

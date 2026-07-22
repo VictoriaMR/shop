@@ -24,6 +24,9 @@ class Http
 			CURLOPT_FORBID_REUSE => 1,
 			CURLOPT_TIMEOUT => $timeout,
 		);
+		if ($header) {
+			$opt[CURLOPT_HTTPHEADER] = $this->headerFormat($header);
+		}
 		if (is_array($params)) {
 			$params = http_build_query($params);
 		}

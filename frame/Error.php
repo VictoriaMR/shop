@@ -38,7 +38,7 @@ class Error
 	public function handleShutdown()
 	{
 		$data = error_get_last();
-		if ($data) {
+		if ($data && in_array($data['type'], self::$fatalTypes, true)) {
 			$this->errorEcho([
 				'code' => $data['type'],
 				'file' => $data['file'],

@@ -78,10 +78,9 @@ class App
 
 	public static function autoload($abstract)
 	{
-		if (is_file(ROOT_PATH.$abstract.'.php')) {
-			require ROOT_PATH.$abstract.'.php';
-		} else {
-			throw new \Exception('file: '.$abstract.' was not exist!');
+		$file = ROOT_PATH . str_replace('\\', '/', $abstract) . '.php';
+		if (is_file($file)) {
+			require $file;
 		}
 	}
 

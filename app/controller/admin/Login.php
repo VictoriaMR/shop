@@ -5,14 +5,15 @@ use app\controller\AdminBase;
 
 class Login extends AdminBase
 {
-	protected $_init = false;
-	
 	public function index()
 	{	
 		frame('Html')->addCss();
-		// frame('Html')->addJs();
-		frame('Html')->addJs('login/test2');
-		frame('Html')->addJs('login/test');
+		frame('Html')->addJs();
+
+		$opn = ipost('opn', '');
+		if ($opn == 'login') {
+			$this->login();
+		}
 
 		$this->view([
 			'_loading' => false,
@@ -27,7 +28,7 @@ class Login extends AdminBase
 		service('tool/Image')->verifyCode($code, 80, 34);
 	}
 
-	public function login() 
+	protected function login() 
 	{
 		$mobile = ipost('mobile', '');
 		$code = ipost('code', '');
@@ -67,7 +68,7 @@ class Login extends AdminBase
 
 	public function logout()
 	{
-		$log = service('member/Member')->logout();
+		service('member/Member')->logout();
 		redirect(url('login'), false);
 	}
 

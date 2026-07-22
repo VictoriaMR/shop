@@ -16,7 +16,7 @@ class Product extends AdminBase
 		];
 		$this->_ignore = ['detail', 'operate'];
 		$this->_default = '产品管理';
-		parent::_init();
+		$this->_init();
 	}
 
 	public function index()

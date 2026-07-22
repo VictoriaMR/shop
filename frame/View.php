@@ -11,7 +11,6 @@ class View
 	{
 		$this->setData($data);
 		$data['layout_include_path'] = $this->getTemplate($template, $match);
-		print_r($data);
 		$this->loadFile(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', $data);
 	}
 

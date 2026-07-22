@@ -5,7 +5,15 @@ use app\controller\AdminBase;
 
 class Index extends AdminBase
 {
-	protected $_init = false;
+		//初始化
+	public function __construct()
+	{
+		$this->_arr = [
+			'statInfo'=>'统计信息',
+		];
+		$this->_default = '概览';
+		$this->_init();
+	}
 
 	public function index()
 	{

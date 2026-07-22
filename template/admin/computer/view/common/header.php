@@ -9,6 +9,8 @@
 	<link rel="icon" href="/computer/favicon.ico" type="image/x-icon">
 	<?php if ($temp=frame('Html')->getCommon('css')){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($temp);?>">
 	<?php }?>
+	<?php if ($temp=frame('Html')->getCommon('js')){?><script type="text/javascript" src="<?php echo siteUrl($temp);?>"></script>
+	<?php } ?>
 	<?php if ($temp=frame('Html')->getCss()){?><link rel="stylesheet" type="text/css" href="<?php echo siteUrl($temp);?>">
 	<?php } ?>
 	<?php if ($temp=frame('Html')->getJs()){?><script type="text/javascript" src="<?php echo siteUrl($temp);?>"></script>

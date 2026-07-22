@@ -9,7 +9,7 @@ class SystemInfo extends AdminBase
 	public function __construct()
 	{
 		$this->_arr = [
-			'index'=>'组件安装状态',
+			'index'=>'服务器信息',
 			'mysql' => 'MySQL信息',
 			'redis' => 'Redis信息',
 			'phpinfo' => 'PHP信息',

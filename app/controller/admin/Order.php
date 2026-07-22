@@ -11,7 +11,7 @@ class Order extends AdminBase
 			'index' => '订单列表',
 		];
 		$this->_default = '订单管理';
-		parent::_init();
+		$this->_init();
 	}
 
 	public function index()

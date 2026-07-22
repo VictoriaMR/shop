@@ -33,7 +33,13 @@ class Request
 	public function input($name='', $default=null)
 	{
 		if ($this->_input === null) {
-			$this->_input = array_merge($_GET, $_POST);
+			if (empty($_POST)) {
+				$this->_input = $_GET;
+			} elseif (empty($_GET)) {
+				$this->_input = $_POST;
+			} else {
+				$this->_input = array_merge($_GET, $_POST);
+			}
 		}
 		return $this->format($this->_input, $name, $default);
 	}
