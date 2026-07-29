@@ -3,7 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-body, input, textarea, button, td, th, p, div, span {
+body, input, textarea, button, td, th, p, div {
     font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
     font-size: 12px;
     font-weight: normal;
@@ -120,7 +120,7 @@ button {cursor: pointer;}
     border: 1px #ddd solid;
 }
 .switch_status {
-    background: url(/computer/image/switch.png) no-repeat;
+    background: url(/computer/image/icon/switch.png) no-repeat;
     position: relative;
     width: 98px;
     height: 22px;

@@ -22,7 +22,7 @@ class AdminBase extends Base
 			$data['_title'] = $this->_arr[$func];
 		}
 
-		if ($router['class'] === 'admin' && $router['path'] !== 'Index') {
+		if ($router['path'] !== 'Index') {
 			$this->_nav = $this->_default !== ''
 				? ['default' => $this->_default] + $this->_arr
 				: $this->_arr;

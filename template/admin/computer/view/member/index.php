@@ -1,31 +1,28 @@
 <div class="container-fluid">
 	<form action="<?php echo adminUrl();?>" class="form-inline">
 		<div class="row-item">
-			<input type="hidden" name="status" value="<?php echo $status;?>">
+			<input type="hidden" name="status" value="<?php echo $search['status'];?>">
 			<div class="btn-group" role="group">
-				<button type="button" data-id="-1" class="btn <?php echo ($status == 1 || $status == 0) ? 'btn-default' : 'btn-primary';?>">全部</button>
-				<button type="button" data-id="0" class="btn <?php echo $status == 0 ? 'btn-primary' : 'btn-default';?>">未启用</button>
-				<button type="button" data-id="1" class="btn <?php echo $status == 1 ? 'btn-primary' : 'btn-default';?>">已启用</button>
+				<button type="button" data-id="-1" class="btn <?php echo ($search['status'] == 1 || $search['status'] == 0) ? 'btn-default' : 'btn-primary';?>">全部</button>
+				<button type="button" data-id="0" class="btn <?php echo $search['status'] == 0 ? 'btn-primary' : 'btn-default';?>">未启用</button>
+				<button type="button" data-id="1" class="btn <?php echo $search['status'] == 1 ? 'btn-primary' : 'btn-default';?>">已启用</button>
 			</div>
 		</div>
-		<div class="col-md-12 pt10">
-			<div class="form-group mt10 mr20">
-				<label for="short_name">手机号:</label>
-				<input type="text" class="form-control" name="phone" value="<?php echo $phone;?>" placeholder="手机号码" autocomplete="off">
+		<div class="col-md-12" style="margin-top: 10px;padding:0">
+			<div class="form-group mr20">
+				<input type="text" class="form-control" name="phone" value="<?php echo $search['phone'];?>" placeholder="手机号码" autocomplete="off">
 			</div>
-			<div class="mr20 form-group mt10">
-				<label for="contact">名称:</label>
-				<input type="text" class="form-control" name="name" value="<?php echo $name;?>" placeholder="名称关键字" autocomplete="off">
+			<div class="mr20 form-group">
+				<input type="text" class="form-control" name="name" value="<?php echo $search['name'];?>" placeholder="名称关键字" autocomplete="off">
 			</div>
-			<div class="mr20 form-group mt10">
-				<label for="contact">日期:</label>
-				<input class="form-control form_datetime" type="text" value="<?php echo $stime;?>" name="stime" placeholder="开始时间" autocomplete="off"> - 
-				<input class="form-control form_datetime" type="text" value="<?php echo $etime;?>" name="etime" placeholder="结束时间" autocomplete="off">
+			<div class="mr20 form-group">
+				<input class="form-control form_datetime" type="text" value="<?php echo $search['stime'];?>" name="stime" placeholder="开始时间" autocomplete="off"> - 
+				<input class="form-control form_datetime" type="text" value="<?php echo $search['etime'];?>" name="etime" placeholder="结束时间" autocomplete="off">
 			</div>
-			<div class="mr20 form-group mt10">
+			<div class="mr20 form-group">
 				<button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
 			</div>
-			<div class="form-group mt10 right">
+			<div class="form-group right">
 				<button class="btn btn-success" id="add-data-btn" type="button"><i class="glyphicon glyphicon-plus-sign"></i> 新增管理员</button>
 			</div>
 		</div>
@@ -46,7 +43,7 @@
 			</tr>
 			<?php if (empty($list)){ ?>
 			<tr>
-				<td colspan="10">
+				<td colspan="9">
 					<div class="tc orange">暂无数据</div>
 				</td>
 			</tr>
@@ -82,7 +79,7 @@
 			<?php }?>
 		</tbody>
 	</table>
-	<?php echo page($size, $total);?>
+	<?php echo page($search['size'], $total);?>
 </div>
 <div id="dealbox" class="hidden">
 	<div class="mask"></div>

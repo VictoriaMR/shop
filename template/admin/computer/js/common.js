@@ -112,10 +112,12 @@ const VERIFY = {
 $(function(){
 	$.fn.center = function() {
 		var obj = $(this);
-	    var w = ($(window).innerWidth() - obj.actual('width'))/2;
-	    var h = ($(window).innerHeight() - obj.actual('height'))/2 - 50;
-	    obj.css('top', h+'px');
-	    obj.css('left', w+'px');
+		var width = typeof obj.actual === 'function' ? obj.actual('width') : (obj.outerWidth() || 0);
+		var height = typeof obj.actual === 'function' ? obj.actual('height') : (obj.outerHeight() || 0);
+		var w = ($(window).innerWidth() - width)/2;
+		var h = ($(window).innerHeight() - height)/2 - 50;
+		obj.css('top', h+'px');
+		obj.css('left', w+'px');
 		return $(this);
 	};
 	$.fn.modalShow = function(title) {

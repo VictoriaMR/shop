@@ -1,7 +1,8 @@
 $(function(){
 	$('#login-page #mobile').val(localStorage.getItem('login_number'));
-	$('#login-page #login-btn').on('click', function(){
-		var _thisObj = $(this);
+	$('#login-page #login-form').on('submit', function(e){
+		e.preventDefault();
+		var _thisObj = $('#login-page #login-btn');
 		var mobileObj = $('#login-page #mobile');
 		var passwordObj = $('#login-page #password');
 		var codeObj = $('#login-page #code');
@@ -19,7 +20,6 @@ $(function(){
 			passwordObj.parent().addClass('error');
 			return false;
 		}
-		console.log(code, VERIFY['code'](code));
 		if (!VERIFY['code'](code)) {
 			errorTips('验证码 格式不正确');
 			codeObj.parent().addClass('error');

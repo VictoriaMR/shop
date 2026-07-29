@@ -29,6 +29,7 @@ class Index extends AdminBase
 		frame('Html')->addJs('socket');
 		$this->view([
 			'_loading' => false,
+			'_title' => '后台首页',
 			'funcList' => service('controller/Controller')->getList(),
 			'info' => frame('Session')->get(\App::get('domain', 'class').'_info'),
 			'leftInfo' => frame('Session')->get('left_info'),

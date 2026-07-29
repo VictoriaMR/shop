@@ -14,7 +14,7 @@ class Member extends Base
 
 	public function login($mobile, $password='', $type='mobile')
 	{
-		if (empty($mobile)) return false;
+		if (empty($mobile) || empty($password)) return false;
 		$field = 'mem_id,site_id,first_name,last_name,nick_name,mobile,email,avatar,sex,status,verify,password,salt';
 		switch($type) {
 			case 'mobile':
@@ -48,9 +48,7 @@ class Member extends Base
 
 	protected function loginSuccess($info)
 	{
-		if (!empty($info['avatar'])) {
-			$info['avatar'] = $this->getAvatar($info['avatar'], $info['sex']);
-		}
+		$info['avatar'] = $this->getAvatar($info['avatar'], $info['sex']);
 		unset($info['password']);
 		unset($info['salt']);
 		frame('Session')->set(\App::get('domain', 'class').'_info', $info);
@@ -96,7 +94,7 @@ class Member extends Base
 
 	public function getAvatar($avatar='', $sex=0)
 	{
-		return $avatar ? mediaUrl($avatar, '', false) : siteUrl('image/common/'.(empty($sex) ? 'male' : 'female').'.jpg');
+		return $avatar ? mediaUrl($avatar, '', false) : siteUrl('image/common/'.($sex ? 'female' : 'male').'.jpg');
 	}
 
 	public function resetPassword($mobile, $password, $type='email')

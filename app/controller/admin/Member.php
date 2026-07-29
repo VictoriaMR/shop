@@ -19,38 +19,46 @@ class Member extends AdminBase
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getInfo', 'modify', 'editInfo'])) {
+			if (in_array($opn, ['getInfo', 'modify', 'editInfo', 'delete'])) {
 				$this->$opn();
 			}
 		}
 
 		frame('Html')->addJs();
-		$status = (int) iget('status', -1);
-		$page = (int) iget('page', 1);
-		$size = (int) iget('size', 20);
-		$name = trim(iget('name', ''));
-		$phone = trim(iget('phone', ''));
-		$stime = trim(iget('stime', ''));
-		$etime = trim(iget('etime', ''));
+		$search = [
+			'status' => (int) iget('status', -1),
+			'page' => (int) iget('page', 1),
+			'size' => (int) iget('size', 20),
+			'name' => trim(iget('name', '')),
+			'phone' => trim(iget('phone', '')),
+			'stime' => trim(iget('stime', '')),
+			'etime' => trim(iget('etime', '')),
+		];
 
 		$where = [
 			'site_id' => siteId(),
 		];
-		if ($status >= 0) {
-			$where['status'] = $status;
+		if ($search['status'] >= 0) {
+			$where['status'] = $search['status'];
 		}
-		if (!empty($name)) {
-			$where['first_name,last_name,nick_name'] = ['like', '%'.$name.'%'];
+		if (!empty($search['name'])) {
+			$where['first_name,last_name,nick_name'] = ['like', '%'.$search['name'].'%'];
 		}
-		if (!empty($phone)) {
-			$where['mobile'] = ['like', '%'.$phone.'%'];
+		if (!empty($search['phone'])) {
+			$where['mobile'] = ['like', '%'.$search['phone'].'%'];
+		}
+		if (!empty($search['stime'])) {
+			$where['add_time'] = ['>=', $search['stime']];
+		}
+		if (!empty($search['etime'])) {
+			$where['add_time'] = ['<=', $search['etime']];
 		}
 
 		$member = service('member/Member');
 		$total = $member->getCountData($where);
 		if ($total > 0) {
 			$fields = 'mem_id,avatar,sex,first_name,last_name,nick_name,mobile,email,status,add_time,login_time';
-			$list = $member->getListData($where, $fields, $page, $size);
+			$list = $member->getListData($where, $fields, $search['page'], $search['size']);
 			foreach ($list as $key => $value) {
 				$value['avatar'] = $member->getAvatar($value['avatar'], $value['sex']);
 				$list[$key] = $value;
@@ -60,12 +68,7 @@ class Member extends AdminBase
 		$this->view([
 			'total' => $total,
 			'list' => $list ?? [],
-			'size' => $size,
-			'status' => $status,
-			'name' => $name,
-			'phone' => $phone,
-			'stime' => $stime,
-			'etime' => $etime,
+			'search' => $search,
 		]);
 	}
 
@@ -82,6 +85,21 @@ class Member extends AdminBase
 			$this->success('操作成功');
 		} else {
 			$this->error('操作失败');
+		}
+	}
+
+	protected function delete()
+	{
+		$memId = (int) ipost('mem_id');
+		if (empty($memId)) {
+			$this->error('账户ID不能为空');
+		}
+		$result = service('member/Member')->deleteData($memId);
+		if ($result) {
+			$this->addLog('删除用户-'.$memId);
+			$this->success('删除成功');
+		} else {
+			$this->error('删除失败');
 		}
 	}
 

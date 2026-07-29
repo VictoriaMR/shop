@@ -19,3 +19,7 @@
 #login-page .login-box input[name="code"] {
     width: 256px;
 }
+#login-page .title .select {
+    padding-left: 10px;
+    border-left: 3px solid #e7502b;
+}

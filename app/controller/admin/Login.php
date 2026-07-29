@@ -48,7 +48,7 @@ class Login extends AdminBase
 		}
 		$result = service('member/Member')->login($mobile, $password, preg_match('/^1[3-9]\d{9}$/', $mobile) ? 'mobile' : 'email');
 		if ($result) {
-			$this->success('登录成功', ['url' => frame('Session')->dGet('return_url')]);
+			$this->success('登录成功', ['url' => frame('Session')->dGet('return_url') ?: '/']);
 		} else {
 			$this->error('账号或者密码不匹配!');
 		}
