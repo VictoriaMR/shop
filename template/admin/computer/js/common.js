@@ -145,6 +145,7 @@ $(function(){
 	$.fn.switchBtn = function(status) {
 		const obj = $(this);
 		obj.data('status', status);
+		obj.attr('data-status', status);
 		if (status == 1) {
 			obj.find('.switch_status').removeClass('off').addClass('on');
 		} else {
@@ -234,7 +235,7 @@ $(function(){
 	// 初始加载进度条
 	progressing(20);
 	// 弹窗关闭
-	$('body').on('click', '.s-modal .glyphicon-remove', function(){
+	$('body').on('click', '.s-modal .glyphicon-remove, .s-modal .fa-times, .s-modal .fa-remove, .s-modal .fa-close', function(){
 		$(this).parents('.s-modal').modalHide();
 	});
 	// 日期初始化

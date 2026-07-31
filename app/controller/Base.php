@@ -4,14 +4,26 @@ namespace app\controller;
 
 class Base
 {
+	/**
+	 * 在控制器/方法中显式开启或关闭 PageTrace 引入
+	 *
+	 * @param bool $enable
+	 * @return $this
+	 */
+	protected function trace($enable = true)
+	{
+		\App::set('page_trace', (bool)$enable);
+		return $this;
+	}
+
 	protected function success($msg='', $data=[], $code=1)
 	{
-		\App::jsonRespone($code, $data, $msg);
+		\App::jsonResponse($code, $data, $msg);
 	}
 
 	protected function error($msg='', $data=[], $code=0)
 	{
-		\App::jsonRespone($code, [], $msg);
+		\App::jsonResponse($code, [], $msg);
 	}
 
 	protected function view($data=array())

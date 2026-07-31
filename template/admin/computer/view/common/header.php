@@ -25,8 +25,8 @@
 		<?php if (!empty($_nav[$_func])){?>
 		<span>&gt; <?php echo $_nav[$_func];?></span>
 		<?php } ?>
-		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func);?>" class="glyphicon glyphicon-repeat ml12" title="重新加载"></a>
-		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func);?>" target="_blank" class="glyphicon glyphicon-link ml12" title="新页面打开"></a>
+		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func);?>" class="fa fa-refresh ml12" title="重新加载"></a>
+		<a href="<?php echo frame('Router')->adminUrl($_path.'/'.$_func);?>" target="_blank" class="fa fa-link ml12" title="新页面打开"></a>
 	</div>
 </div>
 <?php } ?>

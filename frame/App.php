@@ -104,14 +104,25 @@ class App
 	public static function runOver($ajax=false)
 	{
 		config('domain', 'log') && frame('Debug')->runlog(isCli()?'task':'');
-		isDebug() && !$ajax && frame('Debug')->init();
+		if (isDebug() && !$ajax && self::shouldShowTrace()) {
+			frame('Debug')->init();
+		}
 		exit();
 	}
 
-	// 保留旧方法名兼容
-	public static function jsonRespone($code, $data=[], $msg='')
+	private static function shouldShowTrace()
 	{
-		return self::jsonResponse($code, $data, $msg);
+		$explicitTrace = self::get('page_trace', null);
+		if (!is_null($explicitTrace)) {
+			return (bool)$explicitTrace;
+		}
+		$router = self::get('router');
+		if (!empty($router)) {
+			if ($router['path'] === 'Index' && $router['func'] === 'index') {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static function jsonResponse($code, $data=[], $msg='')

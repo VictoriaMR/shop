@@ -2,157 +2,161 @@
 
 namespace app\service\tool;
 
-// 更新排序类
+/**
+ * 通用数据表排序工具类
+ */
 class Sort
 {
-    public function move($table, $pk, $index, $sortField='sort', $where=[], $config='database')
+    /**
+     * 对指定表的指定记录进行排序调整 (最顶/上移/下移/最底)
+     *
+     * @param string $table 表名 (如 'category')
+     * @param int|string $pkValue 主键值 (如 12)
+     * @param string $type 排序类型: 'top'|'up'|'down'|'bottom' (兼容 'start'/'prev'/'next'/'end'/'first'/'last')
+     * @param string $pkField 主键字段名 (默认按表名自动推导如 cate_id / table_id)
+     * @param string $sortField 排序字段名 (默认 'sort')
+     * @param array $where 过滤条件/分组条件 (如 ['parent_id' => 0])
+     * @return bool 是否成功
+     */
+    public function sort($table, $pkValue, $type, $pkField = '', $sortField = 'sort', $where = [])
     {
-        $query = frame('Query')->database($database)->table($table);
-        if(!is_array($pk)){
-            $_pk=$query->getPk();
-            if(is_array($_pk)){
-                throw new Exception('does not support complex primary');
-            }
-            $pk = [$_pk=>$pk];
-        }
-
-        $sort = $query->field($sortField)->where($pk)->find();
-        if(!is_numeric($sort)){
+        if (empty($table) || empty($pkValue) || empty($type)) {
             return false;
         }
 
-        if($index=='start'){
-            $query->where($where)->where([$sortField=>['<',$sort]])->increment($sortField,1);
-            $query->where($pk)->setField($sortField,1);
-            return 1;
-        } else if ($index<0){ // 向前移
-            if($sort+$index<1){
-                return $this->toStart($table, $pk, $sortField, $where, $config);
-            } else {
-                $query->where($where)->where([$sortField=>['between',[$sort+$index,$sort-1]]])->increment($sortField,1);
-                $query->where($pk)->setField($sortField,$sort+$index);
-                return $sort+$index;
-            }
-        } else if($index=='end'){
-            if($sort==0){ // 处理新添加的记录的特殊情况
-                $max = $query->where($where)->max($sortField);
-                $query->where($pk)->setField($sortField, $max + 1);
-                return $max + 1;
-            } else {
-                $query->where($where)->where([$sortField => ['>', $sort]])->decrement($sortField, 1);
-                foreach ($pk as $k=>$v) {
-                    break;
-                }
-                $max = $query->where($where)->where([$k=>['<>',$v]])->max($sortField);
-                if ($max >= $sort) {
-                    $query->where($pk)->setField($sortField, $max + 1);
-                    return $max + 1;
-                } else {
-                    return $sort;
-                }
-            }
-        } else { // $index >0 后移
-            $query->where($where)->where([$sortField=>['between',[$sort+1,$sort+$index]]])->decrement($sortField,1);
-            foreach ($pk as $k=>$v) {
-                break;
-            }
-            $max = $query->where($where)->where([$k=>['<>',$v]])->max($sortField);
-            if($max>$sort+$index){
-                $max = $sort+$index;
-            } else {
-                $max =$max+1;
-            }
-            $query->where($pk)->setField($sortField,$max);
-            return $max;
+        // 自动识别主键字段名
+        if (empty($pkField)) {
+            $pkField = ($table === 'category') ? 'cate_id' : $table . '_id';
         }
-    }
 
-    // 向上移动一位
-    public function up($table, $pk, $sortField='sort',  $where=[], $config='database')
-    {
-        return $this->move($table, $pk, -1, $sortField, $where, $config);
-    }
-
-    // 向下移动一位
-    public function down($table, $pk, $sortField='sort', $where=[], $config='database')
-    {
-        return $this->move($table,  $pk, 1, $sortField,$where, $config);
-    }
-
-    // 移动到开头
-    public function toStart($table, $pk, $sortField='sort', $where=[], $config='database')
-    {
-        return $this->move($table, $pk, 'start', $sortField, $where, $config);
-    }
-
-    // 移动到最后
-    public function toEnd($table, $pk, $sortField='sort', $where=[], $config='database')
-    {
-        return $this->move($table, $pk, 'end', $sortField, $where, $config);
-    }
-
-    // 新添加到排序开头， 注意新添加的行排序字段值要为0.
-    public function addToStart($table, $pk, $sortField='sort', $where=[], $config='database')
-    {
-        $this->move($table, $pk, 'end', $sortField, $where, $config);
-        return $this->move($table, $pk, 'start', $sortField, $where, $config);
-    }
-
-    // 新添加到排序结尾， 注意新添加的行排序字段值要为0.
-    public function addToEnd($table, $pk, $sortField='sort', $where=[], $config='database')
-    {
-        return $this->move($table, $pk, 'end', $sortField, $where, $config);
-    }
-
-    // 便捷排序函数
-    public  function sort($type, $table, $pk, $sortField='sort', $where=[], $config='database')
-    {
+        // 规范化操作类型
         $type = strtolower($type);
-        switch ($type){
-            case 'first':
-            case 'start':
-            case 'top':
-                $rst = Sort::toStart($table, $pk, $sortField, $where, $config);
-                break;
-            case 'prev':
-            case 'up':
-                $rst = Sort::up($table, $pk, $sortField, $where, $config);
-                break;
-            case 'next':
-            case 'down':
-                $rst = Sort::down($table, $pk, $sortField, $where, $config);
-                break;
-            case 'last':
-            case 'end':
-            case 'bottom':
-                $rst = Sort::toEnd($table, $pk, $sortField, $where, $config);
-                break;
-            default:
-                $rst = false;
+        $typeMap = [
+            'start' => 'top',
+            'first' => 'top',
+            'prev'  => 'up',
+            'next'  => 'down',
+            'end'   => 'bottom',
+            'last'  => 'bottom',
+        ];
+        if (isset($typeMap[$type])) {
+            $type = $typeMap[$type];
         }
-        return $rst;
-    }
 
-    public function reset($table, $sortField='sort', $where=[], $config='database')
-    {
-        $query=db($table,$config);
-        $pk=$query->getPk();
-        if(is_array($pk)){
-            $pk=implode(',',$pk);
+        if (!in_array($type, ['top', 'up', 'down', 'bottom'])) {
+            return false;
         }
-        $rst = $query->field($pk)->where($where)->field($sortField)->resultType('array')->order($sortField,'asc')->select();
-        $i=1;
-        $sql=[];
-        foreach ($rst as $val){
-            $val[$sortField]=$i++;
-            $sql[] = $query->fetchSql(true)->update($val);
-            if(count($sql)>20){ // 每次批量更新20行
-                Db::query(implode(';',$sql),[],false,null,$config);
-                $sql=[];
+
+        // 直接从数据表查询符合条件的所有记录，按排序字段正序排列 (若sort相同则按主键正序)
+        $query = \frame('Query')->table($table);
+        if (!empty($where)) {
+            $query->where($where);
+        }
+
+        $list = $query->field([$pkField, $sortField])
+                      ->orderBy([$sortField => 'asc', $pkField => 'asc'])
+                      ->page(0, 0)
+                      ->get();
+
+        if (empty($list)) {
+            return false;
+        }
+
+        // 查找目标记录的当前索引位置
+        $targetIndex = -1;
+        foreach ($list as $index => $item) {
+            if ($item[$pkField] == $pkValue) {
+                $targetIndex = $index;
+                break;
             }
         }
-        if(count($sql)>0){
-            Db::query(implode(';',$sql),[],false,null,$config);
+
+        if ($targetIndex === -1) {
+            return false;
         }
+
+        $count = count($list);
+
+        // 根据操作类型重写列表顺序
+        switch ($type) {
+            case 'top':
+                if ($targetIndex === 0) {
+                    return true; // 已经在最顶
+                }
+                $targetItem = array_splice($list, $targetIndex, 1)[0];
+                array_unshift($list, $targetItem);
+                break;
+
+            case 'up':
+                if ($targetIndex === 0) {
+                    return true; // 已经在最顶
+                }
+                $temp = $list[$targetIndex];
+                $list[$targetIndex] = $list[$targetIndex - 1];
+                $list[$targetIndex - 1] = $temp;
+                break;
+
+            case 'down':
+                if ($targetIndex === $count - 1) {
+                    return true; // 已经在最底
+                }
+                $temp = $list[$targetIndex];
+                $list[$targetIndex] = $list[$targetIndex + 1];
+                $list[$targetIndex + 1] = $temp;
+                break;
+
+            case 'bottom':
+                if ($targetIndex === $count - 1) {
+                    return true; // 已经在最底
+                }
+                $targetItem = array_splice($list, $targetIndex, 1)[0];
+                $list[] = $targetItem;
+                break;
+        }
+
+        // 直接在数据库中重新分配连续递增的 sort 值，仅更新发生了变化的行
+        foreach ($list as $newSort => $item) {
+            $newSortVal = $newSort + 1; // 1, 2, 3...
+            if ((int)$item[$sortField] !== $newSortVal) {
+                \frame('Query')->table($table)
+                               ->where([$pkField => $item[$pkField]])
+                               ->update([$sortField => $newSortVal]);
+            }
+        }
+
+        return true;
+    }
+
+    public function move($table, $pk, $index, $sortField = 'sort', $where = [])
+    {
+        $pkValue = is_array($pk) ? current($pk) : $pk;
+        $pkField = is_array($pk) ? key($pk) : '';
+        $type = 'up';
+        if ($index === 'start' || (is_numeric($index) && $index < 0)) {
+            $type = ($index === 'start') ? 'top' : 'up';
+        } elseif ($index === 'end' || (is_numeric($index) && $index > 0)) {
+            $type = ($index === 'end') ? 'bottom' : 'down';
+        }
+        return $this->sort($table, $pkValue, $type, $pkField, $sortField, $where);
+    }
+
+    public function up($table, $pk, $sortField = 'sort', $where = [])
+    {
+        return $this->move($table, $pk, -1, $sortField, $where);
+    }
+
+    public function down($table, $pk, $sortField = 'sort', $where = [])
+    {
+        return $this->move($table, $pk, 1, $sortField, $where);
+    }
+
+    public function toStart($table, $pk, $sortField = 'sort', $where = [])
+    {
+        return $this->move($table, $pk, 'start', $sortField, $where);
+    }
+
+    public function toEnd($table, $pk, $sortField = 'sort', $where = [])
+    {
+        return $this->move($table, $pk, 'end', $sortField, $where);
     }
 }

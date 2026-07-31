@@ -42,6 +42,7 @@ class Category extends AdminBase
 			}
 			$this->error('非法请求');
 		}
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$cid = iget('cid', 0);
 		$pList = [];
@@ -89,7 +90,17 @@ class Category extends AdminBase
 					$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
 					$attachArr = array_column($attachArr, 'url', 'attach_id');
 				}
+				$groupCount = [];
+				foreach ($list as $value) {
+					$pid = $value['parent_id'];
+					$groupCount[$pid] = ($groupCount[$pid] ?? 0) + 1;
+				}
+				$groupIndex = [];
 				foreach ($list as $key => $value) {
+					$pid = $value['parent_id'];
+					$groupIndex[$pid] = ($groupIndex[$pid] ?? 0) + 1;
+					$value['is_first'] = ($groupIndex[$pid] === 1);
+					$value['is_last'] = ($groupIndex[$pid] === $groupCount[$pid]);
 					$value['is_translate'] = empty($cateArr[$value['cate_id']]) ? 0 : ($cateArr[$value['cate_id']] < $len ? 1 : 2);
 					$value['avatar'] = $attachArr[$value['attach_id']] ?? '';
 					$list[$key] = $value;
@@ -111,7 +122,13 @@ class Category extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$info = service('category/Category')->loadData($cateId);
-		$this->success($info);
+		if (!empty($info['parent_id'])) {
+			$parent = service('category/Category')->loadData($info['parent_id']);
+			$info['parent_name'] = $parent['name'] ?? '';
+		} else {
+			$info['parent_name'] = '顶级分类';
+		}
+		$this->success('获取成功', $info);
 	}
 
 	protected function getCateLanguage()
@@ -123,7 +140,7 @@ class Category extends AdminBase
 		}
 		$info = service('category/Language')->getListData(['cate_id'=>$cateId, 'type'=>$type]);
 		$info = array_column($info, 'name', 'lan_id');
-		$languageList = service('Language')->getListData();
+		$languageList = sys()->language()->getListData();
 		$data = [];
 		foreach ($languageList as $key => $value) {
 			if ($value['lan_id'] <= 1 && !$type) continue;
@@ -134,7 +151,7 @@ class Category extends AdminBase
 				'language_name' => $value['name'],
 			];
 		}
-		$this->success($data);
+		$this->success('获取成功', $data);
 	}
 
 	protected function editLanguage()
@@ -232,11 +249,57 @@ class Category extends AdminBase
 		$rst = $categoryService->updateData($id, $data);
 		if ($rst) {
 			if ($status == 0 && $categoryService->hasChildren($id)) {
-				$categoryService->updateData(['parent_id'=>$id], ['status'=>$status]);
+				$subCates = $categoryService->sCate($id, false);
+				if (!empty($subCates)) {
+					$subIds = array_column($subCates, 'cate_id');
+					$categoryService->updateData(['cate_id' => ['in', $subIds]], ['status' => 0]);
+				}
+			}
+			if ($isShow == 0 && $categoryService->hasChildren($id)) {
+				$subCates = $categoryService->sCate($id, false);
+				if (!empty($subCates)) {
+					$subIds = array_column($subCates, 'cate_id');
+					$categoryService->updateData(['cate_id' => ['in', $subIds]], ['is_show' => 0]);
+				}
 			}
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
+	}
+
+	protected function sortCategory()
+	{
+		$cateId = (int) ipost('cate_id');
+		$type = trim(ipost('type', ''));
+		$parentId = (int) ipost('parent_id', 0);
+
+		if (!empty($cateId) && !empty($type)) {
+			$result = service('tool/Sort')->sort('category', $cateId, $type, 'cate_id', 'sort', ['parent_id' => $parentId]);
+			if ($result) {
+				redis()->del('category:list-cache');
+				$this->addLog('分类排序-' . $cateId . '-' . $type);
+				$this->success('排序成功');
+			} else {
+				$this->error('排序失败');
+			}
+		}
+
+		$data = ipost('data');
+		if (!empty($data) && is_array($data)) {
+			$categoryService = service('category/Category');
+			foreach ($data as $pidKey => $items) {
+				if (is_array($items)) {
+					foreach ($items as $sortIndex => $id) {
+						$categoryService->updateData((int)$id, ['sort' => $sortIndex + 1]);
+					}
+				}
+			}
+			redis()->del('category:list-cache');
+			$this->addLog('批量更新分类排序');
+			$this->success('排序成功');
+		}
+
+		$this->error('参数不正确');
 	}
 
 	public function attrUsed()

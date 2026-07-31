@@ -44,7 +44,7 @@ class Category extends Base
 					return $this->_list;
 				}
 			}
-			$tempArr = $this->getListData();
+			$tempArr = $this->getListData([], '*', 0, 0, ['sort' => 'asc', 'cate_id' => 'asc']);
 			$tempArr = $this->listFormat($tempArr);
 			$this->arrayFormat($tempArr, $this->_list);
 			if ($cache) {
@@ -63,18 +63,29 @@ class Category extends Base
 		return $returnData;
 	}
 
+	/**
+	 * 递归格式化分类树，并保证同级子类目严格按 sort ASC, cate_id ASC 排序
+	 */
 	protected function listFormat($list, $parentId=0, $lev=0) 
 	{
 		$returnData = [];
 		foreach ($list as $value) {
-			$value['level'] = $lev;
 			if ($value['parent_id'] == $parentId) {
-				$temp = $this->listFormat($list, $value['cate_id'], $value['level'] + 1);
+				$value['level'] = $lev;
+				$temp = $this->listFormat($list, $value['cate_id'], $lev + 1);
 				if (!empty($temp)) {
 					$value['son'] = $temp;
 				}
 				$returnData[] = $value;
 			}
+		}
+		if (!empty($returnData)) {
+			usort($returnData, function($a, $b) {
+				if ($a['sort'] == $b['sort']) {
+					return $a['cate_id'] <=> $b['cate_id'];
+				}
+				return $a['sort'] <=> $b['sort'];
+			});
 		}
 		return $returnData;
 	}
@@ -90,6 +101,34 @@ class Category extends Base
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * 获取指定父分类下的直属子分类列表，按 sort ASC, cate_id ASC 排序
+	 *
+	 * @param int $parentId 父分类ID
+	 * @param bool $onlyStatus 是否仅获取开启状态(status=1)的分类
+	 * @return array
+	 */
+	public function getChildren($parentId, $onlyStatus = false)
+	{
+		$list = $this->getList();
+		$children = [];
+		foreach ($list as $value) {
+			if ($value['parent_id'] == $parentId) {
+				if ($onlyStatus && empty($value['status'])) {
+					continue;
+				}
+				$children[] = $value;
+			}
+		}
+		usort($children, function($a, $b) {
+			if ($a['sort'] == $b['sort']) {
+				return $a['cate_id'] <=> $b['cate_id'];
+			}
+			return $a['sort'] <=> $b['sort'];
+		});
+		return $children;
 	}
 
 	public function sCate($id, $simple=false)
@@ -123,19 +162,26 @@ class Category extends Base
 					if ($value['status']) $returnData[] = $value;
 				}
 			}
-		}
-		foreach ($list as $value) {
-			if ($lev > 0) {
-				if ($lev < $value['level']) {
-					if ($value['status']) $returnData[] = $value;
-				} else {
-					break;
+		} else {
+			foreach ($list as $value) {
+				if ($lev > 0) {
+					if ($lev < $value['level']) {
+						if ($value['status']) $returnData[] = $value;
+					} else {
+						break;
+					}
+				}
+				if ($value['cate_id'] == $pid) {
+					$lev = $value['level'];
 				}
 			}
-			if ($value['cate_id'] == $pid) {
-				$lev = $value['level'];
-			}
 		}
+		usort($returnData, function($a, $b) {
+			if ($a['sort'] == $b['sort']) {
+				return $a['cate_id'] <=> $b['cate_id'];
+			}
+			return $a['sort'] <=> $b['sort'];
+		});
 		return $returnData;
 	}
 

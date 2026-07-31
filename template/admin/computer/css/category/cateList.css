@@ -1,3 +1,7 @@
 #category-list .item .left.text-content{line-height: 30px;margin-right:12px}
 #category-list .item .left.image-content{width: 30px;height: 30px}
 #category-list .item .left.text-content img{max-width:100%;max-height:100%}
+#category-list .fa-globe {cursor: pointer;}
+#category-list .fa-globe:hover {color: #e7502b;}
+#category-list .list-group-item .badge {cursor: pointer;}
+#category-list .list-group-item .badge:hover {background-color: #e7502b;}
