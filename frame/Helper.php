@@ -1,70 +1,67 @@
 <?php
-function dd(...$arg){
-	foreach ($arg as $value){
+
+function dd(...$arg) {
+	foreach ($arg as $value) {
 		print_r($value);
 		echo PHP_EOL;
 	}
 	exit();
 }
-function config($type, $name='', $default=''){
+
+function config($type, $name = '', $default = '') {
 	static $configs = [];
-	$val = \App::get($type);
-	if ($val === null) {
-		$val = require ROOT_PATH.'config/'.$type.'.php';
-		\App::set($type, $val);
-		$configs[$type] = $val;
-	} elseif ($type === 'domain') {
-		$configs[$type] = $val;
+	if (!isset($configs[$type])) {
+		$file = ROOT_PATH . 'config/' . $type . '.php';
+		$configs[$type] = is_file($file) ? require $file : [];
 	}
 	if ($name === '') {
 		return $configs[$type];
 	}
+	if ($type === 'domain') {
+		$domainContext = \App::get('domain');
+		if (is_array($domainContext) && isset($domainContext[$name])) {
+			return $domainContext[$name];
+		}
+	}
 	return $configs[$type][$name] ?? $default;
 }
-function redirect($url='', $return=true){
-	$return && frame('Session')->set('return_url', trim($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'], '/'));
-	header('Location:'.$url);
+
+function redirect($url = '', $return = true) {
+	if ($return && isset($_SERVER['HTTP_HOST'])) {
+		$scheme = $_SERVER['REQUEST_SCHEME'] ?? 'http';
+		$uri = $_SERVER['REQUEST_URI'] ?? '/';
+		frame('Session')->set('return_url', trim($scheme . '://' . $_SERVER['HTTP_HOST'] . $uri, '/'));
+	}
+	header('Location:' . $url);
 	\App::runOver(true);
 }
-function service($name, $params=null){
-	if ($params === null) {
-		static $instances = [];
-		if (!isset($instances[$name])) {
-			$instances[$name] = \App::make('app/service/'.$name);
-		}
-		return $instances[$name];
-	}
-	return \App::make('app/service/'.$name, $params);
+
+function service($name, $params = null) {
+	return \App::make('app/service/' . $name, $params);
 }
-function model($name, $params=null){
-	if ($params === null) {
-		static $instances = [];
-		if (!isset($instances[$name])) {
-			$instances[$name] = \App::make('app/model/'.$name);
-		}
-		return $instances[$name];
-	}
-	return \App::make('app/model/'.$name, $params);
+
+function model($name, $params = null) {
+	return \App::make('app/model/' . $name, $params);
 }
-function frame($name){
-	static $instances = [];
-	if (!isset($instances[$name])) {
-		$instances[$name] = \App::make('frame/'.$name);
-	}
-	return $instances[$name];
+
+function frame($name) {
+	return \App::make('frame/' . $name);
 }
-function page($size=0, $total=0){
+
+function page($size = 0, $total = 0) {
 	return frame('Paginator')->make($size, $total);
 }
-function siteUrl($name){
+
+function siteUrl($name) {
 	static $prefix = null;
 	if ($prefix === null) {
-		$prefix = '/'.(isMobile()?'mobile':'computer').'/';
+		$prefix = '/' . (isMobile() ? 'mobile' : 'computer') . '/';
 	}
-	return $prefix.$name.'?v='.version();
+	return $prefix . $name . '?v=' . version();
 }
-function mediaUrl($url, $width=''){
-	if ($width){
+
+function mediaUrl($url, $width = '') {
+	if ($width) {
 		$pos = strrpos($url, '.');
 		if ($pos !== false) {
 			$url = substr($url, 0, $pos) . DS . $width . substr($url, $pos);
@@ -72,159 +69,220 @@ function mediaUrl($url, $width=''){
 	}
 	return siteUrl($url);
 }
-function url($c='', $p=[]) {
+
+function url($c = '', $p = []) {
 	return frame('Router')->url($c, $p);
 }
-function adminUrl($name='', $param=[]){
+
+function adminUrl($name = '', $param = []) {
 	return frame('Router')->adminUrl($name, $param);
 }
-function version(){
+
+function version() {
 	return '1.0.0';
 }
-function isJson($string){
+
+function isJson($string) {
 	if (!is_array($string)) return $string;
-	$temp = json_encode($string, JSON_UNESCAPED_UNICODE); 
-	return json_last_error()==JSON_ERROR_NONE?$temp:$string;
+	$temp = json_encode($string, JSON_UNESCAPED_UNICODE);
+	return json_last_error() === JSON_ERROR_NONE ? $temp : $string;
 }
-function isArray($arr){
+
+function isArray($arr) {
 	if (is_array($arr)) return $arr;
-	$temp = json_decode($arr, true); 
-	return json_last_error()==JSON_ERROR_NONE?$temp:$arr;
+	$temp = json_decode($arr, true);
+	return json_last_error() === JSON_ERROR_NONE ? $temp : $arr;
 }
-function isAjax(){
-	defined('IS_AJAX') || define('IS_AJAX', frame('Request')->isAjax());
-	return IS_AJAX;
+
+function isAjax() {
+	static $isAjax = null;
+	if ($isAjax === null) {
+		$isAjax = frame('Request')->isAjax();
+	}
+	return $isAjax;
 }
-function isCli(){
-	defined('IS_CLI') || define('IS_CLI', false);
-	return IS_CLI;
+
+function isCli() {
+	static $isCli = null;
+	if ($isCli === null) {
+		$isCli = defined('IS_CLI') ? IS_CLI : (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
+	}
+	return $isCli;
 }
+
 function isPost() {
-	defined('IS_POST') || define('IS_POST', frame('Request')->isPost());
-	return IS_POST;
+	static $isPost = null;
+	if ($isPost === null) {
+		$isPost = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+	}
+	return $isPost;
 }
-function isMobile(){
-	defined('IS_MOBILE') || define('IS_MOBILE', frame('Request')->isMobile());
-	return IS_MOBILE;
+
+function isMobile() {
+	static $isMobile = null;
+	if ($isMobile === null) {
+		$isMobile = frame('Request')->isMobile();
+	}
+	return $isMobile;
 }
+
 function isDebug() {
-	defined('IS_DEBUG') || define('IS_DEBUG', isCli() ? true : \App::get('domain', 'debug'));
-	return IS_DEBUG;
+	static $isDebug = null;
+	if ($isDebug === null) {
+		$isDebug = isCli() ? true : (bool)config('domain', 'debug', false);
+	}
+	return $isDebug;
 }
-function isWin(){
-	defined('IS_WIN') || define('IS_WIN', PHP_OS_FAMILY === 'Windows');
-	return IS_WIN;
+
+function isWin() {
+	static $isWin = null;
+	if ($isWin === null) {
+		$isWin = DIRECTORY_SEPARATOR === '\\' || (defined('PHP_OS_FAMILY') && PHP_OS_FAMILY === 'Windows');
+	}
+	return $isWin;
 }
-function ipost($name='', $default=null){
+
+function ipost($name = '', $default = null) {
 	return frame('Request')->ipost($name, $default);
 }
-function iget($name='', $default=null){
+
+function iget($name = '', $default = null) {
 	return frame('Request')->iget($name, $default);
 }
-function input($name='', $default=null){
+
+function input($name = '', $default = null) {
 	return frame('Request')->input($name, $default);
 }
-function appT($text, $replace=[], $lanId='', $type='common'){
-	$lanId || $lanId = lanId('code');
-	$key = 'translate_'.$type.'_'.$lanId;
-	if (is_null(\App::get($key))){
-		$file = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/language/'.$type.'/'.$lanId.'.php';
-		\App::set($key, is_file($file) ? require $file : []);
+
+function appT($text, $replace = [], $lanId = '', $type = 'common') {
+	$lanId = $lanId ?: lanId('code');
+	$key = 'translate_' . $type . '_' . $lanId;
+	$transData = \App::get($key);
+	if ($transData === null) {
+		$file = ROOT_PATH . 'template/' . config('domain', 'template') . '/' . (isMobile() ? 'mobile' : 'computer') . '/language/' . $type . '/' . $lanId . '.php';
+		$transData = is_file($file) ? require $file : [];
+		\App::set($key, $transData);
 	}
-	$translated = \App::get($key, $text);
-	if ($translated){
-		$text = $replace ? strtr($translated, $replace) : $translated;
+	$translated = $transData[$text] ?? null;
+	if ($translated) {
+		return $replace ? strtr($translated, $replace) : $translated;
 	}
 	return $text;
 }
-function distT($text, $replace=[], $lanId=''){
+
+function distT($text, $replace = [], $lanId = '') {
 	return appT($text, $replace, $lanId, lcfirst(\App::get('router', 'path')));
 }
-function get1024Peck($size, $dec=2){
+
+function get1024Peck($size, $dec = 2) {
 	static $units = ['B', 'KB', 'MB', 'GB', 'TB'];
 	if ($size <= 0) return '0 B';
 	$pos = min((int)floor(log($size, 1024)), 4);
-	return round($size / (1024 ** $pos), $dec).' '.$units[$pos];
+	return round($size / (1024 ** $pos), $dec) . ' ' . $units[$pos];
 }
-function getDirFile($path, &$result = null){
+
+function getDirFile($path, &$result = null) {
 	if ($result === null) {
 		$result = [];
 	}
-	if (is_file($path)){
+	if (is_file($path)) {
 		$result[] = $path;
 		return $result;
 	}
+	if (!is_dir($path)) {
+		return $result;
+	}
 	$files = scandir($path);
-	foreach ($files as $v){
+	foreach ($files as $v) {
 		if ($v === '.' || $v === '..') continue;
-		$newPath = $path.DS.$v;
-		if (is_file($newPath)){
+		$newPath = $path . DS . $v;
+		if (is_file($newPath)) {
 			$result[] = $newPath;
-		} elseif (is_dir($newPath)){
+		} elseif (is_dir($newPath)) {
 			getDirFile($newPath, $result);
 		}
 	}
 	return $result;
 }
-function randString($len=16, $lower=true, $upper=true, $number=true){
+
+function randString($len = 16, $lower = true, $upper = true, $number = true) {
 	$str = '';
-	$lower && $str .= 'abcdefghijnmqrt';
-	$upper && $str .= 'ABCDEFGHIJLNMQRT';
-	$number && $str .= '23456789';
-	$rStr = '';
+	if ($lower) $str .= 'abcdefghijnmqrt';
+	if ($upper) $str .= 'ABCDEFGHIJLNMQRT';
+	if ($number) $str .= '23456789';
 	$seedLen = strlen($str);
-	while ($len > 0){
+	if ($seedLen === 0) return '';
+	$rStr = '';
+	for ($i = 0; $i < $len; $i++) {
 		$rStr .= $str[random_int(0, $seedLen - 1)];
-		$len--;
 	}
 	return $rStr;
 }
-function strTrim($str){
-	return trim($str, " \t\n\r\0\x0B ");
+
+function strTrim($str) {
+	return trim($str, " \t\n\r\0\x0B\xC2\xA0");
 }
-function lanId($type='id'){
-	return frame('Session')->get('site_language_'.$type, $type=='code'?'en':1);
+
+function lanId($type = 'id') {
+	return frame('Session')->get('site_language_' . $type, $type === 'code' ? 'en' : 1);
 }
-function userId($login=true){
+
+function currencyId($type = 'id') {
+	return frame('Session')->get('site_currency_' . $type, $type === 'code' ? 'USD' : 1);
+}
+
+function userId($login = true) {
 	static $uid = null;
 	if ($uid === null) {
-		$uid = frame('Session')->get(config('domain', 'class').'_info', 0, 'mem_id');
+		$uid = (int)frame('Session')->get(config('domain', 'class') . '_info', 0, 'mem_id');
 	}
-	if (!$login && !$uid) return '10000';
+	if (!$login && $uid <= 0) return 10000;
 	return $uid;
 }
-function createDir($dir){
-	if (!is_dir($dir)){
+
+function createDir($dir) {
+	if (!is_dir($dir)) {
 		mkdir($dir, 0755, true);
 	}
 	return $dir;
 }
+
 function sys() {
 	return service('system/System');
 }
+
 function site() {
 	return service('site/Site');
 }
+
 function category() {
 	return service('category/Category');
 }
+
 function purchase() {
 	return service('purchase/Purchase');
 }
+
 function attr() {
 	return service('attr/Attr');
 }
-function now($time=0) {
-	return $time > 0 ? date('Y-m-d H:i:s', $time) : date('Y-m-d H:i:s');
+
+function now($time = 0) {
+	return date('Y-m-d H:i:s', $time > 0 ? $time : time());
 }
+
 function siteId() {
 	static $id = null;
-	if ($id === null) $id = \App::get('domain', 'site_id');
+	if ($id === null) {
+		$id = (int)\App::get('domain', 'site_id', 0);
+	}
 	return $id;
 }
-function redis($db=0) {
+
+function redis($db = 0) {
 	return frame('Redis')->setDb($db);
 }
-function db($db=null) {
+
+function db($db = null) {
 	return frame('Connection')->setDb($db);
-}
+}

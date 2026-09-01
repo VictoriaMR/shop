@@ -7,38 +7,55 @@ class Html
 	protected $_CSS = [];
 	protected $_JS = [];
 
-	public function addCss($name='')
+	public function addCss($name = '')
 	{
-		if ($name == '') $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+		if ($name === '') {
+			$name = lcfirst(\App::get('router', 'path', 'Index')) . '/' . \App::get('router', 'func', 'index');
+		}
 		$this->_CSS[] = $name;
 	}
 
-	public function addJs($name='')
+	public function addJs($name = '')
 	{
-		if ($name == '') $name = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
+		if ($name === '') {
+			$name = lcfirst(\App::get('router', 'path', 'Index')) . '/' . \App::get('router', 'func', 'index');
+		}
 		$this->_JS[] = $name;
 	}
 
 	public function getCss()
 	{
-		return $this->_CSS ? $this->addStaticFile($this->_CSS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'css') : [];
+		if (empty($this->_CSS)) {
+			return [];
+		}
+		$routeKey = strtolower(\App::get('router', 'path', 'Index') . '_' . \App::get('router', 'func', 'index'));
+		return $this->addStaticFile($this->_CSS, $routeKey, 'css');
 	}
 
 	public function getJs()
 	{
-		return $this->_JS ? $this->addStaticFile($this->_JS, strtolower(\App::get('router', 'path').'_'.\App::get('router', 'func')), 'js') : [];
+		if (empty($this->_JS)) {
+			return [];
+		}
+		$routeKey = strtolower(\App::get('router', 'path', 'Index') . '_' . \App::get('router', 'func', 'index'));
+		return $this->addStaticFile($this->_JS, $routeKey, 'js');
 	}
 
 	public function getCommon($type)
 	{
-		return $this->addStaticFile(config($type, \App::get('router', 'class'))[isMobile() ? 'mobile' : 'computer'], 'common', $type);
+		$class = \App::get('router', 'class', 'home');
+		$config = config($type, $class);
+		$device = isMobile() ? 'mobile' : 'computer';
+		$files = $config[$device] ?? [];
+		return $this->addStaticFile($files, 'common', $type);
 	}
 
 	public function getLanguageJs()
 	{
-		$path = ROOT_PATH.'template/'.config('domain', 'template').'/';
-		$file = 'js/'.(isMobile() ? 'mobile' : 'computer').'/'.strtolower(\App::get('router', 'path')).'/'.\App::get('router', 'func').'_'.lanId('code').'.js';
-		if (is_file($path.$file)) {
+		$device = isMobile() ? 'mobile' : 'computer';
+		$path = ROOT_PATH . 'template/' . config('domain', 'template') . '/';
+		$file = 'js/' . $device . '/' . strtolower(\App::get('router', 'path', 'Index')) . '/' . \App::get('router', 'func', 'index') . '_' . lanId('code') . '.js';
+		if (is_file($path . $file)) {
 			return $file;
 		}
 		return false;
@@ -46,26 +63,32 @@ class Html
 
 	protected function addStaticFile(array $arr, $name, $type)
 	{
-		$path = ROOT_PATH.'template/'.config('domain', 'template').'/'.(isMobile()?'mobile':'computer').'/';
-		$file = 'static/'.$name.'.'.$type;
-		if (\App::get('domain', 'static_cache') && is_file($path.$file)) return $file;
+		if (empty($arr)) {
+			return false;
+		}
+		$device = isMobile() ? 'mobile' : 'computer';
+		$path = ROOT_PATH . 'template/' . config('domain', 'template') . '/' . $device . '/';
+		$file = 'static/' . $name . '.' . $type;
+
+		if (config('domain', 'static_cache') && is_file($path . $file)) {
+			return $file;
+		}
+
 		$str = '';
 		$arr = array_unique($arr);
-		foreach ($arr as $key => $value) {
-			$source = $path.$type.'/'.$value.'.'.$type;
+		foreach ($arr as $value) {
+			$source = $path . $type . '/' . $value . '.' . $type;
 			if (is_file($source)) {
-				$str .= '/* '.$name.' */'.PHP_EOL;
-				$str .= trim(file_get_contents($source)).PHP_EOL;
+				$str .= '/* ' . $name . ' */' . PHP_EOL . trim(file_get_contents($source)) . PHP_EOL;
 			}
 		}
-		if ($str) {
-			createDir($path.'static/');
-			if ($type == 'css') {
-				$str = $this->compressCss($str);
-			} else {
 
+		if ($str !== '') {
+			createDir($path . 'static/');
+			if ($type === 'css') {
+				$str = $this->compressCss($str);
 			}
-			file_put_contents($path.$file, $str);
+			file_put_contents($path . $file, $str);
 			return $file;
 		}
 		return false;
@@ -73,6 +96,13 @@ class Html
 
 	protected function compressCss($css)
 	{
-		return str_replace(array(' {', ';}'), array('{', '}'), preg_replace('/\s*(?<=[}{:,;])\s*/', '', preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', str_replace(PHP_EOL, '', $css))));
+		// 移除注释
+		$css = preg_replace('!/\*[^*]*\*+([^/][^*]*\*+)*/!', '', $css);
+		// 移除空白与换行
+		$css = str_replace(["\r\n", "\r", "\n", "\t"], '', $css);
+		$css = preg_replace('/\s+/', ' ', $css);
+		$css = preg_replace('/\s*([:;{}])\s*/', '$1', $css);
+		$css = str_replace(';}', '}', $css);
+		return trim($css);
 	}
-}
+}

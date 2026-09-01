@@ -6,15 +6,16 @@ class View
 {
 	private $_data = [];
 	private $_device;
+	private $_templateDir;
 
-	public function display($template, $match=true, $data=[])
+	public function display($template = '', $match = true, $data = [])
 	{
 		$this->setData($data);
 		$data['layout_include_path'] = $this->getTemplate($template, $match);
-		$this->loadFile(ROOT_PATH.'template/'.config('domain', 'template').'/layout.php', $data);
+		$this->loadFile($this->getTemplateDir() . 'layout.php', $data);
 	}
 
-	private function loadFile($template, array $data=[])
+	private function loadFile($template, array $data = [])
 	{
 		if (!is_file($template)) {
 			echo isDebug()
@@ -35,25 +36,35 @@ class View
 
 	public function setData($data)
 	{
-		if ($data) {
-			$this->_data += $data;
+		if (!empty($data)) {
+			$this->_data = array_merge($this->_data, $data);
 		}
 	}
 
-	private function getTemplate($template, $match=true)
+	private function getTemplateDir()
+	{
+		if ($this->_templateDir === null) {
+			$this->_templateDir = ROOT_PATH . 'template/' . config('domain', 'template') . '/';
+		}
+		return $this->_templateDir;
+	}
+
+	private function getTemplate($template, $match = true)
 	{
 		if ($match) {
-			$template || $template = lcfirst(\App::get('router', 'path')).'/'.\App::get('router', 'func');
-			if (!$this->_device) {
+			if ($template === '') {
+				$template = lcfirst(\App::get('router', 'path', 'Index')) . '/' . \App::get('router', 'func', 'index');
+			}
+			if ($this->_device === null) {
 				$this->_device = isMobile() ? 'mobile' : 'computer';
 			}
-			$template = 'template/'.config('domain', 'template').'/'.$this->_device.'/view/'.$template;
+			return $this->getTemplateDir() . $this->_device . '/view/' . $template . '.php';
 		}
-		return ROOT_PATH.$template.'.php';
+		return ROOT_PATH . $template . '.php';
 	}
 
-	public function load($template='', $data=[], $match=true)
+	public function load($template = '', $data = [], $match = true)
 	{
 		$this->loadFile($this->getTemplate($template, $match), $data);
 	}
-}
+}

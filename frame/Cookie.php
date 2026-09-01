@@ -13,29 +13,29 @@ class Cookie
 		'samesite' => 'lax',
 	];
 
-	public function init($home=true)
+	public function init($home = true)
 	{
 		$uuid = $this->get('uuid');
-		if ($uuid) {
-			//自动登录
+		if ($uuid && is_string($uuid) && strlen($uuid) >= 16) {
+			// 自动登录查询
 			$info = service('member/Uuid')->getInfo($uuid);
 			if (!empty($info['mem_id'])) {
 				service('member/Member')->loginById($info['mem_id']);
-				if ($home && $info['lan_cur']) {
+				if ($home && !empty($info['lan_cur'])) {
 					$arr = explode('_', $info['lan_cur']);
-					$this->set('language', $arr[0]);
-					$this->set('currency', $arr[1]);
+					if (isset($arr[0])) $this->set('language', $arr[0]);
+					if (isset($arr[1])) $this->set('currency', $arr[1]);
 				}
 			}
 		}
 		frame('Session')->set('set_cookie', true);
 	}
 
-	public function setUuid($home=true)
+	public function setUuid($home = true)
 	{
 		$uuid = $this->get('uuid');
 		if (empty($uuid)) {
-			$exp = 3600*24*10;
+			$exp = 3600 * 24 * 10;
 			$this->set('uuid', randString(32), $exp);
 			if ($home) {
 				$this->set('language', 'en', $exp);
@@ -48,8 +48,12 @@ class Cookie
 	public function login($memId)
 	{
 		$uuidService = service('member/Uuid');
+		$uuid = $this->get('uuid');
+		if (empty($uuid)) {
+			return false;
+		}
 		$where = [
-			'uuid' => $this->get('uuid'),
+			'uuid' => $uuid,
 			'site_id' => siteId(),
 		];
 		if ($uuidService->getCountData($where)) {
@@ -70,12 +74,14 @@ class Cookie
 		return $this->set('currency', $currency);
 	}
 
-	public function set($name, $value='', $option=null)
+	public function set($name, $value = '', $option = null)
 	{
+		$config = $this->config;
+		$reqTime = $_SERVER['REQUEST_TIME'] ?? time();
+
 		if ($option !== null) {
-			$config = $this->config;
 			if (is_numeric($option)) {
-				$config['expires'] = $_SERVER['REQUEST_TIME'] + intval($option);
+				$config['expires'] = $reqTime + intval($option);
 			} else {
 				if (is_string($option)) {
 					parse_str($option, $option);
@@ -83,22 +89,35 @@ class Cookie
 				$option = array_change_key_case($option);
 				$config = array_merge($config, $option);
 				if (isset($option['expire']) && !isset($option['expires'])) {
-					$config['expires'] = $_SERVER['REQUEST_TIME'] + intval($option['expire']);
+					$config['expires'] = $reqTime + intval($option['expire']);
 				} elseif (isset($config['expires']) && $config['expires'] > 0 && $config['expires'] < 1000000000) {
-					// Relative offset
-					$config['expires'] = $_SERVER['REQUEST_TIME'] + intval($config['expires']);
+					$config['expires'] = $reqTime + intval($config['expires']);
 				}
 			}
-		} else {
-			$config = $this->config;
 		}
+
 		if (is_array($value)) {
-			$value = 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE);
+			$cookieValue = 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE);
+		} else {
+			$cookieValue = (string)$value;
 		}
-		$_COOKIE[$name] = $value;
-		frame('Session')->set(config('domain', 'class').'_info', $value, $name);
+
+		$_COOKIE[$name] = $cookieValue;
+		frame('Session')->set(config('domain', 'class') . '_info', $value, $name);
 		unset($config['expire']);
-		return setcookie($name, $value, $config);
+
+		if (PHP_VERSION_ID >= 70300) {
+			return setcookie($name, $cookieValue, $config);
+		}
+		return setcookie(
+			$name,
+			$cookieValue,
+			$config['expires'] ?? 0,
+			$config['path'] ?? '/',
+			$config['domain'] ?? '',
+			$config['secure'] ?? false,
+			$config['httponly'] ?? false
+		);
 	}
 
 	public function has($name)
@@ -108,21 +127,22 @@ class Cookie
 
 	public function get($name)
 	{
-		if (isset($_COOKIE[$name])) {
-			$value = $_COOKIE[$name];
-			if (strpos($value, 'json:') === 0) {
-				$value = substr($value, 5);
-				$value = json_decode($value, true);
-			}
-			return $value;
-		} else {
+		if (!isset($_COOKIE[$name])) {
 			return null;
 		}
+		$value = $_COOKIE[$name];
+		if (is_string($value) && strncmp($value, 'json:', 5) === 0) {
+			return json_decode(substr($value, 5), true);
+		}
+		return $value;
 	}
 
 	public function clear()
 	{
-		// 清除登录状态
-		return service('member/Uuid')->updateData(['uuid' =>$this->get('uuid')], ['mem_id'=>0]);
+		$uuid = $this->get('uuid');
+		if ($uuid) {
+			return service('member/Uuid')->updateData(['uuid' => $uuid], ['mem_id' => 0]);
+		}
+		return false;
 	}
-}
+}

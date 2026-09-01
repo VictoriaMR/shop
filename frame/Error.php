@@ -4,7 +4,14 @@ namespace frame;
 
 class Error
 {
-	private static $fatalTypes = [E_ERROR, E_PARSE, E_CORE_ERROR, E_COMPILE_ERROR, E_USER_ERROR, E_RECOVERABLE_ERROR];
+	private static $fatalTypes = [
+		E_ERROR => true,
+		E_PARSE => true,
+		E_CORE_ERROR => true,
+		E_COMPILE_ERROR => true,
+		E_USER_ERROR => true,
+		E_RECOVERABLE_ERROR => true,
+	];
 
 	public function register()
 	{
@@ -16,12 +23,16 @@ class Error
 
 	public function handleError($code, $message, $file, $line)
 	{
+		if (!(error_reporting() & $code)) {
+			return false;
+		}
 		$this->errorEcho([
 			'code' => $code,
 			'file' => $file,
 			'line' => $line,
 			'message' => $message,
 		]);
+		return true;
 	}
 
 	public function handleException(\Throwable $e)
@@ -38,7 +49,7 @@ class Error
 	public function handleShutdown()
 	{
 		$data = error_get_last();
-		if ($data && in_array($data['type'], self::$fatalTypes, true)) {
+		if ($data && isset(self::$fatalTypes[$data['type']])) {
 			$this->errorEcho([
 				'code' => $data['type'],
 				'file' => $data['file'],
@@ -50,8 +61,8 @@ class Error
 
 	protected function errorEcho($data)
 	{
-		$log = "[{$data['code']} - ".$this->errorType($data['code'])."] {$data['message']} [{$data['file']}:{$data['line']}]";
-		$isFatal = in_array($data['code'], self::$fatalTypes) || isset($data['trace']);
+		$log = "[{$data['code']} - " . $this->errorType($data['code']) . "] {$data['message']} [{$data['file']}:{$data['line']}]";
+		$isFatal = isset(self::$fatalTypes[$data['code']]) || isset($data['trace']);
 
 		// 致命错误/异常: 始终输出; 非致命错误: 仅 debug 输出
 		if ($isFatal) {

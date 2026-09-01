@@ -1,9 +1,12 @@
 #!/usr/bin/env php
 <?php 
-require './init.php';
-define('IS_CLI', true);
+defined('IS_CLI') || define('IS_CLI', true);
+require __DIR__ . '/init.php';
+
 if (!isset($argv[1])) exit('class error');
 if (!isset($argv[2])) exit('function error');
+
+$class = $argv[1];
 $func = $argv[2];
-\App::make($argv[1])->$func();
-\App::runOver();
+\App::make($class)->$func();
+\App::runOver();

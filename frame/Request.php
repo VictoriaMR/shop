@@ -4,33 +4,47 @@ namespace frame;
 
 class Request 
 {
+	private $_input;
+	private $_isAjax;
+	private $_isMobile;
+	private $_isPost;
+
 	public function isPost()
 	{
-		return $_SERVER['REQUEST_METHOD'] == 'POST';
+		if ($this->_isPost === null) {
+			$this->_isPost = ($_SERVER['REQUEST_METHOD'] ?? '') === 'POST';
+		}
+		return $this->_isPost;
 	}
 
 	public function isAjax()
 	{
-		return (isset($_SERVER['HTTP_X_REQUESTED_WITH'])&&stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest')!==false)||input('is_ajax', false);
+		if ($this->_isAjax === null) {
+			$this->_isAjax = (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && stripos($_SERVER['HTTP_X_REQUESTED_WITH'], 'xmlhttprequest') !== false) || (bool)$this->input('is_ajax', false);
+		}
+		return $this->_isAjax;
 	}
 
 	public function isMobile()
 	{
-		return isset($_SERVER['HTTP_USER_AGENT'])&&preg_match('/(android|phone|mobile|iphone|ipod|ipad|mobi|tablet|touch|aarch64|kfapwi)/i', $_SERVER['HTTP_USER_AGENT']);
+		if ($this->_isMobile === null) {
+			$agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+			$this->_isMobile = $agent !== '' && (bool)preg_match('/(android|phone|mobile|iphone|ipod|ipad|mobi|tablet|touch|aarch64|kfapwi)/i', $agent);
+		}
+		return $this->_isMobile;
 	}
 
-	public function ipost($name='', $default=null)
+	public function ipost($name = '', $default = null)
 	{
 		return $this->format($_POST, $name, $default);
 	}
 
-	public function iget($name='', $default=null)
+	public function iget($name = '', $default = null)
 	{
 		return $this->format($_GET, $name, $default);
 	}
 
-	private $_input;
-	public function input($name='', $default=null)
+	public function input($name = '', $default = null)
 	{
 		if ($this->_input === null) {
 			if (empty($_POST)) {
@@ -46,44 +60,44 @@ class Request
 
 	private function format($arr, $name, $default)
 	{
-		if (!$name) return $arr;
+		if ($name === '') return $arr;
 		$index = strrpos($name, '/');
 		if ($index === false) {
 			$type = 's';
 		} else {
-			$type = substr($name, $index+1);
+			$type = substr($name, $index + 1);
 			$name = substr($name, 0, $index);
 		}
 		if (!isset($arr[$name])) return $default;
 		switch ($type) {
-			case 'd': //整数
+			case 'd': // 整数
 				return (int)$arr[$name];
-			case 'f': //浮点数
-				return (float) $arr[$name];
-			case 't': //时间 time
-				return false === strtotime($arr[$name]) ? $default : $arr[$name];
-			case 'a': //数组
+			case 'f': // 浮点数
+				return (float)$arr[$name];
+			case 't': // 时间 time
+				return strtotime($arr[$name]) === false ? $default : $arr[$name];
+			case 'a': // 数组
 				return is_array($arr[$name]) ? $arr[$name] : $default;
 			case 's':
-				return trim($arr[$name] ?? $default);
+				return is_string($arr[$name]) ? trim($arr[$name]) : $arr[$name];
 			default:
 				return $arr[$name];
 		}
 	}
 
-	public function getBrowser($agent='')
+	public function getBrowser($agent = '')
 	{
 		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		if (empty($agent)) return '未知设备';
 		if (stripos($agent, 'Chrome') !== false) return 'Chrome';
 		if (stripos($agent, 'Safari') !== false) return 'Safari';
-		if (stripos($agent, 'MSIE') !== false) return 'Msie';
+		if (stripos($agent, 'MSIE') !== false || stripos($agent, 'Trident') !== false) return 'Msie';
 		if (stripos($agent, 'Firefox') !== false) return 'Firefox';
-		if (stripos($agent, 'Opera') !== false) return 'Opera';
+		if (stripos($agent, 'Opera') !== false || stripos($agent, 'OPR') !== false) return 'Opera';
 		return 'Other';
 	}
 
-	public function getSystem($agent='')
+	public function getSystem($agent = '')
 	{
 		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		if (empty($agent)) return '未知操作系统';
@@ -96,4 +110,4 @@ class Request
 		if (stripos($agent, 'bsd') !== false) return 'Bsd';
 		return 'Other';
 	}
-}
+}
