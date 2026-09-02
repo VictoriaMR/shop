@@ -63,12 +63,15 @@ class Request
 		if ($name === '') return $arr;
 		$index = strrpos($name, '/');
 		if ($index === false) {
-			$type = 's';
-		} else {
-			$type = substr($name, $index + 1);
-			$name = substr($name, 0, $index);
+			if (!isset($arr[$name])) return $default;
+			$val = $arr[$name];
+			return is_string($val) ? trim($val) : $val;
 		}
+		
+		$type = substr($name, $index + 1);
+		$name = substr($name, 0, $index);
 		if (!isset($arr[$name])) return $default;
+		
 		switch ($type) {
 			case 'd': // 整数
 				return (int)$arr[$name];
@@ -87,8 +90,8 @@ class Request
 
 	public function getBrowser($agent = '')
 	{
-		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-		if (empty($agent)) return '未知设备';
+		if ($agent === '') $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+		if ($agent === '') return '未知设备';
 		if (stripos($agent, 'Chrome') !== false) return 'Chrome';
 		if (stripos($agent, 'Safari') !== false) return 'Safari';
 		if (stripos($agent, 'MSIE') !== false || stripos($agent, 'Trident') !== false) return 'Msie';
@@ -99,8 +102,8 @@ class Request
 
 	public function getSystem($agent = '')
 	{
-		if (empty($agent)) $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
-		if (empty($agent)) return '未知操作系统';
+		if ($agent === '') $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+		if ($agent === '') return '未知操作系统';
 		if (stripos($agent, 'android') !== false) return 'Android';
 		if (stripos($agent, 'iphone') !== false) return 'iPhone';
 		if (stripos($agent, 'win') !== false) return 'Windows';

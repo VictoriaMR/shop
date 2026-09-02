@@ -5,28 +5,29 @@ namespace frame;
 final class Query
 {
 	private $_database;
-	private $_table;
-	private $_sql='';
-	private $_where=[];
-	private $_columns='*';
-	private $_groupBy='';
-	private $_orderBy='';
-	private $_having=[];
-	private $_offset=0;
-	private $_limit=1;
-	private $_withSite=true;
-	private $_insert_id=0;
+	private $_table = '';
+	private $_sql = '';
+	private $_where = [];
+	private $_columns = '*';
+	private $_groupBy = '';
+	private $_orderBy = '';
+	private $_having = [];
+	private $_offset = 0;
+	private $_limit = 1;
+	private $_withSite = true;
+	private $_insert_id = 0;
 	public $_addTime;
 	public $_updateTime;
-	public $_intFields=[];
+	public $_intFields = [];
+	private $_intMap = null;
 
-	public function setDb($database=null)
+	public function setDb($database = null)
 	{
 		$this->_database = $database;
 		return $this;
 	}
 
-	public function table($table='')
+	public function table($table = '')
 	{
 		$this->_table = $table;
 		return $this;
@@ -37,31 +38,51 @@ final class Query
 		return $this->_table;
 	}
 
-	public function where($columns, $operator=null)
+	public function setIntFields(array $fields)
 	{
-		if (is_array($columns)) $this->_where += $columns;
-		else $this->_where[$columns] = $operator;
+		$this->_intFields = $fields;
+		$this->_intMap = $fields ? array_flip($fields) : [];
+		return $this;
+	}
+
+	public function getIntMap(): array
+	{
+		if ($this->_intMap === null) {
+			$this->_intMap = $this->_intFields ? array_flip($this->_intFields) : [];
+		}
+		return $this->_intMap;
+	}
+
+	public function where($columns, $operator = null)
+	{
+		if (is_array($columns)) {
+			foreach ($columns as $k => $v) {
+				$this->_where[$k] = $v;
+			}
+		} else {
+			$this->_where[$columns] = $operator;
+		}
 		return $this;
 	}
 
 	public function leftJoin($table, $linkForm, $linkTo)
 	{
-		$this->_table .= ' LEFT JOIN '.$table.' ON '.$linkForm.' = '.$linkTo;
+		$this->_table .= ' LEFT JOIN ' . $table . ' ON ' . $linkForm . ' = ' . $linkTo;
 		return $this;
 	}
 
-	public function orderBy($columns, $operator=null)
+	public function orderBy($columns, $operator = null)
 	{
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) {
-					$this->_orderBy .= "FIELD(`{$key}`, '".implode('", "', $value)."'),";
+					$this->_orderBy .= "FIELD(`{$key}`, '" . implode("', '", $value) . "'),";
 				} else {
-					$this->_orderBy .= '`'.$key.'` '.strtoupper($value).',';
+					$this->_orderBy .= '`' . $key . '` ' . strtoupper($value) . ',';
 				}
 			}
-		} else {
-			$this->_orderBy .= '`'.$columns.'` '.strtoupper($operator).',';
+		} elseif ($columns) {
+			$this->_orderBy .= '`' . $columns . '` ' . strtoupper($operator) . ',';
 		}
 		return $this;
 	}
@@ -69,7 +90,7 @@ final class Query
 	public function groupBy($columns)
 	{
 		if ($columns) {
-			$this->_groupBy .= '`'.$columns.'`';
+			$this->_groupBy = '`' . $columns . '`';
 		}
 		return $this;
 	}
@@ -82,7 +103,9 @@ final class Query
 
 	public function field($columns)
 	{
-		if (is_string($columns)) $columns = explode(',', $columns);
+		if (is_string($columns)) {
+			$columns = explode(',', $columns);
+		}
 		$parts = [];
 		foreach ($columns as $col) {
 			$col = trim($col);
@@ -98,7 +121,7 @@ final class Query
 
 	public function page(int $page, int $size)
 	{
-		$this->_offset = $page > 0 ? ($page-1) * $size : 0;
+		$this->_offset = $page > 0 ? ($page - 1) * $size : 0;
 		$this->_limit = $size;
 		return $this;
 	}
@@ -107,28 +130,37 @@ final class Query
 	{
 		$params = [];
 		$paramsType = '';
-		$sql = 'SELECT '.$this->_columns.' FROM `'.$this->_table.'`';
+		$sql = 'SELECT ' . $this->_columns . ' FROM `' . $this->_table . '`';
 		$whereString = $this->analyzeWhere($paramsType, $params);
-		$whereString && $sql .= ' WHERE ' . $whereString;
-		$this->_groupBy && $sql .= ' GROUP BY ' . $this->_groupBy;
-		$this->_orderBy && $sql .= ' ORDER BY ' . trim($this->_orderBy, ',');
-		if ($this->_having) {
-			$sql .= ' HAVING ';
+		if ($whereString !== '') {
+			$sql .= ' WHERE ' . $whereString;
+		}
+		if ($this->_groupBy !== '') {
+			$sql .= ' GROUP BY ' . $this->_groupBy;
+		}
+		if ($this->_orderBy !== '') {
+			$sql .= ' ORDER BY ' . rtrim($this->_orderBy, ',');
+		}
+		if (!empty($this->_having)) {
+			$havingParts = [];
 			foreach ($this->_having as $key => $value) {
-				$this->_having[$key] = ' `'.$key.'` '.$value[0].' ?';
+				$havingParts[] = ' `' . $key . '` ' . $value[0] . ' ?';
 				$paramsType .= 's';
 				$params[] = $value[1];
 			}
-			$sql .= implode(' AND ', $this->_having);
+			$sql .= ' HAVING ' . implode(' AND ', $havingParts);
 		}
-		$this->_limit && $sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		if ($this->_limit > 0) {
+			$sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		}
 		return $this->getQuery($sql, $paramsType ? array_merge([$paramsType], $params) : []);
 	}
 
 	public function find()
 	{
 		$this->page(0, 1);
-		return $this->get()[0] ?? [];
+		$res = $this->get();
+		return $res[0] ?? [];
 	}
 
 	public function value($name)
@@ -136,30 +168,39 @@ final class Query
 		return $this->field($name)->find();
 	}
 
-	public function count($where=[]):int
+	public function count($where = []): int
 	{
-		return $this->where($where)->value('COUNT(*) AS core_count')['core_count'] ?? 0;
+		if (!empty($where)) {
+			$this->where($where);
+		}
+		$res = $this->field('COUNT(*) AS core_count')->find();
+		return (int)($res['core_count'] ?? 0);
 	}
 
-	public function max($field):int
+	public function max($field): int
 	{
-		return $this->value('MAX(`'.$field.'`) AS core_max')['core_max'] ?? 0;
+		$res = $this->field('MAX(`' . $field . '`) AS core_max')->find();
+		return (int)($res['core_max'] ?? 0);
 	}
 
-	public function min($field):int
+	public function min($field): int
 	{
-		return $this->value('MIN(`'.$field.'`) AS core_min')['core_min'] ?? 0;
+		$res = $this->field('MIN(`' . $field . '`) AS core_min')->find();
+		return (int)($res['core_min'] ?? 0);
 	}
 
-	public function sum($field):int
+	public function sum($field): int
 	{
-		return $this->value('SUM(`'.$field.'`) AS core_sum')['core_sum'] ?? 0;
+		$res = $this->field('SUM(`' . $field . '`) AS core_sum')->find();
+		return (int)($res['core_sum'] ?? 0);
 	}
 
 	public function insert(array $data)
 	{
-		if (!is_array(current($data))) $data = [$data];
-		$intMap = $this->_intFields ? array_flip($this->_intFields) : [];
+		if (!is_array(current($data))) {
+			$data = [$data];
+		}
+		$intMap = $this->getIntMap();
 		$nowTime = now();
 		$fields = [];
 		$paramsType = '';
@@ -170,21 +211,25 @@ final class Query
 			if ($this->_withSite && isset($intMap['site_id'])) {
 				$value['site_id'] = siteId();
 			}
-			$this->_addTime && $value[$this->_addTime] = $nowTime;
-			if ($index == 0) {
-				foreach ($value as $k=>$v) {
-					$fields[] = '`'.$k.'`';
+			if ($this->_addTime) {
+				$value[$this->_addTime] = $nowTime;
+			}
+			if ($index === 0) {
+				foreach ($value as $k => $v) {
+					$fields[] = '`' . $k . '`';
 					$paramsType .= isset($intMap[$k]) ? 'i' : 's';
 					$paramValue .= '?,';
 				}
-				$paramValue = '('.trim($paramValue, ',').'),';
+				$paramValue = '(' . rtrim($paramValue, ',') . '),';
 			}
-			$params = array_merge($params, array_values($value));
+			foreach ($value as $v) {
+				$params[] = $v;
+			}
 			$index++;
 		}
 		$paramsType = str_repeat($paramsType, $index);
 		$paramValue = str_repeat($paramValue, $index);
-		return $this->getQuery("INSERT INTO `".$this->_table."` (".implode(',', $fields).") VALUES ".trim($paramValue, ','), array_merge([$paramsType], $params));
+		return $this->getQuery("INSERT INTO `" . $this->_table . "` (" . implode(',', $fields) . ") VALUES " . rtrim($paramValue, ','), array_merge([$paramsType], $params));
 	}
 
 	public function insertGetId(array $data)
@@ -195,30 +240,30 @@ final class Query
 
 	public function update(array $data)
 	{
-		$intMap = $this->_intFields ? array_flip($this->_intFields) : [];
+		$intMap = $this->getIntMap();
 		$fields = [];
 		$params = [];
 		$paramsType = '';
 		foreach ($data as $key => $value) {
-			$fields[] = '`'.$key.'` = ?';
+			$fields[] = '`' . $key . '` = ?';
 			$paramsType .= isset($intMap[$key]) ? 'i' : 's';
 			$params[] = $value;
 		}
 		if ($this->_updateTime) {
-			$fields[] = '`'.$this->_updateTime.'` = ?';
+			$fields[] = '`' . $this->_updateTime . '` = ?';
 			$paramsType .= 's';
 			$params[] = now();
 		}
 		$whereString = $this->analyzeWhere($paramsType, $params);
-		return $this->getQuery('UPDATE `'.$this->_table.'` SET '.implode(',', $fields).' WHERE '.$whereString, array_merge([$paramsType], $params));
+		return $this->getQuery('UPDATE `' . $this->_table . '` SET ' . implode(',', $fields) . ($whereString !== '' ? ' WHERE ' . $whereString : ''), array_merge([$paramsType], $params));
 	}
 
-	public function increment($value, int $num=1) 
+	public function increment($value, int $num = 1) 
 	{
 		return $this->crement($value, $num, '+');
 	}
 
-	public function decrement($value, int $num=1) 
+	public function decrement($value, int $num = 1) 
 	{
 		return $this->crement($value, $num, '-');
 	}
@@ -228,7 +273,7 @@ final class Query
 		$params = [];
 		$paramsType = '';
 		$whereString = $this->analyzeWhere($paramsType, $params);
-		return $this->getQuery('UPDATE `'.$this->_table.'` SET `'.$value.'` = `'.$value.'` '.$operator.' '.$num.' WHERE '.$whereString, $paramsType ? array_merge([$paramsType], $params) : []);
+		return $this->getQuery('UPDATE `' . $this->_table . '` SET `' . $value . '` = `' . $value . '` ' . $operator . ' ' . $num . ($whereString !== '' ? ' WHERE ' . $whereString : ''), $paramsType ? array_merge([$paramsType], $params) : []);
 	}
 
 	public function delete()
@@ -239,16 +284,18 @@ final class Query
 		$params = [];
 		$paramsType = '';
 		$whereString = $this->analyzeWhere($paramsType, $params);
-		return $this->getQuery('DELETE FROM `'.$this->_table.'` WHERE '.$whereString, array_merge([$paramsType], $params));
+		return $this->getQuery('DELETE FROM `' . $this->_table . '`' . ($whereString !== '' ? ' WHERE ' . $whereString : ''), array_merge([$paramsType], $params));
 	}
 
-	private function analyzeWhere(&$paramsType='', &$params=[])
+	private function analyzeWhere(&$paramsType = '', array &$params = [])
 	{
-		$intMap = $this->_intFields ? array_flip($this->_intFields) : [];
-		$this->_withSite && isset($intMap['site_id']) && $this->_where['site_id'] = siteId();
+		$intMap = $this->getIntMap();
+		if ($this->_withSite && isset($intMap['site_id'])) {
+			$this->_where['site_id'] = siteId();
+		}
 		$where = '';
 		foreach ($this->_where as $key => $item) {
-			$where .= ' AND `'.$key.'` ';
+			$where .= ' AND `' . $key . '` ';
 			if (is_array($item)) {
 				$keyName = strtoupper(trim($item[0]));
 				switch ($keyName) {
@@ -261,23 +308,25 @@ final class Query
 					case 'IN':
 					case 'NOT IN':
 						$index = count($item[1]);
-						$where .= $keyName.' ('.trim(str_repeat('?,', $index), ',').')';
+						$where .= $keyName . ' (' . rtrim(str_repeat('?,', $index), ',') . ')';
 						$paramsType .= isset($intMap[$key]) ? str_repeat('i', $index) : str_repeat('s', $index);
-						$params = array_merge($params, $item[1]);
+						foreach ($item[1] as $v) {
+							$params[] = $v;
+						}
 						break;
 					default:
-						$where .= $item[0].' ?';
+						$where .= $item[0] . ' ?';
 						$paramsType .= isset($intMap[$key]) ? 'i' : 's';
 						$params[] = $item[1];
 						break;
 				}
 			} else {
-				$where .= ' = ?';
+				$where .= '= ?';
 				$paramsType .= isset($intMap[$key]) ? 'i' : 's';
 				$params[] = $item;
 			}
 		}
-		return ltrim($where, ' AND ') ? substr($where, 5) : '';
+		return $where !== '' ? substr($where, 5) : '';
 	}
 
 	public function sql()
@@ -285,9 +334,11 @@ final class Query
 		return $this->_sql;
 	}
 
-	public function getQuery($sql, $bindParams=[])
+	public function getQuery($sql, array $bindParams = [])
 	{
-		isDebug() && \App::append('exec_sql', $sql);
+		if (isDebug()) {
+			\App::append('exec_sql', $sql);
+		}
 		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
 		$this->clearQuery();
@@ -302,63 +353,65 @@ final class Query
 				}
 				if (is_bool($result)) {
 					$this->_insert_id = $mysqli->insert_id;
-					$return = $mysqli->affected_rows;
-				} else {
-					$return = $result->fetch_all(MYSQLI_ASSOC);
-					$result->free();
+					return $mysqli->affected_rows;
 				}
-			} else {
-				$stmt = $mysqli->prepare($sql);
-				if ($stmt === false) {
-					throw new \Exception('SQL prepare failed: ' . $mysqli->error . PHP_EOL . 'SQL: ' . $sql, $mysqli->errno);
-				}
-				$stmt->bind_param(...$bindParams);
-				$stmt->execute();
-				$result = $stmt->get_result();
-				if (is_bool($result)) {
-					$this->_insert_id = $stmt->insert_id;	
-					$return = $stmt->affected_rows;
-				} else {
-					$return = $result->fetch_all(MYSQLI_ASSOC);
-					$result->free();
-				}
-				$stmt->close();
+				$return = $result->fetch_all(MYSQLI_ASSOC);
+				$result->free();
+				return $return;
 			}
+
+			$stmt = $mysqli->prepare($sql);
+			if ($stmt === false) {
+				throw new \Exception('SQL prepare failed: ' . $mysqli->error . PHP_EOL . 'SQL: ' . $sql, $mysqli->errno);
+			}
+			$stmt->bind_param(...$bindParams);
+			$stmt->execute();
+			$result = $stmt->get_result();
+			if (is_bool($result)) {
+				$this->_insert_id = $stmt->insert_id;	
+				$return = $stmt->affected_rows;
+			} else {
+				$return = $result->fetch_all(MYSQLI_ASSOC);
+				$result->free();
+			}
+			$stmt->close();
 			return $return;
-		} catch (\Exception $e){
-			$error[] = 'SQL: '.$sql;
-			$error[] = ', errno: '.$e->getCode().', error: '.$e->getMessage();
+		} catch (\Throwable $e) {
+			$error = ['SQL: ' . $sql, ', errno: ' . $e->getCode() . ', error: ' . $e->getMessage()];
+			throw new \Exception(implode(PHP_EOL, $error), 1);
 		}
-		throw new \Exception(implode(PHP_EOL, $error), 1);
 	}
 
 	/**
-	 * 仅重置查询状态，不重置 Model 层元数据 (_addTime/_updateTime/_intFields)
+	 * 仅重置查询状态，不重置 Model 层元数据 (_addTime/_updateTime/_intFields/_intMap)
 	 */
 	private function clearQuery()
 	{
-		$this->_sql='';
-		$this->_where=[];
-		$this->_columns='*';
-		$this->_groupBy='';
-		$this->_orderBy='';
-		$this->_having=[];
-		$this->_offset=0;
-		$this->_limit=1;
+		$this->_sql = '';
+		$this->_where = [];
+		$this->_columns = '*';
+		$this->_groupBy = '';
+		$this->_orderBy = '';
+		$this->_having = [];
+		$this->_offset = 0;
+		$this->_limit = 1;
 	}
 
 	public function start() 
 	{
-		return $this->getQuery('START TRANSACTION');
+		$mysqli = frame('Connection')->setDb($this->_database);
+		return $mysqli ? $mysqli->begin_transaction() : false;
 	}
 
 	public function rollback()
 	{
-		return $this->getQuery('ROLLBACK');
+		$mysqli = frame('Connection')->setDb($this->_database);
+		return $mysqli ? $mysqli->rollback() : false;
 	}
 
 	public function commit()
 	{
-		return $this->getQuery('COMMIT');
+		$mysqli = frame('Connection')->setDb($this->_database);
+		return $mysqli ? $mysqli->commit() : false;
 	}
 }

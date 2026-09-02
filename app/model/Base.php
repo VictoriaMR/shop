@@ -24,21 +24,21 @@ class Base
 			$this->_instance->table($this->_table);
 			$this->_instance->_addTime = $this->_addTime;
 			$this->_instance->_updateTime = $this->_updateTime;
-			$this->_instance->_intFields = $this->_intFields;
+			$this->_instance->setIntFields($this->_intFields);
 		}
 		return $this->_instance;
 	}
 
 	public function getConst($name)
 	{
-		return constant(get_class($this).'::'.$name);
+		return constant(get_class($this) . '::' . $name);
 	}
 
-	public function loadData($where, $field='*', $orderBy=[])
+	public function loadData($where, $field = '*', $orderBy = [])
 	{
 		if (!is_array($where)) {
 			if (!$this->_primaryKey) {
-				$this->_primaryKey = $this->_table.'_id';
+				$this->_primaryKey = $this->_table . '_id';
 			}
 			$where = [$this->_primaryKey => $where];
 		}
@@ -49,7 +49,7 @@ class Base
 	{
 		if (!is_array($where)) {
 			if (!$this->_primaryKey) {
-				$this->_primaryKey = $this->_table.'_id';
+				$this->_primaryKey = $this->_table . '_id';
 			}
 			$where = [$this->_primaryKey => $where];
 		}
@@ -60,24 +60,24 @@ class Base
 	{
 		if (!is_array($where)) {
 			if (!$this->_primaryKey) {
-				$this->_primaryKey = $this->_table.'_id';
+				$this->_primaryKey = $this->_table . '_id';
 			}
 			$where = [$this->_primaryKey => $where];
 		}
 		return $this->instance()->where($where)->delete();
 	}
 
-	public function insertData($data, $returnId=false)
+	public function insertData($data, $returnId = false)
 	{
 		return $returnId ? $this->instance()->insertGetId($data) : $this->instance()->insert($data);
 	}
 
-	public function getCountData(array $where=[]) 
+	public function getCountData(array $where = []) 
 	{
 		return $this->instance()->where($where)->count();
 	}
 
-	public function getListData(array $where=[], $field='*', $page=0, $size=0, $order=[], $group='')
+	public function getListData(array $where = [], $field = '*', $page = 0, $size = 0, $order = [], $group = '')
 	{
 		return $this->instance()->where($where)->field($field)->page($page, $size)->orderBy($order)->groupBy($group)->get();
 	}
@@ -89,7 +89,7 @@ class Base
 
 	public function userId()
 	{
-		if (!$this->_memId) {
+		if ($this->_memId === null) {
 			$this->_memId = userId();
 		}
 		return $this->_memId;
@@ -97,7 +97,7 @@ class Base
 
 	public function siteId()
 	{
-		if (!$this->_siteId) {
+		if ($this->_siteId === null) {
 			$this->_siteId = siteId();
 		}
 		return $this->_siteId;
@@ -105,7 +105,7 @@ class Base
 
 	public function lanId()
 	{
-		if (!$this->_lanId) {
+		if ($this->_lanId === null) {
 			$this->_lanId = lanId();
 		}
 		return $this->_lanId;
@@ -113,7 +113,7 @@ class Base
 
 	public function currencyId()
 	{
-		if (!$this->_currencyId) {
+		if ($this->_currencyId === null) {
 			$this->_currencyId = currencyId();
 		}
 		return $this->_currencyId;

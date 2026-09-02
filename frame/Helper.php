@@ -10,18 +10,18 @@ function dd(...$arg) {
 
 function config($type, $name = '', $default = '') {
 	static $configs = [];
+	if ($type === 'domain' && $name !== '') {
+		$domainContext = \App::get('domain');
+		if (is_array($domainContext) && isset($domainContext[$name])) {
+			return $domainContext[$name];
+		}
+	}
 	if (!isset($configs[$type])) {
 		$file = ROOT_PATH . 'config/' . $type . '.php';
 		$configs[$type] = is_file($file) ? require $file : [];
 	}
 	if ($name === '') {
 		return $configs[$type];
-	}
-	if ($type === 'domain') {
-		$domainContext = \App::get('domain');
-		if (is_array($domainContext) && isset($domainContext[$name])) {
-			return $domainContext[$name];
-		}
 	}
 	return $configs[$type][$name] ?? $default;
 }
@@ -89,7 +89,7 @@ function isJson($string) {
 }
 
 function isArray($arr) {
-	if (is_array($arr)) return $arr;
+	if (is_array($arr) || !is_string($arr)) return $arr;
 	$temp = json_decode($arr, true);
 	return json_last_error() === JSON_ERROR_NONE ? $temp : $arr;
 }
@@ -155,19 +155,15 @@ function input($name = '', $default = null) {
 }
 
 function appT($text, $replace = [], $lanId = '', $type = 'common') {
+	static $langCache = [];
 	$lanId = $lanId ?: lanId('code');
-	$key = 'translate_' . $type . '_' . $lanId;
-	$transData = \App::get($key);
-	if ($transData === null) {
+	$cacheKey = $type . '.' . $lanId;
+	if (!isset($langCache[$cacheKey])) {
 		$file = ROOT_PATH . 'template/' . config('domain', 'template') . '/' . (isMobile() ? 'mobile' : 'computer') . '/language/' . $type . '/' . $lanId . '.php';
-		$transData = is_file($file) ? require $file : [];
-		\App::set($key, $transData);
+		$langCache[$cacheKey] = is_file($file) ? require $file : [];
 	}
-	$translated = $transData[$text] ?? null;
-	if ($translated) {
-		return $replace ? strtr($translated, $replace) : $translated;
-	}
-	return $text;
+	$translated = $langCache[$cacheKey][$text] ?? $text;
+	return $replace ? strtr($translated, $replace) : $translated;
 }
 
 function distT($text, $replace = [], $lanId = '') {
@@ -206,15 +202,22 @@ function getDirFile($path, &$result = null) {
 }
 
 function randString($len = 16, $lower = true, $upper = true, $number = true) {
-	$str = '';
-	if ($lower) $str .= 'abcdefghijnmqrt';
-	if ($upper) $str .= 'ABCDEFGHIJLNMQRT';
-	if ($number) $str .= '23456789';
+	static $poolCache = [];
+	$key = ($lower ? 1 : 0) | ($upper ? 2 : 0) | ($number ? 4 : 0);
+	if (!isset($poolCache[$key])) {
+		$str = '';
+		if ($lower) $str .= 'abcdefghijnmqrt';
+		if ($upper) $str .= 'ABCDEFGHIJLNMQRT';
+		if ($number) $str .= '23456789';
+		$poolCache[$key] = $str;
+	}
+	$str = $poolCache[$key];
 	$seedLen = strlen($str);
 	if ($seedLen === 0) return '';
 	$rStr = '';
+	$max = $seedLen - 1;
 	for ($i = 0; $i < $len; $i++) {
-		$rStr .= $str[random_int(0, $seedLen - 1)];
+		$rStr .= $str[random_int(0, $max)];
 	}
 	return $rStr;
 }
@@ -232,10 +235,7 @@ function currencyId($type = 'id') {
 }
 
 function userId($login = true) {
-	static $uid = null;
-	if ($uid === null) {
-		$uid = (int)frame('Session')->get(config('domain', 'class') . '_info', 0, 'mem_id');
-	}
+	$uid = (int)frame('Session')->get(config('domain', 'class') . '_info', 0, 'mem_id');
 	if (!$login && $uid <= 0) return 10000;
 	return $uid;
 }

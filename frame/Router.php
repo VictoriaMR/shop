@@ -13,8 +13,7 @@ final class Router
 
 		$key = key($_GET);
 		if ($key !== null && $key !== '') {
-			$cleanKey = str_replace('_html', '', $key);
-			$cleanKey = trim($cleanKey, '/');
+			$cleanKey = trim(str_replace('_html', '', $key), '/');
 			if ($cleanKey !== '') {
 				$pos = strpos($cleanKey, '/');
 				if ($pos === false) {
@@ -42,7 +41,7 @@ final class Router
 	public function url($name = '', $param = [], $joint = true)
 	{
 		$host = $_SERVER['HTTP_HOST'] ?? '';
-		if ($param) {
+		if (!empty($param)) {
 			if (is_array($param)) {
 				$query = http_build_query($param);
 				if (isset($this->funcExcept[$name])) {
@@ -66,7 +65,7 @@ final class Router
 				$name .= '/' . $func;
 			}
 		}
-		$queryString = $param ? '?' . http_build_query($param) : '';
+		$queryString = !empty($param) ? '?' . http_build_query($param) : '';
 		return '/' . ltrim($name, '/') . $queryString;
 	}
 
@@ -86,8 +85,8 @@ final class Router
 	public function nameFormat($name, $param = [])
 	{
 		if (!$name) return '';
-		$name = preg_replace('/[^-A-Za-z0-9\/\s\&=]/', '', strtolower($name));
-		$name = str_replace([' ', '&', '='], '-', $name);
+		$name = preg_replace('/[^-a-z0-9\/\s\&=]/', '', strtolower($name));
+		$name = strtr($name, [' ' => '-', '&' => '-', '=' => '-']);
 		$name = preg_replace('/-+/', '-', $name);
 		return trim($name, '-');
 	}

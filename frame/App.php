@@ -7,6 +7,28 @@ class App
 	private static $domain = [];
 	private static $_error = [];
 
+	private static $classMap = [
+		'frame\\App' => 'frame/App.php',
+		'frame\\Connection' => 'frame/Connection.php',
+		'frame\\Cookie' => 'frame/Cookie.php',
+		'frame\\Debug' => 'frame/Debug.php',
+		'frame\\Error' => 'frame/Error.php',
+		'frame\\Helper' => 'frame/Helper.php',
+		'frame\\Html' => 'frame/Html.php',
+		'frame\\Http' => 'frame/Http.php',
+		'frame\\IP' => 'frame/IP.php',
+		'frame\\Locker' => 'frame/Locker.php',
+		'frame\\Paginator' => 'frame/Paginator.php',
+		'frame\\Query' => 'frame/Query.php',
+		'frame\\Redis' => 'frame/Redis.php',
+		'frame\\Request' => 'frame/Request.php',
+		'frame\\Router' => 'frame/Router.php',
+		'frame\\Session' => 'frame/Session.php',
+		'frame\\Task' => 'frame/Task.php',
+		'frame\\Time' => 'frame/Time.php',
+		'frame\\View' => 'frame/View.php',
+	];
+
 	public static function init()
 	{
 		spl_autoload_register([__CLASS__, 'autoload'], true, true);
@@ -16,18 +38,21 @@ class App
 	public static function make($abstract, $params = null)
 	{
 		if ($params === null) {
-			if (isset(self::$instances[$abstract])) {
-				return self::$instances[$abstract];
+			$concrete = is_string($abstract)
+				? (strpos($abstract, '/') !== false ? strtr($abstract, '/', '\\') : $abstract)
+				: null;
+
+			$key = $concrete ?? $abstract;
+			if (isset(self::$instances[$key])) {
+				return self::$instances[$key];
 			}
+
 			if ($abstract instanceof \Closure) {
 				$instance = $abstract();
 			} else {
-				$concrete = strpos($abstract, '/') !== false ? strtr($abstract, '/', '\\') : $abstract;
 				$instance = new $concrete();
 			}
-			self::$instances[$abstract] = $instance;
-			self::$data['autoload'][$abstract] = $instance;
-			return $instance;
+			return self::$instances[$key] = $instance;
 		}
 
 		if ($abstract instanceof \Closure) {
@@ -40,8 +65,12 @@ class App
 	public static function send()
 	{
 		$rawHost = $_SERVER['HTTP_HOST'] ?? '';
-		$host = ($pos = strpos($rawHost, ':')) !== false ? substr($rawHost, 0, $pos) : $rawHost;
-		$host = strtolower($host);
+		if ($rawHost !== '') {
+			$pos = strpos($rawHost, ':');
+			$host = strtolower($pos !== false ? substr($rawHost, 0, $pos) : $rawHost);
+		} else {
+			$host = '';
+		}
 
 		$info = config('domain', $host);
 		if (!$info) {
@@ -62,7 +91,7 @@ class App
 		self::$data['router'] = $router;
 
 		if (self::middleware($router)) {
-			$classPath = 'app/controller/' . $router['class'] . '/' . $router['path'];
+			$classPath = 'app\\controller\\' . $router['class'] . '\\' . $router['path'];
 			$call = self::make($classPath);
 			$func = $router['func'];
 			if (method_exists($call, $func)) {
@@ -113,17 +142,12 @@ class App
 
 	public static function autoload($abstract)
 	{
-		$first = $abstract[0] ?? '';
-		if ($first === 'f' && strncmp($abstract, 'frame\\', 6) === 0) {
-			$file = ROOT_PATH . 'frame/' . substr($abstract, 6) . '.php';
-		} elseif ($first === 'a' && strncmp($abstract, 'app\\', 4) === 0) {
-			$file = ROOT_PATH . 'app/' . str_replace('\\', '/', substr($abstract, 4)) . '.php';
-		} elseif ($first === 't' && strncmp($abstract, 'template\\', 9) === 0) {
-			$file = ROOT_PATH . 'template/' . str_replace('\\', '/', substr($abstract, 9)) . '.php';
-		} else {
-			$file = ROOT_PATH . str_replace('\\', '/', $abstract) . '.php';
+		if (isset(self::$classMap[$abstract])) {
+			require ROOT_PATH . self::$classMap[$abstract];
+			return;
 		}
 
+		$file = ROOT_PATH . strtr($abstract, '\\', '/') . '.php';
 		if (is_file($file)) {
 			require $file;
 		}
@@ -153,7 +177,11 @@ class App
 
 	public static function runOver($ajax = false)
 	{
-		// FastCGI 环境下提前将响应输出冲刷给客户端，后续耗时任务后台异步完成
+		if (isDebug() && !$ajax && self::shouldShowTrace()) {
+			frame('Debug')->init();
+		}
+
+		// FastCGI 环境下立即将响应输出冲刷给客户端，后续耗时任务后台异步完成
 		if (function_exists('fastcgi_finish_request')) {
 			fastcgi_finish_request();
 		}
@@ -161,10 +189,6 @@ class App
 		$logEnabled = self::$domain['log'] ?? self::get('domain', 'log', false);
 		if ($logEnabled) {
 			frame('Debug')->runlog(isCli() ? 'task' : '');
-		}
-
-		if (isDebug() && !$ajax && self::shouldShowTrace()) {
-			frame('Debug')->init();
 		}
 
 		exit();

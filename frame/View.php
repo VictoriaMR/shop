@@ -7,10 +7,10 @@ class View
 	private $_data = [];
 	private $_device;
 	private $_templateDir;
+	private $_tplCache = [];
 
 	public function display($template = '', $match = true, $data = [])
 	{
-		$this->setData($data);
 		$data['layout_include_path'] = $this->getTemplate($template, $match);
 		$this->loadFile($this->getTemplateDir() . 'layout.php', $data);
 	}
@@ -23,7 +23,9 @@ class View
 				: '<!-- template missing -->';
 			return;
 		}
-		$this->setData($data);
+		if (!empty($data)) {
+			$this->_data = array_merge($this->_data, $data);
+		}
 		extract($this->_data, EXTR_OVERWRITE);
 		try {
 			include $template;
@@ -51,6 +53,11 @@ class View
 
 	private function getTemplate($template, $match = true)
 	{
+		$cacheKey = $template . ($match ? '_1' : '_0');
+		if (isset($this->_tplCache[$cacheKey])) {
+			return $this->_tplCache[$cacheKey];
+		}
+
 		if ($match) {
 			if ($template === '') {
 				$template = lcfirst(\App::get('router', 'path', 'Index')) . '/' . \App::get('router', 'func', 'index');
@@ -58,9 +65,12 @@ class View
 			if ($this->_device === null) {
 				$this->_device = isMobile() ? 'mobile' : 'computer';
 			}
-			return $this->getTemplateDir() . $this->_device . '/view/' . $template . '.php';
+			$path = $this->getTemplateDir() . $this->_device . '/view/' . $template . '.php';
+		} else {
+			$path = ROOT_PATH . $template . '.php';
 		}
-		return ROOT_PATH . $template . '.php';
+
+		return $this->_tplCache[$cacheKey] = $path;
 	}
 
 	public function load($template = '', $data = [], $match = true)

@@ -37,24 +37,30 @@ class Paginator
 		],
 	];
 
-	public function make($size=0, $total=0, $showPage=7)
+	public function make($size = 0, $total = 0, $showPage = 7)
 	{
 		$this->setSize($size);
 		$this->setTotal($total);
 		$this->setCurrent();
 		
 		$config = $this->config;
-		$prev = strtr($config['prev'][$this->current==1?'disabled':'enabled'], ['{url}'=>$this->url($this->current-1),'{text}'=>$config[siteId()<=80?'text_zh':'text']['prev']]);
+		$isZh = siteId() <= 80;
+		$textConf = $isZh ? $config['text_zh'] : $config['text'];
+		$prev = strtr($config['prev'][$this->current == 1 ? 'disabled' : 'enabled'], [
+			'{url}' => $this->url($this->current - 1),
+			'{text}' => $textConf['prev'],
+		]);
+		
 		//总页数
 		$pageStr = '';
-		$totalPage = ceil($this->total / $this->size);
-		if ($totalPage==0) {
-			$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[siteId()<=80?'text_zh':'text']['next']]);
+		$totalPage = (int)ceil($this->total / $this->size);
+		if ($totalPage == 0) {
+			$next = strtr($config['next']['disabled'], ['{url}' => '', '{text}' => $textConf['next']]);
 		} else {
 			if ($this->current < $totalPage) {
-				$next = strtr($config['next']['enabled'],['{url}'=>$this->url($this->current+1),'{text}'=>$config[siteId()<=80?'text_zh':'text']['next']]);
+				$next = strtr($config['next']['enabled'], ['{url}' => $this->url($this->current + 1), '{text}' => $textConf['next']]);
 			} else {
-				$next = strtr($config['next']['disabled'],['{url}'=>'','{text}'=>$config[siteId()<=80?'text_zh':'text']['next']]);
+				$next = strtr($config['next']['disabled'], ['{url}' => '', '{text}' => $textConf['next']]);
 			}
 			//默认拼接第一页
 			$pageStr .= strtr($config[1 == $this->current ? 'current' : 'paging'], [
@@ -87,11 +93,11 @@ class Paginator
 						'{text}' => '...',
 					]);
 				}
-				for ($i=$leftPage; $i<$this->current; $i++) {
+				for ($i = $leftPage; $i < $this->current; $i++) {
 					if ($i > 1) {
 						$pageStr .= strtr($config[$i == $this->current ? 'current' : 'paging'], [
 							'{url}' => $this->url($i),
-							'{text}' => $i
+							'{text}' => $i,
 						]);
 					}
 				}
@@ -103,15 +109,15 @@ class Paginator
 					]);
 				}
 				//中间过度...
-				for ($i=$this->current+1; $i<=$rightPage; $i++) {
+				for ($i = $this->current + 1; $i <= $rightPage; $i++) {
 					if ($i < $totalPage) {
 						$pageStr .= strtr($config[$i == $this->current ? 'current' : 'paging'], [
 							'{url}' => $this->url($i),
-							'{text}' => $i
+							'{text}' => $i,
 						]);
 					}
 				}
-				if ($totalPage > $rightPage+2) {
+				if ($totalPage > $rightPage + 2) {
 					$pageStr .= strtr($config['paging'], [
 						'{url}' => '',
 						'{text}' => '...',
@@ -121,7 +127,7 @@ class Paginator
 				if ($this->current != $totalPage) {
 					$pageStr .= strtr($config['paging'], [
 						'{url}' => $this->url($totalPage),
-						'{text}' => $totalPage
+						'{text}' => $totalPage,
 					]);
 				}
 			}
@@ -134,7 +140,7 @@ class Paginator
 			'{prev}' => $prev,
 			'{paging}' => $pageStr,
 			'{next}' => $next,
-			'{extra}' => siteId()<=80 ? strtr($config['extra'], ['{total}'=>$this->total, '{size}'=>$this->size, '{totalPage}'=>$totalPage]) : '',
+			'{extra}' => $isZh ? strtr($config['extra'], ['{total}' => $this->total, '{size}' => $this->size, '{totalPage}' => $totalPage]) : '',
 		];
 		return strtr($config['global'], $replace);
 	}

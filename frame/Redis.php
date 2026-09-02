@@ -40,9 +40,10 @@ class Redis
 	public function __call($func, $arg)
 	{
 		if (!$this->_connect) return false;
-		if ($func === 'blPop' || $func === 'brPop') {
+		if ($func === 'blPop' || $func === 'brPop' || $func === 'eval') {
 			return $this->_link->$func(...$arg);
-		} elseif ($func == 'hSet') {
+		}
+		if ($func === 'hSet') {
 			if (isset($arg[2]) && is_array($arg[2])) {
 				$arg[2] = json_encode($arg[2], JSON_UNESCAPED_UNICODE);
 			}
@@ -50,13 +51,12 @@ class Redis
 			$arg[1] = json_encode($arg[1], JSON_UNESCAPED_UNICODE);
 		}
 		$info = $this->_link->$func(...$arg);
-		if ($info) {
-			if (in_array($func, ['hGetAll'])) {
-				foreach ($info as $k => $v) {
-					$info[$k] = isArray($v);
-				}
-			} else {
-				$info = isArray($info);
+		if ($info && is_string($info)) {
+			return isArray($info);
+		}
+		if ($info && is_array($info) && $func === 'hGetAll') {
+			foreach ($info as $k => $v) {
+				$info[$k] = isArray($v);
 			}
 		}
 		return $info;

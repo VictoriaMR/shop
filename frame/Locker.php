@@ -14,10 +14,10 @@ class Locker
 
 	protected function getKey($name)
 	{
-		return self::LOCKERPREFIX.$name;
+		return self::LOCKERPREFIX . $name;
 	}
 
-	public function lock($name, $timeout=100)
+	public function lock($name, $timeout = 100)
 	{
 		$cas = randString(32);
 		$lock = $this->cache()->set($this->getKey($name), $cas, ['nx', 'ex' => $timeout]);
@@ -40,41 +40,36 @@ class Locker
 	public function getLock($name, $cas)
 	{
 		$lock = $this->cache()->get($this->getKey($name));
-		if ($lock == $cas) {
+		if ($lock === $cas) {
 			$this->lock[$name] = $cas;
 			return true;
 		}
 		return false;
 	}
 
-	public function update($name, $timeout=10)
-    {
-    	if (!isset($this->lock[$name])) {
-    		return false;
-    	}
-		$key = $this->getKey($name);
-		$lock = $this->cache()->get($key);
-		if ($lock == $this->lock[$name]) {
-			return $this->cache()->expire($key, $timeout);
+	public function update($name, $timeout = 10)
+	{
+		if (!isset($this->lock[$name])) {
+			return false;
 		}
-		return false;
-    }
+		$cas = $this->lock[$name];
+		$lua = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('expire', KEYS[1], ARGV[2]) else return 0 end";
+		return (bool)$this->cache()->eval($lua, [$this->getKey($name), $cas, $timeout], 1);
+	}
 
-    public function unlock($name)
-    {
-    	if (!isset($this->lock[$name])) {
-    		return false;
-    	}
-		$lock = $this->cache()->get($this->getKey($name));
-		if ($lock == $this->lock[$name]) {
-			unset($this->lock[$name]);
-			return $this->cache()->del($this->getKey($name));
+	public function unlock($name)
+	{
+		if (!isset($this->lock[$name])) {
+			return false;
 		}
-		return false;
-    }
+		$cas = $this->lock[$name];
+		unset($this->lock[$name]);
+		$lua = "if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end";
+		return (bool)$this->cache()->eval($lua, [$this->getKey($name), $cas], 1);
+	}
 
-    public function existLock($name)
-    {
-    	return $this->cache()->exists($name);
-    }
+	public function existLock($name)
+	{
+		return (bool)$this->cache()->exists($this->getKey($name));
+	}
 }
