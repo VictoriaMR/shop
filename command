@@ -1,12 +1,8 @@
 #!/usr/bin/env php
-<?php 
+<?php
+define('APP_MEMORY_START', memory_get_usage());
+define('APP_TIME_START', microtime(true));
 defined('IS_CLI') || define('IS_CLI', true);
 require __DIR__ . '/init.php';
-
-if (!isset($argv[1])) exit('class error');
-if (!isset($argv[2])) exit('function error');
-
-$class = $argv[1];
-$func = $argv[2];
-\App::make($class)->$func();
-\App::runOver();
+\App::make($argv[1])->{$argv[2]}();
+\App::runOver();

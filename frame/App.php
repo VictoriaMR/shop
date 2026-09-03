@@ -13,7 +13,6 @@ class App
 		'frame\\Cookie' => 'frame/Cookie.php',
 		'frame\\Debug' => 'frame/Debug.php',
 		'frame\\Error' => 'frame/Error.php',
-		'frame\\Helper' => 'frame/Helper.php',
 		'frame\\Html' => 'frame/Html.php',
 		'frame\\Http' => 'frame/Http.php',
 		'frame\\IP' => 'frame/IP.php',
@@ -35,31 +34,16 @@ class App
 		frame('Error')->register();
 	}
 
-	public static function make($abstract, $params = null)
+	public static function make($abstract)
 	{
-		if ($params === null) {
-			$concrete = is_string($abstract)
-				? (strpos($abstract, '/') !== false ? strtr($abstract, '/', '\\') : $abstract)
-				: null;
-
-			$key = $concrete ?? $abstract;
-			if (isset(self::$instances[$key])) {
-				return self::$instances[$key];
-			}
-
-			if ($abstract instanceof \Closure) {
-				$instance = $abstract();
-			} else {
-				$instance = new $concrete();
-			}
-			return self::$instances[$key] = $instance;
+		// 单例缓存命中
+		if (isset(self::$instances[$abstract])) {
+			return self::$instances[$abstract];
 		}
-
-		if ($abstract instanceof \Closure) {
-			return $abstract($params);
-		}
-		$concrete = strpos($abstract, '/') !== false ? strtr($abstract, '/', '\\') : $abstract;
-		return new $concrete($params);
+		// 仅在包含 '/' 时做转换
+		$concrete = strtr($abstract, '/', '\\');
+		self::$instances[$abstract] = new $concrete();
+		return self::$instances[$abstract];
 	}
 
 	public static function send()
@@ -72,12 +56,11 @@ class App
 			$host = '';
 		}
 
-		$info = config('domain', $host);
-		if (!$info) {
-			$domains = config('domain');
-			if (is_array($domains) && !empty($domains)) {
-				$info = $domains[$host] ?? reset($domains);
-			}
+		// 一次加载，直接查找
+		$domains = config('domain');
+		$info = $domains[$host] ?? null;
+		if (!$info && is_array($domains) && !empty($domains)) {
+			$info = reset($domains);
 		}
 
 		if (!$info) {
@@ -107,10 +90,6 @@ class App
 	private static function middleware($request)
 	{
 		$except = config('except', $request['class']);
-
-		if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-			@session_start();
-		}
 
 		$session = frame('Session');
 		$isHome = ($request['class'] === 'home');
@@ -148,9 +127,8 @@ class App
 		}
 
 		$file = ROOT_PATH . strtr($abstract, '\\', '/') . '.php';
-		if (is_file($file)) {
-			require $file;
-		}
+		// 用 @include 替代 is_file() + require，减少一次 stat 系统调用
+		@include $file;
 	}
 
 	public static function set($name, $value, $key = null)

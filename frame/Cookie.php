@@ -15,6 +15,12 @@ class Cookie
 
 	public function init($home = true)
 	{
+		// 如果已有登录状态，跳过 UUID 自动登录查询
+		if (userId() > 0) {
+			frame('Session')->set('set_cookie', true);
+			return;
+		}
+
 		$uuid = $this->get('uuid');
 		if ($uuid && is_string($uuid) && strlen($uuid) >= 16) {
 			// 自动登录查询
@@ -106,18 +112,7 @@ class Cookie
 		frame('Session')->set(config('domain', 'class') . '_info', $value, $name);
 		unset($config['expire']);
 
-		if (PHP_VERSION_ID >= 70300) {
-			return setcookie($name, $cookieValue, $config);
-		}
-		return setcookie(
-			$name,
-			$cookieValue,
-			$config['expires'] ?? 0,
-			$config['path'] ?? '/',
-			$config['domain'] ?? '',
-			$config['secure'] ?? false,
-			$config['httponly'] ?? false
-		);
+		return setcookie($name, $cookieValue, $config);
 	}
 
 	public function has($name)

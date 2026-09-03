@@ -4,11 +4,21 @@ namespace frame;
 
 class Session
 {
+	private $_started = false;
+
+	private function ensureStarted()
+	{
+		if (!$this->_started) {
+			if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+				@session_start();
+			}
+			$this->_started = (session_status() === PHP_SESSION_ACTIVE);
+		}
+	}
+
 	public function set($name, $data = null, $key = null)
 	{
-		if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-			@session_start();
-		}
+		$this->ensureStarted();
 		if ($key !== null) {
 			if (!isset($_SESSION[$name]) || !is_array($_SESSION[$name])) {
 				$_SESSION[$name] = [];
@@ -26,7 +36,7 @@ class Session
 			return $default;
 		}
 		if ($key !== null) {
-			return isset($_SESSION[$name][$key]) ? $_SESSION[$name][$key] : $default;
+			return $_SESSION[$name][$key] ?? $default;
 		}
 		return $_SESSION[$name] ?? $default;
 	}
@@ -56,5 +66,6 @@ class Session
 		if (session_status() === PHP_SESSION_ACTIVE) {
 			session_write_close();
 		}
+		$this->_started = false;
 	}
 }

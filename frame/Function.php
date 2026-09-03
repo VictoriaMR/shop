@@ -10,18 +10,19 @@ function dd(...$arg) {
 
 function config($type, $name = '', $default = '') {
 	static $configs = [];
-	if ($type === 'domain' && $name !== '') {
-		$domainContext = \App::get('domain');
-		if (is_array($domainContext) && isset($domainContext[$name])) {
-			return $domainContext[$name];
-		}
-	}
 	if (!isset($configs[$type])) {
 		$file = ROOT_PATH . 'config/' . $type . '.php';
 		$configs[$type] = is_file($file) ? require $file : [];
 	}
 	if ($name === '') {
 		return $configs[$type];
+	}
+	// domain 类型优先从运行时上下文取值（App::send() 设置后才生效）
+	if ($type === 'domain') {
+		$domainContext = \App::get('domain');
+		if ($domainContext !== null && isset($domainContext[$name])) {
+			return $domainContext[$name];
+		}
 	}
 	return $configs[$type][$name] ?? $default;
 }
@@ -36,12 +37,16 @@ function redirect($url = '', $return = true) {
 	\App::runOver(true);
 }
 
-function service($name, $params = null) {
-	return \App::make('app/service/' . $name, $params);
+function make($name) {
+	return \App::make($name);
 }
 
-function model($name, $params = null) {
-	return \App::make('app/model/' . $name, $params);
+function service($name) {
+	return \App::make('app/service/' . $name);
+}
+
+function model($name) {
+	return \App::make('app/model/' . $name);
 }
 
 function frame($name) {

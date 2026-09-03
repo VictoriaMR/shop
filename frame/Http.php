@@ -19,9 +19,7 @@ class Http
 		$ch = curl_init();
 		$opt = array(
 			CURLOPT_HEADER => 0,
-			CURLOPT_FRESH_CONNECT => 1,
 			CURLOPT_RETURNTRANSFER => 1,
-			CURLOPT_FORBID_REUSE => 1,
 			CURLOPT_TIMEOUT => $timeout,
 		);
 		if ($header) {
