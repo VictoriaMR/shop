@@ -8,21 +8,14 @@ function dd(...$arg) {
 	exit();
 }
 
-function config($type, $name = '', $default = '') {
+function config($type, $name = null, $default = null) {
 	static $configs = [];
 	if (!isset($configs[$type])) {
 		$file = ROOT_PATH . 'config/' . $type . '.php';
 		$configs[$type] = is_file($file) ? require $file : [];
 	}
-	if ($name === '') {
+	if ($name === null) {
 		return $configs[$type];
-	}
-	// domain 类型优先从运行时上下文取值（App::send() 设置后才生效）
-	if ($type === 'domain') {
-		$domainContext = \App::get('domain');
-		if ($domainContext !== null && isset($domainContext[$name])) {
-			return $domainContext[$name];
-		}
 	}
 	return $configs[$type][$name] ?? $default;
 }
@@ -290,4 +283,4 @@ function redis($db = 0) {
 
 function db($db = null) {
 	return frame('Connection')->setDb($db);
-}
+}

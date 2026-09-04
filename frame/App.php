@@ -7,27 +7,6 @@ class App
 	private static $domain = [];
 	private static $_error = [];
 
-	private static $classMap = [
-		'frame\\App' => 'frame/App.php',
-		'frame\\Connection' => 'frame/Connection.php',
-		'frame\\Cookie' => 'frame/Cookie.php',
-		'frame\\Debug' => 'frame/Debug.php',
-		'frame\\Error' => 'frame/Error.php',
-		'frame\\Html' => 'frame/Html.php',
-		'frame\\Http' => 'frame/Http.php',
-		'frame\\IP' => 'frame/IP.php',
-		'frame\\Locker' => 'frame/Locker.php',
-		'frame\\Paginator' => 'frame/Paginator.php',
-		'frame\\Query' => 'frame/Query.php',
-		'frame\\Redis' => 'frame/Redis.php',
-		'frame\\Request' => 'frame/Request.php',
-		'frame\\Router' => 'frame/Router.php',
-		'frame\\Session' => 'frame/Session.php',
-		'frame\\Task' => 'frame/Task.php',
-		'frame\\Time' => 'frame/Time.php',
-		'frame\\View' => 'frame/View.php',
-	];
-
 	public static function init()
 	{
 		spl_autoload_register([__CLASS__, 'autoload'], true, true);
@@ -36,54 +15,31 @@ class App
 
 	public static function make($abstract)
 	{
-		// 单例缓存命中
 		if (isset(self::$instances[$abstract])) {
 			return self::$instances[$abstract];
 		}
-		// 仅在包含 '/' 时做转换
 		$concrete = strtr($abstract, '/', '\\');
-		self::$instances[$abstract] = new $concrete();
-		return self::$instances[$abstract];
+		return self::$instances[$abstract] = new $concrete();
 	}
 
 	public static function send()
 	{
-		$rawHost = $_SERVER['HTTP_HOST'] ?? '';
-		if ($rawHost !== '') {
-			$pos = strpos($rawHost, ':');
-			$host = strtolower($pos !== false ? substr($rawHost, 0, $pos) : $rawHost);
-		} else {
-			$host = '';
+		$host = $_SERVER['HTTP_HOST'] ?? '';
+		if ($host) {
+			$host = strtolower(strstr($host, ':', true) ?: $host);
 		}
-
-		// 一次加载，直接查找
-		$domains = config('domain');
-		$info = $domains[$host] ?? null;
-		if (!$info && is_array($domains) && !empty($domains)) {
-			$info = reset($domains);
+		self::$data['domain'] = config('domain', $host, false);
+		if (!self::$data['domain']) {
+			throw new \Exception('Domain host: [' . $host . '] does not exist!');
 		}
-
-		if (!$info) {
-			throw new \Exception('Domain host: ' . ($rawHost ?: 'unknown') . ' does not exist!');
-		}
-
-		self::$domain = $info;
-		self::$data['domain'] = $info;
-
-		$router = frame('Router')->analyze($info['class']);
+		// 分析路由
+		$router = frame('Router')->analyze(self::$data['domain']['class']);
 		self::$data['router'] = $router;
-
+		//中间件校验
 		if (self::middleware($router)) {
-			$classPath = 'app\\controller\\' . $router['class'] . '\\' . $router['path'];
-			$call = self::make($classPath);
-			$func = $router['func'];
-			if (method_exists($call, $func)) {
-				$call->$func();
-			} else {
-				throw new \Exception('Action not found: ' . $classPath . '::' . $func);
-			}
+			self::make('app/controller/' . $router['class'] . '/' . $router['path'])->{$router['func']}();
 		}
-
+		//结束输出
 		self::runOver();
 	}
 
@@ -121,14 +77,7 @@ class App
 
 	public static function autoload($abstract)
 	{
-		if (isset(self::$classMap[$abstract])) {
-			require ROOT_PATH . self::$classMap[$abstract];
-			return;
-		}
-
-		$file = ROOT_PATH . strtr($abstract, '\\', '/') . '.php';
-		// 用 @include 替代 is_file() + require，减少一次 stat 系统调用
-		@include $file;
+		require ROOT_PATH . strtr($abstract, '\\', '/') . '.php';
 	}
 
 	public static function set($name, $value, $key = null)
