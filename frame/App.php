@@ -46,33 +46,19 @@ class App
 	private static function middleware($request)
 	{
 		$except = config('except', $request['class']);
-
-		$session = frame('Session');
-		$isHome = ($request['class'] === 'home');
-
-		if (!$session->get('set_uuid', false)) {
-			frame('Cookie')->setUuid($isHome);
-		}
-
-		// 语言/货币 Cookie 仅前端需要
-		if ($isHome && $request['path'] !== 'Api' && $request['path'] !== 'Login' && !$session->get('set_cookie', false)) {
-			frame('Cookie')->init(true);
-		}
-
 		if (isset($except[$request['path']]) || isset($except[$request['path'] . '/' . $request['func']])) {
 			return true;
 		}
-
-		if (userId() < 1) {
-			if (isAjax()) {
-				self::jsonResponse(400, [], 'need login');
-			} else {
-				redirect(url('login'));
-			}
-			return false;
+		$rst = frame('Cookie')->init($request['class'] === 'home');
+		if ($rst) {
+			return true;
 		}
-
-		return true;
+		if (isAjax()) {
+			self::jsonResponse(400, [], 'need login');
+		} else {
+			redirect(url('login'));
+		}
+		return false;
 	}
 
 	public static function autoload($abstract)
@@ -104,6 +90,7 @@ class App
 
 	public static function runOver($ajax = false)
 	{
+		dd('end');
 		if (isDebug() && !$ajax && self::shouldShowTrace()) {
 			frame('Debug')->init();
 		}

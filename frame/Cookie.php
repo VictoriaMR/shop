@@ -15,121 +15,56 @@ class Cookie
 
 	public function init($home = true)
 	{
-		// 如果已有登录状态，跳过 UUID 自动登录查询
 		if (userId() > 0) {
-			frame('Session')->set('set_cookie', true);
-			return;
+			return true;
 		}
-
 		$uuid = $this->get('uuid');
-		if ($uuid && is_string($uuid) && strlen($uuid) >= 16) {
+		if ($uuid) {
 			// 自动登录查询
 			$info = service('member/Uuid')->getInfo($uuid);
 			if (!empty($info['mem_id'])) {
 				service('member/Member')->loginById($info['mem_id']);
-				if ($home && !empty($info['lan_cur'])) {
+				if ($home) {
 					$arr = explode('_', $info['lan_cur']);
-					if (isset($arr[0])) $this->set('language', $arr[0]);
-					if (isset($arr[1])) $this->set('currency', $arr[1]);
+					$this->set('language', $arr[0] ?? 'en');
+					$this->set('currency', $arr[1] ?? 'usd');
 				}
 			}
 		}
-		frame('Session')->set('set_cookie', true);
+		return false;
 	}
 
-	public function setUuid($home = true)
+	private function setUuid()
 	{
-		$uuid = $this->get('uuid');
-		if (empty($uuid)) {
-			$exp = 3600 * 24 * 10;
-			$this->set('uuid', randString(32), $exp);
-			if ($home) {
-				$this->set('language', 'en', $exp);
-				$this->set('currency', 'usd', $exp);
-			}
-		}
-		frame('Session')->set('set_uuid', true);
-	}
-
-	public function login($memId)
-	{
-		$uuidService = service('member/Uuid');
-		$uuid = $this->get('uuid');
-		if (empty($uuid)) {
-			return false;
-		}
-		$where = [
-			'uuid' => $uuid,
-			'site_id' => siteId(),
-		];
-		if ($uuidService->getCountData($where)) {
-			return false;
-		}
-		$where['mem_id'] = $memId;
-		$where['lan_cur'] = 'en_usd';
-		return $uuidService->insert($where);
-	}
-
-	public function updateLanguage($language)
-	{
-		return $this->set('language', $language);
-	}
-
-	public function updateCurrency($currency)
-	{
-		return $this->set('currency', $currency);
+		$uuid = randString(32);
+		$this->set('uuid', $uuid, ['expires' => 3600 * 24 * 10]);
+		return $uuid;
 	}
 
 	public function set($name, $value = '', $option = null)
 	{
-		$config = $this->config;
-		$reqTime = $_SERVER['REQUEST_TIME'] ?? time();
-
-		if ($option !== null) {
-			if (is_numeric($option)) {
-				$config['expires'] = $reqTime + intval($option);
-			} else {
-				if (is_string($option)) {
-					parse_str($option, $option);
-				}
-				$option = array_change_key_case($option);
-				$config = array_merge($config, $option);
-				if (isset($option['expire']) && !isset($option['expires'])) {
-					$config['expires'] = $reqTime + intval($option['expire']);
-				} elseif (isset($config['expires']) && $config['expires'] > 0 && $config['expires'] < 1000000000) {
-					$config['expires'] = $reqTime + intval($config['expires']);
-				}
-			}
-		}
-
-		if (is_array($value)) {
-			$cookieValue = 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE);
+		if ($option === null) {
+			$option = $this->config;
 		} else {
-			$cookieValue = (string)$value;
+			$option = $option + $this->config;
 		}
-
-		$_COOKIE[$name] = $cookieValue;
-		frame('Session')->set(config('domain', 'class') . '_info', $value, $name);
-		unset($config['expire']);
-
-		return setcookie($name, $cookieValue, $config);
-	}
-
-	public function has($name)
-	{
-		return isset($_COOKIE[$name]);
+		if (is_array($value)) {
+			$value = 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE);
+		}
+		return setcookie($name, $value, $option);
 	}
 
 	public function get($name)
 	{
-		if (!isset($_COOKIE[$name])) {
-			return null;
+		if (isset($_COOKIE[$name])) {
+			$value = $_COOKIE[$name];
+			if (strncmp($value, 'json:', 5) === 0) {
+				return json_decode(substr($value, 5), true);
+			} else {
+				return $value;
+			}
 		}
-		$value = $_COOKIE[$name];
-		if (is_string($value) && strncmp($value, 'json:', 5) === 0) {
-			return json_decode(substr($value, 5), true);
-		}
-		return $value;
+		return null;
 	}
 
 	public function clear()
@@ -140,4 +75,4 @@ class Cookie
 		}
 		return false;
 	}
-}
+}

@@ -10,16 +10,14 @@ final class Query
 	private $_where = [];
 	private $_columns = '*';
 	private $_groupBy = '';
-	private $_orderBy = '';
+	private $_orderBy = [];
 	private $_having = [];
-	private $_offset = 0;
-	private $_limit = 1;
-	private $_withSite = true;
+	private $_limit;
 	private $_insert_id = 0;
 	public $_addTime;
 	public $_updateTime;
 	public $_intFields = [];
-	private $_intMap = null;
+	private $_intMap;
 
 	public function setDb($database = null)
 	{
@@ -76,13 +74,13 @@ final class Query
 		if (is_array($columns)) {
 			foreach ($columns as $key => $value) {
 				if (is_array($value)) {
-					$this->_orderBy .= "FIELD(`{$key}`, '" . implode("', '", $value) . "'),";
+					$this->_orderBy[] = "FIELD(`{$key}`, '" . implode("', '", $value) . "')";
 				} else {
-					$this->_orderBy .= '`' . $key . '` ' . strtoupper($value) . ',';
+					$this->_orderBy[] = '`' . $key . '` ' . strtoupper($value);
 				}
 			}
 		} elseif ($columns) {
-			$this->_orderBy .= '`' . $columns . '` ' . strtoupper($operator) . ',';
+			$this->_orderBy[] = '`' . $columns . '` ' . strtoupper($operator);
 		}
 		return $this;
 	}
@@ -109,7 +107,7 @@ final class Query
 		$parts = [];
 		foreach ($columns as $col) {
 			$col = trim($col);
-			if ($col === '*' || preg_match('/[\(\)\s\.\*]/', $col)) {
+			if ($col === '*' || strpbrk($col, '(). *') !== false) {
 				$parts[] = $col;
 			} else {
 				$parts[] = '`' . $col . '`';
@@ -121,8 +119,7 @@ final class Query
 
 	public function page(int $page, int $size)
 	{
-		$this->_offset = $page > 0 ? ($page - 1) * $size : 0;
-		$this->_limit = $size;
+		$this->_limit = [$page > 0 ? ($page - 1) * $size : 0, $size];
 		return $this;
 	}
 
@@ -138,27 +135,27 @@ final class Query
 		if ($this->_groupBy !== '') {
 			$sql .= ' GROUP BY ' . $this->_groupBy;
 		}
-		if ($this->_orderBy !== '') {
-			$sql .= ' ORDER BY ' . rtrim($this->_orderBy, ',');
-		}
-		if (!empty($this->_having)) {
+		if ($this->_having) {
 			$havingParts = [];
 			foreach ($this->_having as $key => $value) {
-				$havingParts[] = ' `' . $key . '` ' . $value[0] . ' ?';
+				$havingParts[] = '`' . $key . '` ' . $value[0] . ' ?';
 				$paramsType .= 's';
 				$params[] = $value[1];
 			}
 			$sql .= ' HAVING ' . implode(' AND ', $havingParts);
 		}
-		if ($this->_limit > 0) {
-			$sql .= ' LIMIT ' . $this->_offset . ',' . $this->_limit;
+		if ($this->_orderBy) {
+			$sql .= ' ORDER BY ' . implode(',', $this->_orderBy);
+		}
+		if ($this->_limit !== null) {
+			$sql .= ' LIMIT ' . $this->_limit[0] . ',' . $this->_limit[1];
 		}
 		return $this->getQuery($sql, $paramsType ? array_merge([$paramsType], $params) : []);
 	}
 
 	public function find()
 	{
-		$this->page(0, 1);
+		$this->_limit = [0, 1];
 		$res = $this->get();
 		return $res[0] ?? [];
 	}
@@ -170,28 +167,32 @@ final class Query
 
 	public function count($where = []): int
 	{
-		if (!empty($where)) {
+		if ($where) {
 			$this->where($where);
 		}
-		$res = $this->field('COUNT(*) AS core_count')->find();
+		$this->_columns = 'COUNT(*) AS core_count';
+		$res = $this->find();
 		return (int)($res['core_count'] ?? 0);
 	}
 
 	public function max($field): int
 	{
-		$res = $this->field('MAX(`' . $field . '`) AS core_max')->find();
+		$this->_columns = 'MAX(`' . $field . '`) AS core_max';
+		$res = $this->find();
 		return (int)($res['core_max'] ?? 0);
 	}
 
 	public function min($field): int
 	{
-		$res = $this->field('MIN(`' . $field . '`) AS core_min')->find();
+		$this->_columns = 'MIN(`' . $field . '`) AS core_min';
+		$res = $this->find();
 		return (int)($res['core_min'] ?? 0);
 	}
 
 	public function sum($field): int
 	{
-		$res = $this->field('SUM(`' . $field . '`) AS core_sum')->find();
+		$this->_columns = 'SUM(`' . $field . '`) AS core_sum';
+		$res = $this->find();
 		return (int)($res['core_sum'] ?? 0);
 	}
 
@@ -208,7 +209,7 @@ final class Query
 		$paramValue = '';
 		$index = 0;
 		foreach ($data as $value) {
-			if ($this->_withSite && isset($intMap['site_id'])) {
+			if (isset($intMap['site_id'])) {
 				$value['site_id'] = siteId();
 			}
 			if ($this->_addTime) {
@@ -290,43 +291,45 @@ final class Query
 	private function analyzeWhere(&$paramsType = '', array &$params = [])
 	{
 		$intMap = $this->getIntMap();
-		if ($this->_withSite && isset($intMap['site_id'])) {
+		if (isset($intMap['site_id'])) {
 			$this->_where['site_id'] = siteId();
 		}
-		$where = '';
+		if (!$this->_where) {
+			return '';
+		}
+		$parts = [];
 		foreach ($this->_where as $key => $item) {
-			$where .= ' AND `' . $key . '` ';
 			if (is_array($item)) {
 				$keyName = strtoupper(trim($item[0]));
 				switch ($keyName) {
 					case 'BETWEEN':
-						$where .= 'BETWEEN ? AND ?';
+						$parts[] = '`' . $key . '` BETWEEN ? AND ?';
 						$paramsType .= 'ss';
 						$params[] = $item[1][0];
 						$params[] = $item[1][1];
 						break;
 					case 'IN':
 					case 'NOT IN':
-						$index = count($item[1]);
-						$where .= $keyName . ' (' . rtrim(str_repeat('?,', $index), ',') . ')';
-						$paramsType .= isset($intMap[$key]) ? str_repeat('i', $index) : str_repeat('s', $index);
+						$count = count($item[1]);
+						$parts[] = '`' . $key . '` ' . $keyName . ' (' . rtrim(str_repeat('?,', $count), ',') . ')';
+						$paramsType .= isset($intMap[$key]) ? str_repeat('i', $count) : str_repeat('s', $count);
 						foreach ($item[1] as $v) {
 							$params[] = $v;
 						}
 						break;
 					default:
-						$where .= $item[0] . ' ?';
+						$parts[] = '`' . $key . '` ' . $item[0] . ' ?';
 						$paramsType .= isset($intMap[$key]) ? 'i' : 's';
 						$params[] = $item[1];
 						break;
 				}
 			} else {
-				$where .= '= ?';
+				$parts[] = '`' . $key . '` = ?';
 				$paramsType .= isset($intMap[$key]) ? 'i' : 's';
 				$params[] = $item;
 			}
 		}
-		return $where !== '' ? substr($where, 5) : '';
+		return implode(' AND ', $parts);
 	}
 
 	public function sql()
@@ -337,9 +340,9 @@ final class Query
 	public function getQuery($sql, array $bindParams = [])
 	{
 		if (isDebug()) {
+			$this->_sql = $sql;
 			\App::append('exec_sql', $sql);
 		}
-		$this->_sql = $sql;
 		$mysqli = frame('Connection')->setDb($this->_database);
 		$this->clearQuery();
 		if (!$mysqli) {
@@ -387,14 +390,12 @@ final class Query
 	 */
 	private function clearQuery()
 	{
-		$this->_sql = '';
 		$this->_where = [];
 		$this->_columns = '*';
 		$this->_groupBy = '';
-		$this->_orderBy = '';
+		$this->_orderBy = [];
 		$this->_having = [];
-		$this->_offset = 0;
-		$this->_limit = 1;
+		$this->_limit = null;
 	}
 
 	public function start() 
