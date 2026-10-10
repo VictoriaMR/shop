@@ -34,13 +34,6 @@ class Cookie
 		return false;
 	}
 
-	private function setUuid()
-	{
-		$uuid = randString(32);
-		$this->set('uuid', $uuid, ['expires' => 3600 * 24 * 10]);
-		return $uuid;
-	}
-
 	public function set($name, $value = '', $option = null)
 	{
 		if ($option === null) {
