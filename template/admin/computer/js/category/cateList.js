@@ -41,9 +41,42 @@ const CATEGORYLIST = {
 			event.stopPropagation();
 			const id = $(this).data('id');
 			const link = $(this).closest('.list-group-item');
-			const parentName = link.find('span').not('.badge').text().trim();
+			const parentName = link.find('.cate-item-name').text().trim() || link.find('span').not('.badge').text().trim();
 			const data = {parent_id: id, parent_name: parentName};
 			_this.initData(data);
+		});
+		// 左侧一级品类即时搜索过滤
+		$('.search-parent-cate').on('input keyup', function(){
+			const kw = $.trim($(this).val()).toLowerCase();
+			$('.parent-cate-list .list-group-item').each(function(){
+				const name = $(this).find('.cate-item-name').text().toLowerCase();
+				if (!kw || name.indexOf(kw) !== -1) {
+					$(this).show();
+				} else {
+					$(this).hide();
+				}
+			});
+		});
+		// 顶部按钮：为当前品类直接新增子类目
+		$('.add-top-sub-btn').on('click', function(){
+			const activeLink = $('.parent-cate-list .list-group-item.active');
+			const cid = activeLink.find('.badge').data('id') || $('#category-list').data('cid');
+			const parentName = activeLink.find('.cate-item-name').text().trim() || '当前品类';
+			const data = {parent_id: cid, parent_name: parentName};
+			_this.initData(data);
+		});
+		// 展开/收起全部子类目
+		let allExpanded = true;
+		$('.toggle-all-btn').on('click', function(){
+			if (allExpanded) {
+				$('#category-list table tr.item[data-lev!="1"]').hide();
+				$(this).html('<i class="glyphicon glyphicon-resize-full"></i> 全部展开');
+				allExpanded = false;
+			} else {
+				$('#category-list table tr.item').show();
+				$(this).html('<i class="glyphicon glyphicon-resize-small"></i> 全部折叠');
+				allExpanded = true;
+			}
 		});
 		//更新数据
 		$('.btn.update-btn').on('click', function(){
@@ -305,6 +338,7 @@ const CATEGORYLIST = {
 				obj.find('input[name="parent_name"]').val('顶级分类');
 				obj.find('.parent-group').hide();
 			}
+			obj.find('.title').text(data.cate_id ? '编辑子类目' : '新增子类目');
 		} else {
 			obj.find('input[name="cate_id"]').val(0);
 			obj.find('input[name="parent_id"]').val(0);
@@ -313,6 +347,7 @@ const CATEGORYLIST = {
 			obj.find('input[name="image"]').val('');
 			obj.find('input[name="parent_name"]').val('顶级分类');
 			obj.find('.parent-group').hide();
+			obj.find('.title').text('新增子类目');
 		}
 		obj.modalShow();
 		return true;

@@ -1,86 +1,116 @@
-<div class="container-fluid">
-	<form action="<?php echo adminUrl();?>" class="form-inline">
-		<div class="row-item">
-			<input type="hidden" name="status" value="<?php echo $search['status'];?>">
-			<div class="btn-group" role="group">
-				<button type="button" data-id="-1" class="btn <?php echo ($search['status'] == 1 || $search['status'] == 0) ? 'btn-default' : 'btn-primary';?>">全部</button>
-				<button type="button" data-id="0" class="btn <?php echo $search['status'] == 0 ? 'btn-primary' : 'btn-default';?>">未启用</button>
-				<button type="button" data-id="1" class="btn <?php echo $search['status'] == 1 ? 'btn-primary' : 'btn-default';?>">已启用</button>
+<div class="container-fluid" id="member-page">
+	<form action="<?php echo adminUrl('member/index');?>" method="get" class="form-inline">
+		<input type="hidden" name="status" value="<?php echo $search['status'];?>">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="btn-group left" role="group" style="margin-right: 12px; margin-bottom: 10px;">
+					<button type="button" data-id="-1" class="btn <?php echo ($search['status'] == 1 || $search['status'] === 0) ? 'btn-default' : 'btn-primary';?>">全部</button>
+					<button type="button" data-id="0" class="btn <?php echo $search['status'] === 0 ? 'btn-primary' : 'btn-default';?>">未启用</button>
+					<button type="button" data-id="1" class="btn <?php echo $search['status'] === 1 ? 'btn-primary' : 'btn-default';?>">已启用</button>
+				</div>
+				<div class="form-group" style="margin-right: 10px; margin-bottom: 10px;">
+					<input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($search['phone']);?>" placeholder="手机号码" autocomplete="off">
+				</div>
+				<div class="form-group" style="margin-right: 10px; margin-bottom: 10px;">
+					<input type="text" class="form-control" name="name" value="<?php echo htmlspecialchars($search['name']);?>" placeholder="姓名 / 昵称关键字" autocomplete="off">
+				</div>
+				<div class="form-group" style="margin-right: 10px; margin-bottom: 10px;">
+					<input class="form-control form_datetime" type="text" value="<?php echo htmlspecialchars($search['stime']);?>" name="stime" placeholder="开始时间" autocomplete="off" style="width: 140px;">
+					<span class="text-muted">-</span>
+					<input class="form-control form_datetime" type="text" value="<?php echo htmlspecialchars($search['etime']);?>" name="etime" placeholder="结束时间" autocomplete="off" style="width: 140px;">
+				</div>
+				<div class="form-group" style="margin-right: 10px; margin-bottom: 10px;">
+					<button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
+				</div>
+				<div class="form-group right" style="margin-bottom: 10px;">
+					<button class="btn btn-success" id="add-data-btn" type="button"><i class="glyphicon glyphicon-plus-sign"></i> 新增管理员</button>
+				</div>
 			</div>
 		</div>
-		<div class="col-md-12" style="margin-top: 10px;padding:0">
-			<div class="form-group mr20">
-				<input type="text" class="form-control" name="phone" value="<?php echo $search['phone'];?>" placeholder="手机号码" autocomplete="off">
-			</div>
-			<div class="mr20 form-group">
-				<input type="text" class="form-control" name="name" value="<?php echo $search['name'];?>" placeholder="名称关键字" autocomplete="off">
-			</div>
-			<div class="mr20 form-group">
-				<input class="form-control form_datetime" type="text" value="<?php echo $search['stime'];?>" name="stime" placeholder="开始时间" autocomplete="off"> - 
-				<input class="form-control form_datetime" type="text" value="<?php echo $search['etime'];?>" name="etime" placeholder="结束时间" autocomplete="off">
-			</div>
-			<div class="mr20 form-group">
-				<button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
-			</div>
-			<div class="form-group right">
-				<button class="btn btn-success" id="add-data-btn" type="button"><i class="glyphicon glyphicon-plus-sign"></i> 新增管理员</button>
-			</div>
-		</div>
-		<div class="clear"></div>
 	</form>
-	<table class="table table-hover mt20" id="data-list">
-		<tbody>
+
+	<table class="table table-hover table-middle mt6" id="data-list">
+		<thead>
 			<tr>
-				<th width="50">ID</th>
-				<th width="50">头像</th>
-				<th width="100">名称</th>
-				<th width="100">昵称</th>
-				<th width="100">手机</th>
-				<th width="50">状态</th>
-				<th width="100">邮箱</th>
-				<th width="120">添加时间<br />更新时间</th>
-				<th width="100">操作</th>
+				<th width="60">ID</th>
+				<th width="60">头像</th>
+				<th width="140">姓名 / 昵称</th>
+				<th width="120">手机号码</th>
+				<th width="160">邮箱</th>
+				<th width="70">状态</th>
+				<th width="170">时间记录</th>
+				<th width="140">操作</th>
 			</tr>
+		</thead>
+		<tbody>
 			<?php if (empty($list)){ ?>
 			<tr>
-				<td colspan="9">
-					<div class="tc orange">暂无数据</div>
-				</td>
-			</tr>
-			<?php } else {?>
-			<?php foreach ($list as $key => $value) { ?>
-			<tr data-id="<?php echo $value['mem_id'];?>">
-				<td><?php echo $value['mem_id'];?></td>
-				<td>
-					<div class="avatar-hover">
-						<img src="<?php echo $value['avatar'];?>">
+				<td colspan="8">
+					<div class="tc orange">
+						<i class="glyphicon glyphicon-info-sign"></i> 暂无人员数据
 					</div>
 				</td>
-				<td><?php echo trim($value['first_name'].' '.$value['last_name']);?></td>
-				<td><?php echo $value['nick_name'];?></td>
-				<td><?php echo $value['mobile'];?></td>
+			</tr>
+			<?php } else { ?>
+			<?php foreach ($list as $value) { 
+				$avatar = !empty($value['avatar']) ? $value['avatar'] : siteUrl('/image/common/male.jpg');
+				$firstName = $value['first_name'] ?? '';
+				$lastName = $value['last_name'] ?? '';
+				$fullName = ($firstName === $lastName) ? $firstName : trim($firstName . ' ' . $lastName);
+				$rowInfo = [
+					'mem_id' => $value['mem_id'],
+					'name' => $fullName,
+					'first_name' => $firstName,
+					'last_name' => $lastName,
+					'nick_name' => $value['nick_name'] ?? '',
+					'nickname' => $value['nick_name'] ?? '',
+					'mobile' => $value['mobile'] ?? '',
+					'email' => $value['email'] ?? '',
+					'status' => (int)($value['status'] ?? 0),
+				];
+			?>
+			<tr data-id="<?php echo $value['mem_id'];?>" data-info="<?php echo htmlspecialchars(json_encode($rowInfo, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');?>">
+				<td><strong><?php echo $value['mem_id'];?></strong></td>
 				<td>
-					<div class="switch_botton" data-status="<?php echo $value['status'];?>">
+					<div class="avatar-hover">
+						<img src="<?php echo $avatar;?>" alt="avatar">
+					</div>
+				</td>
+				<td>
+					<div><strong><?php echo htmlspecialchars($fullName !== '' ? $fullName : ($value['nick_name'] ?? '-'));?></strong></div>
+					<?php if ($fullName !== '' && !empty($value['nick_name']) && $value['nick_name'] !== $fullName){ ?>
+					<div class="text-muted f12"><?php echo htmlspecialchars($value['nick_name']);?></div>
+					<?php } ?>
+				</td>
+				<td><?php echo !empty($value['mobile']) ? htmlspecialchars($value['mobile']) : '-';?></td>
+				<td><?php echo !empty($value['email']) ? htmlspecialchars($value['email']) : '-';?></td>
+				<td>
+					<div class="switch_botton" data-status="<?php echo $value['status'];?>" title="点击切换状态">
 						<div class="switch_status <?php echo $value['status'] == 1 ? 'on' : 'off';?>"></div>
 					</div>
 				</td>
-				<td><?php echo $value['email'];?></td>
 				<td>
-					<span title="增加时间"><?php echo $value['add_time'];?></span>
-					<br>
-					<span title="登录时间"><?php echo $value['login_time'];?></span>
+					<div title="注册时间"><span class="text-muted">增:</span> <?php echo $value['add_time'];?></div>
+					<div title="最后登录时间"><span class="text-muted">登:</span> <?php echo !empty($value['login_time']) ? $value['login_time'] : '-';?></div>
 				</td>
 				<td>
-					<button class="btn btn-primary btn-xs modify mt2" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
-					<button class="btn btn-danger btn-xs delete mt2" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>
+					<button class="btn btn-primary btn-xs modify" type="button"><i class="glyphicon glyphicon-edit"></i> 编辑</button>
+					<button class="btn btn-danger btn-xs delete" type="button" style="margin-left: 4px;"><i class="glyphicon glyphicon-trash"></i> 删除</button>
 				</td>
 			</tr>
 			<?php } ?>
-			<?php }?>
+			<?php } ?>
 		</tbody>
 	</table>
-	<?php echo page($search['size'], $total);?>
+
+	<div class="row mt12">
+		<div class="col-xs-12">
+			<?php echo page($search['size'], $total);?>
+		</div>
+	</div>
 </div>
+
+<!-- 新增/编辑弹窗 -->
 <div id="dealbox" class="hidden">
 	<div class="mask"></div>
 	<div class="centerShow">
@@ -88,43 +118,43 @@
 			<input type="hidden" name="mem_id" class="no_show" value="0">
 			<input type="hidden" class="no_replace" name="opn" value="editInfo">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
-			<div class="f24 dealbox-title">新增管理员</div>
+			<div class="dealbox-title">新增管理员</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>名称</span></div>
-				<input type="text" class="form-control" name="name" required="required" maxlength="30" autocomplete="off">
+				<span class="input-group-addon"><span>名称</span></span>
+				<input type="text" class="form-control" name="name" required="required" maxlength="30" placeholder="真实姓名" autocomplete="off">
 			</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>昵称</span></div>
-				<input type="text" class="form-control" name="nickname" required="required" maxlength="30" autocomplete="off">
+				<span class="input-group-addon"><span>昵称</span></span>
+				<input type="text" class="form-control" name="nickname" required="required" maxlength="30" placeholder="管理昵称" autocomplete="off">
 			</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>手机号码</span></div>
-				<input type="text" class="form-control" name="mobile" required="required" maxlength="11" autocomplete="off">
+				<span class="input-group-addon"><span>手机号码</span></span>
+				<input type="text" class="form-control" name="mobile" required="required" maxlength="11" placeholder="11位手机号" autocomplete="off">
 			</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>邮箱</span></div>
-				<input type="text" class="form-control" name="email" required="required" maxlength="30" autocomplete="off">
+				<span class="input-group-addon"><span>邮箱</span></span>
+				<input type="text" class="form-control" name="email" required="required" maxlength="30" placeholder="电子邮箱" autocomplete="off">
 			</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>状态</span></div>
-				<div class="switch_botton ml20" data-status="0">
-					<div class="switch_status off"></div>
+				<span class="input-group-addon"><span>状态</span></span>
+				<div class="form-control" style="padding-top: 4px;">
+					<div class="switch_botton" data-status="0">
+						<div class="switch_status off"></div>
+					</div>
+					<input type="hidden" name="status" value="0">
 				</div>
-				<input type="hidden" name="status" value="0">
-			</div>
-			<div class="input-group hidden">
-				<div class="input-group-addon"><span>盐值</span></div>
-				<input type="text" class="form-control" readonly="readonly" name="salt">
 			</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>密码</span></div>
-				<input type="password" class="form-control" name="password" maxlength="30" autocomplete="off">
+				<span class="input-group-addon"><span>密码</span></span>
+				<input type="password" class="form-control" name="password" maxlength="30" placeholder="密码（编辑时不填表示不修改）" autocomplete="off">
 			</div>
 			<div class="input-group">
-				<div class="input-group-addon"><span>重复密码</span></div>
-				<input type="password" class="form-control" name="repassword" maxlength="30" autocomplete="off">
+				<span class="input-group-addon"><span>确认密码</span></span>
+				<input type="password" class="form-control" name="repassword" maxlength="30" placeholder="再次输入密码" autocomplete="off">
 			</div>
-			<button type="button" class="btn btn-primary btn-lg btn-block save">确认</button>
+			<div style="margin-top: 20px;">
+				<button type="button" class="btn btn-primary btn-block save">确认保存</button>
+			</div>
 		</form>
 	</div>
 </div>

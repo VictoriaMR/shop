@@ -53,7 +53,7 @@ class Html
 	public function getLanguageJs()
 	{
 		$device = isMobile() ? 'mobile' : 'computer';
-		$path = ROOT_PATH . 'template/' . config('domain', 'template') . '/';
+		$path = ROOT_PATH . 'template/' . \App::get('domain', 'template') . '/';
 		$file = 'js/' . $device . '/' . strtolower(\App::get('router', 'path', 'Index')) . '/' . \App::get('router', 'func', 'index') . '_' . lanId('code') . '.js';
 		if (is_file($path . $file)) {
 			return $file;
@@ -67,10 +67,10 @@ class Html
 			return false;
 		}
 		$device = isMobile() ? 'mobile' : 'computer';
-		$path = ROOT_PATH . 'template/' . config('domain', 'template') . '/' . $device . '/';
+		$path = ROOT_PATH . 'template/' . \App::get('domain', 'template') . '/' . $device . '/';
 		$file = 'static/' . $name . '.' . $type;
 
-		if (config('domain', 'static_cache') && is_file($path . $file)) {
+		if (\App::get('domain', 'static_cache') && is_file($path . $file)) {
 			return $file;
 		}
 
@@ -105,4 +105,4 @@ class Html
 		$css = str_replace(';}', '}', $css);
 		return trim($css);
 	}
-}
+}

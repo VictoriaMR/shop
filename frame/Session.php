@@ -32,6 +32,7 @@ class Session
 
 	public function get($name, $default = null, $key = null)
 	{
+		$this->ensureStarted();
 		if (!isset($_SESSION)) {
 			return $default;
 		}
@@ -43,6 +44,7 @@ class Session
 
 	public function del($name, $key = null)
 	{
+		$this->ensureStarted();
 		if (!isset($_SESSION)) {
 			return true;
 		}

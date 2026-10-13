@@ -119,7 +119,9 @@ final class Query
 
 	public function page(int $page, int $size)
 	{
-		$this->_limit = [$page > 0 ? ($page - 1) * $size : 0, $size];
+		if ($size > 0) {
+			$this->_limit = [$page > 0 ? ($page - 1) * $size : 0, $size];
+		}
 		return $this;
 	}
 

@@ -90,21 +90,17 @@ class App
 
 	public static function runOver($ajax = false)
 	{
-		dd('end');
 		if (isDebug() && !$ajax && self::shouldShowTrace()) {
 			frame('Debug')->init();
 		}
-
 		// FastCGI 环境下立即将响应输出冲刷给客户端，后续耗时任务后台异步完成
 		if (function_exists('fastcgi_finish_request')) {
 			fastcgi_finish_request();
 		}
-
 		$logEnabled = self::$domain['log'] ?? self::get('domain', 'log', false);
 		if ($logEnabled) {
 			frame('Debug')->runlog(isCli() ? 'task' : '');
 		}
-
 		exit();
 	}
 

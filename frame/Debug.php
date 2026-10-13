@@ -7,9 +7,11 @@ class Debug
 	public function init()
 	{
 		if (isCli()) return;
-		$runtime = number_format(microtime(true) - APP_TIME_START, 6, '.', '');
+		$timeStart = defined('APP_TIME_START') ? APP_TIME_START : microtime(true);
+		$memStart = defined('APP_MEMORY_START') ? APP_MEMORY_START : memory_get_usage();
+		$runtime = number_format(microtime(true) - $timeStart, 6, '.', '');
 		$reqs = $runtime > 0 ? number_format(1 / (float)$runtime, 2, '.', '') : '∞';
-		$mem = number_format((memory_get_usage() - APP_MEMORY_START) / 1024, 2, '.', '');
+		$mem = number_format((memory_get_usage() - $memStart) / 1024, 2, '.', '');
 		$uri = ($_SERVER['SERVER_PROTOCOL'] ?? 'HTTP/1.1') . ' ' . ($_SERVER['REQUEST_METHOD'] ?? 'GET') . ' ' . ($_SERVER['HTTP_HOST'] ?? '') . ($_SERVER['REQUEST_URI'] ?? '/');
 		
 		$info = get_included_files();
@@ -64,9 +66,11 @@ class Debug
 		}
 
 		// 运行指标
-		$runtime = number_format(microtime(true) - APP_TIME_START, 6, '.', '');
+		$timeStart = defined('APP_TIME_START') ? APP_TIME_START : microtime(true);
+		$memStart = defined('APP_MEMORY_START') ? APP_MEMORY_START : memory_get_usage();
+		$runtime = number_format(microtime(true) - $timeStart, 6, '.', '');
 		$reqs = $runtime > 0 ? number_format(1 / (float)$runtime, 2, '.', '') : '∞';
-		$mem = number_format((memory_get_usage() - APP_MEMORY_START) / 1024, 2, '.', '');
+		$mem = number_format((memory_get_usage() - $memStart) / 1024, 2, '.', '');
 		$fileCount = count(get_included_files());
 		$sqlCount = count(\App::get('exec_sql') ?? []);
 

@@ -32,6 +32,24 @@ class Currency extends Base
 		return $rst;
 	}
 
+	public function insertCurrency(array $data)
+	{
+		$rst = $this->insertData($data);
+		if ($rst) {
+			redis()->del($this->getCacheKey($data['code']));
+		}
+		return $rst;
+	}
+
+	public function deleteCurrency($code)
+	{
+		$rst = $this->deleteData($code);
+		if ($rst) {
+			redis()->del($this->getCacheKey($code));
+		}
+		return $rst;
+	}
+
 	public function priceSymbol($type)
 	{
 		$info = $this->getInfoCache($this->currencyId());
@@ -78,28 +96,27 @@ class Currency extends Base
             return false;
         }
         $arr = [];
-        $result = preg_match_all('/<tr align=\"center\">([\s\r\n]+)<td bgcolor=\"#FFFFFF\">([A-Z]{3})<\/td>([\s\r\n]+)<td bgcolor=\"#FFFFFF\">([0-9\.]+)<\/td>/', $result, $arr);
-        if (!$result) {
+        $matchCount = preg_match_all('/<tr align=\"center\"[^>]*>\s*<td[^>]*>([A-Z]{3})<\/td>\s*<td[^>]*>([0-9\.]+)<\/td>/i', $result, $arr);
+        if (!$matchCount) {
             return false;
         }
-        $result = [];
-        foreach ($arr[2] as $k => $v) {
-            $result[$v] = number_format($arr[4][$k] / 100, 6, '.', '');
+        $rates = [];
+        foreach ($arr[1] as $k => $v) {
+            $rates[$v] = number_format($arr[2][$k] / 100, 6, '.', '');
         }
         $logCurrency = service('log/Currency');
-        $site = service('site/Site');
         $currencyArr = $this->getListData();
         foreach ($currencyArr as $value) {
-            if (!isset($result[$value['code']]) || $value['rate'] == $result[$value['code']]) {
+            if (!isset($rates[$value['code']]) || $value['rate'] == $rates[$value['code']]) {
                 continue;
             }
-            $this->updateData($value['code'], ['rate'=>$result[$value['code']]]);
+            $this->updateInfo($value['code'], ['rate'=>$rates[$value['code']]]);
             $logCurrency->insert([
                 'code' => $value['code'],
                 'old_rate' => $value['rate'],
-                'new_rate' => $result[$value['code']],
+                'new_rate' => $rates[$value['code']],
             ]);
         }
-        return false;
+        return true;
 	}
 }

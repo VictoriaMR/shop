@@ -1,24 +1,62 @@
 <div id="login-page">
 	<div class="login-bg">
-		<img height="100%" width="100%" src="<?php echo siteUrl('image/common/login_bg.jpg');?>">
+		<img src="<?php echo siteUrl('image/common/login_bg.jpg');?>" alt="登录背景">
+		<div class="login-bg-mask"></div>
 	</div>
+
 	<div class="login-box">
-		<div class="title">
-			<h2 class="f16 select" href="javascript:void(0);">密码登录</h2>
+		<div class="login-header">
+			<div class="brand-icon">
+				<i class="fa fa-shield"></i>
+			</div>
+			<h1 class="brand-title"><?php echo \App::get('domain', 'name', '管理后台');?></h1>
+			<p class="brand-subtitle">欢迎登录系统后台管理中心</p>
 		</div>
-		<form class="relative" action="" method="post" id="login-form">
-			<div class="mt20">
-				<input type="text" class="input" name="mobile" id="mobile" placeholder="请输入手机号码" autocomplete="off" required="required">
+
+		<form class="login-form" action="" method="post" id="login-form" novalidate>
+			<div class="form-group">
+				<label for="mobile" class="sr-only">账号</label>
+				<div class="input-wrap">
+					<i class="fa fa-user input-icon" aria-hidden="true"></i>
+					<input type="text" class="input" name="mobile" id="mobile" placeholder="请输入手机号码或邮箱" autocomplete="username" required>
+				</div>
 			</div>
-			<div class="mt20">
-				<input type="password" class="input" name="password" id="password" placeholder="请输入密码" autocomplete="off" required="required">
+
+			<div class="form-group">
+				<label for="password" class="sr-only">密码</label>
+				<div class="input-wrap">
+					<i class="fa fa-lock input-icon" aria-hidden="true"></i>
+					<input type="password" class="input" name="password" id="password" placeholder="请输入登录密码" autocomplete="current-password" required>
+					<button type="button" class="btn-toggle-pwd pointer" id="toggle-pwd" title="显示/隐藏密码" tabindex="-1">
+						<i class="fa fa-eye-slash" aria-hidden="true"></i>
+					</button>
+				</div>
 			</div>
-			<div class="mt20">
-				<input type="text" class="input left" name="code" id="code" placeholder="请输入验证码" autocomplete="off" required="required">
-				<img id="refresh" class="left pointer ml12" height="40" width="80" src="<?php echo adminUrl('login/loginCode');?>" onclick="document.getElementById('refresh').src='<?php echo adminUrl('login/loginCode', ['is_ajax'=>1]);?>'" title="看不清？换一张">
-				<div class="clear"></div>
+
+			<div class="form-group">
+				<label for="code" class="sr-only">验证码</label>
+				<div class="code-wrap">
+					<div class="input-wrap code-input-wrap">
+						<i class="fa fa-shield input-icon" aria-hidden="true"></i>
+						<input type="text" class="input" name="code" id="code" placeholder="请输入验证码" maxlength="4" autocomplete="off" required>
+					</div>
+					<div class="captcha-img-box pointer" id="captcha-box" title="看不清？点击更换">
+						<img id="refresh" src="<?php echo adminUrl('login/loginCode');?>" alt="验证码" data-src="<?php echo adminUrl('login/loginCode', ['is_ajax'=>1]);?>">
+						<span class="refresh-tip"><i class="fa fa-refresh"></i></span>
+					</div>
+				</div>
 			</div>
-			<button type="submit" id="login-btn" class="btn btn-primary w100 mt20">登录</button>
+
+			<div class="form-group mt24">
+				<button type="submit" id="login-btn" class="btn btn-primary btn-submit w100" data-loading-text="<i class='fa fa-spinner fa-spin'></i> 正在登录...">
+					<span>登 录</span>
+					<i class="fa fa-arrow-right ml12"></i>
+				</button>
+			</div>
 		</form>
+
+		<div class="login-footer">
+			<span>安全防护中 · 请妥善保管您的管理权限</span>
+		</div>
 	</div>
 </div>

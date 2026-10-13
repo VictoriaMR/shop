@@ -46,7 +46,7 @@ class View
 	private function getTemplateDir()
 	{
 		if ($this->_templateDir === null) {
-			$this->_templateDir = ROOT_PATH . 'template/' . config('domain', 'template') . '/';
+			$this->_templateDir = ROOT_PATH . 'template/' . \App::get('domain', 'template') . '/';
 		}
 		return $this->_templateDir;
 	}
@@ -77,4 +77,4 @@ class View
 	{
 		$this->loadFile($this->getTemplate($template, $match), $data);
 	}
-}
+}

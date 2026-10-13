@@ -142,6 +142,22 @@ $(function(){
 		obj.hide();
 		return obj;
 	};
+	$.fn.dealboxShow = function(title) {
+		const obj = $(this);
+		if (title) {
+			obj.find('.dealbox-title, .title').text(title);
+		}
+		$('body').css({'overflow': 'hidden'});
+		obj.removeClass('hidden hide').show();
+		return obj;
+	};
+	$.fn.dealboxHide = function() {
+		const obj = $(this);
+		$('body').css({'overflow': 'auto'});
+		$('body').css({'padding-right': 0});
+		obj.addClass('hidden').hide();
+		return obj;
+	};
 	$.fn.switchBtn = function(status) {
 		const obj = $(this);
 		obj.data('status', status);
@@ -237,6 +253,9 @@ $(function(){
 	// 弹窗关闭
 	$('body').on('click', '.s-modal .glyphicon-remove, .s-modal .fa-times, .s-modal .fa-remove, .s-modal .fa-close', function(){
 		$(this).parents('.s-modal').modalHide();
+	});
+	$('body').on('click', '#dealbox .close, #dealbox .mask, .dealbox .close, .dealbox .mask', function(){
+		$(this).closest('#dealbox, .dealbox').dealboxHide();
 	});
 	// 日期初始化
 	$('.form_datetime').datetimepicker({

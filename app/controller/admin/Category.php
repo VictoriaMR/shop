@@ -8,8 +8,9 @@ class Category extends AdminBase
 	public function __construct()
 	{
 		$this->_arr = [
-			'index' => '品类管理',
+			'index'    => '品类管理',
 			'cateList' => '子类目管理',
+			'log'      => '分类日志',
 			'attrUsed' => '属性映射',
 		];
 		$this->_ignore = ['attrUsed'];
@@ -21,15 +22,35 @@ class Category extends AdminBase
 	{	
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, [''])) {
+			if (in_array($opn, ['getCateInfo', 'editInfo', 'deleteCategory', 'modifyCategory'])) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
 		frame('Html')->addJs();
 
+		$tempList = service('category/Category')->getListFormat(false);
+		$list = [];
+		if (!empty($tempList)) {
+			$count = 0;
+			foreach ($tempList as $value) {
+				if ($value['level'] == 0) {
+					if (!empty($list)) {
+						$list[count($list) - 1]['count'] = $count;
+					}
+					$count = 0;
+					$list[] = $value;
+				} else {
+					$count++;
+				}
+			}
+			if (!empty($list)) {
+				$list[count($list) - 1]['count'] = $count;
+			}
+		}
+
 		$this->view([
-			'list' => service('category/Category')->getListData(['parent_id'=>0])
+			'list' => $list
 		]);
 	}
 
@@ -164,9 +185,17 @@ class Category extends AdminBase
 		$language = ipost('language');
 		if (!empty($language)) {
 			$services = service('category/Language');
+			$oldInfo = $services->getListData(['cate_id' => $cateId, 'type' => $type]);
+			$oldMap = array_column($oldInfo, 'name', 'lan_id');
+			$langList = sys()->language()->getListData();
+			$langMap = array_column($langList, 'name', 'lan_id');
+
 			foreach ($language as $key => $value) {
 				$services->setNxLanguage($cateId, $key, $type, strTrim($value));
 			}
+
+			$diff = service('log/Category')->diffLanguage($cateId, $type, $language, $oldMap, $langMap);
+			service('log/Category')->addLog(\app\service\log\Category::TYPE_LANGUAGE, $cateId, '修改分类多语言配置 #' . $cateId, $diff);
 		}
 		$this->addLog('修改分类语言-'.$cateId);
 		$this->success('操作成功');
@@ -186,14 +215,26 @@ class Category extends AdminBase
 			'name' => $name,
 			'name_en' => $name_en,
 		];
+		$logService = service('log/Category');
+		$categoryService = service('category/Category');
+		$type = \app\service\log\Category::TYPE_CATEGORY;
+
 		if (empty($cateId)) {
-			$result = service('category/Category')->insert($data);
-			$this->addLog('新增分类-'.$result);
+			$result = $categoryService->insert($data);
+			$logTitle = ($parentId == 0 ? '新增品类' : '新增子类目') . ' #' . $result;
+			$detail = $logService->snapshotCategory($data);
+			$this->addLog($logTitle);
+			$logService->addLog($type, $result, $logTitle, $detail);
 		} else {
-			$this->addLog('修改分类信息-'.$cateId);
-			$result = service('category/Category')->updateData($cateId, $data);
+			$oldInfo = $categoryService->loadData($cateId);
+			$result = $categoryService->updateData($cateId, $data);
+			$logTitle = ($parentId == 0 ? '修改品类' : '修改子类目') . ' #' . $cateId;
+			$detail = $logService->diffCategory($oldInfo ?: [], $data);
+			$this->addLog($logTitle);
+			$logService->addLog($type, $cateId, $logTitle, $detail);
 		}
 		if ($result) {
+			redis()->del('category:list-cache');
 			$this->success('操作成功');
 		} else {
 			$this->error('操作失败');
@@ -213,9 +254,14 @@ class Category extends AdminBase
 		if ($services->hasProduct($cateId)) {
 			$this->error('该分类有产品, 不能删除');
 		}
+		$oldInfo = $services->loadData($cateId);
 		$result = $services->deleteDataById($cateId);
 		if ($result) {
-			$this->addLog('删除分类语言-'.$cateId);
+			redis()->del('category:list-cache');
+			$this->addLog('删除分类-'.$cateId);
+			$type = \app\service\log\Category::TYPE_CATEGORY;
+			$detail = service('log/Category')->snapshotCategory($oldInfo ?: ['name' => '分类-' . $cateId]);
+			service('log/Category')->addLog($type, $cateId, '删除分类 #' . $cateId, $detail);
 			$this->success('删除成功');
 		} else {
 			$this->error('删除失败');
@@ -246,6 +292,7 @@ class Category extends AdminBase
 			$data['is_hot'] = $isHot;
 		}
 		$categoryService = service('category/Category');
+		$oldInfo = $categoryService->loadData($id);
 		$rst = $categoryService->updateData($id, $data);
 		if ($rst) {
 			if ($status == 0 && $categoryService->hasChildren($id)) {
@@ -262,6 +309,10 @@ class Category extends AdminBase
 					$categoryService->updateData(['cate_id' => ['in', $subIds]], ['is_show' => 0]);
 				}
 			}
+			redis()->del('category:list-cache');
+			$type = \app\service\log\Category::TYPE_CATEGORY;
+			$detail = service('log/Category')->diffCategory($oldInfo ?: [], $data);
+			service('log/Category')->addLog($type, $id, '修改分类属性 #' . $id, $detail);
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
@@ -278,6 +329,9 @@ class Category extends AdminBase
 			if ($result) {
 				redis()->del('category:list-cache');
 				$this->addLog('分类排序-' . $cateId . '-' . $type);
+				service('log/Category')->addLog(\app\service\log\Category::TYPE_SORT, $cateId, '分类排序调整 #' . $cateId, [
+					['field' => 'sort', 'label' => '排序动作', 'old' => '-', 'new' => $type]
+				]);
 				$this->success('排序成功');
 			} else {
 				$this->error('排序失败');
@@ -302,8 +356,89 @@ class Category extends AdminBase
 		$this->error('参数不正确');
 	}
 
+	protected function transfer()
+	{
+		$trCode = ipost('tr_code');
+		$name = ipost('name');
+		if (empty($name) || empty($trCode)) {
+			$this->error('参数不正确');
+		}
+		$rst = service('Translate')->getText($name, $trCode);
+		if ($rst) {
+			$this->success($rst, '');
+		}
+		$this->error('翻译失败');
+	}
+
 	public function attrUsed()
 	{
+		$this->view();
+	}
+
+	public function log()
+	{
+		frame('Html')->addJs();
+		$type = iget('type', -1);
+		$cateId = iget('cate_id', '');
+		$keyword = trim(iget('keyword', ''));
+		$stime = trim(iget('stime', ''));
+		$etime = trim(iget('etime', ''));
+		$page = max(1, (int)iget('page', 1));
+		$size = (int)iget('size', 20);
+
+		$where = [];
+		if ($type >= 0) {
+			$where['type'] = (int)$type;
+		}
+		if ($cateId !== '') {
+			$where['cate_id'] = (int)$cateId;
+		}
+		if ($keyword !== '') {
+			$where['info'] = ['like', '%' . $keyword . '%'];
+		}
+		if ($stime !== '') {
+			$where['add_time'] = ['>=', $stime . ' 00:00:00'];
+		}
+		if ($etime !== '') {
+			$where['add_time'] = ['<=', $etime . ' 23:59:59'];
+		}
+
+		$logService = service('log/Category');
+		$total = $logService->getCountData($where);
+		$list = [];
+		if ($total > 0) {
+			$list = $logService->getListData($where, '*', $page, $size, ['log_id' => 'desc']);
+			$memIds = array_filter(array_column($list, 'mem_id'));
+			$cateIds = array_filter(array_column($list, 'cate_id'));
+			$memberMap = [];
+			if (!empty($memIds)) {
+				$memberMap = service('member/Member')->getListData(['mem_id' => ['in', array_unique($memIds)]], 'mem_id, nick_name, phone, first_name, last_name, avatar');
+				$memberMap = array_column($memberMap, null, 'mem_id');
+			}
+			$categoryMap = [];
+			if (!empty($cateIds)) {
+				$categoryMap = service('category/Category')->getListData(['cate_id' => ['in', array_unique($cateIds)]], 'cate_id, name, parent_id');
+				$categoryMap = array_column($categoryMap, null, 'cate_id');
+			}
+			foreach ($list as &$item) {
+				$item['member'] = $memberMap[$item['mem_id']] ?? [];
+				$item['category'] = $categoryMap[$item['cate_id']] ?? [];
+			}
+			unset($item);
+		}
+
+		$this->assign('total', $total);
+		$this->assign('list', $list);
+		$this->assign('size', $size);
+		$this->assign('typeList', $logService->getTypeList());
+		$this->assign('search', [
+			'type'    => $type,
+			'cate_id' => $cateId,
+			'keyword' => $keyword,
+			'stime'   => $stime,
+			'etime'   => $etime,
+		]);
+		$this->_init();
 		$this->view();
 	}
 }

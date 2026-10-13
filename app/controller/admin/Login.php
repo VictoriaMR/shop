@@ -24,8 +24,9 @@ class Login extends AdminBase
 	public function loginCode()
 	{
 		$code = randString(4, true, false, true);
-		frame('Session')->set('admin_login_code', $code);
+		frame('Session')->set('admin_login_code', strtolower($code));
 		service('tool/Image')->verifyCode($code, 80, 34);
+		exit();
 	}
 
 	protected function login() 
@@ -43,11 +44,12 @@ class Login extends AdminBase
 		if (empty($code)) {
 			$this->error('验证码 不能为空');
 		}
-		if (strtolower($code) != frame('Session')->get('admin_login_code')) {
+		if (strtolower($code) !== strtolower((string)frame('Session')->get('admin_login_code'))) {
 			$this->error('验证码错误');
 		}
 		$result = service('member/Member')->login($mobile, $password, preg_match('/^1[3-9]\d{9}$/', $mobile) ? 'mobile' : 'email');
 		if ($result) {
+			frame('Session')->del('admin_login_code');
 			$this->success('登录成功', ['url' => frame('Session')->dGet('return_url') ?: '/']);
 		} else {
 			$this->error('账号或者密码不匹配!');
@@ -60,7 +62,7 @@ class Login extends AdminBase
 		if (empty($code)) {
 			$this->error('验证码错误!');
 		}
-		if (strtolower($code) != frame('Session')->get('admin_login_code')) {
+		if (strtolower($code) !== strtolower((string)frame('Session')->get('admin_login_code'))) {
 			$this->error('验证码错误');
 		}
 		$this->success('验证码正确!');

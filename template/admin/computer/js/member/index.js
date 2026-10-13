@@ -57,12 +57,28 @@ const MEMBERLIST = {
 		// 修改管理员
 		$('#data-list .btn.modify').on('click', function(){
 			const obj = $(this);
-			const memId = obj.parents('tr').data('id');
+			const tr = obj.parents('tr');
+			const memId = tr.data('id');
+			let rowData = tr.data('info') || {};
+			if (typeof rowData === 'string') {
+				try { rowData = JSON.parse(rowData); } catch(e){}
+			}
+			// 立即优先使用列表行基本数据展示弹窗，实现0延迟带入基本信息
+			if (rowData && (rowData.mem_id || rowData.id)) {
+				_this.dealboxData(rowData);
+			}
+			// 异步从服务端获取完整信息（包括盐值等完整字段）进行补全
 			post('', {opn:'getInfo', mem_id: memId}, function(res) {
-				if (res.code) {
-					_this.dealboxData(res.data);
-				} else {
-					showTips(res);
+				if (typeof res === 'string') {
+					try { res = JSON.parse(res); } catch(e){}
+				}
+				if (res && res.code) {
+					const data = (res.data && (res.data.mem_id || res.data.nick_name || res.data.nickname)) 
+						? res.data 
+						: (res.msg && (res.msg.mem_id || res.msg.nick_name) ? res.msg : {});
+					_this.dealboxData(data);
+				} else if (!rowData || !rowData.mem_id) {
+					showTips(res || {code: 0, msg: '获取用户信息失败'});
 				}
 			});
 		});
@@ -74,8 +90,11 @@ const MEMBERLIST = {
 			confirm('确认要删除该人员账号吗？删除后不可恢复', function(btn, modal){
 				post('', {opn: 'delete', mem_id: memId}, function(res){
 					modal.hide();
+					if (typeof res === 'string') {
+						try { res = JSON.parse(res); } catch(e){}
+					}
 					showTips(res);
-					if (res.code) {
+					if (res && res.code) {
 						tr.fadeOut(300, function(){
 							tr.remove();
 						});
@@ -92,21 +111,27 @@ const MEMBERLIST = {
 	dealboxData: function(data) {
 		const obj = $('#dealbox');
 		obj.find('input:not(.no_replace)').val('');
-		if (data && data.mem_id) {
+		if (data && (data.mem_id || data.id)) {
+			const memId = data.mem_id || data.id;
 			obj.find('.dealbox-title').text('编辑管理员');
-			obj.find('[name="mem_id"]').val(data.mem_id);
-			if (data.name) obj.find('[name="name"]').val(data.name);
-			if (data.first_name || data.last_name) {
-				obj.find('[name="name"]').val($.trim((data.first_name || '') + ' ' + (data.last_name || '')));
+			obj.find('[name="mem_id"]').val(memId);
+			
+			let nameVal = '';
+			if (data.first_name && data.last_name) {
+				nameVal = (data.first_name === data.last_name) ? data.first_name : (data.first_name + ' ' + data.last_name);
+			} else {
+				nameVal = data.name || data.first_name || data.last_name || '';
 			}
-			if (data.nick_name) obj.find('[name="nickname"]').val(data.nick_name);
+			obj.find('[name="name"]').val($.trim(nameVal));
+
+			const nickVal = data.nickname || data.nick_name || '';
+			obj.find('[name="nickname"]').val(nickVal);
+
 			if (data.mobile) obj.find('[name="mobile"]').val(data.mobile);
 			if (data.email) obj.find('[name="email"]').val(data.email);
-			if (data.salt) obj.find('[name="salt"]').val(data.salt).parent().removeClass('hidden');
 		} else {
 			obj.find('.dealbox-title').text('新增管理员');
 			obj.find('[name="mem_id"]').val(0);
-			obj.find('[name="salt"]').parent().addClass('hidden');
 		}
 		let status = 0;
 		if (typeof data.status !== 'undefined') {

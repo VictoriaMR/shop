@@ -58,17 +58,17 @@ class Member extends Base
 		return true;
 	}
 
-	protected function checkPassword($inPassword, $sourcePassword, $salt='')
+	public function checkPassword($inPassword, $sourcePassword, $salt='')
 	{
 		return password_verify($this->saltPassword($inPassword, $salt), $sourcePassword);
 	}
 
-	protected function getPassword($password, $salt)
+	public function getPassword($password, $salt)
 	{
 		return password_hash($this->saltPassword($password, $salt), PASSWORD_DEFAULT);
 	}
 
-	protected function saltPassword($password, $salt)
+	public function saltPassword($password, $salt)
 	{
 		if (empty($salt)) return $password;
 		$slen = strlen($salt);

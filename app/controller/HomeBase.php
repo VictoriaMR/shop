@@ -6,7 +6,8 @@ class HomeBase extends Base
 {
 	public function __construct()
 	{
-		$class = 'template/'.config('domain', 'template').'/controller/'.(isMobile()?'mobile/':'computer/').\App::get('router', 'path');
+		$template = \App::get('domain', 'template', 'template1');
+		$class = 'template/' . $template . '/controller/' . (isMobile() ? 'mobile/' : 'computer/') . \App::get('router', 'path');
 		if (is_file(ROOT_PATH.$class.'.php')) {
 			$callArr = [\App::make($class), \App::get('router', 'func')];
 			if (is_callable($callArr)) {

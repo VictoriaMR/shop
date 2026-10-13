@@ -77,7 +77,7 @@ function adminUrl($name = '', $param = []) {
 }
 
 function version() {
-	return '1.0.0';
+	return isDebug() ? (string)time() : '1.0.0';
 }
 
 function isJson($string) {
@@ -127,7 +127,11 @@ function isMobile() {
 function isDebug() {
 	static $isDebug = null;
 	if ($isDebug === null) {
-		$isDebug = isCli() ? true : (bool)config('domain', 'debug', false);
+		if (isCli()) {
+			$isDebug = true;
+		} else {
+			$isDebug = \App::get('domain', 'debug', null);
+		}
 	}
 	return $isDebug;
 }
@@ -157,7 +161,8 @@ function appT($text, $replace = [], $lanId = '', $type = 'common') {
 	$lanId = $lanId ?: lanId('code');
 	$cacheKey = $type . '.' . $lanId;
 	if (!isset($langCache[$cacheKey])) {
-		$file = ROOT_PATH . 'template/' . config('domain', 'template') . '/' . (isMobile() ? 'mobile' : 'computer') . '/language/' . $type . '/' . $lanId . '.php';
+		$template = \App::get('domain', 'template', 'admin');
+		$file = ROOT_PATH . 'template/' . $template . '/' . (isMobile() ? 'mobile' : 'computer') . '/language/' . $type . '/' . $lanId . '.php';
 		$langCache[$cacheKey] = is_file($file) ? require $file : [];
 	}
 	$translated = $langCache[$cacheKey][$text] ?? $text;
@@ -233,7 +238,7 @@ function currencyId($type = 'id') {
 }
 
 function userId($login = true) {
-	$uid = (int)frame('Session')->get(config('domain', 'class') . '_info', 0, 'mem_id');
+	$uid = (int)frame('Session')->get(\App::get('domain', 'class') . '_info', 0, 'mem_id');
 	if (!$login && $uid <= 0) return 10000;
 	return $uid;
 }

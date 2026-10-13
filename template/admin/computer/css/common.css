@@ -1,104 +1,165 @@
-* {
-    margin: 0;
-    padding: 0;
+/**
+ * ====================================================================
+ * Common CSS - Bootstrap 补充与后台标准化样式库
+ * 说明：以 bootstrap.css 为基础，本文件作为项目全局规范的统一补充与扩展
+ * ====================================================================
+ */
+
+/* --------------------------------------------------------------------
+ * 1. 基础重置与全局补充 (Base & Global Setup)
+ * -------------------------------------------------------------------- */
+*, *::before, *::after {
     box-sizing: border-box;
 }
-body, input, textarea, button, td, th, p, div {
-    font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
     font-size: 12px;
-    font-weight: normal;
+    line-height: 1.42857143;
+    color: #5f5f5f;
+    background-color: #fff;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-body {
-    color: #5f5f5f;
-    background-color: #fff;
+
+/* 统一输入框与按钮字体继承 */
+input, textarea, button, select {
+    font-family: inherit;
+    font-size: inherit;
 }
-ul, ol {list-style: none;}
-a {
-    text-decoration: none;
-    color: #3c3c3c;
+
+button {
     cursor: pointer;
 }
+
+ul, ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: #3c3c3c;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+a:hover, a:focus {
+    color: #e7502b;
+    text-decoration: none;
+}
+
+/* 统一图片对齐与边框处理，避免破坏 Bootstrap 响应式布局 */
 img {
-    max-width: 100%;
-    max-height: 100%;
+    vertical-align: middle;
+    border: 0;
 }
-table {
-    table-layout: fixed;
-    border-collapse: collapse;
-    border-spacing: 0;
-    border-bottom: solid 1px #dedede;
+
+/* 全局美化滚动条 */
+::-webkit-scrollbar {
+    width: 7px;
+    height: 10px;
 }
-table .tb_l { border-left: 1px #D5E1EA solid; }
-table .tb_t { border-top: 1px #D5E1EA solid; }
-table th,table td {word-break: break-word;}
-table th {
-    padding: 6px;
-    background-color: #ebeff8;
-    border-top: 1px #D5E1EA solid;
-    font-weight: bold;
+::-webkit-scrollbar-button {
+    display: none;
 }
-table tr:hover td { background-color: #ebeff8; }
-table td { padding: 6px; border-top: 1px #D5E1EA solid;}
-button {cursor: pointer;}
-::-webkit-scrollbar {width: 7px; height: 10px;}
-::-webkit-scrollbar-button {display: none;}
-::-webkit-scrollbar-track-piece {background: #ebeff8;}
-::-webkit-scrollbar-thumb {background-color: #8e8e8e; border-radius: 3px;}
-::-webkit-scrollbar-thumb:hover {background-color: #3b3b3b;}
-::-webkit-scrollbar-corner {background-color: #535353;}
-.container {padding: 0 8px;}
-.container-fluid {padding: 0 16px;}
-.container-fluid .form-inline .form-group {margin-bottom: 10px;}
-.left  {float: left;}
-.right {float: right;}
-.clear {clear: both;}
-.flex  {display: flex;}
-.relative {position: relative;}
-.block {display: block;}
-.w30  {width: 30%;}
-.w35  {width: 35%;}
-.w40  {width: 40%;}
-.w50  {width: 50% !important;}
-.w60  {width: 60%;}
-.w65  {width: 65%;}
-.w70  {width: 70%;}
-.w100 {width: 100%;}
-.tc {text-align: center;}
-.pointer {cursor: pointer;}
-.f400 {font-weight: 400;}
-.f600 {font-weight: 600;}
-.f700 {font-weight: 700;}
-.f12 {font-size: 12px;}
-.f14 {font-size: 14px;}
-.f16 {font-size: 16px;}
-.f18 {font-size: 18px;}
-.f20 {font-size: 20px;}
-.f24 {font-size: 24px;}
-.f26 {font-size: 26px;}
-.f28 {font-size: 28px;}
-.f30 {font-size: 30px;}
-.co, .orange {color: orange;}
-.cf  {color: #fff;}
-.cr, .red    {color: #e7502b;}
-.cg, .green  {color: green;}
-.c5f {color: #5f5f5f;}
+::-webkit-scrollbar-track-piece {
+    background: #ebeff8;
+}
+::-webkit-scrollbar-thumb {
+    background-color: #8e8e8e;
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background-color: #3b3b3b;
+}
+::-webkit-scrollbar-corner {
+    background-color: #535353;
+}
+
+/* --------------------------------------------------------------------
+ * 2. Bootstrap 组件增强与微调 (Bootstrap Enhancements)
+ * -------------------------------------------------------------------- */
+.container {
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.container-fluid {
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+.container-fluid .form-inline .form-group {
+    margin-bottom: 10px;
+}
+
+/* --------------------------------------------------------------------
+ * 3. 布局与原子工具类 (Layout & Utilities)
+ * -------------------------------------------------------------------- */
+.left     { float: left !important; }
+.right    { float: right !important; }
+.clear    { clear: both; }
+.flex     { display: flex; }
+.block    { display: block; }
+.relative { position: relative; }
+.pointer  { cursor: pointer; }
+.tc       { text-align: center; }
+
+/* 常用宽度百分比 */
+.w30  { width: 30%; }
+.w35  { width: 35%; }
+.w40  { width: 40%; }
+.w50  { width: 50% !important; }
+.w60  { width: 60%; }
+.w65  { width: 65%; }
+.w70  { width: 70%; }
+.w100 { width: 100%; }
+
+/* 字重 */
+.f400 { font-weight: 400; }
+.f600 { font-weight: 600; }
+.f700 { font-weight: 700; }
+
+/* 字号 */
+.f12 { font-size: 12px; }
+.f14 { font-size: 14px; }
+.f16 { font-size: 16px; }
+.f18 { font-size: 18px; }
+.f20 { font-size: 20px; }
+.f24 { font-size: 24px; }
+.f26 { font-size: 26px; }
+.f28 { font-size: 28px; }
+.f30 { font-size: 30px; }
+
+/* 颜色 */
+.cf          { color: #fff; }
+.c5f         { color: #5f5f5f; }
+.cr, .red    { color: #e7502b; }
+.cg, .green  { color: #28a745; }
+.co, .orange { color: #ff9800; }
+
+/* 单行文本省略截断 */
 .e1 {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
+
+/* 双行文本省略截断 */
 .e2 {
     overflow: hidden;
-    white-space: normal;
-    word-break: break-all;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;
     -webkit-box-orient: vertical;
 }
+
+/* --------------------------------------------------------------------
+ * 4. 业务通用表单与控件 (Form & Custom Controls)
+ * -------------------------------------------------------------------- */
 .input {
     height: 40px;
     line-height: 38px;
@@ -107,33 +168,65 @@ button {cursor: pointer;}
     padding: 0 10px;
     border-radius: 4px;
     background: #fff;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
-.input::placeholder {color: #666;}
-.input:focus {outline: none;}
+
+.input::placeholder {
+    color: #999;
+}
+
+.input:focus {
+    outline: none;
+    border-color: #e7502b;
+    box-shadow: 0 0 0 2px rgba(231, 80, 43, 0.15);
+}
+
+/* 状态切换开关组件 */
 .switch_botton {
     width: 64px;
     height: 24px;
     cursor: pointer;
     overflow: hidden;
     border-radius: 5px;
-    border: 1px #ddd solid;
+    border: 1px solid #ddd;
+    display: inline-block;
+    vertical-align: middle;
 }
+
 .switch_status {
     background: url(/computer/image/icon/switch.png) no-repeat;
     position: relative;
     width: 98px;
     height: 22px;
-    transition: 0.2s;
+    transition: left 0.2s ease;
 }
-.switch_status.off {left: -36px;}
-.glyphicon:hover {color: #e7502b;}
-.nav-left .left-one .glyphicon:hover {color: #fff;}
-.glyphicon.disabled {color: #ccc; cursor: not-allowed;}
+
+.switch_status.on  { left: 0; }
+.switch_status.off { left: -36px; }
+
+/* 图标状态微调 */
+.glyphicon:hover {
+    color: #e7502b;
+}
+
+.nav-left .left-one .glyphicon:hover {
+    color: #fff;
+}
+
+.glyphicon.disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------
+ * 5. 头像交互组件 (Avatar Components)
+ * -------------------------------------------------------------------- */
 .avatar-hover {
     position: relative;
     height: 36px;
     cursor: pointer;
 }
+
 .avatar-hover img {
     vertical-align: top;
     height: 36px;
@@ -142,49 +235,84 @@ button {cursor: pointer;}
     position: absolute;
     left: 0;
     bottom: 0;
-    transition: 700ms;
+    transition: width 0.3s ease, height 0.3s ease;
     max-width: unset;
     max-height: unset;
 }
+
 .avatar-hover:hover img {
     width: 120px;
     height: 120px;
+    z-index: 10;
 }
-.userAvatarInfo {width: max-content;}
+
+.userAvatarInfo {
+    display: inline-flex;
+    align-items: center;
+    width: max-content;
+}
+
 .userAvatarInfo .avatarStyle {
     width: 36px;
     height: 36px;
     position: relative;
     display: inline-block;
+    flex-shrink: 0;
 }
+
 .userAvatarInfo img {
     position: absolute;
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    right: 0;
-    bottom: 0;
+    left: 0;
+    top: 0;
+    transition: width 0.3s ease, height 0.3s ease;
+    object-fit: cover;
 }
-.userAvatarInfo .avatarStyle,
+
 .userAvatarInfo .two {
     display: inline-block;
-    vertical-align: top;
-    font-size: 0;
+    vertical-align: middle;
+    margin-left: 10px;
+    line-height: 1.3;
 }
-.userAvatarInfo .two p {line-height: 18px; font-size: 12px;}
+
+.userAvatarInfo .two p {
+    margin: 0;
+    line-height: 18px;
+    font-size: 12px;
+}
+
+.userAvatarInfo .two .name {
+    font-weight: 500;
+    color: #333;
+    font-size: 13px;
+}
+
+.userAvatarInfo .two .sub-name {
+    color: #337ab7;
+    font-size: 12px;
+}
+
 .userAvatarInfo .avatarStyle:hover img {
     width: 120px;
     height: 120px;
     max-width: 120px;
     max-height: 120px;
-    transition: 700ms;
+    z-index: 99;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+/* --------------------------------------------------------------------
+ * 6. 弹窗、遮罩与提示系统 (Modal, Mask & Toast)
+ * -------------------------------------------------------------------- */
 .s-modal {
-    box-shadow: 0 5px 7px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     border-radius: 5px;
     width: 440px;
     padding: 20px;
-    background-color: #f1f1f1;
+    background-color: #f8f9fa;
     margin: 0 auto;
     text-align: left;
     position: fixed;
@@ -193,8 +321,17 @@ button {cursor: pointer;}
     overflow-y: auto;
     display: none;
 }
-.s-modal .input-group {margin-bottom: 10px;}
-.s-modal .title {font-size: 22px; margin-bottom: 20px;}
+
+.s-modal .input-group {
+    margin-bottom: 10px;
+}
+
+.s-modal .title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
 .s-modal .glyphicon-remove,
 .s-modal .fa-times,
 .s-modal .fa-remove,
@@ -207,17 +344,27 @@ button {cursor: pointer;}
     line-height: 30px;
     text-align: center;
     cursor: pointer;
+    color: #999;
+    transition: color 0.15s ease;
 }
+
+.s-modal .glyphicon-remove:hover,
+.s-modal .fa-times:hover,
+.s-modal .fa-remove:hover,
+.s-modal .fa-close:hover {
+    color: #333;
+}
+
 .mask {
     position: fixed;
     height: 100%;
     width: 100%;
-    background: #000;
-    opacity: 0.2;
+    background: rgba(0, 0, 0, 0.4);
     left: 0;
     top: 0;
     z-index: 66;
 }
+
 #confirm-pop .content {
     background: #fff;
     padding: 20px;
@@ -226,43 +373,112 @@ button {cursor: pointer;}
     top: calc(50% - 70px);
     left: calc(50% - 175px);
     z-index: 99;
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+#dealbox .centerShow,
+.dealbox .centerShow {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 460px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    padding: 24px;
+    border-radius: 6px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.25);
+    z-index: 99;
+}
+
+#dealbox .dealbox-title,
+.dealbox .dealbox-title {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+#dealbox .input-group,
+.dealbox .input-group {
+    margin-bottom: 12px;
+}
+
 #rightTips {
     position: fixed;
-    top: 4px;
-    right: 4px;
-    width: 200px;
-    z-index: 999;
+    top: 10px;
+    right: 10px;
+    width: 240px;
+    z-index: 9999;
 }
+
 #rightTips .info {
     position: relative;
     width: 100%;
-    padding: 12px;
-    border-radius: 5px;
+    padding: 12px 28px 12px 14px;
+    border-radius: 4px;
     background-color: #333336;
     margin-bottom: 8px;
     color: #fff;
     word-break: break-all;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
-#rightTips .success {color: #3c763d; background-color: #dff0d8; border: 1px solid #d6e9c6;}
-#rightTips .error   {color: #a94442; background-color: #f2dede; border: 1px solid #ebccd1;}
+
+#rightTips .success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border: 1px solid #d6e9c6;
+}
+
+#rightTips .error {
+    color: #a94442;
+    background-color: #f2dede;
+    border: 1px solid #ebccd1;
+}
+
 #rightTips .info .glyphicon-remove {
     cursor: pointer;
     position: absolute;
-    top: 4px;
-    right: 4px;
-    transition: 1s;
+    top: 10px;
+    right: 10px;
+    transition: transform 0.3s ease;
 }
-#rightTips .info .glyphicon-remove:hover {transform: rotate(180deg);}
-#header-nav {margin-top: 10px; margin-bottom: 15px;}
+
+#rightTips .info .glyphicon-remove:hover {
+    transform: rotate(90deg);
+}
+
+/* 顶部面包屑与标题条 */
+#header-nav {
+    margin-top: 10px;
+}
+
 #header-nav .nav {
-    border-left: 2px solid #e7502b;
+    border-left: 3px solid #e7502b;
     line-height: 20px;
     padding-left: 10px;
+    font-size: 14px;
 }
-#header-nav .nav a {display: none;}
-#header-nav .nav:hover a {display: inline-block;}
-#header-nav .nav a:hover {color: #e7502b;}
+
+#header-nav .nav a {
+    display: none;
+    margin-left: 8px;
+}
+
+#header-nav .nav:hover a {
+    display: inline-block;
+}
+
+#header-nav .nav a:hover {
+    color: #e7502b;
+}
+
+/* 页面加载指示条 */
 #progressing {
     width: 1px;
     height: 3px;
@@ -271,17 +487,17 @@ button {cursor: pointer;}
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 99999;
 }
+
 .loading {
     animation: loading 1s steps(8) infinite;
     height: 50%;
     width: 50%;
     margin-top: 25%;
 }
+
 @keyframes loading {
-    from {transform: rotate(0deg)}
-    to {transform: rotate(360deg)}
-}
-@media screen and (max-width: 750px) {
-    .w50 {width: 100%; padding-left: 0 !important; padding-right: 0 !important;}
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
 }

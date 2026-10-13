@@ -59,6 +59,7 @@
 }
 #index-page .body .nav-left .person .info p {
 	line-height: 19px;
+	margin: 0;
 }
 #index-page .body .nav-left .left-content {
 	width: 100%;

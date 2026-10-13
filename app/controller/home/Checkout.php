@@ -279,7 +279,7 @@ class Checkout extends HomeBase
 				$error = appT('order_error');
 			} else {
 				//获取支付列表
-				$methodList = make('app/payment/PaymentMethod')::sortedMethodList();
+				$methodList = service('payment/Payment')->sortedMethodList();
 				if (!empty($methodList) && empty($method)) {
 					$method = key($methodList);
 				}

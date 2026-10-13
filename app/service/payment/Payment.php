@@ -48,4 +48,24 @@ class Payment extends Base
 		}
 		return $this->loadData(['payment_id'=>$usedInfo['payment_id'], 'status'=>1, 'is_sandbox'=>isDebug()?1:0], 'payment_id,type,is_sandbox,name,app_key,secret_key,webhook_key');
 	}
+
+	/**
+	 * 获取全系统支持的支付方式清单
+	 *
+	 * @return array
+	 */
+	public function methodList(): array
+	{
+		return \app\payment\PaymentMethod::methodList();
+	}
+
+	/**
+	 * 获取当前站点启用的排序支付方式列表
+	 *
+	 * @return array
+	 */
+	public function sortedMethodList(): array
+	{
+		return \app\payment\PaymentMethod::sortedMethodList();
+	}
 }
