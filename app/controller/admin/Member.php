@@ -19,20 +19,23 @@ class Member extends AdminBase
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getInfo', 'modify', 'editInfo', 'delete'])) {
+			if (in_array($opn, ['getInfo', 'modify', 'editInfo', 'delete'], true)) {
 				$this->$opn();
 			}
+			$this->error('非法请求');
 		}
 
+		frame('Html')->addCss();
 		frame('Html')->addJs();
+
 		$search = [
 			'status' => (int) iget('status', -1),
-			'page' => (int) iget('page', 1),
-			'size' => (int) iget('size', 20),
-			'name' => trim(iget('name', '')),
-			'phone' => trim(iget('phone', '')),
-			'stime' => trim(iget('stime', '')),
-			'etime' => trim(iget('etime', '')),
+			'page'   => max(1, (int) iget('page', 1)),
+			'size'   => max(1, min(100, (int) iget('size', 20))),
+			'name'   => trim(iget('name', '')),
+			'phone'  => trim(iget('phone', '')),
+			'stime'  => trim(iget('stime', '')),
+			'etime'  => trim(iget('etime', '')),
 		];
 
 		$where = [
@@ -41,24 +44,28 @@ class Member extends AdminBase
 		if ($search['status'] >= 0) {
 			$where['status'] = $search['status'];
 		}
-		if (!empty($search['name'])) {
-			$where['first_name,last_name,nick_name'] = ['like', '%'.$search['name'].'%'];
+		if ($search['name'] !== '') {
+			$where['first_name,last_name,nick_name'] = ['like', '%' . $search['name'] . '%'];
 		}
-		if (!empty($search['phone'])) {
-			$where['mobile'] = ['like', '%'.$search['phone'].'%'];
+		if ($search['phone'] !== '') {
+			$where['mobile'] = ['like', '%' . $search['phone'] . '%'];
 		}
-		if (!empty($search['stime'])) {
-			$where['add_time'] = ['>=', $search['stime']];
-		}
-		if (!empty($search['etime'])) {
-			$where['add_time'] = ['<=', $search['etime']];
+		$stimeFull = $search['stime'] !== '' ? ($search['stime'] . (strlen($search['stime']) === 10 ? ' 00:00:00' : '')) : '';
+		$etimeFull = $search['etime'] !== '' ? ($search['etime'] . (strlen($search['etime']) === 10 ? ' 23:59:59' : '')) : '';
+		if ($stimeFull !== '' && $etimeFull !== '') {
+			$where['add_time'] = ['between', [$stimeFull, $etimeFull]];
+		} elseif ($stimeFull !== '') {
+			$where['add_time'] = ['>=', $stimeFull];
+		} elseif ($etimeFull !== '') {
+			$where['add_time'] = ['<=', $etimeFull];
 		}
 
 		$member = service('member/Member');
 		$total = $member->getCountData($where);
+		$list = [];
 		if ($total > 0) {
 			$fields = 'mem_id,avatar,sex,first_name,last_name,nick_name,mobile,email,status,add_time,login_time';
-			$list = $member->getListData($where, $fields, $search['page'], $search['size']);
+			$list = $member->getListData($where, $fields, $search['page'], $search['size'], ['mem_id' => 'desc']);
 			foreach ($list as $key => $value) {
 				$value['avatar'] = $member->getAvatar($value['avatar'], $value['sex']);
 				$list[$key] = $value;
@@ -66,8 +73,8 @@ class Member extends AdminBase
 		}
 
 		$this->view([
-			'total' => $total,
-			'list' => $list ?? [],
+			'total'  => $total,
+			'list'   => $list,
 			'search' => $search,
 		]);
 	}
@@ -75,13 +82,13 @@ class Member extends AdminBase
 	protected function modify()
 	{
 		$memId = (int) ipost('mem_id');
-		$status = (int) ipost('status');
+		$status = (int) ipost('status') === 1 ? 1 : 0;
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
-		$result = service('member/Member')->updateData($memId, ['status'=>$status, 'update_time'=>now()]);
+		$result = service('member/Member')->updateData($memId, ['status' => $status, 'update_time' => now()]);
 		if ($result) {
-			$this->addLog('修改用户状态-'.$memId.($status==1?'-启用':'-停用'));
+			$this->addLog('修改用户状态-' . $memId . ($status === 1 ? '-启用' : '-停用'));
 			$this->success('操作成功');
 		} else {
 			$this->error('操作失败');
@@ -96,7 +103,7 @@ class Member extends AdminBase
 		}
 		$result = service('member/Member')->deleteData($memId);
 		if ($result) {
-			$this->addLog('删除用户-'.$memId);
+			$this->addLog('删除用户-' . $memId);
 			$this->success('删除成功');
 		} else {
 			$this->error('删除失败');
@@ -113,7 +120,7 @@ class Member extends AdminBase
 		if (empty($info)) {
 			$this->error('找不到用户数据');
 		}
-		$this->addLog('获取用户信息-'.$memId);
+		$this->addLog('获取用户信息-' . $memId);
 		unset($info['password'], $info['salt']);
 		$firstName = $info['first_name'] ?? '';
 		$lastName = $info['last_name'] ?? '';
@@ -125,43 +132,48 @@ class Member extends AdminBase
 	protected function editInfo()
 	{
 		$mem_id = (int) ipost('mem_id');
-		$name = trim(ipost('name'));
-		$nickname = trim(ipost('nickname'));
-		$mobile = trim(ipost('mobile'));
-		$email = trim(ipost('email'));
-		$status = (int) ipost('status');
-		$password = trim(ipost('password'));
-		$repassword = trim(ipost('repassword'));
-		if (empty($mem_id) && empty($password)) {
+		$name = trim(ipost('name', ''));
+		$nickname = trim(ipost('nickname', ''));
+		$mobile = trim(ipost('mobile', ''));
+		$email = trim(ipost('email', ''));
+		$status = (int) ipost('status') === 1 ? 1 : 0;
+		$password = trim(ipost('password', ''));
+		$repassword = trim(ipost('repassword', ''));
+
+		if ($name === '') {
+			$this->error('名称不能为空');
+		}
+		if ($nickname === '') {
+			$this->error('昵称不能为空');
+		}
+		if ($mobile === '') {
+			$this->error('手机号码不能为空');
+		}
+		if ($email === '') {
+			$this->error('邮箱不能为空');
+		}
+		if (empty($mem_id) && $password === '') {
 			$this->error('密码不能为空');
 		}
-		if (!empty($password)) {
-			if ($password != $repassword) {
-				$this->error('确认密码不匹配');
-			}
+		if ($password !== '' && $password !== $repassword) {
+			$this->error('确认密码不匹配');
 		}
+
 		$data = [
-			'status' => $status,
+			'status'    => $status,
+			'nick_name' => $nickname,
+			'mobile'    => $mobile,
+			'email'     => $email,
 		];
-		if ($name !== '') {
-			if (strpos($name, ' ') !== false) {
-				list($first, $last) = explode(' ', $name, 2);
-				$data['first_name'] = $first;
-				$data['last_name'] = $last;
-			} else {
-				$data['first_name'] = $name;
-				$data['last_name'] = '';
-			}
+		if (strpos($name, ' ') !== false) {
+			list($first, $last) = explode(' ', $name, 2);
+			$data['first_name'] = $first;
+			$data['last_name'] = $last;
+		} else {
+			$data['first_name'] = $name;
+			$data['last_name'] = '';
 		}
-		if ($nickname !== '') {
-			$data['nick_name'] = $nickname;
-		}
-		if ($mobile !== '') {
-			$data['mobile'] = $mobile;
-		}
-		if ($email !== '') {
-			$data['email'] = $email;
-		}
+
 		$service = service('member/Member');
 		if ($password !== '') {
 			if (!empty($mem_id)) {
@@ -178,9 +190,9 @@ class Member extends AdminBase
 		}
 		if (empty($mem_id)) {
 			$result = $service->create($data);
-			$this->addLog('新增用户-'.$result);
+			$this->addLog('新增用户-' . $result);
 		} else {
-			$this->addLog('编辑用户-'.$mem_id);
+			$this->addLog('编辑用户-' . $mem_id);
 			$data['update_time'] = now();
 			$result = $service->updateData($mem_id, $data);
 		}
@@ -192,6 +204,7 @@ class Member extends AdminBase
 
 	public function log()
 	{
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 
 		$type = trim(iget('type', 'all'));
@@ -232,11 +245,14 @@ class Member extends AdminBase
 		}
 
 		// 时间区间
-		if ($stime !== '') {
-			$where['add_time'] = ['>=', $stime . (strlen($stime) === 10 ? ' 00:00:00' : '')];
-		}
-		if ($etime !== '') {
-			$where['add_time'] = ['<=', $etime . (strlen($etime) === 10 ? ' 23:59:59' : '')];
+		$stimeFull = $stime !== '' ? ($stime . (strlen($stime) === 10 ? ' 00:00:00' : '')) : '';
+		$etimeFull = $etime !== '' ? ($etime . (strlen($etime) === 10 ? ' 23:59:59' : '')) : '';
+		if ($stimeFull !== '' && $etimeFull !== '') {
+			$where['add_time'] = ['between', [$stimeFull, $etimeFull]];
+		} elseif ($stimeFull !== '') {
+			$where['add_time'] = ['>=', $stimeFull];
+		} elseif ($etimeFull !== '') {
+			$where['add_time'] = ['<=', $etimeFull];
 		}
 
 		// 按人员姓名/昵称/手机号筛选
@@ -284,7 +300,7 @@ class Member extends AdminBase
 				$mid = (int)$item['mem_id'];
 				$item['member'] = $memberMap[$mid] ?? [
 					'mem_id'   => $mid,
-					'avatar'   => siteUrl('/image/common/male.jpg'),
+					'avatar'   => isMobile() ? '' : siteUrl('image/common/male.jpg'),
 					'nick_name'=> $mid > 0 ? '用户-' . $mid : '系统/未登录',
 					'fullName' => '',
 					'mobile'   => '-',
@@ -305,6 +321,7 @@ class Member extends AdminBase
 		$search = [
 			'type'    => $type,
 			'name'    => $name,
+			'phone'   => $phone,
 			'keyword' => $keyword,
 			'ip'      => $ip,
 			'stime'   => $stime,

@@ -2,7 +2,7 @@
 return [
 	'admin' => [
 		'computer' => ['common','space','icon','bootstrap','bootstrap-plugin'],
-		'mobile' => [],
+		'mobile' => ['common','icon'],
 	],
 	'home' => [
 		'computer' => ['common'],

@@ -1,0 +1,648 @@
+/**
+ * ====================================================================
+ * Admin Mobile Common CSS (Pure REM Responsive System)
+ * 摒弃 Bootstrap 重型桌面样式，保持轻量、一致、无字号冲突
+ * ====================================================================
+ */
+
+/* 1. 基础重置 (Base Reset) */
+*, *::before, *::after {
+	box-sizing: border-box;
+	-webkit-tap-highlight-color: transparent;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100%;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+	font-size: 0.14rem;
+	line-height: 1.5;
+	color: #334155;
+	background-color: #f8fafc;
+	-webkit-font-smoothing: antialiased;
+}
+
+input, textarea, button, select {
+	font-family: inherit;
+	font-size: 0.14rem;
+	color: inherit;
+	outline: none;
+}
+
+button {
+	cursor: pointer;
+	user-select: none;
+}
+
+ul, ol {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+p {
+	margin: 0;
+	padding: 0;
+}
+
+a {
+	color: #334155;
+	text-decoration: none;
+}
+
+a:active {
+	color: #e7502b;
+}
+
+img {
+	vertical-align: middle;
+	border: 0;
+	max-width: 100%;
+}
+
+/* 2. 布局与原子工具类 (Utilities in REM) */
+.container,
+.container-fluid {
+	width: 100%;
+	padding-left: 0.12rem;
+	padding-right: 0.12rem;
+}
+
+.left     { float: left !important; }
+.right    { float: right !important; }
+.clear    { clear: both; }
+.flex     { display: flex; }
+.block    { display: block; }
+.relative { position: relative; }
+.pointer  { cursor: pointer; }
+.tc       { text-align: center; }
+.text-right { text-align: right; }
+.hidden, .hide { display: none !important; }
+
+.sr-only {
+	position: absolute;
+	width: 0.01rem;
+	height: 0.01rem;
+	padding: 0;
+	margin: -0.01rem;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+/* 宽度百分比 */
+.w30  { width: 30%; }
+.w40  { width: 40%; }
+.w50  { width: 50% !important; }
+.w100 { width: 100%; }
+
+/* 字号与字重 */
+.f400 { font-weight: 400; }
+.f600 { font-weight: 600; }
+.f700 { font-weight: 700; }
+.f12  { font-size: 0.12rem; }
+.f14  { font-size: 0.14rem; }
+.f16  { font-size: 0.16rem; }
+.f18  { font-size: 0.18rem; }
+.f20  { font-size: 0.20rem; }
+.f24  { font-size: 0.24rem; }
+
+/* 常用间距 (REM) */
+.mt6  { margin-top: 0.06rem; }
+.mt10 { margin-top: 0.10rem; }
+.mt12 { margin-top: 0.12rem; }
+.mt20 { margin-top: 0.20rem; }
+.mt24 { margin-top: 0.24rem; }
+.ml2  { margin-left: 0.02rem; }
+.ml4  { margin-left: 0.04rem; }
+.ml12 { margin-left: 0.12rem; }
+.mr10 { margin-right: 0.10rem; }
+.mr20 { margin-right: 0.20rem; }
+.p0   { padding: 0 !important; }
+
+/* 颜色 */
+.cf          { color: #ffffff; }
+.c5f         { color: #64748b; }
+.cr, .red    { color: #e7502b; }
+.cg, .green  { color: #10b981; }
+.co, .orange { color: #f59e0b; }
+
+/* 文本省略 */
+.e1 {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.e2 {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+}
+
+/* 3. 顶部进度条与标签栏 (Progress & Tabs) */
+#progressing {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 0%;
+	height: 0.02rem;
+	background: linear-gradient(90deg, #e7502b, #ff7849);
+	z-index: 9999;
+	transition: width 0.15s ease;
+}
+
+.mobile-tabs-wrap {
+	background: #ffffff;
+	border-bottom: 0.01rem solid #e2e8f0;
+	margin-bottom: 0.10rem;
+	overflow-x: auto;
+	-webkit-overflow-scrolling: touch;
+}
+
+.mobile-tabs-wrap::-webkit-scrollbar {
+	display: none;
+}
+
+.nav-tabs {
+	display: flex;
+	white-space: nowrap;
+	padding: 0 0.08rem;
+}
+
+.nav-tabs > li > a {
+	display: block;
+	padding: 0.10rem 0.14rem;
+	font-size: 0.13rem;
+	font-weight: 500;
+	color: #64748b;
+	border-bottom: 0.02rem solid transparent;
+	transition: all 0.2s;
+}
+
+.nav-tabs > li.active > a {
+	color: #e7502b;
+	font-weight: 600;
+	border-bottom-color: #e7502b;
+}
+
+/* 4. 按钮、标签与表单组件 (Buttons, Labels & Forms) */
+.btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.04rem;
+	height: 0.34rem;
+	padding: 0 0.14rem;
+	font-size: 0.13rem;
+	font-weight: 500;
+	line-height: 1;
+	border-radius: 0.06rem;
+	border: 0.01rem solid #cbd5e1;
+	background: #ffffff;
+	color: #334155;
+	transition: all 0.15s ease;
+	white-space: nowrap;
+}
+
+.btn:active {
+	transform: scale(0.98);
+}
+
+.btn:disabled,
+.btn.disabled {
+	opacity: 0.65;
+	pointer-events: none;
+}
+
+.btn-default {
+	color: #333333;
+	background-color: #ffffff;
+	border-color: #cccccc;
+}
+
+.btn-default:hover,
+.btn-default:focus,
+.btn-default:active,
+.btn-default.active {
+	color: #333333;
+	background-color: #e6e6e6;
+	border-color: #adadad;
+}
+
+.btn-primary {
+	color: #ffffff;
+	background-color: #337ab7;
+	border-color: #2e6da4;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary:active,
+.btn-primary.active {
+	color: #ffffff;
+	background-color: #286090;
+	border-color: #204d74;
+}
+
+.btn-success {
+	color: #ffffff;
+	background-color: #5cb85c;
+	border-color: #4cae4c;
+}
+
+.btn-success:hover,
+.btn-success:focus,
+.btn-success:active,
+.btn-success.active {
+	color: #ffffff;
+	background-color: #449d44;
+	border-color: #398439;
+}
+
+.btn-info {
+	color: #ffffff;
+	background-color: #5bc0de;
+	border-color: #46b8da;
+}
+
+.btn-info:hover,
+.btn-info:focus,
+.btn-info:active,
+.btn-info.active {
+	color: #ffffff;
+	background-color: #31b0d5;
+	border-color: #269abc;
+}
+
+.btn-warning {
+	color: #ffffff;
+	background-color: #f0ad4e;
+	border-color: #eea236;
+}
+
+.btn-warning:hover,
+.btn-warning:focus,
+.btn-warning:active,
+.btn-warning.active {
+	color: #ffffff;
+	background-color: #ec971f;
+	border-color: #d58512;
+}
+
+.btn-danger {
+	color: #ffffff;
+	background-color: #d9534f;
+	border-color: #d43f3a;
+}
+
+.btn-danger:hover,
+.btn-danger:focus,
+.btn-danger:active,
+.btn-danger.active {
+	color: #ffffff;
+	background-color: #c9302c;
+	border-color: #ac2925;
+}
+
+.btn-xs {
+	height: 0.28rem;
+	padding: 0 0.08rem;
+	font-size: 0.12rem;
+	border-radius: 0.04rem;
+}
+
+.btn-lg {
+	height: 0.44rem;
+	padding: 0 0.18rem;
+	font-size: 0.15rem;
+	border-radius: 0.08rem;
+}
+
+.btn-block {
+	display: flex;
+	width: 100%;
+}
+
+.label {
+	display: inline-block;
+	padding: 0.03rem 0.08rem;
+	font-size: 0.11rem;
+	font-weight: 600;
+	line-height: 1.2;
+	border-radius: 0.04rem;
+	color: #ffffff;
+}
+
+.label-success { background-color: #10b981; }
+.label-warning { background-color: #f59e0b; }
+.label-danger  { background-color: #ef4444; }
+.label-info    { background-color: #3b82f6; }
+.label-default { background-color: #94a3b8; }
+
+.alert {
+	padding: 0.10rem 0.12rem;
+	margin: 0.08rem 0;
+	border-radius: 0.06rem;
+	font-size: 0.13rem;
+}
+
+.alert-danger {
+	background: #fef2f2;
+	border: 0.01rem solid #fecaca;
+	color: #dc2626;
+}
+
+.alert-success {
+	background: #ecfdf5;
+	border: 0.01rem solid #a7f3d0;
+	color: #059669;
+}
+
+.form-control,
+.input {
+	width: 100%;
+	min-height: 0.34rem;
+	padding: 0 0.12rem;
+	font-size: 0.14rem;
+	color: #1e293b;
+	background-color: #ffffff;
+	border: 0.01rem solid #cbd5e1;
+	border-radius: 0.06rem;
+	transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-control:focus,
+.input:focus {
+	border-color: #e7502b;
+	box-shadow: 0 0 0 0.02rem rgba(231, 80, 43, 0.15);
+}
+
+.input-group {
+	display: flex;
+	align-items: stretch;
+	width: 100%;
+	margin-bottom: 0.12rem;
+}
+
+.input-group .input-group-addon {
+	display: flex;
+	align-items: center;
+	padding: 0 0.10rem;
+	font-size: 0.13rem;
+	color: #475569;
+	background: #f1f5f9;
+	border: 0.01rem solid #cbd5e1;
+	border-right: 0;
+	border-radius: 0.06rem 0 0 0.06rem;
+	white-space: nowrap;
+}
+
+.input-group .form-control,
+.input-group .input {
+	flex: 1;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+/* 5. 移动端提示框与弹窗 (Toast & Modals) */
+#rightTips {
+	position: fixed;
+	top: 0.16rem;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 88vw;
+	max-width: 3.4rem;
+	z-index: 10000;
+	pointer-events: none;
+}
+
+#rightTips .info {
+	pointer-events: auto;
+	position: relative;
+	padding: 0.12rem 0.32rem 0.12rem 0.14rem;
+	border-radius: 0.08rem;
+	color: #ffffff;
+	font-size: 0.13rem;
+	line-height: 1.4;
+	box-shadow: 0 0.08rem 0.20rem rgba(15, 23, 42, 0.22);
+	margin-bottom: 0.08rem;
+	animation: mobileTipIn 0.2s ease-out;
+}
+
+#rightTips .info.error {
+	background: rgba(220, 38, 38, 0.96);
+}
+
+#rightTips .info.success {
+	background: rgba(16, 185, 129, 0.96);
+}
+
+#rightTips .info .close-tip {
+	position: absolute;
+	right: 0.10rem;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 0.14rem;
+	opacity: 0.85;
+	cursor: pointer;
+}
+
+@keyframes mobileTipIn {
+	from {
+		opacity: 0;
+		transform: translateY(-0.10rem);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.mask,
+#dealbox .mask,
+.dealbox .mask,
+#confirm-pop .mask {
+	position: fixed;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.55);
+	backdrop-filter: blur(0.02rem);
+	-webkit-backdrop-filter: blur(0.02rem);
+	z-index: 990;
+}
+
+#dealbox .centerShow,
+.dealbox .centerShow,
+#confirm-pop .content {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 90vw;
+	max-width: 3.45rem;
+	max-height: 85vh;
+	overflow-y: auto;
+	background: #ffffff;
+	padding: 0.20rem;
+	border-radius: 0.12rem;
+	box-shadow: 0 0.16rem 0.36rem rgba(15, 23, 42, 0.28);
+	z-index: 995;
+}
+
+#dealbox .dealbox-title,
+.dealbox .dealbox-title {
+	font-size: 0.16rem;
+	font-weight: 600;
+	color: #0f172a;
+	padding-bottom: 0.10rem;
+	margin-bottom: 0.14rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+}
+
+#dealbox .close,
+.dealbox .close {
+	position: absolute;
+	top: 0.14rem;
+	right: 0.14rem;
+	background: transparent;
+	border: none;
+	font-size: 0.22rem;
+	line-height: 1;
+	color: #94a3b8;
+	padding: 0.04rem;
+}
+
+/* 6. 状态切换开关组件 (Switch Toggle) */
+.switch_botton {
+	display: inline-block;
+	width: 0.44rem;
+	height: 0.24rem;
+	border-radius: 0.12rem;
+	vertical-align: middle;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	user-select: none;
+}
+
+.switch_status {
+	width: 100%;
+	height: 100%;
+	border-radius: 0.12rem;
+	position: relative;
+	background-color: #cbd5e1;
+	transition: background-color 0.2s ease;
+}
+
+.switch_status.on {
+	background-color: #10b981;
+}
+
+.switch_status.off {
+	background-color: #cbd5e1;
+}
+
+.switch_status::after {
+	content: "";
+	position: absolute;
+	top: 0.02rem;
+	left: 0.02rem;
+	width: 0.20rem;
+	height: 0.20rem;
+	border-radius: 50%;
+	background: #ffffff;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.25);
+	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.switch_status.on::after {
+	transform: translateX(0.20rem);
+}
+
+/* 7. 移动端分页组件 (Pagination) */
+.pagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 0.04rem;
+	padding: 0.08rem 0 0.20rem;
+}
+
+.pagination > li {
+	display: inline-flex;
+}
+
+.pagination > li:first-child.disabled {
+	width: 100%;
+	justify-content: center;
+	margin-bottom: 0.04rem;
+}
+
+.pagination > li:first-child.disabled > span {
+	border: none;
+	background: transparent;
+	color: #64748b;
+	font-size: 0.12rem;
+	height: auto;
+	padding: 0.02rem 0;
+}
+
+.pagination > li > a,
+.pagination > li > span,
+.pagination > li.disabled:not(:first-child) > span {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 0.28rem;
+	height: 0.30rem;
+	padding: 0 0.07rem;
+	font-size: 0.12rem;
+	font-weight: 500;
+	color: #334155;
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.06rem;
+	transition: all 0.15s ease;
+}
+
+.pagination > li > a:active {
+	background: #f1f5f9;
+	border-color: #cbd5e1;
+}
+
+.pagination > li.active > span {
+	background: #e7502b;
+	border-color: #e7502b;
+	color: #ffffff;
+	font-weight: 600;
+}
+
+.pagination > li.disabled:not(:first-child) > span {
+	opacity: 0.5;
+	background: #f1f5f9;
+	color: #94a3b8;
+	pointer-events: none;
+}
+
+.pagination > li.disabled > span.ellipsis {
+	min-width: 0.20rem;
+	padding: 0 0.02rem;
+	border: none;
+	background: transparent;
+	color: #64748b;
+	opacity: 1;
+	font-weight: 600;
+}
+
+

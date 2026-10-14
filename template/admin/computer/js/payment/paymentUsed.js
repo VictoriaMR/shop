@@ -23,7 +23,7 @@ const PAYMENTUSED = {
 				if (typeof res === 'string') {
 					try { res = JSON.parse(res); } catch(e){}
 				}
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					const data = res.data || res.msg || {};
 					_this.showEditModal(data);
 				} else {
@@ -58,7 +58,7 @@ const PAYMENTUSED = {
 					try { res = JSON.parse(res); } catch(e){}
 				}
 				showTips(res);
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					$('#dealbox').dealboxHide();
 					setTimeout(function(){
 						window.location.reload();
@@ -79,7 +79,7 @@ const PAYMENTUSED = {
 						try { res = JSON.parse(res); } catch(e){}
 					}
 					showTips(res);
-					if (res && (res.code == 1 || res.code == 200)) {
+					if (res && res.code == 1) {
 						tr.fadeOut(300, function(){
 							tr.remove();
 							if ($('#data-list tbody tr').length === 0) {

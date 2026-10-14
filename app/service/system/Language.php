@@ -5,4 +5,38 @@ use app\service\Base;
 
 class Language extends Base
 {
+	const CACHE_KEY = 'language:';
+
+	public function getInfoCache($code)
+	{
+		$cacheKey = $this->getCacheKey($code);
+		$info = redis()->get($cacheKey);
+		if ($info === false) {
+			$info = $this->loadData($code);
+			redis()->set($cacheKey, $info);
+		}
+		return $info;
+	}
+
+	protected function getCacheKey($code)
+	{
+		return self::CACHE_KEY . $code;
+	}
+
+	public function updateInfo($code, array $data)
+	{
+		$rst = $this->updateData($code, $data);
+		if ($rst) {
+			redis()->del($this->getCacheKey($code));
+		}
+		return $rst;
+	}
+
+	public function getTransList()
+	{
+		$list = $this->getListData();
+		$list = array_column($list, null, 'code');
+		unset($list['zh']);
+		return $list;
+	}
 }

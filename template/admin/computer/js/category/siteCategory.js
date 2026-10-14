@@ -26,7 +26,7 @@ const SITECATEGORY = {
 			_thisobj.button('loading');
 			post(URI+'category/siteCategory', _thisobj.parent().serializeArray(), function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
@@ -41,7 +41,7 @@ const SITECATEGORY = {
 				_thisobj.button('loading');
 				post(URI+'category/siteCategory', {opn: 'deleteSiteCategory', id: id}, function(res){
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
@@ -63,7 +63,7 @@ const SITECATEGORY = {
 			const value = $(this).val();
 			post(URI+'category/siteCategory', {opn: 'modifySiteCategory', id: id, [name]: value}, function(res){
 				showTips(res);
-				if (res.code === 200 && name === 'sort') {
+				if (res.code == 1 && name === 'sort') {
 					window.location.reload();
 				}
 			});

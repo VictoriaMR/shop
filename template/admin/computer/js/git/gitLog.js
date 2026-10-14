@@ -5,7 +5,7 @@ $(function(){
         _thisobj.button('loading');
         post(URI+'git/gitLog', {opn:'updateGit', id:id}, function(res){
             showTips(res);
-            if (res.code == 200) {
+            if (res.code == 1) {
                 window.location.reload();
             } else {
                 _thisobj.button('reset');
@@ -18,7 +18,7 @@ $(function(){
         _thisobj.button('loading');
         post(URI+'git/gitLog', {opn:'releaseGit', id:id}, function(res){
             showTips(res);
-            if (res.code == 200) {
+            if (res.code == 1) {
                 window.location.reload();
             } else {
                 _thisobj.button('reset');

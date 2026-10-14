@@ -2,132 +2,93 @@ $(function(){
 	ATTRIBUTE.init();
 });
 const ATTRIBUTE = {
+	url: '', // 空字符串即提交到当前页面, 与其他模块保持一致
 	init: function() {
 		const _this = this;
-		//新增修改
+		// 状态筛选
+		$('.status-filter .btn').on('click', function(){
+			const form = $(this).parents('form');
+			form.find('input[name="status"]').val($(this).data('status'));
+			form.submit();
+		});
+		// 新增
 		$('.btn.add').on('click', function(){
 			_this.initData();
 		});
+		// 修改
 		$('.btn.modify').on('click', function(){
-			var btnobj = $(this);
-			var id = btnobj.parents('.item').data('id');
+			const btnobj = $(this);
+			const id = btnobj.parents('.item').data('id');
 			btnobj.button('loading');
-			post(URI+'attribute/attrValue', {opn: 'getAttvInfo', id: id}, function(res){
-				if (res.code == 200) {
+			post(_this.url, {opn: 'getAttvInfo', id: id}, function(res){
+				btnobj.button('reset');
+				if (res.code == 1) {
 					_this.initData(res.data);
 				} else {
 					showTips(res);
 				}
-				btnobj.button('reset');
 			});
 		});
-		//多语言配置
-		$('.glyphicon-globe').on('click', function(){
-			const _thisobj = $(this);
-			const id = _thisobj.parents('.item').data('id');
-			post(URI+'attribute/attrValue', {opn: 'getAttvLanguage', id: id}, function(res){
-				if (res.code == 200) {
-					var data = res.data
-					const obj = $('#dealbox-language');
-					obj.find('input[name="id"]').val(id);
-					obj.find('input[name="name"]').val(_thisobj.next().text());
-					obj.find('table input').val('');
-					let html = '<tr>\
-									<th style="width:88px">语言名称</th>\
-									<th>\
-										<span>文本</span>\
-										<span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
-									</th>\
-								</tr>';
-					for (const i in data) {
-						html += '<tr>\
-									<th>\
-										<span>'+data[i].language_name+'</span>\
-									</th>\
-									<td class="p0">\
-										<input type="text" name="language['+i+']" data-tr_code="'+data[i].tr_code+'" class="input" value="'+data[i].name+'" autocomplete="off">\
-									</td>\
-								</tr>';
-					}
-					obj.find('table tbody').html(html);
-					obj.dealboxShow();
+		// 多语言配置
+		$('.btn.language').on('click', function(){
+			const btnobj = $(this);
+			const item = btnobj.parents('.item');
+			btnobj.button('loading');
+			post(_this.url, {opn: 'getAttvLanguage', id: item.data('id')}, function(res){
+				btnobj.button('reset');
+				if (res.code == 1) {
+					_this.initLanguage(item.data('id'), item.data('name'), res.data);
 				} else {
 					showTips(res);
 				}
 			});
 		});
-		//智能翻译
+		// 智能翻译 (仅翻译空白项)
 		$('#dealbox-language').on('click', '.glyphicon-transfer', function(){
-			const name = $('#dealbox-language input[name="name"]').val();
 			const thisobj = $(this);
-			const obj = thisobj.parents('table').find('.input');
-			let len = obj.length;
+			const name = $('#dealbox-language input[name="name"]').val();
+			const empty = $('#dealbox-language .language-list .input').filter(function(){
+				return $(this).val() === '';
+			});
+			let len = empty.length;
+			if (len === 0) return;
 			thisobj.button('loading');
-			obj.each(function(){
-				const value = $(this).val();
-				if (value === '') {
-					const _thisobj = $(this);
-					const tr_code = _thisobj.data('tr_code');
-					post(URI+'attribute/attrValue', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
-						len = len - 1;
-						if (res.code === 200) {
-							_thisobj.val(res.data);
-						} else {
-							showTips(res);
-						}
-						if (len === 0) {
-							thisobj.button('reset');
-						}
-					});
-				} else {
-					len = len - 1;
+			empty.each(function(){
+				const input = $(this);
+				post(_this.url, {opn: 'transfer', tr_code: input.data('tr_code'), name: name}, function(res){
+					if (res.code == 1) {
+						input.val(res.data);
+					} else {
+						showTips(res);
+					}
+					len--;
 					if (len === 0) {
 						thisobj.button('reset');
 					}
-				}
+				});
 			});
 		});
-		//保存数据
+		// 保存属性值
 		$('#dealbox .save-btn').on('click', function(){
-			var name = $('#dealbox form input[name="name"]').val();
-			if (name == '') {
+			const form = $('#dealbox form');
+			if ($.trim(form.find('input[name="name"]').val()) === '') {
 				errorTips('名称不能为空');
 				return false;
 			}
-			var obj = $(this);
-			obj.button('loading');
-			post(URI+'attribute/attrValue', $('#dealbox form').serializeArray(), function(res){
-				showTips(res);
-				if (res.code == 200) {
-					window.location.reload();
-				} else {
-					obj.button('reset');
-				}
-			});
+			_this.submit($(this), form);
 		});
-		//保存语言
+		// 保存多语言
 		$('#dealbox-language .save-btn').on('click', function(){
-			var obj = $(this);
-			obj.button('loading');
-			post(URI+'attribute/attrValue', $('#dealbox-language form').serializeArray(), function(res){
-				showTips(res);
-				if (res.code == 200) {
-					window.location.reload();
-				} else {
-					obj.button('reset');
-				}
-			});
-			return false;
+			_this.submit($(this), $('#dealbox-language form'));
 		});
-		//删除
+		// 删除
 		$('.btn.delete').on('click', function(){
-			var btnobj = $(this);
-			var id = btnobj.parents('.item').data('id');
+			const id = $(this).parents('.item').data('id');
 			confirm('确定要删除吗?', function(obj){
 				obj.button('loading');
-				post(URI+'attribute/attrValue', {opn: 'deleteAttvInfo', id: id}, function(res){
+				post(_this.url, {opn: 'deleteAttvInfo', id: id}, function(res){
 					showTips(res);
-					if (res.code == 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						obj.button('reset');
@@ -136,18 +97,41 @@ const ATTRIBUTE = {
 			});
 		});
 	},
+	submit: function(btn, form) {
+		btn.button('loading');
+		post(this.url, form.serializeArray(), function(res){
+			showTips(res);
+			if (res.code == 1) {
+				window.location.reload();
+			} else {
+				btn.button('reset');
+			}
+		});
+	},
 	initData: function(data) {
-		if (!data) {
-			data = {
-				attrv_id: 0,
-				name: '',
-			};
-		}
-		var obj = $('#dealbox');
-		for (var i in data) {
-			obj.find('input[name="'+i+'"]').val(data[i]);
-		}
+		data = data || {attrv_id: 0, name: ''};
+		const obj = $('#dealbox');
+		obj.find('input[name="attrv_id"]').val(data.attrv_id);
+		obj.find('input[name="name"]').val(data.name);
 		obj.dealboxShow();
 		obj.find('input[name="name"]').focus();
+	},
+	initLanguage: function(id, name, data) {
+		const obj = $('#dealbox-language');
+		obj.find('input[name="attrv_id"]').val(id);
+		obj.find('input[name="name"]').val(name);
+		const list = obj.find('.language-list').empty();
+		// 使用 text()/val() 赋值，避免翻译内容中的特殊字符破坏 HTML
+		$.each(data, function(lanId, item){
+			const input = $('<input type="text" class="input form-control" autocomplete="off">')
+				.attr('name', 'language[' + lanId + ']')
+				.attr('data-tr_code', item.tr_code)
+				.val(item.name);
+			$('<div class="input-group">')
+				.append($('<div class="input-group-addon">').text(item.language_name + '：'))
+				.append(input)
+				.appendTo(list);
+		});
+		obj.dealboxShow();
 	},
 };

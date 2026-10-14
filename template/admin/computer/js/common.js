@@ -224,7 +224,7 @@ $(function(){
             	data.append('file', files[0]);
             	data.append('cate', cate);
             	post('/api/upload', data, function(res){
-            		if (res.code == 200) {
+            		if (res.code == 1) {
 						if (thisobj.get(0).tagName == 'IMG') {
 							thisobj.removeClass('loading').attr('src', res.data.url);
 						} else {

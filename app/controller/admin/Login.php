@@ -76,6 +76,12 @@ class Login extends AdminBase
 
 	public function signature()
 	{
-		service('tool/Image')->text(ROOT_PATH.'template'.DS.'admin/image/computer/signature.png', frame('Session')->get('admin_info', '', 'nickname'), 12, 30, 10, 80, [235, 235, 235]);
+		$device = isMobile() ? 'mobile' : 'computer';
+		$src = ROOT_PATH . 'template/admin/' . $device . '/image/common/signature.png';
+		if (!is_file($src)) {
+			$src = ROOT_PATH . 'template/admin/computer/image/common/signature.png';
+		}
+		$text = frame('Session')->get('admin_info', '', 'nick_name') ?: 'Admin';
+		service('tool/Image')->text($src, $text, 12, 30, 10, 80, [235, 235, 235]);
 	}
 }

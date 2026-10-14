@@ -93,12 +93,18 @@ class Controller extends AdminBase
 
 	protected function sortInfo()
 	{
-		$id = ipost('id');
-		$sort = ipost('sort');
+		$id = (int)ipost('id');
+		$type = trim(ipost('type', ''));
+		$parentId = (int)ipost('parent_id', 0);
 		if (empty($id)) {
 			$this->error('参数不正确');
 		}
-		$rst = service('controller/Controller')->updateData($id, ['sort'=>$sort]);
+		if ($type !== '') {
+			$rst = service('tool/Sort')->sort('controller', $id, $type, 'con_id', 'sort', ['parent_id' => $parentId]);
+		} else {
+			$sort = (int)ipost('sort', 0);
+			$rst = service('controller/Controller')->updateData($id, ['sort' => $sort]);
+		}
 		if ($rst) {
 			$this->success('排序成功');
 		}

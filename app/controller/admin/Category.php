@@ -27,6 +27,7 @@ class Category extends AdminBase
 			}
 			$this->error('非法请求');
 		}
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 
 		$tempList = service('category/Category')->getListFormat(false);
@@ -363,9 +364,9 @@ class Category extends AdminBase
 		if (empty($name) || empty($trCode)) {
 			$this->error('参数不正确');
 		}
-		$rst = service('Translate')->getText($name, $trCode);
-		if ($rst) {
-			$this->success($rst, '');
+		$rst = service('tool/Translate')->getText($name, $trCode);
+		if ($rst !== false && $rst !== null && $rst !== '') {
+			$this->success('翻译成功', $rst);
 		}
 		$this->error('翻译失败');
 	}
@@ -377,6 +378,7 @@ class Category extends AdminBase
 
 	public function log()
 	{
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$type = iget('type', -1);
 		$cateId = iget('cate_id', '');
@@ -384,7 +386,7 @@ class Category extends AdminBase
 		$stime = trim(iget('stime', ''));
 		$etime = trim(iget('etime', ''));
 		$page = max(1, (int)iget('page', 1));
-		$size = (int)iget('size', 20);
+		$size = max(1, (int)iget('size', 20));
 
 		$where = [];
 		if ($type >= 0) {
@@ -396,11 +398,14 @@ class Category extends AdminBase
 		if ($keyword !== '') {
 			$where['info'] = ['like', '%' . $keyword . '%'];
 		}
-		if ($stime !== '') {
-			$where['add_time'] = ['>=', $stime . ' 00:00:00'];
-		}
-		if ($etime !== '') {
-			$where['add_time'] = ['<=', $etime . ' 23:59:59'];
+		$stimeFull = $stime !== '' ? (strlen($stime) <= 10 ? $stime . ' 00:00:00' : $stime) : '';
+		$etimeFull = $etime !== '' ? (strlen($etime) <= 10 ? $etime . ' 23:59:59' : $etime) : '';
+		if ($stimeFull !== '' && $etimeFull !== '') {
+			$where['add_time'] = ['between', [$stimeFull, $etimeFull]];
+		} elseif ($stimeFull !== '') {
+			$where['add_time'] = ['>=', $stimeFull];
+		} elseif ($etimeFull !== '') {
+			$where['add_time'] = ['<=', $etimeFull];
 		}
 
 		$logService = service('log/Category');
@@ -408,12 +413,24 @@ class Category extends AdminBase
 		$list = [];
 		if ($total > 0) {
 			$list = $logService->getListData($where, '*', $page, $size, ['log_id' => 'desc']);
-			$memIds = array_filter(array_column($list, 'mem_id'));
+			$memIds = array_unique(array_filter(array_column($list, 'mem_id')));
 			$cateIds = array_filter(array_column($list, 'cate_id'));
 			$memberMap = [];
 			if (!empty($memIds)) {
-				$memberMap = service('member/Member')->getListData(['mem_id' => ['in', array_unique($memIds)]], 'mem_id, nick_name, phone, first_name, last_name, avatar');
-				$memberMap = array_column($memberMap, null, 'mem_id');
+				$memberService = service('member/Member');
+				$members = $memberService->getListData(
+					['mem_id' => count($memIds) === 1 ? reset($memIds) : ['in', array_values($memIds)]],
+					'mem_id, avatar, sex, first_name, last_name, nick_name, mobile',
+					0,
+					0
+				);
+				foreach ($members as $m) {
+					$firstName = $m['first_name'] ?? '';
+					$lastName = $m['last_name'] ?? '';
+					$m['fullName'] = ($firstName === $lastName) ? $firstName : trim($firstName . ' ' . $lastName);
+					$m['avatar'] = $memberService->getAvatar($m['avatar'], $m['sex']);
+					$memberMap[$m['mem_id']] = $m;
+				}
 			}
 			$categoryMap = [];
 			if (!empty($cateIds)) {
@@ -438,7 +455,6 @@ class Category extends AdminBase
 			'stime'   => $stime,
 			'etime'   => $etime,
 		]);
-		$this->_init();
 		$this->view();
 	}
 }

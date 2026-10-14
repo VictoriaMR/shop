@@ -10,7 +10,7 @@ const SITECACHE = {
 				obj.button('loading');
 				post(URI+'site/staticCache', {opn: 'deleteStaticCache', name: name}, function(res){
 					showTips(res);
-					if (res.code == 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						obj.button('reset');

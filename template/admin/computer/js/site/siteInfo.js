@@ -11,7 +11,7 @@ const SITEINFO = {
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
 			post(URI+'site', {opn: 'modifySite', id: _this.id, status: status}, function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					_thisobj.switchBtn(status);
 				}
 			});
@@ -41,7 +41,7 @@ const SITEINFO = {
 			const id = _thisobj.parents('tr').data('id');
 			_thisobj.button('loading');
 			post(URI+'site', {opn: 'domainInfo', id: id}, function(res){
-				if (res.code === 200) {
+				if (res.code == 1) {
 					_this.initDomainInfo('编辑域名', res.data);
 				} else {
 					showTips(res);
@@ -56,7 +56,7 @@ const SITEINFO = {
 				obj.button('loading');
 				post(URI+'site', {opn: 'deleteDomain', id: id}, function(res){
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						obj.button('reset');
@@ -71,7 +71,7 @@ const SITEINFO = {
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
 			post(URI+'site', {opn: 'modifyDomain', id: id, status: status}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					_thisobj.switchBtn(status);
 				}
 			});
@@ -82,7 +82,7 @@ const SITEINFO = {
 			obj.button('loading');
 			post(URI+'site', obj.parents('form').serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					obj.button('reset');
@@ -106,7 +106,7 @@ const SITEINFO = {
 			_thisobj.button('loading');
 			post(URI+'site', _thisobj.parent('form').serializeArray(), function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
@@ -120,7 +120,7 @@ const SITEINFO = {
 				_thisobj.button('loading');
 				post(URI+'site', {opn: 'deleteLanguage', code: code, site_id: _this.id}, function(res){
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
@@ -135,7 +135,7 @@ const SITEINFO = {
 			_thisobj.button('loading');
 			post(URI+'site', {opn: 'addLanguage', code: code, site_id: _this.id}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
@@ -148,7 +148,7 @@ const SITEINFO = {
 			const sort = $(this).val();
 			post(URI+'site', {opn: 'sortLanguage', id: id, sort: sort}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -160,7 +160,7 @@ const SITEINFO = {
 				_thisobj.button('loading');
 				post(URI+'site', {opn: 'deleteCurrency', code: code, site_id: _this.id}, function(res){
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
@@ -175,7 +175,7 @@ const SITEINFO = {
 			_thisobj.button('loading');
 			post(URI+'site', {opn: 'addCurrency', code: code, site_id: _this.id}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');
@@ -188,7 +188,7 @@ const SITEINFO = {
 			const sort = $(this).val();
 			post(URI+'site', {opn: 'sortCurrency', id: id, sort: sort}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -199,7 +199,7 @@ const SITEINFO = {
 			const name = this.name;
 			post(URI+'site', {opn: 'updateKeyword', value: value, site_id: _this.id, name: name}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -209,7 +209,7 @@ const SITEINFO = {
 			const type = _thisobj.parents('.item').data('id');
 			$('#dealbox-language input[name="source_text"]').val(_thisobj.parents('.item').next().find('textarea').val());
 			post(URI+'site', {opn: 'getLanguage', site_id: _this.id, type: type}, function(res){
-				if (res.code == 200) {
+				if (res.code == 1) {
 					var data = res.data;
 					const obj = $('#dealbox-language');
 					obj.find('input[name="type"]').val(type);
@@ -253,7 +253,7 @@ const SITEINFO = {
 					const tr_code = _thisobj.data('tr_code');
 					post(URI+'site', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
-						if (res.code === 200) {
+						if (res.code == 1) {
 							_thisobj.val(res.data);
 						} else {
 							showTips(res);
@@ -276,7 +276,7 @@ const SITEINFO = {
 			obj.button('loading');
 			post(URI+'site', $('#dealbox-language form').serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					obj.button('reset');

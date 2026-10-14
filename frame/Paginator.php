@@ -27,6 +27,7 @@ class Paginator
 		],
 		'paging' => '<li><a href="{url}" title="page-{text}">{text}</a></li>',
 		'current' => '<li class="active"><span>{text}</span></li>',
+		'ellipsis' => '<li class="disabled"><span class="ellipsis">...</span></li>',
 		'text_zh' => [
 			'prev' => '<span>前一页</span>',
 			'next' => '<span>下一页</span>',
@@ -37,24 +38,28 @@ class Paginator
 		],
 	];
 
-	public function make($size = 0, $total = 0, $showPage = 7)
+	public function make($size = 0, $total = 0, $showPage = 5)
 	{
 		$this->setSize($size);
 		$this->setTotal($total);
 		$this->setCurrent();
-		
+
 		$config = $this->config;
 		$isZh = siteId() <= 80;
 		$textConf = $isZh ? $config['text_zh'] : $config['text'];
-		$prev = strtr($config['prev'][$this->current == 1 ? 'disabled' : 'enabled'], [
+
+		$totalPage = $this->size > 0 ? (int)ceil($this->total / $this->size) : 0;
+		if ($totalPage > 0 && $this->current > $totalPage) {
+			$this->current = $totalPage;
+		}
+
+		$prev = strtr($config['prev'][$this->current <= 1 ? 'disabled' : 'enabled'], [
 			'{url}' => $this->url($this->current - 1),
 			'{text}' => $textConf['prev'],
 		]);
-		
-		//总页数
+
 		$pageStr = '';
-		$totalPage = (int)ceil($this->total / $this->size);
-		if ($totalPage == 0) {
+		if ($totalPage <= 0) {
 			$next = strtr($config['next']['disabled'], ['{url}' => '', '{text}' => $textConf['next']]);
 		} else {
 			if ($this->current < $totalPage) {
@@ -62,76 +67,60 @@ class Paginator
 			} else {
 				$next = strtr($config['next']['disabled'], ['{url}' => '', '{text}' => $textConf['next']]);
 			}
-			//默认拼接第一页
-			$pageStr .= strtr($config[1 == $this->current ? 'current' : 'paging'], [
-				'{url}' => $this->url(1),
-				'{text}' => 1,
-			]);
-			if ($totalPage > 1) {
-				//计算中间分多少页显示
-				$middlePage = ceil($showPage / 2) - 1;
-				//计算
-				$ldiff = 0;
-				$rdiff = 0;
-				$leftPage = $this->current - $middlePage;
-				$rightPage = $this->current + $middlePage;
-				if ($leftPage <= 0) {
-					$ldiff = -$leftPage + 1;
+
+			$showPage = max(5, (int)$showPage);
+			if ($totalPage <= $showPage) {
+				for ($i = 1; $i <= $totalPage; $i++) {
+					$pageStr .= strtr($config[$i === $this->current ? 'current' : 'paging'], [
+						'{url}' => $this->url($i),
+						'{text}' => $i,
+					]);
 				}
-				if ($rightPage >= $totalPage) {
-					$rdiff = $rightPage - $totalPage;
+			} else {
+				// 固定显示第一页
+				$pageStr .= strtr($config[$this->current === 1 ? 'current' : 'paging'], [
+					'{url}' => $this->url(1),
+					'{text}' => 1,
+				]);
+
+				// 计算当前页左右保留的页码范围 (夹在 2 与 $totalPage - 1 之间)
+				$radius = max(1, (int)floor(($showPage - 3) / 2));
+				$leftPage = max(2, $this->current - $radius);
+				$rightPage = min($totalPage - 1, $this->current + $radius);
+
+				if ($this->current <= 1 + $radius) {
+					$rightPage = max($rightPage, min($totalPage - 1, 1 + 2 * $radius));
 				}
-				$leftPage -= $rdiff;
-				$rightPage += $ldiff;
-				if ($rightPage >= $totalPage) {
-					$rightPage = $totalPage - 1;
+				if ($this->current >= $totalPage - $radius) {
+					$leftPage = min($leftPage, max(2, $totalPage - 2 * $radius));
 				}
-				//左侧页码
+
+				// 左侧省略号
 				if ($leftPage > 2) {
-					$pageStr .= strtr($config['paging'], [
-						'{url}' => '',
-						'{text}' => '...',
+					$pageStr .= $config['ellipsis'];
+				}
+
+				// 中间连续页码
+				for ($i = $leftPage; $i <= $rightPage; $i++) {
+					$pageStr .= strtr($config[$i === $this->current ? 'current' : 'paging'], [
+						'{url}' => $this->url($i),
+						'{text}' => $i,
 					]);
 				}
-				for ($i = $leftPage; $i < $this->current; $i++) {
-					if ($i > 1) {
-						$pageStr .= strtr($config[$i == $this->current ? 'current' : 'paging'], [
-							'{url}' => $this->url($i),
-							'{text}' => $i,
-						]);
-					}
+
+				// 右侧省略号
+				if ($rightPage < $totalPage - 1) {
+					$pageStr .= $config['ellipsis'];
 				}
-				// 中间当前页
-				if ($this->current != 1) {
-					$pageStr .= strtr($config['current'], [
-						'{url}' => '',
-						'{text}' => $this->current,
-					]);
-				}
-				//中间过度...
-				for ($i = $this->current + 1; $i <= $rightPage; $i++) {
-					if ($i < $totalPage) {
-						$pageStr .= strtr($config[$i == $this->current ? 'current' : 'paging'], [
-							'{url}' => $this->url($i),
-							'{text}' => $i,
-						]);
-					}
-				}
-				if ($totalPage > $rightPage + 2) {
-					$pageStr .= strtr($config['paging'], [
-						'{url}' => '',
-						'{text}' => '...',
-					]);
-				}
-				// 拼接上尾页
-				if ($this->current != $totalPage) {
-					$pageStr .= strtr($config['paging'], [
-						'{url}' => $this->url($totalPage),
-						'{text}' => $totalPage,
-					]);
-				}
+
+				// 固定显示末页
+				$pageStr .= strtr($config[$this->current === $totalPage ? 'current' : 'paging'], [
+					'{url}' => $this->url($totalPage),
+					'{text}' => $totalPage,
+				]);
 			}
 		}
+
 		$replace = [
 			'{total}' => $this->total,
 			'{size}' => $this->size,
@@ -147,21 +136,21 @@ class Paginator
 
 	protected function url($page)
 	{
-		return siteId()<=80?adminUrl('', array_merge(iget(), ['page'=>$page])):url('', ['page'=>$page]);
+		return siteId() <= 80 ? adminUrl('', array_merge(iget(), ['page' => $page])) : url('', ['page' => $page]);
 	}
 
 	protected function setSize($size)
 	{
-		$this->size = (int) $size;
+		$this->size = max(1, (int)$size);
 	}
 
 	protected function setTotal($total)
 	{
-		$this->total = (int) $total;
+		$this->total = max(0, (int)$total);
 	}
 
 	protected function setCurrent()
 	{
-		$this->current = iget('page', 1);
+		$this->current = max(1, (int)iget('page', 1));
 	}
 }

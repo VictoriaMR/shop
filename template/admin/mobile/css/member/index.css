@@ -1,0 +1,255 @@
+/* ==========================================================================
+   Admin Mobile Member Index Styles (REM Responsive)
+   ========================================================================== */
+
+.member-container {
+	padding: 0.10rem 0.12rem 0.24rem;
+	color: #334155;
+}
+
+/* 筛选卡片 */
+.search-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.toolbar-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	margin-bottom: 0.10rem;
+}
+
+.status-tabs {
+	display: inline-flex;
+	background: #f1f5f9;
+	padding: 0.03rem;
+	border-radius: 0.08rem;
+	gap: 0.02rem;
+}
+
+.status-tab {
+	border: none;
+	background: transparent;
+	color: #64748b;
+	font-size: 0.12rem;
+	font-weight: 500;
+	padding: 0.05rem 0.10rem;
+	border-radius: 0.06rem;
+	transition: all 0.15s ease;
+}
+
+.status-tab.active {
+	background: #ffffff;
+	color: #e7502b;
+	font-weight: 600;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.08);
+}
+
+.btn-add {
+	height: 0.32rem;
+	padding: 0 0.12rem;
+	font-size: 0.12rem;
+	border-radius: 0.06rem;
+}
+
+.filter-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.08rem;
+	margin-bottom: 0.10rem;
+}
+
+.filter-item .form-control {
+	height: 0.34rem;
+	font-size: 0.12rem;
+	padding: 0 0.08rem;
+}
+
+.filter-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+
+.filter-actions .btn {
+	height: 0.34rem;
+	font-size: 0.13rem;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+/* 人员卡片列表 */
+.member-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.10rem;
+}
+
+.member-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.member-card .card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.10rem;
+	padding-bottom: 0.10rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+}
+
+.member-card .user-main {
+	display: flex;
+	align-items: center;
+	gap: 0.10rem;
+	min-width: 0;
+	flex: 1;
+}
+
+.member-card .user-avatar {
+	width: 0.40rem;
+	height: 0.40rem;
+	border-radius: 50%;
+	overflow: hidden;
+	background: #eff6ff;
+	color: #3b82f6;
+	border: 0.01rem solid #dbeafe;
+	font-size: 0.16rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.member-card .user-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.member-card .user-titles {
+	min-width: 0;
+	flex: 1;
+}
+
+.member-card .user-name-row {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+}
+
+.member-card .user-name {
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.member-card .user-id-badge {
+	font-size: 0.11rem;
+	font-weight: 600;
+	color: #3b82f6;
+	background: #eff6ff;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	font-family: SFMono-Regular, Consolas, monospace;
+	flex-shrink: 0;
+}
+
+.member-card .user-nick {
+	font-size: 0.12rem;
+	color: #64748b;
+	margin-top: 0.02rem;
+}
+
+.member-card .card-body {
+	padding: 0.10rem 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.06rem;
+}
+
+.member-card .info-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	font-size: 0.12rem;
+}
+
+.member-card .info-label {
+	color: #64748b;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.05rem;
+	flex-shrink: 0;
+}
+
+.member-card .info-label i {
+	width: 0.14rem;
+	text-align: center;
+	color: #94a3b8;
+}
+
+.member-card .info-val {
+	color: #1e293b;
+	font-weight: 500;
+	text-align: right;
+	min-width: 0;
+}
+
+.member-card .card-footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.08rem;
+	padding-top: 0.10rem;
+	border-top: 0.01rem solid #f1f5f9;
+}
+
+.member-card .card-footer .btn {
+	height: 0.30rem;
+	padding: 0 0.12rem;
+}
+
+/* 空状态 */
+.empty-state {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.36rem 0.16rem;
+	text-align: center;
+	color: #94a3b8;
+}
+
+.empty-state i {
+	font-size: 0.28rem;
+	color: #cbd5e1;
+	margin-bottom: 0.08rem;
+}
+
+.empty-state p {
+	font-size: 0.13rem;
+}
+
+/* 弹窗表单微调 */
+#dealbox .input-group-addon {
+	width: 0.78rem;
+	justify-content: flex-end;
+}
+
+#dealbox .switch-control {
+	display: flex;
+	align-items: center;
+}

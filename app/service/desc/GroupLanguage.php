@@ -10,7 +10,7 @@ class GroupLanguage extends Base
 		if (empty($id) || empty($lanId) || empty($name)) {
 			return false;
 		}
-		$where = ['descv_id'=>$id, 'lan_id'=>$lanId];
+		$where = ['descg_id'=>$id, 'lan_id'=>$lanId];
 		if ($this->getCountData($where)) {
 			return $this->updateData($where, ['name' => $name]);
 		} else {

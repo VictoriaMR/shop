@@ -55,7 +55,7 @@ function siteUrl($name) {
 	if ($prefix === null) {
 		$prefix = '/' . (isMobile() ? 'mobile' : 'computer') . '/';
 	}
-	return $prefix . $name . '?v=' . version();
+	return $prefix . ltrim($name, '/') . '?v=' . version();
 }
 
 function mediaUrl($url, $width = '') {

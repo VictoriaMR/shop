@@ -1,423 +1,403 @@
 <?php
 
 namespace app\controller\admin;
+
 use app\controller\AdminBase;
 
+/**
+ * 商品描述管理控制器 (描述名、描述值、描述分组)
+ * 路由：
+ * - https://admin.cn/desc (描述名称)
+ * - https://admin.cn/desc/descValue (描述值)
+ * - https://admin.cn/desc/descGroup (描述分组)
+ */
 class Desc extends AdminBase
 {
 	public function __construct()
 	{
 		$this->_arr = [
-			'index' => '描述名管理',
-			'descValue' => '描述值管理',
-			'descGroup' => '描述分组管理',
+			'index'     => '描述名称',
+			'descValue' => '描述值',
+			'descGroup' => '描述分组',
 		];
 		$this->_default = '描述管理';
-		parent::_init();
+		$this->_init();
 	}
 
-	public function index()
+	/**
+	 * 描述名称列表
+	 */
+	public function index(): void
 	{
 		if (isPost()) {
-			$opn = ipost('opn');
-			if (in_array($opn, ['getDescInfo', 'getDescLanguage', 'transfer', 'editDescInfo', 'editDescLanguage', 'deleteDescInfo'])) {
-				$this->$opn();
-			}
-			$this->error('非法请求');
+			$this->dispatchPost([
+				'getDescInfo',
+				'getDescLanguage',
+				'transfer',
+				'editDescInfo',
+				'editDescLanguage',
+				'deleteDescInfo',
+			]);
 		}
 
-		frame('Html')->addJs();
+		$this->renderList('desc/Name');
+	}
 
-		$page = iget('page', 1);
-		$size = iget('size', 40);
-		$keyword = trim(iget('keyword', ''));
-		$status = iget('status', -1);
+	protected function getDescInfo(): void
+	{
+		$this->handleGetInfo('desc/Name', 'descn_id', '描述名称');
+	}
+
+	protected function getDescLanguage(): void
+	{
+		$this->handleGetLanguage('desc/Name', 'desc/NameLanguage', 'descn_id', '描述名称');
+	}
+
+	protected function editDescInfo(): void
+	{
+		$this->handleEditInfo('desc/Name', 'descn_id', '描述名称');
+	}
+
+	protected function editDescLanguage(): void
+	{
+		$this->handleEditLanguage('desc/Name', 'desc/NameLanguage', 'descn_id', '描述名称');
+	}
+
+	protected function deleteDescInfo(): void
+	{
+		$this->handleDeleteInfo('desc/Name', 'desc/NameLanguage', 'descn_id', '描述名称');
+	}
+
+	/**
+	 * 描述值列表
+	 */
+	public function descValue(): void
+	{
+		if (isPost()) {
+			$this->dispatchPost([
+				'getDescValueInfo',
+				'getDescValueLanguage',
+				'transfer',
+				'editDescValueInfo',
+				'editDescValueLanguage',
+				'deleteDescValueInfo',
+			]);
+		}
+
+		$this->renderList('desc/Value');
+	}
+
+	protected function getDescValueInfo(): void
+	{
+		$this->handleGetInfo('desc/Value', 'descv_id', '描述值');
+	}
+
+	protected function getDescValueLanguage(): void
+	{
+		$this->handleGetLanguage('desc/Value', 'desc/ValueLanguage', 'descv_id', '描述值');
+	}
+
+	protected function editDescValueInfo(): void
+	{
+		$this->handleEditInfo('desc/Value', 'descv_id', '描述值');
+	}
+
+	protected function editDescValueLanguage(): void
+	{
+		$this->handleEditLanguage('desc/Value', 'desc/ValueLanguage', 'descv_id', '描述值');
+	}
+
+	protected function deleteDescValueInfo(): void
+	{
+		$this->handleDeleteInfo('desc/Value', 'desc/ValueLanguage', 'descv_id', '描述值');
+	}
+
+	/**
+	 * 描述分组列表
+	 */
+	public function descGroup(): void
+	{
+		if (isPost()) {
+			$this->dispatchPost([
+				'getDescGroupInfo',
+				'getDescGroupLanguage',
+				'transfer',
+				'editDescGroupInfo',
+				'editDescGroupLanguage',
+				'deleteDescGroupInfo',
+			]);
+		}
+
+		$this->renderList('desc/Group');
+	}
+
+	protected function getDescGroupInfo(): void
+	{
+		$this->handleGetInfo('desc/Group', 'descg_id', '描述分组');
+	}
+
+	protected function getDescGroupLanguage(): void
+	{
+		$this->handleGetLanguage('desc/Group', 'desc/GroupLanguage', 'descg_id', '描述分组');
+	}
+
+	protected function editDescGroupInfo(): void
+	{
+		$this->handleEditInfo('desc/Group', 'descg_id', '描述分组');
+	}
+
+	protected function editDescGroupLanguage(): void
+	{
+		$this->handleEditLanguage('desc/Group', 'desc/GroupLanguage', 'descg_id', '描述分组');
+	}
+
+	protected function deleteDescGroupInfo(): void
+	{
+		$this->handleDeleteInfo('desc/Group', 'desc/GroupLanguage', 'descg_id', '描述分组');
+	}
+
+	/**
+	 * 智能多语言翻译
+	 */
+	protected function transfer(): void
+	{
+		$trCode = ipost('tr_code', '');
+		$name   = ipost('name', '');
+
+		if ($name === '' || $trCode === '') {
+			$this->error('参数不正确');
+		}
+
+		$rst = service('tool/Translate')->getText($name, $trCode);
+		if ($rst !== false && $rst !== null && $rst !== '') {
+			$this->success('翻译成功', $rst);
+		}
+
+		$this->error('翻译失败');
+	}
+
+	/**
+	 * 统一分发 POST 请求操作
+	 */
+	private function dispatchPost(array $allowed): void
+	{
+		$opn = ipost('opn', '');
+		if (in_array($opn, $allowed, true) && method_exists($this, $opn)) {
+			$this->$opn();
+		}
+		$this->error('非法请求');
+	}
+
+	/**
+	 * 通用列表渲染
+	 */
+	private function renderList(string $serviceName): void
+	{
+		frame('Html')->addJs();
+		frame('Html')->addCss();
+
+		$page    = max(1, iget('page/d', 1));
+		$size    = max(1, iget('size/d', 40));
+		$keyword = trim((string)iget('keyword', ''));
+		$status  = iget('status/d', -1);
+
 		$where = [];
-		if (!empty($keyword)) {
-			$where['name'] = ['like', '%'.$keyword.'%'];
+		if ($keyword !== '') {
+			$where['name'] = ['like', '%' . $keyword . '%'];
 		}
 		if ($status >= 0) {
 			$where['status'] = $status;
 		}
-		$nameService = service('desc/Name');
-		$total = $nameService->getCountData($where);
+
+		$service = service($serviceName);
+		$total   = $service->getCountData($where);
+		$list    = [];
 		if ($total > 0) {
-			$list = $nameService->getList($where, $page, $size);
+			$list = $service->getList($where, $page, $size);
 		}
 
-		$this->assign('status', $status);
-		$this->assign('keyword', $keyword);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->view();
+		$this->view([
+			'status'  => $status,
+			'keyword' => $keyword,
+			'total'   => $total,
+			'size'    => $size,
+			'list'    => $list,
+		]);
 	}
 
-	protected function getDescInfo()
+	/**
+	 * 通用获取单条详情
+	 */
+	private function handleGetInfo(string $serviceName, string $idField, string $label): void
 	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
+		$id = ipost('id/d', 0) ?: ipost($idField . '/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
-		$info = service('desc/Name')->loadData($id);
-		$this->success($info, '');
+
+		$info = service($serviceName)->loadData($id);
+		if (empty($info)) {
+			$this->error($label . '不存在');
+		}
+
+		$this->success('获取成功', $info);
 	}
 
-	protected function getDescLanguage()
+	/**
+	 * 通用获取多语言配置
+	 */
+	private function handleGetLanguage(string $serviceName, string $langServiceName, string $idField, string $label): void
 	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
+		$id = ipost('id/d', 0) ?: ipost($idField . '/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
-		$info = service('desc/NameLanguage')->getListData(['descn_id'=>$id]);
-		$info = array_column($info, null, 'lan_id');
-		$languageList = service('Language')->getTransList();
-		foreach ($languageList as $key => $value) {
-			$info[$value['lan_id']] = [
-				'lan_id' => $value['lan_id'],
-				'tr_code' => $value['tr_code'],
-				'name' => empty($info[$value['lan_id']]) ? '' : $info[$value['lan_id']]['name'],
-				'language_name' => $value['name'],
+
+		$info = service($serviceName)->loadData($id);
+		if (empty($info)) {
+			$this->error($label . '不存在');
+		}
+
+		$languageList    = sys()->language()->getTransList();
+		$rawTranslations = service($langServiceName)->getListData([$idField => $id]);
+		$transMap        = array_column($rawTranslations, 'name', 'lan_id');
+
+		$data = [];
+		foreach ($languageList as $item) {
+			$lanId = $item['lan_id'];
+			$data[$lanId] = [
+				'lan_id'        => $lanId,
+				'tr_code'       => $item['tr_code'] ?? '',
+				'name'          => $transMap[$lanId] ?? '',
+				'language_name' => $item['name'] ?? '',
 			];
 		}
-		$this->success($info, '');
+
+		$this->success('获取成功', $data);
 	}
 
-	protected function editDescInfo()
+	/**
+	 * 通用新增 / 编辑名称
+	 */
+	private function handleEditInfo(string $serviceName, string $idField, string $label): void
 	{
-		$id = (int) ipost('id');
-		$name = trim(ipost('name'));
-		if (empty($name)) {
-			$this->error('名称不能为空');
-		}
-		$data = [
-			'name' => $name,
-		];
-		if (empty($id)) {
-			$result = service('desc/Name')->insert($data);
-			$this->addLog('新增属性-'.$result);
-		} else {
-			$this->addLog('修改属性信息-'.$id);
-			$result = service('desc/Name')->updateData($id, $data);
-		}
-		if ($result) {
-			$this->success('操作成功');
-		} else {
-			$this->error('操作失败');
-		}
-	}
+		$id   = ipost('id/d', 0) ?: ipost($idField . '/d', 0);
+		$name = ipost('name', '');
 
-	protected function editDescLanguage()
-	{
-		$id = (int) ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
+		if ($name === '') {
+			$this->error($label . '不能为空');
 		}
-		$language = array_filter(ipost('language'));
-		if (empty($language)) {
-			$this->error('翻译值不能全部为空');
-		}
-		$services = service('desc/NameLanguage');
-		foreach ($language as $key => $value) {
-			$services->setNxLanguage($id, $key, strTrim($value));
-		}
-		$len = count(service('Language')->getTransList());
-		if ($len <= count($language)) {
-			$status = 2;
-		} else {
-			$status = 1;
-		}
-		service('desc/Name')->updateData($id, ['status'=>$status]);
-		$this->addLog('修改属性语言-'.$id);
-		$this->success('操作成功');
-	}
 
-	protected function deleteDescInfo()
-	{
-		$id = (int) ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
+		$service = service($serviceName);
+		$where   = ['name' => $name];
+		if ($id > 0) {
+			$where[$idField] = ['<>', $id];
 		}
-		$rst = service('desc/Name')->deleteData($id);
-		if ($rst) {
-			//删除属性关联
-			$rst = service('product/DescUsed')->deleteData(['descn_id'=>$id]);
-		}
-		if ($rst) {
-			$this->addLog('删除属性-'.$id);
-			$this->success('删除成功');
-		} else {
-			$this->error('删除失败');
-		}
-	}
 
-	public function descValue()
-	{
-		if (isPost()) {
-			$opn = ipost('opn');
-			if (in_array($opn, ['getDescValueInfo', 'getDescValueLanguage', 'transfer', 'editDescValueInfo', 'editDescValueLanguage', 'deleteDescValueInfo'])) {
-				$this->$opn();
+		if ($service->getCountData($where)) {
+			$this->error($label . '「' . $name . '」已存在，请勿重复添加');
+		}
+
+		$data = ['name' => $name];
+
+		if ($id <= 0) {
+			$newId = $service->insert($data);
+			if ($newId) {
+				$this->addLog('新增' . $label . '-' . $newId);
+				$this->success('操作成功', [$idField => $newId]);
 			}
-			$this->error('非法请求');
-		}
-
-		frame('Html')->addJs();
-
-		$page = iget('page', 1);
-		$size = iget('size', 40);
-		$keyword = trim(iget('keyword', ''));
-		$status = iget('status', -1);
-		$where = [];
-		if (!empty($keyword)) {
-			$where['name'] = ['like', '%'.$keyword.'%'];
-		}
-		if ($status >= 0) {
-			$where['status'] = $status;
-		}
-		$valueService = service('desc/Value');
-		$total = $valueService->getCountData($where); 
-		if ($total > 0) {
-			$list = $valueService->getList($where, $page, $size);
-		}
-
-		$this->assign('status', $status);
-		$this->assign('keyword', $keyword);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->view();
-	}
-
-	protected function getDescValueInfo()
-	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
-		}
-		$info = service('desc/Value')->loadData($id);
-		$this->success($info, '');
-	}
-
-	protected function getDescValueLanguage()
-	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
-		}
-		$info = service('desc/ValueLanguage')->getListData(['descv_id'=>$id]);
-		$info = array_column($info, null, 'lan_id');
-		$languageList = service('Language')->getTransList();
-		foreach ($languageList as $key => $value) {
-			$info[$value['lan_id']] = [
-				'lan_id' => $value['lan_id'],
-				'tr_code' => $value['tr_code'],
-				'name' => empty($info[$value['lan_id']]) ? '' : $info[$value['lan_id']]['name'],
-				'language_name' => $value['name'],
-			];
-		}
-		$this->success($info, '');
-	}
-
-	protected function editDescValueInfo()
-	{
-		$id = (int) ipost('id');
-		$name = trim(ipost('name'));
-		if (empty($name)) {
-			$this->error('名称不能为空');
-		}
-		$data = [
-			'name' => $name,
-		];
-		if (empty($id)) {
-			$result = service('desc/Value')->insert($data);
-			$this->addLog('新增属性-'.$result);
 		} else {
-			$this->addLog('修改属性信息-'.$id);
-			$result = service('desc/Value')->updateData($id, $data);
-		}
-		if ($result) {
-			$this->success('操作成功');
-		} else {
-			$this->error('操作失败');
-		}
-	}
-
-	protected function editDescValueLanguage()
-	{
-		$id = (int) ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
-		}
-		$language = array_filter(ipost('language'));
-		if (empty($language)) {
-			$this->error('翻译值不能全部为空');
-		}
-		$services = service('desc/ValueLanguage');
-		foreach ($language as $key => $value) {
-			$services->setNxLanguage($id, $key, strTrim($value));
-		}
-		$len = count(service('Language')->getTransList());
-		if ($len <= count($language)) {
-			$status = 2;
-		} else {
-			$status = 1;
-		}
-		service('desc/Value')->updateData($id, ['status'=>$status]);
-		$this->addLog('修改属性语言-'.$id);
-		$this->success('操作成功');
-	}
-
-	protected function deleteDescValueInfo()
-	{
-		$id = (int) ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
-		}
-		$rst = service('desc/Value')->deleteData($id);
-		if ($rst) {
-			//删除属性关联
-			$rst = service('product/AttrUsed')->deleteData(['attv_id'=>$id]);
-		}
-		if ($rst) {
-			$this->addLog('删除属性-'.$id);
-			$this->success('删除成功');
-		} else {
-			$this->error('删除失败');
-		}
-	}
-
-	public function descGroup()
-	{
-		if (isPost()) {
-			$opn = ipost('opn');
-			if (in_array($opn, ['getDescGroupInfo', 'getDescGroupLanguage', 'transfer', 'editDescGroupInfo', 'editDescGroupLanguage', 'deleteDescGroupInfo'])) {
-				$this->$opn();
+			$oldInfo = $service->loadData($id);
+			if (empty($oldInfo)) {
+				$this->error('要修改的' . $label . '不存在');
 			}
-			$this->error('非法请求');
+
+			if ($oldInfo['name'] === $name) {
+				$this->success('操作成功', [$idField => $id]);
+			}
+
+			$result = $service->updateData($id, $data);
+			if ($result !== false) {
+				$this->addLog('修改' . $label . '-' . $id);
+				$this->success('操作成功', [$idField => $id]);
+			}
 		}
 
-		frame('Html')->addJs();
-
-		$page = iget('page', 1);
-		$size = iget('size', 40);
-		$keyword = trim(iget('keyword', ''));
-		$status = iget('status', -1);
-		$where = [];
-		if (!empty($keyword)) {
-			$where['name'] = ['like', '%'.$keyword.'%'];
-		}
-		if ($status >= 0) {
-			$where['status'] = $status;
-		}
-		$nameService = service('desc/Group');
-		$total = $nameService->getCountData($where);
-		if ($total > 0) {
-			$list = $nameService->getList($where, $page, $size);
-		}
-
-		$this->assign('status', $status);
-		$this->assign('keyword', $keyword);
-		$this->assign('total', $total);
-		$this->assign('size', $size);
-		$this->assign('list', $list ?? []);
-		$this->view();
+		$this->error('操作失败');
 	}
 
-	protected function getDescGroupInfo()
+	/**
+	 * 通用保存多语言配置
+	 */
+	private function handleEditLanguage(string $serviceName, string $langServiceName, string $idField, string $label): void
 	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
+		$id = ipost('id/d', 0) ?: ipost($idField . '/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
-		$info = service('desc/Group')->loadData($id);
-		$this->success($info, '');
-	}
 
-	protected function getDescGroupLanguage()
-	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
+		$info = service($serviceName)->loadData($id);
+		if (empty($info)) {
+			$this->error($label . '不存在');
 		}
-		$info = service('desc/GroupLanguage')->getListData(['descn_id'=>$id]);
-		$info = array_column($info, null, 'lan_id');
-		$languageList = service('Language')->getTransList();
-		foreach ($languageList as $key => $value) {
-			$info[$value['lan_id']] = [
-				'lan_id' => $value['lan_id'],
-				'tr_code' => $value['tr_code'],
-				'name' => empty($info[$value['lan_id']]) ? '' : $info[$value['lan_id']]['name'],
-				'language_name' => $value['name'],
-			];
-		}
-		$this->success($info, '');
-	}
 
-	protected function editDescGroupInfo()
-	{
-		$id = (int) ipost('id');
-		$name = trim(ipost('name'));
-		if (empty($name)) {
-			$this->error('名称不能为空');
-		}
-		$data = [
-			'name' => $name,
-		];
-		if (empty($id)) {
-			$result = service('desc/Group')->insert($data);
-			$this->addLog('新增属性-'.$result);
-		} else {
-			$this->addLog('修改属性信息-'.$id);
-			$result = service('desc/Group')->updateData($id, $data);
-		}
-		if ($result) {
-			$this->success('操作成功');
-		} else {
-			$this->error('操作失败');
-		}
-	}
+		$language    = ipost('language/a', []);
+		$langService = service($langServiceName);
+		$validCount  = 0;
 
-	protected function editDescGroupLanguage()
-	{
-		$id = (int) ipost('id');
-		if (empty($id)) {
-			$this->error('ID值不正确');
-		}
-		$language = array_filter(ipost('language'));
-		if (empty($language)) {
-			$this->error('翻译值不能全部为空');
-		}
-		$services = service('desc/GroupLanguage');
 		foreach ($language as $key => $value) {
-			$services->setNxLanguage($id, $key, strTrim($value));
+			$lanId = (int)$key;
+			if ($lanId <= 0) {
+				continue;
+			}
+			$val = strTrim((string)$value);
+			if ($val !== '') {
+				$langService->setNxLanguage($id, $lanId, $val);
+				$validCount++;
+			} else {
+				$langService->deleteData([$idField => $id, 'lan_id' => $lanId]);
+			}
 		}
-		$len = count(service('Language')->getTransList());
-		if ($len <= count($language)) {
-			$status = 2;
+
+		$totalLanguages = count(sys()->language()->getTransList());
+		if ($validCount >= $totalLanguages && $totalLanguages > 0) {
+			$status = 2; // 已配置
+		} elseif ($validCount > 0) {
+			$status = 1; // 部分配置
 		} else {
-			$status = 1;
+			$status = 0; // 未配置
 		}
-		service('desc/Group')->updateData($id, ['status'=>$status]);
-		$this->addLog('修改属性语言-'.$id);
-		$this->success('操作成功');
+
+		service($serviceName)->updateData($id, ['status' => $status]);
+		$this->addLog('修改' . $label . '多语言-' . $id);
+
+		$this->success('操作成功', ['status' => $status]);
 	}
 
-	protected function deleteDescGroupInfo()
+	/**
+	 * 通用删除记录及关联数据
+	 */
+	private function handleDeleteInfo(string $serviceName, string $langServiceName, string $idField, string $label): void
 	{
-		$id = (int) ipost('id');
-		if (empty($id)) {
+		$id = ipost('id/d', 0) ?: ipost($idField . '/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
-		$rst = service('desc/Group')->deleteData($id);
-		if ($rst) {
-			//删除属性关联
-			$rst = service('product/DescUsed')->updateData(['descg_id'=>$id], ['descg_id'=>0]);
+
+		$info = service($serviceName)->loadData($id);
+		if (empty($info)) {
+			$this->error($label . '不存在');
 		}
+
+		$rst = service($serviceName)->deleteData($id);
 		if ($rst) {
-			$this->addLog('删除属性-'.$id);
+			service('product/DescUsed')->deleteData([$idField => $id]);
+			service($langServiceName)->deleteData([$idField => $id]);
+
+			$this->addLog('删除' . $label . '-' . $id . ' (' . ($info['name'] ?? '') . ')');
 			$this->success('删除成功');
-		} else {
-			$this->error('删除失败');
 		}
+
+		$this->error('删除失败');
 	}
 }

@@ -1,0 +1,224 @@
+/* ==========================================================================
+   Admin Mobile Currency Log Styles (REM Responsive)
+   ========================================================================== */
+
+.currency-log-container {
+	padding: 0.10rem 0.12rem 0.24rem;
+	color: #334155;
+}
+
+.search-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.filter-row {
+	margin-bottom: 0.08rem;
+}
+
+.filter-row .form-control {
+	height: 0.34rem;
+	font-size: 0.12rem;
+}
+
+.filter-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.08rem;
+	margin-bottom: 0.10rem;
+}
+
+.filter-item .form-control {
+	height: 0.34rem;
+	font-size: 0.12rem;
+	padding: 0 0.08rem;
+}
+
+.filter-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+
+.filter-actions .btn {
+	height: 0.34rem;
+	font-size: 0.13rem;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+/* 日志卡片列表 */
+.log-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.10rem;
+}
+
+.log-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.log-card .log-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	margin-bottom: 0.10rem;
+}
+
+.log-card .currency-info {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+}
+
+.log-card .code-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.02rem 0.07rem;
+	border-radius: 0.04rem;
+	background: #eff6ff;
+	color: #2563eb;
+	border: 0.01rem solid #bfdbfe;
+	font-family: SFMono-Regular, Consolas, monospace;
+	font-size: 0.12rem;
+	font-weight: 700;
+}
+
+.log-card .currency-name {
+	font-size: 0.13rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.log-card .currency-symbol {
+	font-size: 0.12rem;
+	font-weight: 700;
+	color: #64748b;
+}
+
+.log-card .log-id-badge {
+	font-size: 0.11rem;
+	font-weight: 600;
+	color: #94a3b8;
+	font-family: SFMono-Regular, Consolas, monospace;
+}
+
+.log-card .rate-compare-box {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #f8fafc;
+	border: 0.01rem solid #f1f5f9;
+	border-radius: 0.08rem;
+	padding: 0.10rem 0.12rem;
+}
+
+.log-card .rate-col {
+	display: flex;
+	flex-direction: column;
+	gap: 0.02rem;
+}
+
+.log-card .rate-col:last-child {
+	align-items: flex-end;
+}
+
+.log-card .rate-label {
+	font-size: 0.11rem;
+	color: #64748b;
+}
+
+.log-card .rate-old {
+	font-family: SFMono-Regular, Consolas, monospace;
+	font-size: 0.13rem;
+	color: #475569;
+	font-weight: 500;
+}
+
+.log-card .rate-new {
+	font-family: SFMono-Regular, Consolas, monospace;
+	font-size: 0.14rem;
+	color: #0f172a;
+	font-weight: 700;
+}
+
+.log-card .rate-arrow {
+	color: #94a3b8;
+	font-size: 0.13rem;
+}
+
+.log-card .log-footer {
+	margin-top: 0.10rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	flex-wrap: wrap;
+}
+
+.log-card .trend-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+	padding: 0.02rem 0.08rem;
+	border-radius: 0.04rem;
+	font-family: SFMono-Regular, Consolas, monospace;
+	font-size: 0.11rem;
+	font-weight: 600;
+}
+
+.log-card .trend-badge.up {
+	background: #ecfdf5;
+	color: #059669;
+}
+
+.log-card .trend-badge.down {
+	background: #fef2f2;
+	color: #dc2626;
+}
+
+.log-card .trend-badge.flat {
+	background: #f1f5f9;
+	color: #64748b;
+}
+
+.log-card .log-time {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+	font-size: 0.11rem;
+	color: #94a3b8;
+}
+
+/* 空状态 */
+.empty-state {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.36rem 0.16rem;
+	text-align: center;
+	color: #94a3b8;
+}
+
+.empty-state i {
+	font-size: 0.28rem;
+	color: #cbd5e1;
+	margin-bottom: 0.08rem;
+}
+
+.empty-state p {
+	font-size: 0.13rem;
+}

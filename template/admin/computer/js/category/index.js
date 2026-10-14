@@ -24,7 +24,7 @@ const CATEGORYINDEX = {
 				if (typeof res === 'string') {
 					try { res = JSON.parse(res); } catch(err){}
 				}
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					const data = res.data || res.msg || {};
 					_this.showEditModal(data);
 				} else {
@@ -47,7 +47,7 @@ const CATEGORYINDEX = {
 					try { res = JSON.parse(res); } catch(err){}
 				}
 				showTips(res);
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					btn.switchBtn(newStatus);
 				}
 			});
@@ -70,7 +70,7 @@ const CATEGORYINDEX = {
 					try { res = JSON.parse(res); } catch(err){}
 				}
 				showTips(res);
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					$('#dealbox').dealboxHide();
 					setTimeout(function(){
 						window.location.reload();
@@ -93,7 +93,7 @@ const CATEGORYINDEX = {
 						try { res = JSON.parse(res); } catch(err){}
 					}
 					showTips(res);
-					if (res && (res.code == 1 || res.code == 200)) {
+					if (res && res.code == 1) {
 						tr.fadeOut(300, function(){
 							tr.remove();
 							if ($('#data-list tbody tr.item').length === 0) {

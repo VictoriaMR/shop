@@ -194,11 +194,37 @@ img {
 }
 
 .switch_status {
-    background: url(/computer/image/icon/switch.png) no-repeat;
+    background: #fff;
     position: relative;
     width: 98px;
     height: 22px;
     transition: left 0.2s ease;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 22px;
+    color: #fff;
+    text-align: center;
+    user-select: none;
+}
+
+.switch_status::before {
+    content: "ON";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 33px;
+    height: 22px;
+    background: #5cb85c;
+}
+
+.switch_status::after {
+    content: "OFF";
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 33px;
+    height: 22px;
+    background: #f0ad4e;
 }
 
 .switch_status.on  { left: 0; }

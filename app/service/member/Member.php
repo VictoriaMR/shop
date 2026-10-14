@@ -94,7 +94,10 @@ class Member extends Base
 
 	public function getAvatar($avatar='', $sex=0)
 	{
-		return $avatar ? mediaUrl($avatar, '', false) : siteUrl('image/common/'.($sex ? 'female' : 'male').'.jpg');
+		if ($avatar) {
+			return mediaUrl($avatar, '', false);
+		}
+		return isMobile() ? '' : siteUrl('image/common/'.($sex ? 'female' : 'male').'.jpg');
 	}
 
 	public function resetPassword($mobile, $password, $type='email')

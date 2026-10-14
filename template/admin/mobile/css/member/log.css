@@ -1,0 +1,178 @@
+/* ==========================================================================
+   Admin Mobile Member Log Styles (REM Responsive)
+   ========================================================================== */
+
+.log-container {
+	padding: 0.10rem 0.12rem 0.24rem;
+	color: #334155;
+}
+
+.search-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.filter-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.08rem;
+	margin-bottom: 0.10rem;
+}
+
+.filter-item .form-control {
+	height: 0.34rem;
+	font-size: 0.12rem;
+	padding: 0 0.08rem;
+}
+
+.filter-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+
+.filter-actions .btn {
+	height: 0.34rem;
+	font-size: 0.13rem;
+}
+
+.flex-1 {
+	flex: 1;
+}
+
+/* 日志卡片列表 */
+.log-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.10rem;
+}
+
+.log-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.log-card .log-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	margin-bottom: 0.08rem;
+}
+
+.log-card .user-main {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+	min-width: 0;
+	flex: 1;
+}
+
+.log-card .user-avatar {
+	width: 0.34rem;
+	height: 0.34rem;
+	border-radius: 50%;
+	overflow: hidden;
+	background: #eff6ff;
+	color: #3b82f6;
+	border: 0.01rem solid #dbeafe;
+	font-size: 0.14rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.log-card .user-avatar img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.log-card .user-titles {
+	min-width: 0;
+	flex: 1;
+}
+
+.log-card .user-name {
+	font-size: 0.13rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.log-card .user-sub {
+	font-size: 0.11rem;
+	color: #3b82f6;
+}
+
+.log-card .log-meta-right {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 0.03rem;
+	flex-shrink: 0;
+}
+
+.log-card .log-id-badge {
+	font-size: 0.11rem;
+	font-weight: 600;
+	color: #64748b;
+	font-family: SFMono-Regular, Consolas, monospace;
+}
+
+.log-card .ip-badge {
+	font-size: 0.11rem;
+	color: #475569;
+	background: #f1f5f9;
+	border: 0.01rem solid #e2e8f0;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	font-family: SFMono-Regular, Consolas, monospace;
+}
+
+.log-card .log-content {
+	background: #f8fafc;
+	border-radius: 0.06rem;
+	padding: 0.08rem 0.10rem;
+	font-size: 0.13rem;
+	color: #1e293b;
+	word-break: break-all;
+	line-height: 1.45;
+}
+
+.log-card .log-footer {
+	margin-top: 0.08rem;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 0.04rem;
+	font-size: 0.11rem;
+	color: #94a3b8;
+}
+
+/* 空状态 */
+.empty-state {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.36rem 0.16rem;
+	text-align: center;
+	color: #94a3b8;
+}
+
+.empty-state i {
+	font-size: 0.28rem;
+	color: #cbd5e1;
+	margin-bottom: 0.08rem;
+}
+
+.empty-state p {
+	font-size: 0.13rem;
+}

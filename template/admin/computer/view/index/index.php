@@ -1,19 +1,23 @@
 <div id="index-page">
 	<div class="header">
-		<div class="left">
-			<a href="/" title="系统首页">
-				<img src="<?php echo siteUrl('/image/common/erp.svg');?>" height="35" alt="ERP">
+		<div class="header-left">
+			<a href="/" class="brand-logo" title="系统首页">
+				<i class="fa fa-cubes"></i>
+				<span>ERP</span>
 			</a>
 		</div>
-		<div class="right">
+		<div class="header-right">
+			<a href="javascript:;" id="iframe-refresh" title="刷新当前页">
+				<i class="fa fa-rotate-right"></i>
+			</a>
 			<a href="javascript:;" title="通知">
-				<img src="<?php echo siteUrl('/image/icon/notice.png');?>" height="16" alt="通知">
+				<i class="fa fa-bell"></i>
 			</a>
 			<a href="javascript:;" title="消息">
-				<img src="<?php echo siteUrl('/image/icon/email.png');?>" height="16" alt="消息">
+				<i class="fa fa-envelope"></i>
 			</a>
 			<a href="<?php echo adminUrl('login/logout');?>" title="退出系统">
-				<img src="<?php echo siteUrl('/image/icon/exit.png');?>" height="16" alt="退出">
+				<i class="fa fa-right-from-bracket"></i>
 			</a>
 		</div>
 	</div>
@@ -39,11 +43,38 @@
 						<ul>
 							<?php 
 							$lastGroup = $leftInfo['last_group'] ?? '';
+							$groupIconMap = [
+								'overview'   => 'fa-gauge',
+								'management' => 'fa-users',
+								'finance'    => 'fa-coins',
+								'product'    => 'fa-box',
+								'order'      => 'fa-clipboard-list',
+								'system'     => 'fa-gear',
+								'0'          => 'fa-gauge',
+								'53000'      => 'fa-clipboard-list',
+								'53001'      => 'fa-chart-line',
+								'53002'      => 'fa-box',
+								'53003'      => 'fa-tags',
+								'53004'      => 'fa-truck',
+								'53005'      => 'fa-coins',
+								'53006'      => 'fa-wallet',
+								'53007'      => 'fa-shield-halved',
+								'53008'      => 'fa-gear',
+								'53009'      => 'fa-sliders',
+								'53054'      => 'fa-bullhorn',
+								'53057'      => 'fa-comments',
+								'53058'      => 'fa-envelope',
+								'53063'      => 'fa-users',
+								'680201'     => 'fa-globe',
+								'680202'     => 'fa-server',
+							];
 							foreach ($funcList ?? [] as $value){ 
 								$isSelected = ($lastGroup === $value['value']);
+								$rawIcon = (string)($value['icon'] ?? '');
+								$faIcon = $groupIconMap[$value['value']] ?? ($groupIconMap[$rawIcon] ?? (strpos($rawIcon, 'fa-') === 0 ? $rawIcon : 'fa-cube'));
 							?>
 							<li data-title="<?php echo $value['name'];?>" data-to="<?php echo $value['value'];?>" <?php echo $isSelected ? 'class="auto-select"' : '';?>>
-								<img src="<?php echo siteUrl('/image/feature/' . ($value['icon'] ?? 'default') . '.png');?>" alt="<?php echo $value['name'];?>" height="20">
+								<i class="fa <?php echo $faIcon;?> group-icon"></i>
 								<span><?php echo $value['name'];?></span>
 							</li>
 							<?php } ?>

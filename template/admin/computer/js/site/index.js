@@ -13,7 +13,7 @@ const SITE = {
 			obj.button('loading');
 			const id = obj.parents('tr').data('id');
 			post(URI+'site', {opn: 'getInfo', id: id}, function(res){
-				if (res.code === 200) {
+				if (res.code == 1) {
 					_this.initInfo('编辑站点', res.data);
 				} else {
 					showTips(res);
@@ -27,7 +27,7 @@ const SITE = {
 			obj.button('loading');
 			post(URI+'site', obj.parents('form').serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					obj.button('reset');
@@ -41,7 +41,7 @@ const SITE = {
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
 			post(URI+'site', {opn: 'modifySite', id: id, status: status}, function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					_thisobj.switchBtn(status);
 				}
 			});

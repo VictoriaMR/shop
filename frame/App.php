@@ -120,7 +120,7 @@ class App
 	public static function jsonResponse($code, $data = [], $msg = '')
 	{
 		header('Content-Type: application/json; charset=utf-8');
-		echo json_encode(['code' => $code, 'data' => $data, 'msg' => $msg], JSON_UNESCAPED_UNICODE);
+		echo json_encode(['code' => $code, 'msg' => $msg, 'data' => $data], JSON_UNESCAPED_UNICODE);
 		self::runOver(true);
 	}
 

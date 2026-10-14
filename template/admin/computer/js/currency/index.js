@@ -18,7 +18,7 @@ const CURRENCY = {
             post('', {opn: 'updateCurrencyRate'}, function(res){
                 btn.button('reset');
                 showTips(res);
-                if (res && (res.code == 1 || res.code == 200)) {
+                if (res && res.code == 1) {
                     setTimeout(function(){
                         window.location.reload();
                     }, 800);
@@ -45,7 +45,7 @@ const CURRENCY = {
                 if (typeof res === 'string') {
                     try { res = JSON.parse(res); } catch(e){}
                 }
-                if (res && (res.code == 1 || res.code == 200)) {
+                if (res && res.code == 1) {
                     _this.dealboxData(res.data);
                 } else if (!rowData || !rowData.code) {
                     showTips(res || {code: 0, msg: '获取货币信息失败'});
@@ -98,7 +98,7 @@ const CURRENCY = {
                     try { res = JSON.parse(res); } catch(e){}
                 }
                 showTips(res);
-                if (res && (res.code == 1 || res.code == 200)) {
+                if (res && res.code == 1) {
                     $('#dealbox').dealboxHide();
                     setTimeout(function(){
                         window.location.reload();
@@ -123,7 +123,7 @@ const CURRENCY = {
                         try { res = JSON.parse(res); } catch(e){}
                     }
                     showTips(res);
-                    if (res && (res.code == 1 || res.code == 200)) {
+                    if (res && res.code == 1) {
                         tr.fadeOut(300, function(){
                             tr.remove();
                         });

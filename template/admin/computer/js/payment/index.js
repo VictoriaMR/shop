@@ -22,7 +22,7 @@ const PAYMENT = {
 				if (typeof res === 'string') {
 					try { res = JSON.parse(res); } catch(e){}
 				}
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					const data = res.data || res.msg || {};
 					_this.showViewModal(data);
 				} else {
@@ -71,7 +71,7 @@ const PAYMENT = {
 				if (typeof res === 'string') {
 					try { res = JSON.parse(res); } catch(e){}
 				}
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					const data = res.data || res.msg || {};
 					_this.showEditModal(data);
 				} else if (!rowData || !rowData.payment_id) {
@@ -95,7 +95,7 @@ const PAYMENT = {
 					try { res = JSON.parse(res); } catch(e){}
 				}
 				showTips(res);
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					$('#dealbox').dealboxHide();
 					setTimeout(function(){
 						window.location.reload();
@@ -115,7 +115,7 @@ const PAYMENT = {
 						try { res = JSON.parse(res); } catch(e){}
 					}
 					showTips(res);
-					if (res && (res.code == 1 || res.code == 200)) {
+					if (res && res.code == 1) {
 						tr.fadeOut(300, function(){
 							tr.remove();
 						});
@@ -137,7 +137,7 @@ const PAYMENT = {
 					try { res = JSON.parse(res); } catch(e){}
 				}
 				showTips(res);
-				if (res && (res.code == 1 || res.code == 200)) {
+				if (res && res.code == 1) {
 					btn.switchBtn(newStatus);
 				}
 			});

@@ -56,6 +56,7 @@ class Index extends AdminBase
 			}
 			$this->error('非法请求');
 		}
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$log = service('log/Visitor');
 		//浏览设备统计

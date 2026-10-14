@@ -43,11 +43,14 @@ class AdminBase extends Base
 		if (empty($info)) {
 			return '';
 		}
-		$img  = service('member/Member')->getAvatar($info['avatar'], $info['sex']);
-		$nick = htmlspecialchars($info['nick_name'], ENT_QUOTES, 'UTF-8');
-		$mid  = htmlspecialchars($info['mem_id'], ENT_QUOTES, 'UTF-8');
+		$img  = service('member/Member')->getAvatar($info['avatar'] ?? '', $info['sex'] ?? 0);
+		$nick = htmlspecialchars($info['nick_name'] ?? '', ENT_QUOTES, 'UTF-8');
+		$mid  = htmlspecialchars((string)($info['mem_id'] ?? ''), ENT_QUOTES, 'UTF-8');
+		$avatarHtml = ($img !== '' && (!isMobile() || strpos($img, 'image/common/') === false))
+			? '<img src="' . $img . '">'
+			: '<i class="fa fa-user"></i>';
 		return '<div class="userAvatarInfo">'
-			. '<span class="avatarStyle"><img src="' . $img . '"></span>'
+			. '<span class="avatarStyle">' . $avatarHtml . '</span>'
 			. '<span class="two"><p>' . $nick . '</p><p>' . $mid . '</p></span>'
 			. '</div>';
 	}

@@ -18,7 +18,7 @@ const TRANSFER = {
 			const id = _thisobj.parents('tr').data('id');
 			_thisobj.button('loading');
 			post(URI+'transfer', {opn: 'getInfo', id: id}, function(res) {
-				if (res.code == 200) {
+				if (res.code == 1) {
 					_this.initModel(data);
 				} else {
 					showTips(res);
@@ -37,7 +37,7 @@ const TRANSFER = {
 			_thisobj.button('loading');
 			post(URI+'transfer', $('#dealbox form').serializeArray(), function(res) {
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					_thisobj.button('reset');

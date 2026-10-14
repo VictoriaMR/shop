@@ -29,7 +29,7 @@ const PRODUCT = {
 			obj.button('loading');
 			post(URI+'product/detail', obj.parents('form').serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					if (obj.parent().find('[name="opn"]').val() != 'editSpuLanguage') {
 						window.location.reload();
 					} else {
@@ -48,7 +48,7 @@ const PRODUCT = {
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
 			post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), free_ship: status, opn: 'editInfo'}, function(res) {
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					_thisobj.switchBtn(status);
 				}
 			});
@@ -57,7 +57,7 @@ const PRODUCT = {
 		$('.name-trans-btn').on('click', function(){
 			const _thisobj = $(this);
 			post(URI+'product/detail', {opn: 'getSpuNameLanguage', id: $('.detail-page').data('id')}, function(res){
-				if (res.code == 200) {
+				if (res.code == 1) {
 					var data = res.data;
 					const obj = $('#dealbox-language');
 					obj.find('input[name="name"]').val(_thisobj.next().text());
@@ -101,7 +101,7 @@ const PRODUCT = {
 					const tr_code = _thisobj.data('tr_code');
 					post(URI+'product/detail', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
-						if (res.code === 200) {
+						if (res.code == 1) {
 							_thisobj.val(res.data);
 						} else {
 							showTips(res);
@@ -122,7 +122,7 @@ const PRODUCT = {
 		$('.spu-image input[name="sort"]').on('blur', function(){
 			post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: $(this).parents('.spu-image').data('id'), sort: $(this).val(), opn: 'modifySpuImage'}, function(res) {
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -134,7 +134,7 @@ const PRODUCT = {
 				_thisobj.button('loading');
 				post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), item_id: item_id, opn: 'deleteSpuImage'}, function(res) {
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
@@ -148,7 +148,7 @@ const PRODUCT = {
 			confirm('确定设置该图片为主图吗?', function(_thisobj){
 				post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: attach_id, opn: 'editInfo'}, function(res) {
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						_thisobj.button('reset');
@@ -175,7 +175,7 @@ const PRODUCT = {
 			obj.button('loading');
 			post(URI+'product/detail', {opn: 'addSpuImage', spu_id: $('.detail-page').data('id'), attach_id: data.attach_id}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					obj.button('reset');
@@ -188,7 +188,7 @@ const PRODUCT = {
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
 			post(URI+'product/detail', {sku_id: _thisobj.parents('tr').data('id'), status: status, opn: 'editSkuInfo'}, function(res) {
 				showTips(res);
-				if (res.code == 200) {
+				if (res.code == 1) {
 					_thisobj.switchBtn(status);
 				}
 			});
@@ -220,7 +220,7 @@ const PRODUCT = {
 			param.attach_id = data.attach_id;
 			post(URI+'product/detail', param, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -234,7 +234,7 @@ const PRODUCT = {
 				obj.button('loading');
 				post(URI+'product/detail', param, function(res){
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						obj.button('reset');
@@ -248,7 +248,7 @@ const PRODUCT = {
 			const sort = $(this).val();
 			post(URI+'product/detail', {opn: 'modifySpuDesc', item_id: id, sort: sort}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -260,7 +260,7 @@ const PRODUCT = {
 				obj.button('loading');
 				post(URI+'product/detail', {opn: 'deleteSpuDesc', item_id: id}, function(res){
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						obj.button('reset');
@@ -278,7 +278,7 @@ const PRODUCT = {
 			_thisobj.button('loading');
 			const id = _thisobj.parents('tr').data('id');
 			post(URI+'product/detail', {opn: 'getSpuDescInfo', item_id: id}, function(res){
-				if (res.code === 200) {
+				if (res.code == 1) {
 					_this.initDescShow(res.data);
 				} else {
 					showTips(res);
@@ -290,7 +290,7 @@ const PRODUCT = {
 		$('.spu-introduce-image [name="sort"]').on('blur', function(){
 			post(URI+'product/detail', {item_id: $(this).parent().data('id'), attach_id: $(this).parents('.spu-introduce-image').data('id'), sort: $(this).val(), opn: 'modifySpuIntroduceImage'}, function(res) {
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				}
 			});
@@ -302,7 +302,7 @@ const PRODUCT = {
 				obj.button('loading');
 				post(URI+'product/detail', {item_id: id, opn: 'deleteSpuIntroduceImage'}, function(res) {
 					showTips(res);
-					if (res.code === 200) {
+					if (res.code == 1) {
 						window.location.reload();
 					} else {
 						obj.button('reset');
@@ -316,7 +316,7 @@ const PRODUCT = {
 			obj.button('loading');
 			post(URI+'product/detail', {opn: 'addSpuIntroduceImage', spu_id: spu_id, attach_id:data.attach_id}, function(res){
 				showTips(res);
-				if (res.code === 200) {
+				if (res.code == 1) {
 					window.location.reload();
 				} else {
 					obj.button('reset');

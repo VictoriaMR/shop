@@ -1,6 +1,5 @@
 <div id="login-page">
 	<div class="login-bg">
-		<img src="<?php echo siteUrl('image/common/login_bg.jpg');?>" alt="登录背景">
 		<div class="login-bg-mask"></div>
 	</div>
 

@@ -26,12 +26,13 @@ class Payment extends AdminBase
 			$this->error('未知请求');
 		}
 
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$type = iget('type');
 		$isSandbox = iget('is_sandbox', -1);
 		$name = iget('name');
-		$page = iget('page', 1);
-		$size = iget('size', 20);
+		$page = max(1, (int)iget('page', 1));
+		$size = max(1, min(100, (int)iget('size', 20)));
 
 		$paymentService = service('payment/Payment');
 		$where = [];
@@ -200,12 +201,13 @@ class Payment extends AdminBase
 			$this->error('未知请求');
 		}
 		
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$type = iget('type', -1);
 		$siteId = iget('site_id', -1);
 		$paymentId = iget('payment_id', -1);
-		$page = iget('page', 1);
-		$size = iget('size', 20);
+		$page = max(1, (int)iget('page', 1));
+		$size = max(1, min(100, (int)iget('size', 20)));
 		$where = [];
 		if ($type > 0) {
 			$where['type'] = (int)$type;
@@ -239,7 +241,6 @@ class Payment extends AdminBase
 		$this->assign('typeList', $typeList);
 		$this->assign('siteList', $siteList);
 		$this->assign('paymentList', $paymentList);
-		$this->_init();
 		$this->view();
 	}
 
@@ -340,6 +341,7 @@ class Payment extends AdminBase
 
 	public function log()
 	{
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 
 		$type = iget('type', -1);
@@ -360,11 +362,14 @@ class Payment extends AdminBase
 		if ($keyword !== '') {
 			$where['info'] = ['like', '%' . $keyword . '%'];
 		}
-		if ($stime !== '') {
-			$where['add_time'] = ['>=', $stime . (strlen($stime) === 10 ? ' 00:00:00' : '')];
-		}
-		if ($etime !== '') {
-			$where['add_time'] = ['<=', $etime . (strlen($etime) === 10 ? ' 23:59:59' : '')];
+		$stimeFull = $stime !== '' ? $stime . (strlen($stime) === 10 ? ' 00:00:00' : '') : '';
+		$etimeFull = $etime !== '' ? $etime . (strlen($etime) === 10 ? ' 23:59:59' : '') : '';
+		if ($stimeFull !== '' && $etimeFull !== '') {
+			$where['add_time'] = ['between', [$stimeFull, $etimeFull]];
+		} elseif ($stimeFull !== '') {
+			$where['add_time'] = ['>=', $stimeFull];
+		} elseif ($etimeFull !== '') {
+			$where['add_time'] = ['<=', $etimeFull];
 		}
 
 		$logService = service('log/Payment');
@@ -391,7 +396,7 @@ class Payment extends AdminBase
 				$mid = (int)$item['mem_id'];
 				$item['member'] = $memberMap[$mid] ?? [
 					'mem_id'    => $mid,
-					'avatar'    => siteUrl('/image/common/male.jpg'),
+					'avatar'    => isMobile() ? '' : siteUrl('/image/common/male.jpg'),
 					'nick_name' => $mid > 0 ? '用户-' . $mid : '系统/未登录',
 					'fullName'  => '',
 					'mobile'    => '-',
@@ -422,7 +427,6 @@ class Payment extends AdminBase
 			'page'    => $page,
 			'size'    => $size,
 		]);
-		$this->_init();
 		$this->view();
 	}
 }

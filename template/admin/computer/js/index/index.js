@@ -3,6 +3,17 @@ $(function(){
 });
 const INDEX = {
 	init: function() {
+		// 刷新当前 iframe
+		$('#iframe-refresh').on('click', function() {
+			const iframe = document.getElementById('href-to-iframe');
+			if (iframe && iframe.contentWindow) {
+				try {
+					iframe.contentWindow.location.reload();
+				} catch (e) {
+					iframe.src = iframe.src;
+				}
+			}
+		});
 		//左1切换大小
 		$('#index-page .left-one .toggle').on('click', function() {
 			var pObj = $(this).parents('.nav-left');

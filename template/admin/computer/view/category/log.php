@@ -56,7 +56,7 @@
 			<?php } else { ?>
 			<?php foreach ($list as $value) { 
 				$m = $value['member'] ?? [];
-				$avatar = $m['avatar'] ?? siteUrl('/image/common/male.jpg');
+				$avatar = !empty($m['avatar']) ? $m['avatar'] : siteUrl('image/common/male.jpg');
 				$fullName = trim($m['fullName'] ?? '');
 				$nickName = trim($m['nick_name'] ?? '');
 				if ($fullName !== '' && $fullName !== $nickName) {
@@ -103,14 +103,12 @@
 			<tr>
 				<td><strong><?php echo $value['log_id'];?></strong></td>
 				<td>
-					<div class="userAvatarInfo" style="display: flex; align-items: center;">
-						<span class="avatarStyle" style="margin-right: 8px;">
-							<img src="<?php echo htmlspecialchars($avatar);?>" style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid #e2e8f0;">
-						</span>
+					<div class="userAvatarInfo">
+						<span class="avatarStyle"><img src="<?php echo htmlspecialchars($avatar, ENT_QUOTES, 'UTF-8');?>" alt="avatar"></span>
 						<span class="two">
-							<strong style="color: #1e293b; display: block; font-size: 13px;"><?php echo htmlspecialchars($mainName);?></strong>
+							<p class="name"><?php echo htmlspecialchars($mainName);?></p>
 							<?php if ($subName){ ?>
-							<span class="text-muted f12"><?php echo htmlspecialchars($subName);?></span>
+							<p class="sub-name"><?php echo htmlspecialchars($subName);?></p>
 							<?php } ?>
 						</span>
 					</div>

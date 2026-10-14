@@ -19,12 +19,13 @@ class Currency extends AdminBase
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getCurrencyInfo', 'updateCurrencyRate', 'editCurrencyInfo', 'deleteCurrencyInfo'])) {
+			if (in_array($opn, ['getCurrencyInfo', 'updateCurrencyRate', 'editCurrencyInfo', 'deleteCurrencyInfo'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
 
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 
 		$keyword = trim(iget('keyword', ''));
@@ -45,6 +46,7 @@ class Currency extends AdminBase
 
 	public function log()
 	{
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 
 		$code = strtoupper(trim(iget('code', '')));
@@ -57,11 +59,14 @@ class Currency extends AdminBase
 		if ($code !== '' && $code !== 'ALL') {
 			$where['code'] = $code;
 		}
-		if ($stime !== '') {
-			$where['add_time'] = ['>=', $stime . (strlen($stime) === 10 ? ' 00:00:00' : '')];
-		}
-		if ($etime !== '') {
-			$where['add_time'] = ['<=', $etime . (strlen($etime) === 10 ? ' 23:59:59' : '')];
+		$stimeFull = $stime !== '' ? ($stime . (strlen($stime) === 10 ? ' 00:00:00' : '')) : '';
+		$etimeFull = $etime !== '' ? ($etime . (strlen($etime) === 10 ? ' 23:59:59' : '')) : '';
+		if ($stimeFull !== '' && $etimeFull !== '') {
+			$where['add_time'] = ['between', [$stimeFull, $etimeFull]];
+		} elseif ($stimeFull !== '') {
+			$where['add_time'] = ['>=', $stimeFull];
+		} elseif ($etimeFull !== '') {
+			$where['add_time'] = ['<=', $etimeFull];
 		}
 
 		$logService = service('log/Currency');
@@ -157,6 +162,9 @@ class Currency extends AdminBase
 		} else {
 			// 编辑货币
 			$oldInfo = sys()->currency()->loadData($id, 'code,rate');
+			if (!$oldInfo) {
+				$this->error('货币信息不存在');
+			}
 			$data = [
 				'name'   => $name,
 				'symbol' => $symbol,

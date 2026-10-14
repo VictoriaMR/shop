@@ -25,10 +25,19 @@ const MEMBERLIST = {
 			if (!form.formFilter()) {
 				return false;
 			}
+			obj.button('loading');
 			post('', form.serializeArray(), function(res){
+				if (typeof res === 'string') {
+					try { res = JSON.parse(res); } catch(e){}
+				}
 				showTips(res);
-				if (res.code) {
-					window.location.reload();
+				if (res && res.code) {
+					$('#dealbox').modalHide();
+					setTimeout(function(){
+						window.location.reload();
+					}, 800);
+				} else {
+					obj.button('reset');
 				}
 			});
 		});

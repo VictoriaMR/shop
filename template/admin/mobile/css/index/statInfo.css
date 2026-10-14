@@ -1,0 +1,175 @@
+/* ==========================================================================
+   Admin Mobile StatInfo Styles (REM Responsive)
+   ========================================================================== */
+
+.stat-container {
+	padding: 0.14rem 0.12rem 0.24rem;
+	color: #334155;
+	background-color: #f8fafc;
+	min-height: 100vh;
+}
+
+.stat-header {
+	margin-bottom: 0.14rem;
+}
+
+.stat-header h2 {
+	font-size: 0.16rem;
+	font-weight: 700;
+	color: #0f172a;
+	margin: 0 0 0.04rem 0;
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+
+.stat-header p {
+	font-size: 0.12rem;
+	color: #64748b;
+	margin: 0;
+}
+
+/* 2列指标卡片网格 */
+.metrics-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.10rem;
+	margin-bottom: 0.16rem;
+}
+
+.metric-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	padding: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+
+.metric-card .title {
+	font-size: 0.12rem;
+	color: #64748b;
+	font-weight: 500;
+	margin-bottom: 0.06rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.metric-card .value {
+	font-size: 0.18rem;
+	font-weight: 700;
+	color: #0f172a;
+	line-height: 1.2;
+}
+
+.metric-card .sub-info {
+	font-size: 0.11rem;
+	color: #94a3b8;
+	margin-top: 0.06rem;
+	line-height: 1.3;
+}
+
+.metric-progress {
+	height: 0.05rem;
+	background: #f1f5f9;
+	border-radius: 0.03rem;
+	overflow: hidden;
+	margin-top: 0.08rem;
+}
+
+.metric-progress-bar {
+	height: 100%;
+	border-radius: 0.03rem;
+	transition: width 0.5s ease;
+}
+
+/* 详情信息卡片列表 */
+.info-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0.14rem;
+}
+
+.info-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+	overflow: hidden;
+}
+
+.info-card-header {
+	padding: 0.12rem 0.14rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+	background: #ffffff;
+}
+
+.info-card-header h3 {
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #0f172a;
+	margin: 0;
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+
+.info-card-header h3 i {
+	color: #3b82f6;
+}
+
+.info-card-body {
+	padding: 0.10rem 0.12rem;
+}
+
+.data-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.06rem;
+}
+
+.data-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 0.10rem;
+	padding: 0.08rem 0.10rem;
+	background: #f8fafc;
+	border-radius: 0.06rem;
+}
+
+.data-label {
+	font-size: 0.12rem;
+	color: #64748b;
+	font-weight: 500;
+	flex-shrink: 0;
+}
+
+.data-value {
+	font-size: 0.12rem;
+	color: #0f172a;
+	font-weight: 600;
+	word-break: break-all;
+	text-align: right;
+}
+
+.badge-tech {
+	display: inline-block;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.04rem;
+	background: #eff6ff;
+	color: #2563eb;
+	font-size: 0.11rem;
+	font-weight: 500;
+	font-family: SFMono-Regular, Consolas, Menlo, monospace;
+}
+
+.badge-green {
+	background: #ecfdf5;
+	color: #059669;
+}
+
+.badge-purple {
+	background: #f5f3ff;
+	color: #7c3aed;
+}

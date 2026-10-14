@@ -1,20 +1,52 @@
 #index-page .header {
-    width: 100%;
-    height: 35px;
-    margin: 0px;
-    background-color: #2b363e;
+	width: 100%;
+	height: 35px;
+	margin: 0;
+	padding: 0 10px;
+	background-color: #2b363e;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 	overflow: hidden;
 }
-#index-page .header .left a {
-	display: block;
-	height: 35px;
+#index-page .header-left {
+	display: flex;
+	align-items: center;
 }
-#index-page .header .right a {
-	display: table-cell;
-    vertical-align: middle;
+#index-page .brand-logo {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 35px;
+	color: #ffffff;
+	font-size: 16px;
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+#index-page .brand-logo:hover {
+	color: #ffffff;
+}
+#index-page .brand-logo i {
+	color: #e7502b;
+	font-size: 18px;
+}
+#index-page .header-right {
+	display: flex;
+	align-items: center;
+}
+#index-page .header-right a {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	height: 35px;
 	width: 35px;
-	text-align: center;
+	color: #e2e8f0;
+	font-size: 15px;
+	transition: color 0.15s ease, background-color 0.15s ease;
+}
+#index-page .header-right a:hover {
+	color: #ffffff;
+	background-color: rgba(255, 255, 255, 0.08);
 }
 #index-page .body {
 	width: 100%;
@@ -146,9 +178,12 @@
     opacity: 0.7;
     border-bottom: 1px solid #3a444c;
 }
-#index-page .nav-content ul>li img {
-    margin: 10px 4px 0 4px;
-    vertical-align: top;
+#index-page .nav-content ul>li .group-icon {
+    display: inline-block;
+    width: 20px;
+    margin: 0 4px;
+    font-size: 15px;
+    text-align: center;
 }
 #index-page .nav-content ul>li span {
     font-size: 14px;

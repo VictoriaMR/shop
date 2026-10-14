@@ -1,104 +1,110 @@
+<?php
+$statusMap = [
+	-1 => '全部',
+	0  => '未配置',
+	1  => '部分配置',
+	2  => '已配置',
+];
+$transLabel = [
+	0 => ['label-danger', '未配置'],
+	1 => ['label-warning', '部分配置'],
+	2 => ['label-success', '已配置'],
+];
+?>
 <div class="container-fluid" id="attribute-list">
-	<form action="<?php echo adminUrl();?>" class="form-inline">
-		<div class="row-item">
-			<input type="hidden" name="status" value="<?php echo $status;?>">
-			<div class="left btn-group mr20" role="group">
-				<button type="button" data-id="-1" class="btn <?php echo ($status == 1 || $status == 0 || $status == 2) ? 'btn-default' : 'btn-primary';?>">全部</button>
-				<button type="button" data-id="0" class="btn <?php echo $status == 0 ? 'btn-primary' : 'btn-default';?>">未翻译</button>
-				<button type="button" data-id="1" class="btn <?php echo $status == 1 ? 'btn-primary' : 'btn-default';?>">部分翻译</button>
-				<button type="button" data-id="2" class="btn <?php echo $status == 2 ? 'btn-primary' : 'btn-default';?>">已翻译</button>
-			</div>
-			<div class="left">
-				<div class="mr20 form-group">
-					<label for="contact">名称:</label>
-					<input type="text" class="form-control" name="keyword" value="<?php echo $keyword;?>" placeholder="名称关键字" autocomplete="off">
+	<form action="<?php echo adminUrl();?>" method="get" class="form-inline search-form">
+		<input type="hidden" name="status" value="<?php echo (int)$status;?>">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="btn-group left status-filter" role="group" style="margin-right: 12px; margin-bottom: 10px;">
+					<?php foreach ($statusMap as $key => $text){ ?>
+					<button type="button" data-status="<?php echo $key;?>" class="btn <?php echo $status == $key ? 'btn-primary' : 'btn-default';?>"><?php echo $text;?></button>
+					<?php } ?>
 				</div>
-				<div class="mr20 form-group">
+				<div class="form-group" style="margin-right: 10px; margin-bottom: 10px;">
+					<input type="text" class="form-control" name="keyword" value="<?php echo htmlspecialchars($keyword, ENT_QUOTES, 'UTF-8');?>" placeholder="属性值关键字" autocomplete="off">
+				</div>
+				<div class="form-group" style="margin-right: 10px; margin-bottom: 10px;">
 					<button class="btn btn-info" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
 				</div>
+				<div class="form-group right" style="margin-bottom: 10px;">
+					<button class="btn btn-success add" type="button"><i class="glyphicon glyphicon-plus-sign"></i> 新增属性值</button>
+				</div>
 			</div>
-			<div class="form-group right">
-				<button class="btn btn-success add" type="button"><i class="glyphicon glyphicon-plus"></i> 新增属性值</button>
-			</div>
-			<div class="clear"></div>
 		</div>
 	</form>
-	<table class="table table-hover mt10">
-		<tbody>
+
+	<table class="table table-hover table-middle mt6">
+		<thead>
 			<tr>
-				<th class="col-md-1">ID</th>
-				<th class="col-md-3">名称</th>
-				<th class="col-md-1">语言配置</th>
-				<th class="col-md-2">操作</th>
+				<th width="100">ID</th>
+				<th>名称</th>
+				<th width="140">语言配置</th>
+				<th width="240">操作</th>
 			</tr>
+		</thead>
+		<tbody>
 			<?php if (empty($list)){ ?>
 			<tr>
-				<td colspan="8">
-					<div class="tc orange">暂无数据</div>
+				<td colspan="4">
+					<div class="tc orange"><i class="glyphicon glyphicon-info-sign"></i> 暂无数据</div>
 				</td>
 			</tr>
-			<?php } else {?>
-			<?php foreach ($list as $key => $value) { ?>
-			<tr class="item" data-id="<?php echo $value['attrv_id'];?>">
-				<td class="col-md-1"><?php echo $value['attrv_id'];?></td>
-				<td class="col-md-3">
-					<div class="left text-content">
-						<span class="glyphicon glyphicon-globe"></span>
-						&nbsp;
-						<span class="cate_name"><?php echo $value['name'];?></span>
-					</div>
-				</td>
-				<td class="col-md-1">
-					<?php if ($value['is_translate'] == 2){?>
-					<span class="green">已配置</span>
-					<?php } elseif ($value['is_translate'] == 1){?>
-					<span class="orange">部分配置</span>
-					<?php } else {?>
-					<span class="red">未配置</span>
-					<?php } ?>
-				</td>
-				<td class="col-md-2">
-					<button class="btn btn-primary btn-xs ml4 modify"><span class="glyphicon glyphicon-edit"></span>&nbsp;修改</button>
-					<button class="btn btn-danger btn-xs ml4 delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;删除</button>
+			<?php } else { ?>
+			<?php foreach ($list as $value) {
+				$name = htmlspecialchars($value['name'], ENT_QUOTES, 'UTF-8');
+				$trans = $transLabel[$value['is_translate']] ?? $transLabel[0];
+			?>
+			<tr class="item" data-id="<?php echo (int)$value['attrv_id'];?>" data-name="<?php echo $name;?>">
+				<td><?php echo (int)$value['attrv_id'];?></td>
+				<td><strong><?php echo $name;?></strong></td>
+				<td><span class="label <?php echo $trans[0];?>"><?php echo $trans[1];?></span></td>
+				<td>
+					<button class="btn btn-primary btn-xs modify" type="button"><i class="glyphicon glyphicon-edit"></i> 修改</button>
+					<button class="btn btn-info btn-xs ml4 language" type="button"><i class="glyphicon glyphicon-globe"></i> 多语言</button>
+					<button class="btn btn-danger btn-xs ml4 delete" type="button"><i class="glyphicon glyphicon-trash"></i> 删除</button>
 				</td>
 			</tr>
 			<?php } ?>
-			<?php }?>
+			<?php } ?>
 		</tbody>
 	</table>
-	<?php echo page($size, $total);?>
+
+	<div class="row mt12">
+		<div class="col-xs-8 text-right"><?php echo page($size, $total);?></div>
+	</div>
 </div>
-<!-- 管理弹窗 -->
-<div id="dealbox" class="hidden">
+
+<!-- 属性值编辑弹窗 -->
+<div id="dealbox" class="dealbox hidden">
 	<div class="mask"></div>
 	<div class="centerShow">
 		<form class="form-horizontal">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
-			<div class="f24 dealbox-title">属性管理</div>
+			<div class="f24 dealbox-title">属性值管理</div>
 			<input type="hidden" name="attrv_id" value="0">
 			<input type="hidden" name="opn" value="editAttvInfo">
 			<div class="input-group">
 				<div class="input-group-addon"><span>名称：</span></div>
-				<input type="text" class="form-control" name="name" autocomplete="off">
+				<input type="text" class="form-control" name="name" maxlength="120" autocomplete="off">
 			</div>
-			<button type="button" class="btn btn-primary btn-lg w100 save-btn">确认</button>
+			<button type="button" class="btn btn-primary btn-lg w100 save-btn mt20">确认</button>
 		</form>
 	</div>
 </div>
+
 <!-- 多语言弹窗 -->
-<div id="dealbox-language" class="hidden">
+<div id="dealbox-language" class="dealbox hidden">
 	<div class="mask"></div>
 	<div class="centerShow">
 		<form class="form-horizontal">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
-			<div class="f24 dealbox-title">多语言配置</div>
-			<input type="hidden" name="id" value="0">
+			<div class="f24 dealbox-title">多语言配置&nbsp;<span class="glyphicon glyphicon-transfer f16" title="智能翻译空白项" style="cursor:pointer;"></span></div>
+			<input type="hidden" name="attrv_id" value="0">
 			<input type="hidden" name="name" value="">
 			<input type="hidden" name="opn" value="editAttvLanguage">
-			<table class="table table-bordered table-hover">
-				<tbody></tbody>
-			</table>
-			<button type="button" class="btn btn-primary btn-lg btn-block save-btn mt20">确认</button>
+			<div class="language-list"></div>
+			<button type="button" class="btn btn-primary btn-lg w100 save-btn mt20">确认</button>
 		</form>
 	</div>
 </div>

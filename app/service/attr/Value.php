@@ -40,7 +40,7 @@ class Value extends Base
 			$tempArr = service('attr/ValueLanguage')->where(['attrv_id'=>['in', $tempArr]])->field('count(*) as count, attrv_id')->groupBy('attrv_id')->get();
 			$tempArr = array_column($tempArr, 'count', 'attrv_id');
 			//需要翻译的语言列表
-			$languageList = service('Language')->getTransList();
+			$languageList = sys()->language()->getTransList();
 			$len = count($languageList);
 			$transArr = [
 				0 => [],

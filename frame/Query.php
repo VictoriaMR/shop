@@ -301,6 +301,20 @@ final class Query
 		}
 		$parts = [];
 		foreach ($this->_where as $key => $item) {
+			if (strpos($key, ',') !== false) {
+				$cols = explode(',', $key);
+				$orParts = [];
+				$op = is_array($item) ? $item[0] : '=';
+				$val = is_array($item) ? $item[1] : $item;
+				foreach ($cols as $col) {
+					$col = trim($col);
+					$orParts[] = '`' . $col . '` ' . $op . ' ?';
+					$paramsType .= isset($intMap[$col]) ? 'i' : 's';
+					$params[] = $val;
+				}
+				$parts[] = '(' . implode(' OR ', $orParts) . ')';
+				continue;
+			}
 			if (is_array($item)) {
 				$keyName = strtoupper(trim($item[0]));
 				switch ($keyName) {
