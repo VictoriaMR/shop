@@ -1,0 +1,206 @@
+.git-log-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+/* 顶部栏 */
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.12rem 0.14rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #222;
+}
+.page-header-bar .header-title i {
+	color: #337ab7;
+	font-size: 0.15rem;
+}
+.page-header-bar .total-badge {
+	font-size: 0.11rem;
+	font-weight: normal;
+	color: #666;
+	background: #f0f2f5;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.1rem;
+}
+
+/* 筛选栏 */
+.filter-box {
+	background: #fff;
+	padding: 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.filter-group {
+	display: flex;
+	gap: 0.06rem;
+	margin-bottom: 0.08rem;
+	flex-wrap: wrap;
+}
+.filter-group .btn {
+	flex: 1;
+	padding: 0.05rem 0.06rem;
+	font-size: 0.12rem;
+}
+.filter-row {
+	display: flex;
+	gap: 0.08rem;
+}
+.filter-item.flex-1 {
+	flex: 1;
+	min-width: 0;
+}
+.filter-box .form-control {
+	height: 0.34rem;
+	font-size: 0.13rem;
+	padding: 0.04rem 0.08rem;
+}
+.search-submit-btn {
+	height: 0.34rem;
+	padding: 0 0.14rem;
+	font-size: 0.13rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+	flex-shrink: 0;
+}
+
+/* 卡片列表 */
+.card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.08rem;
+}
+.empty-state {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.4rem 0.15rem;
+	text-align: center;
+	color: #999;
+}
+.empty-state i {
+	font-size: 0.32rem;
+	margin-bottom: 0.08rem;
+	color: #ccc;
+}
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}
+
+.log-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.11rem 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.log-card .card-main {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+}
+.log-card .log-info {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+	flex: 1;
+	flex-wrap: wrap;
+}
+.id-badge {
+	font-size: 0.11rem;
+	color: #888;
+	font-family: monospace;
+	background: #f3f4f6;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	flex-shrink: 0;
+}
+.lib-tag {
+	font-size: 0.11rem;
+	color: #2563eb;
+	background: #eff6ff;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	font-weight: 600;
+	flex-shrink: 0;
+}
+.commit-code {
+	font-family: monospace;
+	font-size: 0.12rem;
+	color: #0369a1;
+	background: #f0f9ff;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+}
+.status-tag {
+	display: inline-block;
+	font-size: 0.11rem;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	flex-shrink: 0;
+}
+.status-tag.tag-warning {
+	background: #fff8e6;
+	color: #d97706;
+}
+.status-tag.tag-success {
+	background: #e8f8f0;
+	color: #16a34a;
+}
+
+.card-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	flex-shrink: 0;
+}
+.card-actions .btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	font-size: 0.12rem;
+	border-radius: 0.06rem;
+}
+
+.commit-msg {
+	margin-top: 0.08rem;
+	padding: 0.07rem 0.09rem;
+	background: #f8fafc;
+	border-radius: 0.06rem;
+	font-size: 0.13rem;
+	color: #1e293b;
+	line-height: 1.4;
+	word-break: break-word;
+}
+.commit-meta {
+	margin-top: 0.08rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 0.06rem;
+	font-size: 0.11rem;
+	color: #64748b;
+}
+.commit-meta i {
+	color: #94a3b8;
+	margin-right: 0.02rem;
+}

@@ -8,7 +8,7 @@ const TRANSFER = {
 		$('.btn.reload').on('click', function(){
 			const _thisobj = $(this);
 			_thisobj.button('loading');
-			post(URI+'transfer', {opn: 'reloadCache'}, function(data) {
+			post('/transfer', {opn: 'reloadCache'}, function(data) {
 				_thisobj.button('reset');
 			});
 		});
@@ -17,7 +17,7 @@ const TRANSFER = {
 			const _thisobj = $(this);
 			const id = _thisobj.parents('tr').data('id');
 			_thisobj.button('loading');
-			post(URI+'transfer', {opn: 'getInfo', id: id}, function(res) {
+			post('/transfer', {opn: 'getInfo', id: id}, function(res) {
 				if (res.code == 1) {
 					_this.initModel(data);
 				} else {
@@ -35,7 +35,7 @@ const TRANSFER = {
 			}
 			const _thisobj = $(this);
 			_thisobj.button('loading');
-			post(URI+'transfer', $('#dealbox form').serializeArray(), function(res) {
+			post('/transfer', $('#dealbox form').serializeArray(), function(res) {
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();
@@ -48,7 +48,7 @@ const TRANSFER = {
 		$('#dealbox .glyphicon-transfer').on('click', function(){
 			const _thisobj = $(this);
 			_thisobj.button('loading');
-			post(URI+'transfer', {opn: 'autoTransfer'}, function(res) {
+			post('/transfer', {opn: 'autoTransfer'}, function(res) {
 				showTips(res);
 				_thisobj.button('reset');
 			});

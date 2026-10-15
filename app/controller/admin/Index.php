@@ -27,10 +27,12 @@ class Index extends AdminBase
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 		frame('Html')->addJs('socket');
+		$funcList = service('controller/Controller')->getList();
+		$funcList = service('controller/Permission')->filterMenuList($funcList);
 		$this->view([
 			'_loading' => false,
 			'_title' => '后台首页',
-			'funcList' => service('controller/Controller')->getList(),
+			'funcList' => $funcList,
 			'info' => frame('Session')->get(\App::get('domain', 'class').'_info'),
 			'leftInfo' => frame('Session')->get('left_info'),
 		]);

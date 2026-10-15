@@ -16,6 +16,7 @@ class SiteMap extends TaskDriver
 
 	public static $config = [
 		'name' => '站点地图任务',
+		'type' => self::TYPE_CRON,
 		'cron' => ['1 14 * * 00'],
 	];
 
@@ -78,6 +79,7 @@ class SiteMap extends TaskDriver
 			if ($total > 0) {
 				$size = 100;
 				for ($i=1; $i <= ceil($total / $size); $i++) {
+					$this->updateLock();
 					$spuIdArr = $spuService->getListData($where, 'spu_id', $i, $size);
 					$spuIdArr = array_column($spuIdArr, 'spu_id');
 					//获取名称

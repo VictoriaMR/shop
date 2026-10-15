@@ -1,0 +1,130 @@
+.mysql-mobile-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.12rem 0.14rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+.page-header-bar .header-title i {
+	color: #337ab7;
+	font-size: 0.16rem;
+}
+.ver-badge {
+	font-size: 0.11rem;
+	font-weight: 600;
+	color: #16a34a;
+	background: #dcfce7;
+	padding: 0.02rem 0.08rem;
+	border-radius: 0.1rem;
+	font-family: monospace;
+}
+
+.filter-box {
+	background: #fff;
+	padding: 0.1rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+
+.section-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+	overflow: hidden;
+}
+.section-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.1rem 0.12rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+	background: #fafbfc;
+}
+.section-title {
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #1e293b;
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+}
+.section-title i {
+	color: #337ab7;
+}
+.section-count {
+	font-size: 0.11rem;
+	color: #94a3b8;
+}
+.section-body {
+	padding: 0.1rem 0.12rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.06rem;
+}
+
+.kv-card {
+	background: #f8fafc;
+	border: 0.01rem solid #f1f5f9;
+	border-radius: 0.06rem;
+	padding: 0.08rem 0.1rem;
+}
+.kv-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	margin-bottom: 0.04rem;
+}
+.kv-key {
+	font-size: 0.13rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+.kv-key code {
+	font-size: 0.12rem;
+	color: #2563eb;
+	background: #eff6ff;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.03rem;
+}
+.kv-desc {
+	font-size: 0.11rem;
+	color: #64748b;
+}
+.kv-val {
+	font-size: 0.12rem;
+	color: #334155;
+	word-break: break-all;
+}
+.kv-val code {
+	background: #fff;
+	border: 0.01rem solid #e2e8f0;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.04rem;
+	color: #0f172a;
+	font-size: 0.12rem;
+}
+.kv-card.compact {
+	display: flex;
+	flex-direction: column;
+	gap: 0.03rem;
+}

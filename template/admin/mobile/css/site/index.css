@@ -1,0 +1,365 @@
+.site-mobile-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+/* 顶部栏 */
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.12rem 0.14rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+.page-header-bar .header-title i {
+	color: #337ab7;
+	font-size: 0.16rem;
+}
+.page-header-bar .total-badge {
+	font-size: 0.11rem;
+	font-weight: normal;
+	color: #64748b;
+	background: #f1f5f9;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.1rem;
+}
+
+/* 筛选框 */
+.filter-box {
+	background: #fff;
+	padding: 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.status-filter {
+	display: flex;
+	gap: 0.06rem;
+	margin-bottom: 0.08rem;
+}
+.status-filter .filter-tab {
+	flex: 1;
+	height: 0.3rem;
+	border: 0.01rem solid #e2e8f0;
+	background: #f8fafc;
+	color: #475569;
+	border-radius: 0.06rem;
+	font-size: 0.12rem;
+	font-weight: 500;
+	transition: all 0.15s;
+}
+.status-filter .filter-tab.active {
+	background: #337ab7;
+	border-color: #337ab7;
+	color: #fff;
+}
+.filter-row {
+	display: flex;
+	gap: 0.08rem;
+}
+.filter-item {
+	flex: 1;
+	min-width: 0;
+}
+.search-submit-btn {
+	flex-shrink: 0;
+}
+
+/* 卡片列表 */
+.card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.1rem;
+}
+.empty-state {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.4rem 0.15rem;
+	text-align: center;
+	color: #94a3b8;
+}
+.empty-state i {
+	font-size: 0.32rem;
+	margin-bottom: 0.08rem;
+	color: #cbd5e1;
+}
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}
+
+.site-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.12rem 0.14rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.site-card .card-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	padding-bottom: 0.09rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+}
+.site-card .site-title-wrap {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+	flex: 1;
+}
+.id-badge {
+	font-size: 0.12rem;
+	color: #64748b;
+	font-family: monospace;
+	font-weight: 600;
+	flex-shrink: 0;
+}
+.site-name {
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #0f172a;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.type-tag {
+	display: inline-block;
+	font-size: 0.11rem;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	flex-shrink: 0;
+}
+.type-tag.home {
+	background: #eff6ff;
+	color: #2563eb;
+}
+.type-tag.admin {
+	background: #fef3c7;
+	color: #d97706;
+}
+.card-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	flex-shrink: 0;
+}
+.btn-icon {
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	border-radius: 0.05rem;
+	font-size: 0.12rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.site-card .card-body {
+	padding-top: 0.1rem;
+}
+.status-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 0.08rem;
+	background: #f8fafc;
+	padding: 0.08rem 0.1rem;
+	border-radius: 0.06rem;
+	margin-bottom: 0.08rem;
+}
+.switch-group {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+.switch-label {
+	font-size: 0.12rem;
+	color: #475569;
+}
+.flag-tags {
+	display: flex;
+	align-items: center;
+	gap: 0.04rem;
+}
+.flag-pill {
+	font-size: 0.11rem;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.04rem;
+	font-weight: 500;
+}
+.flag-pill.on {
+	background: #dcfce7;
+	color: #16a34a;
+}
+.flag-pill.warn {
+	background: #fef3c7;
+	color: #d97706;
+}
+.flag-pill.off {
+	background: #e2e8f0;
+	color: #64748b;
+}
+
+.meta-grid {
+	display: flex;
+	flex-direction: column;
+	gap: 0.05rem;
+}
+.meta-row {
+	display: flex;
+	align-items: flex-start;
+	font-size: 0.12rem;
+	line-height: 1.5;
+}
+.meta-label {
+	color: #64748b;
+	flex-shrink: 0;
+	width: 0.65rem;
+}
+.meta-val {
+	color: #1e293b;
+	word-break: break-all;
+}
+.meta-code {
+	background: #f1f5f9;
+	color: #0f172a;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.03rem;
+	font-size: 0.12rem;
+	word-break: break-all;
+}
+.tag-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.04rem;
+	flex: 1;
+}
+.mini-tag {
+	font-size: 0.11rem;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.03rem;
+}
+.mini-tag.lang-tag {
+	background: #f1f5f9;
+	color: #334155;
+}
+.mini-tag.curr-tag {
+	background: #eff6ff;
+	color: #2563eb;
+}
+.time-row {
+	justify-content: space-between;
+	color: #94a3b8;
+	font-size: 0.11rem;
+	padding-top: 0.05rem;
+	margin-top: 0.02rem;
+	border-top: 0.01rem dashed #f1f5f9;
+}
+
+/* 弹窗样式 */
+.modal-mask {
+	position: fixed;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.55);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.14rem;
+}
+.modal-panel {
+	background: #fff;
+	width: 100%;
+	max-width: 3.55rem;
+	max-height: 88vh;
+	border-radius: 0.1rem;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-shadow: 0 0.08rem 0.24rem rgba(15, 23, 42, 0.22);
+}
+.modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.12rem 0.15rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+	background: #f8fafc;
+}
+.modal-header .dealbox-title {
+	margin: 0;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+.modal-header .modal-close {
+	font-size: 0.18rem;
+	color: #64748b;
+	cursor: pointer;
+	padding: 0.02rem 0.06rem;
+}
+.modal-body {
+	padding: 0.14rem 0.15rem;
+	overflow-y: auto;
+}
+.form-group {
+	margin-bottom: 0.1rem;
+}
+.form-label {
+	display: block;
+	font-size: 0.12rem;
+	color: #475569;
+	margin-bottom: 0.04rem;
+	font-weight: 600;
+}
+.form-label .required {
+	color: #ef4444;
+}
+.check-group {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.12rem;
+	padding: 0.06rem 0.1rem;
+	background: #f8fafc;
+	border-radius: 0.06rem;
+	border: 0.01rem solid #e2e8f0;
+}
+.check-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+	font-size: 0.12rem;
+	color: #334155;
+}
+.switch-form-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.08rem 0.1rem;
+	background: #f8fafc;
+	border-radius: 0.06rem;
+}
+.m0 {
+	margin: 0 !important;
+}
+.btn-block {
+	width: 100%;
+	height: 0.36rem;
+	font-size: 0.14rem;
+	margin-top: 0.06rem;
+}

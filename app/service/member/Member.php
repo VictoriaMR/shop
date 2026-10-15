@@ -111,7 +111,7 @@ class Member extends Base
 
 	public function addLog($info='')
 	{
-		return service('log/Login')->addLog($info);
+		return service('log/Member')->addLog($info);
 	}
 
 	public function loginByPassword($email, $password)

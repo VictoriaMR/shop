@@ -1,0 +1,99 @@
+.static-detail-mobile-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.1rem 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.total-badge {
+	font-size: 0.11rem;
+	color: #64748b;
+	background: #f1f5f9;
+	padding: 0.02rem 0.08rem;
+	border-radius: 0.1rem;
+	font-family: monospace;
+}
+
+.detail-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.1rem 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.detail-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	padding-bottom: 0.08rem;
+	margin-bottom: 0.08rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+}
+.file-path-wrap {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+	flex: 1;
+	word-break: break-all;
+}
+.file-path-wrap i {
+	color: #337ab7;
+	flex-shrink: 0;
+}
+.file-path-wrap code {
+	background: #f1f5f9;
+	color: #0f172a;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.04rem;
+	font-size: 0.12rem;
+}
+.btn-icon {
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	border-radius: 0.05rem;
+	font-size: 0.12rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.empty-state {
+	padding: 0.36rem 0.15rem;
+	text-align: center;
+	color: #94a3b8;
+}
+.empty-state i {
+	font-size: 0.3rem;
+	margin-bottom: 0.08rem;
+	color: #cbd5e1;
+}
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}
+
+.static-pre {
+	margin: 0;
+	padding: 0.1rem;
+	background: #0f172a;
+	color: #e2e8f0;
+	border-radius: 0.06rem;
+	font-family: Menlo, Monaco, Consolas, monospace;
+	font-size: 0.11rem;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	word-break: break-all;
+	overflow-x: auto;
+}

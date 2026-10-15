@@ -7,23 +7,29 @@ class LanguageUsed extends Base
 {
 	const CACHE_KEY = 'site-language-used:';
 
-	public function getList($siteId=null)
+	public function getList($siteId = null)
 	{
 		if (is_null($siteId)) {
-			$siteId = $this->siteId();
+			$siteId = siteId();
 		}
-		$list = $this->getListData(['site_id'=>$siteId], '*', 0, 0, ['sort'=>'asc']);
-		$service = service('Language');
+		$list = $this->getListData(['site_id' => $siteId], '*', 0, 0, ['sort' => 'asc']);
+		if (empty($list)) {
+			return [];
+		}
+		$service = service('system/Language');
 		foreach ($list as $key => $value) {
-			$list[$key] += $service->getInfoCache($value['code']);
+			$info = $service->getInfoCache($value['code']);
+			if (is_array($info)) {
+				$list[$key] += $info;
+			}
 		}
 		return $list;
 	}
 
-	public function getListCache($siteId=null)
+	public function getListCache($siteId = null)
 	{
 		if (is_null($siteId)) {
-			$siteId = $this->siteId();
+			$siteId = siteId();
 		}
 		$cacheKey = $this->getCacheKey($siteId);
 		$list = redis()->get($cacheKey);
@@ -31,7 +37,7 @@ class LanguageUsed extends Base
 			$list = $this->getList($siteId);
 			redis()->set($cacheKey, $list);
 		}
-		return $list;
+		return is_array($list) ? $list : [];
 	}
 
 	public function delCache($siteId)
@@ -41,6 +47,6 @@ class LanguageUsed extends Base
 
 	protected function getCacheKey($siteId)
 	{
-		return self::CACHE_KEY.(is_null($siteId) ? $this->siteId() : $siteId);
+		return self::CACHE_KEY . (is_null($siteId) ? siteId() : $siteId);
 	}
 }

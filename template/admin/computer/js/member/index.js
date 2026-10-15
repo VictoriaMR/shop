@@ -112,6 +112,11 @@ const MEMBERLIST = {
 			});
 		});
 
+		// 切换部门/职位筛选下拉自动查询
+		$('#member-page form select[name="dept_id"], #member-page form select[name="pos_id"]').on('change', function(){
+			$(this).closest('form').submit();
+		});
+
 		// 关闭弹窗
 		$('#dealbox .close, #dealbox .mask').on('click', function(){
 			$('#dealbox').modalHide();
@@ -138,9 +143,13 @@ const MEMBERLIST = {
 
 			if (data.mobile) obj.find('[name="mobile"]').val(data.mobile);
 			if (data.email) obj.find('[name="email"]').val(data.email);
+			obj.find('[name="dept_id"]').val(parseInt(data.dept_id || 0));
+			obj.find('[name="pos_id"]').val(parseInt(data.pos_id || 0));
 		} else {
 			obj.find('.dealbox-title').text('新增管理员');
 			obj.find('[name="mem_id"]').val(0);
+			obj.find('[name="dept_id"]').val(0);
+			obj.find('[name="pos_id"]').val(0);
 		}
 		let status = 0;
 		if (typeof data.status !== 'undefined') {

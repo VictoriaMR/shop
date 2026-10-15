@@ -1,28 +1,58 @@
 $(function(){
-    $('#update-git').on('click', function(){
-        var _thisobj = $(this);
-        var id = _thisobj.data('id');
-        _thisobj.button('loading');
-        post(URI+'git/gitLog', {opn:'updateGit', id:id}, function(res){
-            showTips(res);
-            if (res.code == 1) {
-                window.location.reload();
-            } else {
-                _thisobj.button('reset');
-            }
-        });
-    });
-    $('.release-btn').on('click', function(){
-        var _thisobj = $(this);
-        var id = _thisobj.parents('tr').data('id');
-        _thisobj.button('loading');
-        post(URI+'git/gitLog', {opn:'releaseGit', id:id}, function(res){
-            showTips(res);
-            if (res.code == 1) {
-                window.location.reload();
-            } else {
-                _thisobj.button('reset');
-            }
-        });
-    })
+	GITLOG.init();
 });
+
+const GITLOG = {
+	init: function() {
+		// 版本库筛选切换
+		$('.lib-filter button').on('click', function(){
+			const id = $(this).data('id');
+			const form = $(this).closest('form');
+			form.find('input[name="id"]').val(id);
+			form.submit();
+		});
+
+		// 发布状态筛选切换
+		$('.status-filter button').on('click', function(){
+			const status = $(this).data('status');
+			const form = $(this).closest('form');
+			form.find('input[name="status"]').val(status);
+			form.submit();
+		});
+
+		// 同步更新版本库
+		$('#update-git').on('click', function(){
+			const btn = $(this);
+			const id = btn.data('id');
+			btn.button('loading');
+			post('', {opn: 'updateGit', id: id}, function(res){
+				showTips(res);
+				if (res && res.code == 1) {
+					setTimeout(function(){
+						window.location.reload();
+					}, 600);
+				} else {
+					btn.button('reset');
+				}
+			});
+		});
+
+		// 发布指定版本
+		$('.release-btn').on('click', function(){
+			const btn = $(this);
+			const id = btn.closest('tr').data('id');
+			confirm('确定要发布该版本（包含此版本之前未发布的提交）吗?', function(confirmBtn, modal){
+				btn.button('loading');
+				post('', {opn: 'releaseGit', id: id}, function(res){
+					showTips(res);
+					if (res && res.code == 1) {
+						window.location.reload();
+					} else {
+						btn.button('reset');
+						modal.hide();
+					}
+				});
+			});
+		});
+	}
+};

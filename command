@@ -4,5 +4,7 @@ define('APP_MEMORY_START', memory_get_usage());
 define('APP_TIME_START', microtime(true));
 define('IS_CLI', true);
 require __DIR__ . '/init.php';
-\App::make($argv[1])->{$argv[2]}();
+$taskClass = $argv[1] ?? 'app/task/MainTask';
+$taskAction = $argv[2] ?? 'start';
+\App::make($taskClass)->{$taskAction}();
 \App::runOver();

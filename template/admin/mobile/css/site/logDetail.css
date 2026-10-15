@@ -1,0 +1,119 @@
+.log-detail-mobile-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.1rem 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.total-badge {
+	font-size: 0.11rem;
+	color: #64748b;
+	background: #f1f5f9;
+	padding: 0.02rem 0.08rem;
+	border-radius: 0.1rem;
+}
+
+.file-meta-card {
+	background: #fff;
+	padding: 0.1rem 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.file-path-row {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.12rem;
+	color: #334155;
+	word-break: break-all;
+}
+.file-path-row i {
+	color: #337ab7;
+	flex-shrink: 0;
+}
+.file-path-row code {
+	background: #f1f5f9;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.04rem;
+	color: #0f172a;
+	font-size: 0.12rem;
+}
+.filter-input-wrap {
+	margin-top: 0.08rem;
+}
+
+.chunk-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.08rem;
+}
+.empty-state {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.4rem 0.15rem;
+	text-align: center;
+	color: #94a3b8;
+}
+.empty-state i {
+	font-size: 0.32rem;
+	margin-bottom: 0.08rem;
+	color: #cbd5e1;
+}
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}
+
+.chunk-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.1rem 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.chunk-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 0.06rem;
+	margin-bottom: 0.06rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+}
+.chunk-idx {
+	font-size: 0.12rem;
+	font-weight: 600;
+	color: #337ab7;
+	font-family: monospace;
+}
+.btn-icon {
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	border-radius: 0.05rem;
+	font-size: 0.12rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+.chunk-pre {
+	margin: 0;
+	padding: 0.08rem;
+	background: #0f172a;
+	color: #e2e8f0;
+	border-radius: 0.06rem;
+	font-family: Menlo, Monaco, Consolas, monospace;
+	font-size: 0.11rem;
+	line-height: 1.5;
+	white-space: pre-wrap;
+	word-break: break-all;
+	overflow-x: auto;
+}

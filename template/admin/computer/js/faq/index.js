@@ -11,7 +11,7 @@ var FAQGROUP = {
         $('#dealbox-info .btn.save-btn').on('click', function(){
             var obj = $(this);
             obj.button('loading');
-            post(URI+'faq', obj.parents('form').serializeArray(), function(res){
+            post('/faq', obj.parents('form').serializeArray(), function(res){
                 showTips(res);
                 if (res.code == 1) {
                     window.location.reload();
@@ -25,7 +25,7 @@ var FAQGROUP = {
             const obj = $(this);
             obj.button('loading');
             const id = obj.parents('tr').data('id');
-            post(URI+'faq', {opn: 'getGroupInfo', group_id: id}, function(res){
+            post('/faq', {opn: 'getGroupInfo', group_id: id}, function(res){
                 if (res.code == 1) {
                     _this.initInfo('编辑分组', res.data);
                 } else {
@@ -39,7 +39,7 @@ var FAQGROUP = {
             const _thisobj = $(this);
             const id = _thisobj.parents('tr').data('id');
             const status = _thisobj.data('status') == '0' ? 1 : 0;
-            post(URI+'faq', {opn: 'modifyGroupStatus', group_id: id, status: status}, function(res){
+            post('/faq', {opn: 'modifyGroupStatus', group_id: id, status: status}, function(res){
                 showTips(res);
                 if (res.code == 1) {
                     _thisobj.switchBtn(status);
@@ -51,7 +51,7 @@ var FAQGROUP = {
             event.stopPropagation();
             const _thisobj = $(this);
             const id = _thisobj.parents('tr').data('id');
-            post(URI+'faq', {opn: 'getGroupLanguage', group_id: id}, function(res){
+            post('/faq', {opn: 'getGroupLanguage', group_id: id}, function(res){
                 if (res.code == 1) {
                     var data = res.data;
                     const obj = $('#dealbox-language');
@@ -104,7 +104,7 @@ var FAQGROUP = {
                 if (value === '') {
                     const _thisobj = $(this);
                     const tr_code = _thisobj.data('tr_code');
-                    post(URI+'faq', {opn:'transfer', tr_code:tr_code, name:name, from_code: 'en'}, function(res){
+                    post('/faq', {opn:'transfer', tr_code:tr_code, name:name, from_code: 'en'}, function(res){
                         len = len - 1;
                         if (res.code == 1) {
                             _thisobj.val(res.data);
@@ -127,7 +127,7 @@ var FAQGROUP = {
         $('#dealbox-language .save-btn').on('click', function(){
             const obj = $(this);
             obj.button('loading');
-            post(URI+'faq', $('#dealbox-language form').serializeArray(), function(res){
+            post('/faq', $('#dealbox-language form').serializeArray(), function(res){
                 showTips(res);
                 if (res.code == 1) {
                     window.location.reload();

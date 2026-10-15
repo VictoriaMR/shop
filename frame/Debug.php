@@ -77,8 +77,8 @@ class Debug
 		$server = $_SERVER['SERVER_ADDR'] ?? '0.0.0.0';
 		$remote = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
 
-		$log = '[runtime] ' . date('Y-m-d H:i:s') . ' [server addr] ' . $server . ' [remote addr] ' . $remote . $currentUri . PHP_EOL
-			 . "[Time: {$runtime}s] [QPS: {$reqs}req/s] [MEM: {$mem}kb] [SQL: {$sqlCount}] [Files: {$fileCount}]" . PHP_EOL
+		$log = '[runtime] ' . date('Y-m-d H:i:s') . ' [server] ' . $server . ' [remote] ' . $remote . $currentUri . PHP_EOL
+			 . "[time: {$runtime}s] [qps: {$reqs}req/s] [mem: {$mem}kb] [sql: {$sqlCount}] [files: {$fileCount}]" . PHP_EOL
 			 . ($msg !== '' ? $msg . PHP_EOL : '')
 			 . PHP_EOL;
 

@@ -9,7 +9,7 @@ class Member extends AdminBase
 	{
 		$this->_arr = [
 			'index' => '人员列表',
-			'log' => '日志',
+			'log'   => '日志',
 		];
 		$this->_default = '管理人员';
 		parent::_init();
@@ -29,13 +29,15 @@ class Member extends AdminBase
 		frame('Html')->addJs();
 
 		$search = [
-			'status' => (int) iget('status', -1),
-			'page'   => max(1, (int) iget('page', 1)),
-			'size'   => max(1, min(100, (int) iget('size', 20))),
-			'name'   => trim(iget('name', '')),
-			'phone'  => trim(iget('phone', '')),
-			'stime'  => trim(iget('stime', '')),
-			'etime'  => trim(iget('etime', '')),
+			'status'  => (int)iget('status', -1),
+			'dept_id' => max(0, (int)iget('dept_id', 0)),
+			'pos_id'  => max(0, (int)iget('pos_id', 0)),
+			'page'    => max(1, (int)iget('page', 1)),
+			'size'    => max(1, min(100, (int)iget('size', 20))),
+			'name'    => trim(iget('name', '')),
+			'phone'   => trim(iget('phone', '')),
+			'stime'   => trim(iget('stime', '')),
+			'etime'   => trim(iget('etime', '')),
 		];
 
 		$where = [
@@ -60,29 +62,72 @@ class Member extends AdminBase
 			$where['add_time'] = ['<=', $etimeFull];
 		}
 
+		$deptService = service('member/Department');
+		$posService = service('member/Position');
+		$relService = service('member/MemberDepartment');
+
+		$deptList = $deptService->getTreeList();
+		$deptMap = array_column($deptList, null, 'dept_id');
+		$posList = $posService->getList();
+		$posMap = array_column($posList, null, 'pos_id');
+
+		// 按部门或职位关联表过滤人员
+		if ($search['dept_id'] > 0 || $search['pos_id'] > 0) {
+			$relWhere = [];
+			if ($search['dept_id'] > 0) {
+				$deptIds = array_merge([$search['dept_id']], $deptService->getDescendantIds($search['dept_id']));
+				$relWhere['dept_id'] = count($deptIds) === 1 ? $deptIds[0] : ['in', $deptIds];
+			}
+			if ($search['pos_id'] > 0) {
+				$relWhere['pos_id'] = $search['pos_id'];
+			}
+			$relRows = $relService->getListData($relWhere, 'mem_id', 0, 0);
+			if (empty($relRows)) {
+				$where['mem_id'] = -1;
+			} else {
+				$filterMemIds = array_values(array_unique(array_column($relRows, 'mem_id')));
+				$where['mem_id'] = count($filterMemIds) === 1 ? $filterMemIds[0] : ['in', $filterMemIds];
+			}
+		}
+
 		$member = service('member/Member');
 		$total = $member->getCountData($where);
 		$list = [];
 		if ($total > 0) {
 			$fields = 'mem_id,avatar,sex,first_name,last_name,nick_name,mobile,email,status,add_time,login_time';
 			$list = $member->getListData($where, $fields, $search['page'], $search['size'], ['mem_id' => 'desc']);
+			$memIds = array_column($list, 'mem_id');
+			$relMap = $relService->getMapByMemIds($memIds);
+
 			foreach ($list as $key => $value) {
-				$value['avatar'] = $member->getAvatar($value['avatar'], $value['sex']);
+				$mid = (int)$value['mem_id'];
+				$rel = $relMap[$mid] ?? [];
+				$did = (int)($rel['dept_id'] ?? 0);
+				$pid = (int)($rel['pos_id'] ?? 0);
+
+				$value['avatar']    = $member->getAvatar($value['avatar'], $value['sex']);
+				$value['dept_id']   = $did;
+				$value['pos_id']    = $pid;
+				$value['dept_name'] = $deptMap[$did]['name'] ?? '';
+				$value['dept_path'] = $deptMap[$did]['path_name'] ?? '';
+				$value['pos_name']  = $posMap[$pid]['name'] ?? '';
 				$list[$key] = $value;
 			}
 		}
 
 		$this->view([
-			'total'  => $total,
-			'list'   => $list,
-			'search' => $search,
+			'total'    => $total,
+			'list'     => $list,
+			'search'   => $search,
+			'deptList' => $deptList,
+			'posList'  => $posList,
 		]);
 	}
 
 	protected function modify()
 	{
-		$memId = (int) ipost('mem_id');
-		$status = (int) ipost('status') === 1 ? 1 : 0;
+		$memId = (int)ipost('mem_id');
+		$status = (int)ipost('status') === 1 ? 1 : 0;
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
@@ -97,12 +142,17 @@ class Member extends AdminBase
 
 	protected function delete()
 	{
-		$memId = (int) ipost('mem_id');
+		$memId = (int)ipost('mem_id');
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
+		if (service('controller/Permission')->isSuperAdmin($memId)) {
+			$this->error('系统超级管理员不可删除');
+		}
 		$result = service('member/Member')->deleteData($memId);
 		if ($result) {
+			service('member/MemberDepartment')->deleteData(['mem_id' => $memId]);
+			service('controller/Permission')->deleteData(['target_type' => 2, 'target_id' => $memId]);
 			$this->addLog('删除用户-' . $memId);
 			$this->success('删除成功');
 		} else {
@@ -112,7 +162,7 @@ class Member extends AdminBase
 
 	protected function getInfo()
 	{
-		$memId = (int) ipost('mem_id');
+		$memId = (int)ipost('mem_id');
 		if (empty($memId)) {
 			$this->error('账户ID不能为空');
 		}
@@ -126,18 +176,25 @@ class Member extends AdminBase
 		$lastName = $info['last_name'] ?? '';
 		$info['name'] = ($firstName === $lastName) ? $firstName : trim($firstName . ' ' . $lastName);
 		$info['nickname'] = $info['nick_name'] ?? '';
+
+		$rel = service('member/MemberDepartment')->loadData(['mem_id' => $memId], 'dept_id,pos_id');
+		$info['dept_id'] = (int)($rel['dept_id'] ?? 0);
+		$info['pos_id']  = (int)($rel['pos_id'] ?? 0);
+
 		$this->success('获取成功', $info);
 	}
 
 	protected function editInfo()
 	{
-		$mem_id = (int) ipost('mem_id');
-		$name = trim(ipost('name', ''));
-		$nickname = trim(ipost('nickname', ''));
-		$mobile = trim(ipost('mobile', ''));
-		$email = trim(ipost('email', ''));
-		$status = (int) ipost('status') === 1 ? 1 : 0;
-		$password = trim(ipost('password', ''));
+		$mem_id     = (int)ipost('mem_id');
+		$name       = trim(ipost('name', ''));
+		$nickname   = trim(ipost('nickname', ''));
+		$mobile     = trim(ipost('mobile', ''));
+		$email      = trim(ipost('email', ''));
+		$deptId     = max(0, (int)ipost('dept_id', 0));
+		$posId      = max(0, (int)ipost('pos_id', 0));
+		$status     = (int)ipost('status') === 1 ? 1 : 0;
+		$password   = trim(ipost('password', ''));
 		$repassword = trim(ipost('repassword', ''));
 
 		if ($name === '') {
@@ -190,13 +247,20 @@ class Member extends AdminBase
 		}
 		if (empty($mem_id)) {
 			$result = $service->create($data);
-			$this->addLog('新增用户-' . $result);
+			$targetMemId = (int)$result;
+			if ($targetMemId > 0) {
+				service('member/MemberDepartment')->bindMember($targetMemId, $deptId, $posId);
+				$this->addLog('新增用户-' . $targetMemId);
+			}
 		} else {
-			$this->addLog('编辑用户-' . $mem_id);
 			$data['update_time'] = now();
 			$result = $service->updateData($mem_id, $data);
+			if ($result !== false) {
+				service('member/MemberDepartment')->bindMember($mem_id, $deptId, $posId);
+				$this->addLog('编辑用户-' . $mem_id);
+			}
 		}
-		if ($result) {
+		if ($result !== false && $result) {
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
@@ -207,25 +271,31 @@ class Member extends AdminBase
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 
-		$type = trim(iget('type', 'all'));
-		$name = trim(iget('name', ''));
-		$phone = trim(iget('phone', ''));
+		$logType = (int)iget('log_type', -1);
+		$type    = trim(iget('type', 'all'));
+		$name    = trim(iget('name', ''));
+		$phone   = trim(iget('phone', ''));
 		$keyword = trim(iget('keyword', ''));
-		$ip = trim(iget('ip', ''));
-		$stime = trim(iget('stime', ''));
-		$etime = trim(iget('etime', ''));
-		$page = max(1, (int)iget('page', 1));
-		$size = max(1, min(100, (int)iget('size', 20)));
+		$ip      = trim(iget('ip', ''));
+		$stime   = trim(iget('stime', ''));
+		$etime   = trim(iget('etime', ''));
+		$page    = max(1, (int)iget('page', 1));
+		$size    = max(1, min(100, (int)iget('size', 20)));
 
 		$where = [
 			'site_id' => siteId(),
 		];
 
+		// 模块类型筛选 (0:人员管理, 1:部门管理, 2:职位管理)
+		if ($logType >= 0) {
+			$where['type'] = $logType;
+		}
+
 		// 行为类型筛选
 		if ($type === 'login') {
 			$where['info'] = ['like', '%登录%'];
 		} elseif ($type === 'edit') {
-			$where['info'] = ['REGEXP', '编辑|修改|更改'];
+			$where['info'] = ['REGEXP', '编辑|修改|更改|排序'];
 		} elseif ($type === 'add') {
 			$where['info'] = ['like', '%新增%'];
 		} elseif ($type === 'del') {
@@ -274,7 +344,8 @@ class Member extends AdminBase
 			}
 		}
 
-		$logService = service('log/Login');
+		$logService = service('log/Member');
+		$moduleTypes = $logService->getTypeList();
 		$total = $logService->getCountData($where);
 		$list = [];
 		if ($total > 0) {
@@ -299,11 +370,11 @@ class Member extends AdminBase
 			foreach ($list as &$item) {
 				$mid = (int)$item['mem_id'];
 				$item['member'] = $memberMap[$mid] ?? [
-					'mem_id'   => $mid,
-					'avatar'   => isMobile() ? '' : siteUrl('image/common/male.jpg'),
-					'nick_name'=> $mid > 0 ? '用户-' . $mid : '系统/未登录',
-					'fullName' => '',
-					'mobile'   => '-',
+					'mem_id'    => $mid,
+					'avatar'    => isMobile() ? '' : siteUrl('image/common/male.jpg'),
+					'nick_name' => $mid > 0 ? '用户-' . $mid : '系统/未登录',
+					'fullName'  => '',
+					'mobile'    => '-',
 				];
 			}
 			unset($item);
@@ -319,22 +390,24 @@ class Member extends AdminBase
 		];
 
 		$search = [
-			'type'    => $type,
-			'name'    => $name,
-			'phone'   => $phone,
-			'keyword' => $keyword,
-			'ip'      => $ip,
-			'stime'   => $stime,
-			'etime'   => $etime,
-			'page'    => $page,
-			'size'    => $size,
+			'log_type' => $logType,
+			'type'     => $type,
+			'name'     => $name,
+			'phone'    => $phone,
+			'keyword'  => $keyword,
+			'ip'       => $ip,
+			'stime'    => $stime,
+			'etime'    => $etime,
+			'page'     => $page,
+			'size'     => $size,
 		];
 
 		$this->view([
-			'total'   => $total,
-			'list'    => $list,
-			'typeArr' => $typeArr,
-			'search'  => $search,
+			'total'       => $total,
+			'list'        => $list,
+			'typeArr'     => $typeArr,
+			'moduleTypes' => $moduleTypes,
+			'search'      => $search,
 		]);
 	}
 }

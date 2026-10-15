@@ -27,7 +27,7 @@ const PRODUCT = {
 				obj.parent().append('<input type="hidden" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
 			}
 			obj.button('loading');
-			post(URI+'product/detail', obj.parents('form').serializeArray(), function(res){
+			post('/product/detail', obj.parents('form').serializeArray(), function(res){
 				showTips(res);
 				if (res.code == 1) {
 					if (obj.parent().find('[name="opn"]').val() != 'editSpuLanguage') {
@@ -46,7 +46,7 @@ const PRODUCT = {
 		$('.switch_botton.free-ship').on('click', function(){
 			const _thisobj = $(this);
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
-			post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), free_ship: status, opn: 'editInfo'}, function(res) {
+			post('/product/detail', {spu_id: $('.detail-page').data('id'), free_ship: status, opn: 'editInfo'}, function(res) {
 				showTips(res);
 				if (res.code == 1) {
 					_thisobj.switchBtn(status);
@@ -56,7 +56,7 @@ const PRODUCT = {
 		//名称翻译
 		$('.name-trans-btn').on('click', function(){
 			const _thisobj = $(this);
-			post(URI+'product/detail', {opn: 'getSpuNameLanguage', id: $('.detail-page').data('id')}, function(res){
+			post('/product/detail', {opn: 'getSpuNameLanguage', id: $('.detail-page').data('id')}, function(res){
 				if (res.code == 1) {
 					var data = res.data;
 					const obj = $('#dealbox-language');
@@ -99,7 +99,7 @@ const PRODUCT = {
 				if (value === '') {
 					const _thisobj = $(this);
 					const tr_code = _thisobj.data('tr_code');
-					post(URI+'product/detail', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
+					post('/product/detail', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
 						len = len - 1;
 						if (res.code == 1) {
 							_thisobj.val(res.data);
@@ -120,7 +120,7 @@ const PRODUCT = {
 		});
 		//更改排序
 		$('.spu-image input[name="sort"]').on('blur', function(){
-			post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: $(this).parents('.spu-image').data('id'), sort: $(this).val(), opn: 'modifySpuImage'}, function(res) {
+			post('/product/detail', {spu_id: $('.detail-page').data('id'), attach_id: $(this).parents('.spu-image').data('id'), sort: $(this).val(), opn: 'modifySpuImage'}, function(res) {
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();
@@ -132,7 +132,7 @@ const PRODUCT = {
 			const item_id = $(this).parents('.spu-image').data('item_id');
 			confirm('确定要删除该图片吗?', function(_thisobj){
 				_thisobj.button('loading');
-				post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), item_id: item_id, opn: 'deleteSpuImage'}, function(res) {
+				post('/product/detail', {spu_id: $('.detail-page').data('id'), item_id: item_id, opn: 'deleteSpuImage'}, function(res) {
 					showTips(res);
 					if (res.code == 1) {
 						window.location.reload();
@@ -146,7 +146,7 @@ const PRODUCT = {
 		$('.spu-image .spu-btn').on('click', function(){
 			const attach_id = $(this).parents('.spu-image').data('id');
 			confirm('确定设置该图片为主图吗?', function(_thisobj){
-				post(URI+'product/detail', {spu_id: $('.detail-page').data('id'), attach_id: attach_id, opn: 'editInfo'}, function(res) {
+				post('/product/detail', {spu_id: $('.detail-page').data('id'), attach_id: attach_id, opn: 'editInfo'}, function(res) {
 					showTips(res);
 					if (res.code == 1) {
 						window.location.reload();
@@ -173,7 +173,7 @@ const PRODUCT = {
 		//上传图片
 		$('.upload-image').imageUpload('product', function(data, obj){
 			obj.button('loading');
-			post(URI+'product/detail', {opn: 'addSpuImage', spu_id: $('.detail-page').data('id'), attach_id: data.attach_id}, function(res){
+			post('/product/detail', {opn: 'addSpuImage', spu_id: $('.detail-page').data('id'), attach_id: data.attach_id}, function(res){
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();
@@ -186,7 +186,7 @@ const PRODUCT = {
 		$('.switch_botton.sku-status').on('click', function(){
 			const _thisobj = $(this);
 			const status = _thisobj.data('status') == '0' ? 1 : 0;
-			post(URI+'product/detail', {sku_id: _thisobj.parents('tr').data('id'), status: status, opn: 'editSkuInfo'}, function(res) {
+			post('/product/detail', {sku_id: _thisobj.parents('tr').data('id'), status: status, opn: 'editSkuInfo'}, function(res) {
 				showTips(res);
 				if (res.code == 1) {
 					_thisobj.switchBtn(status);
@@ -218,7 +218,7 @@ const PRODUCT = {
 			let param = obj.parents('tr').data();
 			param.opn = 'modifySkuAttrImage';
 			param.attach_id = data.attach_id;
-			post(URI+'product/detail', param, function(res){
+			post('/product/detail', param, function(res){
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();
@@ -232,7 +232,7 @@ const PRODUCT = {
 			param.attach_id = 0;
 			confirm('确定要删除该属性图片吗?', function(obj){
 				obj.button('loading');
-				post(URI+'product/detail', param, function(res){
+				post('/product/detail', param, function(res){
 					showTips(res);
 					if (res.code == 1) {
 						window.location.reload();
@@ -246,7 +246,7 @@ const PRODUCT = {
 		$('#sku-desc-content [name="sort"]').on('blur', function(){
 			const id = $(this).parents('tr').data('id');
 			const sort = $(this).val();
-			post(URI+'product/detail', {opn: 'modifySpuDesc', item_id: id, sort: sort}, function(res){
+			post('/product/detail', {opn: 'modifySpuDesc', item_id: id, sort: sort}, function(res){
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();
@@ -258,7 +258,7 @@ const PRODUCT = {
 			const id = $(this).parents('tr').data('id');
 			confirm('确定要删除该描述文本吗?', function(obj){
 				obj.button('loading');
-				post(URI+'product/detail', {opn: 'deleteSpuDesc', item_id: id}, function(res){
+				post('/product/detail', {opn: 'deleteSpuDesc', item_id: id}, function(res){
 					showTips(res);
 					if (res.code == 1) {
 						window.location.reload();
@@ -277,7 +277,7 @@ const PRODUCT = {
 			const _thisobj = $(this);
 			_thisobj.button('loading');
 			const id = _thisobj.parents('tr').data('id');
-			post(URI+'product/detail', {opn: 'getSpuDescInfo', item_id: id}, function(res){
+			post('/product/detail', {opn: 'getSpuDescInfo', item_id: id}, function(res){
 				if (res.code == 1) {
 					_this.initDescShow(res.data);
 				} else {
@@ -288,7 +288,7 @@ const PRODUCT = {
 		});
 		//描述图片排序
 		$('.spu-introduce-image [name="sort"]').on('blur', function(){
-			post(URI+'product/detail', {item_id: $(this).parent().data('id'), attach_id: $(this).parents('.spu-introduce-image').data('id'), sort: $(this).val(), opn: 'modifySpuIntroduceImage'}, function(res) {
+			post('/product/detail', {item_id: $(this).parent().data('id'), attach_id: $(this).parents('.spu-introduce-image').data('id'), sort: $(this).val(), opn: 'modifySpuIntroduceImage'}, function(res) {
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();
@@ -300,7 +300,7 @@ const PRODUCT = {
 			const id = $(this).parent().data('id');
 			confirm('确定删除该描述图片吗?', function(obj){
 				obj.button('loading');
-				post(URI+'product/detail', {item_id: id, opn: 'deleteSpuIntroduceImage'}, function(res) {
+				post('/product/detail', {item_id: id, opn: 'deleteSpuIntroduceImage'}, function(res) {
 					showTips(res);
 					if (res.code == 1) {
 						window.location.reload();
@@ -314,7 +314,7 @@ const PRODUCT = {
 		$('.upload-introduce-image').imageUpload('introduce', function(data, obj){
 			const spu_id = $('.detail-page').data('id');
 			obj.button('loading');
-			post(URI+'product/detail', {opn: 'addSpuIntroduceImage', spu_id: spu_id, attach_id:data.attach_id}, function(res){
+			post('/product/detail', {opn: 'addSpuIntroduceImage', spu_id: spu_id, attach_id:data.attach_id}, function(res){
 				showTips(res);
 				if (res.code == 1) {
 					window.location.reload();

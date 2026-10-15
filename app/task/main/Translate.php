@@ -9,6 +9,7 @@ class Translate extends TaskDriver
 
 	public static $config = [
 		'name' => '自动翻译任务',
+		'type' => self::TYPE_CRON,
 		'cron' => ['0 6 * * *'],
 	];
 
@@ -26,6 +27,7 @@ class Translate extends TaskDriver
 				$tempData[$value['spu_id']][$value['lan_id']] = $value['name'];
 			}
 			foreach ($tempData as $key => $value) {
+				$this->updateLock();
 				$noLanguage = array_diff(array_keys($language), array_keys($value));
 				if (!empty($noLanguage)) {
 					$insertData = [];
@@ -58,6 +60,7 @@ class Translate extends TaskDriver
 		if (!empty($list)) {
 			$languageService = service('attr/NameLanguage');
 			foreach ($list as $key => $value) {
+				$this->updateLock();
 				$hasLanguage = $languageService->getListData(['attrn_id'=>$value['attrn_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {
@@ -95,6 +98,7 @@ class Translate extends TaskDriver
 		if (!empty($list)) {
 			$languageService = service('attr/ValueLanguage');
 			foreach ($list as $key => $value) {
+				$this->updateLock();
 				$hasLanguage = $languageService->getListData(['attrv_id'=>$value['attrv_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {
@@ -132,6 +136,7 @@ class Translate extends TaskDriver
 		if (!empty($list)) {
 			$languageService = service('desc/NameLanguage');
 			foreach ($list as $key => $value) {
+				$this->updateLock();
 				$hasLanguage = $languageService->getListData(['descn_id'=>$value['descn_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {
@@ -168,6 +173,7 @@ class Translate extends TaskDriver
 		if (!empty($list)) {
 			$languageService = service('desc/ValueLanguage');
 			foreach ($list as $key => $value) {
+				$this->updateLock();
 				$hasLanguage = $languageService->getListData(['descv_id'=>$value['descv_id']], 'lan_id');
 				$noLanguage = array_diff(array_keys($language), array_column($hasLanguage, 'lan_id'));
 				if (!empty($noLanguage)) {

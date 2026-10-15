@@ -7,26 +7,27 @@ class DataHelper extends TaskDriver
 {
 	public static $config = [
 		'name' => '产品维护任务',
-		'cron' => ['* * * * *'],
+		'type' => self::TYPE_OTHER,
+		'cron' => [],
 	];
 
 	public function run()
 	{
-		$info = service('supplier/Url')->loadData(['status'=>0]);
+		$info = service('supplier/Url')->loadData(['status' => 0]);
 		if (empty($info)) {
-			$this->taskMonitor();
 			return false;
 		}
-		//获取空闲机器
+		// 获取空闲机器, 无在线机器时直接退出释放进程资源
 		$socketService = service('Socket');
 		$list = $socketService->getAutoOnlineList();
 		if (empty($list)) {
-			sleep(10);
-			return true;
+			$this->echo('暂无空闲采集机器');
+			return false;
 		}
 		foreach ($list as $value) {
 			$socketService->pushToAuto($value, $info);
 		}
+		$this->updateLock();
 		return true;
 	}
 }

@@ -357,7 +357,9 @@ final class Query
 	{
 		if (isDebug()) {
 			$this->_sql = $sql;
-			\App::append('exec_sql', $sql);
+			if (!isCli()) {
+				\App::append('exec_sql', $sql);
+			}
 		}
 		$mysqli = frame('Connection')->setDb($this->_database);
 		$this->clearQuery();

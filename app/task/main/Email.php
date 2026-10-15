@@ -7,21 +7,22 @@ class Email extends TaskDriver
 {
 	public static $config = [
 		'name' => '邮件发送任务',
-		'cron' => ['* * * * *'],
+		'type' => self::TYPE_OTHER,
+		'cron' => [],
 	];
 
 	public function run()
 	{
 		$email = service('email/Email');
-		$list = $email->getListData(['status'=>0], 'email_id');
+		// 分批拉取待发邮件, 避免一次性加载过多占用内存
+		$list = $email->getListData(['status' => 0], 'email_id', 1, 50);
 		if (empty($list)) {
-			$this->taskMonitor();
 			return false;
-		} else {
-			foreach ($list as $value) {
-				$email->sendEmailById($value['email_id']);
-			}
 		}
-		return true;
+		foreach ($list as $value) {
+			$email->sendEmailById($value['email_id']);
+			$this->updateLock();
+		}
+		return count($list) >= 50;
 	}
 }

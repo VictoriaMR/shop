@@ -1,0 +1,267 @@
+.transfer-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+/* 顶部栏 */
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.12rem 0.14rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #222;
+}
+.page-header-bar .header-title i {
+	color: #337ab7;
+	font-size: 0.15rem;
+}
+.page-header-bar .total-badge {
+	font-size: 0.11rem;
+	font-weight: normal;
+	color: #666;
+	background: #f0f2f5;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.1rem;
+}
+
+/* 筛选框 */
+.filter-box {
+	background: #fff;
+	padding: 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.filter-row {
+	display: flex;
+	gap: 0.08rem;
+}
+.filter-item.flex-1 {
+	flex: 1;
+	min-width: 0;
+}
+.filter-box .form-control {
+	height: 0.34rem;
+	font-size: 0.13rem;
+	padding: 0.04rem 0.08rem;
+}
+.search-submit-btn {
+	height: 0.34rem;
+	padding: 0 0.14rem;
+	font-size: 0.13rem;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+	flex-shrink: 0;
+}
+
+/* 卡片列表 */
+.card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.08rem;
+}
+.empty-state {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.4rem 0.15rem;
+	text-align: center;
+	color: #999;
+}
+.empty-state i {
+	font-size: 0.32rem;
+	margin-bottom: 0.08rem;
+	color: #ccc;
+}
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}
+
+.transfer-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.11rem 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.transfer-card .card-main {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	padding-bottom: 0.08rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+}
+.transfer-card .transfer-info {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+	flex: 1;
+}
+.id-badge {
+	font-size: 0.11rem;
+	color: #888;
+	font-family: monospace;
+	background: #f3f4f6;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	flex-shrink: 0;
+}
+.lang-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+	font-size: 0.11rem;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	background: #eff6ff;
+	color: #2563eb;
+	font-weight: 600;
+}
+
+.card-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	flex-shrink: 0;
+}
+.card-actions .btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	font-size: 0.12rem;
+	border-radius: 0.06rem;
+}
+
+.trans-body {
+	padding-top: 0.08rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.06rem;
+}
+.text-row {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.08rem;
+	font-size: 0.13rem;
+}
+.text-label {
+	font-size: 0.11rem;
+	color: #64748b;
+	background: #f8fafc;
+	border: 0.01rem solid #e2e8f0;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	flex-shrink: 0;
+	margin-top: 0.01rem;
+}
+.text-content {
+	flex: 1;
+	min-width: 0;
+	line-height: 1.4;
+	word-break: break-word;
+}
+.source-text {
+	color: #334155;
+	font-weight: 500;
+}
+.target-text {
+	color: #0f172a;
+}
+
+/* 弹窗 */
+.modal-mask {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.14rem;
+}
+.modal-panel {
+	background: #fff;
+	width: 100%;
+	max-width: 4.2rem;
+	max-height: 86vh;
+	border-radius: 0.1rem;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-shadow: 0 0.06rem 0.2rem rgba(0, 0, 0, 0.18);
+}
+.modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.12rem 0.15rem;
+	border-bottom: 1px solid #eee;
+	background: #fafbfc;
+}
+.modal-header .dealbox-title {
+	margin: 0;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #222;
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+}
+.modal-header-right {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+.modal-header .modal-close {
+	font-size: 0.18rem;
+	color: #888;
+	cursor: pointer;
+	padding: 0.02rem 0.06rem;
+}
+.modal-body {
+	padding: 0.14rem 0.15rem;
+	overflow-y: auto;
+}
+.form-group {
+	margin-bottom: 0.12rem;
+}
+.form-label {
+	display: block;
+	font-size: 0.12rem;
+	color: #555;
+	margin-bottom: 0.05rem;
+	font-weight: 600;
+}
+.form-label .required {
+	color: #d9534f;
+}
+.modal-body textarea.form-control {
+	resize: vertical;
+	font-size: 0.13rem;
+}
+.btn-block {
+	width: 100%;
+	height: 0.36rem;
+	font-size: 0.14rem;
+	margin-top: 0.04rem;
+}

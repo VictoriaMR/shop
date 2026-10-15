@@ -7,7 +7,7 @@ class Site extends Base
 {
 	const CACHE_KEY = 'site:';
 
-	public function getInfoCache($key, $type='site_id')
+	public function getInfoCache($key, $type = 'site_id')
 	{
 		$cacheKey = $this->getCacheKey($type, $key);
 		$info = redis(2)->get($cacheKey);
@@ -20,12 +20,22 @@ class Site extends Base
 
 	protected function getCacheKey($type, $key)
 	{
-		return self::CACHE_KEY.$type.':'.$key;
+		return self::CACHE_KEY . $type . ':' . $key;
 	}
 
-	public function getInfo($key, $type='site_id')
+	public function updateCache($siteId)
 	{
-		return $this->loadData([$type=>$key, 'status'=>1], 'site_id,type,path,name,domain,cate_id,email,view_cache,static_cache,debug');
+		$info = $this->loadData($siteId, 'site_id,domain');
+		redis(2)->del($this->getCacheKey('site_id', $siteId));
+		if (!empty($info['domain'])) {
+			redis(2)->del($this->getCacheKey('domain', $info['domain']));
+		}
+		return true;
+	}
+
+	public function getInfo($key, $type = 'site_id')
+	{
+		return $this->loadData([$type => $key, 'status' => 1], 'site_id,type,path,name,domain,cate_id,email,view_cache,static_cache,debug');
 	}
 
 	public function getCountryCode()

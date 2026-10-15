@@ -1,0 +1,133 @@
+.phpinfo-mobile-page {
+	padding: 0.12rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.12rem 0.14rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+.page-header-bar .header-title i {
+	color: #337ab7;
+	font-size: 0.16rem;
+}
+.ver-badge {
+	font-size: 0.11rem;
+	font-weight: 600;
+	color: #2563eb;
+	background: #eff6ff;
+	padding: 0.02rem 0.08rem;
+	border-radius: 0.1rem;
+	font-family: monospace;
+}
+
+.filter-box {
+	background: #fff;
+	padding: 0.1rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+
+/* 将 phpinfo 原生输出转化为移动端 REM 卡片布局 */
+.phpinfo-card-wrap {
+	width: 100%;
+	overflow: hidden;
+}
+.phpinfo-card-wrap h1 {
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #0f172a;
+	margin: 0.1rem 0 0.08rem;
+	padding: 0.08rem 0.12rem;
+	background: #fff;
+	border-radius: 0.08rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.phpinfo-card-wrap h2 {
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #1e293b;
+	margin: 0.12rem 0 0.06rem;
+	padding: 0.08rem 0.12rem;
+	background: #eff6ff;
+	border-left: 0.03rem solid #337ab7;
+	border-radius: 0.06rem;
+}
+.phpinfo-card-wrap hr {
+	display: none;
+}
+.phpinfo-card-wrap table {
+	display: block;
+	width: 100% !important;
+	background: #fff;
+	border-radius: 0.08rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+	border-collapse: collapse;
+	overflow: hidden;
+}
+.phpinfo-card-wrap tbody,
+.phpinfo-card-wrap thead {
+	display: block;
+	width: 100%;
+}
+.phpinfo-card-wrap tr {
+	display: flex;
+	flex-direction: column;
+	padding: 0.08rem 0.12rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+	gap: 0.03rem;
+}
+.phpinfo-card-wrap tr:last-child {
+	border-bottom: none;
+}
+.phpinfo-card-wrap tr.h {
+	background: #f8fafc;
+	flex-direction: row;
+	justify-content: space-between;
+}
+.phpinfo-card-wrap th {
+	font-size: 0.12rem;
+	font-weight: 600;
+	color: #475569;
+	text-align: left;
+}
+.phpinfo-card-wrap td {
+	display: block;
+	padding: 0;
+	font-size: 0.12rem;
+	line-height: 1.45;
+	word-break: break-all;
+}
+.phpinfo-card-wrap td.e {
+	font-weight: 600;
+	color: #0f172a;
+	font-size: 0.12rem;
+}
+.phpinfo-card-wrap td.v {
+	color: #334155;
+	background: #f8fafc;
+	padding: 0.03rem 0.06rem;
+	border-radius: 0.04rem;
+	font-family: Menlo, Monaco, Consolas, monospace;
+	font-size: 0.11rem;
+}
+.phpinfo-card-wrap img {
+	display: none;
+}

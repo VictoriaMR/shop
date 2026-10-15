@@ -36,19 +36,22 @@ class Product extends AdminBase
 		$spu = service('product/Spu');
 		$statusList = $spu->getStatusList();
 		//分类
-		$cateList = service('category/Category')->getListFormat(false);
-		$cateArr = array_column($cateList, 'name', 'cate_id');
-		$tempArr = [];
+		$rawCateList = service('category/Category')->getListFormat(false);
+		$cateArr = array_column($rawCateList, 'name', 'cate_id');
+		$tempArr = [-1 => $rawCateList];
 		$cateId = 0;
-		foreach ($cateList as $value) {
+		foreach ($rawCateList as $value) {
 			if ($value['parent_id'] == 0) {
 				$cateId = $value['cate_id'];
 				$tempArr[$cateId] = [];
 			}
 			$tempArr[$cateId][] = $value;
 		}
-		$cateList = [];
+		$cateList = $tempArr;
 		$where = [];
+		if ($spuId > 0) {
+			$where['spu_id'] = (int)$spuId;
+		}
 		if ($status > -1) {
 			$where['status'] = $status;
 		}
@@ -357,16 +360,30 @@ class Product extends AdminBase
 		$list = service('product/Language')->getListData(['spu_id'=>$id]);
 		$list = array_column($list, null, 'lan_id');
 		$list[0]['language_name'] = '名称';
-		$languageList = service('Language')->getListData();
+		$languageList = sys()->language()->getListData();
 		foreach ($languageList as $key => $value) {
 			$list[$value['lan_id']] = [
 				'lan_id' => $value['lan_id'],
 				'tr_code' => $value['tr_code'],
 				'name' => empty($list[$value['lan_id']]) ? '' : $list[$value['lan_id']]['name'],
-				'language_name' => $value['name2'],
+				'language_name' => $value['name2'] ?? $value['name'],
 			];
 		}
-		$this->success($list, '');
+		$this->success('获取成功', $list);
+	}
+
+	protected function transfer()
+	{
+		$trCode = ipost('tr_code');
+		$name = ipost('name');
+		if (empty($name) || empty($trCode)) {
+			$this->error('参数不正确');
+		}
+		$rst = service('tool/Translate')->getText($name, $trCode);
+		if ($rst !== false && $rst !== null && $rst !== '') {
+			$this->success('翻译成功', $rst);
+		}
+		$this->error('翻译失败');
 	}
 
 	protected function editSpuLanguage()
@@ -614,7 +631,7 @@ class Product extends AdminBase
 			$info['name'] = $tempArr['name'];
 			$tempArr = service('desc/Value')->loadData($info['descv_id'], 'name');
 			$info['value'] = $tempArr['name'];
-			$this->success($info, '获取成功');
+			$this->success('获取成功', $info);
 		}
 		$this->error('获取失败');
 	}
@@ -626,7 +643,7 @@ class Product extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$sort = ipost('sort');
-		$rst = service('product/IntroduceUsed')->updateData($id, ['sort'=>$sort]);
+		$rst = service('product/IntroUsed')->updateData($id, ['sort'=>$sort]);
 		if ($rst) {
 			$this->success('排序成功');
 		}
@@ -640,7 +657,7 @@ class Product extends AdminBase
 			$this->error('ID值不正确');
 		}
 		$sort = ipost('sort');
-		$rst = service('product/IntroduceUsed')->deleteData($id);
+		$rst = service('product/IntroUsed')->deleteData($id);
 		if ($rst) {
 			$this->success('删除成功');
 		}
@@ -654,7 +671,7 @@ class Product extends AdminBase
 		if (empty($spuId) || empty($attachId)) {
 			$this->error('参数不正确');
 		}
-		$imageService = service('product/IntroduceUsed');
+		$imageService = service('product/IntroUsed');
 		$data = ['spu_id'=>$spuId, 'attach_id'=>$attachId];
 		if ($imageService->getCountData($data)) {
 			$this->success('上传成功');

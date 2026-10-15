@@ -22,7 +22,7 @@ class Email extends Base
 		}
 		$rst = $this->insert($data);
 		if ($rst) {
-			frame('Task')->taskStart('EmailTask');
+			frame('Task')->taskStart('Email');
 		}
 		return $rst;
 	}

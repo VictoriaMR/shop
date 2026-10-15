@@ -6,20 +6,34 @@ final class Connection
 {
     private $_connects = [];
     private $_configs = [];
-    private $_verified = [];
+    private $_lastActive = [];
 
-    public function setDb($db = null)
+    public function setDb($db = null, bool $forceReconnect = false)
     {
         $db = ($db === null || $db === '') ? 'default' : $db;
+        $now = time();
+
+        if ($forceReconnect && isset($this->_connects[$db])) {
+            @$this->_connects[$db]->close();
+            unset($this->_connects[$db], $this->_lastActive[$db]);
+        }
+
         if (isset($this->_connects[$db])) {
-            // 每次请求仅首次 ping 检测死连接，后续直接返回
-            if (!isset($this->_verified[$db])) {
-                if (!$this->_connects[$db]->ping()) {
-                    unset($this->_connects[$db]);
+            // 30秒内活跃连接直接复用(零 ping 开销); 超过30秒(如CLI长任务)检测连接可用性
+            if (($now - ($this->_lastActive[$db] ?? 0)) >= 30) {
+                $alive = false;
+                try {
+                    $alive = @$this->_connects[$db]->query('SELECT 1') !== false;
+                } catch (\Throwable $e) {
+                    $alive = false;
+                }
+                if (!$alive) {
+                    @$this->_connects[$db]->close();
+                    unset($this->_connects[$db], $this->_lastActive[$db]);
                     return $this->setDb($db);
                 }
-                $this->_verified[$db] = true;
             }
+            $this->_lastActive[$db] = $now;
             return $this->_connects[$db];
         }
 
@@ -41,7 +55,6 @@ final class Connection
         }
 
         $mysqli = mysqli_init();
-        // 设置连接超时（秒），防止连接卡死
         $mysqli->options(MYSQLI_OPT_CONNECT_TIMEOUT, $timeout);
         $mysqli->real_connect($host, $config['username'], $config['password'], $config['database'], $port);
 
@@ -52,7 +65,7 @@ final class Connection
             $mysqli->set_charset($config['charset']);
         }
 
-        $this->_verified[$db] = true;
+        $this->_lastActive[$db] = $now;
         return $this->_connects[$db] = $mysqli;
     }
 }

@@ -5,15 +5,18 @@ use app\task\TaskDriver;
 
 class Product extends TaskDriver
 {
-	private $language = [];
-
 	public static $config = [
 		'name' => '产品入库任务',
-		'cron' => ['* * * * *'],
+		'type' => self::TYPE_OTHER,
+		'cron' => [],
 	];
 
 	public function run()
 	{
-		return purchase()->spu()->operateSpu();
+		$rst = purchase()->spu()->operateSpu();
+		if ($rst) {
+			$this->updateLock();
+		}
+		return (bool)$rst;
 	}
 }

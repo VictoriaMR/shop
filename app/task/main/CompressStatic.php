@@ -7,6 +7,7 @@ class CompressStatic extends TaskDriver
 {
 	public static $config = [
 		'name' => '静态文件压缩任务',
+		'type' => self::TYPE_CRON,
 		'cron' => ['0 */6 * * *'],
 	];
 
@@ -30,7 +31,9 @@ class CompressStatic extends TaskDriver
 			foreach ($fileList as $file) {
 				$source = trim(file_get_contents($file));
 				if (strpos($source, PHP_EOL) === false) continue;
-				$type = pathinfo($file)['extension'];
+				$type = pathinfo($file)['extension'] ?? '';
+				if (!isset($urlArr[$type])) continue;
+				$this->updateLock();
 				$reponse = '';
 				$count = 0;
 				while (!$reponse && $count < 5) {

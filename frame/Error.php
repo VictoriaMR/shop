@@ -79,9 +79,26 @@ class Error
 		$log = "[{$data['code']} - " . $this->errorType($data['code']) . "] {$data['message']} [{$data['file']}:{$data['line']}]";
 		$isFatal = isset(self::$fatalTypes[$data['code']]) || isset($data['trace']);
 
+		frame('Debug')->runlog($log, 'error');
+
+		if (isAjax()) {
+			if ($isFatal || isDebug()) {
+				if (!headers_sent()) {
+					header('Content-Type: application/json; charset=utf-8');
+				}
+				echo json_encode([
+					'code' => 0,
+					'msg'  => isDebug() ? $log : 'Internal Server Error',
+					'data' => [],
+				], JSON_UNESCAPED_UNICODE);
+				exit();
+			}
+			return;
+		}
+
 		// 致命错误/异常: 始终输出; 非致命错误: 仅 debug 输出
 		if (isDebug()) {
-			if (isCli() || isAjax()) {
+			if (isCli()) {
 				echo $log . PHP_EOL;
 			} else {
 				echo '<pre style="background:#424651;color:#fff;padding:16px 20px;border-radius:6px;font-family:Consolas,monospace;font-size:14px;line-height:1.6;margin:20px;word-break:break-all;white-space:pre-wrap;">' . htmlspecialchars($log);
@@ -95,16 +112,8 @@ class Error
 			if (!headers_sent()) {
 				http_response_code(500);
 			}
-			if (isAjax()) {
-				echo json_encode([
-					'code' => 0,
-					'msg' => 'Internal Server Error',
-				]);
-			} else {
-				echo '500 Internal Server Error' . PHP_EOL;
-			}
+			echo '500 Internal Server Error' . PHP_EOL;
 		}
-		frame('Debug')->runlog($log, 'error');
 	}
 
 	private function errorType($code)

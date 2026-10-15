@@ -27,6 +27,7 @@ $groupIconMap = [
 $iconOptions = [
 	'fa-gauge'          => '仪表盘 / 概览 (fa-gauge)',
 	'fa-users'          => '人员 / 团队 (fa-users)',
+	'fa-sitemap'        => '部门 / 架构 (fa-sitemap)',
 	'fa-coins'          => '财务 / 货币 (fa-coins)',
 	'fa-wallet'         => '钱包 / 支付 (fa-wallet)',
 	'fa-box'            => '产品 / 商品 (fa-box)',
@@ -54,20 +55,21 @@ foreach ($list ?? [] as $item) {
 <div class="container-fluid" id="function-list">
 	<div class="row">
 		<div class="col-xs-12">
-			<div class="form-inline" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; margin-bottom: 6px;">
-				<div class="form-group" style="margin-bottom: 6px;">
+			<div class="form-inline">
+				<div class="form-group left">
 					<span class="text-muted">
 						共 <strong><?php echo $groupCount;?></strong> 个一级功能分组，<strong><?php echo $sonControllerCount;?></strong> 个子功能模块
 					</span>
 				</div>
-				<div class="form-group" style="margin-bottom: 6px;">
-					<button class="btn btn-default btn-sm toggle-all-btn" type="button" style="margin-right: 6px;">
+				<div class="form-group right">
+					<button class="btn btn-default btn-sm toggle-all-btn" type="button">
 						<i class="fa fa-arrows-alt"></i> 全部折叠/展开
 					</button>
-					<button class="btn btn-success btn-sm add-btn" type="button">
+					<button class="btn btn-success btn-sm add-btn ml6" type="button">
 						<i class="fa fa-plus-circle"></i> 新增一级分组
 					</button>
 				</div>
+				<div class="clear"></div>
 			</div>
 		</div>
 	</div>
@@ -108,20 +110,18 @@ foreach ($list ?? [] as $item) {
 					'sort'        => (int)$value['sort'],
 				];
 			?>
-			<tr class="item parent-row info" data-id="<?php echo (int)$value['con_id'];?>" data-pid="0" data-info="<?php echo htmlspecialchars(json_encode($parentRowData, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');?>" style="cursor: pointer;" title="点击折叠/展开子功能">
+			<tr class="item parent-row info pointer" data-id="<?php echo (int)$value['con_id'];?>" data-pid="0" data-info="<?php echo htmlspecialchars(json_encode($parentRowData, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');?>" title="点击折叠/展开子功能">
 				<td><strong><?php echo (int)$value['con_id'];?></strong></td>
 				<td>
-					<div style="display: flex; align-items: center;">
-						<i class="fa fa-caret-down toggle-icon text-muted" style="width: 14px; margin-right: 4px; transition: transform 0.2s;"></i>
-						<i class="fa <?php echo htmlspecialchars($faIcon, ENT_QUOTES, 'UTF-8');?>" style="width: 20px; text-align: center; margin-right: 6px; color: #e7502b; font-size: 14px;"></i>
-						<strong class="cate_name" style="color: #0f172a; font-size: 13px;"><?php echo htmlspecialchars($value['name']);?></strong>
-					</div>
+					<i class="fa fa-caret-down toggle-icon text-muted"></i>
+					<i class="fa <?php echo htmlspecialchars($faIcon, ENT_QUOTES, 'UTF-8');?> cr ml6"></i>
+					<strong class="cate_name ml6"><?php echo htmlspecialchars($value['name']);?></strong>
 				</td>
 				<td>
-					<code style="color: #334155; background: #f1f5f9; padding: 2px 6px; border-radius: 3px;"><?php echo htmlspecialchars($value['value']);?></code>
+					<code><?php echo htmlspecialchars($value['value']);?></code>
 				</td>
 				<td>
-					<span class="label label-primary" style="font-weight: normal;">一级分组 (<?php echo $sonCount;?>)</span>
+					<span class="label label-primary">一级分组 (<?php echo $sonCount;?>)</span>
 				</td>
 				<td class="tc">
 					<div class="btn-group btn-group-xs" role="group">
@@ -131,11 +131,11 @@ foreach ($list ?? [] as $item) {
 						<button type="button" class="btn btn-default btn-xs sort-btn-action" data-type="bottom" title="置底" <?php echo $isLastGroup ? 'disabled' : '';?>><i class="fa fa-angle-double-down"></i></button>
 					</div>
 				</td>
-				<td style="white-space: nowrap;">
+				<td>
 					<button type="button" class="btn btn-primary btn-xs modify"><i class="fa fa-edit"></i> 修改</button>
-					<button type="button" class="btn btn-success btn-xs ml4 add"><i class="fa fa-plus"></i> 子功能</button>
+					<button type="button" class="btn btn-success btn-xs ml6 add"><i class="fa fa-plus"></i> 子功能</button>
 					<?php if ($sonCount === 0){ ?>
-					<button type="button" class="btn btn-danger btn-xs ml4 delete"><i class="fa fa-trash"></i> 删除</button>
+					<button type="button" class="btn btn-danger btn-xs ml6 delete"><i class="fa fa-trash"></i> 删除</button>
 					<?php } ?>
 				</td>
 			</tr>
@@ -158,18 +158,16 @@ foreach ($list ?? [] as $item) {
 			?>
 			<tr class="item child-row" data-id="<?php echo (int)$sv['con_id'];?>" data-pid="<?php echo (int)$sv['parent_id'];?>" data-info="<?php echo htmlspecialchars(json_encode($childRowData, JSON_UNESCAPED_UNICODE), ENT_QUOTES, 'UTF-8');?>">
 				<td class="text-muted"><?php echo (int)$sv['con_id'];?></td>
-				<td>
-					<div style="padding-left: 26px; display: flex; align-items: center;">
-						<span class="text-muted" style="margin-right: 6px; font-family: monospace; color: #94a3b8;">└─</span>
-						<i class="fa <?php echo htmlspecialchars($svFaIcon, ENT_QUOTES, 'UTF-8');?> text-muted" style="width: 18px; text-align: center; margin-right: 6px;"></i>
-						<span class="cate_name" style="color: #1e293b;"><?php echo htmlspecialchars($sv['name']);?></span>
-					</div>
+				<td class="pl20">
+					<span class="text-muted">└─</span>
+					<i class="fa <?php echo htmlspecialchars($svFaIcon, ENT_QUOTES, 'UTF-8');?> text-muted ml6"></i>
+					<span class="cate_name ml6"><?php echo htmlspecialchars($sv['name']);?></span>
 				</td>
 				<td>
-					<code style="color: #0369a1; background: #f0f9ff; padding: 2px 6px; border-radius: 3px;"><?php echo htmlspecialchars($sv['value']);?></code>
+					<code><?php echo htmlspecialchars($sv['value']);?></code>
 				</td>
 				<td>
-					<span class="label label-default" style="font-weight: normal; background: #94a3b8;">子功能</span>
+					<span class="label label-default">子功能</span>
 				</td>
 				<td class="tc">
 					<div class="btn-group btn-group-xs" role="group">
@@ -179,9 +177,9 @@ foreach ($list ?? [] as $item) {
 						<button type="button" class="btn btn-default btn-xs sort-btn-action" data-type="bottom" title="置底" <?php echo $isLastSon ? 'disabled' : '';?>><i class="fa fa-angle-double-down"></i></button>
 					</div>
 				</td>
-				<td style="white-space: nowrap;">
+				<td>
 					<button type="button" class="btn btn-primary btn-xs modify"><i class="fa fa-edit"></i> 修改</button>
-					<button type="button" class="btn btn-danger btn-xs ml4 delete"><i class="fa fa-trash"></i> 删除</button>
+					<button type="button" class="btn btn-danger btn-xs ml6 delete"><i class="fa fa-trash"></i> 删除</button>
 				</td>
 			</tr>
 			<?php } ?>
@@ -194,7 +192,7 @@ foreach ($list ?? [] as $item) {
 <!-- 功能管理弹窗 -->
 <div id="dealbox" class="dealbox hidden">
 	<div class="mask"></div>
-	<div class="centerShow" style="width: 460px;">
+	<div class="centerShow">
 		<form class="form-horizontal">
 			<button type="button" class="close" aria-hidden="true">&times;</button>
 			<div class="f24 dealbox-title">功能管理</div>
@@ -205,7 +203,7 @@ foreach ($list ?? [] as $item) {
 
 			<div class="input-group parent-group" style="display: none;">
 				<div class="input-group-addon"><span>所属分组：</span></div>
-				<input type="text" class="form-control" name="parent_name" readonly style="background: #f8fafc;">
+				<input type="text" class="form-control" name="parent_name" readonly>
 			</div>
 			<div class="input-group">
 				<div class="input-group-addon"><span>功能名称：</span></div>
@@ -217,7 +215,7 @@ foreach ($list ?? [] as $item) {
 			</div>
 			<div class="input-group">
 				<div class="input-group-addon">
-					<span>图标：<i id="icon-preview" class="fa fa-cube" style="margin-left: 4px; color: #e7502b;"></i></span>
+					<span>图标：<i id="icon-preview" class="fa fa-cube cr ml2"></i></span>
 				</div>
 				<select class="form-control" name="icon">
 					<?php foreach ($iconOptions as $iconKey => $iconLabel){ ?>
@@ -225,7 +223,7 @@ foreach ($list ?? [] as $item) {
 					<?php } ?>
 				</select>
 			</div>
-			<button type="button" class="btn btn-primary btn-lg w100 save-btn mt10">确认保存</button>
+			<button type="button" class="btn btn-primary btn-lg w100 save-btn mt20">确认保存</button>
 		</form>
 	</div>
 </div>

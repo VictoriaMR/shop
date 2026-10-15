@@ -1,305 +1,300 @@
 $(function(){
 	SITEINFO.init();
 });
+
 const SITEINFO = {
+	id: 0,
 	init: function() {
 		const _this = this;
 		_this.id = $('#site-page').data('id');
-		//状态开关
-		$('#site-status .switch_botton').on('click', function(){
-			const _thisobj = $(this);
-			const status = _thisobj.data('status') == '0' ? 1 : 0;
-			post(URI+'site', {opn: 'modifySite', id: _this.id, status: status}, function(res){
+		if (!_this.id) {
+			return;
+		}
+
+		// 关闭弹窗
+		$('.dealbox .close, .dealbox .mask').on('click', function(){
+			$(this).closest('.dealbox').dealboxHide();
+		});
+
+		// 修改站点名称
+		$('#site-name').on('click', function(){
+			_this.openFieldModal('修改站点名称', '站点名称：', 'name', $.trim($(this).find('b').text()));
+		});
+
+		// 修改模板目录
+		$('#site-path').on('click', function(){
+			_this.openFieldModal('修改模板目录', '模板目录：', 'path', $.trim($(this).find('code').text()));
+		});
+
+		// 修改绑定域名
+		$('#site-domain-edit').on('click', function(){
+			let val = $.trim($(this).find('code').text());
+			if (val === '--') val = '';
+			_this.openFieldModal('修改绑定域名', '绑定域名：', 'domain', val);
+		});
+
+		// 修改联系邮箱
+		$('#site-email-edit').on('click', function(){
+			let val = $.trim($(this).find('span').text());
+			if (val === '--') val = '';
+			_this.openFieldModal('修改联系邮箱', '联系邮箱：', 'email', val);
+		});
+
+		// 保存基础字段修改
+		$('#field-info .save-btn').on('click', function(){
+			const btn = $(this);
+			const form = btn.closest('form');
+			btn.button('loading');
+			post('', form.serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 1) {
-					_thisobj.switchBtn(status);
+				if (res && res.code == 1) {
+					window.location.reload();
+				} else {
+					btn.button('reset');
 				}
 			});
 		});
-		//站点名称
-		$('#site-name').on('click', function(){
-			$('#name-info').dealboxShow();
+
+		// 运行开关切换 (status / debug / view_cache / static_cache)
+		$('#site-page .site-switch').on('click', function(){
+			const sw = $(this);
+			const field = sw.data('field');
+			const next = parseInt(sw.attr('data-status')) === 1 ? 0 : 1;
+			const param = {opn: 'modifySite', id: _this.id};
+			param[field] = next;
+			post('', param, function(res){
+				showTips(res);
+				if (res && res.code == 1) {
+					sw.switchBtn(next);
+				}
+			});
 		});
-		//站点模板
-		$('#site-path').on('click', function(){
-			$('#path-info').dealboxShow();
-		});
-		//添加语言弹窗
+
+		// 打开管理语言弹窗
 		$('#add-language').on('click', function(){
 			$('#language-info').dealboxShow();
 		});
+
+		// 打开管理货币弹窗
 		$('#add-currency').on('click', function(){
 			$('#currency-info').dealboxShow();
 		});
-		//添加域名弹窗
-		$('#add-domain').on('click', function(){
-			_this.initDomainInfo('新增域名');
-		});
-		//编辑域名
-		$('#site-domain .btn.modify').on('click', function(){
-			const _thisobj = $(this);
-			const id = _thisobj.parents('tr').data('id');
-			_thisobj.button('loading');
-			post(URI+'site', {opn: 'domainInfo', id: id}, function(res){
-				if (res.code == 1) {
-					_this.initDomainInfo('编辑域名', res.data);
-				} else {
-					showTips(res);
-				}
-				_thisobj.button('reset');
-			});
-		});
-		//删除域名
-		$('#site-domain .btn.delete').on('click', function(){
-			const id = $(this).parents('tr').data('id');
-			confirm('确定要删除这个域名吗?', function(obj){
-				obj.button('loading');
-				post(URI+'site', {opn: 'deleteDomain', id: id}, function(res){
-					showTips(res);
-					if (res.code == 1) {
-						window.location.reload();
-					} else {
-						obj.button('reset');
-					}
-				});
-			});
-		});
-		//滑动按钮
-		$('#site-domain .switch_botton').on('click', function(){
-			const _thisobj = $(this);
-			const id = _thisobj.parents('tr').data('id');
-			const status = _thisobj.data('status') == '0' ? 1 : 0;
-			post(URI+'site', {opn: 'modifyDomain', id: id, status: status}, function(res){
-				showTips(res);
-				if (res.code == 1) {
-					_thisobj.switchBtn(status);
-				}
-			});
-		});
-		//域名保存按钮
-		$('#domain-info .btn.save-btn').on('click', function(){
-			const obj = $(this);
-			obj.button('loading');
-			post(URI+'site', obj.parents('form').serializeArray(), function(res){
-				showTips(res);
-				if (res.code == 1) {
-					window.location.reload();
-				} else {
-					obj.button('reset');
-				}
-			});
-		});
-		//名称 模板确认
-		$('#name-info .save-btn,#path-info .save-btn').on('click', function(){
-			const _thisobj = $(this);
-			let check = true;
-			_thisobj.parent('form').find('[required="required"]').each(function(){
-				if ($(this).val() === '') {
-					check = false;
-					errorTips($(this).prev().text()+'不能为空');
-					return false;
-				}
-			});
-			if (!check) {
-				return false;
-			}
-			_thisobj.button('loading');
-			post(URI+'site', _thisobj.parent('form').serializeArray(), function(res){
-				showTips(res);
-				if (res.code == 1) {
-					window.location.reload();
-				} else {
-					_thisobj.button('reset');
-				}
-			});
-		});
-		//删除语言
-		$('#language-info .btn.delete, #language-table .btn.delete').on('click', function(){
-			const code = $(this).parents('tr').data('code');
-			confirm('确认要删除该语言吗?', function(_thisobj){
-				_thisobj.button('loading');
-				post(URI+'site', {opn: 'deleteLanguage', code: code, site_id: _this.id}, function(res){
-					showTips(res);
-					if (res.code == 1) {
-						window.location.reload();
-					} else {
-						_thisobj.button('reset');
-					}
-				});
-			});
-		});
-		//增加语言
+
+		// 添加语言
 		$('#language-info .btn.add').on('click', function(){
-			const _thisobj = $(this);
-			const code = _thisobj.parents('tr').data('code');
-			_thisobj.button('loading');
-			post(URI+'site', {opn: 'addLanguage', code: code, site_id: _this.id}, function(res){
+			const btn = $(this);
+			const code = btn.closest('tr').data('code');
+			btn.button('loading');
+			post('', {opn: 'addLanguage', code: code, site_id: _this.id}, function(res){
 				showTips(res);
-				if (res.code == 1) {
+				if (res && res.code == 1) {
 					window.location.reload();
 				} else {
-					_thisobj.button('reset');
+					btn.button('reset');
 				}
 			});
 		});
-		//语言排序
-		$('#language-table [name="sort"]').on('blur', function(){
-			const id = $(this).parents('tr').data('id');
-			const sort = $(this).val();
-			post(URI+'site', {opn: 'sortLanguage', id: id, sort: sort}, function(res){
-				showTips(res);
-				if (res.code == 1) {
-					window.location.reload();
-				}
-			});
-		});
-		//删除货币
-		$('#currency-info .btn.delete, #site-currency .btn.delete').on('click', function(){
-			const code = $(this).parents('tr').data('code');
-			confirm('确认要删除该货币吗?', function(_thisobj){
-				_thisobj.button('loading');
-				post(URI+'site', {opn: 'deleteCurrency', code: code, site_id: _this.id}, function(res){
+
+		// 删除语言
+		$('#language-info .btn.delete, #language-table .btn.delete').on('click', function(){
+			const tr = $(this).closest('tr');
+			const code = tr.data('code');
+			const id = tr.data('id') || 0;
+			confirm('确认要移除站点语言 [' + code + '] 吗?', function(btn, modal){
+				btn.button('loading');
+				post('', {opn: 'deleteLanguage', id: id, code: code, site_id: _this.id}, function(res){
 					showTips(res);
-					if (res.code == 1) {
+					if (res && res.code == 1) {
 						window.location.reload();
 					} else {
-						_thisobj.button('reset');
+						btn.button('reset');
+						modal.hide();
 					}
 				});
 			});
 		});
-		//增加货币
-		$('#currency-info .btn.add').on('click', function(){
-			const _thisobj = $(this);
-			const code = _thisobj.parents('tr').data('code');
-			_thisobj.button('loading');
-			post(URI+'site', {opn: 'addCurrency', code: code, site_id: _this.id}, function(res){
+
+		// 语言排序（数值输入）
+		$('#language-table [name="sort"]').on('change', function(){
+			const id = $(this).closest('tr').data('id');
+			const sort = $(this).val();
+			post('', {opn: 'sortLanguage', id: id, sort: sort}, function(res){
 				showTips(res);
-				if (res.code == 1) {
+				if (res && res.code == 1) {
+					window.location.reload();
+				}
+			});
+		});
+
+		// 语言排序（置顶/上移/下移/置底按钮）
+		$('#language-table .sort-lan-btn').on('click', function(){
+			const btn = $(this);
+			if (btn.prop('disabled')) return false;
+			const id = btn.closest('tr').data('id');
+			const type = btn.data('type');
+			post('', {opn: 'sortLanguage', id: id, type: type}, function(res){
+				showTips(res);
+				if (res && res.code == 1) {
+					window.location.reload();
+				}
+			});
+		});
+
+		// 添加货币
+		$('#currency-info .btn.add').on('click', function(){
+			const btn = $(this);
+			const code = btn.closest('tr').data('code');
+			btn.button('loading');
+			post('', {opn: 'addCurrency', code: code, site_id: _this.id}, function(res){
+				showTips(res);
+				if (res && res.code == 1) {
 					window.location.reload();
 				} else {
-					_thisobj.button('reset');
+					btn.button('reset');
 				}
 			});
 		});
-		//语言排序
-		$('#site-currency [name="sort"]').on('blur', function(){
-			const id = $(this).parents('tr').data('id');
+
+		// 删除货币
+		$('#currency-info .btn.delete, #site-currency .btn.delete').on('click', function(){
+			const tr = $(this).closest('tr');
+			const code = tr.data('code');
+			const id = tr.data('id') || 0;
+			confirm('确认要移除站点货币 [' + code + '] 吗?', function(btn, modal){
+				btn.button('loading');
+				post('', {opn: 'deleteCurrency', id: id, code: code, site_id: _this.id}, function(res){
+					showTips(res);
+					if (res && res.code == 1) {
+						window.location.reload();
+					} else {
+						btn.button('reset');
+						modal.hide();
+					}
+				});
+			});
+		});
+
+		// 货币排序（数值输入）
+		$('#site-currency [name="sort"]').on('change', function(){
+			const id = $(this).closest('tr').data('id');
 			const sort = $(this).val();
-			post(URI+'site', {opn: 'sortCurrency', id: id, sort: sort}, function(res){
+			post('', {opn: 'sortCurrency', id: id, sort: sort}, function(res){
 				showTips(res);
-				if (res.code == 1) {
+				if (res && res.code == 1) {
 					window.location.reload();
 				}
 			});
 		});
-		//更新关键字
+
+		// 货币排序（置顶/上移/下移/置底按钮）
+		$('#site-currency .sort-cur-btn').on('click', function(){
+			const btn = $(this);
+			if (btn.prop('disabled')) return false;
+			const id = btn.closest('tr').data('id');
+			const type = btn.data('type');
+			post('', {opn: 'sortCurrency', id: id, type: type}, function(res){
+				showTips(res);
+				if (res && res.code == 1) {
+					window.location.reload();
+				}
+			});
+		});
+
+		// 默认关键字/描述失去焦点更新
 		$('.text-content textarea').on('blur', function(){
 			const value = $(this).val();
 			const name = this.name;
-			post(URI+'site', {opn: 'updateKeyword', value: value, site_id: _this.id, name: name}, function(res){
+			post('', {opn: 'updateKeyword', value: value, site_id: _this.id, name: name}, function(res){
 				showTips(res);
-				if (res.code == 1) {
-					window.location.reload();
-				}
 			});
 		});
+
+		// 打开多语言文本弹窗
 		$('.text-content .btn').on('click', function(){
-			const _thisobj = $(this);
-			const type = _thisobj.parents('.item').data('id');
-			$('#dealbox-language input[name="source_text"]').val(_thisobj.parents('.item').next().find('textarea').val());
-			post(URI+'site', {opn: 'getLanguage', site_id: _this.id, type: type}, function(res){
-				if (res.code == 1) {
-					var data = res.data;
+			const btn = $(this);
+			const type = btn.closest('.item').data('id');
+			const srcText = btn.closest('.item').next().find('textarea').val();
+			$('#dealbox-language input[name="source_text"]').val(srcText);
+			post('', {opn: 'getLanguage', site_id: _this.id, type: type}, function(res){
+				if (res && res.code == 1) {
+					const data = res.data || [];
 					const obj = $('#dealbox-language');
 					obj.find('input[name="type"]').val(type);
-					obj.find('table textarea').val('');
 					let html = '<tr>\
-									<th style="width:88px">语言名称</th>\
+									<th width="100">语言名称</th>\
 									<th>\
-										<span>文本</span>\
-										<span title="智能翻译" class="glyphicon glyphicon-transfer"></span>\
+										<span>多语言文本</span>\
+										<a href="javascript:;" class="right f12 auto-translate"><i class="glyphicon glyphicon-transfer"></i> 一键智能翻译空项</a>\
 									</th>\
 								</tr>';
 					for (const i in data) {
+						const row = data[i];
 						html += '<tr>\
-									<th>\
-										<span>'+data[i].name2+'</span>\
-									</th>\
+									<th><span>' + (row.name2 || row.name || row.code) + '</span></th>\
 									<td class="p0">\
-										<textarea name="language['+data[i].code+']" data-tr_code="'+data[i].tr_code+'" class="form-control" autocomplete="off" rows="3">'+data[i].tr_text+'</textarea>\
+										<textarea name="language[' + row.code + ']" data-tr_code="' + (row.tr_code || row.code) + '" class="form-control" autocomplete="off" rows="3">' + (row.tr_text || '') + '</textarea>\
 									</td>\
 								</tr>';
 					}
 					obj.find('table tbody').html(html);
-					obj.dealboxShow();
+					obj.dealboxShow(type === 'keyword' ? '站点关键词多语言配置' : '站点描述多语言配置');
 				} else {
 					showTips(res);
 				}
 			});
 		});
-		//智能翻译
-		$('#dealbox-language').on('click', '.glyphicon-transfer', function(){
-			const name = $('#dealbox-language input[name="source_text"]').val();
-			const thisobj = $(this);
-			const obj = thisobj.parents('table').find('textarea');
-			let len = obj.length;
-			thisobj.button('loading');
-			obj.each(function(){
-				console.log($(this))
-				const value = $(this).val();
-				if (value === '') {
-					const _thisobj = $(this);
-					const tr_code = _thisobj.data('tr_code');
-					post(URI+'site', {opn:'transfer', tr_code:tr_code, name:name}, function(res){
-						len = len - 1;
-						if (res.code == 1) {
-							_thisobj.val(res.data);
-						} else {
-							showTips(res);
-						}
-						if (len === 0) {
-							thisobj.button('reset');
+
+		// 智能翻译空项
+		$('#dealbox-language').on('click', '.auto-translate', function(){
+			let name = $.trim($('#dealbox-language input[name="source_text"]').val());
+			const table = $(this).closest('table');
+			const textareas = table.find('textarea');
+			if (name === '') {
+				textareas.each(function(){
+					const v = $.trim($(this).val());
+					if (v !== '') {
+						name = v;
+						return false;
+					}
+				});
+			}
+			if (name === '') {
+				errorTips('请先在默认文本框或任一语言框中填写源文本');
+				return false;
+			}
+			textareas.each(function(){
+				const ta = $(this);
+				if ($.trim(ta.val()) === '') {
+					const trCode = ta.data('tr_code');
+					post('', {opn: 'transfer', tr_code: trCode, name: name}, function(res){
+						if (res && res.code == 1) {
+							ta.val(res.data);
 						}
 					});
-				} else {
-					len = len - 1;
-					if (len === 0) {
-						thisobj.button('reset');
-					}
 				}
 			});
 		});
-		//保存语言
+
+		// 保存多语言文本
 		$('#dealbox-language .save-btn').on('click', function(){
-			const obj = $(this);
-			obj.button('loading');
-			post(URI+'site', $('#dealbox-language form').serializeArray(), function(res){
+			const btn = $(this);
+			btn.button('loading');
+			post('', $('#dealbox-language form').serializeArray(), function(res){
 				showTips(res);
-				if (res.code == 1) {
+				if (res && res.code == 1) {
 					window.location.reload();
 				} else {
-					obj.button('reset');
+					btn.button('reset');
 				}
 			});
 			return false;
 		});
 	},
-	initDomainInfo: function(title, data)
-	{
-		if (!data) {
-			data = {
-				domain_id: 0,
-				domain: '',
-				status: 0,
-				remark: '',
-			};
-		}
-		const obj = $('#domain-info');
-		for (const i in data) {
-			obj.find('[name="'+i+'"]').val(data[i]);
-		}
-		obj.dealboxShow(title);
-		return true;
+
+	openFieldModal: function(title, label, fieldName, value) {
+		const modal = $('#field-info');
+		modal.find('#field-label').text(label);
+		modal.find('#field-input').attr('name', fieldName).val(value || '');
+		modal.dealboxShow(title);
 	}
 };

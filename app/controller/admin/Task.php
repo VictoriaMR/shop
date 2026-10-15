@@ -2,6 +2,7 @@
 
 namespace app\controller\admin;
 use app\controller\AdminBase;
+use app\task\TaskDriver;
 
 class Task extends AdminBase
 {
@@ -16,26 +17,16 @@ class Task extends AdminBase
 
 	public function index()
 	{
-		sys()->currency()->updateRate();
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['modifyTask'])) {
+			if (in_array($opn, ['modifyTask'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
-		// frame('Task')->noticeTask('app/task/main/Queue');
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$list = frame('Task')->getTaskList(true);
-		foreach ($list as $key=>$value) {
-			if (!isset($value['boot'])) {
-				$list[$key]['boot'] = 'off';
-			}
-			if (!isset($value['status'])) {
-				$list[$key]['status'] = 'stop';
-			}
-		}
 		$this->view([
 			'taskList' => $list,
 		]);
@@ -52,21 +43,36 @@ class Task extends AdminBase
 				if (empty($key)) {
 					$this->error('未指定任务');
 				}
-				$tasker->boot($key, $type=='start'?'on':'off');
+				$tasker->boot($key, $type === 'start' ? 'on' : 'off');
+				break;
+			case 'run':
+				if (empty($key) || $key === TaskDriver::MAIN_TASK) {
+					$this->error('请指定要执行的子任务');
+				}
+				$tasker->noticeTask($key, true);
 				break;
 			case 'start-all':
 			case 'stop-all':
-				$list = frame('Task')->getTaskList(true);
-				foreach ($list as $key=>$value) {
-					$tasker->boot($key, $type=='start-all'?'on':'off');
+				$list = $tasker->getTaskList(true);
+				$targetBoot = ($type === 'start-all') ? 'on' : 'off';
+				foreach ($list as $taskKey => $value) {
+					$tasker->boot($taskKey, $targetBoot);
 				}
 				break;
 			case 'reset':
-				if ($key != 'app/task/MainTask') {
+				if ($key !== TaskDriver::MAIN_TASK) {
 					$this->error('非主进程任务不能重置');
 				}
-				frame('Task')->start($key);
+				$info = $tasker->getInfo(TaskDriver::MAIN_TASK);
+				if (is_array($info)) {
+					$info['status'] = 'stop';
+					$info['boot'] = 'on';
+					$tasker->setInfo(TaskDriver::MAIN_TASK, $info);
+				}
+				$tasker->start(TaskDriver::MAIN_TASK);
 				break;
+			default:
+				$this->error('未知操作类型');
 		}
 		$this->success('操作成功');
 	}

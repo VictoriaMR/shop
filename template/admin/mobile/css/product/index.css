@@ -1,0 +1,256 @@
+.product-index-page {
+	padding: 0.10rem 0.12rem 0.24rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.50rem);
+}
+
+/* 顶部标题栏 */
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #ffffff;
+	padding: 0.10rem 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+	gap: 0.08rem;
+}
+
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+	flex: 1;
+}
+
+.page-header-bar .header-title i {
+	color: #0284c7;
+	font-size: 0.15rem;
+	flex-shrink: 0;
+}
+
+.page-header-bar .cur-page-title {
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #1e293b;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.page-header-bar .total-badge {
+	font-size: 0.11rem;
+	color: #64748b;
+	background: #f1f5f9;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.10rem;
+	flex-shrink: 0;
+}
+
+.page-header-bar .header-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	flex-shrink: 0;
+}
+
+/* 筛选框 */
+.search-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.08rem;
+	padding: 0.10rem;
+	margin-bottom: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.filter-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.08rem;
+	margin-bottom: 0.08rem;
+}
+
+.filter-item.filter-full {
+	grid-column: span 2;
+}
+
+.filter-item .form-control {
+	height: 0.34rem;
+	min-height: 0.34rem;
+	font-size: 0.12rem;
+	padding: 0 0.08rem;
+}
+
+.filter-actions .btn {
+	height: 0.34rem;
+	font-size: 0.13rem;
+}
+
+/* 产品卡片列表 */
+.card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.08rem;
+}
+
+.spu-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.08rem;
+	padding: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.spu-card .card-main {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.10rem;
+}
+
+.spu-card .spu-thumb {
+	width: 0.72rem;
+	height: 0.72rem;
+	border-radius: 0.06rem;
+	background: #f8fafc;
+	border: 0.01rem solid #e2e8f0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #94a3b8;
+	font-size: 0.22rem;
+	flex-shrink: 0;
+	overflow: hidden;
+}
+
+.spu-card .spu-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.spu-card .spu-info {
+	flex: 1;
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	gap: 0.05rem;
+}
+
+.spu-card .spu-top-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.06rem;
+}
+
+.spu-card .spu-badges {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.05rem;
+	min-width: 0;
+}
+
+.id-badge {
+	font-size: 0.11rem;
+	color: #475569;
+	font-family: SFMono-Regular, Consolas, monospace;
+	background: #f1f5f9;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	font-weight: 600;
+}
+
+.status-badge {
+	font-size: 0.11rem;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	font-weight: 600;
+}
+
+.status-badge.status-on {
+	background: #dcfce7;
+	color: #15803d;
+}
+
+.status-badge.status-off {
+	background: #fee2e2;
+	color: #dc2626;
+}
+
+.card-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.05rem;
+	flex-shrink: 0;
+}
+
+.card-actions .icon-btn {
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.12rem;
+	border-radius: 0.06rem;
+}
+
+.spu-card .spu-name {
+	font-size: 0.13rem;
+	font-weight: 600;
+	color: #0f172a;
+	line-height: 1.38;
+	word-break: break-word;
+}
+
+.spu-card .spu-meta-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	margin-top: 0.02rem;
+}
+
+.spu-card .cate-tag {
+	font-size: 0.11rem;
+	color: #64748b;
+	min-width: 0;
+	flex: 1;
+}
+
+.spu-card .cate-tag i {
+	color: #94a3b8;
+	margin-right: 0.03rem;
+}
+
+.spu-card .price-text {
+	font-size: 0.13rem;
+	font-weight: 700;
+	color: #e7502b;
+	flex-shrink: 0;
+}
+
+/* 空状态 */
+.empty-state {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.08rem;
+	padding: 0.36rem 0.15rem;
+	text-align: center;
+	color: #94a3b8;
+}
+
+.empty-state i {
+	font-size: 0.30rem;
+	margin-bottom: 0.08rem;
+	color: #cbd5e1;
+}
+
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}

@@ -1,0 +1,353 @@
+.faq-list-page {
+	padding: 0.1rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+}
+
+/* 顶部栏 */
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	padding: 0.1rem 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.08rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+.page-header-bar .header-title i {
+	color: #0284c7;
+	font-size: 0.15rem;
+}
+.page-header-bar .total-badge {
+	font-size: 0.11rem;
+	font-weight: normal;
+	color: #64748b;
+	background: #f1f5f9;
+	padding: 0.02rem 0.06rem;
+	border-radius: 0.1rem;
+}
+
+/* 筛选栏 */
+.filter-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.09rem 0.1rem;
+	margin-bottom: 0.1rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+}
+.filter-form {
+	display: flex;
+	flex-direction: column;
+	gap: 0.06rem;
+}
+.filter-row {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+}
+.filter-select {
+	flex: 1;
+	min-width: 0;
+	height: 0.32rem;
+	font-size: 0.12rem;
+	padding: 0 0.06rem;
+}
+.filter-input {
+	flex: 1;
+	min-width: 0;
+	height: 0.32rem;
+	font-size: 0.12rem;
+	padding: 0 0.08rem;
+}
+.filter-submit {
+	height: 0.32rem;
+	padding: 0 0.12rem;
+	font-size: 0.12rem;
+	flex-shrink: 0;
+}
+
+/* 卡片列表 */
+.card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.08rem;
+}
+.empty-state {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.4rem 0.15rem;
+	text-align: center;
+	color: #94a3b8;
+}
+.empty-state i {
+	font-size: 0.32rem;
+	margin-bottom: 0.08rem;
+	color: #cbd5e1;
+}
+.empty-state p {
+	font-size: 0.13rem;
+	margin: 0;
+}
+
+/* 文章卡片 */
+.faq-card {
+	background: #fff;
+	border-radius: 0.08rem;
+	padding: 0.11rem 0.12rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(0, 0, 0, 0.04);
+	border-left: 0.03rem solid #0284c7;
+}
+.faq-card .card-top {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 0.08rem;
+	padding-bottom: 0.08rem;
+	border-bottom: 1px dashed #edf2f7;
+}
+.faq-info {
+	min-width: 0;
+	flex: 1;
+}
+.faq-title-line {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.05rem;
+}
+.id-badge {
+	font-size: 0.11rem;
+	color: #64748b;
+	font-family: monospace;
+	background: #f1f5f9;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	flex-shrink: 0;
+	margin-top: 0.01rem;
+}
+.faq-title {
+	font-size: 0.14rem;
+	color: #0f172a;
+	word-break: break-word;
+	line-height: 1.35;
+}
+.faq-meta-line {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.06rem;
+	margin-top: 0.05rem;
+}
+.group-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.03rem;
+	font-size: 0.11rem;
+	color: #0284c7;
+	background: #e0f2fe;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+}
+.visit-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.03rem;
+	font-size: 0.11rem;
+	color: #64748b;
+	background: #f8fafc;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+}
+
+/* 右侧紧凑图标按钮 */
+.card-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.05rem;
+	flex-shrink: 0;
+}
+.card-actions .btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	font-size: 0.12rem;
+	border-radius: 0.06rem;
+}
+
+/* 卡片底部 */
+.faq-card .card-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-top: 0.08rem;
+	gap: 0.08rem;
+}
+.status-hint {
+	font-size: 0.11rem;
+	color: #94a3b8;
+}
+.switch-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.04rem;
+}
+.switch-txt {
+	font-size: 0.11rem;
+	color: #64748b;
+}
+
+.page-wrap {
+	margin-top: 0.12rem;
+}
+
+/* 弹窗 */
+.modal-mask {
+	position: fixed;
+	inset: 0;
+	background: rgba(0, 0, 0, 0.5);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.12rem;
+}
+.modal-panel {
+	background: #fff;
+	width: 100%;
+	max-width: 4.1rem;
+	max-height: 86vh;
+	border-radius: 0.1rem;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	box-shadow: 0 0.06rem 0.2rem rgba(0, 0, 0, 0.18);
+}
+.modal-panel.modal-panel-lg {
+	max-width: 4.5rem;
+	max-height: 90vh;
+}
+.modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.12rem 0.15rem;
+	border-bottom: 1px solid #eee;
+	background: #fafbfc;
+}
+.modal-header .dealbox-title {
+	margin: 0;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #222;
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+}
+.modal-header .modal-close {
+	font-size: 0.16rem;
+	color: #888;
+	cursor: pointer;
+	padding: 0.02rem 0.06rem;
+}
+.modal-body {
+	padding: 0.14rem 0.15rem;
+	overflow-y: auto;
+}
+.form-group {
+	margin-bottom: 0.12rem;
+}
+.form-label {
+	display: block;
+	font-size: 0.12rem;
+	color: #555;
+	margin-bottom: 0.05rem;
+	font-weight: 600;
+}
+.form-label .required {
+	color: #d9534f;
+}
+.btn-block {
+	width: 100%;
+	height: 0.36rem;
+	font-size: 0.14rem;
+	margin-top: 0.04rem;
+}
+
+/* 多语言配置状态列表 */
+.lang-source-bar {
+	background: #f7f9fc;
+	border: 1px solid #e6ebf2;
+	border-radius: 0.06rem;
+	padding: 0.08rem 0.1rem;
+	margin-bottom: 0.1rem;
+	font-size: 0.12rem;
+	color: #444;
+}
+.lang-status-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.07rem;
+	max-height: 58vh;
+	overflow-y: auto;
+}
+.lang-status-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.09rem 0.11rem;
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 0.06rem;
+	gap: 0.08rem;
+}
+.lang-status-info {
+	display: flex;
+	align-items: center;
+	gap: 0.08rem;
+}
+.lang-name {
+	font-size: 0.13rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+.lang-cfg-badge {
+	font-size: 0.11rem;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	font-weight: 500;
+}
+.lang-cfg-badge.cfg-yes {
+	background: #dcfce7;
+	color: #15803d;
+}
+.lang-cfg-badge.cfg-no {
+	background: #fee2e2;
+	color: #dc2626;
+}
+.lang-status-row .btn.edit {
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 0.06rem;
+}
+
+/* 富文本编辑器适配 */
+#dealbox-faq-language .ke-container {
+	width: 100% !important;
+	border-radius: 0.06rem;
+	overflow: hidden;
+}

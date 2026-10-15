@@ -8,12 +8,12 @@ class Site extends AdminBase
 	public function __construct()
 	{
 		$this->_arr = [
-			'index' => '站点列表',
-			'siteInfo' => '站点设置',
-			'staticCache' => '静态文件管理',
+			'index'        => '站点列表',
+			'siteInfo'     => '站点设置',
+			'staticCache'  => '静态文件管理',
 			'staticDetail' => '静态文件详情',
-			'siteLog' => '站点日志',
-			'logDetail' => '日志详情',
+			'siteLog'      => '站点日志',
+			'logDetail'    => '日志详情',
 		];
 		$this->_ignore = ['siteInfo', 'staticDetail', 'logDetail'];
 		$this->_default = '站点管理';
@@ -21,19 +21,30 @@ class Site extends AdminBase
 	}
 
 	public function index()
-	{	
+	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['editSite', 'getInfo', 'modifySite', 'modifySite', 'deleteLanguage', 'addLanguage', 'sortLanguage', 'domainInfo', 'deleteDomain', 'editDomain', 'modifyDomain', 'deleteCurrency', 'addCurrency', 'sortCurrency', 'updateKeyword', 'editLanguage', 'getLanguage', 'transfer'])) {
+			if (in_array($opn, ['editSite', 'getInfo', 'modifySite', 'deleteLanguage', 'addLanguage', 'sortLanguage', 'deleteCurrency', 'addCurrency', 'sortCurrency', 'updateKeyword', 'editLanguage', 'getLanguage', 'transfer'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
+		frame('Html')->addCss();
 		frame('Html')->addJs();
+
+		$status = (int)iget('status', -1);
+		$keyword = trim((string)iget('keyword', ''));
+		$where = [];
+		if ($status === 0 || $status === 1) {
+			$where['status'] = $status;
+		}
+		if ($keyword !== '') {
+			$where['name,domain,path'] = ['like', '%' . $keyword . '%'];
+		}
+
 		$site = service('site/Site');
-		$list = $site->getListData([], 'site_id,name,path,status,remark,add_time');
+		$list = $site->getListData($where, 'site_id,type,path,name,domain,email,cate_id,view_cache,static_cache,debug,status,add_time,update_time', 0, 0, ['site_id' => 'asc']);
 		if (!empty($list)) {
-			//获取站点对应的语言和货币
 			$language = service('site/LanguageUsed');
 			$currency = service('site/CurrencyUsed');
 			foreach ($list as $key => $value) {
@@ -42,31 +53,70 @@ class Site extends AdminBase
 				$list[$key] = $value;
 			}
 		}
+
+		$this->assign('search', [
+			'status'  => $status,
+			'keyword' => $keyword,
+		]);
 		$this->assign('list', $list);
 		$this->view();
 	}
 
 	public function siteInfo()
 	{
+		if (isPost()) {
+			$opn = ipost('opn');
+			if (in_array($opn, ['modifySite', 'deleteLanguage', 'addLanguage', 'sortLanguage', 'deleteCurrency', 'addCurrency', 'sortCurrency', 'updateKeyword', 'editLanguage', 'getLanguage', 'transfer'], true)) {
+				$this->$opn();
+			}
+			$this->error('非法请求');
+		}
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$id = iget('id');
+		$id = (int)iget('id', 0);
 
-		$site = service('site/Site')->loadData($id);
+		$site = $id > 0 ? service('site/Site')->loadData($id) : [];
 
 		if (!empty($site)) {
-			$currencyList = service('currency/Currency')->getListData();
+			$currencyList = service('system/Currency')->getListData();
 			$currencyList = array_column($currencyList, null, 'code');
-			$languageList = service('Language')->getListData();
+			$languageList = service('system/Language')->getListData();
 			$languageList = array_column($languageList, null, 'code');
-			//语言关联
-			$siteLanguage = service('site/LanguageUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
-			//货币关联
-			$siteCurrency = service('site/CurrencyUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort'=>'asc']);
+
+			$siteLanguage = service('site/LanguageUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort' => 'asc', 'item_id' => 'asc']);
+			$siteCurrency = service('site/CurrencyUsed')->getListData(['site_id' => $id], '*', 0, 0, ['sort' => 'asc', 'item_id' => 'asc']);
+
+			// 读取站点默认多语言文本 (keyword / description)
+			$seoList = service('site/Language')->getListData(['site_id' => $id]);
+			$seoMap = [];
+			foreach ($seoList as $sRow) {
+				$t = $sRow['type'] ?? '';
+				if ($t !== '' && !isset($seoMap[$t])) {
+					$seoMap[$t] = $sRow['name'] ?? '';
+				}
+			}
+			$site['keyword']     = $seoMap['keyword'] ?? '';
+			$site['description'] = $seoMap['description'] ?? '';
+
+			// 读取站点已关联的支付方式
+			$paymentUsed = service('payment/Used')->getListData(['site_id' => $id], '*', 0, 0, ['sort' => 'asc', 'item_id' => 'asc']);
+			$paymentTypeMap = service('payment/Payment')->getTypeList();
+			$paymentAccountMap = [];
+			if (!empty($paymentUsed)) {
+				$payIds = array_values(array_unique(array_filter(array_column($paymentUsed, 'payment_id'))));
+				if (!empty($payIds)) {
+					$payRows = service('payment/Payment')->getListData(['payment_id' => ['in', $payIds]], 'payment_id,name,is_sandbox');
+					$paymentAccountMap = array_column($payRows, null, 'payment_id');
+				}
+			}
+
 			$this->assign('currencyList', $currencyList);
 			$this->assign('languageList', $languageList);
 			$this->assign('siteLanguage', $siteLanguage);
 			$this->assign('siteCurrency', $siteCurrency);
+			$this->assign('paymentUsed', $paymentUsed);
+			$this->assign('paymentTypeMap', $paymentTypeMap);
+			$this->assign('paymentAccountMap', $paymentAccountMap);
 		}
 		$this->assign('id', $id);
 		$this->assign('site', $site);
@@ -75,174 +125,105 @@ class Site extends AdminBase
 
 	protected function getInfo()
 	{
-		$id = ipost('id');
-		if (empty($id)) {
+		$id = (int)ipost('id', 0);
+		if ($id <= 0) {
 			$this->error('参数不正确');
 		}
 		$info = service('site/Site')->loadData($id);
 		if (empty($info)) {
 			$this->error('获取数据失败');
-		} else {
-			$this->success($info, '获取成功');
 		}
+		$this->success('获取成功', $info);
 	}
 
 	protected function editSite()
 	{
-		$id = ipost('site_id');
-		$name = ipost('name');
-		$path = ipost('path');
-		$keyword = ipost('keyword');
-		$description = ipost('description');
+		$id          = (int)ipost('site_id', 0);
+		$name        = trim((string)ipost('name', ''));
+		$type        = trim((string)ipost('type', 'home')) ?: 'home';
+		$path        = trim((string)ipost('path', ''));
+		$domain      = trim((string)ipost('domain', ''));
+		$email       = trim((string)ipost('email', ''));
+		$viewCache   = (int)ipost('view_cache', 0) ? 1 : 0;
+		$staticCache = (int)ipost('static_cache', 0) ? 1 : 0;
+		$debug       = (int)ipost('debug', 0) ? 1 : 0;
+		$status      = (int)ipost('status', 0) ? 1 : 0;
+
+		if ($name === '' || $path === '') {
+			$this->error('站点名称和模板路径不能为空');
+		}
+
 		$data = [
-			'name' => $name,
-			'path' => $path,
-			'keyword' => $keyword,
-			'description' => $description,
+			'name'         => $name,
+			'type'         => $type,
+			'path'         => $path,
+			'domain'       => $domain,
+			'email'        => $email,
+			'view_cache'   => $viewCache,
+			'static_cache' => $staticCache,
+			'debug'        => $debug,
+			'status'       => $status,
 		];
-		if (empty($id)) {
-			$result = service('site/Site')->insert($data);
+
+		$service = service('site/Site');
+		if ($id <= 0) {
+			$result = $service->insertData($data);
 		} else {
-			$result = service('site/Site')->updateData($id, $data);
+			$result = $service->updateData($id, $data);
+			$service->updateCache($id);
 		}
-		if ($result) {
+		if ($result !== false) {
 			$this->success('操作成功');
-		} else {
-			$this->error('操作失败');
 		}
+		$this->error('操作失败');
 	}
 
 	protected function modifySite()
 	{
-		$id = ipost('id');
-		if (empty($id)) {
+		$id = (int)ipost('id', 0);
+		if ($id <= 0) {
 			$this->error('参数不正确');
 		}
-		$status = ipost('status');
-		$name = ipost('name');
-		$path = ipost('path');
-		$keyword = ipost('keyword');
-		$description = ipost('description');
-		$remark = ipost('remark');
+
+		$allowFields = ['status', 'name', 'path', 'domain', 'email', 'view_cache', 'static_cache', 'debug'];
 		$data = [];
-		if (!is_null($status)) $data['status'] = $status;
-		if (!is_null($name)) $data['name'] = $name;
-		if (!is_null($path)) $data['path'] = $path;
-		if (!is_null($keyword)) $data['keyword'] = $keyword;
-		if (!is_null($description)) $data['description'] = $description;
-		if (!is_null($remark)) $data['remark'] = $remark;
+		foreach ($allowFields as $f) {
+			$val = ipost($f, null);
+			if ($val !== null) {
+				$data[$f] = in_array($f, ['status', 'view_cache', 'static_cache', 'debug'], true) ? ((int)$val ? 1 : 0) : trim((string)$val);
+			}
+		}
+
 		if (empty($data)) {
 			$this->error('参数不正确');
 		}
+
 		$service = service('site/Site');
 		$rst = $service->updateData($id, $data);
-		if ($rst) {
-			if (empty($status)) $service->updateCache($id);
-			$this->success('操作成功');
-		}
-		$this->error('操作失败');
-	}
-
-	protected function editDomain()
-	{
-		$id = ipost('domain_id');
-		$domain = ipost('domain');
-		$status = ipost('status');
-		$siteId = ipost('site_id');
-		$remark = ipost('remark');
-		$where = ['domain'=>$domain];
-		if (!empty($id)) {
-			$where['domain_id'] = ['<>', $id];
-		}
-		$service = service('site/Domain');
-		if ($service->getCountData($where)) {
-			$this->error('域名已经存在');
-		}
-		$data = [
-			'domain' => $domain,
-			'status' => $status,
-			'site_id' => $siteId,
-			'remark' => $remark,
-		];
-		if (empty($id)) {
-			$rst = $id = $service->insertGetId($data);
-		} else {
-			$rst = $service->updateData($id, $data);
-		}
-		if ($rst) {
+		if ($rst !== false) {
 			$service->updateCache($id);
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
-	}
-
-	protected function modifyDomain()
-	{
-		$id = ipost('id');
-		$status = ipost('status');
-		if (empty($id)) {
-			$this->error('参数不正确');
-		}
-		$service = service('site/Domain');
-		$rst = $service->updateData($id, ['status'=>$status]);
-		if ($rst) {
-			$service->updateCache($id);
-			$this->success('操作成功');
-		}
-		$this->error('操作失败');
-	}
-
-	protected function deleteDomain()
-	{
-		$id = ipost('id');
-		$siteId = ipost('site_id');
-		$domain = ipost('domain');
-		if (empty($id) && (empty($siteId) || empty($domain))) {
-			$this->error('参数不正确');
-		}
-		$service = service('site/Domain');
-		$where = [];
-		if (empty($id)) {
-			$where['site_id'] = $siteId;
-			$where['domain'] = $domain;
-		} else {
-			$where['domain_id'] = $id;
-		}
-		$info = $service->loadData($where, 'domain');
-		if (empty($info)) {
-			$this->error('数据不存在');
-		}
-		$rst = $service->deleteData($id);
-		if ($rst) {
-			$service->updateCacheByDomain($info['domain']);
-			$this->success('删除成功');
-		}
-		$this->error('删除失败');
 	}
 
 	protected function deleteLanguage()
 	{
-		$id = ipost('id');
-		$siteId = ipost('site_id');
-		$code = ipost('code');
-		if (empty($id) && (empty($siteId) || empty($code))) {
+		$id = (int)ipost('id', 0);
+		$siteId = (int)ipost('site_id', 0);
+		$code = trim((string)ipost('code', ''));
+		if ($id <= 0 && ($siteId <= 0 || $code === '')) {
 			$this->error('参数不正确');
 		}
 		$service = service('site/LanguageUsed');
-		$where = [];
-		if (empty($id)) {
-			$where['site_id'] = $siteId;
-			$where['code'] = $code;
-		} else {
-			$where['item_id'] = $id;
-		}
+		$where = $id > 0 ? ['item_id' => $id] : ['site_id' => $siteId, 'code' => $code];
 		$info = $service->loadData($where, 'site_id,code');
 		if (empty($info)) {
 			$this->error('数据不存在');
 		}
 		$rst = $service->deleteData($where);
 		if ($rst) {
-			//删除站点翻译缓存
+			$service->delCache($info['site_id']);
 			service('site/Language')->updateCache($info['site_id'], $info['code']);
 			$this->success('删除成功');
 		}
@@ -251,20 +232,19 @@ class Site extends AdminBase
 
 	protected function addLanguage()
 	{
-		$siteId = ipost('site_id');
-		$code = ipost('code');
-		if (empty($siteId) || empty($code)) {
+		$siteId = (int)ipost('site_id', 0);
+		$code = trim((string)ipost('code', ''));
+		if ($siteId <= 0 || $code === '') {
 			$this->error('参数不正确');
 		}
 		$service = service('site/LanguageUsed');
-		$where = [];
-		$where['site_id'] = $siteId;
-		$where['code'] = $code;
+		$where = ['site_id' => $siteId, 'code' => $code];
 		if ($service->getCountData($where)) {
 			$this->error('语言已存在');
 		}
 		$rst = $service->insert($where);
 		if ($rst) {
+			$service->delCache($siteId);
 			$this->success('添加成功');
 		}
 		$this->error('添加失败');
@@ -272,18 +252,23 @@ class Site extends AdminBase
 
 	protected function sortLanguage()
 	{
-		$id = ipost('id');
-		if (empty($id)) {
+		$id = (int)ipost('id', 0);
+		if ($id <= 0) {
 			$this->error('参数不正确');
 		}
-		$sort = ipost('sort');
+		$type = trim((string)ipost('type', ''));
 		$service = service('site/LanguageUsed');
 		$info = $service->loadData($id, 'site_id');
 		if (empty($info)) {
 			$this->error('数据不存在');
 		}
-		$rst = $service->updateData($id, ['sort'=>$sort]);
-		if ($rst) {
+		if ($type !== '') {
+			$rst = service('tool/Sort')->sort('site_language_used', $id, $type, 'item_id', 'sort', ['site_id' => (int)$info['site_id']]);
+		} else {
+			$sort = (int)ipost('sort', 0);
+			$rst = $service->updateData($id, ['sort' => $sort]);
+		}
+		if ($rst !== false) {
 			$service->delCache($info['site_id']);
 			$this->success('排序成功');
 		}
@@ -292,26 +277,21 @@ class Site extends AdminBase
 
 	protected function deleteCurrency()
 	{
-		$id = ipost('id');
-		$siteId = ipost('site_id');
-		$code = ipost('code');
-		if (empty($id) && (empty($siteId) || empty($code))) {
+		$id = (int)ipost('id', 0);
+		$siteId = (int)ipost('site_id', 0);
+		$code = trim((string)ipost('code', ''));
+		if ($id <= 0 && ($siteId <= 0 || $code === '')) {
 			$this->error('参数不正确');
 		}
 		$service = service('site/CurrencyUsed');
-		$where = [];
-		if (empty($id)) {
-			$where['site_id'] = $siteId;
-			$where['code'] = $code;
-		} else {
-			$where['item_id'] = $id;
-		}
+		$where = $id > 0 ? ['item_id' => $id] : ['site_id' => $siteId, 'code' => $code];
 		$info = $service->loadData($where, 'site_id,code');
 		if (empty($info)) {
 			$this->error('数据不存在');
 		}
 		$rst = $service->deleteData($where);
 		if ($rst) {
+			$service->delCache($info['site_id']);
 			$this->success('删除成功');
 		}
 		$this->error('删除失败');
@@ -319,20 +299,19 @@ class Site extends AdminBase
 
 	protected function addCurrency()
 	{
-		$siteId = ipost('site_id');
-		$code = ipost('code');
-		if (empty($siteId) || empty($code)) {
+		$siteId = (int)ipost('site_id', 0);
+		$code = trim((string)ipost('code', ''));
+		if ($siteId <= 0 || $code === '') {
 			$this->error('参数不正确');
 		}
 		$service = service('site/CurrencyUsed');
-		$where = [];
-		$where['site_id'] = $siteId;
-		$where['code'] = $code;
+		$where = ['site_id' => $siteId, 'code' => $code];
 		if ($service->getCountData($where)) {
-			$this->error('语言已存在');
+			$this->error('货币已存在');
 		}
 		$rst = $service->insert($where);
 		if ($rst) {
+			$service->delCache($siteId);
 			$this->success('添加成功');
 		}
 		$this->error('添加失败');
@@ -340,18 +319,23 @@ class Site extends AdminBase
 
 	protected function sortCurrency()
 	{
-		$id = ipost('id');
-		if (empty($id)) {
+		$id = (int)ipost('id', 0);
+		if ($id <= 0) {
 			$this->error('参数不正确');
 		}
-		$sort = ipost('sort');
+		$type = trim((string)ipost('type', ''));
 		$service = service('site/CurrencyUsed');
 		$info = $service->loadData($id, 'site_id');
 		if (empty($info)) {
 			$this->error('数据不存在');
 		}
-		$rst = $service->updateData($id, ['sort'=>$sort]);
-		if ($rst) {
+		if ($type !== '') {
+			$rst = service('tool/Sort')->sort('site_currency_used', $id, $type, 'item_id', 'sort', ['site_id' => (int)$info['site_id']]);
+		} else {
+			$sort = (int)ipost('sort', 0);
+			$rst = $service->updateData($id, ['sort' => $sort]);
+		}
+		if ($rst !== false) {
 			$service->delCache($info['site_id']);
 			$this->success('排序成功');
 		}
@@ -360,100 +344,84 @@ class Site extends AdminBase
 
 	protected function updateKeyword()
 	{
-		$siteId = ipost('site_id');
-		$name = ipost('name');
-		$value = ipost('value');
-		if (empty($siteId) || empty($name)) {
+		$siteId = (int)ipost('site_id', 0);
+		$name = trim((string)ipost('name', ''));
+		$value = trim((string)ipost('value', ''));
+		if ($siteId <= 0 || !in_array($name, ['keyword', 'description'], true)) {
 			$this->error('参数不正确');
 		}
-		$rst = service('site/Site')->updateData($siteId, [$name=>$value]);
-		if ($rst) {
-			$this->success('编辑成功');
-		}
-		$this->error('编辑失败');
+		service('site/Language')->setNxLanguage($siteId, 'en', $name, $value);
+		$this->success('编辑成功');
 	}
 
 	protected function getLanguage()
 	{
-		$siteId = ipost('site_id');
-		$type = ipost('type');
-		if (empty($siteId) && empty($type)) {
+		$siteId = (int)ipost('site_id', 0);
+		$type = trim((string)ipost('type', ''));
+		if ($siteId <= 0 || $type === '') {
 			$this->error('参数不正确');
 		}
-		//站点语言列表
-		$languageList = service('site/LanguageUsed')->getListData(['site_id'=>$siteId], 'code', 0, 0, ['sort'=>'asc']);
+		$languageList = service('site/LanguageUsed')->getListData(['site_id' => $siteId], 'code', 0, 0, ['sort' => 'asc']);
 		if (empty($languageList)) {
-			$this->error('该站点没有配置语言');
+			$this->error('该站点暂未配置关联语言，请先添加站点语言');
 		}
-		$languageList = service('Language')->getListData(['code'=>['in', array_column($languageList, 'code')]]);
-		//获取已有的翻译文本
-		$transArr = service('site/Language')->getListData(['site_id'=>$siteId, 'type'=>$type]);
+		$languageList = service('system/Language')->getListData(['code' => ['in', array_column($languageList, 'code')]]);
+		$transArr = service('site/Language')->getListData(['site_id' => $siteId, 'type' => $type]);
 		$transArr = array_column($transArr, null, 'lan_id');
 		foreach ($languageList as $key => $value) {
-			$languageList[$key]['tr_text'] = empty($transArr[$value['code']]) ? '' : $transArr[$value['code']]['name'];
+			$languageList[$key]['tr_text'] = $transArr[$value['code']]['name'] ?? '';
 		}
-		$this->success($languageList);
+		$this->success('获取成功', $languageList);
 	}
 
 	protected function transfer()
 	{
-		$trCode = ipost('tr_code');
-		$name = ipost('name');
-		$rst = service('Translate')->getText($name, $trCode);
-		$this->success($rst, '');
+		$trCode = trim((string)ipost('tr_code', ''));
+		$name = trim((string)ipost('name', ''));
+		if ($name === '' || $trCode === '') {
+			$this->success('翻译完成', '');
+		}
+		$rst = service('tool/Translate')->getText($name, $trCode);
+		$this->success('翻译完成', $rst);
 	}
 
 	protected function editLanguage()
 	{
-		$siteId = ipost('site_id');
-		$type = ipost('type');
+		$siteId = (int)ipost('site_id', 0);
+		$type = trim((string)ipost('type', ''));
 		$language = ipost('language');
-		if (empty($siteId) || empty($type) || empty($language)) {
+		if ($siteId <= 0 || $type === '' || empty($language) || !is_array($language)) {
 			$this->error('参数不正确');
 		}
 		$service = service('site/Language');
 		foreach ($language as $key => $value) {
-			$service->setNxLanguage($siteId, $key, $type, $value);
+			$service->setNxLanguage($siteId, $key, $type, trim((string)$value));
 		}
 		$this->success('保存成功');
-	}
-
-	protected function domainInfo()
-	{
-		$id = ipost('id');
-		if (empty($id)) {
-			$this->error('参数不正确');
-		}
-		$service = service('site/Domain');
-		$info = $service->loadData($id);
-		if (empty($info)) {
-			$this->error('数据不存在');
-		}
-		$this->success($info);
 	}
 
 	public function staticCache()
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['deleteStaticCache'])) {
+			if (in_array($opn, ['deleteStaticCache'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
+		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$files = [];
-		$siteList = service('site/Site')->getListData([], 'path');
-		foreach ($siteList as $key => $value) {
-			$path = ROOT_PATH.$value['path'].DS.'static';
-			$this->getFileList($path, $files);
-		}
+
+		$files = $this->collectStaticFiles();
 		$list = [];
-		foreach ($files as $key => $value) {
+		foreach ($files as $file) {
+			$relPath = str_replace([ROOT_PATH, '\\'], ['', '/'], $file);
+			$ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 			$list[] = [
-				'name' => str_replace(ROOT_PATH, '', $value),
-				'size' => filesize($value),
-				'c_time' => date('Y-m-d H:i:s', filemtime($value)),
+				'name'   => $relPath,
+				'ext'    => $ext,
+				'size'   => (int)@filesize($file),
+				'c_time' => date('Y-m-d H:i:s', (int)@filemtime($file)),
 			];
 		}
 
@@ -463,56 +431,77 @@ class Site extends AdminBase
 
 	public function staticDetail()
 	{
-		$name = iget('name');
-		$file = ROOT_PATH.$name;
-		if (is_file($file)) {
-			$content = file_get_contents($file);
-			$this->assign('content', $content);
+		frame('Html')->addCss();
+		frame('Html')->addJs();
+		$name = trim((string)iget('name', ''));
+		$content = '';
+		if ($name !== '' && strpos($name, '..') === false) {
+			$file = ROOT_PATH . ltrim(str_replace('\\', '/', $name), '/');
+			if (is_file($file)) {
+				$content = (string)file_get_contents($file);
+			}
 		}
+		$this->assign('name', $name);
+		$this->assign('content', $content);
 		$this->view();
 	}
 
 	protected function deleteStaticCache()
 	{
-		$name = ipost('name');
-		if (empty($name)) {
+		$name = trim((string)ipost('name', ''));
+		if ($name === '') {
 			$this->error('名称不能为空');
 		}
-		if ($name == 'all') {
-			$files = [];
-			$siteList = service('site/Site')->getListData([], 'path');
-			foreach ($siteList as $key => $value) {
-				$path = ROOT_PATH.$value['path'].DS.'static';
-				$this->getFileList($path, $files);
-			}
-			if (!empty($files)) {
-				foreach ($files as $key => $value) {
-					unlink($value);
+		if ($name === 'all') {
+			$files = $this->collectStaticFiles();
+			foreach ($files as $file) {
+				if (is_file($file)) {
+					@unlink($file);
 				}
 			}
-			service('site/StaticFile')->deleteData(['static_id'=>['>', 0]]);
 		} else {
-			$file = ROOT_PATH.$name;
-			if (!is_file($file)) {
-				$this->error('非法请求, 文件不存在');
+			if (strpos($name, '..') !== false) {
+				$this->error('非法文件路径');
 			}
-			unlink($file);
-			list($name, $type) = explode('.', $name);
-			service('site/StaticFile')->deleteData(['name'=>$name, 'type'=>$type]);
+			$file = ROOT_PATH . ltrim(str_replace('\\', '/', $name), '/');
+			if (!is_file($file)) {
+				$this->error('文件不存在');
+			}
+			@unlink($file);
 		}
-		$this->success('操作成功');
+		$this->success('清除成功');
+	}
+
+	protected function collectStaticFiles(): array
+	{
+		$files = [];
+		$tplRoot = ROOT_PATH . 'template';
+		if (!is_dir($tplRoot)) {
+			return $files;
+		}
+		foreach (scandir($tplRoot) ?: [] as $tplDir) {
+			if ($tplDir === '.' || $tplDir === '..') continue;
+			foreach (['computer', 'mobile'] as $device) {
+				$staticDir = $tplRoot . '/' . $tplDir . '/' . $device . '/static';
+				if (is_dir($staticDir)) {
+					$this->getFileList($staticDir, $files);
+				}
+			}
+		}
+		return $files;
 	}
 
 	protected function getFileList($path, &$files)
 	{
 		if (is_dir($path)) {
 			$dp = dir($path);
-			while ($file = $dp ->read()){
-	            if($file != '.' && $file != '..') {
-	                $this->getFileList($path.DS.$file, $files);
-	            }
-	        }
-		} else if (is_file($path)) {
+			while ($file = $dp->read()) {
+				if ($file !== '.' && $file !== '..') {
+					$this->getFileList($path . '/' . $file, $files);
+				}
+			}
+			$dp->close();
+		} elseif (is_file($path)) {
 			$files[] = $path;
 		}
 	}
@@ -521,66 +510,94 @@ class Site extends AdminBase
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['deleteLog'])) {
+			if (in_array($opn, ['deleteLog'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
 		}
+		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$path = ROOT_PATH.'runtime';
+
+		$path = ROOT_PATH . 'runtime';
 		$files = [];
 		$this->getFileList($path, $files);
+		$list = [];
 		if (!empty($files)) {
-			$list = [];
-			$timeArr = [];
-			foreach ($files as $key => $value) {
-				$time = str_replace([$path, '.log', DS], '', $value);
-				$time = substr($time, 0, 4).'-'.substr($time, 4, 2).'-'.substr($time, 6, 2);
-				$timeArr[] = strtotime($time);
+			$mtimeArr = [];
+			foreach ($files as $file) {
+				$relName = str_replace([$path . '/', '\\'], ['', '/'], $file);
+				$mtime = (int)@filemtime($file);
+				$logType = 'request';
+				if (strpos($relName, '_error.log') !== false) {
+					$logType = 'error';
+				} elseif (strpos($relName, '_task.log') !== false) {
+					$logType = 'task';
+				}
+				$mtimeArr[] = $mtime;
 				$list[] = [
-					'name' => str_replace($path.DS, '', $value),
-					'size' => filesize($value),
-					'c_time' => $time,
+					'name'     => $relName,
+					'log_type' => $logType,
+					'size'     => (int)@filesize($file),
+					'c_time'   => date('Y-m-d H:i:s', $mtime),
 				];
 			}
-			array_multisort($timeArr, SORT_DESC, $list);
+			array_multisort($mtimeArr, SORT_DESC, $list);
 		}
-		$this->assign('list', $list ?? []);
+		$this->assign('list', $list);
 		$this->view();
 	}
 
 	protected function deleteLog()
 	{
-		$name = ipost('name');
-		if (empty($name)) {
+		$name = trim((string)ipost('name', ''));
+		if ($name === '') {
 			$this->error('名称不能为空');
 		}
-		if ($name == 'all') {
+		$path = ROOT_PATH . 'runtime';
+		if ($name === 'all') {
 			$files = [];
-			$path = ROOT_PATH.'runtime';
 			$this->getFileList($path, $files);
-			foreach ($files as $key => $value) {
-				unlink($value);
+			foreach ($files as $value) {
+				if (is_file($value)) {
+					@unlink($value);
+				}
 			}
 		} else {
-			$file = ROOT_PATH.'runtime'.DS.$name;
-			if (!is_file($file)) {
-				$this->error('非法请求, 文件不存在');
+			if (strpos($name, '..') !== false) {
+				$this->error('非法文件路径');
 			}
-			unlink($file);
+			$file = $path . '/' . ltrim(str_replace('\\', '/', $name), '/');
+			if (!is_file($file)) {
+				$this->error('文件不存在');
+			}
+			@unlink($file);
 		}
-		$this->success('操作成功');
+		$this->success('删除成功');
 	}
 
 	public function logDetail()
 	{
-		$name = iget('name');
-		$file = ROOT_PATH.'runtime'.DS.$name;
-		if (is_file($file)) {
-			$content = file_get_contents($file);
-			$list = explode('---------------------------------------------------------------', $content);
+		frame('Html')->addCss();
+		frame('Html')->addJs();
+		$name = trim((string)iget('name', ''));
+		$list = [];
+		if ($name !== '' && strpos($name, '..') === false) {
+			$file = ROOT_PATH . 'runtime/' . ltrim(str_replace('\\', '/', $name), '/');
+			if (is_file($file)) {
+				$content = trim((string)file_get_contents($file));
+				if ($content !== '') {
+					if (strpos($content, '---------------------------------------------------------------') !== false) {
+						$list = explode('---------------------------------------------------------------', $content);
+					} elseif (strpos($content, '[runtime]') !== false) {
+						$list = preg_split('/(?=\[runtime\]\s+\d{4}-\d{2}-\d{2})/', $content, -1, PREG_SPLIT_NO_EMPTY);
+					} else {
+						$list = preg_split('/\r?\n\r?\n/', $content, -1, PREG_SPLIT_NO_EMPTY);
+					}
+				}
+			}
 		}
-		$this->assign('list', $list ?? []);
+		$this->assign('name', $name);
+		$this->assign('list', $list ?: []);
 		$this->view();
 	}
 }

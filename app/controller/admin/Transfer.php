@@ -23,6 +23,7 @@ class Transfer extends AdminBase
 			}
 		}
 
+		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$keyword = iget('keyword');
 		$page = iget('page', 1);

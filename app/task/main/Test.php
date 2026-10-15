@@ -9,7 +9,8 @@ class Test extends TaskDriver
 
 	public static $config = [
 		'name' => '测试任务',
-		'cron' => ['* * * * *'],
+		'type' => self::TYPE_OTHER,
+		'cron' => [],
 	];
 
 	public function run()

@@ -11,7 +11,7 @@ var FAQGROUP = {
         $('#dealbox-info .btn.save-btn').on('click', function(){
             var obj = $(this);
             obj.button('loading');
-            post(URI+'faq/faqList', obj.parents('form').serializeArray(), function(res){
+            post('/faq/faqList', obj.parents('form').serializeArray(), function(res){
                 showTips(res);
                 if (res.code == 1) {
                     window.location.reload();
@@ -25,7 +25,7 @@ var FAQGROUP = {
             const obj = $(this);
             obj.button('loading');
             const id = obj.parents('tr').data('id');
-            post(URI+'faq/faqList', {opn: 'getFaqInfo', faq_id: id}, function(res){
+            post('/faq/faqList', {opn: 'getFaqInfo', faq_id: id}, function(res){
                 if (res.code == 1) {
                     _this.initInfo('编辑分组', res.data);
                 } else {
@@ -39,7 +39,7 @@ var FAQGROUP = {
             const _thisobj = $(this);
             const id = _thisobj.parents('tr').data('id');
             const status = _thisobj.data('status') == '0' ? 1 : 0;
-            post(URI+'faq/faqList', {opn: 'modifyFaqStatus', faq_id: id, status: status}, function(res){
+            post('/faq/faqList', {opn: 'modifyFaqStatus', faq_id: id, status: status}, function(res){
                 showTips(res);
                 if (res.code == 1) {
                     _thisobj.switchBtn(status);
@@ -51,7 +51,7 @@ var FAQGROUP = {
             event.stopPropagation();
             const _thisobj = $(this);
             const id = _thisobj.parents('tr').data('id');
-            post(URI+'faq/faqList', {opn: 'getFaqLanguage', faq_id: id}, function(res){
+            post('/faq/faqList', {opn: 'getFaqLanguage', faq_id: id}, function(res){
                 if (res.code == 1) {
                     var data = res.data;
                     const obj = $('#dealbox-language');
@@ -99,7 +99,7 @@ var FAQGROUP = {
                 if (value === '') {
                     const _thisobj = $(this);
                     const tr_code = _thisobj.data('tr_code');
-                    post(URI+'faq/faqList', {opn:'transfer', tr_code:tr_code, name:name, from_code: 'en'}, function(res){
+                    post('/faq/faqList', {opn:'transfer', tr_code:tr_code, name:name, from_code: 'en'}, function(res){
                         len = len - 1;
                         if (res.code == 1) {
                             _thisobj.val(res.data);
@@ -124,7 +124,7 @@ var FAQGROUP = {
             var id = _thisobj.parents('form').find('[name="faq_id"]').val();
             var lan_id = _thisobj.parents('tr').data('id');
             const tr_code = _thisobj.data('tr_code');
-            post(URI+'faq/faqList', {opn: 'getFaqLanguage', faq_id: id, lan_id: lan_id}, function(res){
+            post('/faq/faqList', {opn: 'getFaqLanguage', faq_id: id, lan_id: lan_id}, function(res){
                 if (res.code == 1) {
                     _this.initFaqLanguage(res.data);
                 } else {
@@ -138,7 +138,7 @@ var FAQGROUP = {
             const _thisobj = $(this);
             _thisobj.button('loading');
             editor.sync();
-            post(URI+'faq/faqList', $('#dealbox-faq-language form').serializeArray(), function(res){
+            post('/faq/faqList', $('#dealbox-faq-language form').serializeArray(), function(res){
                 showTips(res);
                 if (res.code == 1) {
                     var lanId = _thisobj.parent().find('[name="lan_id"]').val();
@@ -152,7 +152,7 @@ var FAQGROUP = {
         KindEditor.ready(function(K) {
             window.editor = K.create('#faq_editor',{
                 height:'650px',
-                uploadJson : URL+'faq/faqList?opn=upload',
+                uploadJson : '/faq/faqList?opn=upload',
                 allowFileManager : false
             });
         });

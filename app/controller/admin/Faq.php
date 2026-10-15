@@ -19,27 +19,41 @@ class Faq extends AdminBase
     {   
         if (isPost()) {
             $opn = ipost('opn');
-            if (in_array($opn, ['getGroupInfo', 'modifyGroupStatus', 'editGroupInfo', 'getGroupLanguage', 'transfer', 'editGroupLanguage'])) {
+            if (in_array($opn, ['getGroupInfo', 'modifyGroupStatus', 'editGroupInfo', 'deleteGroup', 'getGroupLanguage', 'transfer', 'editGroupLanguage'], true)) {
                 $this->$opn();
             }
+            $this->error('非法请求');
         }
 
         frame('Html')->addJs();
         frame('Html')->addCss();
 
-        $page = (int)iget('page', 1);
-        $size = (int)iget('size', 20);
+        $page = max(1, (int)iget('page', 1));
+        $size = max(1, (int)iget('size', 20));
+        $search = [
+            'status'  => (int)iget('status', -1),
+            'keyword' => trim(iget('keyword', '')),
+        ];
+
+        $where = [];
+        if ($search['status'] >= 0) {
+            $where['status'] = $search['status'];
+        }
+        if ($search['keyword'] !== '') {
+            $where['name'] = ['like', '%' . $search['keyword'] . '%'];
+        }
 
         $group = service('faq/Group');
 
-        $total = $group->getCountData();
+        $total = $group->getCountData($where);
         if ($total > 0) {
-            $list = $group->getListData([], '*', $page, $size);
+            $list = $group->getListData($where, '*', $page, $size);
         } 
 
         $this->assign('size', $size);
         $this->assign('total', $total);
         $this->assign('list', $list ?? []);
+        $this->assign('search', $search);
         $this->view();
     }
 
@@ -60,7 +74,7 @@ class Faq extends AdminBase
     protected function editGroupInfo()
     {
         $id = (int)ipost('group_id', 0);
-        $status = (int)ipost('status', 0);
+        $status = (int)ipost('status', 0) === 1 ? 1 : 0;
         $name = trim(ipost('name', ''));
         if (empty($name)) {
             $this->error('名称不能为空');
@@ -83,7 +97,7 @@ class Faq extends AdminBase
     protected function modifyGroupStatus()
     {
         $id = (int)ipost('group_id', 0);
-        $status = (int)ipost('status', 0);
+        $status = (int)ipost('status', 0) === 1 ? 1 : 0;
         if ($id < 1) {
             $this->error('ID值不正确');
         }
@@ -93,10 +107,28 @@ class Faq extends AdminBase
         }
         $rst = $group->updateData($id, ['status' => $status]);
         $this->addLog('修改帮助文档分组状态-'.$id.':'.$status);
-        if ($rst) {
+        if ($rst !== false) {
             $this->success('操作成功');
         }
         $this->error('操作失败');
+    }
+
+    protected function deleteGroup()
+    {
+        $id = (int)ipost('group_id', 0);
+        if ($id < 1) {
+            $this->error('ID值不正确');
+        }
+        if (service('faq/Faq')->getCountData(['group_id' => $id]) > 0) {
+            $this->error('该分组下存在帮助文档，请先处理关联文档后再删除');
+        }
+        $rst = service('faq/Group')->deleteData($id);
+        if ($rst) {
+            service('faq/GroupLanguage')->deleteData(['group_id' => $id]);
+            $this->addLog('删除帮助文档分组-'.$id);
+            $this->success('删除成功');
+        }
+        $this->error('删除失败');
     }
 
     protected function getGroupLanguage()
@@ -119,7 +151,7 @@ class Faq extends AdminBase
             ];
         }
         $this->addLog('获取帮助文档分组语言-'.$id);
-        $this->success($data);
+        $this->success('获取成功', $data);
     }
 
     protected function editGroupLanguage()
@@ -139,26 +171,57 @@ class Faq extends AdminBase
         $this->success('操作成功');
     }
 
+    protected function transfer()
+    {
+        $trCode = trim(ipost('tr_code', ''));
+        $name = trim(ipost('name', ''));
+        if ($name === '' || $trCode === '') {
+            $this->error('参数不正确');
+        }
+        $rst = service('tool/Translate')->getText($name, $trCode);
+        if ($rst !== false && $rst !== null && $rst !== '') {
+            $this->success('翻译成功', $rst);
+        }
+        $this->error('翻译失败');
+    }
+
     public function faqList()
     {   
         if (isPost()) {
             $opn = ipost('opn');
-            if (in_array($opn, ['getFaqInfo', 'modifyFaqStatus', 'editFaqInfo', 'getFaqLanguage', 'editFaqLanguage'])) {
+            if (in_array($opn, ['getFaqInfo', 'modifyFaqStatus', 'editFaqInfo', 'deleteFaq', 'getFaqLanguage', 'transfer', 'editFaqLanguage'], true)) {
                 $this->$opn();
             }
+            $this->error('非法请求');
         }
 
         frame('Html')->addJs();
         frame('Html')->addCss();
 
-        $page = (int)iget('page', 1);
-        $size = (int)iget('size', 30);
+        $page = max(1, (int)iget('page', 1));
+        $size = max(1, (int)iget('size', 30));
+        $search = [
+            'group_id' => (int)iget('group_id', 0),
+            'status'   => (int)iget('status', -1),
+            'keyword'  => trim(iget('keyword', '')),
+        ];
+
+        $where = [];
+        if ($search['group_id'] > 0) {
+            $where['group_id'] = $search['group_id'];
+        }
+        if ($search['status'] >= 0) {
+            $where['status'] = $search['status'];
+        }
+        if ($search['keyword'] !== '') {
+            $where['title'] = ['like', '%' . $search['keyword'] . '%'];
+        }
 
         $faq = service('faq/Faq');
 
-        $total = $faq->getCountData();
+        $total = $faq->getCountData($where);
         if ($total > 0) {
-            $list = $faq->getListData([], '*', $page, $size);
+            $list = $faq->getListData($where, '*', $page, $size);
         }
 
         $group = service('faq/Group')->getListData();
@@ -168,6 +231,7 @@ class Faq extends AdminBase
         $this->assign('total', $total);
         $this->assign('list', $list ?? []);
         $this->assign('group', $group);
+        $this->assign('search', $search);
         $this->view();
     }
 
@@ -188,10 +252,10 @@ class Faq extends AdminBase
     protected function editFaqInfo()
     {
         $id = (int)ipost('faq_id', 0);
-        $status = (int)ipost('status', 0);
+        $status = (int)ipost('status', 0) === 1 ? 1 : 0;
         $title = trim(ipost('title', ''));
         $groupId = (int)(ipost('group_id', 0));
-        $total = (int)(ipost('visit_total', 0));
+        $total = max(0, (int)(ipost('visit_total', 0)));
         if (empty($title)) {
             $this->error('标题不能为空');
         }
@@ -221,7 +285,7 @@ class Faq extends AdminBase
     protected function modifyFaqStatus()
     {
         $id = (int)ipost('faq_id', 0);
-        $status = (int)ipost('status', 0);
+        $status = (int)ipost('status', 0) === 1 ? 1 : 0;
         if ($id < 1) {
             $this->error('ID值不正确');
         }
@@ -231,10 +295,25 @@ class Faq extends AdminBase
         }
         $rst = $faq->updateData($id, ['status' => $status]);
         $this->addLog('修改帮助文档状态-'.$id.':'.$status);
-        if ($rst) {
+        if ($rst !== false) {
             $this->success('操作成功');
         }
         $this->error('操作失败');
+    }
+
+    protected function deleteFaq()
+    {
+        $id = (int)ipost('faq_id', 0);
+        if ($id < 1) {
+            $this->error('ID值不正确');
+        }
+        $rst = service('faq/Faq')->deleteData($id);
+        if ($rst) {
+            service('faq/FaqLanguage')->deleteData(['faq_id' => $id]);
+            $this->addLog('删除帮助文档-'.$id);
+            $this->success('删除成功');
+        }
+        $this->error('删除失败');
     }
 
     protected function getFaqLanguage()
@@ -256,7 +335,7 @@ class Faq extends AdminBase
                 'title' => $info['title']??'',
                 'content' => $info['content']??'',
             ];
-            $this->success($info);
+            $this->success('获取成功', $info);
         }
         $info = service('faq/FaqLanguage')->getListData(['faq_id'=>$id]);
         $info = array_column($info, 'title', 'lan_id');
@@ -269,7 +348,7 @@ class Faq extends AdminBase
                 'edit' => !empty($info[$value['lan_id']]),
             ];
         }
-        $this->success($data);
+        $this->success('获取成功', $data);
     }
 
     protected function editFaqLanguage()

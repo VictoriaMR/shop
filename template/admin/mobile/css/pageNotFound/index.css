@@ -1,0 +1,84 @@
+.not-found-page {
+	padding: 0.24rem 0.14rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.5rem);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.not-found-card {
+	background: #fff;
+	width: 100%;
+	max-width: 3.6rem;
+	border-radius: 0.12rem;
+	padding: 0.28rem 0.2rem;
+	text-align: center;
+	box-shadow: 0 0.02rem 0.08rem rgba(15, 23, 42, 0.06);
+}
+
+.icon-circle {
+	width: 0.56rem;
+	height: 0.56rem;
+	margin: 0 auto 0.1rem;
+	border-radius: 50%;
+	background: #eff6ff;
+	color: #2563eb;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.26rem;
+}
+
+.error-code {
+	font-size: 0.42rem;
+	font-weight: 800;
+	color: #0f172a;
+	line-height: 1.1;
+	letter-spacing: 0.02rem;
+}
+
+.error-title {
+	margin: 0.08rem 0 0.06rem;
+	font-size: 0.16rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.error-desc {
+	margin: 0 0 0.16rem;
+	font-size: 0.12rem;
+	color: #64748b;
+	line-height: 1.5;
+}
+
+.error-detail {
+	margin-bottom: 0.16rem;
+	padding: 0.1rem;
+	background: #fef2f2;
+	border: 0.01rem solid #fecaca;
+	border-radius: 0.06rem;
+	color: #b91c1c;
+	font-size: 0.12rem;
+	text-align: left;
+	word-break: break-word;
+	line-height: 1.45;
+}
+
+.action-row {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.1rem;
+}
+
+.action-row .btn {
+	flex: 1;
+	height: 0.36rem;
+	font-size: 0.13rem;
+	border-radius: 0.06rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.05rem;
+}

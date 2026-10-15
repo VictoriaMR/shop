@@ -1,0 +1,387 @@
+.purchase-list-page {
+	padding: 0.10rem 0.12rem 0.24rem;
+	background: #f5f6fa;
+	min-height: calc(100vh - 0.50rem);
+}
+
+/* 顶部栏 */
+.page-header-bar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #ffffff;
+	padding: 0.10rem 0.12rem;
+	border-radius: 0.08rem;
+	margin-bottom: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+	gap: 0.08rem;
+}
+
+.page-header-bar .header-title {
+	display: flex;
+	align-items: center;
+	gap: 0.06rem;
+	min-width: 0;
+	flex: 1;
+}
+
+.page-header-bar .header-title i {
+	color: #0284c7;
+	font-size: 0.15rem;
+}
+
+.page-header-bar .cur-page-title {
+	font-size: 0.14rem;
+	font-weight: 600;
+	color: #1e293b;
+}
+
+.page-header-bar .total-badge {
+	font-size: 0.11rem;
+	color: #64748b;
+	background: #f1f5f9;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.10rem;
+}
+
+/* 筛选框 */
+.search-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.08rem;
+	padding: 0.10rem;
+	margin-bottom: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.filter-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.08rem;
+	margin-bottom: 0.08rem;
+}
+
+.filter-item .form-control {
+	height: 0.34rem;
+	min-height: 0.34rem;
+	font-size: 0.12rem;
+	padding: 0 0.08rem;
+}
+
+.filter-actions .btn {
+	height: 0.34rem;
+	font-size: 0.13rem;
+}
+
+/* 卡片列表 */
+.card-list {
+	display: flex;
+	flex-direction: column;
+	gap: 0.08rem;
+}
+
+.purchase-card {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.08rem;
+	padding: 0.10rem;
+	box-shadow: 0 0.01rem 0.03rem rgba(15, 23, 42, 0.04);
+}
+
+.purchase-card .card-top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.06rem;
+	padding-bottom: 0.08rem;
+	border-bottom: 0.01rem dashed #f1f5f9;
+}
+
+.card-badges {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.05rem;
+	min-width: 0;
+}
+
+.id-badge {
+	font-size: 0.11rem;
+	color: #475569;
+	font-family: SFMono-Regular, Consolas, monospace;
+	background: #f1f5f9;
+	padding: 0.01rem 0.05rem;
+	border-radius: 0.04rem;
+	font-weight: 600;
+}
+
+.channel-badge {
+	font-size: 0.11rem;
+	color: #0369a1;
+	background: #e0f2fe;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	font-weight: 600;
+}
+
+.status-badge {
+	font-size: 0.11rem;
+	padding: 0.01rem 0.06rem;
+	border-radius: 0.04rem;
+	font-weight: 600;
+	background: #f1f5f9;
+	color: #64748b;
+}
+
+#purchase-list-page .status.status-0 {
+	background: #f1f5f9;
+	color: #334155;
+}
+
+#purchase-list-page .status.status-1 {
+	background: #fef3c7;
+	color: #d97706;
+}
+
+#purchase-list-page .status.status-2 {
+	background: #dcfce7;
+	color: #15803d;
+}
+
+#purchase-list-page .status.status-3 {
+	background: #d1fae5;
+	color: #065f46;
+}
+
+.card-actions {
+	display: flex;
+	align-items: center;
+	gap: 0.05rem;
+	flex-shrink: 0;
+}
+
+.card-actions .icon-btn {
+	width: 0.28rem;
+	height: 0.28rem;
+	padding: 0;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.12rem;
+	border-radius: 0.06rem;
+}
+
+.card-title-row {
+	padding: 0.08rem 0;
+}
+
+.item-title {
+	font-size: 0.13rem;
+	font-weight: 600;
+	color: #0f172a;
+	line-height: 1.4;
+	word-break: break-word;
+}
+
+.item-title:active {
+	color: #0284c7;
+}
+
+.card-meta-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.06rem;
+	background: #f8fafc;
+	padding: 0.06rem 0.08rem;
+	border-radius: 0.06rem;
+	font-size: 0.12rem;
+}
+
+.meta-cell {
+	display: flex;
+	align-items: center;
+	gap: 0.03rem;
+	min-width: 0;
+}
+
+.meta-cell .m-label {
+	color: #64748b;
+	flex-shrink: 0;
+}
+
+.meta-cell .m-val {
+	color: #1e293b;
+	font-weight: 500;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.meta-cell .price-val {
+	color: #e7502b;
+}
+
+.meta-cell em {
+	font-style: normal;
+	color: #cbd5e1;
+	margin: 0 0.03rem;
+}
+
+/* 店铺信息条 */
+.shop-info-bar {
+	margin-top: 0.06rem;
+	padding: 0.06rem 0.08rem;
+	background: #fafbfc;
+	border: 0.01rem solid #f1f5f9;
+	border-radius: 0.06rem;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.06rem;
+	font-size: 0.11rem;
+	color: #475569;
+}
+
+.shop-info-bar > i {
+	color: #0284c7;
+	margin-top: 0.03rem;
+}
+
+.shop-info-html {
+	flex: 1;
+	min-width: 0;
+}
+
+.shop-info-html a {
+	color: #0284c7;
+	font-weight: 600;
+}
+
+.shop-info-html .desc-info {
+	color: #64748b;
+	margin-top: 0.02rem;
+	word-break: break-word;
+}
+
+/* 卡片底部 */
+.purchase-card .card-bottom {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.08rem;
+	padding-top: 0.08rem;
+	margin-top: 0.06rem;
+	border-top: 0.01rem solid #f1f5f9;
+}
+
+.creator-wrap .userAvatarInfo {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.06rem;
+}
+
+.creator-wrap .avatarStyle {
+	width: 0.26rem;
+	height: 0.26rem;
+	border-radius: 50%;
+	background: #eff6ff;
+	color: #3b82f6;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 0.12rem;
+	overflow: hidden;
+}
+
+.creator-wrap .avatarStyle img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.creator-wrap .two {
+	font-size: 0.11rem;
+	line-height: 1.25;
+	color: #475569;
+}
+
+.time-wrap {
+	font-size: 0.11rem;
+	color: #94a3b8;
+	text-align: right;
+	line-height: 1.35;
+}
+
+/* 弹窗 */
+.modal-mask {
+	position: fixed;
+	inset: 0;
+	background: rgba(15, 23, 42, 0.55);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0.14rem;
+}
+
+.modal-panel {
+	background: #ffffff;
+	width: 100%;
+	max-width: 3.45rem;
+	border-radius: 0.10rem;
+	overflow: hidden;
+	box-shadow: 0 0.08rem 0.24rem rgba(15, 23, 42, 0.22);
+}
+
+.modal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0.12rem 0.14rem;
+	border-bottom: 0.01rem solid #f1f5f9;
+	background: #fafbfc;
+}
+
+.modal-header .dealbox-title {
+	margin: 0;
+	font-size: 0.15rem;
+	font-weight: 600;
+	color: #0f172a;
+}
+
+.modal-header .modal-close {
+	font-size: 0.16rem;
+	color: #64748b;
+	cursor: pointer;
+	padding: 0.02rem 0.05rem;
+}
+
+.modal-body {
+	padding: 0.14rem;
+}
+
+.form-group {
+	margin-bottom: 0.12rem;
+}
+
+.form-label {
+	display: block;
+	font-size: 0.12rem;
+	font-weight: 600;
+	color: #475569;
+	margin-bottom: 0.05rem;
+}
+
+.empty-state {
+	background: #ffffff;
+	border: 0.01rem solid #e2e8f0;
+	border-radius: 0.08rem;
+	padding: 0.36rem 0.15rem;
+	text-align: center;
+	color: #94a3b8;
+}
+
+.empty-state i {
+	font-size: 0.30rem;
+	margin-bottom: 0.08rem;
+	color: #cbd5e1;
+}
