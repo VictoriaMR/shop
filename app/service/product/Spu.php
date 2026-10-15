@@ -22,7 +22,7 @@ class Spu extends Base
 	protected function infoFormat($info)
 	{
 		//价格格式化
-		$currencyService = service('currency/Currency');
+		$currencyService = service('system/Currency');
 		$info['original_price'] = $this->getOriginalPrice($info['min_price']);
 		$info['show_price'] = $this->showPrice($info['spu_id']);
 		$temp = $currencyService->priceFormat($info['min_price']);
@@ -144,7 +144,11 @@ class Spu extends Base
 		if (empty($data)) {
 			return '';
 		}
-		return $data['cate'].DS.$data['name'].DS.$type.'.'.$data['type'];
+		$path = str_replace('\\', '/', $data['path'] ?? $data['cate'] ?? '');
+		if ($type !== '') {
+			return $path.'/'.$data['name'].'_'.$type.'.webp';
+		}
+		return $path.'/'.$data['name'].'.'.$data['type'];
 	}
 
 	protected function getCacheKey($spuId, $lanId)
@@ -173,10 +177,13 @@ class Spu extends Base
 		$lanArr = service('product/Language')->getListData($where, 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
 		$lanArr = array_column($lanArr, 'name', 'spu_id');
 		//获取图片集
-		$attachArr = array_unique(array_column($list, 'attach_id'));
-		$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-		$attachArr = array_column($attachArr, 'url', 'attach_id');
-		$currency = service('currency/Currency');
+		$attachIds = array_values(array_unique(array_filter(array_column($list, 'attach_id'))));
+		$attachArr = [];
+		if (!empty($attachIds)) {
+			$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachIds]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+		}
+		$currency = $priceFormat ? service('system/Currency') : null;
 		$likeArr = [];
 		if ($isLiked && $this->userId()) {
 			$likeArr = service('member/Collect')->getListData(['mem_id'=>$this->userId(), 'spu_id'=>['in', $spuList]], 'spu_id');
@@ -186,7 +193,7 @@ class Spu extends Base
 		foreach($list as $key => $value) {
 			$value['name'] = $lanArr[$value['spu_id']] ?? '';
 			$value['image'] = $attachArr[$value['attach_id']] ?? siteUrl('image/common/noimg.svg');
-			if ($priceFormat) {
+			if ($priceFormat && $currency) {
 				$value['original_price'] = $this->getOriginalPrice($value['min_price']);
 				$temp = $currency->priceFormat($value['min_price']);
 				$value['min_price'] = $temp[1];
@@ -209,45 +216,74 @@ class Spu extends Base
 
 	public function getAdminInfo($spuId)
 	{
+		$spuId = (int)$spuId;
+		if ($spuId <= 0) return false;
 		$info = $this->loadData($spuId);
 		if (empty($info)) return false;
 		//分类
 		$info['category'] = array_reverse(service('category/Category')->pCate($info['cate_id']));
 		//SpuData
-		$info['data'] = service('product/SpuData')->loadData($spuId);
-		$info['shop'] = service('supplier/Shop')->loadData($info['data']['shop_id']);
+		$info['data'] = service('product/SpuData')->loadData($spuId) ?: [
+			'shop_id'   => 0,
+			'supplier'  => '',
+			'item_id'   => '',
+			'item_url'  => '',
+			'post_fee'  => 0,
+			'volume'    => '',
+			'weight'    => 0,
+		];
+		$info['shop'] = !empty($info['data']['shop_id']) ? (service('purchase/Shop')->loadData($info['data']['shop_id']) ?: []) : [];
 		//名称
-		$info['name'] = service('product/Language')->loadData(['spu_id'=>$spuId,'lan_id'=>'zh'], 'name')['name'];
+		$lanRow = service('product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>0], 'name');
+		$info['name'] = $lanRow['name'] ?? '';
 		//图片
 		$info['image'] = service('product/SpuImage')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
 		//获取sku列表
 		$info['sku'] = service('product/Sku')->getListData(['spu_id'=>$spuId]);
-		//skuData
+		//skuData & sku属性
 		$skuIdArr = array_column($info['sku'], 'sku_id');
-		$skuData = service('product/SkuData')->getListData(['sku_id'=>['in', $skuIdArr]]);
-		$skuData = array_column($skuData, null, 'sku_id');
-		//sku属性
-		$attrArr = service('product/AttrUsed')->getListData(['sku_id'=>['in', $skuIdArr]], '*', 0, 0, ['sort'=>'asc']);
-		//属性值名称
-		$attrBute = service('attr/Name')->getListData(['attrn_id'=>['in', array_unique(array_column($attrArr, 'attrn_id'))]]);
-		$attrBute = array_column($attrBute, null, 'attrn_id');
-		$attrValue = service('attr/Value')->getListData(['attrv_id'=>['in', array_unique(array_column($attrArr, 'attrv_id'))]]);
-		$attrValue = array_column($attrValue, null, 'attrv_id');
-		//描述
-		$info['description'] = service('product/DescUsed')->getListData(['spu_id'=>$spuId]);
+		$skuData = [];
+		$attrArr = [];
+		$attrBute = [];
+		$attrValue = [];
+		if (!empty($skuIdArr)) {
+			$skuData = service('product/SkuData')->getListData(['sku_id'=>['in', $skuIdArr]]);
+			$skuData = array_column($skuData, null, 'sku_id');
+			$attrArr = service('product/AttrUsed')->getListData(['sku_id'=>['in', $skuIdArr]], '*', 0, 0, ['sort'=>'asc']);
+			if (!empty($attrArr)) {
+				$attrnIds = array_values(array_unique(array_filter(array_column($attrArr, 'attrn_id'))));
+				$attrvIds = array_values(array_unique(array_filter(array_column($attrArr, 'attrv_id'))));
+				if (!empty($attrnIds)) {
+					$attrBute = service('attr/Name')->getListData(['attrn_id'=>['in', $attrnIds]]);
+					$attrBute = array_column($attrBute, null, 'attrn_id');
+				}
+				if (!empty($attrvIds)) {
+					$attrValue = service('attr/Value')->getListData(['attrv_id'=>['in', $attrvIds]]);
+					$attrValue = array_column($attrValue, null, 'attrv_id');
+				}
+			}
+		}
 		//描述图片
 		$info['introduce'] = service('product/IntroUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
 		//图片
-		$attachArr = array_unique(array_merge(array_column($info['image'], 'attach_id'), array_column($info['sku'], 'attach_id'), array_column($attrArr, 'attach_id'), array_column($info['introduce'], 'attach_id')));
-		$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachArr]]);
-		$attachArr = array_column($attachArr, 'url', 'attach_id');
+		$attachIds = array_values(array_unique(array_filter(array_merge(
+			array_column($info['image'], 'attach_id'),
+			array_column($info['sku'], 'attach_id'),
+			array_column($attrArr, 'attach_id'),
+			array_column($info['introduce'], 'attach_id')
+		))));
+		$attachArr = [];
+		if (!empty($attachIds)) {
+			$attachArr = service('attachment/Attachment')->getList(['attach_id'=>['in', $attachIds]]);
+			$attachArr = array_column($attachArr, 'url', 'attach_id');
+		}
 		//sku 属性归类
 		$skuAttrArr = [];
 		$attrMap = [];
 		foreach ($attrArr as $value) {
 			if (!isset($skuAttrArr[$value['sku_id']])) $skuAttrArr[$value['sku_id']] = [];
-			$value['attr_name'] = isset($attrBute[$value['attrn_id']]['name']) ? $attrBute[$value['attrn_id']]['name'] : '';
-			$value['attv_name'] = isset($attrValue[$value['attrv_id']]['name']) ? $attrValue[$value['attrv_id']]['name'] : '';
+			$value['attr_name'] = $attrBute[$value['attrn_id']]['name'] ?? '';
+			$value['attv_name'] = $attrValue[$value['attrv_id']]['name'] ?? '';
 			$value['image'] = $attachArr[$value['attach_id']] ?? '';
 			if (!isset($attrMap[$value['attrn_id']])) {
 				$attrMap[$value['attrn_id']] = [
@@ -266,29 +302,33 @@ class Spu extends Base
 		}
 		$info['attr_map'] = $attrMap;
 		foreach ($info['sku'] as $key => $value) {
-			$value = array_merge($value, $skuData[$value['sku_id']]);
+			if (isset($skuData[$value['sku_id']])) {
+				$value = array_merge($value, $skuData[$value['sku_id']]);
+			}
 			$value['image'] = $attachArr[$value['attach_id']] ?? '';
-			$value['attr'] = $skuAttrArr[$value['sku_id']];
+			$value['attr'] = $skuAttrArr[$value['sku_id']] ?? [];
 			$info['sku'][$key] = $value;
 		}
 		foreach ($info['image'] as $key => $value) {
 			$info['image'][$key]['image'] = $attachArr[$value['attach_id']] ?? '';
 		}
 		foreach ($info['introduce'] as $key => $value) {
-			$info['introduce'][$key]['image'] = str_replace(['/400', '.220x220'], '', $attachArr[$value['attach_id']] ?? '');
+			$info['introduce'][$key]['image'] = str_replace(['_400.webp', '/400', '.220x220'], ['.webp', '', ''], $attachArr[$value['attach_id']] ?? '');
 		}
 		//描述
 		$descArr = service('product/DescUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
-		$descNameArr = service('desc/Name')->getListData(['descn_id'=>['in', array_column($descArr, 'descn_id')]]);
-		$descValueArr = service('desc/Value')->getListData(['descv_id'=>['in', array_column($descArr, 'descv_id')]]);
-		$descGroupArr = service('desc/Group')->getListData(['descg_id'=>['in', array_column($descArr, 'descg_id')]]);
-		$descGroupArr = array_column($descGroupArr, 'name', 'descg_id');
-		$descNameArr = array_column($descNameArr, 'name', 'descn_id');
-		$descValueArr = array_column($descValueArr, 'name', 'descv_id');
-		foreach($descArr as $key=>$value) {
-			$descArr[$key]['group'] = $descGroupArr[$value['descg_id']] ?? '';
-			$descArr[$key]['name'] = $descNameArr[$value['descn_id']] ?? '';
-			$descArr[$key]['value'] = $descValueArr[$value['descv_id']] ?? '';
+		if (!empty($descArr)) {
+			$descnIds = array_values(array_unique(array_filter(array_column($descArr, 'descn_id'))));
+			$descvIds = array_values(array_unique(array_filter(array_column($descArr, 'descv_id'))));
+			$descgIds = array_values(array_unique(array_filter(array_column($descArr, 'descg_id'))));
+			$descNameArr = !empty($descnIds) ? array_column(service('desc/Name')->getListData(['descn_id'=>['in', $descnIds]]), 'name', 'descn_id') : [];
+			$descValueArr = !empty($descvIds) ? array_column(service('desc/Value')->getListData(['descv_id'=>['in', $descvIds]]), 'name', 'descv_id') : [];
+			$descGroupArr = !empty($descgIds) ? array_column(service('desc/Group')->getListData(['descg_id'=>['in', $descgIds]]), 'name', 'descg_id') : [];
+			foreach ($descArr as $key => $value) {
+				$descArr[$key]['group'] = $descGroupArr[$value['descg_id']] ?? '';
+				$descArr[$key]['name'] = $descNameArr[$value['descn_id']] ?? '';
+				$descArr[$key]['value'] = $descValueArr[$value['descv_id']] ?? '';
+			}
 		}
 		$info['desc'] = $descArr;
 		return $info;

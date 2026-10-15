@@ -16,21 +16,28 @@ const PRODUCT = {
 		$('.data-btn').on('click', function(){
 			const obj = $('#dealbox-data');
 			const title = $(this).parent().prev().prev().text();
-			obj.find('.dealbox-title,.input-group-addon').text(title);
+			const val = $(this).parent().prev().text().trim();
+			obj.find('.dealbox-title, .input-group-addon span').text(title);
 			obj.find('[name="name"]').val($(this).data('name'));
+			obj.find('[name="value"]').val(val);
 			obj.dealboxShow();
 		});
 		//保存SPUData数据 保存语言
 		$('.centerShow .save-btn').on('click', function(){
 			const obj = $(this);
+			const form = obj.parents('form');
 			if (obj.hasClass('batch-save-btn')) {
-				obj.parent().append('<input type="hidden" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
+				if (form.find('input.batch-spu-id').length === 0) {
+					form.append('<input type="hidden" class="batch-spu-id" name="spu_id" value="'+$('.detail-page').data('id')+'" />');
+				}
+			} else {
+				form.find('input.batch-spu-id').remove();
 			}
 			obj.button('loading');
-			post('/product/detail', obj.parents('form').serializeArray(), function(res){
+			post('/product/detail', form.serializeArray(), function(res){
 				showTips(res);
 				if (res.code == 1) {
-					if (obj.parent().find('[name="opn"]').val() != 'editSpuLanguage') {
+					if (form.find('[name="opn"]').val() != 'editSpuLanguage') {
 						window.location.reload();
 					} else {
 						obj.parents('.centerShow').parent().dealboxHide();
@@ -324,7 +331,7 @@ const PRODUCT = {
 			});
 		});
 		//描述选中
-		$('#sku-desc-content .glyphicon').on('click', function(){
+		$('#sku-desc-content td.tc .glyphicon').on('click', function(){
 			if ($(this).hasClass('glyphicon-ok-circle')) {
 				$(this).removeClass('glyphicon-ok-circle').addClass('glyphicon-ok-sign red');
 			} else {

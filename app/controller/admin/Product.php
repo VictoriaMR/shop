@@ -24,17 +24,20 @@ class Product extends AdminBase
 		frame('Html')->addJs();
 		frame('Html')->addCss();
 		
-		$status = iget('status', -1);
-		$site = iget('site', -1);
-		$cate = iget('cate', 0);
-		$stime = iget('stime');
-		$etime = iget('etime');
-		$spuId = iget('spu_id');
-		$page = iget('page', 1);
-		$size = iget('size', 30);
+		$status = iget('status/d', -1);
+		$site = iget('site/d', -1);
+		$cate = iget('cate/d', 0);
+		$stime = iget('stime/t', '');
+		$etime = iget('etime/t', '');
+		$spuId = iget('spu_id/d', 0);
+		$keyword = trim(iget('keyword', ''));
+		$page = iget('page/d', 1);
+		$size = iget('size/d', 30);
+
 		//spu状态
 		$spu = service('product/Spu');
 		$statusList = $spu->getStatusList();
+
 		//分类
 		$rawCateList = service('category/Category')->getListFormat(false);
 		$cateArr = array_column($rawCateList, 'name', 'cate_id');
@@ -48,9 +51,21 @@ class Product extends AdminBase
 			$tempArr[$cateId][] = $value;
 		}
 		$cateList = $tempArr;
+
 		$where = [];
 		if ($spuId > 0) {
-			$where['spu_id'] = (int)$spuId;
+			$where['spu_id'] = $spuId;
+		}
+		if ($keyword !== '') {
+			$lanSpuIds = service('product/Language')->getListData(['lan_id' => 0, 'name' => ['like', '%' . $keyword . '%']], 'spu_id');
+			$lanSpuIds = array_column($lanSpuIds, 'spu_id');
+			if (empty($lanSpuIds)) {
+				$where['spu_id'] = 0;
+			} elseif ($spuId > 0) {
+				$where['spu_id'] = in_array($spuId, $lanSpuIds) ? $spuId : 0;
+			} else {
+				$where['spu_id'] = ['in', $lanSpuIds];
+			}
 		}
 		if ($status > -1) {
 			$where['status'] = $status;
@@ -68,28 +83,30 @@ class Product extends AdminBase
 		} elseif ($etime) {
 			$where['add_time'] = ['<=', date('Y-m-d', strtotime($etime)).' 23:59:59'];
 		}
+
 		$total = $spu->getCountData($where);
 		$list = [];
 		if ($total > 0) {
-			$list = $spu->getList($where, '*', $page, $size);
-			foreach ($list as $key=>$value) {
-				$list[$key]['status_text'] = $statusList[$value['status']];
+			$list = $spu->getList($where, '*', $page, $size, ['spu_id' => 'desc']);
+			foreach ($list as $key => $value) {
+				$list[$key]['status_text'] = $statusList[$value['status']] ?? '--';
 			}
 		}
 
 		$this->view([
-			'spuId' => $spuId,
-			'status' => $status,
+			'spuId'      => $spuId,
+			'keyword'    => $keyword,
+			'status'     => $status,
 			'statusList' => $statusList,
-			'site' => $site,
-			'cate' => $cate,
-			'cateList' => $cateList,
-			'cateArr' => $cateArr,
-			'stime' => $stime,
-			'etime' => $etime,
-			'total' => $total,
-			'size' => $size,
-			'list' => $list,
+			'site'       => $site,
+			'cate'       => $cate,
+			'cateList'   => $cateList,
+			'cateArr'    => $cateArr,
+			'stime'      => $stime,
+			'etime'      => $etime,
+			'total'      => $total,
+			'size'       => $size,
+			'list'       => $list,
 		]);
 	}
 
@@ -290,8 +307,9 @@ class Product extends AdminBase
 		$rst = purchase()->spu()->saveResult($info['channel_id'], $info['item_id'], ipost(), 'save_data');
 		if ($rst) {
 			purchase()->spu()->updateData($id, ['status'=>purchase()->spu()->getConst('STATUS_SPU')]);
+			$this->success('保存成功');
 		}
-		$this->success('保存成功');
+		$this->error('保存失败');
 	}
 
 	public function detail()
@@ -307,16 +325,16 @@ class Product extends AdminBase
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 		$spuService = service('product/Spu');
-		$info = $spuService->getAdminInfo(iget('id'));
+		$info = $spuService->getAdminInfo(iget('id/d', 0));
 		if (!empty($info)) {
 			//spu状态
 			$statusList = $spuService->getStatusList();
 			//站点分类
-			$cateArr = category()->getListFormat();
+			$rawCateList = category()->getListFormat(false);
 			$siteArr = service('site/Site')->getListData([], 'site_id,name,cate_id');
 			$tempArr = [];
 			$cateId = 0;
-			foreach ($cateArr as $value) {
+			foreach ($rawCateList as $value) {
 				if ($value['parent_id'] == 0) {
 					$cateId = $value['cate_id'];
 					$tempArr[$cateId] = [];
@@ -327,9 +345,9 @@ class Product extends AdminBase
 			foreach ($siteArr as $value) {
 				$cateArr[$value['site_id']] = $tempArr[$value['cate_id']] ?? [];
 			}
-			$siteCate = $cateArr[$info['site_id']];
-
 			$info['category'] = array_reverse(category()->pCate($info['cate_id']));
+			$rootCateId = $info['category'][0]['cate_id'] ?? 0;
+			$siteCate = $cateArr[$info['site_id']] ?? ($tempArr[$rootCateId] ?? $rawCateList);
 
 			$tempArr = [];
 			foreach ($info['desc'] as $value) {
@@ -356,20 +374,24 @@ class Product extends AdminBase
 
 	protected function getSpuNameLanguage()
 	{
-		$id = ipost('id');
+		$id = ipost('id/d', 0);
+		if ($id <= 0) {
+			$this->error('参数不正确');
+		}
 		$list = service('product/Language')->getListData(['spu_id'=>$id]);
 		$list = array_column($list, null, 'lan_id');
-		$list[0]['language_name'] = '名称';
 		$languageList = sys()->language()->getListData();
-		foreach ($languageList as $key => $value) {
-			$list[$value['lan_id']] = [
-				'lan_id' => $value['lan_id'],
-				'tr_code' => $value['tr_code'],
-				'name' => empty($list[$value['lan_id']]) ? '' : $list[$value['lan_id']]['name'],
-				'language_name' => $value['name2'] ?? $value['name'],
+		$result = [];
+		foreach ($languageList as $value) {
+			$lanId = $value['lan_id'];
+			$result[$lanId] = [
+				'lan_id'        => $lanId,
+				'tr_code'       => $value['tr_code'],
+				'name'          => $list[$lanId]['name'] ?? '',
+				'language_name' => $lanId == 0 ? '中文名称' : ($value['name2'] ?: $value['name']),
 			];
 		}
-		$this->success('获取成功', $list);
+		$this->success('获取成功', $result);
 	}
 
 	protected function transfer()
@@ -388,8 +410,8 @@ class Product extends AdminBase
 
 	protected function editSpuLanguage()
 	{
-		$spuId = ipost('spu_id');
-		if (empty($spuId)) {
+		$spuId = ipost('spu_id/d', 0);
+		if ($spuId <= 0) {
 			$this->error('ID值不正确');
 		}
 		$language = ipost('language');
@@ -405,14 +427,14 @@ class Product extends AdminBase
 
 	protected function modifySpuImage()
 	{
-		$spuId = ipost('spu_id');
-		$attachId = ipost('attach_id');
-		if (empty($spuId) || empty($attachId)) {
+		$spuId = ipost('spu_id/d', 0);
+		$attachId = ipost('attach_id/d', 0);
+		if ($spuId <= 0 || $attachId <= 0) {
 			$this->error('参数不正确');
 		}
-		$sort = ipost('sort');
+		$sort = ipost('sort/d', 0);
 		$rst = service('product/SpuImage')->updateData(['spu_id'=>$spuId, 'attach_id'=>$attachId], ['sort'=>$sort]);
-		if ($rst) {
+		if ($rst !== false) {
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
@@ -420,9 +442,9 @@ class Product extends AdminBase
 
 	protected function deleteSpuImage()
 	{
-		$spuId = ipost('spu_id');
-		$itemId = ipost('item_id');
-		if (empty($spuId) || empty($itemId)) {
+		$spuId = ipost('spu_id/d', 0);
+		$itemId = ipost('item_id/d', 0);
+		if ($spuId <= 0 || $itemId <= 0) {
 			$this->error('参数不正确');
 		}
 		$rst = service('product/SpuImage')->deleteData(['spu_id'=>$spuId, 'item_id'=>$itemId]);
@@ -434,9 +456,9 @@ class Product extends AdminBase
 
 	protected function addSpuImage()
 	{
-		$spuId = ipost('spu_id');
-		$attachId = ipost('attach_id');
-		if (empty($spuId) || empty($attachId)) {
+		$spuId = ipost('spu_id/d', 0);
+		$attachId = ipost('attach_id/d', 0);
+		if ($spuId <= 0 || $attachId <= 0) {
 			$this->error('参数不正确');
 		}
 		$imageService = service('product/SpuImage');
@@ -444,7 +466,8 @@ class Product extends AdminBase
 		if ($imageService->getCountData($data)) {
 			$this->success('上传成功');
 		}
-		$data['sort'] = $imageService->loadData(['spu_id'=>$spuId], 'max(sort) as sort')['sort']+1;
+		$maxRow = $imageService->loadData(['spu_id'=>$spuId], 'max(sort) as sort');
+		$data['sort'] = (int)($maxRow['sort'] ?? 0) + 1;
 		$rst = $imageService->insert($data);
 		if ($rst) {
 			$this->success('上传成功');
@@ -456,47 +479,49 @@ class Product extends AdminBase
 	{
 		$data = [];
 		$param = ipost();
-		$id = $param['spu_id'];
+		$id = (int)($param['spu_id'] ?? 0);
 		if ($id <= 0) {
 			$this->error('ID不能为空');
 		}
 		if (isset($param['status'])) {
-			$data['status'] = $param['status'];
+			$data['status'] = (int)$param['status'];
 		}
 		if (isset($param['free_ship'])) {
-			$data['free_ship'] = $param['free_ship'];
+			$data['free_ship'] = (int)$param['free_ship'];
+		}
+		if (isset($param['is_hot'])) {
+			$data['is_hot'] = (int)$param['is_hot'];
 		}
 		if (isset($param['cate_id'])) {
-			$data['cate_id'] = $param['cate_id'];
+			$data['cate_id'] = (int)$param['cate_id'];
 		}
 		if (isset($param['gender'])) {
-			$data['gender'] = $param['gender'];
+			$data['gender'] = (int)$param['gender'];
 		}
 		if (isset($param['attach_id'])) {
-			$data['attach_id'] = $param['attach_id'];
+			$data['attach_id'] = (int)$param['attach_id'];
 		}
 		if (empty($data)) {
 			$this->error('参数不正确');
 		}
 		$rst = service('product/Spu')->updateData(['spu_id'=>$id], $data);
-		if ($rst) {
+		if ($rst !== false) {
 			if (isset($data['attach_id'])) {
 				service('product/SpuImage')->updateData(['spu_id'=>$id, 'attach_id'=>$data['attach_id']], ['sort'=>0]);
 			}
 			$this->success('修改成功');
-		} else {
-			$this->error('修改失败');
 		}
+		$this->error('修改失败');
 	}
 
 	protected function editSkuInfo()
 	{
 		$skuId = ipost('sku_id');
-		$spuId = ipost('spu_id');
-		if (empty($skuId) && empty($spuId)) {
+		$spuId = ipost('spu_id/d', 0);
+		if (empty($skuId) && $spuId <= 0) {
 			$this->error('参数不正确');
 		}
-		if (!empty($spuId)) {
+		if ($spuId > 0) {
 			$skuId = service('product/Sku')->getListData(['spu_id'=>$spuId], 'sku_id');
 			$skuId = array_column($skuId, 'sku_id');
 		} elseif (!is_array($skuId)) {
@@ -505,10 +530,10 @@ class Product extends AdminBase
 		$param = ipost();
 		$data = [];
 		if (isset($param['attach_id'])) {
-			$data['attach_id'] = $param['attach_id'];
+			$data['attach_id'] = (int)$param['attach_id'];
 		}
 		if (isset($param['status'])) {
-			$data['status'] = $param['status'];
+			$data['status'] = (int)$param['status'];
 		}
 		if (isset($param['price'])) {
 			$data['price'] = $param['price'];
@@ -517,7 +542,7 @@ class Product extends AdminBase
 			$data['original_price'] = $param['original_price'];
 		}
 		if (isset($param['stock'])) {
-			$data['stock'] = $param['stock'];
+			$data['stock'] = (int)$param['stock'];
 		}
 		if (isset($param['cost_price'])) {
 			$data['cost_price'] = $param['cost_price'];
@@ -537,7 +562,7 @@ class Product extends AdminBase
 			$service = service('product/Sku');
 		}
 		$rst = $service->updateData(['sku_id'=>['in', $skuId]], $data);
-		if ($rst) {
+		if ($rst !== false) {
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
@@ -545,11 +570,11 @@ class Product extends AdminBase
 
 	protected function modifySkuAttrImage()
 	{
-		$spuId = ipost('spu_id');
-		$attrId = ipost('attrn_id');
-		$attvId = ipost('attrv_id');
-		$attachId = ipost('attach_id');
-		if (empty($spuId) || empty($attrId) || empty($attvId)) {
+		$spuId = ipost('spu_id/d', 0);
+		$attrId = ipost('attrn_id/d', 0);
+		$attvId = ipost('attrv_id/d', 0);
+		$attachId = ipost('attach_id/d', 0);
+		if ($spuId <= 0 || $attrId <= 0 || $attvId <= 0) {
 			$this->error('参数不正确');
 		}
 		$skuService = service('product/Sku');
@@ -565,7 +590,7 @@ class Product extends AdminBase
 		}
 		$rst = $attrUsed->updateData(['item_id'=>['in', array_column($list, 'item_id')]], ['attach_id'=>$attachId]);
 		$skuService->updateData(['sku_id'=>['in', array_unique(array_column($list, 'sku_id'))]], ['attach_id'=>$attachId]);
-		if ($rst) {
+		if ($rst !== false) {
 			$this->success('更新成功');
 		}
 		$this->error('更新失败');
@@ -573,34 +598,36 @@ class Product extends AdminBase
 
 	protected function modifySpuDesc()
 	{
-		$id = ipost('item_id');
+		$id = ipost('item_id/d', 0);
 		$param = ipost();
 		$data = [];
 		if (isset($param['sort'])) {
-			$data['sort'] = $param['sort'];
+			$data['sort'] = (int)$param['sort'];
 		}
-		if (empty($data)) {
+		if (empty($data) && empty($param['spu_id'])) {
 			$this->error('参数不正确');
 		}
 		if (!empty($param['spu_id'])) {
-			if (empty($param['name'])) {
+			$name = trim($param['name'] ?? '');
+			$value = trim($param['value'] ?? '');
+			if ($name === '') {
 				$this->error('描述名不能为空');
 			}
-			if(empty($param['value'])) {
+			if ($value === '') {
 				$this->error('描述值不能为空');
 			}
-			$tempArr = service('desc/Name')->addNotExist($param['name']);
-			$data['descn_id'] = $tempArr[$param['name']];
-			$tempArr = service('desc/Value')->addNotExist($param['value']);
-			$data['descv_id'] = $tempArr[$param['value']];
-			$data['spu_id'] = $param['spu_id'];
+			$tempArr = service('desc/Name')->addNotExist($name);
+			$data['descn_id'] = $tempArr[$name];
+			$tempArr = service('desc/Value')->addNotExist($value);
+			$data['descv_id'] = $tempArr[$value];
+			$data['spu_id'] = (int)$param['spu_id'];
 		}
-		if (empty($id)) {
-			$rst = service('product/DescUsed')->addDescUsed($param['spu_id'], $data);
+		if ($id <= 0) {
+			$rst = service('product/DescUsed')->addDescUsed((int)$param['spu_id'], $data);
 		} else {
 			$rst = service('product/DescUsed')->updateData($id, $data);
 		}
-		if ($rst) {
+		if ($rst !== false) {
 			$this->success('操作成功');
 		}
 		$this->error('操作失败');
@@ -608,8 +635,8 @@ class Product extends AdminBase
 
 	protected function deleteSpuDesc()
 	{
-		$id = ipost('item_id');
-		if (empty($id)) {
+		$id = ipost('item_id/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
 		$rst = service('product/DescUsed')->deleteData($id);
@@ -621,16 +648,16 @@ class Product extends AdminBase
 
 	protected function getSpuDescInfo()
 	{
-		$id = ipost('item_id');
-		if (empty($id)) {
+		$id = ipost('item_id/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
 		$info = service('product/DescUsed')->loadData($id);
 		if ($info) {
 			$tempArr = service('desc/Name')->loadData($info['descn_id'], 'name');
-			$info['name'] = $tempArr['name'];
+			$info['name'] = $tempArr['name'] ?? '';
 			$tempArr = service('desc/Value')->loadData($info['descv_id'], 'name');
-			$info['value'] = $tempArr['name'];
+			$info['value'] = $tempArr['name'] ?? '';
 			$this->success('获取成功', $info);
 		}
 		$this->error('获取失败');
@@ -638,13 +665,13 @@ class Product extends AdminBase
 
 	protected function modifySpuIntroduceImage()
 	{
-		$id = ipost('item_id');
-		if (empty($id)) {
+		$id = ipost('item_id/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
-		$sort = ipost('sort');
+		$sort = ipost('sort/d', 0);
 		$rst = service('product/IntroUsed')->updateData($id, ['sort'=>$sort]);
-		if ($rst) {
+		if ($rst !== false) {
 			$this->success('排序成功');
 		}
 		$this->error('排序失败');
@@ -652,11 +679,10 @@ class Product extends AdminBase
 
 	protected function deleteSpuIntroduceImage()
 	{
-		$id = ipost('item_id');
-		if (empty($id)) {
+		$id = ipost('item_id/d', 0);
+		if ($id <= 0) {
 			$this->error('ID值不正确');
 		}
-		$sort = ipost('sort');
 		$rst = service('product/IntroUsed')->deleteData($id);
 		if ($rst) {
 			$this->success('删除成功');
@@ -666,9 +692,9 @@ class Product extends AdminBase
 
 	protected function addSpuIntroduceImage()
 	{
-		$spuId = ipost('spu_id');
-		$attachId = ipost('attach_id');
-		if (empty($spuId) || empty($attachId)) {
+		$spuId = ipost('spu_id/d', 0);
+		$attachId = ipost('attach_id/d', 0);
+		if ($spuId <= 0 || $attachId <= 0) {
 			$this->error('参数不正确');
 		}
 		$imageService = service('product/IntroUsed');
@@ -676,7 +702,8 @@ class Product extends AdminBase
 		if ($imageService->getCountData($data)) {
 			$this->success('上传成功');
 		}
-		$data['sort'] = $imageService->loadData(['spu_id'=>$spuId], 'max(sort) as sort')['sort']+1;
+		$maxRow = $imageService->loadData(['spu_id'=>$spuId], 'max(sort) as sort');
+		$data['sort'] = (int)($maxRow['sort'] ?? 0) + 1;
 		$rst = $imageService->insert($data);
 		if ($rst) {
 			$this->success('上传成功');
@@ -686,14 +713,19 @@ class Product extends AdminBase
 
 	protected function modifySpuData()
 	{
-		$spuId = ipost('spu_id');
-		$name = ipost('name');
-		$value = ipost('value');
-		if (empty($spuId) || empty($name)) {
+		$spuId = ipost('spu_id/d', 0);
+		$name = trim(ipost('name', ''));
+		$value = ipost('value', '');
+		if ($spuId <= 0 || $name === '') {
 			$this->error('参数不正确');
 		}
-		$rst = service('product/SpuData')->updateData($spuId, [$name=>$value]);
-		if ($rst) {
+		$spuDataService = service('product/SpuData');
+		if ($spuDataService->getCountData(['spu_id' => $spuId]) > 0) {
+			$rst = $spuDataService->updateData($spuId, [$name => $value]);
+		} else {
+			$rst = $spuDataService->insert(['spu_id' => $spuId, $name => $value]);
+		}
+		if ($rst !== false) {
 			$this->success('更新成功');
 		}
 		$this->error('更新失败');
@@ -706,11 +738,11 @@ class Product extends AdminBase
 		if (empty($idArr)) {
 			$this->error('ID值不正确');
 		}
-		if (empty($groupId)) {
+		if ($groupId === null || $groupId === '') {
 			$this->error('分组ID值不正确');
 		}
-		$rst = service('product/DescUsed')->updateData(['item_id'=>['in', $idArr]], ['descg_id'=>$groupId]);
-		if ($rst) {
+		$rst = service('product/DescUsed')->updateData(['item_id'=>['in', $idArr]], ['descg_id'=>(int)$groupId]);
+		if ($rst !== false) {
 			$this->success('更新成功');
 		}
 		$this->error('更新失败');

@@ -14,17 +14,17 @@ class Attachment extends Base
 		return $info['attach_id'];
 	}
 
-	public function getAttachmentByName($name, $cate='', $width='')
+	public function getAttachmentByName($name, $path='', $width='')
 	{
 		$where = ['name'=>$name];
-		if ($cate) {
-			$where['cate'] = $cate;
+		if ($path) {
+			$where['path'] = $path;
 		}
 		$info = $this->loadData($where);
 		if (empty($info)) {
 			return false;
 		}
-		return $this->urlInfo($info, $width);;
+		return $this->urlInfo($info, $width);
 	}
 
 	public function getAttachmentById($attachId)
@@ -38,13 +38,14 @@ class Attachment extends Base
 
 	public function urlInfo($info, $width='')
 	{
-		$info['url'] = mediaUrl($info['cate'].DS.$info['name'].($width == '' ? '' : DS.$width).'.'.$info['type']);
+		$path = str_replace('\\', '/', $info['path'] ?? $info['cate'] ?? '');
+		$info['url'] = mediaUrl($path.'/'.$info['name'].'.'.$info['type'], $width);
 		return $info;
 	}
 
 	public function getList($where, $type='400', $format=true)
 	{
-		$list = $this->getListData($where, 'attach_id,name,cate,type');
+		$list = $this->getListData($where, 'attach_id,name,path,type');
 		if (!$format) {
 			return $list;
 		}

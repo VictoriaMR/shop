@@ -15,13 +15,13 @@ class Sku extends Base
 		}
 		if (!empty($info)) {
 			$info['url'] = url($info['name'], ['s'=>$skuId]);
-			$info['image'] = siteUrl($info['image']);
+			$info['image'] = mediaUrl($info['image']);
 			foreach ($info['attr'] as $key=>$value) {
 				if (!empty($value['image'])) {
-					$info['attr'][$key]['image'] = siteUrl($value['image']);
+					$info['attr'][$key]['image'] = mediaUrl($value['image']);
 				}
 			}
-			$currencyService = service('currency/Currency');
+			$currencyService = service('system/Currency');
 			$spu = service('product/Spu');
 			$info['original_price'] = $spu->getOriginalPrice($info['price']);
 			$info['show_price'] = $spu->showPrice($info['spu_id']);

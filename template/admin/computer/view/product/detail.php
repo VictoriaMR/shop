@@ -1,6 +1,6 @@
-<div class="container-fluid detail-page" data-id="<?php echo $info['spu_id'];?>">
+<div class="container-fluid detail-page" data-id="<?php echo $info['spu_id'] ?? 0;?>">
 	<?php if (empty($info)) {?>
-	<p class="cred tc">找不到产品</p>
+	<p class="cred tc mt20">找不到产品</p>
 	<?php } else { ?>
 	<div class="field-row w100">
 		<div class="w50">
@@ -10,7 +10,7 @@
 			</dl>
 			<dl class="field-row">
 				<dt>状态：</dt>
-				<dd class="<?php echo $info['status'] == 1 ? 'green' : 'red';?> j-show-spu-status" data-status="<?php echo $info['status'];?>"><?php echo $statusList[$info['status']];?></dd>
+				<dd class="<?php echo $info['status'] == 1 ? 'green' : 'red';?> j-show-spu-status" data-status="<?php echo $info['status'];?>"><?php echo $statusList[$info['status']] ?? '--';?></dd>
 				<dd>
 					<button type="button" class="btn btn-primary btn-xs status-btn">修改</button>
 				</dd>
@@ -25,28 +25,28 @@
 			</dl>
 			<dl class="field-row">
 				<dt>产品分类：</dt>
-				<dd><?php echo implode(' - ', array_column($info['category'], 'name'));?></dd>
+				<dd><?php echo htmlspecialchars(implode(' - ', array_column($info['category'], 'name')) ?: '--');?></dd>
 				<dd>
 					<button type="button" class="btn btn-primary btn-xs category-btn">修改</button>
 				</dd>
 			</dl>
 			<dl class="field-row">
 				<dt>邮费：</dt>
-				<dd><?php echo $info['data']['post_fee'];?></dd>
+				<dd><?php echo $info['data']['post_fee'] ?? 0;?></dd>
 				<dd>
 					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="post_fee">修改</button>
 				</dd>
 			</dl>
 			<dl class="field-row">
 				<dt>体积：</dt>
-				<dd><?php echo $info['data']['volume'];?></dd>
+				<dd><?php echo htmlspecialchars($info['data']['volume'] ?? '');?></dd>
 				<dd>
 					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="volume">修改</button>
 				</dd>
 			</dl>
 			<dl class="field-row">
 				<dt>重量：</dt>
-				<dd><?php echo $info['data']['weight'];?></dd>
+				<dd><?php echo $info['data']['weight'] ?? 0;?></dd>
 				<dd>
 					<button type="button" class="btn btn-primary btn-xs data-btn" data-name="weight">修改</button>
 				</dd>
@@ -54,8 +54,8 @@
 			<dl class="field-row">
 				<dt>产品名称：</dt>
 				<dd>
-					<span class="glyphicon glyphicon-globe name-trans-btn"></span>
-					<span class="name f14 f600"><?php echo $info['name'];?></span>
+					<span class="glyphicon glyphicon-globe name-trans-btn" title="多语言配置"></span>
+					<span class="name f14 f600"><?php echo htmlspecialchars($info['name']);?></span>
 				</dd>
 			</dl>
 			<dl class="field-row">
@@ -71,36 +71,44 @@
 			<div class="pl10">
 				<dl class="field-row">
 					<dt>店铺ID：</dt>
-					<dd><?php echo empty($info['data']['shop_id'])?'':$info['data']['shop_id'];?></dd>
+					<dd><?php echo !empty($info['data']['shop_id']) ? $info['data']['shop_id'] : '--';?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>店铺名称：</dt>
-					<dd><?php echo empty($info['shop']['name'])?'':$info['shop']['name'];?></dd>
+					<dd><?php echo !empty($info['shop']['name']) ? htmlspecialchars($info['shop']['name']) : '--';?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>店铺链接：</dt>
 					<dd>
-						<a href="<?php echo empty($info['shop']['url'])?'javascript:;':$info['shop']['url'];?>" target="_blank"><?php echo empty($info['shop']['url'])?'':$info['shop']['url'];?> <span class="glyphicon glyphicon-link"></span></a>
+						<?php if (!empty($info['shop']['url'])) { ?>
+						<a href="<?php echo htmlspecialchars($info['shop']['url']);?>" target="_blank"><?php echo htmlspecialchars($info['shop']['url']);?> <span class="glyphicon glyphicon-link"></span></a>
+						<?php } else { ?>
+						--
+						<?php } ?>
 					</dd>
 				</dl>
 				<dl class="field-row">
 					<dt>供应商：</dt>
-					<dd><?php echo empty($info['data']['supplier'])?'':$info['data']['supplier'];?></dd>
+					<dd><?php echo !empty($info['data']['supplier']) ? htmlspecialchars($info['data']['supplier']) : '--';?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>供应商SPU：</dt>
-					<dd><?php echo $info['data']['item_id'];?></dd>
+					<dd><?php echo !empty($info['data']['item_id']) ? htmlspecialchars($info['data']['item_id']) : '--';?></dd>
 				</dl>
 				<dl class="field-row">
 					<dt>SPU链接：</dt>
 					<dd>
-						<a href="<?php echo $info['data']['item_url'];?>" target="_blank"><?php echo $info['data']['item_url'];?> <span class="glyphicon glyphicon-link"></span></a>
+						<?php if (!empty($info['data']['item_url'])) { ?>
+						<a href="<?php echo htmlspecialchars($info['data']['item_url']);?>" target="_blank"><?php echo htmlspecialchars($info['data']['item_url']);?> <span class="glyphicon glyphicon-link"></span></a>
+						<?php } else { ?>
+						--
+						<?php } ?>
 					</dd>
 				</dl>
 			</div>
 		</div>
 	</div>
-	<dl class="field-row" style="margin-bottom: 4px">
+	<dl class="field-row">
 		<dt>产品图片：</dt>
 		<dd>
 			<button class="btn btn-success btn-xs upload-image">上传图片</button>
@@ -110,10 +118,10 @@
 		<?php foreach ($info['image'] as $key => $value) {?>
 		<div class="spu-image" data-id="<?php echo $value['attach_id'];?>" data-item_id="<?php echo $value['item_id'];?>">
 			<div class="image-tcell">
-				<img src="<?php echo siteUrl('/image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+				<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
 			</div>
 			<div class="image-btn">
-				<a class="btn btn-default btn-xs" target="_blank" href="<?php echo str_replace('/400', '', $value['image']);?>"><span class="glyphicon glyphicon-search"></span></a>
+				<a class="btn btn-default btn-xs" target="_blank" href="<?php echo str_replace(['_400.webp', '/400'], ['.webp', ''], $value['image']);?>"><span class="glyphicon glyphicon-search"></span></a>
 				<?php if ($value['attach_id'] != $info['attach_id']){?>
 				<button class="btn btn-primary btn-xs spu-btn">SPU</button>
 				<?php }?>
@@ -125,11 +133,11 @@
 		<?php }?>
 		<div class="clear"></div>
 	</dl>
-	<dl class="field-row mt10" style="margin-bottom: 4px">
-		<dt>SKU列表 <span class="co f12">(售价、原价、成本、库存双击修改)</span>：</dt>
+	<dl class="field-row mt10">
+		<dt>SKU列表 <span class="co f12">(售价、原价、成本、库存、重量、体积双击修改)</span>：</dt>
 	</dl>
 	<dl>
-		<table class="table table-bordered table-hover" width="100%">
+		<table class="table table-bordered table-hover">
 			<tbody>
 				<tr>
 					<th width="80">封面图</th>
@@ -143,20 +151,20 @@
 					<th width="70">库存</th>
 					<th width="70">重量(g)</th>
 					<th width="90">体积(mm)</th>
-					<th width="60">供应商SKU</th>
+					<th width="90">供应商SKU</th>
 					<th width="140">上架时间</th>
 				</tr>
 				<?php foreach($info['sku'] as $value){?>
 				<tr data-id="<?php echo $value['sku_id'];?>">
 					<td>
 						<div class="sku-image">
-							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'] ?: siteUrl('image/common/noimg.svg');?>" class="lazyload">
 						</div>
 					</td>
 					<td><?php echo $value['sku_id'];?></td>
 					<td>
 						<?php foreach ($value['attr'] as $attrValue){?>
-						<p><?php echo $attrValue['attr_name'].': '.$attrValue['attv_name'];?></p>
+						<p><?php echo htmlspecialchars($attrValue['attr_name'].': '.$attrValue['attv_name']);?></p>
 						<?php }?>
 					</td>
 					<td>
@@ -165,14 +173,14 @@
 						</div>
 					</td>
 					<td class="can-edit" data-name="price"><?php echo $value['price'];?></td>
-					<td class="can-edit" data-name="cost_price"><?php echo $value['cost_price'];?></td>
+					<td class="can-edit" data-name="cost_price"><?php echo $value['cost_price'] ?? 0;?></td>
 					<td class="can-edit" data-name="stock"><?php echo $value['stock'];?></td>
-					<td class="can-edit" data-name="weight"><?php echo $value['weight'];?></td>
-					<td class="can-edit" data-name="volume"><?php echo $value['volume'];?></td>
-					<td><?php echo $value['item_id'];?></td>
+					<td class="can-edit" data-name="weight"><?php echo $value['weight'] ?? 0;?></td>
+					<td class="can-edit" data-name="volume"><?php echo htmlspecialchars($value['volume'] ?? '');?></td>
+					<td><?php echo htmlspecialchars($value['item_id'] ?? '--');?></td>
 					<td>
 						<?php echo $value['add_time'];?><br />
-						<?php echo $value['update_time'] ? $value['update_time'] : '-';?>
+						<?php echo !empty($value['update_time']) ? $value['update_time'] : '-';?>
 					</td>
 				</tr>
 				<?php }?>
@@ -182,16 +190,16 @@
 	<dl class="field-row mt10">
 		<div class="w50">
 			<div class="pr10">
-				<dl class="field-row mt10" style="margin-bottom: 4px">
-					<dt>属性列表	<span class="co f12">(修改图片, 快捷属性映射)</span>：</dt>
+				<dl class="field-row mt10">
+					<dt>属性列表 <span class="co f12">(修改图片, 快捷属性映射)</span>：</dt>
 				</dl>
-				<table class="table table-bordered" width="50%">
+				<table class="table table-bordered">
 					<tbody>
 						<tr>
-							<th width="50">属性名</th>
-							<th width="50">属性值</th>
-							<th width="20">图片</th>
-							<th width="50">操作</th>
+							<th width="120">属性名</th>
+							<th>属性值</th>
+							<th width="80">图片</th>
+							<th width="80">操作</th>
 						</tr>
 						<?php foreach($info['attr_map'] as $kv){
 							$count = 0;
@@ -200,13 +208,13 @@
 						<tr data-attrn_id="<?php echo $kv['attrn_id'];?>" data-attrv_id="<?php echo $value['attrv_id'];?>" data-spu_id="<?php echo $info['spu_id'];?>">
 							<?php if ($count == 0){?>
 							<td rowspan="<?php echo count($kv['son']);?>" class="tc">
-								<?php echo $kv['attr_name'];?>
+								<?php echo htmlspecialchars($kv['attr_name']);?>
 							</td>
 							<?php }?>
-							<td><?php echo $value['attv_name'];?></td>
+							<td><?php echo htmlspecialchars($value['attv_name']);?></td>
 							<td>
 								<div class="sku-attr-image">
-									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+									<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'] ?: siteUrl('image/common/noimg.svg');?>" class="lazyload">
 								</div>
 								<?php if (!empty($value['image'])){?>
 								<button class="btn btn-danger btn-xs delete-attr-image-btn">删除</button>
@@ -221,31 +229,31 @@
 		</div>
 		<div class="w50">
 			<div class="pr10" id="sku-desc-content">
-				<dl class="field-row mt10" style="margin-bottom: 4px">
-					<dt>描述列表	<span class="co f12">(修改)</span>：<button class="btn btn-success btn-xs add-desc-btn">增加</button> <button class="btn btn-info btn-xs desc-group-btn">分组</button></dt>
+				<dl class="field-row mt10">
+					<dt>描述列表 <span class="co f12">(修改)</span>：<button class="btn btn-success btn-xs add-desc-btn">增加</button> <button class="btn btn-info btn-xs desc-group-btn">分组</button></dt>
 				</dl>
-				<table class="table table-bordered" width="50%">
+				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th width="10">选择</th>
-							<th width="40">描述名</th>
-							<th width="50">描述值</th>
-							<th width="10">排序</th>
-							<th width="20">操作</th>
+							<th width="50">选择</th>
+							<th width="140">描述名</th>
+							<th>描述值</th>
+							<th width="70">排序</th>
+							<th width="130">操作</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php foreach($info['desc'] as $item){?>
 						<tr>
-							<td colspan="5"><?php echo $item['group']?:'默认分组';?></td>
+							<td colspan="5" class="f600"><?php echo htmlspecialchars($item['group'] ?: '默认分组');?></td>
 						</tr>
 						<?php foreach($item['list'] as $value){?>
 						<tr data-id="<?php echo $value['item_id'];?>">
 							<td class="tc f20">
 								<span class="glyphicon glyphicon-ok-circle"></span>
 							</td>
-							<td><?php echo $value['name'];?></td>
-							<td><?php echo $value['value'];?></td>
+							<td><?php echo htmlspecialchars($value['name']);?></td>
+							<td><?php echo htmlspecialchars($value['value']);?></td>
 							<td>
 								<input type="text" name="sort" value="<?php echo $value['sort'];?>" class="form-control">
 							</td>
@@ -261,7 +269,7 @@
 			</div>
 		</div>
 	</dl>
-	<dl class="field-row mt10" style="margin-bottom: 4px">
+	<dl class="field-row mt10">
 		<dt>描述图片：</dt>
 		<dd>
 			<button class="btn btn-success btn-xs upload-introduce-image">上传图片</button>
@@ -271,10 +279,10 @@
 		<?php foreach ($info['introduce'] as $key => $value) {?>
 		<div class="spu-introduce-image" data-id="<?php echo $value['attach_id'];?>">
 			<div class="image-tcell">
-				<img src="<?php echo siteUrl('/image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
+				<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload">
 			</div>
 			<div class="image-btn" data-id="<?php echo $value['item_id'];?>">
-				<a class="btn btn-default btn-xs" target="_blank" href="<?php echo str_replace('/400', '', $value['image']);?>"><span class="glyphicon glyphicon-search"></span></a>
+				<a class="btn btn-default btn-xs" target="_blank" href="<?php echo str_replace(['_400.webp', '/400'], ['.webp', ''], $value['image']);?>"><span class="glyphicon glyphicon-search"></span></a>
 				<input type="text" name="sort" class="form-control" value="<?php echo $value['sort'];?>" placeholder="排序">
 				<span class="glyphicon glyphicon-trash delete-introduce-btn"></span>
 			</div>
@@ -282,7 +290,6 @@
 		<?php }?>
 		<div class="clear"></div>
 	</dl>
-	<?php } ?>
 </div>
 <!-- 状态弹窗 -->
 <div id="status-dealbox" class="hidden">
@@ -486,4 +493,4 @@
 		</form>
 	</div>
 </div>
-<!-- 映射弹窗 -->
+<?php } ?>

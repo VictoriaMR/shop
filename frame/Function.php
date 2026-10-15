@@ -59,13 +59,14 @@ function siteUrl($name) {
 }
 
 function mediaUrl($url, $width = '') {
-	if ($width) {
+	$url = str_replace('\\', '/', $url);
+	if ($width !== '') {
 		$pos = strrpos($url, '.');
 		if ($pos !== false) {
-			$url = substr($url, 0, $pos) . DS . $width . substr($url, $pos);
+			$url = substr($url, 0, $pos) . '_' . $width . '.webp';
 		}
 	}
-	return siteUrl($url);
+	return '/' . ltrim($url, '/');
 }
 
 function url($c = '', $p = []) {
@@ -194,7 +195,7 @@ function getDirFile($path, &$result = null) {
 	$files = scandir($path);
 	foreach ($files as $v) {
 		if ($v === '.' || $v === '..') continue;
-		$newPath = $path . DS . $v;
+		$newPath = $path . '/' . $v;
 		if (is_file($newPath)) {
 			$result[] = $newPath;
 		} elseif (is_dir($newPath)) {
@@ -202,6 +203,10 @@ function getDirFile($path, &$result = null) {
 		}
 	}
 	return $result;
+}
+
+function isAdmin() {
+	return \App::get('router', 'class') === 'admin';
 }
 
 function randString($len = 16, $lower = true, $upper = true, $number = true) {

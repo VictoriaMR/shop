@@ -120,7 +120,7 @@ const OPERATE = {
 			const cateHtml = _this.pCate(cid, '');
 			$('#add-product-page .category-name').html(cateHtml);
 			$('#add-product-page [name="cate_id"]').val(cid);
-			obj.hide();
+			obj.modalHide();
 		});
 		// 修改站点
 		$('.change-site-btn').on('click', function(){
@@ -136,7 +136,7 @@ const OPERATE = {
 			}
 			$('#add-product-page .site-name').html(sid+' - '+obj.find('[name="site_id"] option:selected').text());
 			$('#add-product-page [name="site_id"]').val(sid);
-			obj.hide();
+			obj.modalHide();
 		});
 		// 图片切换
 		$('.hy-sl-list-inline li').on('click', function(){
@@ -192,7 +192,7 @@ const OPERATE = {
 			obj.modalHide();
 		});
 		// 描述删除
-		$('.desc-info-content .glyphicon-remove').on('click', function(){
+		$('.desc-info-content').on('click', '.glyphicon-remove', function(){
 			$(this).parents('.item').remove();
 		});
 		// 描述添加
@@ -376,16 +376,16 @@ const DROP = {
 		this.p_h = this.pObj.height();
 		this.p_x = this.pObj.offset().left;
 		this.p_y = this.pObj.offset().top;
-		this.pObj.on('mouseup', '.item .cover', this.end);
-		this.pObj.on('mousemove', '.item .cover', this.move);
-		this.pObj.on('mousedown', '.item .cover', this.down);
+		this.pObj.off('mouseup', '.item .cover').on('mouseup', '.item .cover', this.end);
+		this.pObj.off('mousemove', '.item .cover').on('mousemove', '.item .cover', this.move);
+		this.pObj.off('mousedown', '.item .cover').on('mousedown', '.item .cover', this.down);
 	},
 	down: function(e) {
 		DROP.obj = $(this).parents('.item');
 		DROP.w = DROP.obj.width();
 		DROP.h = DROP.obj.height();
 		DROP.status = true;
-		DROP.obj.before('<div class="index"></div');
+		DROP.obj.before('<div class="index"></div>');
 		DROP.obj.css({'position':'fixed', 'left':DROP.obj.offset().left - $(document).scrollLeft(), 'top':DROP.obj.offset().top - $(document).scrollTop(), 'z-index':2});
 		DROP.pObj.append(DROP.obj);
 	},
@@ -415,7 +415,7 @@ const DROP = {
 			if (x_index != this.in_index) {
 				this.in_index = x_index;
 				this.pObj.find('.index').remove();
-				this.pObj.find('.item').eq(x_index).before('<div class="index"></div');
+				this.pObj.find('.item').eq(x_index).before('<div class="index"></div>');
 			}
 		}
 	},

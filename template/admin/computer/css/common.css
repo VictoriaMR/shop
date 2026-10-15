@@ -86,11 +86,6 @@ img {
     padding-right: 8px;
 }
 
-.container-fluid {
-    padding-left: 16px;
-    padding-right: 16px;
-}
-
 .container-fluid .form-inline .form-group {
     margin-bottom: 10px;
 }
@@ -481,7 +476,7 @@ img {
 
 /* 顶部面包屑与标题条 */
 #header-nav {
-    margin-top: 10px;
+    margin: 10px 0;
 }
 
 #header-nav .nav {

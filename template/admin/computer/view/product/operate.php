@@ -1,6 +1,6 @@
 <?php if (!empty($info)){?>
 <div class="container-fluid" id="add-product-page">
-	<form action="<?php echo url("product/operate");?>" method="post" enctype="multipart/form-data">
+	<form action="<?php echo adminUrl('product/operate');?>" method="post" enctype="multipart/form-data">
 		<div class="left product-info-content">
 			<input type="hidden" name="opn" value="addProduct">
 			<input type="hidden" name="id" value="<?php echo iget('id/d', 0);?>">
@@ -211,7 +211,7 @@
 									<input type="text" class="form-control stock" name="sku[<?php echo $key;?>][stock]" value="<?php echo $value['stock'];?>">
 								</td>
 								<td>
-									<select name="type" class="form-control unit" name="sku[<?php echo $key;?>][unit]">
+									<select class="form-control unit" name="sku[<?php echo $key;?>][unit]">
 										<option value="0" selected>--</option>
 										<option value="1">件</option>
 										<option value="2">个</option>
