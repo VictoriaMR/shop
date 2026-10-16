@@ -1,31 +1,420 @@
-#spu-list .spu-item {
-	width: calc((100% - 50px) / 5);
-	border: 1px solid #ccc;
-	max-width: 240px;
-	min-width: 180px;
+#spu-index-page {
+	padding-top: 8px;
+	padding-bottom: 30px;
+}
+
+#spu-index-page .filter-bar {
+	background: #f8fafc;
+	border: 1px solid #e2e8f0;
+	border-radius: 6px;
+	padding: 10px 12px 0;
+	margin-bottom: 12px;
+}
+
+#spu-index-page .mr8 {
+	margin-right: 8px;
+}
+
+#spu-index-page .mb4 {
+	margin-bottom: 4px;
+}
+
+#spu-index-page .shop-filter-tag {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: #eff6ff;
+	color: #1d4ed8;
+	border: 1px solid #bfdbfe;
 	border-radius: 4px;
-	float: left;
-	margin-right: 10px;
-	margin-bottom: 10px;
+	padding: 5px 10px;
+	font-size: 12px;
+	font-weight: 600;
 }
-#spu-list .spu-name {
-	margin: 5px 0;
-	min-height: 34px;
+
+#spu-index-page .shop-filter-tag a {
+	color: #1d4ed8;
+	font-size: 14px;
+	line-height: 1;
 }
-#spu-list .spu-image {
+
+#spu-index-page .shop-filter-tag a:hover {
+	color: #dc2626;
+}
+
+/* 状态快捷Tab与视图切换工具栏 */
+#spu-index-page .spu-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-bottom: 12px;
+	padding-bottom: 8px;
+	border-bottom: 1px solid #e2e8f0;
+}
+
+#spu-index-page .status-tabs {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-wrap: wrap;
+}
+
+#spu-index-page .status-tab {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 5px 12px;
+	border-radius: 4px;
+	font-size: 12px;
+	font-weight: 600;
+	color: #475569;
+	background: #f1f5f9;
+	border: 1px solid transparent;
+	transition: all 0.15s ease;
+}
+
+#spu-index-page .status-tab:hover {
+	background: #e2e8f0;
+	color: #1e293b;
+}
+
+#spu-index-page .status-tab.active {
+	background: #2563eb;
+	color: #fff;
+}
+
+#spu-index-page .status-tab .tab-count {
+	display: inline-block;
+	padding: 0 6px;
+	border-radius: 10px;
+	font-size: 11px;
+	background: rgba(15, 23, 42, 0.08);
+	color: inherit;
+}
+
+#spu-index-page .status-tab.active .tab-count {
+	background: rgba(255, 255, 255, 0.22);
+	color: #fff;
+}
+
+#spu-index-page .view-switcher {
+	display: flex;
+	align-items: center;
+}
+
+#spu-index-page .view-mode-btn.active {
+	background: #1e293b;
+	color: #fff;
+	border-color: #1e293b;
+}
+
+/* 响应式网格卡片视图 */
+#spu-index-page .spu-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(226px, 1fr));
+	gap: 14px;
+}
+
+#spu-index-page .spu-card {
+	background: #fff;
+	border: 1px solid #e2e8f0;
+	border-radius: 8px;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+#spu-index-page .spu-card:hover {
+	border-color: #94a3b8;
+	box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+	transform: translateY(-2px);
+}
+
+#spu-index-page .spu-card-media {
+	position: relative;
 	width: 100%;
 	padding-bottom: 100%;
-	height: 0;
-	text-align: center;
-	position: relative;
+	background: #f8fafc;
+	overflow: hidden;
+	border-bottom: 1px solid #f1f5f9;
 }
-#spu-list .spu-image img {
+
+#spu-index-page .spu-card-media .spu-img-link {
 	position: absolute;
-	top: 0;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#spu-index-page .spu-card-media img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	transition: transform 0.25s ease;
+}
+
+#spu-index-page .spu-card:hover .spu-card-media img {
+	transform: scale(1.03);
+}
+
+#spu-index-page .card-top-left {
+	position: absolute;
+	top: 8px;
+	left: 8px;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	z-index: 2;
+}
+
+#spu-index-page .pid-badge {
+	background: rgba(15, 23, 42, 0.72);
+	color: #fff;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 2px 6px;
+	border-radius: 4px;
+	font-family: Consolas, Monaco, monospace;
+}
+
+#spu-index-page .sup-badge {
+	display: inline-block;
+	font-size: 11px;
+	font-weight: 600;
+	padding: 1px 6px;
+	border-radius: 3px;
+}
+
+#spu-index-page .sup-badge.sup-taobao {
+	background: #fff7ed;
+	color: #ea580c;
+	border: 1px solid #fed7aa;
+}
+
+#spu-index-page .sup-badge.sup-tmall {
+	background: #fef2f2;
+	color: #dc2626;
+	border: 1px solid #fecaca;
+}
+
+#spu-index-page .sup-badge.sup-1688 {
+	background: #eff6ff;
+	color: #2563eb;
+	border: 1px solid #bfdbfe;
+}
+
+#spu-index-page .sup-badge.sup-default {
+	background: #f1f5f9;
+	color: #475569;
+}
+
+#spu-index-page .card-top-right {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	z-index: 2;
+}
+
+#spu-index-page .spu-status-pill {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 4px;
+	font-size: 11px;
+	font-weight: 600;
+	cursor: pointer;
+	user-select: none;
+	transition: opacity 0.15s ease;
+}
+
+#spu-index-page .spu-status-pill:hover {
+	opacity: 0.85;
+}
+
+#spu-index-page .spu-status-pill.status-0 {
+	background: #fef3c7;
+	color: #b45309;
+	border: 1px solid #fde68a;
+}
+
+#spu-index-page .spu-status-pill.status-1 {
+	background: #dcfce7;
+	color: #15803d;
+	border: 1px solid #bbf7d0;
+}
+
+#spu-index-page .spu-status-pill.status-2 {
+	background: #fee2e2;
+	color: #b91c1c;
+	border: 1px solid #fecaca;
+}
+
+#spu-index-page .card-bottom-overlay {
+	position: absolute;
 	bottom: 0;
 	left: 0;
 	right: 0;
+	background: linear-gradient(to top, rgba(15, 23, 42, 0.72), transparent);
+	color: #fff;
+	padding: 16px 8px 5px;
+	font-size: 11px;
+	display: flex;
+	justify-content: space-between;
+	pointer-events: none;
 }
-#spu-list .name-content {
-	padding: 0 4px 4px 4px;
+
+#spu-index-page .spu-card-body {
+	padding: 10px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+#spu-index-page .spu-card-title {
+	font-size: 13px;
+	font-weight: 600;
+	color: #1e293b;
+	line-height: 1.4;
+	height: 36px;
+	margin-bottom: 6px;
+}
+
+#spu-index-page .spu-card-title:hover {
+	color: #2563eb;
+}
+
+#spu-index-page .spu-card-price-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin-bottom: 6px;
+}
+
+#spu-index-page .price-range {
+	color: #dc2626;
+	font-weight: 700;
+	font-size: 14px;
+}
+
+#spu-index-page .spu-flags {
+	display: flex;
+	gap: 4px;
+}
+
+#spu-index-page .flag-tag {
+	font-size: 10px;
+	padding: 1px 5px;
+	border-radius: 3px;
+	font-weight: 600;
+}
+
+#spu-index-page .flag-freeship {
+	background: #ecfdf5;
+	color: #047857;
+	border: 1px solid #a7f3d0;
+}
+
+#spu-index-page .flag-hot {
+	background: #fff1f2;
+	color: #e11d48;
+	border: 1px solid #fecdd3;
+}
+
+#spu-index-page .spu-card-meta {
+	font-size: 12px;
+	color: #64748b;
+	border-top: 1px dashed #e2e8f0;
+	padding-top: 6px;
+	margin-top: auto;
+}
+
+#spu-index-page .meta-line {
+	line-height: 1.6;
+}
+
+#spu-index-page .meta-label {
+	color: #94a3b8;
+	margin-right: 4px;
+}
+
+#spu-index-page .meta-link {
+	color: #475569;
+}
+
+#spu-index-page .meta-link:hover {
+	color: #2563eb;
+	text-decoration: underline;
+}
+
+#spu-index-page .spu-card-footer {
+	padding: 8px 10px;
+	background: #f8fafc;
+	border-top: 1px solid #f1f5f9;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+#spu-index-page .footer-right-actions {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+/* 紧凑表格视图 */
+#spu-index-page .spu-table-wrap {
+	background: #fff;
+}
+
+#spu-index-page .spu-table-wrap thead th {
+	background: #f1f5f9;
+	color: #334155;
+	font-weight: 600;
+	vertical-align: middle;
+}
+
+#spu-index-page .spu-table-wrap tbody td {
+	vertical-align: middle;
+}
+
+#spu-index-page .table-spu-thumb {
+	width: 52px;
+	height: 52px;
+	border-radius: 4px;
+	border: 1px solid #e2e8f0;
+	overflow: hidden;
+	background: #f8fafc;
+}
+
+#spu-index-page .table-spu-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#spu-index-page .table-title-link {
+	color: #1e293b;
+}
+
+#spu-index-page .table-title-link:hover {
+	color: #2563eb;
+	text-decoration: underline;
+}
+
+#spu-index-page .empty-state {
+	text-align: center;
+	padding: 50px 20px;
+	background: #f8fafc;
+	border: 1px dashed #cbd5e1;
+	border-radius: 8px;
+	color: #64748b;
+}
+
+#spu-index-page .empty-state .glyphicon {
+	font-size: 36px;
+	color: #94a3b8;
+	margin-bottom: 10px;
 }

@@ -130,6 +130,10 @@ class AttrUsed extends Base
 					unset($insert[$key]);
 				}
 			}
+			$insert = array_values($insert);
+			if (empty($insert)) {
+				return true;
+			}
 		}
 		return $this->insert($insert);
 	}
@@ -139,7 +143,9 @@ class AttrUsed extends Base
 		$cacheKey = 'spu:attr:'.siteId();
 		$rst = redis()->get($cacheKey);
 		if (!$rst) {
-			$sql = 'SELECT b.`attrn_id`,b.`attrv_id` FROM `product_sku` a LEFT JOIN `product_attr_used` b ON a.`sku_id`=b.`sku_id` WHERE a.`site_id`='.siteId().' GROUP BY b.`attrn_id`, b.`attrv_id` ORDER BY b.`attrn_id` ASC, b.`attrv_id` ASC';
+			$siteCateIds = service('category/Category')->getSiteCateIds();
+			$cateWhere = !empty($siteCateIds) ? ' AND s.`cate_id` IN (' . implode(',', $siteCateIds) . ')' : '';
+			$sql = 'SELECT b.`attrn_id`,b.`attrv_id` FROM `product_sku` a INNER JOIN `product_spu` s ON a.`spu_id`=s.`spu_id` INNER JOIN `product_attr_used` b ON a.`sku_id`=b.`sku_id` WHERE s.`status`=1 AND a.`status`=1' . $cateWhere . ' GROUP BY b.`attrn_id`, b.`attrv_id` ORDER BY b.`attrn_id` ASC, b.`attrv_id` ASC';
 			$rst = $this->getQuery($sql);
 			$tempArr = [];
 			foreach ($rst as $value) {

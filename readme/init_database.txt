@@ -874,7 +874,6 @@ CREATE TABLE `product_language` (
 DROP TABLE IF EXISTS `product_sku`;
 CREATE TABLE `product_sku` (
   `sku_id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
   `spu_id` int(11) NOT NULL COMMENT 'SPUID',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `attach_id` int(11) NOT NULL DEFAULT '0' COMMENT '主图ID',
@@ -901,7 +900,6 @@ CREATE TABLE `product_sku_data` (
 DROP TABLE IF EXISTS `product_spu`;
 CREATE TABLE `product_spu` (
   `spu_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键ID',
-  `site_id` tinyint(1) NOT NULL DEFAULT '0' COMMENT '站点ID',
   `cate_id` smallint(5) NOT NULL DEFAULT '0' COMMENT '分类ID',
   `status` tinyint(1) NOT NULL DEFAULT '0' COMMENT '状态',
   `rank` mediumint(9) NOT NULL DEFAULT '0' COMMENT '综合排名',

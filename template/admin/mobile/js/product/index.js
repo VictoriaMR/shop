@@ -4,24 +4,19 @@ $(function() {
 
 var PRODUCT = {
 	init: function() {
-		var _this = this;
-		$('select[name="site"]').on('change', function() {
-			var selectedSite = $(this).val();
-			_this.cate_init(selectedSite, -1);
-		});
-		if (typeof site !== 'undefined' && site >= 0 && typeof cate_list !== 'undefined' && cate_list[site]) {
-			_this.cate_init(site, typeof cate !== 'undefined' ? cate : -1);
+		if (typeof cate_list !== 'undefined' && cate_list) {
+			this.cate_init(typeof cate !== 'undefined' ? cate : 0);
 		}
 	},
-	cate_init: function(siteVal, cateVal) {
+	cate_init: function(cateVal) {
 		if (typeof cate_list === 'undefined' || !cate_list) {
 			return false;
 		}
-		var list = cate_list[siteVal] || cate_list[-1];
+		var list = Array.isArray(cate_list) ? cate_list : (cate_list[-1] || []);
 		if (!list || !list.length) {
 			return false;
 		}
-		var html = '<option value="-1">全部分类</option>';
+		var html = '<option value="0">全部分类</option>';
 		for (var i = 0; i < list.length; i++) {
 			var item = list[i];
 			var lev = parseInt(item.level || 0, 10);

@@ -34,6 +34,43 @@ class Category extends Base
 		return $tempArr[$siteCateId] ?? [];
 	}
 
+	/**
+	 * 获取指定站点关联的所有分类ID列表（结合站点根品类 site.cate_id 与 site_category_used）
+	 */
+	public function getSiteCateIds($siteId = null)
+	{
+		if (is_null($siteId)) {
+			$siteId = siteId();
+		}
+		$siteId = (int)$siteId;
+		if ($siteId <= 0) {
+			return [];
+		}
+		$allList = array_column($this->getList(), null, 'cate_id');
+		$cateIds = [];
+		$siteInfo = service('site/Site')->loadData($siteId, 'site_id,cate_id');
+		if (!empty($siteInfo['cate_id'])) {
+			$siteCates = $this->getSiteCateList($siteInfo['cate_id']);
+			if (!empty($siteCates)) {
+				$cateIds = array_column($siteCates, 'cate_id');
+			}
+		}
+		$usedRows = service('site/CategoryUsed')->getListData(['site_id' => $siteId], 'cate_id');
+		if (!empty($usedRows)) {
+			foreach ($usedRows as $row) {
+				$cid = (int)$row['cate_id'];
+				if (isset($allList[$cid])) {
+					$cateIds[] = $cid;
+					$subCates = $this->sCate($cid);
+					if (!empty($subCates)) {
+						$cateIds = array_merge($cateIds, array_column($subCates, 'cate_id'));
+					}
+				}
+			}
+		}
+		return array_values(array_unique(array_map('intval', $cateIds)));
+	}
+
 	protected function getList($cache=true)
 	{
 		if (empty($this->_list)) {

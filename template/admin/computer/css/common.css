@@ -38,6 +38,10 @@ ul, ol {
     padding: 0;
 }
 
+p {
+    margin: 0;
+}
+
 a {
     color: #3c3c3c;
     text-decoration: none;

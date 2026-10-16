@@ -19,7 +19,7 @@ class Product extends HomeBase
 				$spuId = service('product/Sku')->loadData(['sku_id'=>$skuId], 'spu_id')['spu_id'] ?? 0;
 			}
 			$lanId = lanId();
-			$info = $spu->getInfoCache($spuId, $lanId, siteId());
+			$info = $spu->getInfoCache($spuId, $lanId);
 			if ($info) {
 				$cateList = service('category/Category')->pCate($info['cate_id']);
 				$cateList = array_reverse($cateList);
@@ -100,7 +100,6 @@ class Product extends HomeBase
 		$sku = service('product/Sku');
 		$where = [
 			'sku_id' => $skuId,
-			'site_id' => siteId(),
 			'status' => $sku->getConst('STATUS_OPEN'),
 		];
 		$data = $sku->loadData($where, 'stock');
@@ -119,7 +118,7 @@ class Product extends HomeBase
 		if ($spuId <= 0) {
 			$this->error(distT('id_error'));
 		}
-		$info = service('product/Spu')->getInfoCache($spuId, lanId(), siteId());
+		$info = service('product/Spu')->getInfoCache($spuId, lanId());
 		if ($info) {
 			unset($info['description']);
 			unset($info['introduce']);

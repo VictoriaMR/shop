@@ -5,12 +5,12 @@ use app\service\Base;
 
 class Spu extends Base
 {
-	public function getInfoCache($spuId, $lanId=1, $siteId=0)
+	public function getInfoCache($spuId, $lanId=1)
 	{
 		$cacheKey = $this->getCacheKey($spuId, $lanId);
 		$info = redis()->get($cacheKey);
 		if ($info === false) {
-			$info = $this->getInfo($spuId, $lanId, $siteId);
+			$info = $this->getInfo($spuId, $lanId);
 			redis()->set($cacheKey, $info, $this->getConst('CACHE_EXPIRE_TIME'));
 		}
 		if ($info) {
@@ -80,12 +80,9 @@ class Spu extends Base
 		return mediaUrl($image);
 	}
 
-	public function getInfo($spuId, $lanId=1, $siteId=0)
+	public function getInfo($spuId, $lanId=1)
 	{
 		$where = ['spu_id'=>$spuId];
-		if ($siteId) {
-			$where['site_id'] = $siteId;
-		}
 		$info = $this->loadData($where, 'spu_id,status,cate_id,attach_id,min_price,max_price,free_ship,is_hot');
 		if (!$info) return [];
 		if ($info['status'] != $this->getConst('STATUS_OPEN')) {
@@ -233,6 +230,11 @@ class Spu extends Base
 			'weight'    => 0,
 		];
 		$info['shop'] = !empty($info['data']['shop_id']) ? (service('purchase/Shop')->loadData($info['data']['shop_id']) ?: []) : [];
+		$info['purchase_spu_id'] = 0;
+		if (!empty($info['data']['item_id'])) {
+			$purRow = service('purchase/Spu')->loadData(['item_id' => $info['data']['item_id']], 'purchase_spu_id');
+			$info['purchase_spu_id'] = (int)($purRow['purchase_spu_id'] ?? 0);
+		}
 		//名称
 		$lanRow = service('product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>0], 'name');
 		$info['name'] = $lanRow['name'] ?? '';
@@ -292,11 +294,13 @@ class Spu extends Base
 					'son' => [],
 				];
 			}
+			$prevCount = $attrMap[$value['attrn_id']]['son'][$value['attrv_id']]['sku_count'] ?? 0;
 			$attrMap[$value['attrn_id']]['son'][$value['attrv_id']] = [
-				'attrv_id' => $value['attrv_id'],
+				'attrv_id'  => $value['attrv_id'],
 				'attv_name' => $value['attv_name'],
 				'attach_id' => $value['attach_id'],
-				'image' => $value['image'],
+				'image'     => $value['image'],
+				'sku_count' => $prevCount + 1,
 			];
 			$skuAttrArr[$value['sku_id']][] = $value;
 		}
@@ -334,7 +338,44 @@ class Spu extends Base
 		return $info;
 	}
 
-	protected function getPrice($price)
+	/**
+	 * 同步重算SPU的最低价与最高价区间
+	 */
+	public function syncSpuPriceRange(int $spuId): array
+	{
+		if ($spuId <= 0) {
+			return ['min_price' => 0, 'max_price' => 0];
+		}
+		$skuService = service('product/Sku');
+		$skus = $skuService->getListData(['spu_id' => $spuId], 'price,status');
+		if (empty($skus)) {
+			return ['min_price' => 0, 'max_price' => 0];
+		}
+		$activePrices = [];
+		$allPrices = [];
+		foreach ($skus as $row) {
+			$p = (float)$row['price'];
+			if ($p > 0) {
+				$allPrices[] = $p;
+				if ((int)$row['status'] === 1) {
+					$activePrices[] = $p;
+				}
+			}
+		}
+		$prices = !empty($activePrices) ? $activePrices : $allPrices;
+		if (empty($prices)) {
+			return ['min_price' => 0, 'max_price' => 0];
+		}
+		$minPrice = min($prices);
+		$maxPrice = max($prices);
+		$this->updateData($spuId, [
+			'min_price' => $minPrice,
+			'max_price' => $maxPrice,
+		]);
+		return ['min_price' => $minPrice, 'max_price' => $maxPrice];
+	}
+
+	public function getPrice($price)
 	{
 		if ($price <= 100) {
 			$price += 88;
@@ -412,7 +453,11 @@ class Spu extends Base
 			}
 			$collSpuList = array_column($collSpuList, 'spu_id');
 		}
-		$where = ['site_id' => siteId(), 'status'=>$this->getConst('STATUS_OPEN')];
+		$where = ['status' => $this->getConst('STATUS_OPEN')];
+		$siteCateIds = service('category/Category')->getSiteCateIds();
+		if (!empty($siteCateIds)) {
+			$where['cate_id'] = ['in', $siteCateIds];
+		}
 		$orderBy = [];
 		if (!empty($spuList)) {
 			$cateList = $this->getListData(['spu_id'=>['in', $spuList]], 'cate_id');

@@ -211,7 +211,7 @@ final class Query
 		$paramValue = '';
 		$index = 0;
 		foreach ($data as $value) {
-			if (isset($intMap['site_id'])) {
+			if (isset($intMap['site_id']) && !isset($value['site_id']) && !isAdmin()) {
 				$value['site_id'] = siteId();
 			}
 			if ($this->_addTime) {
@@ -293,7 +293,7 @@ final class Query
 	private function analyzeWhere(&$paramsType = '', array &$params = [])
 	{
 		$intMap = $this->getIntMap();
-		if (isset($intMap['site_id'])) {
+		if (isset($intMap['site_id']) && !isset($this->_where['site_id']) && !isAdmin()) {
 			$this->_where['site_id'] = siteId();
 		}
 		if (!$this->_where) {

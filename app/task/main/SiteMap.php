@@ -74,7 +74,11 @@ class SiteMap extends TaskDriver
 				}
 			}
 			//站点产品
-			$where = ['site_id'=>$value['site_id'], 'status'=>1, 'spu_id'=>['>', $this->lastSpuId]];
+			$siteCateIds = $category->getSiteCateIds($value['site_id']);
+			$where = ['status' => 1, 'spu_id' => ['>', $this->lastSpuId]];
+			if (!empty($siteCateIds)) {
+				$where['cate_id'] = ['in', $siteCateIds];
+			}
 			$total = $spuService->getCountData($where);
 			if ($total > 0) {
 				$size = 100;

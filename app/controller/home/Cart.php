@@ -110,7 +110,6 @@ class Cart extends HomeBase
 		$sku = service('product/Sku');
 		$where = [
 			'sku_id' => $skuId,
-			'site_id' => siteId(),
 			'status' => $sku->getConst('STATUS_OPEN'),
 		];
 		$skuInfo = $sku->loadData($where, 'stock,price');
@@ -169,7 +168,6 @@ class Cart extends HomeBase
 		$sku = service('product/Sku');
 		$where = [
 			'sku_id' => $cartInfo['sku_id'],
-			'site_id' => siteId(),
 			'status' => $sku->getConst('STATUS_OPEN'),
 		];
 		$skuInfo = $sku->loadData($where, 'stock');

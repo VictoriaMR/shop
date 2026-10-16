@@ -21,6 +21,10 @@ class DescUsed extends Base
 					unset($insert[$key]);
 				}
 			}
+			$insert = array_values($insert);
+			if (empty($insert)) {
+				return true;
+			}
 		}
 		return $this->insert($insert);
 	}

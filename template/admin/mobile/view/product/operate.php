@@ -1,12 +1,48 @@
 <?php
 $operateId = iget('id/d', 0);
-$cateArr = [];
-if (!empty($info['cate_id'])) {
-	$cateArr = category()->pCate($info['cate_id'], true, true);
-}
-$initCateId = !empty($info['cate_id']) ? (int)$info['cate_id'] : 0;
+$saveData = $info['save_data'] ?? [];
+$initCateId = (int)($saveData['cate_id'] ?? ($info['cate_id'] ?? 0));
+$cateArr = $initCateId > 0 ? category()->pCate($initCateId, true, true) : [];
 $initCateName = !empty($cateArr) ? implode(' - ', array_column($cateArr, 'name')) : '未选择分类';
-$firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
+$firstSpuImg = $saveData['spu_image'] ?? (current($info['pdt_picture'] ?? []) ?: '');
+$savedSpuName = $saveData['spu_name'] ?? ($info['name'] ?? '');
+$savedPostFee = $saveData['post_fee'] ?? ($info['post_fee'] ?? '0');
+$savedSkus = ($saveData['sku'] ?? []) ?: [];
+$savedAttrGroups = isset($saveData['attr_group_checked']) && is_array($saveData['attr_group_checked']) ? array_flip($saveData['attr_group_checked']) : null;
+
+$descList = [];
+if (!empty($saveData['desc']['name']) && is_array($saveData['desc']['name'])) {
+	$savedDescNames = [];
+	foreach ($saveData['desc']['name'] as $dk => $dName) {
+		$descList[] = [
+			'name'    => $dName,
+			'value'   => $saveData['desc']['value'][$dk] ?? '',
+			'checked' => true,
+			'is_junk' => false,
+		];
+		$savedDescNames[$dName] = true;
+	}
+	foreach ($info['detail'] ?? [] as $origDesc) {
+		$origName = $origDesc['name'] ?? '';
+		if ($origName !== '' && !isset($savedDescNames[$origName])) {
+			$descList[] = [
+				'name'    => $origName,
+				'value'   => $origDesc['value'] ?? '',
+				'checked' => false,
+				'is_junk' => !empty($origDesc['is_junk']),
+			];
+		}
+	}
+} else {
+	foreach ($info['detail'] ?? [] as $origDesc) {
+		$descList[] = [
+			'name'    => $origDesc['name'] ?? '',
+			'value'   => $origDesc['value'] ?? '',
+			'checked' => isset($origDesc['default_checked']) ? (bool)$origDesc['default_checked'] : true,
+			'is_junk' => !empty($origDesc['is_junk']),
+		];
+	}
+}
 ?>
 <div class="operate-page" id="add-product-page" data-url="<?php echo adminUrl('product/operate');?>">
 	<!-- 顶部栏 -->
@@ -16,6 +52,11 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 			<span class="cur-page-title">配置采购产品 <?php echo $operateId > 0 ? '#' . $operateId : '';?></span>
 		</div>
 		<div class="header-actions">
+			<?php if (!empty($nextId)) { ?>
+			<a href="<?php echo adminUrl('product/operate', ['id' => $nextId]);?>" class="btn btn-info btn-xs">
+				下一条 #<?php echo (int)$nextId;?> <i class="fa fa-angles-right"></i>
+			</a>
+			<?php } ?>
 			<a href="<?php echo adminUrl('product/purchaseList');?>" class="btn btn-default btn-xs">
 				<i class="fa fa-arrow-left"></i> 返回采购池
 			</a>
@@ -32,8 +73,8 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 		<input type="hidden" name="opn" value="addProduct">
 		<input type="hidden" name="id" value="<?php echo $operateId;?>">
 		<input type="hidden" name="cate_id" value="<?php echo $initCateId;?>">
-		<input type="hidden" name="site_id" value="0">
 		<input type="hidden" name="spu_image" value="<?php echo htmlspecialchars((string)$firstSpuImg, ENT_QUOTES, 'UTF-8');?>">
+		<input type="hidden" name="submit_mode" id="submit-mode-input" value="save">
 
 		<!-- 1. 基础配置卡片 -->
 		<div class="section-card">
@@ -41,13 +82,6 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 				<span class="section-title"><i class="fa fa-sliders"></i> 基础信息配置</span>
 			</div>
 			<div class="info-list">
-				<div class="info-row">
-					<span class="info-label"><strong class="must">*</strong> 站点</span>
-					<div class="info-val-group">
-						<span class="site-name info-text">未选择站点</span>
-						<button type="button" class="btn btn-primary btn-xs change-site-btn">选择站点</button>
-					</div>
-				</div>
 				<div class="info-row">
 					<span class="info-label"><strong class="must">*</strong> 产品分类</span>
 					<div class="info-val-group">
@@ -58,11 +92,11 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 			</div>
 			<div class="form-group mt10">
 				<label class="form-label"><strong class="must">*</strong> 产品名称</label>
-				<input type="text" class="form-control" name="spu_name" value="<?php echo htmlspecialchars((string)($info['name'] ?? ''), ENT_QUOTES, 'UTF-8');?>" placeholder="请输入SPU产品标题">
+				<input type="text" class="form-control" name="spu_name" value="<?php echo htmlspecialchars((string)$savedSpuName, ENT_QUOTES, 'UTF-8');?>" placeholder="请输入SPU产品标题">
 			</div>
 			<div class="form-group" style="margin-bottom:0;">
 				<label class="form-label"><strong class="must">*</strong> 邮费</label>
-				<input type="text" class="form-control" name="post_fee" value="<?php echo htmlspecialchars((string)($info['post_fee'] ?? '0'), ENT_QUOTES, 'UTF-8');?>" placeholder="邮费金额">
+				<input type="text" class="form-control" name="post_fee" value="<?php echo htmlspecialchars((string)$savedPostFee, ENT_QUOTES, 'UTF-8');?>" placeholder="邮费金额">
 			</div>
 		</div>
 
@@ -206,16 +240,32 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 			</div>
 		</div>
 
-		<!-- 4. 属性映射卡片 -->
+		<!-- 4. 属性映射卡片（零弹窗行内极速工作台） -->
 		<div class="section-card attr-info-content">
 			<div class="section-header">
-				<span class="section-title"><i class="fa fa-tags"></i> 属性映射</span>
-				<span class="section-tip">点击红色/绿色标签编辑映射</span>
+				<span class="section-title"><i class="fa fa-tags"></i> 属性极速工作台</span>
+				<div class="attr-quick-bar">
+					<button type="button" class="btn btn-xs btn-default" id="btn-attr-group-all">全选</button>
+					<button type="button" class="btn btn-xs btn-default" id="btn-attr-group-invert">反选</button>
+					<button type="button" class="btn btn-xs btn-warning" id="btn-attr-ignore-single">忽略单值</button>
+					<button type="button" class="btn btn-xs btn-primary" id="btn-attr-clean-noise">去噪</button>
+					<button type="button" class="btn btn-xs btn-success" id="btn-attr-map-raw">全用原值</button>
+					<button type="button" class="btn btn-xs btn-info" id="btn-attr-sync-img">同步图</button>
+				</div>
+			</div>
+			<div class="attr-help-tip">
+				行内输入框可直接改名并实时同步SKU（已自动剥离促销后缀）；点击 <code>+</code> 可添加衍生多属性。
 			</div>
 			<div class="attr-rule-box">
 				<div class="attr-rule-top attr-rule">
-					<input type="text" name="attr_rule_value" class="form-control" placeholder="分割字符长(如:2)">
-					<button type="button" class="btn btn-primary btn-xs attr-rule-btn"><i class="fa fa-bolt"></i> 按规则生成</button>
+					<select name="attr_rule_target" class="form-control">
+						<option value="">全部属性组</option>
+						<?php foreach ($info['attr'] ?? [] as $av) { ?>
+						<option value="<?php echo htmlspecialchars((string)($av['name'] ?? ''), ENT_QUOTES, 'UTF-8');?>">仅：<?php echo htmlspecialchars((string)($av['name'] ?? ''), ENT_QUOTES, 'UTF-8');?></option>
+						<?php } ?>
+					</select>
+					<input type="text" name="attr_rule_value" class="form-control" placeholder="分隔符或字数">
+					<button type="button" class="btn btn-primary btn-xs attr-rule-btn"><i class="fa fa-bolt"></i> 生成</button>
 				</div>
 				<div class="attr-rule-name">
 					<input type="text" class="form-control" name="attr_rule_name[]" placeholder="属性1">
@@ -229,24 +279,53 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 				<?php foreach ($info['attr'] ?? [] as $av) {
 					$aName = (string)($av['name'] ?? '');
 					$hasNameMap = isset($attrNs[$aName]);
+					$mappedAttrName = $hasNameMap ? ($attrNs[$aName]['attrn_name'] ?? $attrNs[$aName]['name']) : ($av['clean_name'] ?? $aName);
+					$valCount = count($av['value'] ?? []);
+					$defaultGroupChecked = isset($av['default_checked']) ? (bool)$av['default_checked'] : true;
+					$isGroupChecked = $savedAttrGroups === null ? $defaultGroupChecked : isset($savedAttrGroups[$aName]);
 				?>
-				<div class="attr-map-row">
+				<div class="attr-map-row <?php echo $isGroupChecked ? '' : 'attr-group-disabled';?>" data-attr-group="<?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?>" data-val-count="<?php echo $valCount;?>">
 					<div class="attr-row-head">
-						<span class="row-label">属性名：</span>
-						<div class="attr-item attr-name <?php echo $hasNameMap ? 'success' : 'error';?>" data-name="<?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?>">
+						<label class="attr-group-check-label">
+							<input type="checkbox" class="attr-group-check" name="attr_group_checked[]" value="<?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?>" <?php echo $isGroupChecked ? 'checked' : '';?>>
+							<span>入库</span>
+						</label>
+						<?php if ($valCount <= 1) { ?>
+						<span class="single-attr-badge">单值</span>
+						<?php } ?>
+						<div class="attr-item attr-name success" data-name="<?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?>" title="<?php echo htmlspecialchars($mappedAttrName, ENT_QUOTES, 'UTF-8');?>">
 							<span><?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?></span>
-							<i class="fa fa-pen-to-square"></i>
 						</div>
+						<input type="text" class="form-control input-sm inline-attr-name" name="attr_name_map[<?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?>]" data-from-name="<?php echo htmlspecialchars($aName, ENT_QUOTES, 'UTF-8');?>" value="<?php echo htmlspecialchars($mappedAttrName, ENT_QUOTES, 'UTF-8');?>" <?php echo $isGroupChecked ? '' : 'disabled';?>>
+						<?php if ($valCount > 1) { ?>
+						<div class="attr-row-sub-actions">
+							<a href="javascript:void(0);" class="attr-val-select-all">全选值</a>
+							<span>·</span>
+							<a href="javascript:void(0);" class="attr-val-select-invert">反选值</a>
+						</div>
+						<?php } ?>
 					</div>
 					<div class="attr-row-vals">
 						<?php foreach ($av['value'] ?? [] as $avv) {
 							$vName = (string)($avv['name'] ?? '');
-							$hasValMap = isset($attrVs[$vName]);
-							$extJson = isset($attrVs[$vName]['ext']) ? json_encode($attrVs[$vName]['ext'], JSON_UNESCAPED_UNICODE) : '';
+							$cleanVName = (string)($avv['clean_name'] ?? $vName);
+							$valMapEntry = $attrVs[$vName] ?? ($attrVs[$cleanVName] ?? null);
+							$mappedValName = $valMapEntry ? ($valMapEntry['attrv_name'] ?? $valMapEntry['name']) : $cleanVName;
+							$extArr = ($valMapEntry && !empty($valMapEntry['ext']) && is_array($valMapEntry['ext'])) ? $valMapEntry['ext'] : [];
+							$extJson = !empty($extArr) ? json_encode($extArr, JSON_UNESCAPED_UNICODE) : '';
 						?>
-						<div class="attr-item attr-value <?php echo $hasValMap ? 'success' : 'error';?>" data-name="<?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?>" data-ext='<?php echo htmlspecialchars((string)$extJson, ENT_QUOTES, 'UTF-8');?>'>
-							<span><?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?></span>
-							<i class="fa fa-pen-to-square"></i>
+						<div class="attr-item attr-value success" data-name="<?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?>" data-mapped="<?php echo htmlspecialchars($mappedValName, ENT_QUOTES, 'UTF-8');?>" data-img="<?php echo htmlspecialchars((string)($avv['img'] ?? ''), ENT_QUOTES, 'UTF-8');?>" data-ext='<?php echo htmlspecialchars((string)$extJson, ENT_QUOTES, 'UTF-8');?>'>
+							<input type="checkbox" class="attr-val-check" <?php echo $isGroupChecked ? 'checked' : '';?>>
+							<span class="attr-val-text"><?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?></span>
+							<span class="inline-arrow">→</span>
+							<input type="text" class="form-control input-sm inline-attr-val" name="attr_val_map[<?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?>][main]" data-from-val="<?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?>" value="<?php echo htmlspecialchars($mappedValName, ENT_QUOTES, 'UTF-8');?>" <?php echo $isGroupChecked ? '' : 'disabled';?>>
+							<input type="hidden" class="inline-attr-ext" name="attr_val_map[<?php echo htmlspecialchars($vName, ENT_QUOTES, 'UTF-8');?>][ext]" value='<?php echo htmlspecialchars((string)$extJson, ENT_QUOTES, 'UTF-8');?>' <?php echo $isGroupChecked ? '' : 'disabled';?>>
+							<span class="ext-tag-wrap">
+								<?php foreach ($extArr as $ek => $ev) { ?>
+								<em class="ext-tag">+<?php echo htmlspecialchars($ek . ':' . $ev, ENT_QUOTES, 'UTF-8');?></em>
+								<?php } ?>
+							</span>
+							<span class="btn-open-ext" title="添加衍生属性">+</span>
 						</div>
 						<?php } ?>
 					</div>
@@ -258,11 +337,19 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 		<!-- 5. 产品SKU配置卡片 -->
 		<div class="section-card">
 			<div class="section-header">
-				<span class="section-title"><i class="fa fa-cubes"></i> 产品SKU (<?php echo count($info['sku'] ?? []);?>)</span>
+				<span class="section-title"><i class="fa fa-cubes"></i> 产品SKU (<span id="checked-sku-count">0</span>/<span id="total-sku-count"><?php echo count($info['sku'] ?? []);?></span>)</span>
+				<div class="sku-quick-btns">
+					<button type="button" class="btn btn-default btn-xs" id="btn-sku-select-all">全选</button>
+					<button type="button" class="btn btn-default btn-xs" id="btn-sku-select-invert">反选</button>
+					<button type="button" class="btn btn-default btn-xs" id="btn-sku-select-instock">有效库存</button>
+					<button type="button" class="btn btn-default btn-xs" id="btn-sku-toggle-unchecked">隐藏未选</button>
+				</div>
 			</div>
 			<!-- 快捷批量设置栏 -->
 			<div class="batch-bar">
 				<span class="batch-label">批量赋值：</span>
+				<button type="button" class="btn btn-default btn-xs batch-btn" data-type="price">采购价</button>
+				<button type="button" class="btn btn-default btn-xs batch-btn" data-type="stock">库存</button>
 				<button type="button" class="btn btn-default btn-xs batch-btn" data-type="unit">单位</button>
 				<button type="button" class="btn btn-default btn-xs batch-btn" data-type="weight">重量</button>
 				<button type="button" class="btn btn-default btn-xs batch-btn" data-type="length">长度</button>
@@ -273,18 +360,28 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 			<div id="sku-list" class="sku-operate-list">
 				<?php
 				$tmpVol = purchase()->spu()->getVolume($info['volume'] ?? '');
+				$attrDefaultCheckedMap = [];
+				foreach ($info['attr'] ?? [] as $avItem) {
+					$attrDefaultCheckedMap[$avItem['name'] ?? ''] = isset($avItem['default_checked']) ? (bool)$avItem['default_checked'] : true;
+				}
 				foreach ($info['sku'] ?? [] as $key => $value) {
-					$check = true;
-					foreach ($value['pvs'] ?? [] as $pk => $pv) {
-						if (!isset($attrNs[$pk]) || !isset($attrVs[$pv])) {
-							$check = false;
-							break;
-						}
-					}
-					$skuImg = trim((string)($value['img'] ?? ''));
+					$pvs = $value['pvs'] ?? [];
+					$cleanPvs = $value['clean_pvs'] ?? [];
+					$savedRow = $savedSkus[$key] ?? null;
+					$defaultRowChecked = isset($value['default_checked']) ? (bool)$value['default_checked'] : ((int)($value['stock'] ?? 0) > 0 && (float)($value['price'] ?? 0) > 0);
+					$isRowChecked = $savedSkus ? ($savedRow !== null) : $defaultRowChecked;
+					$skuImg = trim((string)($savedRow['img'] ?? ($value['img'] ?? '')));
 					$hasSkuImg = $skuImg !== '' && strpos($skuImg, 'image/common/') === false;
+					$skuPrice = $savedRow['price'] ?? ($value['price'] ?? '');
+					$skuStock = $savedRow['stock'] ?? ($value['stock'] ?? '');
+					$skuUnit = (int)($savedRow['unit'] ?? 0);
+					$skuWeight = $savedRow['weight'] ?? ($info['weight'] ?? '');
+					$skuLength = $savedRow['length'] ?? ($tmpVol['length'] ?: '');
+					$skuWidth = $savedRow['width'] ?? ($tmpVol['width'] ?: '');
+					$skuHight = $savedRow['hight'] ?? ($tmpVol['height'] ?: '');
+					$check = true;
 				?>
-				<div class="sku-op-card sku-row" data-sku="<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>">
+				<div class="sku-op-card sku-row <?php echo $isRowChecked ? '' : 'sku-row-disabled';?>" data-sku="<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>">
 					<div class="sku-op-top">
 						<div class="sku-op-thumb <?php echo $check ? 'check' : '';?>">
 							<?php if ($hasSkuImg) { ?>
@@ -296,30 +393,43 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 						</div>
 						<div class="sku-op-meta">
 							<div class="sku-key-line">
-								<span class="id-badge">源SKU: <?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?></span>
+								<label class="sku-row-check-label">
+									<input type="checkbox" class="sku-row-check" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][checked]" value="1" <?php echo $isRowChecked ? 'checked' : '';?>>
+									<span class="id-badge">源SKU: <?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?></span>
+								</label>
 							</div>
 							<div class="sku-orig-pvs">
-								<?php foreach ($value['pvs'] ?? [] as $pk => $pv) { ?>
+								<?php foreach ($pvs as $pk => $pv) { ?>
 									<span class="orig-pv-tag"><?php echo htmlspecialchars($pk . ': ' . $pv, ENT_QUOTES, 'UTF-8');?></span>
 								<?php } ?>
 							</div>
 							<div class="sku-mapped-cell">
-								<?php foreach ($value['pvs'] ?? [] as $pk => $pv) { ?>
-								<p class="mapped-line">
-									<span class="attr-name <?php echo isset($attrNs[$pk]) ? 'success' : 'error';?>" data-name="<?php echo htmlspecialchars((string)$pk, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)(isset($attrNs[$pk]) ? $attrNs[$pk]['name'] : $pk), ENT_QUOTES, 'UTF-8');?></span>
-									<span>: </span>
-									<span class="attr-value <?php echo isset($attrVs[$pv]) ? 'success' : 'error';?>" data-name="<?php echo htmlspecialchars((string)$pv, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)(isset($attrVs[$pv]) ? $attrVs[$pv]['name'] : $pv), ENT_QUOTES, 'UTF-8');?></span>
-									<input type="hidden" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][attr][<?php echo htmlspecialchars((string)$pk, ENT_QUOTES, 'UTF-8');?>]" value="<?php echo htmlspecialchars((string)$pv, ENT_QUOTES, 'UTF-8');?>">
-								</p>
-								<?php if (!empty($attrVs[$pv]['ext'])) {
-									foreach ($attrVs[$pv]['ext'] as $ek => $ev) { ?>
-								<p class="attr-map mapped-line">
-									<span class="attr-name success" data-name="<?php echo htmlspecialchars((string)$ek, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)$ek, ENT_QUOTES, 'UTF-8');?></span>
-									<span>: </span>
-									<span class="attr-value success" data-name="<?php echo htmlspecialchars((string)$ev, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)$ev, ENT_QUOTES, 'UTF-8');?></span>
-									<input type="hidden" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][attr][<?php echo htmlspecialchars((string)$ek, ENT_QUOTES, 'UTF-8');?>]" value="<?php echo htmlspecialchars((string)$ev, ENT_QUOTES, 'UTF-8');?>">
-								</p>
-								<?php } } ?>
+								<?php foreach ($pvs as $pk => $pv) {
+									$cleanPv = $cleanPvs[$pk] ?? $pv;
+									$nMapped = isset($attrNs[$pk]);
+									$valMapEntry = $attrVs[$pv] ?? ($attrVs[$cleanPv] ?? null);
+									$mapAttrN = $nMapped ? ($attrNs[$pk]['attrn_name'] ?? $attrNs[$pk]['name']) : $pk;
+									$mapAttrV = $valMapEntry ? ($valMapEntry['attrv_name'] ?? $valMapEntry['name']) : $cleanPv;
+									$groupEnabled = $savedAttrGroups === null ? ($attrDefaultCheckedMap[$pk] ?? true) : isset($savedAttrGroups[$pk]);
+								?>
+								<div class="sku-attr-group <?php echo $groupEnabled ? '' : 'sku-attr-ignored';?>" data-from-name="<?php echo htmlspecialchars((string)$pk, ENT_QUOTES, 'UTF-8');?>" data-from-val="<?php echo htmlspecialchars((string)$pv, ENT_QUOTES, 'UTF-8');?>">
+									<p class="mapped-line sku-attr-main">
+										<input type="checkbox" class="sku-single-attr-check" <?php echo $groupEnabled ? 'checked' : '';?>>
+										<span class="attr-name success" data-name="<?php echo htmlspecialchars((string)$pk, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)$mapAttrN, ENT_QUOTES, 'UTF-8');?></span>
+										<span>: </span>
+										<span class="attr-value success" data-name="<?php echo htmlspecialchars((string)$pv, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)$mapAttrV, ENT_QUOTES, 'UTF-8');?></span>
+										<input type="hidden" class="sku-attr-input" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][attr][<?php echo htmlspecialchars((string)$mapAttrN, ENT_QUOTES, 'UTF-8');?>]" value="<?php echo htmlspecialchars((string)$mapAttrV, ENT_QUOTES, 'UTF-8');?>" <?php echo $groupEnabled ? '' : 'disabled';?>>
+									</p>
+									<?php if (!empty($valMapEntry['ext']) && is_array($valMapEntry['ext'])) {
+										foreach ($valMapEntry['ext'] as $ek => $ev) { ?>
+									<p class="attr-map mapped-line">
+										<span class="attr-name success" data-name="<?php echo htmlspecialchars((string)$ek, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)$ek, ENT_QUOTES, 'UTF-8');?></span>
+										<span>: </span>
+										<span class="attr-value success" data-name="<?php echo htmlspecialchars((string)$ev, ENT_QUOTES, 'UTF-8');?>"><?php echo htmlspecialchars((string)$ev, ENT_QUOTES, 'UTF-8');?></span>
+										<input type="hidden" class="sku-attr-input" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][attr][<?php echo htmlspecialchars((string)$ek, ENT_QUOTES, 'UTF-8');?>]" value="<?php echo htmlspecialchars((string)$ev, ENT_QUOTES, 'UTF-8');?>" <?php echo $groupEnabled ? '' : 'disabled';?>>
+									</p>
+									<?php } } ?>
+								</div>
 								<?php } ?>
 							</div>
 						</div>
@@ -328,38 +438,38 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 					<div class="sku-inputs-grid">
 						<div class="sku-field">
 							<label>采购价</label>
-							<input type="text" class="form-control price" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][price]" value="<?php echo htmlspecialchars((string)($value['price'] ?? ''), ENT_QUOTES, 'UTF-8');?>">
+							<input type="text" class="form-control price" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][price]" value="<?php echo htmlspecialchars((string)$skuPrice, ENT_QUOTES, 'UTF-8');?>">
 						</div>
 						<div class="sku-field">
 							<label>库存</label>
-							<input type="text" class="form-control stock" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][stock]" value="<?php echo htmlspecialchars((string)($value['stock'] ?? ''), ENT_QUOTES, 'UTF-8');?>">
+							<input type="text" class="form-control stock" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][stock]" value="<?php echo htmlspecialchars((string)$skuStock, ENT_QUOTES, 'UTF-8');?>">
 						</div>
 						<div class="sku-field">
 							<label>单位</label>
 							<select class="form-control unit" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][unit]">
-								<option value="0" selected>--</option>
-								<option value="1">件</option>
-								<option value="2">个</option>
-								<option value="3">套</option>
-								<option value="4">打</option>
-								<option value="5">箱</option>
+								<option value="0" <?php echo $skuUnit === 0 ? 'selected' : '';?>>--</option>
+								<option value="1" <?php echo $skuUnit === 1 ? 'selected' : '';?>>件</option>
+								<option value="2" <?php echo $skuUnit === 2 ? 'selected' : '';?>>个</option>
+								<option value="3" <?php echo $skuUnit === 3 ? 'selected' : '';?>>套</option>
+								<option value="4" <?php echo $skuUnit === 4 ? 'selected' : '';?>>打</option>
+								<option value="5" <?php echo $skuUnit === 5 ? 'selected' : '';?>>箱</option>
 							</select>
 						</div>
 						<div class="sku-field">
 							<label>重量(g)</label>
-							<input type="text" class="form-control weight" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][weight]" placeholder="重量(g)" value="<?php echo htmlspecialchars((string)($info['weight'] ?? ''), ENT_QUOTES, 'UTF-8');?>">
+							<input type="text" class="form-control weight" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][weight]" placeholder="重量(g)" value="<?php echo htmlspecialchars((string)$skuWeight, ENT_QUOTES, 'UTF-8');?>">
 						</div>
 						<div class="sku-field">
 							<label>长(cm)</label>
-							<input type="text" class="form-control length" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][length]" value="<?php echo htmlspecialchars((string)($tmpVol['length'] ?: ''), ENT_QUOTES, 'UTF-8');?>" placeholder="长">
+							<input type="text" class="form-control length" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][length]" value="<?php echo htmlspecialchars((string)$skuLength, ENT_QUOTES, 'UTF-8');?>" placeholder="长">
 						</div>
 						<div class="sku-field">
 							<label>宽(cm)</label>
-							<input type="text" class="form-control width" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][width]" value="<?php echo htmlspecialchars((string)($tmpVol['width'] ?: ''), ENT_QUOTES, 'UTF-8');?>" placeholder="宽">
+							<input type="text" class="form-control width" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][width]" value="<?php echo htmlspecialchars((string)$skuWidth, ENT_QUOTES, 'UTF-8');?>" placeholder="宽">
 						</div>
 						<div class="sku-field">
 							<label>高(cm)</label>
-							<input type="text" class="form-control hight" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][hight]" value="<?php echo htmlspecialchars((string)($tmpVol['height'] ?: ''), ENT_QUOTES, 'UTF-8');?>" placeholder="高">
+							<input type="text" class="form-control hight" name="sku[<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>][hight]" value="<?php echo htmlspecialchars((string)$skuHight, ENT_QUOTES, 'UTF-8');?>" placeholder="高">
 						</div>
 					</div>
 				</div>
@@ -370,15 +480,27 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 		<!-- 6. 描述信息卡片 -->
 		<div class="section-card desc-info-content">
 			<div class="section-header">
-				<span class="section-title"><i class="fa fa-align-left"></i> 产品描述属性</span>
-				<button type="button" class="btn btn-xs btn-success btn-add-desc"><i class="fa fa-plus"></i> 添加描述</button>
+				<span class="section-title"><i class="fa fa-align-left"></i> 产品描述属性 (<span id="desc-checked-count">0</span>/<span id="desc-count"><?php echo count($descList);?></span>)</span>
+				<div class="desc-quick-btns">
+					<button type="button" class="btn btn-xs btn-warning btn-clean-junk-desc">过滤冗余</button>
+					<button type="button" class="btn btn-xs btn-default btn-check-all-desc">全选</button>
+					<button type="button" class="btn btn-xs btn-default btn-invert-desc">反选</button>
+					<button type="button" class="btn btn-xs btn-success btn-add-desc"><i class="fa fa-plus"></i> 添加</button>
+				</div>
 			</div>
 			<div class="content desc-pair-list">
-				<?php foreach ($info['detail'] ?? [] as $value) { ?>
-				<div class="item desc-pair-row">
-					<input type="text" class="form-control" name="desc[name][]" value="<?php echo htmlspecialchars((string)($value['name'] ?? ''), ENT_QUOTES, 'UTF-8');?>" placeholder="属性名">
+				<?php foreach ($descList as $value) {
+					$isDescChecked = $value['checked'] ?? true;
+					$isJunk = !empty($value['is_junk']);
+				?>
+				<div class="item desc-pair-row <?php echo $isDescChecked ? '' : 'desc-item-disabled';?>" data-junk="<?php echo $isJunk ? '1' : '0';?>">
+					<input type="checkbox" class="desc-item-check" <?php echo $isDescChecked ? 'checked' : '';?>>
+					<?php if ($isJunk) { ?>
+					<span class="junk-desc-badge">冗余</span>
+					<?php } ?>
+					<input type="text" class="form-control" name="desc[name][]" value="<?php echo htmlspecialchars((string)($value['name'] ?? ''), ENT_QUOTES, 'UTF-8');?>" placeholder="属性名" <?php echo $isDescChecked ? '' : 'disabled';?>>
 					<span class="pair-sep">:</span>
-					<input type="text" class="form-control" name="desc[value][]" value="<?php echo htmlspecialchars((string)($value['value'] ?? ''), ENT_QUOTES, 'UTF-8');?>" placeholder="属性值">
+					<input type="text" class="form-control" name="desc[value][]" value="<?php echo htmlspecialchars((string)($value['value'] ?? ''), ENT_QUOTES, 'UTF-8');?>" placeholder="属性值" <?php echo $isDescChecked ? '' : 'disabled';?>>
 					<button type="button" class="btn btn-danger btn-xs icon-btn remove-desc-row" title="移除"><i class="fa fa-trash-can"></i></button>
 				</div>
 				<?php } ?>
@@ -387,22 +509,27 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 
 		<!-- 提交保存按钮 -->
 		<div class="submit-footer-bar">
-			<button type="button" class="btn btn-success btn-lg btn-block confirm-btn" data-loading-text="<i class='fa fa-spinner fa-spin'></i> 保存中...">
-				<i class="fa fa-check"></i> 确认保存产品
+			<button type="button" class="btn btn-default btn-lg confirm-btn" data-mode="save" data-loading-text="保存中...">
+				保存配置
+			</button>
+			<button type="button" class="btn btn-primary btn-lg confirm-btn" data-mode="save_next" data-loading-text="保存跳转中...">
+				保存并下一条
+			</button>
+			<button type="button" class="btn btn-success btn-lg confirm-btn" data-mode="direct" data-loading-text="入库中...">
+				直通入库
 			</button>
 		</div>
 	</form>
 
 	<!-- 分类选择弹窗 -->
-	<div class="modal-mask change-category-modal" style="display: none;">
-		<div class="modal-panel">
-			<div class="modal-header">
-				<h4 class="dealbox-title title">分类修改</h4>
-				<span class="modal-close"><i class="fa fa-xmark"></i></span>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<label class="form-label">一级品类</label>
+	<div class="dealbox hidden change-category-modal">
+		<div class="mask"></div>
+		<div class="centerShow">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="dealbox-title">分类修改</div>
+			<div class="form-horizontal">
+				<div class="input-group">
+					<span class="input-group-addon"><span>一级品类</span></span>
 					<select name="root_category_id" class="form-control">
 						<option value="0">请选择品类</option>
 						<?php foreach ($cateList ?? [] as $value) {
@@ -411,94 +538,69 @@ $firstSpuImg = current($info['pdt_picture'] ?? []) ?: '';
 						<?php } } ?>
 					</select>
 				</div>
-				<div class="form-group">
-					<label class="form-label">子分类</label>
+				<div class="input-group">
+					<span class="input-group-addon"><span>子分类</span></span>
 					<select name="category_id" class="form-control">
 						<option value="0">请先选择品类</option>
 					</select>
 				</div>
-				<button type="button" class="btn btn-primary btn-block btn-save">保存选择</button>
-			</div>
-		</div>
-	</div>
-
-	<!-- 站点选择弹窗 -->
-	<div class="modal-mask change-site-modal" style="display: none;">
-		<div class="modal-panel">
-			<div class="modal-header">
-				<h4 class="dealbox-title title">站点修改</h4>
-				<span class="modal-close"><i class="fa fa-xmark"></i></span>
-			</div>
-			<div class="modal-body">
-				<div class="form-group">
-					<label class="form-label">所属站点</label>
-					<select name="site_id" class="form-control">
-						<option value="0">请选择站点</option>
-						<?php foreach ($siteList ?? [] as $value) { ?>
-						<option value="<?php echo (int)$value['site_id'];?>"><?php echo htmlspecialchars((string)$value['name'], ENT_QUOTES, 'UTF-8');?></option>
-						<?php } ?>
-					</select>
+				<div class="mt20">
+					<button type="button" class="btn btn-primary btn-lg btn-block btn-save">保存选择</button>
 				</div>
-				<button type="button" class="btn btn-primary btn-block btn-save">保存选择</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- 属性映射弹窗 -->
-	<div class="modal-mask map-modal-mask" style="display: none;">
-		<div class="modal-panel">
-			<div class="modal-header">
-				<h4 class="dealbox-title title">属性映射</h4>
-				<span class="modal-close"><i class="fa fa-xmark"></i></span>
-			</div>
-			<div class="modal-body">
-				<form class="map-modal" onsubmit="return false;">
-					<input type="hidden" name="from_name">
-					<input type="hidden" name="type">
-					<input type="hidden" name="opn" value="attrMap">
-					<div class="content"></div>
-				</form>
-			</div>
+	<div class="dealbox hidden map-modal-box">
+		<div class="mask"></div>
+		<div class="centerShow">
+			<form class="map-modal form-horizontal" onsubmit="return false;">
+				<button type="button" class="close" aria-hidden="true">&times;</button>
+				<div class="dealbox-title title">属性映射</div>
+				<input type="hidden" name="from_name">
+				<input type="hidden" name="type">
+				<input type="hidden" name="opn" value="attrMap">
+				<div class="content"></div>
+			</form>
 		</div>
 	</div>
 
 	<!-- 批量单位/重量/尺寸赋值弹窗 -->
-	<div class="modal-mask batch-edit-modal" style="display: none;">
-		<div class="modal-panel">
-			<div class="modal-header">
-				<h4 class="dealbox-title title">批量赋值</h4>
-				<span class="modal-close"><i class="fa fa-xmark"></i></span>
-			</div>
-			<div class="modal-body">
-				<input type="hidden" name="type" value="">
-				<div class="content form-group"></div>
-				<button type="button" class="btn btn-primary btn-block btn-save">确认批量赋值</button>
+	<div class="dealbox hidden batch-edit-modal">
+		<div class="mask"></div>
+		<div class="centerShow">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="dealbox-title title">批量赋值</div>
+			<input type="hidden" name="type" value="">
+			<div class="content"></div>
+			<div class="mt20">
+				<button type="button" class="btn btn-primary btn-lg btn-block btn-save">确认批量赋值</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- SKU主图设置弹窗 -->
-	<div class="modal-mask sku-modal" style="display: none;">
-		<div class="modal-panel">
-			<div class="modal-header">
-				<h4 class="dealbox-title title">SKU主图设置</h4>
-				<span class="modal-close"><i class="fa fa-xmark"></i></span>
+	<div class="dealbox hidden sku-modal">
+		<div class="mask"></div>
+		<div class="centerShow">
+			<button type="button" class="close" aria-hidden="true">&times;</button>
+			<div class="dealbox-title title">SKU主图设置</div>
+			<div class="sku-check-list">
+				<?php foreach ($info['sku'] ?? [] as $key => $value) {
+					$arr = [];
+					foreach ($value['pvs'] ?? [] as $pk => $pv) {
+						$arr[] = $pk . ': ' . $pv;
+					}
+				?>
+				<label class="sku-check-item">
+					<input type="checkbox" data-sku="<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>">
+					<span><?php echo htmlspecialchars(!empty($arr) ? implode(' / ', $arr) : '单品默认规格', ENT_QUOTES, 'UTF-8');?></span>
+				</label>
+				<?php } ?>
 			</div>
-			<div class="modal-body">
-				<div class="sku-check-list">
-					<?php foreach ($info['sku'] ?? [] as $key => $value) {
-						$arr = [];
-						foreach ($value['pvs'] ?? [] as $pk => $pv) {
-							$arr[] = $pk . ': ' . $pv;
-						}
-					?>
-					<label class="sku-check-item">
-						<input type="checkbox" data-sku="<?php echo htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8');?>">
-						<span><?php echo htmlspecialchars(implode(' / ', $arr), ENT_QUOTES, 'UTF-8');?></span>
-					</label>
-					<?php } ?>
-				</div>
-				<button type="button" class="btn btn-primary btn-block btn-save">确认配图</button>
+			<div class="mt20">
+				<button type="button" class="btn btn-primary btn-lg btn-block btn-save">确认配图</button>
 			</div>
 		</div>
 	</div>

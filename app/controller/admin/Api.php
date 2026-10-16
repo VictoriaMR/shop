@@ -77,25 +77,33 @@ class Api extends AdminBase
 			$id = purchase()->spu()->insertData($where, true);
 		}
 		$shopId = 0;
-		if (!empty($data['seller'])) {
+		if (!empty($data['seller']) && is_array($data['seller'])) {
 			// 添加店铺
-			$shopId = purchase()->shop()->addShop($channelId, $data['seller']['shop_id'], $data['seller']['shop_name'], $data['seller']['shop_url'], $data['seller']['service']);
+			$shopId = purchase()->shop()->addShop(
+				$channelId,
+				$data['seller']['shop_id'] ?? '',
+				$data['seller']['shop_name'] ?? '',
+				$data['seller']['shop_url'] ?? '',
+				$data['seller']['service'] ?? []
+			);
 		}
 		$price = 0;
-		if (!empty($data['sku'])) {
-			$price = min(array_column($data['sku'], 'price'));
+		$skuList = (!empty($data['sku']) && is_array($data['sku'])) ? $data['sku'] : [];
+		if (!empty($skuList)) {
+			$prices = array_column($skuList, 'price');
+			$price = !empty($prices) ? min($prices) : 0;
 		}
 		$updateData = [
 			'status' => purchase()->spu()->getConst('STATUS_SET'),
 			'mem_id' => userId(),
-			'name' => $data['name'],
+			'name' => $data['name'] ?? '',
 			'purchase_shop_id' => $shopId,
-			'sale_count' => $data['sale_count'] ?? 0,
+			'sale_count' => (int)($data['sale_count'] ?? 0),
 			'price' => $price,
 		];
 		$rst = purchase()->spu()->updateData($where, $updateData);
 		//更新采购产品
-		$rst = purchase()->sku()->addNotExist($id, $data['sku']);
+		$rst = purchase()->sku()->addNotExist($id, $skuList);
 		$rst = purchase()->spu()->saveResult($channelId, $data['item_id'], $data);
 		$this->success('上传成功');
 	}

@@ -89,6 +89,12 @@ class Category extends HomeBase
 		} elseif ($cateId) {
 			$where['cate_id'] = $cateId;
 		}
+		if (!isset($where['cate_id'])) {
+			$siteCateIds = $category->getSiteCateIds();
+			if (!empty($siteCateIds)) {
+				$where['cate_id'] = ['in', $siteCateIds];
+			}
+		}
 		$spuIdArr = [];
 		if ($vid) {
 			$spuIdArr = $attrUsed->getSpuId([$vid]);
@@ -126,7 +132,6 @@ class Category extends HomeBase
 					$orderBy = ['grade'=>'desc'];
 					break;
 			}
-			$where['site_id'] = siteId();
 			$list = $spu->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, $orderBy, lanId(), true, true);
 			foreach ($list as $key=>$value) {
 				$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);

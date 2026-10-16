@@ -30,9 +30,9 @@
 			</div>
 			<div class="filter-item filter-full">
 				<select class="form-control" name="cate">
-					<option value="-1">全部分类</option>
+					<option value="0">全部分类</option>
 					<?php
-					$allCates = $cateList[-1] ?? [];
+					$allCates = isset($cateList[0]) ? $cateList : ($cateList[-1] ?? []);
 					if (!empty($allCates)) {
 						foreach ($allCates as $cIdx => $cRow) {
 							$cId = (int)$cRow['cate_id'];
@@ -126,6 +126,5 @@
 
 <script type="text/javascript">
 var cate_list = <?php echo json_encode($cateList ?? [], JSON_UNESCAPED_UNICODE);?>;
-var site = <?php echo (int)$site;?>;
 var cate = <?php echo (int)$cate;?>;
 </script>

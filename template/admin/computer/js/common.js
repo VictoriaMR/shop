@@ -56,11 +56,11 @@ function confirm(msg, callbck) {
 	}
 	const obj = $('#confirm-pop');
 	obj.find('.message').text(msg);
+	obj.find('.btn.confirm').button('reset');
 	obj.show();
-	obj.on('click', '.btn.cancel, .mask', function(){
+	obj.off('click').on('click', '.btn.cancel, .mask', function(){
 		obj.hide();
-	});
-	obj.on('click', '.btn.confirm', function(){
+	}).on('click', '.btn.confirm', function(){
 		callbck($(this), obj);
 	});
 }
@@ -187,19 +187,22 @@ $(function(){
 		obj.css({cursor: 'pointer'});
 		obj.attr('title', '点击查看大图');
 		obj.on('click', function(){
-			var obj = $('.bigImage-modal');
-			if (obj.length == 0) {
-				var html = '<div class="s-modal bigImage-modal" style="width:800px;height:800px">\
-								<i class="glyphicon glyphicon-remove"></i>\
-								<div class="content" style="font-size:0">\
-									<img src="">\
+			var modal = $('.bigImage-modal');
+			if (modal.length == 0) {
+				var html = '<div class="dealbox hidden bigImage-modal">\
+								<div class="mask"></div>\
+								<div class="centerShow" style="width:auto;max-width:90vw;max-height:92vh;padding:16px;">\
+									<button type="button" class="close" aria-hidden="true">&times;</button>\
+									<div class="content" style="font-size:0;text-align:center;">\
+										<img src="" style="max-width:85vw;max-height:85vh;object-fit:contain;">\
+									</div>\
 								</div>\
 							</div>';
 				$('body').append(html);
-				obj = $('.bigImage-modal');
+				modal = $('.bigImage-modal');
 			}
-			obj.find('.content img').attr('src', $(this).attr('src'));
-			obj.modalShow();
+			modal.find('.content img').attr('src', $(this).attr('data-src') || $(this).attr('src'));
+			modal.dealboxShow();
 		});
 	};
 	$.fn.imageUpload = function(cate, callback) {

@@ -29,7 +29,6 @@ class Order extends Base
 		//获取sku信息
 		$sku = service('product/Sku');
 		$where = [
-			'site_id' => $this->siteId(),
 			'sku_id' => ['in', array_keys($skuIdArr)],
 			'status' => $sku->getConst('STATUS_OPEN'),
 		];

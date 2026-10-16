@@ -42,6 +42,10 @@ class Search extends HomeBase
 		if (!empty($spuIdArr)) {
 			$where['spu_id'] = ['in', $spuIdArr];
 		}
+		$siteCateIds = service('category/Category')->getSiteCateIds();
+		if (!empty($siteCateIds)) {
+			$where['cate_id'] = ['in', $siteCateIds];
+		}
 		$where['status'] = $spu->getConst('STATUS_OPEN');
 		$total = $spu->getCountData($where);
 		if ($total >0) {
@@ -60,7 +64,6 @@ class Search extends HomeBase
 					$orderBy = ['grade'=>'desc'];
 					break;
 			}
-			$where['site_id'] = siteId();
 			$list = $spu->getList($where, 'spu_id,gender,attach_id,min_price,max_price,free_ship,is_hot', $page, $size, $orderBy, lanId(), true, true);
 			foreach ($list as $key=>$value) {
 				$list[$key]['url'] = url($value['name'], ['p'=>$value['spu_id']]);

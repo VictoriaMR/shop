@@ -70,12 +70,24 @@ class Html
 		$path = ROOT_PATH . 'template/' . \App::get('domain', 'template') . '/' . $device . '/';
 		$file = 'static/' . $name . '.' . $type;
 
-		if (\App::get('domain', 'static_cache') && is_file($path . $file)) {
-			return $file;
+		$targetFile = $path . $file;
+		$arr = array_unique($arr);
+		if (\App::get('domain', 'static_cache') && is_file($targetFile)) {
+			$cacheMtime = (int)@filemtime($targetFile);
+			$needRebuild = false;
+			foreach ($arr as $value) {
+				$source = $path . $type . '/' . $value . '.' . $type;
+				if (is_file($source) && (int)@filemtime($source) > $cacheMtime) {
+					$needRebuild = true;
+					break;
+				}
+			}
+			if (!$needRebuild) {
+				return $file;
+			}
 		}
 
 		$str = '';
-		$arr = array_unique($arr);
 		foreach ($arr as $value) {
 			$source = $path . $type . '/' . $value . '.' . $type;
 			if (is_file($source)) {

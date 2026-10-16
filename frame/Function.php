@@ -51,11 +51,19 @@ function page($size = 0, $total = 0) {
 }
 
 function siteUrl($name) {
-	static $prefix = null;
-	if ($prefix === null) {
-		$prefix = '/' . (isMobile() ? 'mobile' : 'computer') . '/';
+	static $device = null;
+	if ($device === null) {
+		$device = isMobile() ? 'mobile' : 'computer';
 	}
-	return $prefix . ltrim($name, '/') . '?v=' . version();
+	$cleanName = ltrim($name, '/');
+	$ver = version();
+	if (!isDebug()) {
+		$localFile = ROOT_PATH . 'template/' . \App::get('domain', 'template') . '/' . $device . '/' . $cleanName;
+		if (is_file($localFile)) {
+			$ver = (string)@filemtime($localFile);
+		}
+	}
+	return '/' . $device . '/' . $cleanName . '?v=' . $ver;
 }
 
 function mediaUrl($url, $width = '') {

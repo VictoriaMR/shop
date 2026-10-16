@@ -20,19 +20,23 @@ class Sku extends Base
 				'unique_id' => $key,
 			];
 			$tmp = [];
-			foreach ($value['pvs'] as $k=>$v) {
-				$tmp[] = $k.':'.$v;
+			if (!empty($value['pvs']) && is_array($value['pvs'])) {
+				foreach ($value['pvs'] as $k => $v) {
+					$tmp[] = $k . ':' . $v;
+				}
 			}
 			$attr = trim(implode(';', $tmp));
+			$stock = (int)($value['stock'] ?? 0);
+			$price = (float)($value['price'] ?? 0);
 			if ($this->getCountData($where) > 0) {
 				$this->updateData($where, [
-					'stock' => $value['stock'],
-					'price' => $value['price'],
+					'stock' => $stock,
+					'price' => $price,
 					'attr' => $attr,
 				]);
 			} else {
-				$where['stock'] = $value['stock'];
-				$where['price'] = $value['price'];
+				$where['stock'] = $stock;
+				$where['price'] = $price;
 				$where['attr'] = $attr;
 				$this->insertData($where);
 			}
