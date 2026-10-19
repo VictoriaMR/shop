@@ -31,7 +31,7 @@ class DescUsed extends Base
 
 	public function getListById($spuId, $lanId=1)
 	{
-		$list = $this->getListData(['spu_id'=>$spuId], 'descn_id,descv_id', 0, 0, ['sort'=>'asc']);
+		$list = $this->getListData(['spu_id'=>$spuId], 'descn_id,descv_id', 0, 0, ['sort'=>'asc', 'item_id'=>'asc']);
 		if ($list) {
 			$nameArr = array_unique(array_column($list, 'descn_id'));
 			$valueArr = array_unique(array_column($list, 'descv_id'));

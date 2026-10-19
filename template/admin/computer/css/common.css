@@ -234,6 +234,10 @@ img {
     color: #e7502b;
 }
 
+.btn .glyphicon:hover {
+    color: inherit;
+}
+
 .nav-left .left-one .glyphicon:hover {
     color: #fff;
 }

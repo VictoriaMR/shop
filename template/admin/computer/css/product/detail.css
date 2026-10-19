@@ -31,6 +31,10 @@
 	padding: 20px !important;
 }
 
+.detail-page .hidden {
+	display: none !important;
+}
+
 .detail-page .c-danger {
 	color: #dc2626;
 }
@@ -175,6 +179,7 @@
 	color: #1e293b;
 }
 
+.detail-card-header .card-title .fa,
 .detail-card-header .card-title .glyphicon {
 	color: #2563eb;
 	margin-right: 4px;
@@ -194,6 +199,18 @@
 
 .detail-card-body {
 	padding: 14px;
+}
+.detail-card .table {
+	border-bottom: 0;
+}
+.detail-card .table th,
+.detail-card .table td {
+	border-right: 1px solid #e2e8f0;
+}
+
+.detail-card .table th:last-child,
+.detail-card .table td:last-child {
+	border-right: 0;
 }
 
 /* 基础信息排版 */
@@ -287,7 +304,16 @@
 	position: relative;
 	overflow: hidden;
 	background: #f8fafc;
-	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+	cursor: grab;
+	user-select: none;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+.spu-introduce-image.is-dragging,
+.spu-image.is-dragging {
+	opacity: 0.45;
+	border: 2px dashed #2563eb;
+	cursor: grabbing;
 }
 
 .spu-image.is-cover {
@@ -309,10 +335,10 @@
 	pointer-events: none;
 }
 
+.spu-index-badge,
 .intro-index-badge {
 	position: absolute;
 	top: 6px;
-	left: 6px;
 	z-index: 3;
 	background: rgba(15, 23, 42, 0.65);
 	color: #fff;
@@ -321,6 +347,14 @@
 	padding: 1px 6px;
 	border-radius: 3px;
 	pointer-events: none;
+}
+
+.spu-index-badge {
+	right: 6px;
+}
+
+.intro-index-badge {
+	left: 6px;
 }
 
 .image-tcell {
@@ -458,11 +492,6 @@
 	color: #64748b;
 }
 
-.delete-attr-image-btn {
-	padding: 0 5px;
-	line-height: 1.2;
-}
-
 /* SKU 规格矩阵工作台 */
 .sku-workbench-bar {
 	padding: 8px 14px;
@@ -569,9 +598,62 @@
 }
 
 /* 描述属性表格 */
+.desc-attr-table thead th {
+	background: #f8fafc;
+	color: #334155;
+	font-weight: 600;
+	vertical-align: middle !important;
+}
+
+.desc-attr-table tbody td {
+	vertical-align: middle !important;
+}
+
 .desc-group-header td {
 	background: #f1f5f9 !important;
 	color: #1e293b;
+}
+
+.desc-name-cell {
+	font-weight: 600;
+	color: #334155;
+	white-space: nowrap;
+}
+
+.desc-val-cell {
+	word-break: break-word;
+	line-height: 1.5;
+	color: #1e293b;
+}
+
+.desc-sort-input {
+	width: 60px !important;
+	height: 26px !important;
+	padding: 2px 6px !important;
+	margin: 0 auto;
+	display: inline-block;
+}
+
+.desc-action-cell {
+	white-space: nowrap;
+	text-align: center;
+	width: 140px;
+}
+
+.desc-action-btns {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	white-space: nowrap;
+}
+
+.desc-action-btns .btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	padding: 2px 8px;
+	line-height: 1.4;
 }
 
 .empty-state {
@@ -583,6 +665,7 @@
 	color: #64748b;
 }
 
+.empty-state .fa,
 .empty-state .glyphicon {
 	font-size: 32px;
 	color: #94a3b8;

@@ -27,6 +27,22 @@ class IntroUsed extends Base
 
 	public function getListById($spuId)
 	{
-		return $this->getListData(['spu_id'=>$spuId], 'attach_id', 0, 0, ['sort'=>'asc']);
+		return $this->getListData(['spu_id'=>$spuId], 'attach_id', 0, 0, ['sort'=>'asc', 'item_id'=>'asc']);
+	}
+
+	public function updateSort(int $spuId, array $itemIds)
+	{
+		$itemIds = array_values(array_unique(array_filter(array_map('intval', $itemIds))));
+		if ($spuId <= 0 || empty($itemIds)) {
+			return false;
+		}
+		$caseSql = [];
+		foreach ($itemIds as $index => $itemId) {
+			$sort = $index + 1;
+			$caseSql[] = "WHEN {$itemId} THEN {$sort}";
+		}
+		$inSql = implode(',', $itemIds);
+		$sql = "UPDATE `product_intro_used` SET `sort` = CASE `item_id` " . implode(' ', $caseSql) . " END WHERE `spu_id` = ? AND `item_id` IN ({$inSql})";
+		return $this->getQuery($sql, ['i', $spuId]);
 	}
 }

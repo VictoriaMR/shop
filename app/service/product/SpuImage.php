@@ -28,4 +28,20 @@ class SpuImage extends Base
 	{
 		return $this->getListData(['spu_id'=>$spuId], 'attach_id', 0, 0, ['sort'=>'asc']);
 	}
+
+	public function updateSort(int $spuId, array $attachIds)
+	{
+		$attachIds = array_values(array_unique(array_filter(array_map('intval', $attachIds))));
+		if ($spuId <= 0 || empty($attachIds)) {
+			return false;
+		}
+		$caseSql = [];
+		foreach ($attachIds as $index => $attachId) {
+			$sort = $index + 1;
+			$caseSql[] = "WHEN {$attachId} THEN {$sort}";
+		}
+		$inSql = implode(',', $attachIds);
+		$sql = "UPDATE `product_spu_image` SET `sort` = CASE `attach_id` " . implode(' ', $caseSql) . " END WHERE `spu_id` = ? AND `attach_id` IN ({$inSql})";
+		return $this->getQuery($sql, ['i', $spuId]);
+	}
 }

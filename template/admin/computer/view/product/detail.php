@@ -1,7 +1,7 @@
 <div class="container-fluid detail-page" data-id="<?php echo $info['spu_id'] ?? 0;?>" data-post-fee="<?php echo (float)($info['data']['post_fee'] ?? 0);?>">
 	<?php if (empty($info)) { ?>
 	<div class="empty-state mt20">
-		<i class="glyphicon glyphicon-exclamation-sign"></i>
+		<i class="fa fa-exclamation-circle"></i>
 		<p>找不到该 SPU 产品数据</p>
 		<a href="<?php echo adminUrl('product/index');?>" class="btn btn-primary btn-sm mt10">返回 SPU 列表</a>
 	</div>
@@ -28,7 +28,7 @@
 	<div class="detail-sticky-bar">
 		<div class="sticky-left">
 			<a href="<?php echo adminUrl('product/index');?>" class="btn btn-default btn-xs" title="返回SPU列表">
-				<i class="glyphicon glyphicon-menu-left"></i> 列表
+				<i class="fa fa-angle-left"></i> 列表
 			</a>
 			<span class="spu-pid-tag">PID #<?php echo $info['spu_id'];?></span>
 			<span class="spu-status-badge status-<?php echo (int)$info['status'];?> j-show-spu-status" data-status="<?php echo (int)$info['status'];?>">
@@ -49,14 +49,17 @@
 			<a href="#sec-desc" class="sec-nav-link">描述与详情图 (<?php echo $descCount;?>/<?php echo $introCount;?>)</a>
 		</div>
 		<div class="sticky-right">
+			<a href="<?php echo adminUrl('product/log', ['spu_id' => $info['spu_id']]);?>" target="_blank" class="btn btn-default btn-xs" title="查看当前SPU的操作日志">
+				<i class="fa fa-history"></i> 操作日志
+			</a>
 			<?php if (!empty($info['purchase_spu_id'])) { ?>
 			<a href="<?php echo adminUrl('product/operate', ['id' => $info['purchase_spu_id']]);?>" class="btn btn-info btn-xs" title="前往采购入库工作台重新调整入库配置">
-				<i class="glyphicon glyphicon-retweet"></i> 入库配置台
+				<i class="fa fa-retweet"></i> 入库配置台
 			</a>
 			<?php } ?>
 			<?php if (!empty($info['data']['item_url'])) { ?>
 			<a href="<?php echo htmlspecialchars($info['data']['item_url']);?>" target="_blank" class="btn btn-default btn-xs">
-				<i class="glyphicon glyphicon-link"></i> 货源原链接
+				<i class="fa fa-link"></i> 货源原链接
 			</a>
 			<?php } ?>
 		</div>
@@ -67,16 +70,16 @@
 		<!-- 左卡：SPU 核心信息 -->
 		<div class="detail-card">
 			<div class="detail-card-header">
-				<span class="card-title"><i class="glyphicon glyphicon-tag"></i> SPU 核心配置</span>
+				<span class="card-title"><i class="fa fa-tag"></i> SPU 核心配置</span>
 				<div class="card-actions">
-					<button type="button" class="btn btn-default btn-xs status-btn"><i class="glyphicon glyphicon-cog"></i> 状态设置</button>
-					<button type="button" class="btn btn-primary btn-xs name-trans-btn"><i class="glyphicon glyphicon-globe"></i> 多语言与标题</button>
+					<button type="button" class="btn btn-default btn-xs status-btn"><i class="fa fa-cog"></i> 状态设置</button>
+					<button type="button" class="btn btn-primary btn-xs name-trans-btn"><i class="fa fa-globe"></i> 多语言与标题</button>
 				</div>
 			</div>
 			<div class="detail-card-body">
 				<div class="info-title-box">
 					<span class="name f15 f600" id="spu-main-title"><?php echo htmlspecialchars($info['name']);?></span>
-					<button type="button" class="btn btn-link btn-xs name-trans-btn" title="修改标题与多语言翻译"><i class="glyphicon glyphicon-edit"></i></button>
+					<button type="button" class="btn btn-link btn-xs name-trans-btn" title="修改标题与多语言翻译"><i class="fa fa-edit"></i></button>
 				</div>
 				<div class="info-kv-grid">
 					<div class="kv-item">
@@ -133,14 +136,14 @@
 		<!-- 右卡：供应商与货源档案 -->
 		<div class="detail-card">
 			<div class="detail-card-header">
-				<span class="card-title"><i class="glyphicon glyphicon-home"></i> 供应商与货源档案</span>
+				<span class="card-title"><i class="fa fa-home"></i> 供应商与货源档案</span>
 				<?php if (!empty($info['data']['shop_id'])) { ?>
 				<div class="card-actions">
 					<a href="<?php echo adminUrl('product/index', ['shop_id' => $info['data']['shop_id']]);?>" class="btn btn-default btn-xs">
-						<i class="glyphicon glyphicon-th-large"></i> 同店已入库SPU
+						<i class="fa fa-th-large"></i> 同店已入库SPU
 					</a>
 					<a href="<?php echo adminUrl('product/purchaseList', ['shop_id' => $info['data']['shop_id']]);?>" class="btn btn-default btn-xs">
-						<i class="glyphicon glyphicon-list"></i> 同店采购池
+						<i class="fa fa-list"></i> 同店采购池
 					</a>
 				</div>
 				<?php } ?>
@@ -166,7 +169,7 @@
 						<span class="kv-val e1">
 							<?php if (!empty($info['data']['item_url'])) { ?>
 							<a href="<?php echo htmlspecialchars($info['data']['item_url']);?>" target="_blank" class="c-primary">
-								<?php echo htmlspecialchars($info['data']['item_url']);?> <span class="glyphicon glyphicon-link"></span>
+								<?php echo htmlspecialchars($info['data']['item_url']);?> <i class="fa fa-link"></i>
 							</a>
 							<?php } else { echo '--'; } ?>
 						</span>
@@ -187,7 +190,7 @@
 						<span class="kv-val e1">
 							<?php if (!empty($info['shop']['url'])) { ?>
 							<a href="<?php echo htmlspecialchars($info['shop']['url']);?>" target="_blank" class="c-primary">
-								<?php echo htmlspecialchars($info['shop']['url']);?> <span class="glyphicon glyphicon-link"></span>
+								<?php echo htmlspecialchars($info['shop']['url']);?> <i class="fa fa-link"></i>
 							</a>
 							<?php } else { echo '--'; } ?>
 						</span>
@@ -207,11 +210,11 @@
 	<div id="sec-images" class="detail-card mt12">
 		<div class="detail-card-header">
 			<div>
-				<span class="card-title"><i class="glyphicon glyphicon-picture"></i> SPU 主图画廊 (<?php echo $imageCount;?>)</span>
-				<span class="card-subtitle">点击图片可放大预览；修改排序数字自动保存；点击「封面」设为商品主图</span>
+				<span class="card-title"><i class="fa fa-image"></i> SPU 主图画廊 (<?php echo $imageCount;?>)</span>
+				<span class="card-subtitle">点击图片可放大预览；拖动图片可调整排序；点击「封面」设为商品主图</span>
 			</div>
 			<div class="card-actions">
-				<button type="button" class="btn btn-success btn-xs upload-image"><i class="glyphicon glyphicon-plus"></i> 上传主图</button>
+				<button type="button" class="btn btn-success btn-xs upload-image"><i class="fa fa-plus"></i> 上传主图</button>
 			</div>
 		</div>
 		<div class="detail-card-body">
@@ -220,21 +223,21 @@
 					$isCover = ($value['attach_id'] == $info['attach_id']);
 					$origUrl = str_replace(['_400.webp', '/400'], ['.webp', ''], $value['image']);
 				?>
-				<div class="spu-image <?php echo $isCover ? 'is-cover' : '';?>" data-id="<?php echo $value['attach_id'];?>" data-item_id="<?php echo $value['item_id'];?>">
+				<div class="spu-image <?php echo $isCover ? 'is-cover' : '';?>" draggable="true" data-id="<?php echo $value['attach_id'];?>" data-item_id="<?php echo $value['item_id'];?>" title="按住拖动可调整排序">
 					<?php if ($isCover) { ?>
 					<span class="cover-ribbon">主封面</span>
 					<?php } ?>
+					<span class="spu-index-badge">#<?php echo $key + 1;?></span>
 					<div class="image-tcell">
 						<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload bigImage" alt="">
 					</div>
 					<div class="image-btn">
-						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo htmlspecialchars($origUrl);?>" title="新窗口查看原图"><span class="glyphicon glyphicon-search"></span></a>
+						<a class="btn btn-default btn-xs" target="_blank" href="<?php echo htmlspecialchars($origUrl);?>" title="新窗口查看原图"><i class="fa fa-search"></i></a>
 						<?php if (!$isCover) { ?>
 						<button type="button" class="btn btn-primary btn-xs spu-btn" title="设为SPU主封面">封面</button>
 						<?php } ?>
 						<button type="button" class="btn btn-success btn-xs sku-btn" title="绑定为指定SKU图片">SKU</button>
-						<input type="text" name="sort" class="form-control" value="<?php echo $value['sort'];?>" placeholder="排序" title="排序值">
-						<span class="glyphicon glyphicon-trash" title="删除主图"></span>
+						<button type="button" class="btn btn-danger btn-xs delete-spu-img-btn" title="删除主图"><i class="fa fa-trash"></i></button>
 					</div>
 				</div>
 				<?php } ?>
@@ -247,11 +250,11 @@
 	<div id="sec-attrs" class="detail-card mt12">
 		<div class="detail-card-header">
 			<div>
-				<span class="card-title"><i class="glyphicon glyphicon-th"></i> 规格属性看板</span>
+				<span class="card-title"><i class="fa fa-th-large"></i> 规格属性看板</span>
 				<span class="card-subtitle">点击规格缩略图可批量替换同规格所有SKU图片；点击规格文字可在下方SKU列表中快速过滤</span>
 			</div>
 			<div class="card-actions">
-				<button type="button" class="btn btn-default btn-xs hidden" id="clear-attr-filter-btn"><i class="glyphicon glyphicon-remove"></i> 清除规格过滤</button>
+				<button type="button" class="btn btn-default btn-xs hidden" id="clear-attr-filter-btn"><i class="fa fa-times"></i> 清除规格过滤</button>
 			</div>
 		</div>
 		<div class="detail-card-body">
@@ -272,7 +275,7 @@
 							<div class="attr-chip-meta"><?php echo (int)($value['sku_count'] ?? 0);?> 个SKU</div>
 						</div>
 						<?php if (!empty($value['image'])) { ?>
-						<button type="button" class="btn btn-danger btn-xs delete-attr-image-btn" title="移除该规格图">&times;</button>
+						<button type="button" class="btn btn-danger btn-xs delete-attr-image-btn" title="移除该规格图"><i class="fa fa-trash"></i></button>
 						<?php } ?>
 					</div>
 					<?php } ?>
@@ -287,12 +290,12 @@
 	<div id="sec-skus" class="detail-card mt12">
 		<div class="detail-card-header">
 			<div>
-				<span class="card-title"><i class="glyphicon glyphicon-list-alt"></i> SKU 规格矩阵 (<?php echo $skuCount;?>)</span>
+				<span class="card-title"><i class="fa fa-table"></i> SKU 规格矩阵 (<?php echo $skuCount;?>)</span>
 				<span class="card-subtitle">单击或双击【售价 / 成本价 / 库存 / 重量 / 体积】单元格可直接行内修改，回车或失焦自动保存</span>
 			</div>
 			<div class="card-actions">
 				<button type="button" class="btn btn-warning btn-xs recalc-sku-price-btn" title="根据(成本价 + 基础邮费)阶梯公式重新计算勾选或全部SKU售价">
-					<i class="glyphicon glyphicon-flash"></i> 按成本+邮费重算售价
+					<i class="fa fa-bolt"></i> 按成本+邮费重算售价
 				</button>
 			</div>
 		</div>
@@ -323,7 +326,7 @@
 			</div>
 		</div>
 		<div class="detail-card-body p0">
-			<table class="table table-bordered table-hover mb0" id="sku-matrix-table">
+			<table class="table table-hover mb0" id="sku-matrix-table">
 				<thead>
 					<tr>
 						<th width="36" class="tc"><input type="checkbox" id="check-all-skus"></th>
@@ -331,12 +334,12 @@
 						<th width="70">SKU ID</th>
 						<th>规格属性</th>
 						<th width="78">状态</th>
-						<th width="105">售价 (￥) <i class="glyphicon glyphicon-pencil c9 f12"></i></th>
-						<th width="105">成本价 (￥) <i class="glyphicon glyphicon-pencil c9 f12"></i></th>
+						<th width="105">售价 (￥) <i class="fa fa-pencil c9 f12"></i></th>
+						<th width="105">成本价 (￥) <i class="fa fa-pencil c9 f12"></i></th>
 						<th width="95" title="毛利 = 售价 - 成本价 - 基础邮费(￥<?php echo $postFee;?>)">毛利参考</th>
-						<th width="85">库存 <i class="glyphicon glyphicon-pencil c9 f12"></i></th>
-						<th width="85">重量(g) <i class="glyphicon glyphicon-pencil c9 f12"></i></th>
-						<th width="110">体积(mm) <i class="glyphicon glyphicon-pencil c9 f12"></i></th>
+						<th width="85">库存 <i class="fa fa-pencil c9 f12"></i></th>
+						<th width="85">重量(g) <i class="fa fa-pencil c9 f12"></i></th>
+						<th width="110">体积(mm) <i class="fa fa-pencil c9 f12"></i></th>
 						<th width="120">供应商SKU</th>
 						<th width="135">上/更新时间</th>
 					</tr>
@@ -400,51 +403,63 @@
 	</div>
 
 	<!-- 第五区：描述属性列表 & 详情介绍图片 -->
-	<div id="sec-desc" class="detail-grid-desc mt12">
-		<!-- 左栏：描述属性列表 -->
+	<div id="sec-desc" class="mt12">
+		<!-- 描述属性列表 -->
 		<div class="detail-card" id="sku-desc-content">
 			<div class="detail-card-header">
 				<div>
-					<span class="card-title"><i class="glyphicon glyphicon-align-left"></i> 描述属性列表 (<?php echo $descCount;?>)</span>
-					<span class="card-subtitle">点击选择图标可批量分组或批量删除</span>
+					<span class="card-title"><i class="fa fa-align-left"></i> 描述属性列表 (<?php echo $descCount;?>)</span>
+					<span class="card-subtitle">点击选择图标可批量分组或批量删除；点击排序图标可调整先后顺序</span>
 				</div>
 				<div class="card-actions">
 					<button type="button" class="btn btn-default btn-xs" id="toggle-all-desc-btn">全选/反选</button>
-					<button type="button" class="btn btn-success btn-xs add-desc-btn"><i class="glyphicon glyphicon-plus"></i> 增加</button>
-					<button type="button" class="btn btn-info btn-xs desc-group-btn"><i class="glyphicon glyphicon-folder-open"></i> 分组</button>
-					<button type="button" class="btn btn-danger btn-xs batch-delete-desc-btn"><i class="glyphicon glyphicon-trash"></i> 批量删除</button>
+					<button type="button" class="btn btn-success btn-xs add-desc-btn"><i class="fa fa-plus"></i> 增加</button>
+					<button type="button" class="btn btn-info btn-xs desc-group-btn"><i class="fa fa-folder-open"></i> 分组</button>
+					<button type="button" class="btn btn-danger btn-xs batch-delete-desc-btn"><i class="fa fa-trash"></i> 批量删除</button>
 				</div>
 			</div>
 			<div class="detail-card-body p0">
-				<table class="table table-bordered table-hover mb0">
+				<table class="table table-hover mb0 desc-attr-table">
 					<thead>
 						<tr>
-							<th width="46" class="tc">选择</th>
-							<th width="140">描述名</th>
+							<th width="54" class="tc">选择</th>
+							<th width="180">描述名</th>
 							<th>描述值</th>
-							<th width="68">排序</th>
-							<th width="115">操作</th>
+							<th width="130" class="tc">排序</th>
+							<th width="140" class="tc">操作</th>
 						</tr>
 					</thead>
 					<tbody>
 						<?php if (!empty($info['desc'])) {
-							foreach ($info['desc'] as $item) { ?>
-						<tr class="desc-group-header">
+							foreach ($info['desc'] as $item) {
+								$groupRowCount = count($item['list']);
+						?>
+						<tr class="desc-group-header" data-group_id="<?php echo (int)$item['descg_id'];?>">
 							<td colspan="5" class="f600"><?php echo htmlspecialchars($item['group'] ?: '默认分组');?></td>
 						</tr>
-						<?php foreach ($item['list'] as $value) { ?>
-						<tr class="desc-item-row" data-id="<?php echo $value['item_id'];?>">
+						<?php foreach ($item['list'] as $dIdx => $value) {
+							$isFirstDesc = ($dIdx === 0);
+							$isLastDesc = ($dIdx === $groupRowCount - 1);
+						?>
+						<tr class="desc-item-row" data-id="<?php echo $value['item_id'];?>" data-group_id="<?php echo (int)$item['descg_id'];?>">
 							<td class="tc f18 pointer desc-check-cell">
-								<span class="glyphicon glyphicon-ok-circle"></span>
+								<i class="far fa-check-circle desc-check-icon"></i>
 							</td>
 							<td class="desc-name-cell"><?php echo htmlspecialchars($value['name']);?></td>
 							<td class="desc-val-cell"><?php echo htmlspecialchars($value['value']);?></td>
-							<td>
-								<input type="text" name="sort" value="<?php echo $value['sort'];?>" class="form-control input-sm tc">
+							<td class="tc">
+								<div class="btn-group btn-group-xs" role="group">
+									<button type="button" class="btn btn-default btn-xs sort-btn-action" data-type="top" title="置顶" <?php echo $isFirstDesc ? 'disabled' : '';?>><i class="fa fa-angle-double-up"></i></button>
+									<button type="button" class="btn btn-default btn-xs sort-btn-action" data-type="up" title="上移" <?php echo $isFirstDesc ? 'disabled' : '';?>><i class="fa fa-arrow-up"></i></button>
+									<button type="button" class="btn btn-default btn-xs sort-btn-action" data-type="down" title="下移" <?php echo $isLastDesc ? 'disabled' : '';?>><i class="fa fa-arrow-down"></i></button>
+									<button type="button" class="btn btn-default btn-xs sort-btn-action" data-type="bottom" title="置底" <?php echo $isLastDesc ? 'disabled' : '';?>><i class="fa fa-angle-double-down"></i></button>
+								</div>
 							</td>
-							<td>
-								<button type="button" class="btn btn-primary btn-xs edit-desc-btn"><span class="glyphicon glyphicon-edit"></span></button>
-								<button type="button" class="btn btn-danger btn-xs delete-desc-btn"><span class="glyphicon glyphicon-trash"></span></button>
+							<td class="desc-action-cell">
+								<div class="desc-action-btns">
+									<button type="button" class="btn btn-primary btn-xs edit-desc-btn"><i class="fa fa-edit"></i> 编辑</button>
+									<button type="button" class="btn btn-danger btn-xs delete-desc-btn"><i class="fa fa-trash"></i> 删除</button>
+								</div>
 							</td>
 						</tr>
 						<?php } } } else { ?>
@@ -457,15 +472,15 @@
 			</div>
 		</div>
 
-		<!-- 右栏：详情介绍长图 -->
-		<div class="detail-card" id="sec-intro">
+		<!-- 详情介绍长图 -->
+		<div class="detail-card mt12" id="sec-intro">
 			<div class="detail-card-header">
 				<div>
-					<span class="card-title"><i class="glyphicon glyphicon-camera"></i> 详情介绍图片 (<?php echo $introCount;?>)</span>
-					<span class="card-subtitle">点击图片放大查看，修改排序值失焦即存</span>
+					<span class="card-title"><i class="fa fa-camera"></i> 详情介绍图片 (<?php echo $introCount;?>)</span>
+					<span class="card-subtitle">点击图片放大查看，拖动图片可调整排序</span>
 				</div>
 				<div class="card-actions">
-					<button type="button" class="btn btn-success btn-xs upload-introduce-image"><i class="glyphicon glyphicon-plus"></i> 上传详情图</button>
+					<button type="button" class="btn btn-success btn-xs upload-introduce-image"><i class="fa fa-plus"></i> 上传详情图</button>
 				</div>
 			</div>
 			<div class="detail-card-body">
@@ -474,15 +489,14 @@
 					<?php foreach ($info['introduce'] as $idx => $value) {
 						$origIntroUrl = str_replace(['_400.webp', '/400'], ['.webp', ''], $value['image']);
 					?>
-					<div class="spu-introduce-image" data-id="<?php echo $value['attach_id'];?>" data-item_id="<?php echo $value['item_id'];?>">
+					<div class="spu-introduce-image" draggable="true" data-id="<?php echo $value['attach_id'];?>" data-item_id="<?php echo $value['item_id'];?>" title="按住拖动可调整排序">
 						<span class="intro-index-badge">#<?php echo $idx + 1;?></span>
 						<div class="image-tcell">
 							<img src="<?php echo siteUrl('image/common/noimg.svg');?>" data-src="<?php echo $value['image'];?>" class="lazyload bigImage" alt="">
 						</div>
 						<div class="image-btn" data-id="<?php echo $value['item_id'];?>">
-							<a class="btn btn-default btn-xs" target="_blank" href="<?php echo htmlspecialchars($origIntroUrl);?>" title="查看原图"><span class="glyphicon glyphicon-search"></span></a>
-							<input type="text" name="sort" class="form-control" value="<?php echo $value['sort'];?>" placeholder="排序">
-							<span class="glyphicon glyphicon-trash delete-introduce-btn" title="删除详情图"></span>
+							<a class="btn btn-default btn-xs" target="_blank" href="<?php echo htmlspecialchars($origIntroUrl);?>" title="查看原图"><i class="fa fa-search"></i></a>
+							<button type="button" class="btn btn-danger btn-xs delete-introduce-btn" title="删除详情图"><i class="fa fa-trash"></i></button>
 						</div>
 					</div>
 					<?php } ?>

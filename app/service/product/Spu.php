@@ -239,7 +239,7 @@ class Spu extends Base
 		$lanRow = service('product/Language')->loadData(['spu_id'=>$spuId, 'lan_id'=>0], 'name');
 		$info['name'] = $lanRow['name'] ?? '';
 		//图片
-		$info['image'] = service('product/SpuImage')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		$info['image'] = service('product/SpuImage')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc', 'item_id'=>'asc']);
 		//获取sku列表
 		$info['sku'] = service('product/Sku')->getListData(['spu_id'=>$spuId]);
 		//skuData & sku属性
@@ -266,7 +266,7 @@ class Spu extends Base
 			}
 		}
 		//描述图片
-		$info['introduce'] = service('product/IntroUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		$info['introduce'] = service('product/IntroUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc', 'item_id'=>'asc']);
 		//图片
 		$attachIds = array_values(array_unique(array_filter(array_merge(
 			array_column($info['image'], 'attach_id'),
@@ -320,7 +320,7 @@ class Spu extends Base
 			$info['introduce'][$key]['image'] = str_replace(['_400.webp', '/400', '.220x220'], ['.webp', '', ''], $attachArr[$value['attach_id']] ?? '');
 		}
 		//描述
-		$descArr = service('product/DescUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc']);
+		$descArr = service('product/DescUsed')->getListData(['spu_id'=>$spuId], '*', 0, 0, ['sort'=>'asc', 'item_id'=>'asc']);
 		if (!empty($descArr)) {
 			$descnIds = array_values(array_unique(array_filter(array_column($descArr, 'descn_id'))));
 			$descvIds = array_values(array_unique(array_filter(array_column($descArr, 'descv_id'))));

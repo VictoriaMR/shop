@@ -6,7 +6,7 @@
 			<input type="hidden" name="shop_id" value="<?php echo (int)$shopId;?>">
 			<div class="form-group mr8 mb10">
 				<span class="shop-filter-tag">
-					<i class="glyphicon glyphicon-home"></i>
+					<i class="fa fa-store"></i>
 					店铺：<?php echo htmlspecialchars($filterShop['name'] ?? ('ID:' . $shopId));?>
 					<a href="<?php echo adminUrl('product/index', ['status' => $status, 'cate' => $cate, 'keyword' => $keyword]);?>" title="清除店铺筛选">&times;</a>
 				</span>
@@ -40,9 +40,7 @@
 				<input class="form-control form_datetime" type="text" value="<?php echo htmlspecialchars($etime);?>" name="etime" placeholder="入库结束日期" style="width: 115px;" autocomplete="off">
 			</div>
 			<div class="form-group mb10">
-				<button class="btn btn-primary" type="submit"><i class="glyphicon glyphicon-search"></i> 查询</button>
-				<a class="btn btn-default ml6" href="<?php echo adminUrl('product/index');?>"><i class="glyphicon glyphicon-refresh"></i> 重置</a>
-				<a class="btn btn-info ml6" href="<?php echo adminUrl('product/purchaseList');?>"><i class="glyphicon glyphicon-cloud-download"></i> 采购池</a>
+				<button class="btn btn-primary" type="submit"><i class="fa fa-search"></i> 查询</button>
 			</div>
 			<div class="clear"></div>
 		</form>
@@ -76,10 +74,10 @@
 			<span class="c9 mr8 f12">共 <strong class="c3"><?php echo (int)$total;?></strong> 款 SPU</span>
 			<div class="btn-group btn-group-xs" role="group">
 				<button type="button" class="btn btn-default view-mode-btn active" data-mode="grid" title="网格卡片视图">
-					<i class="glyphicon glyphicon-th-large"></i> 卡片
+					<i class="fa fa-th-large"></i> 卡片
 				</button>
 				<button type="button" class="btn btn-default view-mode-btn" data-mode="table" title="紧凑表格视图">
-					<i class="glyphicon glyphicon-th-list"></i> 列表
+					<i class="fa fa-list"></i> 列表
 				</button>
 			</div>
 		</div>
@@ -158,10 +156,10 @@
 				</div>
 			</div>
 			<div class="spu-card-footer">
-				<a href="<?php echo adminUrl('product/detail', ['id' => $value['spu_id']]);?>" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> 管理详情</a>
+				<a href="<?php echo adminUrl('product/detail', ['id' => $value['spu_id']]);?>" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> 管理详情</a>
 				<div class="footer-right-actions">
 					<?php if (!empty($sData['item_url'])) { ?>
-					<a href="<?php echo htmlspecialchars($sData['item_url']);?>" target="_blank" class="btn btn-default btn-xs" title="打开第三方货源链接"><i class="glyphicon glyphicon-link"></i> 货源</a>
+					<a href="<?php echo htmlspecialchars($sData['item_url']);?>" target="_blank" class="btn btn-default btn-xs" title="打开第三方货源链接"><i class="fa fa-link"></i> 货源</a>
 					<?php } ?>
 					<button type="button" class="btn <?php echo $value['status'] == 1 ? 'btn-warning' : 'btn-success';?> btn-xs j-quick-status" data-id="<?php echo $value['spu_id'];?>" data-status="<?php echo (int)$value['status'];?>">
 						<?php echo $value['status'] == 1 ? '下架' : '上架';?>
@@ -220,7 +218,7 @@
 							<?php if (!empty($sData['item_id'])) { ?>
 							<span class="mr8">货源ID: 
 								<?php if (!empty($sData['item_url'])) { ?>
-								<a href="<?php echo htmlspecialchars($sData['item_url']);?>" target="_blank" class="c-primary"><?php echo htmlspecialchars($sData['item_id']);?> <i class="glyphicon glyphicon-link"></i></a>
+								<a href="<?php echo htmlspecialchars($sData['item_url']);?>" target="_blank" class="c-primary"><?php echo htmlspecialchars($sData['item_id']);?> <i class="fa fa-link"></i></a>
 								<?php } else { echo htmlspecialchars($sData['item_id']); } ?>
 							</span>
 							<?php } ?>
@@ -264,7 +262,7 @@
 						<?php } ?>
 					</td>
 					<td>
-						<a href="<?php echo adminUrl('product/detail', ['id' => $value['spu_id']]);?>" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-edit"></i> 详情</a>
+						<a href="<?php echo adminUrl('product/detail', ['id' => $value['spu_id']]);?>" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> 详情</a>
 						<button type="button" class="btn <?php echo $value['status'] == 1 ? 'btn-warning' : 'btn-success';?> btn-xs j-quick-status" data-id="<?php echo $value['spu_id'];?>" data-status="<?php echo (int)$value['status'];?>">
 							<?php echo $value['status'] == 1 ? '下架' : '上架';?>
 						</button>
@@ -280,7 +278,7 @@
 	</div>
 	<?php } else { ?>
 	<div class="empty-state">
-		<i class="glyphicon glyphicon-inbox"></i>
+		<i class="fa fa-inbox"></i>
 		<p>没有找到符合条件的 SPU 产品数据</p>
 		<a href="<?php echo adminUrl('product/purchaseList');?>" class="btn btn-primary btn-sm mt10">前往采购产品列表入库</a>
 	</div>

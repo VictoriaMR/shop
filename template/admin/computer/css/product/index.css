@@ -99,15 +99,23 @@
 	color: #fff;
 }
 
+#spu-index-page .hidden {
+	display: none !important;
+}
+
 #spu-index-page .view-switcher {
 	display: flex;
 	align-items: center;
 }
 
-#spu-index-page .view-mode-btn.active {
-	background: #1e293b;
+#spu-index-page .view-mode-btn.active,
+#spu-index-page .view-mode-btn.active:hover,
+#spu-index-page .view-mode-btn.active:focus {
+	background: #2563eb;
 	color: #fff;
-	border-color: #1e293b;
+	border-color: #2563eb;
+	box-shadow: none;
+	outline: none;
 }
 
 /* 响应式网格卡片视图 */
@@ -413,6 +421,7 @@
 	color: #64748b;
 }
 
+#spu-index-page .empty-state .fa,
 #spu-index-page .empty-state .glyphicon {
 	font-size: 36px;
 	color: #94a3b8;

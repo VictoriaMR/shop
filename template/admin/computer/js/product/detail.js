@@ -113,7 +113,7 @@ const PRODUCT = {
 									<th style="width:110px">语言名称</th>\
 									<th>\
 										<span>对应文本</span>\
-										<span title="一键智能翻译空缺语言" class="glyphicon glyphicon-transfer pointer ml6 c-primary"> 智能翻译</span>\
+										<span title="一键智能翻译空缺语言" class="j-smart-translate pointer ml6 c-primary"><i class="fa fa-language"></i> 智能翻译</span>\
 									</th>\
 								</tr>';
 					for (const i in data) {
@@ -134,7 +134,7 @@ const PRODUCT = {
 		});
 
 		// 智能翻译
-		$('#dealbox-language').on('click', '.glyphicon-transfer', function(){
+		$('#dealbox-language').on('click', '.j-smart-translate', function(){
 			const name = $('#dealbox-language textarea[name="language[0]"]').val() || $('#dealbox-language input[name="name"]').val();
 			const thisobj = $(this);
 			const obj = thisobj.parents('table').find('textarea');
@@ -165,21 +165,11 @@ const PRODUCT = {
 			});
 		});
 
-		// 主图更改排序（无刷新保存）
-		$('.spu-image input[name="sort"]').on('change', function(){
-			const input = $(this);
-			post('/product/detail', {
-				spu_id: spuId,
-				attach_id: input.closest('.spu-image').data('id'),
-				sort: input.val(),
-				opn: 'modifySpuImage'
-			}, function(res) {
-				showTips(res);
-			});
-		});
+		// 主图拖动排序（无刷新保存）
+		_this.initSpuImageDragSort(spuId);
 
 		// 删除主图
-		$('.spu-image .glyphicon-trash').on('click', function(){
+		$('.spu-image .delete-spu-img-btn').on('click', function(){
 			const card = $(this).closest('.spu-image');
 			const item_id = card.data('item_id');
 			confirm('确定要删除该主图吗?', function(_thisobj, pop){
@@ -189,7 +179,10 @@ const PRODUCT = {
 					_thisobj.button('reset');
 					if (pop) pop.hide();
 					if (res.code == 1) {
-						card.fadeOut(200, function(){ $(this).remove(); });
+						card.fadeOut(200, function(){
+							$(this).remove();
+							_this.refreshSpuImageIndex();
+						});
 					}
 				});
 			});
@@ -457,12 +450,41 @@ const PRODUCT = {
 			});
 		});
 
-		// 描述排序（无刷新保存）
-		$('#sku-desc-content [name="sort"]').on('change', function(){
-			const id = $(this).closest('tr').data('id');
-			const sort = $(this).val();
-			post('/product/detail', {opn: 'modifySpuDesc', item_id: id, sort: sort}, function(res){
+		// 描述排序图标点击（无刷新移动行并保存）
+		$('#sku-desc-content').on('click', '.sort-btn-action', function(){
+			const btn = $(this);
+			if (btn.is(':disabled') || btn.hasClass('disabled')) {
+				return false;
+			}
+			const tr = btn.closest('tr.desc-item-row');
+			const id = tr.data('id');
+			const groupId = tr.data('group_id');
+			const type = btn.data('type');
+			const groupRows = $('#sku-desc-content tr.desc-item-row[data-group_id="' + groupId + '"]');
+			if (groupRows.length <= 1) {
+				return false;
+			}
+			groupRows.find('.sort-btn-action').prop('disabled', true);
+			post('/product/detail', {opn: 'modifySpuDesc', item_id: id, type: type}, function(res){
 				showTips(res);
+				if (res && res.code == 1) {
+					if (type === 'top') {
+						groupRows.first().before(tr);
+					} else if (type === 'up') {
+						const prev = tr.prev('tr.desc-item-row[data-group_id="' + groupId + '"]');
+						if (prev.length) {
+							prev.before(tr);
+						}
+					} else if (type === 'down') {
+						const next = tr.next('tr.desc-item-row[data-group_id="' + groupId + '"]');
+						if (next.length) {
+							next.after(tr);
+						}
+					} else if (type === 'bottom') {
+						groupRows.last().after(tr);
+					}
+				}
+				_this.refreshDescSortButtons(groupId);
 			});
 		});
 
@@ -470,6 +492,7 @@ const PRODUCT = {
 		$('.delete-desc-btn').on('click', function(){
 			const tr = $(this).closest('tr');
 			const id = tr.data('id');
+			const groupId = tr.data('group_id');
 			confirm('确定要删除该描述属性吗?', function(obj, pop){
 				obj.button('loading');
 				post('/product/detail', {opn: 'deleteSpuDesc', item_id: id}, function(res){
@@ -477,7 +500,10 @@ const PRODUCT = {
 					obj.button('reset');
 					if (pop) pop.hide();
 					if (res.code == 1) {
-						tr.fadeOut(200, function(){ $(this).remove(); });
+						tr.fadeOut(200, function(){
+							$(this).remove();
+							_this.refreshDescSortButtons(groupId);
+						});
 					}
 				});
 			});
@@ -486,7 +512,7 @@ const PRODUCT = {
 		// 批量删除选中描述属性
 		$('.batch-delete-desc-btn').on('click', function(){
 			const ids = [];
-			$('#sku-desc-content .glyphicon-ok-sign').each(function(){
+			$('#sku-desc-content .desc-check-icon.fas').each(function(){
 				ids.push($(this).closest('tr').data('id'));
 			});
 			if (ids.length === 0) {
@@ -500,7 +526,10 @@ const PRODUCT = {
 					obj.button('reset');
 					if (pop) pop.hide();
 					if (res.code == 1) {
-						$('#sku-desc-content .glyphicon-ok-sign').closest('tr').fadeOut(200, function(){ $(this).remove(); });
+						$('#sku-desc-content .desc-check-icon.fas').closest('tr').fadeOut(200, function(){
+							$(this).remove();
+							_this.refreshDescSortButtons();
+						});
 					}
 				});
 			});
@@ -508,12 +537,12 @@ const PRODUCT = {
 
 		// 全选/反选描述属性
 		$('#toggle-all-desc-btn').on('click', function(){
-			const allIcons = $('#sku-desc-content td.desc-check-cell .glyphicon');
-			const selectedCount = allIcons.filter('.glyphicon-ok-sign').length;
+			const allIcons = $('#sku-desc-content td.desc-check-cell .desc-check-icon');
+			const selectedCount = allIcons.filter('.fas').length;
 			if (selectedCount === allIcons.length) {
-				allIcons.removeClass('glyphicon-ok-sign red').addClass('glyphicon-ok-circle');
+				allIcons.removeClass('fas red').addClass('far');
 			} else {
-				allIcons.removeClass('glyphicon-ok-circle').addClass('glyphicon-ok-sign red');
+				allIcons.removeClass('far').addClass('fas red');
 			}
 			_this.initDescSelect();
 		});
@@ -538,22 +567,13 @@ const PRODUCT = {
 			});
 		});
 
-		// 描述图片排序（无刷新保存）
-		$('.spu-introduce-image [name="sort"]').on('change', function(){
-			post('/product/detail', {
-				item_id: $(this).parent().data('id'),
-				attach_id: $(this).closest('.spu-introduce-image').data('id'),
-				sort: $(this).val(),
-				opn: 'modifySpuIntroduceImage'
-			}, function(res) {
-				showTips(res);
-			});
-		});
+		// 描述图片拖动排序（无刷新保存）
+		_this.initIntroImageDragSort(spuId);
 
 		// 删除描述图片（无刷新移除卡片）
 		$('.spu-introduce-image .delete-introduce-btn').on('click', function(){
 			const card = $(this).closest('.spu-introduce-image');
-			const id = $(this).parent().data('id');
+			const id = card.data('item_id') || $(this).parent().data('id');
 			confirm('确定删除该详情介绍图片吗?', function(obj, pop){
 				obj.button('loading');
 				post('/product/detail', {item_id: id, opn: 'deleteSpuIntroduceImage'}, function(res) {
@@ -561,7 +581,10 @@ const PRODUCT = {
 					obj.button('reset');
 					if (pop) pop.hide();
 					if (res.code == 1) {
-						card.fadeOut(200, function(){ $(this).remove(); });
+						card.fadeOut(200, function(){
+							$(this).remove();
+							_this.refreshIntroImageIndex();
+						});
 					}
 				});
 			});
@@ -582,18 +605,18 @@ const PRODUCT = {
 
 		// 描述选中切换
 		$('#sku-desc-content').on('click', 'td.desc-check-cell', function(){
-			const icon = $(this).find('.glyphicon');
-			if (icon.hasClass('glyphicon-ok-circle')) {
-				icon.removeClass('glyphicon-ok-circle').addClass('glyphicon-ok-sign red');
+			const icon = $(this).find('.desc-check-icon');
+			if (icon.hasClass('far')) {
+				icon.removeClass('far').addClass('fas red');
 			} else {
-				icon.removeClass('glyphicon-ok-sign red').addClass('glyphicon-ok-circle');
+				icon.removeClass('fas red').addClass('far');
 			}
 			_this.initDescSelect();
 		});
 
 		// 分组点击
 		$('#sku-desc-content .desc-group-btn').on('click', function(){
-			if ($('#sku-desc-content .glyphicon-ok-sign').length === 0) {
+			if ($('#sku-desc-content .desc-check-icon.fas').length === 0) {
 				errorTips('请先选择需要分组的描述项');
 				return false;
 			}
@@ -680,9 +703,162 @@ const PRODUCT = {
 	initDescSelect: function() {
 		var obj = $('#desc-group-dealbox');
 		obj.find('[name="id[]"]').remove();
-		$('#sku-desc-content .glyphicon-ok-sign').each(function(){
+		$('#sku-desc-content .desc-check-icon.fas').each(function(){
 			var id = $(this).closest('tr').data('id');
 			obj.find('form').append('<input type="hidden" name="id[]" value="' + id + '">');
+		});
+	},
+
+	initSpuImageDragSort: function(spuId) {
+		const _this = this;
+		this.bindGalleryDragSort({
+			gridSelector: '#sec-images .media-gallery-grid',
+			itemSelector: '.spu-image',
+			idDataKey: 'id',
+			onRefreshIndex: function() {
+				_this.refreshSpuImageIndex();
+			},
+			onSave: function(attachIds) {
+				post('/product/detail', {
+					spu_id: spuId,
+					attach_ids: attachIds,
+					opn: 'modifySpuImage'
+				}, function(res) {
+					showTips(res);
+				});
+			}
+		});
+	},
+
+	initIntroImageDragSort: function(spuId) {
+		const _this = this;
+		this.bindGalleryDragSort({
+			gridSelector: '#sec-intro .media-gallery-grid',
+			itemSelector: '.spu-introduce-image',
+			idDataKey: 'item_id',
+			onRefreshIndex: function() {
+				_this.refreshIntroImageIndex();
+			},
+			onSave: function(itemIds) {
+				post('/product/detail', {
+					spu_id: spuId,
+					item_ids: itemIds,
+					opn: 'modifySpuIntroduceImage'
+				}, function(res) {
+					showTips(res);
+				});
+			}
+		});
+	},
+
+	bindGalleryDragSort: function(options) {
+		const $grid = $(options.gridSelector);
+		if ($grid.length === 0) {
+			return;
+		}
+		let dragEl = null;
+		let initialOrder = '';
+
+		const getOrderIds = function() {
+			const ids = [];
+			$grid.find(options.itemSelector).each(function() {
+				ids.push($(this).data(options.idDataKey));
+			});
+			return ids;
+		};
+
+		$grid.on('dragstart', options.itemSelector, function(e) {
+			if ($(e.target).closest('.image-btn').length > 0) {
+				e.preventDefault();
+				return false;
+			}
+			dragEl = this;
+			initialOrder = getOrderIds().join(',');
+			$(this).addClass('is-dragging');
+			const dt = e.originalEvent && e.originalEvent.dataTransfer;
+			if (dt) {
+				dt.effectAllowed = 'move';
+				try {
+					dt.setData('text/plain', String($(this).data(options.idDataKey) || ''));
+				} catch (err) {}
+			}
+		});
+
+		$grid.on('dragover', options.itemSelector, function(e) {
+			if (!dragEl) {
+				return;
+			}
+			e.preventDefault();
+			const dt = e.originalEvent && e.originalEvent.dataTransfer;
+			if (dt) {
+				dt.dropEffect = 'move';
+			}
+			if (this === dragEl) {
+				return;
+			}
+			const rect = this.getBoundingClientRect();
+			const clientX = e.originalEvent ? e.originalEvent.clientX : e.clientX;
+			const isAfter = (clientX - rect.left) > (rect.width / 2);
+			if (isAfter) {
+				if (this.nextElementSibling !== dragEl) {
+					$(this).after(dragEl);
+					options.onRefreshIndex();
+				}
+			} else {
+				if (this.previousElementSibling !== dragEl) {
+					$(this).before(dragEl);
+					options.onRefreshIndex();
+				}
+			}
+		});
+
+		$grid.on('dragover drop', function(e) {
+			if (dragEl) {
+				e.preventDefault();
+			}
+		});
+
+		$grid.on('dragend', options.itemSelector, function() {
+			if (!dragEl) {
+				return;
+			}
+			$(dragEl).removeClass('is-dragging');
+			dragEl = null;
+			options.onRefreshIndex();
+
+			const ids = getOrderIds();
+			if (ids.join(',') === initialOrder) {
+				return;
+			}
+			options.onSave(ids);
+		});
+	},
+
+	refreshSpuImageIndex: function() {
+		$('#sec-images .media-gallery-grid .spu-image').each(function(idx) {
+			$(this).find('.spu-index-badge').text('#' + (idx + 1));
+		});
+	},
+
+	refreshIntroImageIndex: function() {
+		$('#sec-intro .media-gallery-grid .spu-introduce-image').each(function(idx) {
+			$(this).find('.intro-index-badge').text('#' + (idx + 1));
+		});
+	},
+
+	refreshDescSortButtons: function(groupId) {
+		const selector = groupId !== undefined
+			? '#sku-desc-content tr.desc-group-header[data-group_id="' + groupId + '"]'
+			: '#sku-desc-content tr.desc-group-header';
+		$(selector).each(function() {
+			const gid = $(this).data('group_id');
+			const rows = $('#sku-desc-content tr.desc-item-row[data-group_id="' + gid + '"]');
+			const total = rows.length;
+			rows.each(function(idx) {
+				const row = $(this);
+				row.find('.sort-btn-action[data-type="top"], .sort-btn-action[data-type="up"]').prop('disabled', idx === 0);
+				row.find('.sort-btn-action[data-type="down"], .sort-btn-action[data-type="bottom"]').prop('disabled', idx === total - 1);
+			});
 		});
 	}
 };
