@@ -105,16 +105,16 @@ class Index extends AdminBase
 		$out = [];
 		$cmd = 'wmic ComputerSystem get TotalPhysicalMemory';
 		exec($cmd, $out);
-		$data['memory_total'] = sprintf('%.2f', ($out[1] ?? 0) / 1024 / 1024);
+		$memTotal = ($out[1] ?? 0) / 1024 / 1024;
 		$out = [];
 		$cmd = 'wmic OS get FreePhysicalMemory';
 		exec($cmd, $out);
-		$data['memory_free'] = sprintf('%.2f', ($out[1] ?? 0) / 1024);
-		$data['memory_used'] = sprintf('%.2f', $data['memory_total'] - $data['memory_free']);
-		$data['memory_used_rate'] = sprintf('%.2f', $data['memory_used'] / $data['memory_total']*100).'%';
-		$data['memory_total'] .= ' M';
-		$data['memory_used'] .= ' M';
-		$data['memory_free'] .= ' M';
+		$memFree = ($out[1] ?? 0) / 1024;
+		$memUsed = $memTotal - $memFree;
+		$data['memory_used_rate'] = ($memTotal > 0 ? sprintf('%.2f', $memUsed / $memTotal * 100) : '0.00').'%';
+		$data['memory_total'] = $this->formatMemory($memTotal);
+		$data['memory_used'] = $this->formatMemory($memUsed);
+		$data['memory_free'] = $this->formatMemory($memFree);
 		//内存使用
 
 		exec('wmic logicaldisk get FreeSpace,size /format:list', $out);
@@ -145,13 +145,13 @@ class Index extends AdminBase
 		$memData = explode(' ', trim($data[0]));
 		$swapData = explode(' ', trim($data[1]));
 		$data = [];
-		$data['memory_total'] = sprintf('%.2f', ($memData[0] + ($swapData[0] ?? 0)) / 1024);
-		$data['memory_used'] = sprintf('%.2f', ($memData[1] + ($swapData[1] ?? 0)) / 1024);
-		$data['memory_free'] = sprintf('%.2f', ($data['memory_total'] - $data['memory_used']));
-		$data['memory_used_rate'] = sprintf('%.2f', $data['memory_used'] / $data['memory_total']*100).'%';
-		$data['memory_total'] .= ' M';
-		$data['memory_used'] .= ' M';
-		$data['memory_free'] .= ' M';
+		$memTotal = ($memData[0] + ($swapData[0] ?? 0)) / 1024;
+		$memUsed = ($memData[1] + ($swapData[1] ?? 0)) / 1024;
+		$memFree = $memTotal - $memUsed;
+		$data['memory_used_rate'] = ($memTotal > 0 ? sprintf('%.2f', $memUsed / $memTotal * 100) : '0.00').'%';
+		$data['memory_total'] = $this->formatMemory($memTotal);
+		$data['memory_used'] = $this->formatMemory($memUsed);
+		$data['memory_free'] = $this->formatMemory($memFree);
 		$data['loadpercentage'] = ((sys_getloadavg()[0] ?? 0)*100).'%';
 		$total = disk_total_space('/');
 		$free = disk_free_space('/');
@@ -159,5 +159,13 @@ class Index extends AdminBase
 		$data['disk_free_space'] = get1024Peck($free);
 		$data['disk_used_space'] = get1024Peck($total - $free);
 		return $data;
+	}
+
+	protected function formatMemory($mb)
+	{
+		if ($mb > 1024) {
+			return sprintf('%.2f', $mb / 1024).' G';
+		}
+		return sprintf('%.2f', $mb).' M';
 	}
 }

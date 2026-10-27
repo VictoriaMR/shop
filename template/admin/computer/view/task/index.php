@@ -7,6 +7,7 @@ $totalMemory = 0;
 foreach ($taskList ?? [] as $item) {
 	if (($item['status'] ?? '') === 'running') {
 		$runningCount++;
+		$totalMemory += (int)($item['memory_usage'] ?? 0);
 	}
 	$itemType = $item['type'] ?? 'other';
 	if ($itemType === 'cron') {
@@ -14,7 +15,6 @@ foreach ($taskList ?? [] as $item) {
 	} elseif ($itemType === 'other') {
 		$otherCount++;
 	}
-	$totalMemory += (int)($item['memory_usage'] ?? 0);
 }
 $bootBadgeMap = [
 	'on'     => ['label-success', '已开启'],

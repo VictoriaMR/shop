@@ -139,10 +139,15 @@ class MainTask extends TaskDriver
 		$redis = $this->redis();
 		$allInfo = $redis->hGetAll(self::LIST_KEY) ?: [];
 
-		// 1. 检查主进程自身是否收到停止指令
+		// 1. 检查主进程自身是否收到停止指令或已被新进程接管
 		$mainInfo = $allInfo[self::MAIN_TASK] ?? [];
 		if (in_array($mainInfo['boot'] ?? 'on', ['off', 'offing'], true)) {
 			$this->task_info['boot'] = 'off';
+			return false;
+		}
+		$cachedPid = (int)($mainInfo['process_pid'] ?? 0);
+		if ($cachedPid > 0 && $cachedPid !== (int)$this->task_info['process_pid']) {
+			$this->shouldStop = true;
 			return false;
 		}
 

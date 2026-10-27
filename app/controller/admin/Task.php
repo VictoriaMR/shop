@@ -65,8 +65,17 @@ class Task extends AdminBase
 				}
 				$info = $tasker->getInfo(TaskDriver::MAIN_TASK);
 				if (is_array($info)) {
+					if (($info['status'] ?? '') === 'running') {
+						$info['boot'] = 'off';
+						$info['status'] = 'stop';
+						$info['process_pid'] = 0;
+						$tasker->setInfo(TaskDriver::MAIN_TASK, $info);
+						$tasker->signal();
+						usleep(100000);
+					}
 					$info['status'] = 'stop';
 					$info['boot'] = 'on';
+					$info['process_pid'] = 0;
 					$tasker->setInfo(TaskDriver::MAIN_TASK, $info);
 				}
 				$tasker->start(TaskDriver::MAIN_TASK);

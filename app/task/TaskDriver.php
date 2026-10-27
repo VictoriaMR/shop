@@ -157,6 +157,10 @@ abstract class TaskDriver
 	public function start()
 	{
 		$key = static::formatKey(get_class($this));
+		$lockKey = self::TASKPREFIX . 'lock:' . $key;
+		if (!$this->redis()->set($lockKey, (string)getmypid(), ['nx', 'ex' => 5])) {
+			return false;
+		}
 		$now = time();
 		$cached = $this->getCache($key);
 		$config = static::$config;
@@ -185,10 +189,12 @@ abstract class TaskDriver
 				$this->task_info['next_run'] = 0;
 				$this->setCache($key, $this->task_info);
 				$this->redis()->zRem(self::DELAY_KEY, $key);
+				$this->redis()->del($lockKey);
 				return false;
 			}
 			// 防止同一任务重复并发启动 (支持 Linux 实时 PID 检测)
 			if (self::isProcessRunning($this->task_info, $this->timeout)) {
+				$this->redis()->del($lockKey);
 				return false;
 			}
 		}
@@ -223,6 +229,7 @@ abstract class TaskDriver
 		$this->task_info['process_user'] = get_current_user();
 		$this->task_info['memory_usage'] = memory_get_usage() - APP_MEMORY_START;
 		$this->setCache($key, $this->task_info);
+		$this->redis()->del($lockKey);
 		$this->lastSyncAt = $now;
 
 		try {
@@ -248,6 +255,11 @@ abstract class TaskDriver
 				if ($this->isMainTask() || ($now - $this->lastSyncAt) >= 2) {
 					$latest = $this->getCache($key);
 					if (is_array($latest)) {
+						$latestPid = (int)($latest['process_pid'] ?? 0);
+						if ($latestPid > 0 && $latestPid !== (int)$this->task_info['process_pid']) {
+							$this->shouldStop = true;
+							break;
+						}
 						$latestBoot = $latest['boot'] ?? 'on';
 						if ($latestBoot === 'off' || $latestBoot === 'offing') {
 							$this->task_info['boot'] = 'off';
@@ -281,8 +293,14 @@ abstract class TaskDriver
 
 		$now = time();
 		$latest = $this->getCache($key);
-		if (is_array($latest) && in_array($latest['boot'] ?? '', ['off', 'offing'], true)) {
-			$this->task_info['boot'] = 'off';
+		if (is_array($latest)) {
+			$latestPid = (int)($latest['process_pid'] ?? 0);
+			if ($latestPid > 0 && $latestPid !== (int)$this->task_info['process_pid']) {
+				return;
+			}
+			if (in_array($latest['boot'] ?? '', ['off', 'offing'], true)) {
+				$this->task_info['boot'] = 'off';
+			}
 		}
 
 		$this->task_info['status']       = 'stop';
@@ -322,6 +340,11 @@ abstract class TaskDriver
 		$key = static::formatKey(get_class($this));
 		$info = $this->getCache($key);
 		if (is_array($info)) {
+			$latestPid = (int)($info['process_pid'] ?? 0);
+			if ($latestPid > 0 && $latestPid !== (int)$this->task_info['process_pid']) {
+				$this->shouldStop = true;
+				return false;
+			}
 			$this->task_info['boot'] = $info['boot'] ?? $this->task_info['boot'];
 			if (in_array($this->task_info['boot'], ['off', 'offing'], true)) {
 				$this->shouldStop = true;
