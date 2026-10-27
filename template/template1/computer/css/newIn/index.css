@@ -1,0 +1,144 @@
+/* New Arrivals (newIn/index) Page Specific Styles */
+.newin-main {
+	padding-bottom: 36px;
+}
+
+.newin-hero {
+	margin-bottom: 8px;
+}
+
+.newin-hero-inner {
+	position: relative;
+	border-radius: var(--radius-lg);
+	background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 52%, #e0e7ff 100%);
+	border: 1px solid #dbeafe;
+	padding: 36px 42px;
+	display: grid;
+	grid-template-columns: 1.35fr 0.9fr;
+	gap: 32px;
+	align-items: center;
+	overflow: hidden;
+}
+
+.newin-hero-content {
+	position: relative;
+	z-index: 2;
+}
+
+.newin-hero-badges {
+	gap: 8px;
+	margin-bottom: 12px;
+	flex-wrap: wrap;
+}
+
+.newin-hero-title {
+	font-size: 34px;
+	font-weight: 800;
+	line-height: 1.18;
+	letter-spacing: -0.025em;
+	color: var(--text-main);
+	margin-bottom: 12px;
+}
+
+.newin-hero-desc {
+	font-size: 15px;
+	line-height: 1.6;
+	color: var(--text-secondary);
+	max-width: 580px;
+	margin-bottom: 20px;
+}
+
+.newin-perks {
+	gap: 20px;
+	flex-wrap: wrap;
+}
+
+.newin-perk-item {
+	gap: 7px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-main);
+}
+
+.newin-perk-icon {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	color: #047857;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: var(--shadow-sm);
+	flex-shrink: 0;
+}
+
+.newin-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 14px;
+	position: relative;
+	z-index: 2;
+}
+
+.newin-stat-card {
+	background-color: rgba(255, 255, 255, 0.92);
+	border: 1px solid rgba(255, 255, 255, 0.95);
+	border-radius: var(--radius-md);
+	padding: 18px 20px;
+	box-shadow: var(--shadow-sm);
+}
+
+.stat-value {
+	display: block;
+	font-size: 24px;
+	font-weight: 800;
+	letter-spacing: -0.02em;
+	color: var(--primary);
+	line-height: 1.15;
+	margin-bottom: 4px;
+}
+
+.stat-value.accent {
+	color: var(--accent);
+}
+
+.stat-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--text-secondary);
+}
+
+.newin-catalog-section {
+	padding-top: 8px;
+}
+
+@media (max-width: 992px) {
+	.newin-hero-inner {
+		grid-template-columns: 1fr;
+		padding: 28px 24px;
+		gap: 24px;
+	}
+	.newin-hero-title {
+		font-size: 28px;
+	}
+}
+
+@media (max-width: 576px) {
+	.newin-hero-inner {
+		padding: 22px 18px;
+	}
+	.newin-hero-title {
+		font-size: 24px;
+	}
+	.newin-stats-grid {
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+	}
+	.newin-stat-card {
+		padding: 14px;
+	}
+	.stat-value {
+		font-size: 20px;
+	}
+}

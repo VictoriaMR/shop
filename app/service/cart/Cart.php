@@ -1,14 +1,16 @@
 <?php
 
-namespace app\service;
+namespace app\service\cart;
 use app\service\Base;
 
 class Cart extends Base
 {
-	public function addToCart($skuId, $quantity=1)
+	protected $_model = 'app/model/Cart';
+
+	public function addToCart($skuId, $quantity = 1)
 	{
 		$where = [
-			'mem_id' => $this->userId(),
+			'mem_id' => userId(),
 			'sku_id' => $skuId,
 		];
 		$cartId = $this->loadData($where, 'cart_id')['cart_id'] ?? 0;
@@ -23,59 +25,67 @@ class Cart extends Base
 	{
 		$where = [
 			'cart_id' => $cartId,
-			'mem_id' => $this->userId(),
+			'mem_id' => userId(),
 		];
 		return $this->deleteData($where);
 	}
 
-	public function reduceCart($cartId, $quantity=1)
+	public function reduceCart($cartId, $quantity = 1)
 	{
 		$where = [
 			'cart_id' => $cartId,
-			'mem_id' => $this->userId(),
+			'mem_id' => userId(),
 		];
 		return $this->where($where)->decrement('quantity', $quantity);
 	}
 
-	public function checkCart($cartId, $check=1)
+	public function checkCart($cartId, $check = 1)
 	{
 		$where = [
 			'cart_id' => $cartId,
-			'mem_id' => $this->userId(),
+			'mem_id' => userId(),
 		];
-		return $this->updateData($where, ['checked'=>$check]);
+		return $this->updateData($where, ['checked' => $check]);
 	}
 
 	public function getCartCount()
 	{
-		$where = $this->getWhere();
-		$where['checked'] = 1;
-		return $this->loadData($where, 'SUM(quantity) as quantity')['quantity'] ?? 0;
+		$memId = userId();
+		if ($memId <= 0) {
+			return 0;
+		}
+		$where = [
+			'mem_id' => $memId,
+			'checked' => 1,
+		];
+		return (int)($this->loadData($where, 'SUM(quantity) as quantity')['quantity'] ?? 0);
 	}
 
 	protected function getWhere()
 	{
-		$memId = $this->userId();
-		if (empty($memId)) return ['uuid' => uuId(), 'mem_id'=>0];
-		else return ['mem_id' => $memId];
+		return ['mem_id' => userId()];
 	}
 
 	public function getList()
 	{
-		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,price as cart_price,checked', 0, 0, ['cart_id'=>'desc']);
+		$memId = userId();
+		if ($memId <= 0) {
+			return [];
+		}
+		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,price as cart_price,checked', 0, 0, ['cart_id' => 'desc']);
 		if (!empty($list)) {
 			$sku = service('product/Sku');
 			$list = array_column($list, null, 'sku_id');
-			$currencyService = service('currency/Currency');
+			$currencyService = service('system/Currency');
 			$symbol = $currencyService->priceSymbol(2);
 			foreach ($list as $key => $value) {
-				$tempData = $sku->getInfoCache($value['sku_id'], $this->lanId());
+				$tempData = $sku->getInfoCache($value['sku_id'], lanId());
 				$value = array_merge($value, $tempData);
 				$temp = $currencyService->priceFormat($value['cart_price']);
 				$value['cart_price'] = $temp[1];
 				$value['cart_price_format'] = $temp[2];
 				$value['price_total'] = $value['price'] * $value['quantity'];
-				$value['price_total_format'] = $symbol.$value['price_total'];
+				$value['price_total_format'] = $symbol . $value['price_total'];
 				$list[$key] = $value;
 			}
 		}
@@ -84,12 +94,16 @@ class Cart extends Base
 
 	public function check()
 	{
-		$list = $this->getListData(['mem_id' => $this->userId(), 'checked'=>1], 'cart_id,sku_id,quantity');
+		$memId = userId();
+		if ($memId <= 0) {
+			return false;
+		}
+		$list = $this->getListData(['mem_id' => $memId, 'checked' => 1], 'cart_id,sku_id,quantity');
 		if (empty($list)) {
 			return false;
 		}
 		$sku = service('product/Sku');
-		$skuList = $sku->getListData(['sku_id'=>['in', array_column($list, 'sku_id')]], 'sku_id,spu_id,status,stock');
+		$skuList = $sku->getListData(['sku_id' => ['in', array_column($list, 'sku_id')]], 'sku_id,spu_id,status,stock');
 		$skuList = array_column($skuList, null, 'sku_id');
 
 		foreach ($list as $value) {

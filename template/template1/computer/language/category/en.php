@@ -1,0 +1,23 @@
+<?php
+return [
+	'all_categories_heading' => 'All Categories',
+	'all_categories_pill'    => 'All Categories',
+	'seo_title_suffix'       => 'Curated Collection & Direct Studio Pricing',
+	'seo_keyword'            => 'online catalog, modern furniture, trending fashion, designer lighting, home decor, free shipping',
+	'subcategories_label'    => 'Subcategories:',
+	'price_all'              => 'All Prices',
+	'price_under_120'        => 'Under $120',
+	'price_120_160'          => '$120 – $160',
+	'price_over_160'         => 'Over $160',
+	'sort_label'             => 'Sort by:',
+	'sort_featured'          => 'Featured',
+	'sort_popular'           => 'Most Popular',
+	'sort_newest'            => 'Newest',
+	'sort_price_asc'         => 'Price: Low to High',
+	'sort_price_desc'        => 'Price: High to Low',
+	'clear_filters'          => 'Reset Filters',
+	'empty_title'            => 'No Products Match Your Filter Criteria',
+	'empty_desc'             => 'Try resetting your price filter or explore another department below.',
+	'recommend_heading'      => 'Recommended Popular Picks',
+	'recommend_sub'          => 'Explore our customer-favorite styles across all departments',
+];

@@ -18,6 +18,10 @@ class Base
 
 	protected function success($msg='', $data=[], $code=1)
 	{
+		if (is_array($msg) && empty($data)) {
+			$data = $msg;
+			$msg = 'success';
+		}
 		\App::jsonResponse($code, $data, $msg);
 	}
 

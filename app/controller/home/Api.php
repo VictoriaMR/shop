@@ -9,6 +9,7 @@ class Api extends HomeBase
 	{
 		$path = [];
 		$param = ipost();
+		unset($param['is_ajax']);
 		if (!empty($param['class'])) {
 			$path[] = $param['class'];
 			unset($param['class']);
@@ -21,34 +22,40 @@ class Api extends HomeBase
 			$path[] = $param['func'];
 			unset($param['func']);
 		}
+		$needCart = !empty($param['cart']);
+		$needLogin = !empty($param['login']);
+		unset($param['cart'], $param['login']);
+
+		$pathStr = implode('/', $path);
 		$data = [
-			'path' => implode('/', $path),
-			'param' => json_encode($param),
+			'path' => $pathStr,
 		];
 		$rst = service('log/Visitor')->addLog($data);
-		if ($data['path'] == 'home/Product/index') {
+		if ($pathStr === 'home/Product/index') {
+			$spuId = 0;
 			if (isset($param['pid'])) {
-				$spuId = $param['pid'];
+				$spuId = (int)$param['pid'];
 			} elseif (isset($param['sid'])) {
-				$spuId = service('product/Sku')->loadData($param['sid'], 'spu_id')['spu_id'] ?? 0;
+				$spuId = (int)(service('product/Sku')->loadData($param['sid'], 'spu_id')['spu_id'] ?? 0);
 			}
 			if ($spuId) {
 				//更新浏览人数
-				$rst = service('product/Spu')->where(['spu_id'=>$spuId])->increment('visit_total');
+				$rst = service('product/Spu')->where(['spu_id' => $spuId])->increment('visit_total');
 				//浏览历史
 				if ($rst && userId()) {
 					service('member/History')->addHistory($spuId);
 				}
 			}
 		}
-		$data = [];
-		if (!empty($param['cart'])) {
-			$data['cart_count'] = service('Cart')->getCartCount();
+		$resData = [];
+		if ($needCart) {
+			$resData['cart_count'] = service('cart/Cart')->getCartCount();
 		}
-		if (!empty($param['login'])) {
-			$data['member'] = userId() ? session()->get(type().'_info', []) : [];
+		if ($needLogin) {
+			$resData['member'] = userId() ? session()->get(type() . '_info', []) : [];
 		}
-		$this->success($data);
+		header('Cache-Control: private, no-cache, must-revalidate');
+		$this->success($resData);
 	}
 
 	public function upload()
@@ -148,5 +155,117 @@ class Api extends HomeBase
 		} else {
 			$this->error(appT('address_error'));
 		}
+	}
+
+	public function aiCatalog()
+	{
+		$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+		$host = strtolower(strstr($host, ':', true) ?: $host);
+		$siteName = \App::get('domain', 'name', 'Shop');
+		$baseUrl = 'https://' . $host;
+
+		$manifest = [
+			'specVersion' => '1.0',
+			'host' => [
+				'displayName' => $siteName,
+				'identifier' => 'did:web:' . $host,
+				'documentationUrl' => $baseUrl . '/',
+				'logoUrl' => $baseUrl . '/computer/image/logo.png',
+			],
+			'entries' => [
+				[
+					'identifier' => 'urn:air:' . $host . ':commerce:product-catalog',
+					'displayName' => $siteName . ' Product Catalog & Search API',
+					'type' => 'application/openapi+json',
+					'url' => $baseUrl . '/api/openapi.json',
+					'description' => 'Search and browse products, categories, pricing, and new arrivals on ' . $siteName . '.',
+					'version' => '1.0.0',
+					'updatedAt' => '2026-01-01T00:00:00Z',
+					'tags' => ['ecommerce', 'shopping', 'catalog', 'products', 'search'],
+					'representativeQueries' => [
+						'Search for products and check prices on ' . $siteName,
+						'Browse new arrivals and trending products',
+						'Find products by category or keyword',
+					],
+				],
+			],
+		];
+
+		header('Content-Type: application/json; charset=utf-8');
+		header('Cache-Control: public, max-age=3600');
+		echo json_encode($manifest, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+		\App::runOver(true);
+	}
+
+	public function openapi()
+	{
+		$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+		$host = strtolower(strstr($host, ':', true) ?: $host);
+		$siteName = \App::get('domain', 'name', 'Shop');
+		$baseUrl = 'https://' . $host;
+
+		$spec = [
+			'openapi' => '3.1.0',
+			'info' => [
+				'title' => $siteName . ' Storefront Catalog API',
+				'version' => '1.0.0',
+				'description' => 'Public product search, category browsing, and product detail endpoints for ' . $siteName . '.',
+			],
+			'servers' => [
+				['url' => $baseUrl],
+			],
+			'paths' => [
+				'/search.html' => [
+					'get' => [
+						'operationId' => 'searchProducts',
+						'summary' => 'Search products by keyword',
+						'parameters' => [
+							[
+								'name' => 'keyword',
+								'in' => 'query',
+								'required' => true,
+								'schema' => ['type' => 'string'],
+								'description' => 'Search keyword for matching product titles and tags',
+							],
+						],
+						'responses' => [
+							'200' => ['description' => 'Search results page'],
+						],
+					],
+				],
+				'/category.html' => [
+					'get' => [
+						'operationId' => 'browseCategory',
+						'summary' => 'Browse products by category ID',
+						'parameters' => [
+							[
+								'name' => 'cid',
+								'in' => 'query',
+								'required' => true,
+								'schema' => ['type' => 'integer'],
+								'description' => 'Category ID',
+							],
+						],
+						'responses' => [
+							'200' => ['description' => 'Category product listing page'],
+						],
+					],
+				],
+				'/newIn.html' => [
+					'get' => [
+						'operationId' => 'listNewArrivals',
+						'summary' => 'Browse latest new arrival products',
+						'responses' => [
+							'200' => ['description' => 'New arrivals product listing page'],
+						],
+					],
+				],
+			],
+		];
+
+		header('Content-Type: application/json; charset=utf-8');
+		header('Cache-Control: public, max-age=3600');
+		echo json_encode($spec, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+		\App::runOver(true);
 	}
 }

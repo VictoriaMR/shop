@@ -1,0 +1,22 @@
+<?php
+return [
+	'page_heading'     => 'New Arrivals',
+	'seo_title_suffix' => 'Just Landed Styles & Modern Home Essentials',
+	'seo_keyword'      => 'new arrivals, just landed, new season fashion, modern furniture, designer lighting, latest home decor',
+	'seo_desc'         => 'Explore the latest category new arrivals. Shop fresh seasonal drops, direct-to-consumer studio pricing, and 30-day easy returns.',
+	'hero_eyebrow'     => 'WEEKLY CURATED DROPS',
+	'hero_subtitle'    => 'Discover our newest handpicked arrivals across fashion apparel, contemporary furniture, and statement lighting — crafted for modern living at direct studio prices.',
+	'all_new_in'       => 'All New Arrivals',
+	'price_all'        => 'All Prices',
+	'price_under_120'  => 'Under $120',
+	'price_120_160'    => '$120 – $160',
+	'price_over_160'   => 'Over $160',
+	'sort_label'       => 'Sort by:',
+	'sort_newest'      => 'Newest First',
+	'sort_popular'     => 'Most Popular',
+	'sort_price_asc'   => 'Price: Low to High',
+	'sort_price_desc'  => 'Price: High to Low',
+	'clear_filters'    => 'Reset Filters',
+	'empty_title'      => 'No Matching New Arrivals Found',
+	'empty_desc'       => 'We could not find any products matching your current filter selection. Try resetting filters to explore all newly added styles.',
+];

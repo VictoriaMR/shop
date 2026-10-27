@@ -1,10 +1,13 @@
-Sitemap: https://clothestome.com/sitemap.xml
-
 User-agent: *
 Disallow: /userInfo
 Disallow: /contact
 Disallow: /login
 Disallow: /checkout
 Disallow: /order
-Disallow: /api
+Disallow: /api/stat
+Disallow: /api/upload
+Disallow: /api/notice
+Disallow: /api/address
+Allow: /.well-known/ai-catalog.json
+Allow: /api/openapi.json
 Allow: /

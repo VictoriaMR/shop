@@ -192,16 +192,16 @@ class Category extends Base
 	protected function getSubCategory($list, $pid, $simple=false) 
 	{
 		$returnData = [];
-		$lev = 0;
+		$lev = -1;
 		if ($simple) {
 			foreach ($list as $value) {
-				if ($value['parent_id'] == $pid && $value['level'] == 1) {
+				if ($value['parent_id'] == $pid) {
 					if ($value['status']) $returnData[] = $value;
 				}
 			}
 		} else {
 			foreach ($list as $value) {
-				if ($lev > 0) {
+				if ($lev >= 0) {
 					if ($lev < $value['level']) {
 						if ($value['status']) $returnData[] = $value;
 					} else {
@@ -209,7 +209,7 @@ class Category extends Base
 					}
 				}
 				if ($value['cate_id'] == $pid) {
-					$lev = $value['level'];
+					$lev = (int)$value['level'];
 				}
 			}
 		}
@@ -244,5 +244,127 @@ class Category extends Base
 	protected function getCacheKey()
 	{
 		return 'category:list-cache';
+	}
+
+	public function getEnName(int $cateId, string $fallback = ''): string
+	{
+		$map = $this->getEnMap();
+		if (isset($map[$cateId])) {
+			return $map[$cateId];
+		}
+		return $fallback !== '' ? $fallback : 'Category';
+	}
+
+	public function getEnMap(): array
+	{
+		return [
+			101 => 'Furniture',
+			102 => 'Lighting',
+			103 => 'Rugs & Mats',
+			104 => 'Home Decor',
+			105 => 'Window & Textiles',
+			106 => 'Wall Art',
+			107 => 'Baby & Kids',
+			108 => 'Home Improvement',
+			109 => 'Outdoor & Garden',
+			110 => "Men's Clothing",
+			111 => "Women's Clothing",
+			112 => 'Trending Picks',
+			113 => 'Personal Care',
+			114 => 'Kitchen & Dining',
+			115 => 'Bedding & Bath',
+			116 => 'Pet Supplies',
+			117 => 'Sports & Fitness',
+			118 => 'Beauty & Salon',
+			119 => 'Kitchen & Dining Furniture',
+			120 => 'Dining Tables & Seating',
+			122 => 'Dining Tables',
+			123 => 'Dining Table Sets',
+			124 => 'Bar Furniture',
+			125 => 'Bar Stools & Counter Stools',
+			126 => 'Home Bars & Bar Sets',
+			128 => 'Pub & Bistro Tables',
+			133 => 'Wine Racks & Cabinets',
+			134 => 'Living Room Furniture',
+			135 => 'Coffee & Accent Tables',
+			137 => 'End & Side Tables',
+			139 => 'Sofas & Couches',
+			141 => 'Living Room Chairs',
+			143 => 'Accent Benches',
+			144 => 'Rocking Chairs',
+			146 => 'Chaise Lounges',
+			147 => 'Massage Chairs',
+			149 => 'TV Stands & Media Consoles',
+			161 => 'Home Office Furniture',
+			166 => 'Office Storage Cabinets',
+			168 => 'Bookcases & Bookshelves',
+			170 => 'Office & Reception Sofas',
+			172 => 'Bedroom Furniture',
+			175 => 'Chests & Dressers',
+			177 => 'Makeup Vanities',
+			178 => 'Jewelry Armoires',
+			179 => 'Daybeds',
+			184 => 'Entryway Furniture',
+			198 => 'Wall Lights & Sconces',
+			206 => 'Ceiling Lights',
+			216 => 'Wall Lamps',
+			222 => 'Table & Floor Lamps',
+			223 => 'Table & Floor Lamps',
+			229 => 'Ceiling Fans & Lights',
+			230 => 'Chandeliers',
+			231 => 'Solar & Outdoor Lights',
+			235 => 'Solar Garden Lights',
+			238 => 'Outdoor Wall Lights',
+			244 => 'Novelty & Accent Lights',
+			249 => 'Light Bulbs',
+			255 => 'Wallpapers',
+			256 => 'Wall Art & Prints',
+			257 => 'Wall Decals',
+			258 => 'Decorative Accents',
+			259 => 'Wall Hangings',
+			260 => 'Curtains & Drapes',
+			261 => 'Blinds & Shades',
+			262 => 'Valances & Tiers',
+			463 => 'Patio Furniture',
+			478 => 'Outdoor Recreation',
+			485 => 'Decking & Fencing',
+			487 => 'Camping & Hiking',
+			490 => 'Shades & Pergolas',
+			494 => 'Pools, Saunas & Spas',
+			497 => 'Outdoor Storage',
+			502 => 'Jackets & Coats',
+			514 => 'Tops & Tees',
+			520 => 'Hoodies & Sweatshirts',
+			521 => 'Sweaters & Knitwear',
+			525 => 'Jeans & Denim',
+			526 => 'Active & Swimwear',
+			531 => 'Suits & Blazers',
+			536 => 'Casual Pants',
+			540 => 'Dresses',
+			541 => 'Tops & Blouses',
+			547 => 'Sweaters & Cardigans',
+			552 => 'Hoodies & Sweatshirts',
+			553 => 'Jeans & Denim',
+			554 => 'Leggings & Tights',
+			555 => 'Swimwear & Cover-Ups',
+			565 => 'Coats & Jackets',
+			629 => "Men's Trending",
+			635 => "Women's Trending",
+			643 => 'Viral Favorites',
+			646 => 'Trending Fashion',
+			651 => 'Creative Gadgets',
+			658 => 'Gaming & Lifestyle',
+			662 => 'Protective Masks',
+			663 => 'Safety Goggles',
+			664 => 'Protective Apparel',
+			665 => 'Disposable Care',
+			666 => 'Health Monitors',
+			667 => 'Hand Sanitizers',
+			816 => 'Salon Chairs',
+			822 => 'Styling Stations',
+			826 => 'Shampoo Units',
+			828 => 'Manicure & Pedicure',
+			830 => 'Facial & Spa Equipment',
+		];
 	}
 }

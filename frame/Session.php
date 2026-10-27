@@ -10,6 +10,8 @@ class Session
 	{
 		if (!$this->_started) {
 			if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+				session_cache_limiter('');
+				header('Cache-Control: private, no-cache, must-revalidate');
 				@session_start();
 			}
 			$this->_started = (session_status() === PHP_SESSION_ACTIVE);
@@ -32,6 +34,9 @@ class Session
 
 	public function get($name, $default = null, $key = null)
 	{
+		if (!$this->_started && empty($_COOKIE[session_name()])) {
+			return $default;
+		}
 		$this->ensureStarted();
 		if (!isset($_SESSION)) {
 			return $default;
@@ -44,6 +49,9 @@ class Session
 
 	public function del($name, $key = null)
 	{
+		if (!$this->_started && empty($_COOKIE[session_name()])) {
+			return true;
+		}
 		$this->ensureStarted();
 		if (!isset($_SESSION)) {
 			return true;
@@ -70,4 +78,4 @@ class Session
 		}
 		$this->_started = false;
 	}
-}
+}

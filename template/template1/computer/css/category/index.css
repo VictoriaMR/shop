@@ -1,0 +1,214 @@
+/* Category Collection (category/index) Page Specific Styles */
+.cate-main {
+	padding-bottom: 40px;
+}
+
+.cate-banner {
+	margin-bottom: 18px;
+}
+
+.cate-banner-inner {
+	border-radius: var(--radius-lg);
+	padding: 32px 38px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 28px;
+	border: 1px solid var(--border-color);
+	background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 55%, #e0e7ff 100%);
+}
+
+.cate-banner-inner.theme-amber {
+	background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 55%, #fde68a 100%);
+	border-color: #fde68a;
+}
+
+.cate-banner-inner.theme-rose {
+	background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 55%, #fecdd3 100%);
+	border-color: #fecdd3;
+}
+
+.cate-banner-inner.theme-purple {
+	background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 55%, #e9d5ff 100%);
+	border-color: #e9d5ff;
+}
+
+.cate-banner-inner.theme-emerald {
+	background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 55%, #bbf7d0 100%);
+	border-color: #bbf7d0;
+}
+
+.cate-banner-inner.theme-sky {
+	background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 55%, #bae6fd 100%);
+	border-color: #bae6fd;
+}
+
+.cate-banner-left {
+	display: flex;
+	align-items: flex-start;
+	gap: 22px;
+	max-width: 720px;
+}
+
+.cate-emblem {
+	width: 60px;
+	height: 60px;
+	border-radius: var(--radius-md);
+	background-color: #ffffff;
+	color: var(--primary);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-shadow: var(--shadow-sm);
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.cate-banner-badges {
+	gap: 8px;
+	margin-bottom: 8px;
+	flex-wrap: wrap;
+}
+
+.cate-banner-title {
+	font-size: 30px;
+	font-weight: 800;
+	letter-spacing: -0.025em;
+	line-height: 1.2;
+	color: var(--text-main);
+	margin-bottom: 8px;
+}
+
+.cate-banner-desc {
+	font-size: 14px;
+	line-height: 1.6;
+	color: var(--text-secondary);
+}
+
+.cate-banner-right {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	flex-shrink: 0;
+}
+
+.cate-metric-box {
+	background-color: rgba(255, 255, 255, 0.92);
+	border: 1px solid rgba(255, 255, 255, 0.95);
+	border-radius: var(--radius-md);
+	padding: 14px 20px;
+	min-width: 132px;
+	text-align: center;
+	box-shadow: var(--shadow-sm);
+}
+
+.cate-metric-num {
+	display: block;
+	font-size: 22px;
+	font-weight: 800;
+	color: var(--primary);
+	line-height: 1.15;
+	margin-bottom: 3px;
+}
+
+.cate-metric-num.accent {
+	color: var(--accent);
+}
+
+.cate-metric-label {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+/* Subcategory Quick-Filter Bar */
+.subcate-panel {
+	background-color: #ffffff;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 12px 18px;
+	margin-bottom: 16px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.subcate-label {
+	font-size: 12px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--text-muted);
+	flex-shrink: 0;
+}
+
+.subcate-list {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.subcate-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	height: 32px;
+	padding: 0 14px;
+	border-radius: 6px;
+	background-color: var(--bg-subtle);
+	border: 1px solid transparent;
+	color: var(--text-secondary);
+	font-size: 13px;
+	font-weight: 600;
+	transition: all var(--transition);
+}
+
+.subcate-chip:hover {
+	border-color: var(--primary);
+	color: var(--primary);
+	background-color: #ffffff;
+}
+
+.subcate-chip.active {
+	background-color: var(--primary);
+	color: #ffffff;
+}
+
+.subcate-count {
+	font-size: 11px;
+	opacity: 0.78;
+}
+
+.cate-recommend-section {
+	margin-top: 36px;
+	padding-top: 32px;
+	border-top: 1px solid var(--border-color);
+}
+
+@media (max-width: 992px) {
+	.cate-banner-inner {
+		flex-direction: column;
+		align-items: flex-start;
+		padding: 24px;
+	}
+	.cate-banner-right {
+		width: 100%;
+	}
+	.cate-metric-box {
+		flex: 1;
+	}
+}
+
+@media (max-width: 576px) {
+	.cate-banner-left {
+		flex-direction: column;
+		gap: 14px;
+	}
+	.cate-banner-title {
+		font-size: 24px;
+	}
+}

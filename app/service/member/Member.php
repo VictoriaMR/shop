@@ -9,7 +9,7 @@ class Member extends Base
 	{
 		$data['salt'] = randString(4);
 		$data['password'] = $this->getPassword($data['password'], $data['salt']);
-		return $this->insertGetId($data);
+		return $this->insertData($data, true);
 	}
 
 	public function login($mobile, $password='', $type='mobile')
@@ -75,12 +75,10 @@ class Member extends Base
 		$plen = strlen($password);
 		$rePassword = '';
 		if ($plen > $slen) {
-			$split = (int)($plen/$slen);
 			for($i=0; $i<$plen; $i++){
 				$rePassword .= $password[$i].($salt[$i] ?? '');
 			}
 		} elseif ($plen < $slen){
-			$split = (int)($slen/$plen);
 			for($i=0; $i<$slen; $i++){
 				$rePassword .= ($password[$i] ?? '').$salt[$i];
 			}
@@ -95,9 +93,9 @@ class Member extends Base
 	public function getAvatar($avatar='', $sex=0)
 	{
 		if ($avatar) {
-			return mediaUrl($avatar, '', false);
+			return mediaUrl($avatar);
 		}
-		return isMobile() ? '' : siteUrl('image/common/'.($sex ? 'female' : 'male').'.jpg');
+		return siteUrl('image/common/noimg.svg');
 	}
 
 	public function resetPassword($mobile, $password, $type='email')

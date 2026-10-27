@@ -53,6 +53,9 @@ class Currency extends Base
 	public function priceSymbol($type)
 	{
 		$info = $this->getInfoCache($this->currencyId());
+		if (empty($info) || !is_array($info)) {
+			$info = ['code' => 'USD', 'symbol' => '$', 'rate' => 6.6814];
+		}
 		switch ($type) {
 			case '1':
 				return $info['code'];
@@ -65,21 +68,29 @@ class Currency extends Base
 	public function priceFormat($price, $type=null)
 	{
 		$info = $this->getInfoCache($this->currencyId());
-		$price = sprintf('%.2f', $price*$info['rate']);
+		if (empty($info) || !is_array($info)) {
+			$info = ['code' => 'USD', 'symbol' => '$', 'rate' => 6.6814];
+		}
+		$rate = (!empty($info['rate']) && (float)$info['rate'] > 0) ? (float)$info['rate'] : 1.0;
+		$numPrice = (float)str_replace(',', '', (string)$price);
+		$formattedPrice = sprintf('%.2f', $numPrice / $rate);
 		$arr = [
-			1 => $price,
-			2 => $info['symbol'].$price,
-			3 => $info['code'].$price,
+			1 => $formattedPrice,
+			2 => $info['symbol'].$formattedPrice,
+			3 => $info['code'].$formattedPrice,
 		];
 		if (is_null($type)) {
 			return $arr;
 		}
-		return $arr[$type];
+		return $arr[$type] ?? $formattedPrice;
 	}
 
 	public function getSymbolByCode($code, $type=2)
 	{
 		$info = $this->getInfoCache($code);
+		if (empty($info) || !is_array($info)) {
+			return '';
+		}
 		switch ($type) {
 			case '1':
 				return $info['code'];

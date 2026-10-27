@@ -10,8 +10,10 @@ class Index extends HomeBase
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 
-		frame('Html')->addCss('common/address');
-		frame('Html')->addJs('common/address');
+		if (isMobile()) {
+			frame('Html')->addCss('common/address');
+			frame('Html')->addJs('common/address');
+		}
 		$this->view();
 	}
 }

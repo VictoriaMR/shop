@@ -165,11 +165,7 @@ class Spu extends Base
 		if (isAdmin()) {
 			$where['lan_id'] = 0;
 		} else {
-			if ($lanId == 1 || !$lanId) {
-				$where['lan_id'] = $lanId;
-			} else {
-				$where['lan_id'] = ['in', [1, $lanId]];
-			}
+			$where['lan_id'] = ['in', array_values(array_unique([0, 1, (int)$lanId]))];
 		}
 		$lanArr = service('product/Language')->getListData($where, 'spu_id,name', 0, 0, ['lan_id'=>'asc']);
 		$lanArr = array_column($lanArr, 'name', 'spu_id');
@@ -416,7 +412,7 @@ class Spu extends Base
 		} else {
 			$rate = 0.75;
 		}
-		return number_format($price / $rate, 2);
+		return number_format((float)$price / $rate, 2, '.', '');
 	}
 
 	protected function getSupplierItemUrl($url)

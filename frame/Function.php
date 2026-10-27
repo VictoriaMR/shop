@@ -246,7 +246,7 @@ function lanId($type = 'id') {
 	return frame('Session')->get('site_language_' . $type, $type === 'code' ? 'en' : 1);
 }
 
-function currencyId($type = 'id') {
+function currencyId($type = 'code') {
 	return frame('Session')->get('site_currency_' . $type, $type === 'code' ? 'USD' : 1);
 }
 
