@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Coupons & Vouchers Page (userInfo/coupon)
+   ========================================================================== */
+
+.coupon-redeem-bar {
+    display: flex;
+    gap: 10px;
+    max-width: 460px;
+    margin-bottom: 24px;
+}
+
+.coupon-redeem-bar input {
+    flex: 1;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f172a;
+}
+
+.coupon-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 12px;
+}
+
+.coupon-tab {
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    background: #f8fafc;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.coupon-tab.is-active {
+    background: #0f172a;
+    color: #ffffff;
+}

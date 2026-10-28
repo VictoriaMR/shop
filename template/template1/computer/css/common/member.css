@@ -1,0 +1,384 @@
+/* Shared Member Center & Order Center Styles (common/member.css) */
+.member-page {
+	padding: 24px 0 64px;
+}
+
+.member-layout {
+	display: grid;
+	grid-template-columns: 260px 1fr;
+	gap: 32px;
+	align-items: start;
+}
+
+/* Sidebar */
+.member-sidebar {
+	background-color: #ffffff;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	position: sticky;
+	top: 96px;
+}
+
+.member-user-card {
+	padding: 20px;
+	background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.member-avatar {
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background-color: rgba(255, 255, 255, 0.16);
+	color: #ffffff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 18px;
+	font-weight: 800;
+	flex-shrink: 0;
+}
+
+.member-user-meta {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.member-user-name {
+	font-size: 14px;
+	font-weight: 700;
+	color: #ffffff;
+}
+
+.member-user-email {
+	font-size: 12px;
+	color: #cbd5e1;
+}
+
+.member-nav-list {
+	padding: 8px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.member-nav-item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 11px 14px;
+	border-radius: var(--radius-sm);
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--text-secondary);
+	transition: all var(--transition);
+}
+
+.member-nav-item:hover {
+	background-color: var(--bg-subtle);
+	color: var(--primary);
+}
+
+.member-nav-item.active {
+	background-color: var(--primary);
+	color: #ffffff;
+}
+
+.member-nav-item.logout {
+	margin-top: 6px;
+	border-top: 1px solid var(--border-light);
+	color: var(--accent);
+}
+
+/* Main Content Area */
+.member-card {
+	background-color: #ffffff;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 24px 28px;
+	margin-bottom: 24px;
+}
+
+.member-card-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 16px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid var(--border-light);
+	gap: 16px;
+	flex-wrap: wrap;
+}
+
+.member-card-title {
+	font-size: 20px;
+	font-weight: 800;
+	color: var(--text-main);
+}
+
+/* Stats Grid */
+.member-stats-grid {
+	display: grid;
+	grid-template-columns: repeat(4, 1fr);
+	gap: 16px;
+	margin-bottom: 24px;
+}
+
+.member-stat-box {
+	background-color: var(--bg-subtle);
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 18px 20px;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	transition: border-color var(--transition), transform var(--transition);
+}
+
+.member-stat-box:hover {
+	border-color: var(--primary);
+	transform: translateY(-2px);
+}
+
+.member-stat-num {
+	font-size: 26px;
+	font-weight: 800;
+	color: var(--primary);
+}
+
+.member-stat-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-secondary);
+}
+
+/* Order Tabs & Search Bar */
+.order-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 16px;
+	margin-bottom: 20px;
+}
+
+.order-status-tabs {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.order-tab-link {
+	padding: 7px 14px;
+	border-radius: 999px;
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--text-secondary);
+	background-color: var(--bg-subtle);
+	border: 1px solid var(--border-color);
+	transition: all var(--transition);
+}
+
+.order-tab-link:hover {
+	color: var(--primary);
+	border-color: var(--primary);
+}
+
+.order-tab-link.active {
+	background-color: var(--primary);
+	color: #ffffff;
+	border-color: var(--primary);
+}
+
+.order-search-form {
+	display: flex;
+	gap: 8px;
+}
+
+.order-search-input {
+	height: 36px;
+	padding: 0 12px;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-sm);
+	font-size: 13px;
+	min-width: 220px;
+}
+
+/* Order Card */
+.order-item-card {
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	margin-bottom: 18px;
+	background-color: #ffffff;
+}
+
+.order-card-header {
+	padding: 14px 20px;
+	background-color: var(--bg-subtle);
+	border-bottom: 1px solid var(--border-color);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+	font-size: 13px;
+}
+
+.order-status-badge {
+	display: inline-flex;
+	align-items: center;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 700;
+	background-color: #e0f2fe;
+	color: #0369a1;
+}
+
+.order-status-badge.status-0 {
+	background-color: #fef3c7;
+	color: #b45309;
+}
+
+.order-status-badge.status-3 {
+	background-color: #dcfce7;
+	color: #166534;
+}
+
+.order-status-badge.status--1 {
+	background-color: var(--bg-muted);
+	color: var(--text-muted);
+}
+
+.order-card-body {
+	padding: 18px 20px;
+}
+
+.order-prod-row {
+	display: grid;
+	grid-template-columns: 68px 1fr auto;
+	gap: 14px;
+	align-items: center;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--border-light);
+}
+
+.order-prod-row:last-child {
+	border-bottom: none;
+}
+
+.order-prod-thumb {
+	width: 68px;
+	height: 68px;
+	border-radius: var(--radius-sm);
+	border: 1px solid var(--border-color);
+	overflow: hidden;
+}
+
+.order-prod-thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.order-card-footer {
+	padding: 14px 20px;
+	border-top: 1px solid var(--border-light);
+	background-color: #fafafa;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.order-action-btns {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+/* Address Book Grid */
+.addr-book-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 18px;
+}
+
+.addr-book-card {
+	border: 1.5px solid var(--border-color);
+	border-radius: var(--radius-md);
+	padding: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	background-color: #ffffff;
+}
+
+.addr-book-card.is-default {
+	border-color: var(--primary);
+}
+
+/* Coupons Grid */
+.coupon-grid {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 18px;
+}
+
+.coupon-card {
+	display: grid;
+	grid-template-columns: 120px 1fr;
+	border: 1px solid var(--border-color);
+	border-radius: var(--radius-md);
+	overflow: hidden;
+	background-color: #ffffff;
+}
+
+.coupon-left {
+	background: linear-gradient(135deg, var(--primary) 0%, #334155 100%);
+	color: #ffffff;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+	text-align: center;
+}
+
+.coupon-amount {
+	font-size: 24px;
+	font-weight: 800;
+}
+
+.coupon-cond {
+	font-size: 11px;
+	color: #cbd5e1;
+}
+
+.coupon-right {
+	padding: 16px 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+@media (max-width: 992px) {
+	.member-layout {
+		grid-template-columns: 1fr;
+	}
+	.member-sidebar {
+		position: static;
+	}
+	.member-stats-grid,
+	.addr-book-grid,
+	.coupon-grid {
+		grid-template-columns: 1fr;
+	}
+}

@@ -6,7 +6,7 @@ use app\controller\HomeBase;
 class Contact extends HomeBase
 {
 	public function index()
-	{	
+	{
 		frame('Html')->addCss();
 		frame('Html')->addJs();
 
@@ -17,37 +17,63 @@ class Contact extends HomeBase
 	public function create()
 	{
 		$service = service('message/Message');
-		$key = $service->createGroup(userId(), $service->getSystemId());
+		$fromId = userId() ?: (int) crc32(uuId());
+		$key = $service->createGroup($fromId, $service->getSystemId());
 		if ($key) {
 			$this->success($key, '');
 		} else {
-			$this->error('contact false');
+			$this->error('Could not initialize support chat.');
 		}
+	}
+
+	public function send()
+	{
+		$name = trim((string)ipost('name', ''));
+		$email = trim((string)ipost('email', ''));
+		$subject = trim((string)ipost('subject', 'General Inquiry'));
+		$content = trim((string)ipost('content', ''));
+		if (empty($email) || empty($content)) {
+			$this->error('Please enter your email address and message.');
+		}
+		$ticketId = 'TKT-' . date('Ymd') . '-' . strtoupper(randString(6));
+		$record = [
+			'ticket_id' => $ticketId,
+			'mem_id'    => userId(),
+			'name'      => substr($name, 0, 64),
+			'email'     => substr($email, 0, 128),
+			'subject'   => substr($subject, 0, 128),
+			'content'   => substr($content, 0, 1000),
+			'add_time'  => now(),
+		];
+		$history = session()->get('contact_tickets') ?: [];
+		$history[] = $record;
+		session()->set('contact_tickets', $history);
+		$this->success('Thank you! Your inquiry (' . $ticketId . ') has been received. Our support team will reply within 24 hours.', ['ticket_id' => $ticketId]);
 	}
 
 	public function message()
 	{
 		$key = ipost('key');
-		$page = ipost('page', 0);
-		$size = ipost('size', 20);
+		$page = (int)ipost('page', 1);
+		$size = (int)ipost('size', 20);
 		if (empty($key)) {
-			$this->error('contact key empty.');
+			$this->error('Contact key is empty.');
 		}
 		$list = service('message/Message')->getListData(['group_key'=>$key], '*', $page, $size, ['add_time'=>'desc']);
 		if (!empty($list)) {
 			$memId = userId();
-			$userInfo = $value['avatar'] = session()->get(type().'_info');
-			foreach ($list as $key => $value) {
-				if ($memId == $value['mem_id']) {
+			$userInfo = session()->get(type().'_info') ?: [];
+			foreach ($list as $idx => $value) {
+				if ($memId && $memId == $value['mem_id']) {
 					$value['is_self'] = true;
 					$value['avatar'] = $userInfo['avatar'] ?? '';
-					$value['name'] = $userInfo['name'] ?? '';
+					$value['name'] = $userInfo['name'] ?? 'Me';
 				} else {
 					$value['is_self'] = false;
 					$value['avatar'] = '';
 					$value['name'] = site()->getName();
 				}
-				$list[$key] = $value;
+				$list[$idx] = $value;
 			}
 		}
 		$this->success($list, '');

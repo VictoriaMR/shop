@@ -302,3 +302,20 @@ function redis($db = 0) {
 function db($db = null) {
 	return frame('Connection')->setDb($db);
 }
+
+
+function uuId() {
+	return frame('Cookie')->setUuid(true);
+}
+
+function session() {
+	return frame('Session');
+}
+
+function type() {
+	return \App::get('domain', 'class', 'home');
+}
+
+function getUniqueName() {
+	return 'OR' . date('YmdHis') . random_int(100000, 999999) . 'EN';
+}

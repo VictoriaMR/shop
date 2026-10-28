@@ -7,98 +7,144 @@ class Cart extends Base
 {
 	protected $_model = 'app/model/Cart';
 
+	public function getOwnerWhere(): array
+	{
+		$memId = userId();
+		if ($memId > 0) {
+			$this->mergeGuestCart($memId);
+			return ['mem_id' => $memId];
+		}
+		$uuid = frame('Cookie')->get('uuid') ?: uuId();
+		return ['mem_id' => 0, 'uuid' => (string)$uuid];
+	}
+
+	protected function mergeGuestCart(int $memId): void
+	{
+		static $merged = false;
+		if ($merged || $memId <= 0) {
+			return;
+		}
+		$merged = true;
+		$uuid = frame('Cookie')->get('uuid');
+		if (empty($uuid) || !is_string($uuid)) {
+			return;
+		}
+		$guestRows = $this->getListData(['mem_id' => 0, 'uuid' => $uuid], 'cart_id,sku_id,quantity,price,checked');
+		if (empty($guestRows)) {
+			return;
+		}
+		foreach ($guestRows as $gRow) {
+			$existing = $this->loadData(['mem_id' => $memId, 'sku_id' => $gRow['sku_id']], 'cart_id,quantity');
+			if (!empty($existing)) {
+				$this->updateData($existing['cart_id'], ['quantity' => (int)$existing['quantity'] + (int)$gRow['quantity']]);
+				$this->deleteData($gRow['cart_id']);
+			} else {
+				$this->updateData($gRow['cart_id'], ['mem_id' => $memId]);
+			}
+		}
+	}
+
 	public function addToCart($skuId, $quantity = 1)
 	{
-		$where = [
-			'mem_id' => userId(),
-			'sku_id' => $skuId,
-		];
-		$cartId = $this->loadData($where, 'cart_id')['cart_id'] ?? 0;
-		if ($cartId) {
-			return $this->where('cart_id', $cartId)->increment('quantity');
+		$skuId = (int)$skuId;
+		$quantity = max(1, (int)$quantity);
+		$skuInfo = service('product/Sku')->loadData(['sku_id' => $skuId, 'status' => 1], 'sku_id,stock,price');
+		if (empty($skuInfo)) {
+			return false;
 		}
-		$where['quantity'] = $quantity;
+		$where = $this->getOwnerWhere();
+		$where['sku_id'] = $skuId;
+		$existing = $this->loadData($where, 'cart_id,quantity');
+		if (!empty($existing)) {
+			$newQty = min((int)$skuInfo['stock'], (int)$existing['quantity'] + $quantity);
+			return $this->updateData($existing['cart_id'], [
+				'quantity' => max(1, $newQty),
+				'price'    => $skuInfo['price'],
+				'checked'  => 1,
+			]);
+		}
+		$where['site_id'] = siteId();
+		$where['quantity'] = min((int)$skuInfo['stock'], $quantity);
+		$where['price'] = $skuInfo['price'];
+		$where['checked'] = 1;
 		return $this->insert($where);
 	}
 
 	public function removeCart($cartId)
 	{
-		$where = [
-			'cart_id' => $cartId,
-			'mem_id' => userId(),
-		];
+		$where = $this->getOwnerWhere();
+		$where['cart_id'] = (int)$cartId;
 		return $this->deleteData($where);
 	}
 
 	public function reduceCart($cartId, $quantity = 1)
 	{
-		$where = [
-			'cart_id' => $cartId,
-			'mem_id' => userId(),
-		];
-		return $this->where($where)->decrement('quantity', $quantity);
+		$where = $this->getOwnerWhere();
+		$where['cart_id'] = (int)$cartId;
+		return $this->where($where)->decrement('quantity', (int)$quantity);
 	}
 
 	public function checkCart($cartId, $check = 1)
 	{
-		$where = [
-			'cart_id' => $cartId,
-			'mem_id' => userId(),
-		];
-		return $this->updateData($where, ['checked' => $check]);
+		$where = $this->getOwnerWhere();
+		$where['cart_id'] = (int)$cartId;
+		return $this->updateData($where, ['checked' => (int)$check]);
 	}
 
 	public function getCartCount()
 	{
 		$memId = userId();
-		if ($memId <= 0) {
-			return 0;
+		if ($memId > 0) {
+			$this->mergeGuestCart($memId);
+			$where = ['mem_id' => $memId, 'checked' => 1];
+		} else {
+			$uuid = frame('Cookie')->get('uuid');
+			if (empty($uuid)) {
+				return 0;
+			}
+			$where = ['mem_id' => 0, 'uuid' => (string)$uuid, 'checked' => 1];
 		}
-		$where = [
-			'mem_id' => $memId,
-			'checked' => 1,
-		];
 		return (int)($this->loadData($where, 'SUM(quantity) as quantity')['quantity'] ?? 0);
-	}
-
-	protected function getWhere()
-	{
-		return ['mem_id' => userId()];
 	}
 
 	public function getList()
 	{
-		$memId = userId();
-		if ($memId <= 0) {
+		$where = $this->getOwnerWhere();
+		$list = $this->getListData($where, 'cart_id,sku_id,quantity,price as cart_price,checked', 0, 0, ['cart_id' => 'desc']);
+		if (empty($list)) {
 			return [];
 		}
-		$list = $this->getListData($this->getWhere(), 'cart_id,sku_id,quantity,price as cart_price,checked', 0, 0, ['cart_id' => 'desc']);
-		if (!empty($list)) {
-			$sku = service('product/Sku');
-			$list = array_column($list, null, 'sku_id');
-			$currencyService = service('system/Currency');
-			$symbol = $currencyService->priceSymbol(2);
-			foreach ($list as $key => $value) {
-				$tempData = $sku->getInfoCache($value['sku_id'], lanId());
-				$value = array_merge($value, $tempData);
-				$temp = $currencyService->priceFormat($value['cart_price']);
-				$value['cart_price'] = $temp[1];
-				$value['cart_price_format'] = $temp[2];
-				$value['price_total'] = $value['price'] * $value['quantity'];
-				$value['price_total_format'] = $symbol . $value['price_total'];
-				$list[$key] = $value;
+		$skuService = service('product/Sku');
+		$currencyService = service('system/Currency');
+		$symbol = $currencyService->priceSymbol(2);
+		$result = [];
+		foreach ($list as $value) {
+			$skuId = (int)$value['sku_id'];
+			$tempData = $skuService->getInfoCache($skuId, lanId());
+			if (empty($tempData)) {
+				continue;
 			}
+			$item = array_merge($value, $tempData);
+			$temp = $currencyService->priceFormat($value['cart_price']);
+			$item['cart_price'] = $temp[1];
+			$item['cart_price_format'] = $temp[2];
+			$qty = max(1, (int)$item['quantity']);
+			$unitPrice = (float)$item['price'];
+			$origUnitPrice = (float)($item['original_price'] ?? $unitPrice);
+			$item['price_total'] = sprintf('%.2f', $unitPrice * $qty);
+			$item['price_total_format'] = $symbol . $item['price_total'];
+			$item['original_total'] = sprintf('%.2f', $origUnitPrice * $qty);
+			$item['original_total_format'] = $symbol . $item['original_total'];
+			$result[$skuId] = $item;
 		}
-		return $list;
+		return $result;
 	}
 
 	public function check()
 	{
-		$memId = userId();
-		if ($memId <= 0) {
-			return false;
-		}
-		$list = $this->getListData(['mem_id' => $memId, 'checked' => 1], 'cart_id,sku_id,quantity');
+		$where = $this->getOwnerWhere();
+		$where['checked'] = 1;
+		$list = $this->getListData($where, 'cart_id,sku_id,quantity');
 		if (empty($list)) {
 			return false;
 		}
@@ -107,13 +153,14 @@ class Cart extends Base
 		$skuList = array_column($skuList, null, 'sku_id');
 
 		foreach ($list as $value) {
-			if (empty($skuList[$value['sku_id']])) {
+			$sid = $value['sku_id'];
+			if (empty($skuList[$sid])) {
 				return false;
 			}
-			if ($skuList[$value['sku_id']]['status'] != $sku->getConst('STATUS_OPEN')) {
+			if ($skuList[$sid]['status'] != $sku->getConst('STATUS_OPEN')) {
 				return false;
 			}
-			if ($value['quantity'] > $skuList[$value['sku_id']]['stock']) {
+			if ($value['quantity'] > $skuList[$sid]['stock']) {
 				return false;
 			}
 		}

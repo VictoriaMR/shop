@@ -6,105 +6,62 @@ use app\controller\HomeBase;
 class Cart extends HomeBase
 {
 	public function index()
-	{	
+	{
 		frame('Html')->addCss();
 		frame('Html')->addJs();
-		$list = service('Cart')->getList();
-		$summary = [];
-		if (!empty($list)) {
-			$originalPriceTotal = 0;
-			$priceTotal = 0;
-			//收藏检查
-			$spuIdArr = array_unique(array_column($list, 'spu_id'));
-			$where = [
-				'mem_id' => userId(),
-				'spu_id' => ['in', $spuIdArr],
-			];
-			$collect = service('member/Collect')->getListData($where, 'spu_id');
-			$collect = array_column($collect, 'spu_id');
-			foreach ($list as $key => $value) {
-				if ($value['quantity'] == 0 || $value['quantity'] > $value['stock']) {
-					$value['out_of_stock'] = true;
-				} else {
-					$value['out_of_stock'] = false;
-				}
-				$value['is_liked'] = in_array($value['spu_id'], $collect);
-				if ($value['checked']) {
-					$originalPriceTotal += $value['original_price']*$value['quantity'];
-					$priceTotal += $value['price']*$value['quantity'];
-				}
-				$list[$key] = $value;
-			}
-			$symbol = service('currency/Currency')->priceSymbol(2);
-			$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
-			$priceTotal = sprintf('%.2f', $priceTotal);
-			$summary[1] = [
-				'type'=> 1,
-				'name' => appT('original_price'),
-				'price' => $originalPriceTotal,
-				'price_format' => $symbol.$originalPriceTotal,
-			];
-			$summary[2] = [
-				'type'=> 2,
-				'name' => appT('total'),
-				'price' => $priceTotal,
-				'price_format' => $symbol.$priceTotal,
-			];
-		}
-		$this->assign('isLogin', userId());
-		$this->assign('list', $list);
-		$this->assign('summary', $summary);
-		$this->assign('_title', distT('shopping_bag'));
 		$this->view();
 	}
 
 	public function cartSummary()
 	{
-		$list = service('Cart')->getList();
+		$list = service('cart/Cart')->getList();
 		$originalPriceTotal = 0;
 		$priceTotal = 0;
+		$checkedCount = 0;
 		if (!empty($list)) {
-			foreach ($list as $key => $value) {
-				if ($value['checked']) {
-					$originalPriceTotal += $value['original_price']*$value['quantity'];
-					$priceTotal += $value['price']*$value['quantity'];
+			foreach ($list as $value) {
+				if (!empty($value['checked'])) {
+					$qty = max(1, (int)$value['quantity']);
+					$originalPriceTotal += (float)$value['original_price'] * $qty;
+					$priceTotal += (float)$value['price'] * $qty;
+					$checkedCount += $qty;
 				}
 			}
 		}
-		$summary = [];
-		$symbol = service('currency/Currency')->priceSymbol(2);
-		$originalPriceTotal = sprintf('%.2f', $originalPriceTotal);
-		$priceTotal = sprintf('%.2f', $priceTotal);
-		$summary[] = [
-			'type'=> 1,
-			'name' => appT('original_price'),
-			'price' => $originalPriceTotal,
-			'price_format' => $symbol.$originalPriceTotal,
-		];
-		$summary[] = [
-			'type'=> 2,
-			'name' => appT('total'),
-			'price' => $priceTotal,
-			'price_format' => $symbol.$priceTotal,
+		$symbol = service('system/Currency')->priceSymbol(2) ?: '$';
+		$discountTotal = max(0, $originalPriceTotal - $priceTotal);
+		$shippingFee = $priceTotal > 0 ? service('order/Order')->getShippingFee($priceTotal) : 0;
+		$grandTotal = $priceTotal + $shippingFee;
+
+		$summary = [
+			'checked_count'         => $checkedCount,
+			'symbol'                => $symbol,
+			'original_total'        => sprintf('%.2f', $originalPriceTotal),
+			'original_total_format' => $symbol . sprintf('%.2f', $originalPriceTotal),
+			'subtotal'              => sprintf('%.2f', $priceTotal),
+			'subtotal_format'       => $symbol . sprintf('%.2f', $priceTotal),
+			'discount'              => sprintf('%.2f', $discountTotal),
+			'discount_format'       => '-' . $symbol . sprintf('%.2f', $discountTotal),
+			'shipping'              => sprintf('%.2f', $shippingFee),
+			'shipping_format'       => $shippingFee > 0 ? ($symbol . sprintf('%.2f', $shippingFee)) : 'FREE',
+			'grand_total'           => sprintf('%.2f', $grandTotal),
+			'grand_total_format'    => $symbol . sprintf('%.2f', $grandTotal),
+			'free_shipping_diff'    => sprintf('%.2f', max(0, 59 - $priceTotal)),
 		];
 		$this->success($summary);
 	}
 
 	public function cartCount()
 	{
-		$rst = service('Cart')->getCartCount();
-		if ($rst) {
-			$this->success($rst);
-		} else {
-			$this->error();
-		}
+		$rst = service('cart/Cart')->getCartCount();
+		$this->success($rst);
 	}
 
 	public function addToCart()
 	{
-		$skuId = ipost('sku_id');
-		$num = ipost('num', 1);
-		if (empty($skuId)) {
+		$skuId = (int)ipost('sku_id', (int)ipost('id', 0));
+		$num = max(1, (int)ipost('num', (int)ipost('quantity', 1)));
+		if ($skuId <= 0) {
 			$this->error(appT('param_error'));
 		}
 		$sku = service('product/Sku');
@@ -116,34 +73,13 @@ class Cart extends HomeBase
 		if (!$skuInfo) {
 			$this->error(distT('add_invalid'));
 		}
-		$where = ['sku_id' => $skuId, 'mem_id' => userId()];
-		if (!userId()) {
-			$where['uuid'] = uuId();
+		if ((int)$skuInfo['stock'] < $num) {
+			$this->error(distT('add_out_stock'));
 		}
-		$cart = service('Cart');
-		$cartSkuIno = $cart->loadData($where);
-		if (empty($cartSkuIno)) {
-			if ($skuInfo['stock'] < $num) {
-				$this->error(distT('add_out_stock'));
-			}
-			$where['quantity'] = $num;
-			$where['price'] = $skuInfo['price'];
-			$rst = $cart->insert($where);
-		} else {
-			$num += $cartSkuIno['quantity'];
-			if ($skuInfo['stock'] > $cartSkuIno['quantity']) {
-				if ($skuInfo['stock'] < $num) {
-					$num = $skuInfo['stock'];
-				}
-				$where = ['quantity' => $num];
-				$where['price'] = $skuInfo['price'];
-				$rst = $cart->updateData($cartSkuIno['cart_id'], $where);
-			} else {
-				$rst = true;
-			}
-		}
+		$cart = service('cart/Cart');
+		$rst = $cart->addToCart($skuId, $num);
 		if ($rst) {
-			$this->success(distT('add_success'), ['cart_count'=>$cart->getCartCount()]);
+			$this->success(distT('add_success'), ['cart_count' => $cart->getCartCount()]);
 		} else {
 			$this->error(distT('add_fail'));
 		}
@@ -151,35 +87,32 @@ class Cart extends HomeBase
 
 	public function updateQuantity()
 	{
-		$id = ipost('id');
-		$quantity = ipost('quantity', 1);
-		if (empty($id)) {
+		$id = (int)ipost('id');
+		$quantity = max(1, (int)ipost('quantity', 1));
+		if ($id <= 0) {
 			$this->error(appT('param_error'));
 		}
-		if ($quantity <= 0) {
-			$quantity = 1;
-		}
-		$where = ['mem_id' => userId(), 'cart_id' => $id];
-		$cart = service('Cart');
+		$cart = service('cart/Cart');
+		$where = $cart->getOwnerWhere();
+		$where['cart_id'] = $id;
 		$cartInfo = $cart->loadData($where);
 		if (empty($cartInfo)) {
 			$this->error(distT('cart_not_exist'));
 		}
 		$sku = service('product/Sku');
-		$where = [
+		$skuInfo = $sku->loadData([
 			'sku_id' => $cartInfo['sku_id'],
 			'status' => $sku->getConst('STATUS_OPEN'),
-		];
-		$skuInfo = $sku->loadData($where, 'stock');
+		], 'stock');
 		if (empty($skuInfo)) {
 			$this->error(distT('add_invalid'));
 		}
-		if ($skuInfo['stock'] < $quantity) {
+		if ((int)$skuInfo['stock'] < $quantity) {
 			$this->error(distT('add_out_stock'));
 		}
 		$rst = $cart->updateData($id, ['quantity' => $quantity]);
-		if ($rst) {
-			$this->success(distT('add_success'));
+		if ($rst !== false) {
+			$this->success(distT('update_success'), ['cart_count' => $cart->getCartCount()]);
 		} else {
 			$this->error(distT('add_fail'));
 		}
@@ -188,16 +121,13 @@ class Cart extends HomeBase
 	public function remove()
 	{
 		$id = (int)ipost('id');
-		if (empty($id)) {
+		if ($id <= 0) {
 			$this->error(appT('param_error'));
 		}
-		$where = [
-			'cart_id' => $id,
-			'mem_id' => userId(),
-		];
-		$rst = service('Cart')->deleteData($where);
+		$cart = service('cart/Cart');
+		$rst = $cart->removeCart($id);
 		if ($rst) {
-			$this->success(distT('remove_success'));
+			$this->success(distT('remove_success'), ['cart_count' => $cart->getCartCount()]);
 		} else {
 			$this->error(distT('remove_fail'));
 		}
@@ -206,17 +136,23 @@ class Cart extends HomeBase
 	public function setChecked()
 	{
 		$id = (int)ipost('id');
-		$check = (int)ipost('check', 0);
-		if (empty($id)) {
-			$this->error(appT('param_error'));
+		$check = (int)ipost('check', 0) ? 1 : 0;
+		$cart = service('cart/Cart');
+		if ($id === -1) {
+			// 全选 / 取消全选
+			$where = $cart->getOwnerWhere();
+			$rst = $cart->updateData($where, ['checked' => $check]);
+		} else {
+			if ($id <= 0) {
+				$this->error(appT('param_error'));
+			}
+			$rst = $cart->checkCart($id, $check);
 		}
-		$where = [
-			'cart_id' => $id,
-			'mem_id' => userId(),
-		];
-		$rst = service('Cart')->updateData($where, ['checked'=>$check]);
-		if ($rst) {
-			$this->success($check ? distT('move_to_cart_success') : distT('save_for_later_success'));
+		if ($rst !== false) {
+			$this->success(
+				$check ? distT('move_to_cart_success') : distT('save_for_later_success'),
+				['cart_count' => $cart->getCartCount()]
+			);
 		} else {
 			$this->error($check ? distT('move_to_cart_fail') : distT('save_for_later_fail'));
 		}
@@ -224,73 +160,11 @@ class Cart extends HomeBase
 
 	public function check()
 	{
-		$rst = service('Cart')->check();
+		$rst = service('cart/Cart')->check();
 		if ($rst) {
-			$this->success(url('checkout'));
+			$this->success(distT('check_ok'), ['url' => url('checkout')]);
 		} else {
 			$this->error(distT('check_error'));
 		}
-	}
-
-	public function editInfo()
-	{
-		$id = (int)ipost('id');
-		if (empty($id)) {
-			$this->error(appT('param_error'));
-		}
-		$where = [
-			'cart_id' => $id,
-			'mem_id' => userId(),
-		];
-		$cart = service('Cart');
-		$cartInfo = $cart->loadData($where, 'sku_id');
-		if (empty($cartInfo)) {
-			$this->error(distT('cart_not_exist'));
-		}
-		$info = service('product/Sku')->loadData($cartInfo['sku_id'], 'spu_id');
-		if (empty($info)) {
-			$this->error(distT('add_invalid'));
-		}
-		$info = service('product/Spu')->getInfoCache($info['spu_id'], lanId());
-		if (empty($info)) {
-			$this->error(distT('add_invalid'));
-		} else {
-			$info['sku_id'] = $cartInfo['sku_id'];
-			$this->success($info);
-		}
-	}
-
-	public function edit()
-	{
-		$cartId = (int)ipost('cart_id');
-		$skuId = (int)ipost('sku_id');
-		if (empty($cartId) || empty($skuId)) {
-			$this->error(appT('param_error'));
-		}
-		$memId = userId();
-		$where = [
-			'cart_id' => $cartId,
-			'mem_id' => $memId,
-		];
-		$cart = service('Cart');
-		$cartInfo = $cart->loadData($where, 'sku_id,quantity');
-		if (empty($cartInfo)) {
-			$this->error(distT('cart_not_exist'));
-		}
-		if ($cartInfo['sku_id'] == $skuId) {
-			$this->success(distT('add_success'));
-		}
-		$where = [
-			'mem_id' => $memId,
-			'sku_id' => $skuId,
-		];
-		$changeInfo = $cart->loadData($where);
-		if (empty($changeInfo)) {
-			$cart->updateData($cartId, ['sku_id'=>$skuId]);
-		} else {
-			$cart->updateData($changeInfo['cart_id'], ['quantity'=>$changeInfo['quantity']+$cartInfo['quantity']]);
-			$cart->deleteData($cartId);
-		}
-		$this->success(distT('add_success'));
 	}
 }

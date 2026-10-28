@@ -1,0 +1,89 @@
+/* ==========================================================================
+   Order Detail Page (order/detail)
+   ========================================================================== */
+
+.order-detail-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 22px 24px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+}
+
+.order-detail-meta h2 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 6px;
+}
+
+.order-detail-meta p {
+    font-size: 13px;
+    color: #64748b;
+    margin: 0;
+}
+
+.order-detail-addresses {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.detail-addr-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 20px;
+    background: #ffffff;
+}
+
+.detail-addr-box h3 {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #64748b;
+    margin: 0 0 10px;
+}
+
+.detail-addr-box p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: #334155;
+    margin: 0 0 4px;
+}
+
+.detail-totals-panel {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px solid #e2e8f0;
+    max-width: 340px;
+    margin-left: auto;
+}
+
+.detail-total-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.detail-total-row.grand {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    padding-top: 10px;
+    border-top: 1px solid #f1f5f9;
+}
+
+@media (max-width: 768px) {
+    .order-detail-addresses {
+        grid-template-columns: 1fr;
+    }
+}

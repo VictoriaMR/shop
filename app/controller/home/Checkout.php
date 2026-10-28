@@ -6,258 +6,12 @@ use app\controller\HomeBase;
 class Checkout extends HomeBase
 {
 	public function index()
-	{	
+	{
 		frame('Html')->addCss();
 		frame('Html')->addCss('common/address');
 		frame('Html')->addJs();
 		frame('Html')->addJs('common/address');
-
-		$info = $this->getCheckoutData();
-
-		if (empty($info['list'])) {
-			$error = distT('checkout_error');
-		} else {
-			//获取地址
-			$memId = userId();
-			if (empty($memId)) {
-				$addressData = session()->get(type().'_info.address');
-				$email = session()->get(type().'_info.guest_email', '');
-				$this->assign('email', $email);
-			} else {
-				$addressData = service('member/Address')->getListData(['mem_id'=>$memId], '*', 0, 2, ['is_default'=>'desc','is_bill'=>'desc', 'address_id' => 'desc']);
-			}
-			if (!empty($addressData)) {
-				foreach ($addressData as $value) {
-					if ($value['is_default']) {
-						$shipAddress = $value;
-					}
-					if ($value['is_bill']) {
-						$billAddress = $value;
-					}
-				}
-				if (empty($shipAddress)) {
-					$shipAddress = array_shift($addressData);
-				}
-				if (empty($billingAddress)) {
-					$billAddress = $shipAddress;
-				}
-				$order = service('order/Order');
-				$symbol = service('currency/Currency')->priceSymbol(2);
-				$logisticsList = [[
-					'name' => appT('express_shipping'),
-					'fee' => $symbol.$order->getShippingFee($info['total']),
-					'time_first' => 5,
-					'time_second' => 9,
-					'tips' => appT('shipping_tips', ['{start}'=>5, '{end}'=>9]),
-				]];
-				$insuranceFee = $symbol.$order->getInsurance($info['total']);
-				$this->assign('insuranceFee', $insuranceFee);
-				$this->assign('logisticsList', $logisticsList);
-				$this->assign('shipAddress', $shipAddress);
-				$this->assign('billAddress', $billAddress);
-			}
-			$this->assign('skuList', $info['list']);
-		}
-
-		$this->assign('skuId', ipost('id'));
-		$this->assign('quantity', ipost('quantity'));
-		$this->assign('error', $error ?? '');
-		$this->assign('_title', distT('checkout'));
-
 		$this->view();
-	}
-
-	public function createOrder()
-	{
-		$skuIds = ipost('id');
-		$quantity = ipost('quantity', 1);
-		$shippingAddressId = ipost('shipping_address_id');
-		$billingAddressId = ipost('billing_address_id');
-		$insurance = ipost('insurance', 0);
-		//游客登录
-		if (empty(userId())) {
-			$email = session()->get(type().'_info.guest_email');
-			if (empty($email)) {
-				$this->error(distT('email_empty'));
-			}
-			//注册
-			$memberService = service('member/Member');
-			$memId = $memberService->insertGetId(['site_id'=>siteId(), 'email'=>$email]);
-			if (empty($memId)) {
-				$this->error(distT('regist_error'));
-			}
-			//登录
-			$rst = $memberService->loginById($memId);
-			if (!$rst) {
-				$this->error(distT('regist_error'));
-			}
-			//地址更新
-			$addressData = session()->get(type().'_info.address');
-			if (empty($addressData)) {
-				$this->error(distT('address_empty'));
-			}
-			$addressData = array_column($addressData, null, 'address_id');
-			$addressService = service('member/Address');
-			$countryService = service('address/Country');
-			foreach ($addressData as $key => $value) {
-				unset($value['address_id']);
-				$countryInfo = $countryService->loadData($value['country_code2'], 'dialing_code');
-				$data['phone'] = '+'.$countryInfo['dialing_code'].' '.$value['phone'];
-				$value['mem_id'] = $memId;
-				$addressData[$key] = $addressService->insertGetId($value);
-			}
-			$shippingAddressId = $addressData[$shippingAddressId] ?? 0;
-			$billingAddressId = $addressData[$billingAddressId] ?? 0;
-		}
-		if (empty($shippingAddressId)) {
-			$this->error(distT('shipping_address_required'));
-		}
-		if (empty($billingAddressId)) {
-			$this->error(distT('billing_address_required'));
-		}
-		$skuList = [];
-		if (empty($skuIds)) {
-			$where = [
-				'mem_id' => userId(),
-				'checked' => 1,
-			];
-			$skuList = service('Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
-			if (empty($skuList)) {
-				$this->error(appT('checked_empty'));
-			}
-			$skuList = array_column($skuList, 'quantity', 'sku_id');
-		} else {
-			if (empty($skuIds)) {
-				$this->error(appT('checked_empty'));
-			}
-			$skuList = [$skuIds=>$quantity];
-		}
-		$rst = service('order/Order')->createOrder($skuList, $shippingAddressId, $billingAddressId, $insurance);
-		if ($rst) {
-			//清空购物车
-			if (empty($skuIds)) {
-				service('Cart')->deleteData($where);
-			}
-			$this->success(url('checkout/payOrder', ['id'=>$rst]));
-		} else {
-			$this->error(distT('create_order_error'));
-		}
-	}
-
-	public function calculateOrderFee()
-	{
-		$info = $this->getCheckoutData();
-		$currencyService = service('currency/Currency');
-		$order = service('order/Order');
-		$list = [];
-		$orderTotal = $info['total'];
-		$symbol = $currencyService->priceSymbol(2);
-		$list[] = [
-			'type' => 0,
-			'name' => appT('product_original_total'),
-			'value' => $info['original_total'],
-			'value_format' => $symbol.$info['original_total'],
-		];
-		$list[] = [
-			'type' => 1,
-			'name' => appT('product_total'),
-			'value' => $info['total'],
-			'value_format' => $symbol.$info['total'],
-		];
-		$shippingFee = $order->getShippingFee($info['total']);
-		$list[] = [
-			'type' => 2,
-			'name' => appT('shipping_fee'),
-			'value' => $shippingFee,
-			'value_format' => $symbol.$shippingFee,
-		];
-		$orderTotal += $shippingFee;
-		if (!empty(ipost('insurance'))) {
-			$insuranceFee = $order->getInsurance($info['total']);
-			$list[] = [
-				'type' => 3,
-				'name' => appT('shipping_guarantee'),
-				'value' => $insuranceFee,
-				'value_format' => $symbol.$insuranceFee,
-			];
-			$orderTotal += $insuranceFee;
-		}
-		$data = [
-			'fee_list' => $list,
-			'name' => appT('order_total'),
-			'value' => sprintf('%.2f', $orderTotal),
-			'value_format' => $symbol.$orderTotal,
-		];
-		$this->success($data, '');
-	}
-
-	public function selectLogistics()
-	{
-		$info = $this->getCheckoutData();
-		$language = service('Language');
-		$order = service('order/Order');
-		$logisticsList = [[
-			'name' => appT('express_shipping'),
-			'fee' => $language->priceSymbol(2).$order->getShippingFee($info['total']),
-			'time_first' => 5,
-			'time_second' => 9,
-			'tips' => appT('shipping_tips', ['start'=>5, 'end'=>9]),
-		]];
-		$this->success($logisticsList);
-	}
-
-	protected function getCheckoutData()
-	{
-		$skuId = (int)ipost('id');
-		$quantity = (int)ipost('quantity');
-		$address_id = (int)ipost('shipping_address_id');
-
-		if (empty($skuId)) {
-			$where = [
-				'mem_id' => userId(),
-				'checked' => 1,
-			];
-			if (empty(userId())) {
-				$where['uuid'] = uuId();
-			}
-			$skuList = service('Cart')->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id'=>'desc']);
-			if (!empty($skuList)) {
-				$skuList = array_column($skuList, 'quantity', 'sku_id');
-			}
-		} else {
-			$skuList = [$skuId => $quantity];
-		}
-		if (empty($skuList)) {
-			return [];
-		}
-		//获取数值总额
-		$sku = service('product/Sku');
-		$tempSkuList = $sku->getListData(['sku_id'=> ['in', array_keys($skuList)]], 'sku_id,spu_id,status,stock');
-		$tempSkuList = array_column($tempSkuList, null, 'sku_id');
-		$productTotal = 0;
-		$productOriginalTotal = 0;
-		foreach ($skuList as $key => $value) {
-			unset($skuList[$key]);
-			if (empty($tempSkuList[$key])) {
-				continue;
-			}
-			if ($tempSkuList[$key]['status'] != $sku->getConst('STATUS_OPEN')) {
-				continue;
-			}
-			if ($value > $tempSkuList[$key]['stock']) {
-				continue;
-			}
-			$tempInfo = $sku->getInfoCache($key, lanId());
-			$skuList[$key] = ['quantity' => $value];
-			$productTotal += $tempInfo['price']*$value;
-			$productOriginalTotal += $tempInfo['original_price']*$value;
-			$skuList[$key] += $tempInfo;
-		}
-		return [
-			'total' => sprintf('%.2f', $productTotal),
-			'original_total' => sprintf('%.2f', $productOriginalTotal),
-			'list' => $skuList,
-		];
 	}
 
 	public function payOrder()
@@ -266,66 +20,236 @@ class Checkout extends HomeBase
 		frame('Html')->addCss('common/address');
 		frame('Html')->addJs('common/address');
 		frame('Html')->addJs();
+		$this->view();
+	}
 
-		$orderId = (int)iget('id');
-		$method = iget('method');
-		$error = '';
-		if (empty($orderId)) {
-			$error = appT('order_error');
-		}
-		if (empty($error)) {
-			$orderInfo = service('order/Order')->getInfo($orderId);
-			if (empty($orderInfo)) {
-				$error = appT('order_error');
+	public function createOrder()
+	{
+		$skuIds = (int)input('id', 0);
+		$quantity = max(1, (int)input('quantity', 1));
+		$shippingAddressId = (int)ipost('shipping_address_id', 0);
+		$billingAddressId = (int)ipost('billing_address_id', 0);
+		$insurance = (int)ipost('insurance', 0) ? true : false;
+
+		// 游客快捷下单：自动创建或关联账户并持久化地址
+		if (userId() <= 0) {
+			$email = trim((string)ipost('guest_email', session()->get(type() . '_info.guest_email', '')));
+			if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				$this->error(distT('email_empty'));
+			}
+			$memberService = service('member/Member');
+			$existingMem = $memberService->loadData(['site_id' => siteId(), 'email' => $email], 'mem_id');
+			if (!empty($existingMem['mem_id'])) {
+				$memId = (int)$existingMem['mem_id'];
 			} else {
-				//获取支付列表
-				$methodList = service('payment/Payment')->sortedMethodList();
-				if (!empty($methodList) && empty($method)) {
-					$method = key($methodList);
+				$memId = (int)$memberService->create([
+					'site_id'  => siteId(),
+					'email'    => $email,
+					'password' => randString(10),
+					'status'   => 1,
+				]);
+			}
+			if ($memId <= 0 || !$memberService->loginById($memId)) {
+				$this->error(distT('regist_error'));
+			}
+			$addressData = session()->get(type() . '_info.address') ?: [];
+			if (!empty($addressData)) {
+				$addressService = service('member/Address');
+				$idMap = [];
+				foreach ($addressData as $value) {
+					$oldId = (int)($value['address_id'] ?? 0);
+					unset($value['address_id'], $value['country']);
+					$value['mem_id'] = $memId;
+					$value['site_id'] = siteId();
+					$newId = (int)$addressService->insertGetId($value);
+					if ($oldId > 0) {
+						$idMap[$oldId] = $newId;
+					}
+					if ($shippingAddressId <= 0) {
+						$shippingAddressId = $newId;
+					}
 				}
-				$this->assign('method', $method);
-				$this->assign('methodList', $methodList);
-				$this->assign('orderInfo', $orderInfo);
+				if (isset($idMap[$shippingAddressId])) {
+					$shippingAddressId = $idMap[$shippingAddressId];
+				}
+				if (isset($idMap[$billingAddressId])) {
+					$billingAddressId = $idMap[$billingAddressId];
+				}
 			}
 		}
 
-		$this->assign('error', $error);
-		$this->assign('_title', 'Checkout, Pay Order - ');
-		$this->view();
+		if ($shippingAddressId <= 0) {
+			$this->error(distT('shipping_address_required'));
+		}
+		if ($billingAddressId <= 0) {
+			$billingAddressId = $shippingAddressId;
+		}
+
+		$cartService = service('cart/Cart');
+		if ($skuIds <= 0) {
+			$where = $cartService->getOwnerWhere();
+			$where['checked'] = 1;
+			$rows = $cartService->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id' => 'desc']);
+			if (empty($rows)) {
+				$this->error(distT('checkout_error'));
+			}
+			$skuList = array_column($rows, 'quantity', 'sku_id');
+		} else {
+			$skuList = [$skuIds => $quantity];
+		}
+
+		$orderId = service('order/Order')->createOrder($skuList, $shippingAddressId, $billingAddressId, $insurance);
+		if ($orderId) {
+			if ($skuIds <= 0) {
+				$delWhere = $cartService->getOwnerWhere();
+				$delWhere['checked'] = 1;
+				$cartService->deleteData($delWhere);
+			}
+			$this->success(distT('order_created'), ['url' => url('checkout/payOrder', ['id' => $orderId])]);
+		} else {
+			$this->error(distT('create_order_error'));
+		}
+	}
+
+	public function calculateOrderFee()
+	{
+		$info = $this->getCheckoutData();
+		if (empty($info['list'])) {
+			$this->error(distT('checkout_error'));
+		}
+		$currencyService = service('system/Currency');
+		$order = service('order/Order');
+		$symbol = $currencyService->priceSymbol(2) ?: '$';
+
+		$productTotal = (float)$info['total'];
+		$origTotal = (float)$info['original_total'];
+		$shippingFee = (float)$order->getShippingFee($productTotal);
+		$insuranceFee = !empty(ipost('insurance')) ? (float)$order->getInsurance($productTotal) : 0.00;
+		$orderTotal = $productTotal + $shippingFee + $insuranceFee;
+
+		$list = [
+			[
+				'type'         => 0,
+				'name'         => 'Original Retail Price',
+				'value'        => sprintf('%.2f', $origTotal),
+				'value_format' => $symbol . sprintf('%.2f', $origTotal),
+			],
+			[
+				'type'         => 1,
+				'name'         => 'Items Subtotal',
+				'value'        => sprintf('%.2f', $productTotal),
+				'value_format' => $symbol . sprintf('%.2f', $productTotal),
+			],
+			[
+				'type'         => 2,
+				'name'         => 'Express Shipping',
+				'value'        => sprintf('%.2f', $shippingFee),
+				'value_format' => $shippingFee > 0 ? ($symbol . sprintf('%.2f', $shippingFee)) : 'FREE',
+			],
+		];
+		if ($insuranceFee > 0) {
+			$list[] = [
+				'type'         => 3,
+				'name'         => 'Shipping Protection Guarantee',
+				'value'        => sprintf('%.2f', $insuranceFee),
+				'value_format' => $symbol . sprintf('%.2f', $insuranceFee),
+			];
+		}
+
+		$data = [
+			'fee_list'     => $list,
+			'name'         => 'Order Total',
+			'value'        => sprintf('%.2f', $orderTotal),
+			'value_format' => $symbol . sprintf('%.2f', $orderTotal),
+		];
+		$this->success('ok', $data);
 	}
 
 	public function payOrderAjax()
 	{
-		$method = (int)ipost('method');
-		$orderId = (int)ipost('order_id');
-		$orderTotal = ipost('order_total');
-		$currency = ipost('currency');
-		$countryCode2 = ipost('country_code2');
-		if (empty($method)) {
-			$this->error(appT('payment_method_error'));
+		$method = (int)ipost('method', 1);
+		$orderId = (int)ipost('order_id', 0);
+		if ($method <= 0) {
+			$this->error('Please select a payment method.');
 		}
-		if (empty($orderId)) {
-
-		} else {
-			
+		if ($orderId <= 0) {
+			$this->error('Invalid order ID.');
 		}
+		$orderService = service('order/Order');
+		$orderInfo = $orderService->loadData([
+			'order_id' => $orderId,
+			'mem_id'   => userId(),
+		]);
+		if (empty($orderInfo)) {
+			$this->error('Order not found.');
+		}
+		$paidStatus = $orderService->getConst('STATUS_PAIED');
+		$orderService->updateData($orderId, [
+			'payment_id' => $method,
+			'status'     => $paidStatus,
+			'pay_time'   => now(),
+		]);
+		service('order/StatusHistory')->addLog($orderId, $paidStatus, $orderInfo['lan_id']);
+		$this->success('Payment confirmed! Redirecting to order details...', [
+			'url' => url('order/detail', ['id' => $orderId]),
+		]);
 	}
 
 	public function setGuestEmail()
 	{
-		$email = ipost('email');
-		if (empty($email)) {
+		$email = trim((string)ipost('email', ''));
+		if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			$this->error(distT('email_empty'));
 		}
-		$where = [
-			'site_id' => siteId(),
-			'email' => $email,
-		];
-		$rst = service('member/Member')->getCountData($where);
-		if ($rst) {
-			$this->error(distT('email_exist'));
-		}
-		session()->set(type().'_info.guest_email', $email);
+		session()->set(type() . '_info.guest_email', $email);
 		$this->success(distT('regist_able'));
+	}
+
+	protected function getCheckoutData()
+	{
+		$skuId = (int)input('id', 0);
+		$quantity = max(1, (int)input('quantity', 1));
+
+		if ($skuId <= 0) {
+			$cartService = service('cart/Cart');
+			$where = $cartService->getOwnerWhere();
+			$where['checked'] = 1;
+			$skuRows = $cartService->getListData($where, 'sku_id,quantity', 0, 0, ['cart_id' => 'desc']);
+			$skuList = !empty($skuRows) ? array_column($skuRows, 'quantity', 'sku_id') : [];
+		} else {
+			$skuList = [$skuId => $quantity];
+		}
+		if (empty($skuList)) {
+			return [];
+		}
+
+		$sku = service('product/Sku');
+		$tempSkuList = $sku->getListData(['sku_id' => ['in', array_keys($skuList)]], 'sku_id,spu_id,status,stock');
+		$tempSkuList = array_column($tempSkuList, null, 'sku_id');
+		$productTotal = 0;
+		$productOriginalTotal = 0;
+		$symbol = service('system/Currency')->priceSymbol(2) ?: '$';
+
+		foreach ($skuList as $key => $value) {
+			unset($skuList[$key]);
+			if (empty($tempSkuList[$key])) continue;
+			if ($tempSkuList[$key]['status'] != $sku->getConst('STATUS_OPEN')) continue;
+			if ($value > $tempSkuList[$key]['stock']) continue;
+
+			$tempInfo = $sku->getInfoCache($key, lanId());
+			if (empty($tempInfo)) continue;
+			$lineTotal = (float)$tempInfo['price'] * (int)$value;
+			$lineOrig = (float)$tempInfo['original_price'] * (int)$value;
+			$productTotal += $lineTotal;
+			$productOriginalTotal += $lineOrig;
+			$tempInfo['quantity'] = (int)$value;
+			$tempInfo['subtotal_format'] = $symbol . sprintf('%.2f', $lineTotal);
+			$skuList[$key] = $tempInfo;
+		}
+		return [
+			'total'          => sprintf('%.2f', $productTotal),
+			'original_total' => sprintf('%.2f', $productOriginalTotal),
+			'list'           => $skuList,
+		];
 	}
 }

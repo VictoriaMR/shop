@@ -34,9 +34,10 @@ class Message extends Base
 		$this->commit();
 		$insert = 'Hi, Welcome to '.site()->getName().', what can I do for you?';
 		$this->sendMessage($key, $insert, $to);
+		return $key;
 	}
 
-	protected function sendMessage($key, $content, $memId)
+	public function sendMessage($key, $content, $memId)
 	{
 		if (!$this->isExistGroup($key)) return false;
 		if (!$this->isExistMember($key, $memId)) return false;

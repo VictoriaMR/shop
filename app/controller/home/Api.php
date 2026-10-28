@@ -65,7 +65,7 @@ class Api extends HomeBase
 			$this->error(appT('param_error'));
 		}
 		$cate = $_POST['cate'] ?? '';
-		$fileService = service('File');
+		$fileService = service('tool/File');
 
 		if (!in_array($cate, $fileService::FILE_TYPE)) {
 			$this->error(appT('param_error'));
@@ -145,7 +145,9 @@ class Api extends HomeBase
 				}
 				$rst = service('member/Address')->updateData($id, $data);
 			} else {
-				$rst = service('member/Address')->insertData($data);
+				$data['mem_id'] = userId();
+				$data['site_id'] = siteId();
+				$rst = service('member/Address')->insert($data);
 			}
 		} else {
 			$rst = frame('Session')->set('guest_address', $data);

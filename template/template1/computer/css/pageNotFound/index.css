@@ -1,0 +1,81 @@
+/* ==========================================================================
+   404 Page Not Found (pageNotFound/index)
+   ========================================================================== */
+
+.notfound-shell {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 24px 100px;
+    text-align: center;
+}
+
+.notfound-code {
+    font-size: 84px;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.notfound-title {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0 0 12px;
+}
+
+.notfound-desc {
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.6;
+    margin: 0 auto 32px;
+    max-width: 480px;
+}
+
+.notfound-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.btn-nf-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    padding: 0 28px;
+    border-radius: 10px;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s ease;
+}
+
+.btn-nf-primary:hover {
+    background: #1e293b;
+}
+
+.btn-nf-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 46px;
+    padding: 0 24px;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #cbd5e1;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+}
+
+.btn-nf-secondary:hover {
+    border-color: #0f172a;
+}

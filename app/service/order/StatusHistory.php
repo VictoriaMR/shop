@@ -12,13 +12,13 @@ class StatusHistory extends Base
 		}
 		$data = [
 			'order_id' => $orderId,
-			'status' => $status,
-			'info' => $this->getStatusText($status, $lanId, $replace),
+			'status'   => $status,
+			'info'     => $this->getStatusText($status, is_array($replace) ? $replace : [], $lanId),
 		];
 		return $this->insert($data);
 	}
 
-	protected function getStatusText($status, $replace, $lanId)
+	protected function getStatusText($status, $replace=[], $lanId='')
 	{
 		$arr = [
 			0 => 'cancel_order',
@@ -30,6 +30,7 @@ class StatusHistory extends Base
 			6 => 'order_refunded',
 			7 => 'order_refunding',
 		];
-		return appT($arr[$status], $lanId, $replace);
+		$key = $arr[$status] ?? 'create_order';
+		return appT($key, is_array($replace) ? $replace : [], $lanId);
 	}
 }

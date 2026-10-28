@@ -1,0 +1,231 @@
+/* ==========================================================================
+   Member Account Overview (userInfo/index)
+   ========================================================================== */
+
+.profile-overview-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 28px;
+    background: linear-gradient(135deg, #111827 0%, #1e293b 100%);
+    border-radius: 16px;
+    color: #ffffff;
+    margin-bottom: 24px;
+}
+
+.profile-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-avatar-wrap {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    border: 2px solid rgba(255, 255, 255, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.profile-avatar-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-hero-meta h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    color: #ffffff;
+}
+
+.profile-hero-meta p {
+    font-size: 13px;
+    color: #cbd5e1;
+    margin: 0;
+}
+
+.btn-edit-profile {
+    height: 40px;
+    padding: 0 20px;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-edit-profile:hover {
+    background: #ffffff;
+    color: #111827;
+}
+
+/* Order Quick Status Strip */
+.order-status-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.status-pill-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-decoration: none;
+    color: #0f172a;
+    transition: border-color 0.2s ease, transform 0.18s ease, box-shadow 0.2s ease;
+}
+
+.status-pill-card:hover {
+    border-color: #0f172a;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.06);
+}
+
+.status-pill-info span {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.status-pill-info strong {
+    font-size: 22px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.status-pill-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f8fafc;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Profile Edit Drawer / Form Card */
+.profile-edit-panel {
+    display: none;
+    margin-bottom: 24px;
+}
+
+.profile-edit-panel.is-open {
+    display: block;
+}
+
+.profile-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.profile-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 6px;
+}
+
+.profile-field input,
+.profile-field select {
+    width: 100%;
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #0f172a;
+    background: #ffffff;
+}
+
+.profile-phone-group {
+    display: flex;
+    gap: 10px;
+}
+
+.profile-phone-group select {
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.profile-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+/* Recent Orders Mini List */
+.recent-order-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.recent-order-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.recent-order-meta strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.recent-order-meta span {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.recent-order-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.recent-order-total {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+@media (max-width: 768px) {
+    .profile-overview-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .order-status-strip {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .profile-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
