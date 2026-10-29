@@ -60,7 +60,7 @@ class Uv implements EventInterface
      *
      * @return  void
      */
-    public function __construct(\UVLoop $loop = null)
+    public function __construct(?\UVLoop $loop = null)
     {
         if(!extension_loaded('uv')) 
         {

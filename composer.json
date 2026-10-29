@@ -1,5 +1,6 @@
 {
     "name": "simple-frame/simple-frame",
     "require": {
-    },
+        "php": ">=8.5"
+    }
 }

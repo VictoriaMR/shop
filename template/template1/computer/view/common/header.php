@@ -19,6 +19,7 @@
 		$__pageJsFile = frame('Html')->getJs();
 	?>
 	<?php if ($__commonCssUrl) { ?><link rel="preload" href="<?php echo $__commonCssUrl;?>" as="style">
+	<?php } ?><?php if (!empty($__pageCssFile)) { ?><link rel="preload" href="<?php echo siteUrl($__pageCssFile);?>" as="style">
 	<?php } ?><?php if ($__commonJsUrl) { ?><link rel="preload" href="<?php echo $__commonJsUrl;?>" as="script">
 	<?php } ?><title><?php echo htmlspecialchars($__pageTitle, ENT_QUOTES, 'UTF-8');?></title>
 	<meta name="keywords" content="<?php echo htmlspecialchars($__pageKeyword, ENT_QUOTES, 'UTF-8');?>">

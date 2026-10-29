@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace app\service\site;
 use app\service\Base;
@@ -6,6 +6,11 @@ use app\service\Base;
 class Site extends Base
 {
 	const CACHE_KEY = 'site:';
+
+	public function getName(): string
+	{
+		return (string)\App::get('domain', 'name', 'Shop');
+	}
 
 	public function getInfoCache($key, $type = 'site_id')
 	{
@@ -18,12 +23,12 @@ class Site extends Base
 		return $info;
 	}
 
-	protected function getCacheKey($type, $key)
+	protected function getCacheKey($type, $key): string
 	{
 		return self::CACHE_KEY . $type . ':' . $key;
 	}
 
-	public function updateCache($siteId)
+	public function updateCache($siteId): bool
 	{
 		$info = $this->loadData($siteId, 'site_id,domain');
 		redis(2)->del($this->getCacheKey('site_id', $siteId));
@@ -38,13 +43,13 @@ class Site extends Base
 		return $this->loadData([$type => $key, 'status' => 1], 'site_id,type,path,name,domain,cate_id,email,view_cache,static_cache,debug');
 	}
 
-	public function getCountryCode()
+	public function getCountryCode(): string
 	{
 		$countryCode = frame('Session')->get('default_country_code');
-		if (true || !$countryCode) {
+		if (!$countryCode) {
 			$countryCode = frame('IP')->getIpCountry()['country']['iso_code'] ?? 'US';
 			frame('Session')->set('default_country_code', $countryCode);
 		}
-		return $countryCode;
+		return (string)$countryCode;
 	}
 }

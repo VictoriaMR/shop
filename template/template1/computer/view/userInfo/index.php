@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -17,7 +17,7 @@
                 <div class="profile-hero-left">
                     <div class="profile-avatar-wrap">
                         <?php if (!empty($info['avatar'])) { ?>
-                        <img src="<?php echo htmlspecialchars($info['avatar'], ENT_QUOTES, 'UTF-8'); ?>" alt="Avatar">
+                        <img src="<?php echo htmlspecialchars($info['avatar'], ENT_QUOTES, 'UTF-8'); ?>" alt="Avatar" width="68" height="68">
                         <?php } else { ?>
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                         <?php } ?>
@@ -190,7 +190,7 @@
                     <div class="member-empty-icon">
                         <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                     </div>
-                    <h3>Sign in to your account</h3>
+                    <h2>Sign in to your account</h2>
                     <p>Access your orders, manage shipping addresses, and view your saved wishlist items.</p>
                     <div style="display:flex;gap:12px;justify-content:center;">
                         <a href="<?php echo url('login'); ?>" class="btn-member-primary">Sign In</a>

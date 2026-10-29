@@ -6,7 +6,7 @@ $addresses = $orderInfo['address'] ?? [];
 $sym = $base['currency_symbol'] ?? '$';
 ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -25,7 +25,7 @@ $sym = $base['currency_symbol'] ?? '$';
                 <?php if (!empty($base)) { ?>
                 <div class="order-detail-banner">
                     <div class="order-detail-meta">
-                        <h2>Order #<?php echo htmlspecialchars($base['order_no'] ?? $base['order_id'], ENT_QUOTES, 'UTF-8'); ?></h2>
+                        <h1>Order #<?php echo htmlspecialchars($base['order_no'] ?? $base['order_id'], ENT_QUOTES, 'UTF-8'); ?></h1>
                         <p>Placed on <?php echo htmlspecialchars($base['add_time'] ?? '', ENT_QUOTES, 'UTF-8'); ?> &middot; Status: <strong><?php echo htmlspecialchars($base['status_text'] ?? '', ENT_QUOTES, 'UTF-8'); ?></strong></p>
                     </div>
                     <div style="display:flex;gap:10px;">
@@ -40,7 +40,7 @@ $sym = $base['currency_symbol'] ?? '$';
                 <div class="order-detail-addresses">
                     <?php foreach ($addresses as $addr) { ?>
                     <div class="detail-addr-box">
-                        <h3><?php echo ($addr['type'] ?? 0) == 1 ? 'Billing Address' : 'Shipping Address'; ?></h3>
+                        <h2><?php echo ($addr['type'] ?? 0) == 1 ? 'Billing Address' : 'Shipping Address'; ?></h2>
                         <p><strong><?php echo htmlspecialchars(trim(($addr['first_name'] ?? '') . ' ' . ($addr['last_name'] ?? '')), ENT_QUOTES, 'UTF-8'); ?></strong></p>
                         <p><?php echo htmlspecialchars(($addr['address1'] ?? '') . (!empty($addr['address2']) ? ', ' . $addr['address2'] : ''), ENT_QUOTES, 'UTF-8'); ?></p>
                         <p><?php echo htmlspecialchars(($addr['city'] ?? '') . ', ' . ($addr['state'] ?? '') . ' ' . ($addr['postcode'] ?? ''), ENT_QUOTES, 'UTF-8'); ?></p>
@@ -51,7 +51,7 @@ $sym = $base['currency_symbol'] ?? '$';
                 </div>
                 <?php } ?>
 
-                <h3 style="font-size:15px;font-weight:700;margin:0 0 12px;">Order Items</h3>
+                <h2 style="font-size:15px;font-weight:700;margin:0 0 12px;">Order Items</h2>
                 <div style="border-top:1px solid #f1f5f9;">
                     <?php foreach ($products as $prod) { ?>
                     <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid #f1f5f9;gap:16px;">
@@ -85,7 +85,7 @@ $sym = $base['currency_symbol'] ?? '$';
                 </div>
                 <?php } else { ?>
                 <div class="member-empty-state">
-                    <h3>Order not found</h3>
+                    <h1>Order not found</h1>
                     <p><?php echo htmlspecialchars($error ?: 'We could not find the requested order details.', ENT_QUOTES, 'UTF-8'); ?></p>
                     <a href="<?php echo url('order/index'); ?>" class="btn-member-outline">Back to My Orders</a>
                 </div>

@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -75,7 +75,7 @@
                     <div class="member-empty-icon">
                         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
                     </div>
-                    <h3>No saved addresses yet</h3>
+                    <h2>No saved addresses yet</h2>
                     <p>Add a shipping address now to speed up your future checkout experience.</p>
                     <button type="button" class="btn-member-primary" onclick="window.ShopAddressModal && window.ShopAddressModal.open()">+ Add Shipping Address</button>
                 </div>

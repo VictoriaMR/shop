@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -63,7 +63,7 @@
                 </div>
                 <?php } else { ?>
                 <div class="member-empty-state">
-                    <h3>No matching orders</h3>
+                    <h2>No matching orders</h2>
                     <p>We couldn't find any orders matching your search query.</p>
                     <a href="<?php echo url('order/index'); ?>" class="btn-member-outline">View All Orders</a>
                 </div>

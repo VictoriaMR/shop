@@ -14,9 +14,10 @@ class HomeBase extends Base
 		$template = \App::get('domain', 'template', 'template1');
 		$class = 'template/' . $template . '/controller/' . (isMobile() ? 'mobile/' : 'computer/') . \App::get('router', 'path');
 		if (is_file(ROOT_PATH . $class . '.php')) {
-			$callArr = [\App::make($class), \App::get('router', 'func')];
-			if (is_callable($callArr)) {
-				call_user_func_array($callArr, []);
+			$tplCtrl = \App::make($class);
+			$func = (string)\App::get('router', 'func');
+			if ($func !== '' && is_callable([$tplCtrl, $func])) {
+				$tplCtrl->$func();
 			}
 		}
 	}

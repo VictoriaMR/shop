@@ -1,6 +1,10 @@
-$(function () {
-    $(document).on('click', '.js-faq-trigger', function () {
-        var $item = $(this).closest('.faq-accordion-item');
-        $item.toggleClass('is-open');
-    });
+document.addEventListener('DOMContentLoaded', function () {
+	document.addEventListener('click', function (e) {
+		var trigger = e.target.closest ? e.target.closest('.js-faq-trigger') : null;
+		if (!trigger) return;
+		var item = trigger.closest('.faq-accordion-item');
+		if (item) {
+			item.classList.toggle('is-open');
+		}
+	});
 });

@@ -4,17 +4,20 @@ namespace app\payment;
 
 class PayPal extends PaymentMethod
 {
-	public function pay($data)
+	public function pay($orderId)
 	{
 		$this->setOrderId($orderId);
 		if (empty($this->getConfig())) {
 			return false;
 		}
-		$path = $this->getTemplatePath();
+		$path = method_exists($this, 'getTemplatePath') ? $this->getTemplatePath() : '';
 		if (empty($path)) {
 			return false;
 		}
-		// dd($this->getOrderInfo());
-		return $this->getTemplate($path, ['config'=>$this->config, 'orderData'=>$this->getOrderInfo(), 'method'=>$this->type]);
+		return $this->getTemplate($path, [
+			'config' => $this->config,
+			'orderData' => $this->getOrderInfo(),
+			'method' => $this->type,
+		]);
 	}
 }

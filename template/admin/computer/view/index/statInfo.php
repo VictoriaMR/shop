@@ -226,15 +226,15 @@
 					</div>
 					<div class="data-item">
 						<span class="data-label">服务器版本</span>
-						<span class="data-value"><?php echo $_SERVER['SERVER_SOFTWARE'];?></span>
+						<span class="data-value"><?php echo htmlspecialchars($_SERVER['SERVER_SOFTWARE'] ?? '');?></span>
 					</div>
 					<div class="data-item">
 						<span class="data-label">服务器域名</span>
-						<span class="data-value"><?php echo $_SERVER['SERVER_NAME'];?></span>
+						<span class="data-value"><?php echo htmlspecialchars($_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? ''));?></span>
 					</div>
 					<div class="data-item">
 						<span class="data-label">服务器地址 / 端口</span>
-						<span class="data-value badge-tech badge-purple"><?php echo $_SERVER['SERVER_ADDR'].':'.$_SERVER['SERVER_PORT'];?></span>
+						<span class="data-value badge-tech badge-purple"><?php echo htmlspecialchars(($_SERVER['SERVER_ADDR'] ?? '127.0.0.1').':'.($_SERVER['SERVER_PORT'] ?? '80'));?></span>
 					</div>
 					<div class="data-item">
 						<span class="data-label">PHP 版本</span>
@@ -246,7 +246,7 @@
 					</div>
 					<div class="data-item">
 						<span class="data-label">MySQL 版本</span>
-						<span class="data-value badge-tech badge-green"><?php echo $mysqlVersion;?></span>
+						<span class="data-value badge-tech badge-green"><?php echo htmlspecialchars((string)$mysqlVersion);?></span>
 					</div>
 					<div class="data-item">
 						<span class="data-label">最大执行时间</span>

@@ -1,9 +1,10 @@
 <?php
-$phpOk = version_compare(PHP_VERSION, '7.1', '>=');
+$phpOk = PHP_VERSION_ID >= 80500;
 $redisOk = !empty($redis_version) && version_compare($redis_version, '2.8', '>=');
 $mysqliOk = extension_loaded('mysqli');
 $opensslOk = extension_loaded('openssl');
 $opensslCnfOk = $opensslOk && !empty($openssl_cnf) && is_file($openssl_cnf);
+$opcacheOk = extension_loaded('Zend OPcache') && (bool)ini_get('opcache.enable');
 
 $envRows = [
 	[
@@ -16,14 +17,14 @@ $envRows = [
 	[
 		'name'   => '运行环境 / SAPI',
 		'value'  => ($_SERVER['SERVER_SOFTWARE'] ?? 'CLI') . ' / ' . PHP_SAPI,
-		'remark' => '時区: ' . date_default_timezone_get(),
+		'remark' => '时区: ' . date_default_timezone_get(),
 		'ok'     => true,
 		'status' => '正常',
 	],
 	[
 		'name'   => 'PHP 版本',
 		'value'  => PHP_VERSION,
-		'remark' => '要求 >= 7.1',
+		'remark' => '要求 >= 8.5',
 		'ok'     => $phpOk,
 		'status' => $phpOk ? '符合要求' : '版本过低',
 	],
@@ -42,11 +43,11 @@ $envRows = [
 		'status' => $redisOk ? '已连接' : '未连接',
 	],
 	[
-		'name'   => 'Mysqli.reconnect',
-		'value'  => ini_get('mysqli.reconnect') ? 'On' : 'Off',
-		'remark' => '断线自动重连配置',
-		'ok'     => (bool)ini_get('mysqli.reconnect'),
-		'status' => ini_get('mysqli.reconnect') ? '已开启' : '未开启',
+		'name'   => 'Zend OPcache',
+		'value'  => $opcacheOk ? 'On' : 'Off',
+		'remark' => '字节码加速缓存',
+		'ok'     => $opcacheOk,
+		'status' => $opcacheOk ? '已开启' : '未开启',
 		'warn'   => true,
 	],
 	[

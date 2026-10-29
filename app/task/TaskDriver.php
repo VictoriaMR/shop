@@ -49,7 +49,7 @@ abstract class TaskDriver
 	public static function formatKey(string $key): string
 	{
 		$key = trim(strtr($key, '\\', '/'), '/');
-		if (strpos($key, 'app-task-main-') === 0) {
+		if (str_starts_with($key, 'app-task-main-')) {
 			return 'app/task/main/' . substr($key, 14);
 		}
 		if ($key === 'app-task-MainTask') {
@@ -139,7 +139,7 @@ abstract class TaskDriver
 	 */
 	protected function isMainTask(): bool
 	{
-		return static::formatKey(get_class($this)) === self::MAIN_TASK;
+		return static::formatKey(static::class) === self::MAIN_TASK;
 	}
 
 	/**
@@ -147,7 +147,7 @@ abstract class TaskDriver
 	 */
 	protected function isCronTask(): bool
 	{
-		$key = static::formatKey(get_class($this));
+		$key = static::formatKey(static::class);
 		return static::resolveType(static::$config, $key) === self::TYPE_CRON;
 	}
 
@@ -156,7 +156,7 @@ abstract class TaskDriver
 	 */
 	public function start()
 	{
-		$key = static::formatKey(get_class($this));
+		$key = static::formatKey(static::class);
 		$lockKey = self::TASKPREFIX . 'lock:' . $key;
 		if (!$this->redis()->set($lockKey, (string)getmypid(), ['nx', 'ex' => 5])) {
 			return false;
@@ -337,7 +337,7 @@ abstract class TaskDriver
 		if (($now - $this->lastSyncAt) < 5) {
 			return !$this->shouldStop;
 		}
-		$key = static::formatKey(get_class($this));
+		$key = static::formatKey(static::class);
 		$info = $this->getCache($key);
 		if (is_array($info)) {
 			$latestPid = (int)($info['process_pid'] ?? 0);

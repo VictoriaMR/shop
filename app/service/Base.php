@@ -4,36 +4,36 @@ namespace app\service;
 
 abstract class Base
 {
-    protected $baseModel;
-    protected $_error = [];
-    protected $_model;
+	protected $baseModel = null;
+	protected array $_error = [];
+	protected $_model = null;
 
-    private function __clone() {}
-    
-    protected function getModel()
-    {
-        if (!$this->_model) {
-            $this->_model = str_replace('\\service\\', '\\model\\', get_called_class());
-        }
-        $this->baseModel = \App::make($this->_model);
-    }
+	private function __clone() {}
 
-    public function __call($func, $arg)
-    {
-        if (is_null($this->baseModel)) {
-            $this->getModel();
-        }
-        return $this->baseModel->$func(...$arg);
-    }
+	protected function getModel()
+	{
+		if (!$this->_model) {
+			$this->_model = str_replace('\\service\\', '\\model\\', static::class);
+		}
+		$this->baseModel = \App::make($this->_model);
+	}
 
-    protected function setError($message)
-    {
-        $this->_error[] = $message;
-        return false;
-    }
+	public function __call($func, $arg)
+	{
+		if ($this->baseModel === null) {
+			$this->getModel();
+		}
+		return $this->baseModel->$func(...$arg);
+	}
 
-    public function getError()
-    {
-        return $this->_error;
-    }
+	protected function setError($message): bool
+	{
+		$this->_error[] = $message;
+		return false;
+	}
+
+	public function getError(): array
+	{
+		return $this->_error;
+	}
 }

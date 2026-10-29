@@ -15,6 +15,7 @@
     margin-bottom: 24px;
 }
 
+.order-detail-meta h1,
 .order-detail-meta h2 {
     font-size: 18px;
     font-weight: 800;
@@ -42,6 +43,7 @@
     background: #ffffff;
 }
 
+.detail-addr-box h2,
 .detail-addr-box h3 {
     font-size: 13px;
     font-weight: 700;

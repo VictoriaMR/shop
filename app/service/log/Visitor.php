@@ -1,9 +1,9 @@
-<?php 
+<?php
 
 namespace app\service\log;
 use app\service\Base;
 
-class Visitor extends Base 
+class Visitor extends Base
 {
 	public function add($data)
 	{
@@ -16,5 +16,10 @@ class Visitor extends Base
 		$data['agent'] = substr($_SERVER['HTTP_USER_AGENT'] ?? '', 0, 255);
 		$data['ip'] = frame('IP')->getIp();
 		return $this->insertData($data);
+	}
+
+	public function addLog($data)
+	{
+		return $this->add($data);
 	}
 }

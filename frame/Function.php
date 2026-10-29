@@ -1,6 +1,6 @@
 <?php
 
-function dd(...$arg) {
+function dd(...$arg): never {
 	foreach ($arg as $value) {
 		print_r($value);
 		echo PHP_EOL;
@@ -35,6 +35,19 @@ function make($name) {
 }
 
 function service($name) {
+	static $aliasMap = [
+		'Image'     => 'tool/Image',
+		'Translate' => 'tool/Translate',
+		'Socket'    => 'tool/Socket',
+		'File'      => 'tool/File',
+		'IP'        => 'tool/IP',
+		'Queue'     => 'tool/Queue',
+		'Sort'      => 'tool/Sort',
+		'Widget'    => 'tool/Widget',
+		'Language'  => 'system/Language',
+		'Currency'  => 'system/Currency',
+	];
+	$name = $aliasMap[$name] ?? $name;
 	return \App::make('app/service/' . $name);
 }
 
@@ -44,6 +57,10 @@ function model($name) {
 
 function frame($name) {
 	return \App::make('frame/' . $name);
+}
+
+function view() {
+	return frame('View');
 }
 
 function page($size = 0, $total = 0) {
@@ -97,8 +114,8 @@ function isJson($string) {
 
 function isArray($arr) {
 	if (is_array($arr) || !is_string($arr)) return $arr;
-	$temp = json_decode($arr, true);
-	return json_last_error() === JSON_ERROR_NONE ? $temp : $arr;
+	if (!json_validate($arr)) return $arr;
+	return json_decode($arr, true);
 }
 
 function isAjax() {
@@ -148,7 +165,7 @@ function isDebug() {
 function isWin() {
 	static $isWin = null;
 	if ($isWin === null) {
-		$isWin = DIRECTORY_SEPARATOR === '\\' || (defined('PHP_OS_FAMILY') && PHP_OS_FAMILY === 'Windows');
+		$isWin = PHP_OS_FAMILY === 'Windows';
 	}
 	return $isWin;
 }
@@ -242,6 +259,10 @@ function strTrim($str) {
 	return trim($str, " \t\n\r\0\x0B\xC2\xA0");
 }
 
+function hasZht(string $str): bool {
+	return $str !== '' && (bool)preg_match('/[\x{4e00}-\x{9fa5}]/u', $str);
+}
+
 function lanId($type = 'id') {
 	return frame('Session')->get('site_language_' . $type, $type === 'code' ? 'en' : 1);
 }
@@ -302,7 +323,6 @@ function redis($db = 0) {
 function db($db = null) {
 	return frame('Connection')->setDb($db);
 }
-
 
 function uuId() {
 	return frame('Cookie')->setUuid(true);

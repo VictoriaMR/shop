@@ -3,7 +3,7 @@
 namespace app\model\log;
 use app\model\Base;
 
-class Order extends Base
+class System extends Base
 {
 	protected $_connect = 'static';
 	protected $_table = 'log_system';

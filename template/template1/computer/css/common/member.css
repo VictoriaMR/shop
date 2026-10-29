@@ -1,13 +1,40 @@
 /* Shared Member Center & Order Center Styles (common/member.css) */
-.member-page {
-	padding: 24px 0 64px;
+.member-page,
+.member-shell {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 24px 20px 64px;
+}
+
+.member-breadcrumb {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+	font-size: 13px;
+	color: var(--text-muted);
+	margin-bottom: 20px;
+}
+
+.member-breadcrumb a {
+	color: var(--text-secondary);
+	transition: color var(--transition);
+}
+
+.member-breadcrumb a:hover {
+	color: var(--primary);
+	text-decoration: underline;
 }
 
 .member-layout {
 	display: grid;
-	grid-template-columns: 260px 1fr;
+	grid-template-columns: 260px minmax(0, 1fr);
 	gap: 32px;
 	align-items: start;
+}
+
+.member-main {
+	min-width: 0;
 }
 
 /* Sidebar */
@@ -91,7 +118,7 @@
 
 .member-nav-item.logout {
 	margin-top: 6px;
-	border-top: 1px solid var(--border-light);
+	border-top: 1px solid var(--border-color);
 	color: var(--accent);
 }
 
@@ -104,13 +131,18 @@
 	margin-bottom: 24px;
 }
 
-.member-card-head {
+.member-card:last-child {
+	margin-bottom: 0;
+}
+
+.member-card-head,
+.member-card-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	padding-bottom: 16px;
 	margin-bottom: 20px;
-	border-bottom: 1px solid var(--border-light);
+	border-bottom: 1px solid #f1f5f9;
 	gap: 16px;
 	flex-wrap: wrap;
 }
@@ -119,6 +151,100 @@
 	font-size: 20px;
 	font-weight: 800;
 	color: var(--text-main);
+	margin: 0;
+}
+
+.member-card-subtitle {
+	font-size: 13px;
+	color: var(--text-muted);
+	margin: 4px 0 0;
+}
+
+/* Member Buttons */
+.btn-member-primary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 40px;
+	padding: 0 20px;
+	border-radius: 8px;
+	background-color: var(--primary);
+	color: #ffffff;
+	font-size: 13px;
+	font-weight: 600;
+	border: 1px solid var(--primary);
+	cursor: pointer;
+	text-decoration: none;
+	transition: all var(--transition);
+}
+
+.btn-member-primary:hover {
+	background-color: var(--primary-hover);
+	border-color: var(--primary-hover);
+	color: #ffffff;
+}
+
+.btn-member-outline {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	height: 38px;
+	padding: 0 16px;
+	border-radius: 8px;
+	background-color: #ffffff;
+	color: var(--text-main);
+	font-size: 13px;
+	font-weight: 600;
+	border: 1px solid #cbd5e1;
+	cursor: pointer;
+	text-decoration: none;
+	transition: all var(--transition);
+}
+
+.btn-member-outline:hover {
+	border-color: var(--primary);
+	background-color: var(--bg-subtle);
+	color: var(--primary);
+}
+
+/* Member Empty State */
+.member-empty-state {
+	padding: 48px 24px;
+	text-align: center;
+	background-color: var(--bg-subtle);
+	border: 1px dashed #cbd5e1;
+	border-radius: 12px;
+}
+
+.member-empty-icon {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	color: var(--text-muted);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0 auto 14px;
+	box-shadow: var(--shadow-sm);
+}
+
+.member-empty-state h2,
+.member-empty-state h3 {
+	font-size: 17px;
+	font-weight: 700;
+	color: var(--text-main);
+	margin: 0 0 6px;
+}
+
+.member-empty-state p {
+	font-size: 13px;
+	color: var(--text-muted);
+	max-width: 420px;
+	margin: 0 auto 20px;
+	line-height: 1.6;
 }
 
 /* Stats Grid */
@@ -136,7 +262,7 @@
 	padding: 18px 20px;
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 	transition: border-color var(--transition), transform var(--transition);
 }
 
@@ -145,10 +271,12 @@
 	transform: translateY(-2px);
 }
 
-.member-stat-num {
+.member-stat-num,
+.member-stat-value {
 	font-size: 26px;
 	font-weight: 800;
 	color: var(--primary);
+	line-height: 1.1;
 }
 
 .member-stat-label {
@@ -189,7 +317,8 @@
 	border-color: var(--primary);
 }
 
-.order-tab-link.active {
+.order-tab-link.active,
+.order-tab-link.is-active {
 	background-color: var(--primary);
 	color: #ffffff;
 	border-color: var(--primary);
@@ -266,7 +395,7 @@
 	gap: 14px;
 	align-items: center;
 	padding: 10px 0;
-	border-bottom: 1px solid var(--border-light);
+	border-bottom: 1px solid #f1f5f9;
 }
 
 .order-prod-row:last-child {
@@ -289,7 +418,7 @@
 
 .order-card-footer {
 	padding: 14px 20px;
-	border-top: 1px solid var(--border-light);
+	border-top: 1px solid #f1f5f9;
 	background-color: #fafafa;
 	display: flex;
 	align-items: center;

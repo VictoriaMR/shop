@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -63,7 +63,7 @@
                                         <img src="<?php echo htmlspecialchars($prod['image'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($prod['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" loading="lazy">
                                     </a>
                                     <div class="order-product-info">
-                                        <h4><a href="<?php echo htmlspecialchars($prod['url'] ?? url('product', ['pid' => $prod['spu_id']]), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($prod['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></a></h4>
+                                        <h2><a href="<?php echo htmlspecialchars($prod['url'] ?? url('product', ['pid' => $prod['spu_id']]), ENT_QUOTES, 'UTF-8'); ?>"><?php echo htmlspecialchars($prod['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?></a></h2>
                                         <?php if (!empty($prod['attr'])) { ?>
                                         <div class="order-product-attrs">
                                             <?php
@@ -108,7 +108,7 @@
                     <div class="member-empty-icon">
                         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
                     </div>
-                    <h3>No orders found</h3>
+                    <h2>No orders found</h2>
                     <p>You don't have any orders matching the selected filter yet.</p>
                     <a href="<?php echo url('newIn'); ?>" class="btn-member-primary">Start Shopping</a>
                 </div>

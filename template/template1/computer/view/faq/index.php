@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="faq-shell">
+<main class="faq-shell container">
     <section class="faq-hero">
         <h1>Help Center &amp; Policies</h1>
         <p>Find answers about shipping, returns, sizing, orders, and store policies.</p>

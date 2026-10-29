@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -52,7 +52,7 @@
                     <div class="member-empty-icon">
                         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
                     </div>
-                    <h3>No browsing history yet</h3>
+                    <h2>No browsing history yet</h2>
                     <p>Products you view while signed in will automatically appear here for easy access.</p>
                     <a href="<?php echo url('newIn'); ?>" class="btn-member-primary">Browse Catalog</a>
                 </div>

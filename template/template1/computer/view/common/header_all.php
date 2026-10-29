@@ -11,6 +11,13 @@ $hotKeywords = $hotKeywords ?? ['Dress', 'Sweater', 'T-Shirt', 'Chandelier', 'No
 $currentKeyword = htmlspecialchars(trim((string)iget('keyword', '')), ENT_QUOTES, 'UTF-8');
 $currentCid = (int)iget('cid', 0);
 $currentPath = strtolower(\App::get('router', 'path', 'Index'));
+$__headerMem = session()->get(type() . '_info') ?: [];
+$__isLogged = !empty($__headerMem['mem_id']);
+$__headerDisplayName = $__isLogged
+	? (!empty($__headerMem['first_name']) ? $__headerMem['first_name'] : (!empty($__headerMem['nickname']) ? $__headerMem['nickname'] : (!empty($__headerMem['email']) ? $__headerMem['email'] : 'Account')))
+	: appT('sign_in');
+$__headerGreeting = $__isLogged ? 'Hi, Member' : 'Welcome';
+$__headerUserUrl = $__isLogged ? url('userInfo') : url('login');
 ?>
 <header class="site-header" id="site-header">
 	<!-- Top Announcement & Locale Bar -->
@@ -132,19 +139,19 @@ $currentPath = strtolower(\App::get('router', 'path', 'Index'));
 			<!-- User Account, Wishlist & Cart Actions -->
 			<div class="header-actions flex-align">
 				<div class="action-item account-dropdown" id="header-account">
-					<a href="<?php echo url('login');?>" class="action-link flex-align" id="header-user-link" title="<?php echo appT('my_account');?>">
+					<a href="<?php echo $__headerUserUrl;?>" class="action-link flex-align" id="header-user-link" title="<?php echo appT('my_account');?>">
 						<span class="action-icon">
 							<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
 								<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
 							</svg>
 						</span>
 						<span class="action-meta">
-							<small class="action-sub" id="header-user-greeting">Welcome</small>
-							<strong class="action-title" id="header-user-name"><?php echo appT('sign_in');?></strong>
+							<small class="action-sub" id="header-user-greeting"><?php echo htmlspecialchars($__headerGreeting, ENT_QUOTES, 'UTF-8');?></small>
+							<strong class="action-title" id="header-user-name"><?php echo htmlspecialchars($__headerDisplayName, ENT_QUOTES, 'UTF-8');?></strong>
 						</span>
 					</a>
 					<div class="account-popover">
-						<div class="account-popover-head" id="account-guest-cta">
+						<div class="account-popover-head<?php echo $__isLogged ? ' hidden' : '';?>" id="account-guest-cta">
 							<a href="<?php echo url('login');?>" class="btn btn-primary btn-sm w-full"><?php echo appT('sign_in');?> / <?php echo appT('register');?></a>
 						</div>
 						<ul class="account-menu-list">

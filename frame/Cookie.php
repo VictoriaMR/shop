@@ -4,7 +4,7 @@ namespace frame;
 
 class Cookie
 {
-	protected $config = [
+	protected array $config = [
 		'expires' => 0,
 		'path' => '/',
 		'domain' => '',
@@ -16,13 +16,13 @@ class Cookie
 	public function __construct()
 	{
 		$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
-			|| (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)
+			|| (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443)
 			|| (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
 			|| (isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] === 'https');
 		$this->config['secure'] = $isHttps;
 	}
 
-	public function init($home = true)
+	public function init($home = true): bool
 	{
 		if (userId() > 0) {
 			return true;
@@ -77,52 +77,39 @@ class Cookie
 		return $uuid;
 	}
 
-	public function updateLanguage($language)
+	public function updateLanguage($language): bool
 	{
 		return $this->set('language', $language, 3600 * 24 * 30);
 	}
 
-	public function updateCurrency($currency)
+	public function updateCurrency($currency): bool
 	{
 		return $this->set('currency', $currency, 3600 * 24 * 30);
 	}
 
-	public function set($name, $value = '', $option = null)
+	public function set($name, $value = '', $option = null): bool
 	{
 		if ($option === null) {
 			$option = $this->config;
 		} elseif (is_numeric($option)) {
-			$option = ['expires' => time() + intval($option)] + $this->config;
+			$option = ['expires' => time() + (int)$option] + $this->config;
 		} elseif (is_array($option)) {
 			if (isset($option['expire']) && !isset($option['expires'])) {
-				$option['expires'] = time() + intval($option['expire']);
+				$option['expires'] = time() + (int)$option['expire'];
 				unset($option['expire']);
 			}
 			$option = $option + $this->config;
 		}
 
-		if (is_array($value)) {
-			$cookieValue = 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE);
-		} else {
-			$cookieValue = (string)$value;
-		}
+		$cookieValue = is_array($value)
+			? 'json:' . json_encode($value, JSON_UNESCAPED_UNICODE)
+			: (string)$value;
 
 		$_COOKIE[$name] = $cookieValue;
-		if (PHP_VERSION_ID >= 70300) {
-			return setcookie($name, $cookieValue, $option);
-		}
-		return setcookie(
-			$name,
-			$cookieValue,
-			$option['expires'] ?? 0,
-			$option['path'] ?? '/',
-			$option['domain'] ?? '',
-			$option['secure'] ?? false,
-			$option['httponly'] ?? false
-		);
+		return setcookie($name, $cookieValue, $option);
 	}
 
-	public function has($name)
+	public function has($name): bool
 	{
 		return isset($_COOKIE[$name]);
 	}
@@ -133,7 +120,7 @@ class Cookie
 			return null;
 		}
 		$value = $_COOKIE[$name];
-		if (is_string($value) && strncmp($value, 'json:', 5) === 0) {
+		if (is_string($value) && str_starts_with($value, 'json:')) {
 			return json_decode(substr($value, 5), true);
 		}
 		return $value;

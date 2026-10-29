@@ -3,7 +3,7 @@
 namespace app\model\purchase;
 use app\model\Base;
 
-class Order extends Base
+class Trade extends Base
 {
 	protected $_table = 'purchase_trade';
 	protected $_addTime = 'add_time';

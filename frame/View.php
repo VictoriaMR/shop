@@ -2,20 +2,20 @@
 
 namespace frame;
 
-class View 
+class View
 {
-	private $_data = [];
-	private $_device;
-	private $_templateDir;
-	private $_tplCache = [];
+	private array $_data = [];
+	private ?string $_device = null;
+	private ?string $_templateDir = null;
+	private array $_tplCache = [];
 
-	public function display($template = '', $match = true, $data = [])
+	public function display($template = '', $match = true, array $data = []): void
 	{
 		$data['layout_include_path'] = $this->getTemplate($template, $match);
 		$this->loadFile($this->getTemplateDir() . 'layout.php', $data);
 	}
 
-	private function loadFile($template, array $data = [])
+	private function loadFile(string $template, array $data = []): void
 	{
 		if (!is_file($template)) {
 			echo isDebug()
@@ -36,14 +36,14 @@ class View
 		}
 	}
 
-	public function setData($data)
+	public function setData(array $data): void
 	{
 		if (!empty($data)) {
 			$this->_data = array_merge($this->_data, $data);
 		}
 	}
 
-	private function getTemplateDir()
+	private function getTemplateDir(): string
 	{
 		if ($this->_templateDir === null) {
 			$this->_templateDir = ROOT_PATH . 'template/' . \App::get('domain', 'template') . '/';
@@ -51,7 +51,7 @@ class View
 		return $this->_templateDir;
 	}
 
-	private function getTemplate($template, $match = true)
+	private function getTemplate(string $template, bool $match = true): string
 	{
 		$cacheKey = $template . ($match ? '_1' : '_0');
 		if (isset($this->_tplCache[$cacheKey])) {
@@ -67,14 +67,27 @@ class View
 			}
 			$path = $this->getTemplateDir() . $this->_device . '/view/' . $template . '.php';
 		} else {
-			$path = ROOT_PATH . $template . '.php';
+			$cleanTemplate = str_starts_with($template, ROOT_PATH)
+				? substr($template, strlen(ROOT_PATH))
+				: $template;
+			if (!str_ends_with($cleanTemplate, '.php')) {
+				$cleanTemplate .= '.php';
+			}
+			$path = ROOT_PATH . ltrim($cleanTemplate, '/\\');
 		}
 
 		return $this->_tplCache[$cacheKey] = $path;
 	}
 
-	public function load($template = '', $data = [], $match = true)
+	public function load(string $template = '', array $data = [], bool $match = true): void
 	{
 		$this->loadFile($this->getTemplate($template, $match), $data);
+	}
+
+	public function getContent(string $template = '', array $data = [], bool $match = false): string
+	{
+		ob_start();
+		$this->load($template, $data, $match);
+		return (string)ob_get_clean();
 	}
 }

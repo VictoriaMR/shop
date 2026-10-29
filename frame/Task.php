@@ -8,7 +8,7 @@ class Task
 	const TASKPREFIX = TaskDriver::TASKPREFIX;
 
 	/** @var array<string, string> classKey 缓存 */
-	private $classKeyCache = [];
+	private array $classKeyCache = [];
 
 	/**
 	 * 启动后台 CLI 任务进程
@@ -40,10 +40,7 @@ class Task
 	 */
 	public function getClassKey(string $classname): string
 	{
-		if (!isset($this->classKeyCache[$classname])) {
-			$this->classKeyCache[$classname] = TaskDriver::formatKey($classname);
-		}
-		return $this->classKeyCache[$classname];
+		return $this->classKeyCache[$classname] ??= TaskDriver::formatKey($classname);
 	}
 
 	/**
@@ -59,7 +56,7 @@ class Task
 		if (is_dir($subDir)) {
 			$files = scandir($subDir);
 			foreach ($files as $file) {
-				if ($file === '.' || $file === '..' || substr($file, -4) !== '.php') {
+				if ($file === '.' || $file === '..' || !str_ends_with($file, '.php')) {
 					continue;
 				}
 				$keys[] = 'app/task/main/' . substr($file, 0, -4);
@@ -295,7 +292,7 @@ class Task
 		if ($name === 'EmailTask') {
 			$name = 'Email';
 		}
-		$classKey = (strpos($name, 'app/task/') === 0) ? $name : 'app/task/main/' . $name;
+		$classKey = str_starts_with($name, 'app/task/') ? $name : 'app/task/main/' . $name;
 		return $this->noticeTask($classKey, $force);
 	}
 

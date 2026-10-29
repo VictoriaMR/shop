@@ -79,12 +79,11 @@ class Api extends HomeBase
 
 	public function notice()
 	{
-		$url = trim(ipost('url', ''));
-		$priority = (int)ipost('priority');
+		$url = trim((string)ipost('url', ''));
 		if (empty($url)) {
 			$this->error('url 不能为空');
 		}
-		service('supplier/Url')->addUrl($url, $priority);
+		purchase()->spu()->addUrl($url);
 		$this->success();
 	}
 

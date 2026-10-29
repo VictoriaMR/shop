@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -49,7 +49,7 @@
                 </div>
                 <?php } else { ?>
                 <div class="member-empty-state">
-                    <h3>Order trash is empty</h3>
+                    <h2>Order trash is empty</h2>
                     <p>You have no deleted orders in your trash bin.</p>
                     <a href="<?php echo url('order/index'); ?>" class="btn-member-outline">Back to My Orders</a>
                 </div>

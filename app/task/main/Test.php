@@ -5,7 +5,7 @@ use app\task\TaskDriver;
 
 class Test extends TaskDriver
 {
-	private $language = [];
+	private array $language = [];
 
 	public static $config = [
 		'name' => '测试任务',
@@ -20,7 +20,7 @@ class Test extends TaskDriver
 		//spu价格更新
 		// $this->updateSpuPrice();
 		//转换webp图片
-		$this->getDirFile(ROOT_PATH.'storage');
+		$this->getDirFile(ROOT_PATH . 'storage');
 		return false;
 	}
 
@@ -32,8 +32,8 @@ class Test extends TaskDriver
 		$transService = service('Translate');
 		$cateList = service('category/Category')->getListData();
 		$languageService = service('category/Language');
-		foreach ($cateList as $key=>$value) {
-			$hasLanguage = $languageService->getListData(['cate_id'=>$value['cate_id']], 'lan_id');
+		foreach ($cateList as $key => $value) {
+			$hasLanguage = $languageService->getListData(['cate_id' => $value['cate_id']], 'lan_id');
 			if (count($hasLanguage) == $lanCount) continue;
 			//更新锁 防止超时
 			$this->updateLock();
@@ -76,7 +76,7 @@ class Test extends TaskDriver
 	private function filterTxt($str)
 	{
 		$arr = [
-			'   ' => ' ',
+			'   ' => ' ',
 			'（' => '(',
 			'）' => ')',
 			' (' => '(',
@@ -125,9 +125,9 @@ class Test extends TaskDriver
 		$sku = service('product/Sku');
 		$list = $spu->getListData([], 'spu_id');
 		foreach ($list as $value) {
-			$info = $sku->loadData(['spu_id'=>$value['spu_id']], 'max(price) as max_price,min(price) as min_price');
+			$info = $sku->loadData(['spu_id' => $value['spu_id']], 'max(price) as max_price,min(price) as min_price');
 			if ($info) {
-				$spu->updateData($value['spu_id'], ['min_price'=>$info['min_price'], 'max_price'=>$info['max_price']]);
+				$spu->updateData($value['spu_id'], ['min_price' => $info['min_price'], 'max_price' => $info['max_price']]);
 			}
 		}
 		$this->echo('更新spu价格完成');
@@ -140,10 +140,10 @@ class Test extends TaskDriver
 		}
 		$files = scandir($path);
 		foreach ($files as $v) {
-			$newPath = $path.DS.$v;
+			$newPath = $path . DS . $v;
 			if (is_file($newPath)) {
 				$this->toWebp($newPath);
-			} elseif (is_dir($newPath)&&$v!='.'&&$v!='..') {
+			} elseif (is_dir($newPath) && $v !== '.' && $v !== '..') {
 				$this->getDirFile($newPath);
 			}
 		}
@@ -152,31 +152,25 @@ class Test extends TaskDriver
 
 	private function toWebp($file)
 	{
-		$extension = pathinfo($file)['extension'];
-		if ($extension == 'webp') {
+		$extension = pathinfo($file, PATHINFO_EXTENSION);
+		if ($extension === 'webp') {
 			return true;
 		}
-		$toFile = str_replace('.'.$extension, '.webp', $file);
+		$toFile = str_replace('.' . $extension, '.webp', $file);
 		if (is_file($toFile)) {
 			return true;
 		}
-		$suffix = getimagesize($file)['mime'];
-		switch ($suffix) {
-			case 'image/png':
-				$im = imagecreatefrompng($file);
-				break;
-			// case 'image/gif':
-			//     $im = imagecreatefromgif($file);
-			//     break;
-			case 'image/jpeg':
-			case 'image/jpg':
-				$im = imagecreatefromjpeg($file);
-				break;
-			default:
-				return false;
+		$imgInfo = getimagesize($file);
+		$suffix = $imgInfo['mime'] ?? '';
+		$im = match ($suffix) {
+			'image/png' => imagecreatefrompng($file),
+			'image/jpeg', 'image/jpg' => imagecreatefromjpeg($file),
+			default => false,
+		};
+		if (!$im) {
+			return false;
 		}
 		imagewebp($im, $toFile);
-		imagedestroy($im);
 		return true;
 	}
 }

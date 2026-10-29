@@ -64,6 +64,7 @@
     flex-shrink: 0;
 }
 
+.contact-channel-body h2,
 .contact-channel-body h3 {
     font-size: 16px;
     font-weight: 700;

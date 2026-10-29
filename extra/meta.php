@@ -57,7 +57,13 @@ $services = scanClasses(ROOT_PATH . 'app/service', 'app\service');
 $services['Image']     = '\app\service\tool\Image';
 $services['Translate'] = '\app\service\tool\Translate';
 $services['Socket']    = '\app\service\tool\Socket';
+$services['File']      = '\app\service\tool\File';
+$services['IP']        = '\app\service\tool\IP';
+$services['Queue']     = '\app\service\tool\Queue';
+$services['Sort']      = '\app\service\tool\Sort';
+$services['Widget']    = '\app\service\tool\Widget';
 $services['Language']  = '\app\service\system\Language';
+$services['Currency']  = '\app\service\system\Currency';
 ksort($services);
 
 $models = scanClasses(ROOT_PATH . 'app/model', 'app\model');

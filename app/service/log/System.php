@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace app\service\log;
 use app\service\Base;
@@ -12,7 +12,12 @@ class System extends Base
 			'mem_id' => userId(),
 			'site_id' => siteId(),
 			'ip' => frame('IP')->getIp(),
-			'info' => trim($info),
+			'info' => trim((string)$info),
 		]);
+	}
+
+	public function addLog($info)
+	{
+		return $this->add($info);
 	}
 }

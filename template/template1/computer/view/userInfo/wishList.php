@@ -1,6 +1,6 @@
 <?php $this->load('common/header_all'); ?>
 
-<main class="member-shell">
+<main class="member-shell container">
     <nav class="member-breadcrumb" aria-label="Breadcrumb">
         <a href="<?php echo url('index'); ?>">Home</a>
         <span>/</span>
@@ -50,7 +50,7 @@
                     <div class="member-empty-icon">
                         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                     </div>
-                    <h3>Your wishlist is empty</h3>
+                    <h2>Your wishlist is empty</h2>
                     <p>Tap the heart icon on any product to save your favorite styles here for later.</p>
                     <a href="<?php echo url('newIn'); ?>" class="btn-member-primary">Discover New Arrivals</a>
                 </div>

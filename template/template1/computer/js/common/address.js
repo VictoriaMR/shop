@@ -47,6 +47,11 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (closeBtn) closeBtn.addEventListener('click', closeModal);
 	if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
 
+	window.ShopAddressModal = {
+		open: openModal,
+		close: closeModal
+	};
+
 	document.addEventListener('click', function (e) {
 		var trigger = e.target.closest ? e.target.closest('[data-open-address-modal]') : null;
 		if (trigger) {

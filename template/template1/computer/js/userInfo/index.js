@@ -1,26 +1,60 @@
-$(function () {
-    var $panel = $('#js-profile-edit-panel');
+document.addEventListener('DOMContentLoaded', function () {
+	var panel = document.getElementById('js-profile-edit-panel');
+	var toggleBtn = document.getElementById('js-toggle-edit-profile');
+	var cancelBtn = document.getElementById('js-cancel-edit-profile');
+	var form = document.getElementById('js-profile-form');
+	var saveBtn = document.getElementById('js-save-profile-btn');
 
-    $('#js-toggle-edit-profile, #js-cancel-edit-profile').on('click', function () {
-        $panel.toggleClass('is-open');
-    });
+	function toggleEditPanel() {
+		if (panel) {
+			panel.classList.toggle('is-open');
+		}
+	}
 
-    $('#js-profile-form').on('submit', function (e) {
-        e.preventDefault();
-        var $btn = $('#js-save-profile-btn');
-        var origText = $btn.text();
-        $btn.prop('disabled', true).text('Saving...');
+	if (toggleBtn) toggleBtn.addEventListener('click', toggleEditPanel);
+	if (cancelBtn) cancelBtn.addEventListener('click', toggleEditPanel);
 
-        $.post('/userInfo/editInfo', $(this).serialize(), function (res) {
-            $btn.prop('disabled', false).text(origText);
-            if (res && (res.code == 1 || res.code == 200)) {
-                window.location.reload();
-            } else {
-                alert((res && res.msg) ? res.msg : 'Failed to update profile.');
-            }
-        }, 'json').fail(function () {
-            $btn.prop('disabled', false).text(origText);
-            alert('Network error. Please try again.');
-        });
-    });
+	if (form) {
+		form.addEventListener('submit', function (e) {
+			e.preventDefault();
+			var firstNameEl = form.querySelector('[name="first_name"]');
+			var lastNameEl = form.querySelector('[name="last_name"]');
+			var dialingEl = form.querySelector('[name="dialing_code"]');
+			var phoneEl = form.querySelector('[name="phone"]');
+
+			var payload = {
+				first_name: firstNameEl ? firstNameEl.value.trim() : '',
+				last_name: lastNameEl ? lastNameEl.value.trim() : '',
+				dialing_code: dialingEl ? dialingEl.value : '+1',
+				phone: phoneEl ? phoneEl.value.trim() : ''
+			};
+
+			if (!payload.first_name || !payload.last_name || !payload.phone) {
+				Tool.tips('Please complete all required fields.');
+				return false;
+			}
+
+			var origText = saveBtn ? saveBtn.textContent : 'Save Changes';
+			if (saveBtn) {
+				saveBtn.disabled = true;
+				saveBtn.textContent = 'Saving...';
+			}
+
+			post('/userInfo/editInfo', payload, function (res) {
+				if (saveBtn) {
+					saveBtn.disabled = false;
+					saveBtn.textContent = origText;
+				}
+				if (res && (res.code === 1 || res.code === 200)) {
+					Tool.tips(res.msg || 'Profile updated successfully.');
+					setTimeout(function () {
+						window.location.reload();
+					}, 400);
+				} else {
+					Tool.tips((res && res.msg) ? res.msg : 'Failed to update profile.');
+				}
+			});
+			return false;
+		});
+	}
 });

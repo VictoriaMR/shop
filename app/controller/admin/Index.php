@@ -5,11 +5,11 @@ use app\controller\AdminBase;
 
 class Index extends AdminBase
 {
-		//初始化
+	//初始化
 	public function __construct()
 	{
 		$this->_arr = [
-			'statInfo'=>'统计信息',
+			'statInfo' => '统计信息',
 		];
 		$this->_default = '概览';
 		$this->_init();
@@ -19,7 +19,7 @@ class Index extends AdminBase
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['setLeft'])) {
+			if (in_array($opn, ['setLeft'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -33,7 +33,7 @@ class Index extends AdminBase
 			'_loading' => false,
 			'_title' => '后台首页',
 			'funcList' => $funcList,
-			'info' => frame('Session')->get(\App::get('domain', 'class').'_info'),
+			'info' => frame('Session')->get(\App::get('domain', 'class') . '_info'),
 			'leftInfo' => frame('Session')->get('left_info'),
 		]);
 	}
@@ -53,7 +53,7 @@ class Index extends AdminBase
 	{
 		if (isPost()) {
 			$opn = ipost('opn');
-			if (in_array($opn, ['getSystemInfo'])) {
+			if (in_array($opn, ['getSystemInfo'], true)) {
 				$this->$opn();
 			}
 			$this->error('非法请求');
@@ -66,11 +66,7 @@ class Index extends AdminBase
 		//每日浏览人数统计
 		$viewerInfo = $log->getIpDateStat();
 		//系统信息
-		if (strtoupper(substr(PHP_OS, 0, 3))=='WIN') {
-			$cpuInfo = $this->sys_windows();
-		} else {
-			$cpuInfo = $this->sys_linux();
-		}
+		$cpuInfo = isWin() ? $this->sys_windows() : $this->sys_linux();
 		$mysqlVersion = $log->getQuery('SELECT version() AS version');
 		if (isset($mysqlVersion[0]['version'])) {
 			$mysqlVersion = $mysqlVersion[0]['version'];
@@ -85,87 +81,87 @@ class Index extends AdminBase
 
 	protected function getSystemInfo()
 	{
-		if (strtoupper(substr(PHP_OS, 0, 3))=='WIN') {
-			$returnData = $this->sys_windows();
-		} else {
-			$returnData = $this->sys_linux();
-		}
+		$returnData = isWin() ? $this->sys_windows() : $this->sys_linux();
 		$this->success('获取成功', $returnData);
 	}
 
-	protected function sys_windows()
+	protected function sys_windows(): array
 	{
-		$out = [];
 		$data = [];
-		//cmd Cpu 使用
-		$cmd = 'wmic cpu get loadpercentage';
-		exec($cmd, $out);
-		$data['loadpercentage'] = ($out[1] ?? 0).'%';
-		//内存总量
 		$out = [];
-		$cmd = 'wmic ComputerSystem get TotalPhysicalMemory';
-		exec($cmd, $out);
-		$memTotal = ($out[1] ?? 0) / 1024 / 1024;
-		$out = [];
-		$cmd = 'wmic OS get FreePhysicalMemory';
-		exec($cmd, $out);
-		$memFree = ($out[1] ?? 0) / 1024;
-		$memUsed = $memTotal - $memFree;
-		$data['memory_used_rate'] = ($memTotal > 0 ? sprintf('%.2f', $memUsed / $memTotal * 100) : '0.00').'%';
-		$data['memory_total'] = $this->formatMemory($memTotal);
-		$data['memory_used'] = $this->formatMemory($memUsed);
-		$data['memory_free'] = $this->formatMemory($memFree);
-		//内存使用
+		@exec('wmic cpu get loadpercentage 2>NUL', $out);
+		$load = isset($out[1]) && is_numeric(trim($out[1])) ? (int)trim($out[1]) : 0;
 
-		exec('wmic logicaldisk get FreeSpace,size /format:list', $out);
-		$size = $freespace = 0;
-		for ($i=0; $i<count($out);$i++) {
-			if (empty($out[$i])) continue;
-			$arr = explode('=', $out[$i]);
-			$freespace += $arr[1] ?? 0;
-			$i++;
-			if (is_numeric($out[$i])) {
-				$size += $out[$i];
-			} else {
-				$arr = explode('=', $out[$i]);
-				$size += $arr[1] ?? 0;
+		$out = [];
+		@exec('wmic ComputerSystem get TotalPhysicalMemory 2>NUL', $out);
+		$memTotalBytes = isset($out[1]) && is_numeric(trim($out[1])) ? (float)trim($out[1]) : 0.0;
+
+		$out = [];
+		@exec('wmic OS get FreePhysicalMemory 2>NUL', $out);
+		$memFreeKb = isset($out[1]) && is_numeric(trim($out[1])) ? (float)trim($out[1]) : 0.0;
+
+		// 若新版 Windows 移除了 wmic，回退使用 PowerShell CIM 查询
+		if ($memTotalBytes <= 0) {
+			$psOut = [];
+			@exec('powershell -NoProfile -Command "$os=Get-CimInstance Win32_OperatingSystem;$cpu=(Get-CimInstance Win32_Processor | Measure-Object -Property LoadPercentage -Average).Average;Write-Output \"$cpu|$($os.TotalVisibleMemorySize)|$($os.FreePhysicalMemory)\"" 2>NUL', $psOut);
+			if (!empty($psOut[0])) {
+				$parts = explode('|', trim($psOut[0]));
+				$load = (int)($parts[0] ?? 0);
+				$memTotalBytes = (float)($parts[1] ?? 0) * 1024;
+				$memFreeKb = (float)($parts[2] ?? 0);
 			}
 		}
-		$data['disk_total_space'] = get1024Peck($size);
-		$data['disk_free_space'] = get1024Peck($freespace);
-		$data['disk_used_space'] = get1024Peck($size - $freespace);
-		return $data;
-	}
 
-	protected function sys_linux()
-	{
-		$str = shell_exec('free');
-		$str = preg_replace('/\s(?=\s)/', '\\1', explode('Mem:', $str)[1]);
-		$data = explode('Swap:', $str);
-		$memData = explode(' ', trim($data[0]));
-		$swapData = explode(' ', trim($data[1]));
-		$data = [];
-		$memTotal = ($memData[0] + ($swapData[0] ?? 0)) / 1024;
-		$memUsed = ($memData[1] + ($swapData[1] ?? 0)) / 1024;
-		$memFree = $memTotal - $memUsed;
-		$data['memory_used_rate'] = ($memTotal > 0 ? sprintf('%.2f', $memUsed / $memTotal * 100) : '0.00').'%';
+		$data['loadpercentage'] = $load . '%';
+		$memTotal = $memTotalBytes / 1024 / 1024;
+		$memFree = $memFreeKb / 1024;
+		$memUsed = max(0.0, $memTotal - $memFree);
+		$data['memory_used_rate'] = ($memTotal > 0 ? sprintf('%.2f', $memUsed / $memTotal * 100) : '0.00') . '%';
 		$data['memory_total'] = $this->formatMemory($memTotal);
 		$data['memory_used'] = $this->formatMemory($memUsed);
 		$data['memory_free'] = $this->formatMemory($memFree);
-		$data['loadpercentage'] = ((sys_getloadavg()[0] ?? 0)*100).'%';
-		$total = disk_total_space('/');
-		$free = disk_free_space('/');
-		$data['disk_total_space'] = get1024Peck($total);
-		$data['disk_free_space'] = get1024Peck($free);
-		$data['disk_used_space'] = get1024Peck($total - $free);
+
+		$totalDisk = (float)@disk_total_space(ROOT_PATH);
+		$freeDisk = (float)@disk_free_space(ROOT_PATH);
+		$data['disk_total_space'] = get1024Peck($totalDisk);
+		$data['disk_free_space'] = get1024Peck($freeDisk);
+		$data['disk_used_space'] = get1024Peck(max(0.0, $totalDisk - $freeDisk));
 		return $data;
 	}
 
-	protected function formatMemory($mb)
+	protected function sys_linux(): array
+	{
+		$str = (string)@shell_exec('free');
+		$memTotal = $memUsed = 0.0;
+		if (str_contains($str, 'Mem:')) {
+			$str = preg_replace('/\s(?=\s)/', '\\1', explode('Mem:', $str)[1]);
+			$parts = explode('Swap:', $str);
+			$memData = explode(' ', trim($parts[0] ?? ''));
+			$swapData = explode(' ', trim($parts[1] ?? ''));
+			$memTotal = ((float)($memData[0] ?? 0) + (float)($swapData[0] ?? 0)) / 1024;
+			$memUsed = ((float)($memData[1] ?? 0) + (float)($swapData[1] ?? 0)) / 1024;
+		}
+		$memFree = max(0.0, $memTotal - $memUsed);
+		$data = [];
+		$data['memory_used_rate'] = ($memTotal > 0 ? sprintf('%.2f', $memUsed / $memTotal * 100) : '0.00') . '%';
+		$data['memory_total'] = $this->formatMemory($memTotal);
+		$data['memory_used'] = $this->formatMemory($memUsed);
+		$data['memory_free'] = $this->formatMemory($memFree);
+		$loadAvg = function_exists('sys_getloadavg') ? sys_getloadavg() : [0];
+		$data['loadpercentage'] = round(((float)($loadAvg[0] ?? 0)) * 100, 2) . '%';
+		$total = (float)@disk_total_space('/');
+		$free = (float)@disk_free_space('/');
+		$data['disk_total_space'] = get1024Peck($total);
+		$data['disk_free_space'] = get1024Peck($free);
+		$data['disk_used_space'] = get1024Peck(max(0.0, $total - $free));
+		return $data;
+	}
+
+	protected function formatMemory(float $mb): string
 	{
 		if ($mb > 1024) {
-			return sprintf('%.2f', $mb / 1024).' G';
+			return sprintf('%.2f', $mb / 1024) . ' G';
 		}
-		return sprintf('%.2f', $mb).' M';
+		return sprintf('%.2f', $mb) . ' M';
 	}
 }

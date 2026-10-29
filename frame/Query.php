@@ -200,7 +200,7 @@ final class Query
 
 	public function insert(array $data)
 	{
-		if (!is_array(current($data))) {
+		if (!is_array(array_first($data))) {
 			$data = [$data];
 		}
 		$intMap = $this->getIntMap();
@@ -301,8 +301,8 @@ final class Query
 		}
 		$parts = [];
 		foreach ($this->_where as $key => $item) {
-			if (strpos($key, ',') !== false) {
-				$cols = explode(',', $key);
+			if (str_contains((string)$key, ',')) {
+				$cols = explode(',', (string)$key);
 				$orParts = [];
 				$op = is_array($item) ? $item[0] : '=';
 				$val = is_array($item) ? $item[1] : $item;

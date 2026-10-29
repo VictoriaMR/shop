@@ -4,7 +4,7 @@ namespace app\model;
 
 class Base
 {
-	protected $_instance;
+	protected ?\frame\Query $_instance = null;
 	protected $_connect;
 	protected $_table;
 	protected $_primaryKey;
@@ -16,7 +16,7 @@ class Base
 	protected $_updateTime;
 	protected $_intFields = [];
 
-	private function instance()
+	private function instance(): \frame\Query
 	{
 		if ($this->_instance === null) {
 			$this->_instance = new \frame\Query();
@@ -29,9 +29,9 @@ class Base
 		return $this->_instance;
 	}
 
-	public function getConst($name)
+	public function getConst(string $name)
 	{
-		return constant(get_class($this) . '::' . $name);
+		return constant(static::class . '::' . $name);
 	}
 
 	public function loadData($where, $field = '*', $orderBy = [])
@@ -72,14 +72,14 @@ class Base
 		return $returnId ? $this->instance()->insertGetId($data) : $this->instance()->insert($data);
 	}
 
-	public function getCountData(array $where = []) 
+	public function getCountData(array $where = []): int
 	{
 		return $this->instance()->where($where)->count();
 	}
 
 	public function getListData(array $where = [], $field = '*', $page = 0, $size = 0, $order = [], $group = '')
 	{
-		return $this->instance()->where($where)->field($field)->page($page, $size)->orderBy($order)->groupBy($group)->get();
+		return $this->instance()->where($where)->field($field)->page((int)$page, (int)$size)->orderBy($order)->groupBy($group)->get();
 	}
 
 	public function sql()
@@ -89,34 +89,22 @@ class Base
 
 	public function userId()
 	{
-		if ($this->_memId === null) {
-			$this->_memId = userId();
-		}
-		return $this->_memId;
+		return $this->_memId ??= userId();
 	}
 
 	public function siteId()
 	{
-		if ($this->_siteId === null) {
-			$this->_siteId = siteId();
-		}
-		return $this->_siteId;
+		return $this->_siteId ??= siteId();
 	}
 
 	public function lanId()
 	{
-		if ($this->_lanId === null) {
-			$this->_lanId = lanId();
-		}
-		return $this->_lanId;
+		return $this->_lanId ??= lanId();
 	}
 
 	public function currencyId()
 	{
-		if ($this->_currencyId === null) {
-			$this->_currencyId = currencyId();
-		}
-		return $this->_currencyId;
+		return $this->_currencyId ??= currencyId();
 	}
 
 	public function __call($func, $arg)

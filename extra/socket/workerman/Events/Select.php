@@ -200,7 +200,7 @@ class Select implements EventInterface
                 \pcntl_signal($fd, SIG_IGN);
                 break;
             case self::EV_TIMER:
-            case self::EV_TIMER_ONCE;
+            case self::EV_TIMER_ONCE:
                 unset($this->_eventTimer[$fd_key]);
                 return true;
         }
